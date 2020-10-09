@@ -8,10 +8,6 @@ This is an IDS Connector using the specifications of the [IDS Information Model]
 It provides an HTTP API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
 The connector supports IDS conform message handling with other IDS connectors and IDS brokers and implements usage control for eight IDS usage policy patterns. 
 
-| ⚠ IMPORTANT NOTE  |
-|-----------------------------------------|
-| The repository was recently moved to [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). There, the project will continue as an open source project with an active community that continues to push the development of the Dataspace Connector. Please feel free to participate. The repository here will remain for now, with accesses being removed in spring 2021. Until then, old releases can still be used. The repository at GitHub starts with release 3.2.0. The code here will not be updated any further. |
-
 ## Content
  
 - [Features](#features)  
