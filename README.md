@@ -19,7 +19,7 @@ The connector supports IDS conform message handling with other IDS connectors an
     - [Docker Setup](#docker-setup)  
 - [Example Setup](#example-setup)  
 - [Development](#development)  
-    - [Configurations](#configuration)  
+    - [Configurations](#configurations)  
         - [Proxy](#proxy)  
         - [Authentication](#authentication)  
     - [Deployment](#deployment)  
@@ -73,7 +73,7 @@ The data provider will be running at https://localhost:8080 and the consumer at 
 
 For requesting data from the provider, open the Swagger UI of the consumer (https://localhost:8081/admin/api with `admin` + `password`) and send a request as shown below. 
 Due to the missing requested resource, the self-description of the provider is returned in response. To request a specific resource, it has to be created in the provider first.
-A more detailed explanation can be found at [Hands-on IDS Communication](https://github.com/FraunhoferISST/Dataspace-Connector/wiki/IDS-Communication).
+A more detailed explanation can be found at [Hands-on IDS Communication](https://github.com/FraunhoferISST/Dataspace-Connector/wiki/Hands-on-IDS-Communication).
 
 ![Data Request from Consumer to Provider](images/example.PNG)
 
@@ -104,7 +104,7 @@ It can only be reached from inside a VPN network. To get your IP address unblock
 
 ## Development
 
-If you want to setup the connector application yourself, follow the instructions below. If you encounter any problems, please have a look at the [FAQ](https://github.com/FraunhoferISST/Dataspace-Connector/wiki/FAQ). 
+If you want to setup the connector application yourself, follow the instructions below. If you encounter any problems, please have a look at the [FAQ](https://github.com/FraunhoferISST/Dataspace-Connector/wiki/Frequently-Asked-Questions). 
 
 ### Configurations
 
@@ -115,7 +115,7 @@ Each message to IDS participant needs to be signed with a valid DAT. On the othe
 * `truststore.p12`: The truststore is used by the IDS Framework for any Https communication. It ensures the connection to trusted addresses.
 * `config.json`: The configuration is used to set important properties for IDS message handling.
 
-Step 1: When starting the application, the `config.json` will be scanned for important connector information, e.g. its UUID, its address, contact information, or proxy settings. 
+**Step 1**: When starting the application, the `config.json` will be scanned for important connector information, e.g. its UUID, its address, contact information, or proxy settings. 
 Please keep this file up to date to your own connector settings. In case you are using the demo cert, you don't need to change anything except the [**proxy settings**](#proxy). 
 
 **If you want to connect to a running connector or any other system running at `https`, keep in mind that you need to add the keystore to your truststore. 
@@ -124,7 +124,7 @@ Otherwise the communication will fail. For now, with the provided truststore, th
 _If you are not familiar with the IDS Information Model, the `MainController` class provides an endpoint `GET /example/configuration` to print a filled in Java object as JSON-LD.  
 Adapt this to your needs, take the received string and place it in the `config.json`._
 
-Step 2: In the provided `config.json`, the `ids:connectorDeployMode` is set to `idsc:TEST_DEPLOYMENT`. This allows to use the `keystore-localhost.p12` as an IDS certificate. 
+**Step 2**: In the provided `config.json`, the `ids:connectorDeployMode` is set to `idsc:TEST_DEPLOYMENT`. This allows to use the `keystore-localhost.p12` as an IDS certificate. 
 For testing purpose, the existing cert can be used, as on application start, the IDS Framework will not get a valid DAT from the DAPS and for received messages, the sent DAT will not be checked. 
 
 To turn on the DAT checking, you need to set the `ids:connectorDeployMode` to `idsc:PRODUCTIVE_DEPLOYMENT`. For getting a trusted certificate, contact [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). 
@@ -132,7 +132,7 @@ Add the keystore with the IDS certifiacte inside to the `resources/conf` and cha
 
 **The TEST_DEPLOYMENT and accepting a demo cert is for testing purposes only! This mode is a security risk and cannot ensure that the connector is talking to a verified IDS participant. Furthermore, messages from the Dataspace Connector without a valid IDS certificate will not be accepted by other connectors.** 
 
-Step 3 (optional): The `application.properties` specifies database, SSL, spring security, open API, and DAPS configurations. 
+**Step 3 (optional)**: The `application.properties` specifies database, SSL, spring security, open API, and DAPS configurations. 
     To define on which port the connector should be running, change `server.port={PORT}`. 
     If you want to add your own SSL certificate, check the corresponding path. 
     
