@@ -1,6 +1,6 @@
 # Contributing to the Dataspace Connector
 
-The following is a set of guidelines for contributing to The Dataspace Connector, also located at the [CONTRIBUTING.md](CONTRIBUTING.md). This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/de/geschaeftsfelder/datenwirtschaft.html) department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/) hosted on [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. For this, always create an issue and a corresponding pull request, and follow our style guides as described below.
+The following is a set of guidelines for contributing to The Dataspace Connector. This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/de/geschaeftsfelder/datenwirtschaft.html) department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/) hosted on [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. For this, always create an issue and a corresponding pull request, and follow our style guides as described below.
 
 Please note that we have a [code of conduct](#code-of-conduct) that all developers should stick to.
 
