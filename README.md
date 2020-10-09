@@ -1,7 +1,7 @@
 # Dataspace Connector
 
 **Contact**: [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de)
-| **Issues**: Feel free to report issues in this repository using the menu item `Issues` or write an [email](mailto:julia.pampus@isst.fraunhofer.de).
+| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:julia.pampus@isst.fraunhofer.de).
 
 **Contributing: This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/de/geschaeftsfelder/datenwirtschaft.html) department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/) hosted on [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
 
