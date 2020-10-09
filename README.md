@@ -79,7 +79,7 @@ This is a list of currently implemented features, which is continuously updated.
 
 At first, clone the repository: `git clone https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector.git`.
 
-If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, go to the folder `test-setup`. 
+If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding release. 
 Both test setups provide a connector as a data provider, one as a data consumer, and a separated h2 database with an HTTP API running inside an additional spring boot application.
 
 ### Java Setup
