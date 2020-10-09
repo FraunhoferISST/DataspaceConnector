@@ -1,0 +1,14 @@
+version: '3.5'
+
+services:
+  connector:
+    image: dataspaceconnector:latest
+    container_name: 'connector-container'
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - connector
+
+networks:
+  connector:
