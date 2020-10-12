@@ -7,7 +7,7 @@ This is an IDS Connector using the specifications of the [IDS Information Model]
 It provides an HTTP API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
 The connector supports IDS conform message handling with other IDS connectors and IDS brokers and implements usage control for eight IDS usage policy patterns. 
 
-**Contributing: This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/de/geschaeftsfelder/datenwirtschaft.html) department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
+This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
 
 ## Content
  
@@ -61,7 +61,7 @@ This is a list of currently implemented features, which is continuously updated.
 
 ## Getting started
 
-At first, clone the repository: `git clone https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector.git`.
+At first, clone the repository: `git clone https://github.com/FraunhoferISST/DataspaceConnector.git`.
 
 If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding release. 
 Both test setups provide a connector as a data provider, one as a data consumer, and a separated h2 database with an HTTP API running inside an additional spring boot application.
@@ -119,7 +119,7 @@ Each message to IDS participant needs to be signed with a valid DAT. On the othe
 Please keep this file up to date to your own connector settings. In case you are using the demo cert, you don't need to change anything except the [**proxy settings**](#proxy). 
 
 **If you want to connect to a running connector or any other system running at `https`, keep in mind that you need to add the keystore to your truststore. 
-Otherwise the communication will fail. For now, with the provided truststore, the Dataspace Connector will accept its own localhost certificate, public certificates, and any IDS keystore that was provided by the Fraunhofer IAIS.**
+Otherwise the communication will fail. For now, with the provided truststore, the Dataspace Connector will accept its own localhost certificate, public certificates, and any IDS keystore that was provided by the Fraunhofer AISEC.**
 
 _If you are not familiar with the IDS Information Model, the `MainController` class provides an endpoint `GET /example/configuration` to print a filled in Java object as JSON-LD.  
 Adapt this to your needs, take the received string and place it in the `config.json`._
@@ -128,7 +128,7 @@ Adapt this to your needs, take the received string and place it in the `config.j
 For testing purpose, the existing cert can be used, as on application start, the IDS Framework will not get a valid DAT from the DAPS and for received messages, the sent DAT will not be checked. 
 
 To turn on the DAT checking, you need to set the `ids:connectorDeployMode` to `idsc:PRODUCTIVE_DEPLOYMENT`. For getting a trusted certificate, contact [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). 
-Add the keystore with the IDS certifiacte inside to the `resources/conf` and change the filename at `ids:keyStore` accordingly. 
+Add the keystore with the IDS certificate inside to the `resources/conf` and change the filename at `ids:keyStore` accordingly. 
 
 **The TEST_DEPLOYMENT and accepting a demo cert is for testing purposes only! This mode is a security risk and cannot ensure that the connector is talking to a verified IDS participant. Furthermore, messages from the Dataspace Connector without a valid IDS certificate will not be accepted by other connectors.** 
 
