@@ -1,10 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
@@ -32,7 +30,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/api/broker")
 @Tag(name = "Connector: IDS Broker Communication", description = "Endpoints for invoking broker communication")
-public class BrokerController { // TODO add update resources
+public class BrokerController {
     /** Constant <code>LOGGER</code> */
     public static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
