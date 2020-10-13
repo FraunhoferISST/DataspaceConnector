@@ -123,8 +123,7 @@ Please keep this file up to date to your own connector settings. In case you are
 **If you want to connect to a running connector or any other system running at `https`, keep in mind that you need to add the keystore to your truststore. 
 Otherwise the communication will fail. For now, with the provided truststore, the Dataspace Connector will accept its own localhost certificate, public certificates, and any IDS keystore that was provided by the Fraunhofer AISEC.**
 
-_If you are not familiar with the IDS Information Model, the `MainController` class provides an endpoint `GET /example/configuration` to print a filled in Java object as JSON-LD.  
-Adapt this to your needs, take the received string and place it in the `config.json`._
+_If you are not familiar with the IDS Information Model, the `MainController` class provides an endpoint `GET /example/configuration` to print a filled in Java object as JSON-LD. Adapt this to your needs, take the received string and place it in the `config.json`._
 
 **Step 2**: In the provided `config.json`, the `ids:connectorDeployMode` is set to `idsc:TEST_DEPLOYMENT`. This allows to use the `keystore-localhost.p12` as an IDS certificate. 
 For testing purpose, the existing cert can be used, as on application start, the IDS Framework will not get a valid DAT from the DAPS and for received messages, the sent DAT will not be checked. 
