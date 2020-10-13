@@ -4,7 +4,7 @@
 | **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:julia.pampus@isst.fraunhofer.de).
 
 This is an IDS Connector using the specifications of the [IDS Information Model](https://github.com/industrial-data-space/InformationModel) with integration of the [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) for connector configuration and message handling.
-It provides an HTTP API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
+It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
 The connector supports IDS conform message handling with other IDS connectors and IDS brokers and implements usage control for eight IDS usage policy patterns. 
 
 Basic information about the International Data Spaces reference architecture model can be found [here](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf).
