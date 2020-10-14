@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## [3.2.1-SNAPSHOT]
 
+### Changed 
+- Update to IDS framework v3.2.2.
+
 ### Added
 - Update and delete resources from broker.
 - Add configuration controller for GET and PUT configuration model.

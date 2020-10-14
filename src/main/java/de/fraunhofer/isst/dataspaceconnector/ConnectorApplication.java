@@ -46,7 +46,7 @@ public class ConnectorApplication {
                 .info(new Info()
                         .title("Dataspace Connector API")
                         .description("This is the Dataspace Connector's backend API using springdoc-openapi and OpenAPI 3.")
-                        .version("v3.2.1-SNAPSHOT")
+                        .version("v3.2.2-SNAPSHOT")
                         .contact(new Contact()
                                 .name("Julia Pampus")
                                 .email("julia.pampus@isst.fraunhofer.de")
