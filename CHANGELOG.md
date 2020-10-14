@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
 - Add configuration controller for GET and PUT configuration model.
 - Add possibility to set a resource id on create.
 
+### Fixed
+- Add representation.
+
 ## [3.2.0] - 2020-10-09
 
 ### Changed
