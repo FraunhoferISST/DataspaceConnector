@@ -46,6 +46,8 @@ Types: `fix`, `feat`, `chore`, `test`, `refactor`, `docs`, `release`. Append `!`
 
 An example of a very good commit might look like this: `feat![login]: add awesome breaking feature`
 
+**Pay attention to never commit your IDS keystore or certificate! Therefore, the `resources/conf` directory is added to the `.gitignore`.**
+
 ## Versioning
 The Dataspace Connector uses the [SemVer](https://semver.org/) for versioning. The release versions are tagged with their respective version.
 
