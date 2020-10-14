@@ -74,12 +74,20 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) {
-        OfferedResource resource = new OfferedResource(new Date(), new Date(), resourceMetadata, "");
+        OfferedResource resource = new OfferedResource(createUuid(), new Date(), new Date(), resourceMetadata, "");
 
         offeredResourceRepository.save(resource);
         offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
 
         return resource.getUuid();
+    }
+
+    @Override
+    public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) {
+        OfferedResource resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata, "");
+
+        offeredResourceRepository.save(resource);
+        offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
     }
 
     /**
@@ -286,6 +294,26 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                 throw new Exception("Could not retrieve data.");
             default:
                 throw new Exception("Could not retrieve data.");
+        }
+    }
+
+    /**
+     * Generates a unique uuid for a resource, if it does not already exist.
+     *
+     * @return Generated uuid
+     */
+    private UUID createUuid() {
+        UUID uuid = UUID.randomUUID();
+        ArrayList<UUID> list = new ArrayList<>();
+
+        for (OfferedResource r : offeredResourceRepository.findAll()) {
+            list.add(r.getUuid());
+        }
+
+        if (!list.contains(uuid)) {
+            return uuid;
+        } else {
+            return createUuid();
         }
     }
 }

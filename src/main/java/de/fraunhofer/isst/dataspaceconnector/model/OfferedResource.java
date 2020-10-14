@@ -19,7 +19,6 @@ import java.util.UUID;
 @Table
 public class OfferedResource implements ConnectorResource{
     @Id
-    @GeneratedValue
     @JsonProperty("uuid")
     private UUID uuid;
 
@@ -48,12 +47,14 @@ public class OfferedResource implements ConnectorResource{
     /**
      * <p>Constructor for OfferedResource.</p>
      *
+     * @param uuid a {@link java.util.Date} object.
      * @param created a {@link java.util.Date} object.
      * @param modified a {@link java.util.Date} object.
      * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      * @param data a {@link java.lang.String} object.
      */
-    public OfferedResource(Date created, Date modified, ResourceMetadata resourceMetadata, String data) {
+    public OfferedResource(UUID uuid, Date created, Date modified, ResourceMetadata resourceMetadata, String data) {
+        this.uuid = uuid;
         this.created = created;
         this.modified = modified;
         this.resourceMetadata = resourceMetadata;

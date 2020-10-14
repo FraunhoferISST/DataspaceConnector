@@ -39,6 +39,14 @@ public interface OfferedResourceService {
     UUID addResource(ResourceMetadata resourceMetadata);
 
     /**
+     * <p>addResourceWithId.</p>
+     *
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @param uuid a {@link java.util.UUID} object.
+     */
+    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid);
+
+    /**
      * <p>addData.</p>
      *
      * @param resourceId a {@link java.util.UUID} object.
