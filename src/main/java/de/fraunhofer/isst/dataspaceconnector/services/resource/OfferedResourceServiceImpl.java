@@ -217,7 +217,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         resource.setModified(new Date());
 
         representation.setUuid(representationId);
-        resource.getResourceMetadata().getRepresentations().add(getIndex(resource, representationId), representation);
+        resource.getResourceMetadata().getRepresentations().set(getIndex(resource, representationId), representation);
 
         offeredResourceRepository.save(resource);
         offeredResources.put(resourceId, idsUtils.getAsResource(resource));
