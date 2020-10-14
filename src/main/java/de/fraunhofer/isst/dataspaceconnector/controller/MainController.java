@@ -30,6 +30,7 @@ import java.util.ArrayList;
  * @version $Id: $Id
  */
 @RestController
+@RequestMapping("/admin/api")
 @Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
 public class MainController {
     /** Constant <code>LOGGER</code> */
@@ -72,7 +73,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @Operation(summary = "Connector Self-description", description = "Get the connector's self-description.")
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/selfservice"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getSelfService() {
         try {

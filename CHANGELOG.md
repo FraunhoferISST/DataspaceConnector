@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed 
 - Update to IDS framework v3.2.2.
+- Move self-service and example endpoints to admin API.
 
 ### Added
 - Update and delete resources from broker.
