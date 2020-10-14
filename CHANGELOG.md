@@ -1,21 +1,28 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [3.2.1-SNAPSHOT]
+
+### Added
+- Update and delete resources from broker.
+- Add configuration controller for GET and PUT configuration model.
+- Add possibility to set a resource id on create.
+
 ## [3.2.0] - 2020-10-09
 
 ### Changed
-- Change call to BrokerService constructor (parameters changed) in BrokerController
-- Change call to IDSHttpService constructor (parameters changed) in ConnectorRequestServiceImpl
-- Replace ConfigProducer with ConfigurationContainer in IdsUtils, MainController and DescriptionMessageHandler
+- Change call to BrokerService constructor (parameters changed) in BrokerController.
+- Change call to IDSHttpService constructor (parameters changed) in ConnectorRequestServiceImpl.
+- Replace ConfigProducer with ConfigurationContainer in IdsUtils, MainController and DescriptionMessageHandler.
 
 ### Added
-- Autowire ConfigurationContainer in constructor to instantiate Connector, KeyStoreManager or ConfigurationModel (previously directly autowired)
-- Add ClientProvider field to all classes using an OkHttpClient (create instance in constructor from autowired ConfigurationContainer) & replace calls to IDSUtils.getClient() with clientProvider.getClient()
-- Add file URI scheme to paths of KeyStore and TrustStore in config.json
-- Add test classes: SelfDescriptionTest, RequestDescriptionTest, RequestArtifactTest, DescriptionRequestMessageHandlingTest, ArtifactRequestMessageHandlingTest
+- Autowire ConfigurationContainer in constructor to instantiate Connector, KeyStoreManager or ConfigurationModel (previously directly autowired).
+- Add ClientProvider field to all classes using an OkHttpClient (create instance in constructor from autowired ConfigurationContainer) & replace calls to IDSUtils.getClient() with clientProvider.getClient().
+- Add file URI scheme to paths of KeyStore and TrustStore in config.json.
+- Add test classes: SelfDescriptionTest, RequestDescriptionTest, RequestArtifactTest, DescriptionRequestMessageHandlingTest, ArtifactRequestMessageHandlingTest.
 
 ### Removed 
-- IDS Connector certificate file
+- IDS Connector certificate file.
 
 ## [3.1.0] - 2020-09-29
 
