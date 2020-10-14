@@ -54,18 +54,23 @@ public class ResourceController {
     }
 
     /**
-     * Registers a resource with its metadata.
+     * Registers a resource with its metadata and, if wanted, with an already existing id.
      *
      * @param resourceMetadata The resource metadata.
+     * @param uuid The resource uuid.
      * @return The added uuid.
      */
     @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createResource(@RequestBody ResourceMetadata resourceMetadata) {
+    public ResponseEntity<Object> createResource(@RequestBody ResourceMetadata resourceMetadata, @RequestParam(value = "id", required = false) UUID uuid) {
         try {
-            UUID uuid = offeredResourceService.addResource(resourceMetadata);
-            return new ResponseEntity<>("Resource registered with uuid: " + uuid, HttpStatus.CREATED);
+            if (uuid != null) {
+                offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                return new ResponseEntity<>("Resource registered with uuid: " + uuid, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Resource registered with uuid: " + offeredResourceService.addResource(resourceMetadata), HttpStatus.CREATED);
+            }
         } catch (Exception e) {
             LOGGER.error("Resource could not be registered: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
