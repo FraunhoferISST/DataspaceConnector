@@ -112,7 +112,7 @@ If you want to setup the connector application yourself, follow the instructions
 
 The resource folder `conf` provides three important files that are loaded at application start:
 
-* `keystore-localhost.p12`: The provided keystore, on the one hand, is used as IDS certificate that is loaded by the IDS Framework for requesting a valid Dynamic Attribute Token (DAT) from the Digital Attribute Provisioning Service (DAPS). 
+* `keystore-localhost.p12`: The provided keystore, on the one hand, is used as IDS certificate that is loaded by the IDS Framework for requesting a valid Dynamic Attribute Token (DAT) from the Dynamic Attribute Provisioning Service (DAPS). 
 Each message to IDS participant needs to be signed with a valid DAT. On the other hand, it is used as SSL certificate for TLS encryption.
 * `truststore.p12`: The truststore is used by the IDS Framework for any Https communication. It ensures the connection to trusted addresses.
 * `config.json`: The configuration is used to set important properties for IDS message handling.
