@@ -54,7 +54,7 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<project.version>3.2.4-SNAPSHOT</project.version>
+		<project.version>3.2.1-SNAPSHOT</project.version>
 		<framework.version>3.2.2</framework.version>
 
 		<java.version>11</java.version>
