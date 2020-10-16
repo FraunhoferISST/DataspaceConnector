@@ -1,4 +1,4 @@
-FROM maven:latest
+FROM maven:latest AS maven
 LABEL maintainer="Julia Pampus <julia.pampus@isst.fraunhofer.de>"
 
 COPY pom.xml /tmp/
@@ -10,6 +10,11 @@ COPY src /tmp/src/
 
 RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
 
-WORKDIR target
-RUN cp *.jar app.jar
+FROM adoptopenjdk:jre-11.0.8_10-alpine
+RUN mkdir /app
+
+COPY --from=maven /tmp/target/app*.jar /app/
+
+WORKDIR /app/
+
 ENTRYPOINT ["java","-jar","app.jar"]
