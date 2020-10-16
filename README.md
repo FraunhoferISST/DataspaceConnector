@@ -7,6 +7,8 @@ This is an IDS Connector using the specifications of the [IDS Information Model]
 It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
 The connector supports IDS conform message handling with other IDS connectors and IDS brokers and implements usage control for eight IDS usage policy patterns. 
 
+**This repository has a `develop` branch in addition to the `master` branch. The idea is to always merge other branches into the `develop` branch (as SNAPSHOT version) and to push the changes from there into the `master` only for releases. This way, the `develop` branch is always up to date, with the risk of small issues, while the `master` only contains official releases.**
+
 Basic information about the International Data Spaces reference architecture model can be found [here](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf).
 
 **This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
@@ -40,9 +42,9 @@ This is a list of currently implemented features, which is continuously updated.
 *  Data resource registration (CRUD metadata) with internal H2 database
 *  Backend data handling internal (CRUD data) with internal H2 database
 *  Backend data handling external with example Rest Api (external spring boot application with H2 database)
-*  IDS message handling with other IDS connectors (as data provider and data consumer): description request/response, artifact request/response, rejection message
+*  IDS message handling with other IDS connectors (as data provider and data consumer): description request/response, artifact request/response, rejection message
 *  Read IDS response messages: save requested data & metadata in internal database
-*  IDS message handling with the IDS broker (IDS lab): available/update, unavailable, query 
+*  IDS message handling with the IDS broker (IDS lab): available/update, unavailable, query 
 *  Usage control with ODRL policies following the IDS policy language specifications
 *  Possibility to add multiple representations (different backend connections) to a resource
 
@@ -56,7 +58,7 @@ This is a list of currently implemented features, which is continuously updated.
 | ------ | ------ | ------ | ------ | ------ |
 | IDS Information Model | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | IDS Information Model Serializer | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Framework | 3.2.1 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
+| IDS Framework | 3.2.2 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
 | IDS Broker | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | DAPS | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
@@ -112,7 +114,7 @@ If you want to setup the connector application yourself, follow the instructions
 
 The resource folder `conf` provides three important files that are loaded at application start:
 
-* `keystore-localhost.p12`: The provided keystore, on the one hand, is used as IDS certificate that is loaded by the IDS Framework for requesting a valid Dynamic Attribute Token (DAT) from the Digital Attribute Provisioning Service (DAPS). 
+* `keystore-localhost.p12`: The provided keystore, on the one hand, is used as IDS certificate that is loaded by the IDS Framework for requesting a valid Dynamic Attribute Token (DAT) from the Dynamic Attribute Provisioning Service (DAPS). 
 Each message to IDS participant needs to be signed with a valid DAT. On the other hand, it is used as SSL certificate for TLS encryption.
 * `truststore.p12`: The truststore is used by the IDS Framework for any Https communication. It ensures the connection to trusted addresses.
 * `config.json`: The configuration is used to set important properties for IDS message handling.
