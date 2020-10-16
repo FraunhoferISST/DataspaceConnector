@@ -13,7 +13,7 @@ We document changes in the [CHANGELOG.md](CHANGELOG.md) on root level which is f
 You always have to create an issue if you want to integrate a bugfix, improvement, or feature. Briefly and clearly describe the purpose of your contribution in the corresponding issue. The pre-defined [labels](#labels) improve the understanding of your intentions and help to follow the scope of your changes. 
 
 **Bug Report**: As mentioned above, bug reports should be submitted as an issue. To give others the chance to reproduce the error in order to find a solution as quickly as possible, the report should at least include the following information:
-* Description: What did you expected and what happened instead?
+* Description: What did you expect and what happened instead?
 * Steps to reproduce (system specs included)
 * Relevant logs and/or media (optional): e.g. an image
 
