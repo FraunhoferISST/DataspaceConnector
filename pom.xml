@@ -279,8 +279,5 @@
 				</includes>
 			</resource>
 		</resources>
-
-		<finalName>app-${project.version}</finalName>
 	</build>
-
 </project>

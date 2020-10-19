@@ -10,10 +10,10 @@ COPY src /tmp/src/
 
 RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
 
-FROM adoptopenjdk:jre-11.0.8_10-alpine
+FROM adoptopenjdk/openjdk11:jre-11.0.8_10-alpine
 RUN mkdir /app
 
-COPY --from=maven /tmp/target/app*.jar /app/
+COPY --from=maven /tmp/target/*.jar /app/app.jar
 
 WORKDIR /app/
 
