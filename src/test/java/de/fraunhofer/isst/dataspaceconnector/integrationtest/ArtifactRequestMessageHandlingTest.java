@@ -8,6 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,6 +57,9 @@ public class ArtifactRequestMessageHandlingTest {
 
     @Autowired
     private ArtifactMessageHandler artifactMessageHandler;
+
+    @Autowired
+    private TokenProvider tokenProvider;
 
     private final UUID representationUUID = UUID.fromString("f7f69b0e-0930-11eb-adc1-0242ac120002");
 
@@ -160,7 +164,7 @@ public class ArtifactRequestMessageHandlingTest {
                 "   \"ids:requestedArtifact\":\"https://w3id.org/idsa/autogen/dataResource/" + requestedArtifact + "\",\r\n" +
                 "   \"ids:securityToken\":{\r\n" +
                 "      \"@type\":\"ids:DynamicAttributeToken\",\r\n" +
-                "      \"ids:tokenValue\":\"eyJ0eXAiOiJKV1QiLCJraWQiOiJkZWZhdWx0IiwiYWxnIjoiUlMyNTYifQ.eyJpZHNfYXR0cmlidXRlcyI6eyJzZWN1cml0eV9wcm9maWxlIjp7ImF1ZGl0X2xvZ2dpbmciOjB9LCJtZW1iZXJzaGlwIjp0cnVlLCJpZHMtdXJpIjoiaHR0cDovL3NvbWUtdXJpIiwidHJhbnNwb3J0X2NlcnRzX3NoYTI1OCI6ImJhY2I4Nzk1NzU3MzBiYjA4M2YyODNmZDViNjdhOGNiODk2OTQ0ZDFiZTI4YzdiMzIxMTdjZmM3NTdjODFlOTYifSwic2NvcGVzIjpbImlkc19jb25uZWN0b3IiXSwiYXVkIjoiSURTX0Nvbm5lY3RvciIsImlzcyI6Imh0dHBzOi8vZGFwcy5haXNlYy5mcmF1bmhvZmVyLmRlIiwic3ViIjoiQz1ERSxPPUZyYXVuaG9mZXIsT1U9SVNTVCxDTj01ODc3NmViZS1mOGY4LTRhNmYtYjQ0Yi1lZWVmYTQ3ZmMwNGIiLCJuYmYiOjE2MDIxNDQwNzMsImV4cCI6MTYwMjE0NzY3M30.SG1Av3G00ne2tYQMerrJbhg9f24klDMjS5ur1aykIGHrL5AyL2wsLit_5aMhG12DUQ7tPa2o4RHyTCQFAhVKkI9_bwCR9jGBcN6jfVn8vjxQ3mDvNdWOoRURI_3YOAjBlo1TqFLOKBmN3uTsB_ns7LqJDruea07sme5O38NOukHPWxsAnoiH4N9NByxHqxayrFj0buDxJCLKXG3_FQtZBcsGO89geylFec0epehh9pL5QV5nr4xLzVhfrJRgx512KVqr1hNLqfNRWGl0TFoKHyEE5J8IMEihZwF76_4kl_1HZe1HP866yO8ceONfTvRI2sCXmKpP8A02NGhisEF_Mg\",\r\n" +
+                "      \"ids:tokenValue\":\"" + tokenProvider.provideDapsToken() + "\",\r\n" +
                 "      \"referingConnector\":\"https://divaconnector.isst.fraunhofer.de\",\r\n" +
                 "      \"aud\":\"asd\",\r\n" +
                 "      \"iss\":\"adas\",\r\n" +

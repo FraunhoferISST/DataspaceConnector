@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Add representation.
+- Fix token error in test classes 
 
 ## [3.2.0] - 2020-10-09
 
