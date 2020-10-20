@@ -1,13 +1,20 @@
-FROM openjdk:11-jdk-slim
-FROM maven:latest
+FROM maven:latest AS maven
 LABEL maintainer="Julia Pampus <julia.pampus@isst.fraunhofer.de>"
 
 COPY pom.xml /tmp/
-COPY src /tmp/src/
 
 WORKDIR tmp
-RUN mvn clean package
+RUN mvn verify clean --fail-never
 
-WORKDIR target
-RUN cp *.jar app.jar
+COPY src /tmp/src/
+
+RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
+
+FROM adoptopenjdk/openjdk11:jre-11.0.8_10-alpine
+RUN mkdir /app
+
+COPY --from=maven /tmp/target/*.jar /app/app.jar
+
+WORKDIR /app/
+
 ENTRYPOINT ["java","-jar","app.jar"]
