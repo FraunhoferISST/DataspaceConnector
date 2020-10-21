@@ -236,9 +236,14 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<Object> addRepresentation(
             @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation) throws IllegalArgumentException {
+            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation,
+            @RequestParam(value = "id", required = false) UUID uuid) throws IllegalArgumentException {
         try {
-            UUID uuid = offeredResourceService.addRepresentation(resourceId, representation);
+            if(uuid != null){
+                offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
+            }else {
+                uuid = offeredResourceService.addRepresentation(resourceId, representation);
+            }
             return new ResponseEntity<>("Representation was saved successfully with uuid: " + uuid, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);

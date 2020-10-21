@@ -4,17 +4,20 @@ All notable changes to this project will be documented in this file.
 ## [3.2.1-SNAPSHOT]
 
 ### Changed 
-- Update to IDS framework v3.2.2.
+- Update to IDS framework v3.2.3.
 - Move self-service and example endpoints to admin API.
+- Improve Dockerfile.
 
 ### Added
 - Update and delete resources from broker.
 - Add configuration controller for GET and PUT configuration model.
 - Add possibility to set a resource id on create.
+- Add possibility to set a representation id on create.
 
 ### Fixed
 - Add representation.
-- Fix token error in test classes 
+- Fix token error in test classes.
+- Fix file path in packaged jar.
 
 ## [3.2.0] - 2020-10-09
 

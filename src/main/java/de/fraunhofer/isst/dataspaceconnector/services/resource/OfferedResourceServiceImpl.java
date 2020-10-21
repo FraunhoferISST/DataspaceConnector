@@ -212,6 +212,24 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
     /** {@inheritDoc} */
     @Override
+    public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation, UUID representationId) {
+        OfferedResource resource = offeredResourceRepository.getOne(resourceId);
+        resource.setModified(new Date());
+
+        if (resource.getResourceMetadata().getRepresentations() == null) {
+            resource.getResourceMetadata().setRepresentations(new ArrayList<>());
+        }
+        representation.setUuid(representationId);
+        resource.getResourceMetadata().getRepresentations().add(representation);
+
+        offeredResourceRepository.save(resource);
+        offeredResources.put(resourceId, idsUtils.getAsResource(resource));
+
+        return representation.getUuid();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void updateRepresentation(UUID resourceId, UUID representationId, ResourceRepresentation representation) {
         OfferedResource resource = offeredResourceRepository.getOne(resourceId);
         resource.setModified(new Date());
