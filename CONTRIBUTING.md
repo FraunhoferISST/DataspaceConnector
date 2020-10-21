@@ -1,6 +1,6 @@
 # Contributing to the Dataspace Connector
 
-The following is a set of guidelines for contributing to The Dataspace Connector. This is an ongoing project of the [Data Business](https://www.isst.fraunhofer.de/de/geschaeftsfelder/datenwirtschaft.html) department of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/) hosted on [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. For this, always create an issue and a corresponding pull request, and follow our style guides as described below.
+The following is a set of guidelines for contributing to The Dataspace Connector. This is an ongoing project of the  [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html) hosted on [GitHub](https://github.com/FraunhoferISST/Dataspace-Connector). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. For this, always create an issue and a corresponding pull request, and follow our style guides as described below.
 
 Please note that we have a [code of conduct](#code-of-conduct) that all developers should stick to.
 
@@ -19,8 +19,8 @@ You always have to create an issue if you want to integrate a bugfix, improvemen
 
 ## Labels
 
-The labels are also listed at the menu item `Issues`. There are two types of labels: one descibes the content of the issue and should be used by the developer that creates the issue. The other one, starting with `status`, will be added from the developer that takes on the issue. New issues should be initially marked with `status:open`.
-*  Basic labels: `bug`, `enhancement`, `suggestion`, `documentation` `outdated`, `question`
+The labels are also listed at the menu item `Issues`. There are two types of labels: one describes the content of the issue and should be used by the developer that creates the issue. The other one, starting with `status`, will be added from the developer that takes on the issue. New issues should be initially marked with `status:open`.
+*  Basic labels: `bug`, `enhancement`, `suggestion`, `documentation` `outdated`, `question`, `discussion`
 *  `status:closed`: issue is closed (after successful approval by issuer and QA)
 *  `status:duplicate`: issue is a duplicate of another linked issue and therefore discontinued
 *  `status:in-progress`: issue has been assigned and is currently being worked on
@@ -31,11 +31,11 @@ The labels are also listed at the menu item `Issues`. There are two types of lab
 
 ## Branches
 
-After creating an issue yourself or if you want to address an existing issue, you have to create a branch with a unique name that assigns it to an issue. Therefore, follow the guidelines at https://deepsource.io/blog/git-branch-naming-conventions/. After your changes, update the README.md with details of changes to the interface, this includes new environment variables, exposed ports, useful file locations and container parameters. Then, create a merge request and note that **committing to the master is not allowed**. Please use the feature `Linked issues` to link issues and merge requests. 
+After creating an issue yourself or if you want to address an existing issue, you have to create a branch with a unique number and name that assigns it to an issue. Therefore, follow the guidelines at https://deepsource.io/blog/git-branch-naming-conventions/. After your changes, update the README.md and CHANGELOG.md with details of changes. Then, create a pull request and note that **committing to the master is not allowed**. Please use the feature `Linked issues` to link issues and pull requests. 
 
 ## Commits
 
-We encourage all contributors to stick to the commit convention following the specification on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). In generall, use  the imperative in the present tense. A quick overview of the schema:
+We encourage all contributors to stick to the commit convention following the specification on [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). In general, use  the imperative in the present tense. A quick overview of the schema:
 ```
 <type>[optional scope]: <description>
 [optional body]
@@ -46,7 +46,7 @@ Types: `fix`, `feat`, `chore`, `test`, `refactor`, `docs`, `release`. Append `!`
 
 An example of a very good commit might look like this: `feat![login]: add awesome breaking feature`
 
-**Pay attention to never commit your IDS keystore or certificate! Therefore, the `resources/conf` directory is added to the `.gitignore`.**
+**Pay attention to never push your IDS keystore or certificate to the repository - not in a single commit! Therefore, the `resources/conf` directory is added to the `.gitignore`.**
 
 ## Versioning
 The Dataspace Connector uses the [SemVer](https://semver.org/) for versioning. The release versions are tagged with their respective version.
