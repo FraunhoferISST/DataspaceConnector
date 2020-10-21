@@ -7,11 +7,11 @@ This is an IDS Connector using the specifications of the [IDS Information Model]
 It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
 The connector supports IDS conform message handling with other IDS connectors and IDS brokers and implements usage control for eight IDS usage policy patterns. 
 
-**This repository has a `develop` branch in addition to the `master` branch. The idea is to always merge other branches into the `develop` branch (as SNAPSHOT version) and to push the changes from there into the `master` only for releases. This way, the `develop` branch is always up to date, with the risk of small issues, while the `master` only contains official releases.**
-
 Basic information about the International Data Spaces reference architecture model can be found [here](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf).
 
 **This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
+
+**This repository has a `develop` branch in addition to the `master` branch. The idea is to always merge other branches into the `develop` branch (as SNAPSHOT version) and to push the changes from there into the `master` only for releases. This way, the `develop` branch is always up to date, with the risk of small issues, while the `master` only contains official releases.**
 
 ## Content
  
@@ -58,7 +58,7 @@ This is a list of currently implemented features, which is continuously updated.
 | ------ | ------ | ------ | ------ | ------ |
 | IDS Information Model | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | IDS Information Model Serializer | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Framework | 3.2.2 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
+| IDS Framework | 3.2.3 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
 | IDS Broker | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | DAPS | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
@@ -67,8 +67,8 @@ This is a list of currently implemented features, which is continuously updated.
 
 At first, clone the repository: `git clone https://github.com/FraunhoferISST/DataspaceConnector.git`.
 
-If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding release. 
-Both test setups provide a connector as a data provider, one as a data consumer, and a separated h2 database with an HTTP API running inside an additional spring boot application.
+If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding [release](https://github.com/FraunhoferISST/DataspaceConnector/releases). 
+Both test setups provide a connector as a data provider and one as a data consumer.
 
 ### Java Setup
 
