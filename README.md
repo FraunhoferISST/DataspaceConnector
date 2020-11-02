@@ -1,7 +1,7 @@
 # Dataspace Connector
 
 **Contact**: [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de)
-| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:julia.pampus@isst.fraunhofer.de).
+| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:info@dataspace-connector.de).
 
 This is an IDS Connector using the specifications of the [IDS Information Model](https://github.com/industrial-data-space/InformationModel) with integration of the [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) for connector configuration and message handling.
 It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
@@ -179,8 +179,8 @@ If you want to change the default credentials, go to `application.properties`. T
 #### Database
 
 The Dataspace Connector uses Spring Data JPA to set up the database and manage interactions with it. Spring Data JPA 
-supports many well-known relational databases out of the box. Thus the internal H2 can be replaced by e.g. MySQL, 
-PostgreSQL or Oracle databases with minimal effort.
+supports many well-known relational databases out of the box. Thus, the internal H2 can be replaced by e.g. MySQL, 
+PostgreSQL, or Oracle databases with minimal effort.
 
 To use another database for the Connector, follow these steps: [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/Database-configuration)
 
