@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Add configuration controller for GET and PUT configuration model.
 - Add possibility to set a resource id on create.
 - Add possibility to set a representation id on create.
+- Add a description of how the internal database can be replaced by another.
 
 ### Fixed
 - Add representation.
