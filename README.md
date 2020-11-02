@@ -175,6 +175,14 @@ In case you don't want to provide authentication for your backend maintenance, f
 
 If you want to change the default credentials, go to `application.properties`. The properties are located at `spring.security.user.name=admin` and `spring.security.user.name=password`.
 
+#### Database
+
+The Dataspace Connector uses Spring Data JPA to set up the database and manage interactions with it. Spring Data JPA 
+supports many well-known relational databases out of the box. Thus the internal H2 can be replaced by e.g. MySQL, 
+PostgreSQL or Oracle databases with minimal effort.
+
+To use another database for the Connector, follow these steps: [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/Database-configuration)
+
 ### Deployment
 
 In the following, the deployment with Maven and Docker will be explained.

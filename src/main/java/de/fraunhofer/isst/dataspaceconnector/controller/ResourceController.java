@@ -231,7 +231,7 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Get Resource Contract", description = "Get the resource's metadata by its uuid.")
+    @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> addRepresentation(
