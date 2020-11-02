@@ -57,11 +57,11 @@ This is a list of currently implemented features, which is continuously updated.
 
 | Library/Component | Version | License | Owner | Contact |
 | ------ | ------ | ------ | ------ | ------ |
-| IDS Information Model | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Information Model Serializer | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Framework | 3.2.3 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
-| IDS Broker | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| DAPS | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
+| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) | 3.2.3 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
+| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [DAPS](https://daps.aisec.fraunhofer.de/) | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
 
 ## Getting started
