@@ -26,6 +26,7 @@ Basic information about the International Data Spaces reference architecture mod
     - [Configurations](#configurations)  
         - [Proxy](#proxy)  
         - [Authentication](#authentication)  
+        - [Database](#database)
     - [Deployment](#deployment)  
         - [Maven Build](#maven-build)  
         - [Docker Setup](#docker-setup)  
