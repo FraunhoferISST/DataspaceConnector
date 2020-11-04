@@ -1,14 +1,27 @@
 version: '3.5'
 
 services:
-  connector:
-    image: dataspaceconnector:latest
-    container_name: 'connector-container'
-    restart: always
+  postgres:
+    image: postgres
+    container_name: 'postgres-container'
     ports:
-      - 8080:8080
+      - "5432:5432"
+    env_file:
+      - ./postgres.env
     networks:
       - connector
+  connector:
+    build:
+      context: .
+    container_name: 'connector-container'
+    ports:
+      - 8080:8080
+    env_file:
+      - ./connector.env
+    networks:
+      - connector
+    depends_on:
+      - postgres
 
 networks:
   connector:
