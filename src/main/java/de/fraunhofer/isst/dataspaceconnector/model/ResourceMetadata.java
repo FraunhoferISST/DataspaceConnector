@@ -31,7 +31,7 @@ import java.util.List;
                 "    \"sample\"\n" +
                 "  ],\n" +
                 "  \"owner\": \"https://openweathermap.org/\",\n" +
-                "  \"license\": \"ODbL\",\n" +
+                "  \"license\": \"http://opendatacommons.org/licenses/odbl/1.0/\",\n" +
                 "  \"version\": \"1.0\"\n" +
                 "}\n"
 )
