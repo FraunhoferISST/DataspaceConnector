@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
-import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -31,6 +33,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     private IdsUtils idsUtils;
 
     private Map<UUID, Resource> offeredResources;
+    private ContractOffer contractOffer;
 
     @Autowired
     /**
@@ -44,6 +47,14 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         this.offeredResourceRepository = offeredResourceRepository;
         this.httpUtils = httpUtils;
         this.idsUtils = idsUtils;
+
+        contractOffer = new ContractOfferBuilder()
+                ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("provide-access")))
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                .build();
 
         offeredResources = new HashMap<>();
         for (OfferedResource resource : offeredResourceRepository.findAll()) {
@@ -74,6 +85,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) {
+        resourceMetadata.setPolicy(contractOffer.toRdf());
         OfferedResource resource = new OfferedResource(createUuid(), new Date(), new Date(), resourceMetadata, "");
 
         offeredResourceRepository.save(resource);
@@ -84,6 +96,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
     @Override
     public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) {
+        resourceMetadata.setPolicy(contractOffer.toRdf());
         OfferedResource resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata, "");
 
         offeredResourceRepository.save(resource);
