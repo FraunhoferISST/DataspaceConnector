@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 - Update to IDS framework v3.2.3.
 - Move self-service and example endpoints to admin API.
 - Improve Dockerfile.
+- Add key- and truststore to example configuration.
+- Add example policy (provide access) to resource on creation. 
 
 ### Added
 - Update and delete resources from broker.
@@ -14,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Add possibility to set a resource id on create.
 - Add possibility to set a representation id on create.
 - Add a description of how the internal database can be replaced by another.
+- Add .dockerignore file.
 
 ### Fixed
 - Add representation.
