@@ -128,6 +128,8 @@ public class MainController {
                                 ._accessURL_(URI.create("/api/ids/data"))
                                 .build())
                         .build())
+                ._keyStore_(URI.create("file:///conf/keystore.p12"))
+                ._trustStore_(URI.create("file:///conf/truststore.p12"))
                 .build().toRdf(), HttpStatus.OK);
     }
 
