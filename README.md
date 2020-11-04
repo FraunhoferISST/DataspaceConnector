@@ -84,7 +84,7 @@ A more detailed explanation can be found at [Hands-on IDS Communication](https:/
 
 ### Docker Setup 
 
-Extract the provided `docker-setup.zip` file. Make sure you have Docker Compose installed and run `docker-compose up` inside the extracted folder. 
+Extract the provided `docker-setup.zip` file. Make sure you have Docker Compose installed and run `docker-compose build --no-cache` and then `docker-compose up` inside the extracted folder. 
 In doing so, the provided `.jar` files will be built up as Docker Images and started as a data provider running at http://localhost:8080/ and a data consumer running at http://localhost:8081/.
 
 For requesting data from the provider, please remind that all applications are running inside isolated docker containers. So don't request e.g. http://localhost:8080/api/ids/data but http://provider:8080/api/ids/data.
