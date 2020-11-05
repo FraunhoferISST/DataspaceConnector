@@ -260,7 +260,7 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Get Resource Contract", description = "Get the resource's metadata by its uuid.")
+    @Operation(summary = "Update representation", description = "Update a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<Object> updateRepresentation(
@@ -306,7 +306,7 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Remove Resource Representation", description = "Get the resource's representation by its uuid.")
+    @Operation(summary = "Remove Resource Representation", description = "Remove a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Object> deleteRepresentation(
