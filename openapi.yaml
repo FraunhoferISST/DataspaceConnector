@@ -25,94 +25,6 @@ tags:
   - name: 'Connector: IDS Broker Communication'
     description: Endpoints for invoking broker communication
 paths:
-  /admin/api/broker/register:
-    post:
-      tags:
-        - 'Connector: IDS Broker Communication'
-      summary: Register Connector
-      description: Register or update connector at an IDS broker.
-      operationId: updateAtBroker
-      parameters:
-        - name: broker
-          in: query
-          description: The url of the broker.
-          required: true
-          schema:
-            type: string
-          example: https://broker.ids.isst.fraunhofer.de/infrastructure
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-  /admin/api/broker/update:
-    post:
-      tags:
-        - 'Connector: IDS Broker Communication'
-      summary: Register Connector
-      description: Register or update connector at an IDS broker.
-      operationId: updateAtBroker_1
-      parameters:
-        - name: broker
-          in: query
-          description: The url of the broker.
-          required: true
-          schema:
-            type: string
-          example: https://broker.ids.isst.fraunhofer.de/infrastructure
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-  /admin/api/broker/query:
-    post:
-      tags:
-        - 'Connector: IDS Broker Communication'
-      summary: Broker Query Request
-      description: Send a query request to an IDS broker.
-      operationId: queryBroker
-      parameters:
-        - name: broker
-          in: query
-          description: The url of the broker.
-          required: true
-          schema:
-            type: string
-          example: https://broker.ids.isst.fraunhofer.de/infrastructure
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-  /admin/api/broker/unregister:
-    post:
-      tags:
-        - 'Connector: IDS Broker Communication'
-      summary: Unregister Connector
-      description: Unregister connector at an IDS broker.
-      operationId: unregisterAtBroker
-      parameters:
-        - name: broker
-          in: query
-          description: The url of the broker.
-          required: true
-          schema:
-            type: string
-          example: https://broker.ids.isst.fraunhofer.de/infrastructure
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
   /admin/api/broker/resource/{resource-id}/update:
     post:
       tags:
@@ -171,11 +83,152 @@ paths:
             '*/*':
               schema:
                 type: object
+  /admin/api/broker/register:
+    post:
+      tags:
+        - 'Connector: IDS Broker Communication'
+      summary: Register Connector
+      description: Register or update connector at an IDS broker.
+      operationId: updateAtBroker
+      parameters:
+        - name: broker
+          in: query
+          description: The url of the broker.
+          required: true
+          schema:
+            type: string
+          example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /admin/api/broker/update:
+    post:
+      tags:
+        - 'Connector: IDS Broker Communication'
+      summary: Register Connector
+      description: Register or update connector at an IDS broker.
+      operationId: updateAtBroker_1
+      parameters:
+        - name: broker
+          in: query
+          description: The url of the broker.
+          required: true
+          schema:
+            type: string
+          example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /admin/api/broker/unregister:
+    post:
+      tags:
+        - 'Connector: IDS Broker Communication'
+      summary: Unregister Connector
+      description: Unregister connector at an IDS broker.
+      operationId: unregisterAtBroker
+      parameters:
+        - name: broker
+          in: query
+          description: The url of the broker.
+          required: true
+          schema:
+            type: string
+          example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /admin/api/broker/query:
+    post:
+      tags:
+        - 'Connector: IDS Broker Communication'
+      summary: Broker Query Request
+      description: Send a query request to an IDS broker.
+      operationId: queryBroker
+      parameters:
+        - name: broker
+          in: query
+          description: The url of the broker.
+          required: true
+          schema:
+            type: string
+          example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
   /admin/api/example/configuration:
     get:
       tags:
         - 'Connector: Selfservice'
+      summary: Get Connector configuration
+      description: Get the connector's configuration.
       operationId: getConnector
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /admin/api/example/usage-policy:
+    post:
+      tags:
+        - 'Connector: Selfservice'
+      summary: Get example policy
+      description: Get an example policy for a given policy pattern.
+      operationId: getExampleUsagePolicy
+      parameters:
+        - name: pattern
+          in: query
+          description: The policy pattern.
+          required: true
+          schema:
+            type: string
+            enum:
+              - PROVIDE_ACCESS
+              - PROHIBIT_ACCESS
+              - N_TIMES_USAGE
+              - DURATION_USAGE
+              - USAGE_DURING_INTERVAL
+              - USAGE_UNTIL_DELETION
+              - USAGE_LOGGING
+              - USAGE_NOTIFICATION
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /admin/api/example/policy-pattern:
+    post:
+      tags:
+        - 'Connector: Selfservice'
+      summary: Get pattern of policy
+      description: Get the policy pattern represented by a given JSON string.
+      operationId: getPolicyPattern
+      parameters:
+        - name: policy
+          in: query
+          description: The JSON string representing a policy
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -190,51 +243,6 @@ paths:
       summary: Connector Self-description
       description: Get the connector's self-description.
       operationId: getSelfService
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-  /admin/api/example/policy-pattern:
-    post:
-      tags:
-        - 'Connector: Selfservice'
-      operationId: getPolicyPattern
-      parameters:
-        - name: policy
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-  /admin/api/example/usage-policy:
-    post:
-      tags:
-        - 'Connector: Selfservice'
-      operationId: getExampleUsagePolicy
-      parameters:
-        - name: pattern
-          in: query
-          required: true
-          schema:
-            type: string
-            enum:
-              - PROVIDE_ACCESS
-              - PROHIBIT_ACCESS
-              - N_TIMES_USAGE
-              - DURATION_USAGE
-              - USAGE_DURING_INTERVAL
-              - USAGE_UNTIL_DELETION
-              - USAGE_LOGGING
-              - USAGE_NOTIFICATION
       responses:
         "200":
           description: OK
@@ -405,6 +413,97 @@ paths:
             '*/*':
               schema:
                 type: object
+  /admin/api/resources/{resource-id}/{representation-id}:
+    get:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Get Resource Representation
+      description: Get the resource's representation by its uuid.
+      operationId: getRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    put:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Update representation
+      description: Update a resource's representation by its uuid.
+      operationId: updateRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRepresentation'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    delete:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Remove Resource Representation
+      description: Remove a resource's representation by its uuid.
+      operationId: deleteRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
   /admin/api/resources/resource:
     post:
       tags:
@@ -516,13 +615,13 @@ paths:
             '*/*':
               schema:
                 type: object
-  /admin/api/resources/{resource-id}/{representation-id}:
+  /admin/api/resources/{resource-id}/{representation-id}/data:
     get:
       tags:
-        - 'Connector: Resource Handling'
-      summary: Get Resource Representation
-      description: Get the resource's representation by its uuid.
-      operationId: getRepresentation
+        - 'Backend: Resource Data Handling'
+      summary: Request Data String by Representation
+      description: Get the resource's data as a string by representation.
+      operationId: getDataByRepresentation
       parameters:
         - name: resource-id
           in: path
@@ -531,68 +630,7 @@ paths:
           schema:
             type: string
             format: uuid
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-    put:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Get Resource Contract
-      description: Get the resource's metadata by its uuid.
-      operationId: updateRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResourceRepresentation'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-    delete:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Remove Resource Representation
-      description: Get the resource's representation by its uuid.
-      operationId: deleteRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
+          example: a4212311-86e4-40b3-ace3-ef29cd687cf9
         - name: representation-id
           in: path
           description: The representation uuid.
@@ -659,36 +697,6 @@ paths:
             '*/*':
               schema:
                 type: object
-  /admin/api/resources/{resource-id}/{representation-id}/data:
-    get:
-      tags:
-        - 'Backend: Resource Data Handling'
-      summary: Request Data String by Representation
-      description: Get the resource's data as a string by representation.
-      operationId: getDataByRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-          example: a4212311-86e4-40b3-ace3-ef29cd687cf9
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
 components:
   schemas:
     BackendSource:
@@ -706,6 +714,41 @@ components:
       description: Information of the backend system.
       oneOf:
         - $ref: '#/components/schemas/BackendSource'
+    ResourceRepresentation:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        type:
+          type: string
+        byteSize:
+          type: integer
+          format: int32
+        sourceType:
+          type: string
+          description: Information of the backend system.
+          enum:
+            - local
+            - http-get
+            - http-get-basicauth
+            - https-get
+            - https-get-basicauth
+            - mongodb
+        source:
+          $ref: '#/components/schemas/BackendSource'
+      description: A new resource representation.
+      example:
+        type: json
+        byteSize: 105
+        sourceType: http-get
+        source:
+          url: https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02
+          username: "-"
+          password: "-"
+          system: Open Weather Map API
+      oneOf:
+        - $ref: '#/components/schemas/ResourceRepresentation'
     ResourceMetadata:
       required:
         - representations
@@ -746,38 +789,3 @@ components:
         version: "1.0"
       oneOf:
         - $ref: '#/components/schemas/ResourceMetadata'
-    ResourceRepresentation:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: uuid
-        type:
-          type: string
-        byteSize:
-          type: integer
-          format: int32
-        sourceType:
-          type: string
-          description: Information of the backend system.
-          enum:
-            - local
-            - http-get
-            - http-get-basicauth
-            - https-get
-            - https-get-basicauth
-            - mongodb
-        source:
-          $ref: '#/components/schemas/BackendSource'
-      description: A new resource representation.
-      example:
-        type: json
-        byteSize: 105
-        sourceType: http-get
-        source:
-          url: https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02
-          username: "-"
-          password: "-"
-          system: Open Weather Map API
-      oneOf:
-        - $ref: '#/components/schemas/ResourceRepresentation'
