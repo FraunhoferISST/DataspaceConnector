@@ -68,7 +68,7 @@ This is a list of currently implemented features, which is continuously updated.
 
 At first, clone the repository: `git clone https://github.com/FraunhoferISST/DataspaceConnector.git`.
 
-If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding [release](https://github.com/FraunhoferISST/DataspaceConnector/releases). 
+If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the **two test setups placed at the corresponding [release](https://github.com/FraunhoferISST/DataspaceConnector/releases)**. 
 Both test setups provide a connector as a data provider and one as a data consumer.
 
 ### Java Setup
@@ -194,7 +194,7 @@ If you want to build and run locally, ensure that Java 11 is installed. Then, fo
 
 1.  Execute `cd dataspace-connector` and `mvn clean package`.
 2.  The connector can be started by running the Spring Boot Application. Therefore, navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
-3.  If everything worked fine, the connector is available at https://localhost:8080/.
+3.  If everything worked fine, the connector is available at https://localhost:8080/. By default, it is running with an h2 database.
 
 _After successfully building the project, the Javadocs as a static website can be found at `/target/apidocs`. Open the `index.html` in a browser of your choice._
 
@@ -202,10 +202,17 @@ _After successfully building the project, the Javadocs as a static website can b
 
 If you want to deploy in docker and build the maven project with the Dockerfile, follow these steps:
 
-1. Navigate to `dataspace-connector`. To build the image, run `docker build -t <IMAGE_NAME:TAG> .` (e.g. `docker build -t dataspaceconnector .`).
-2. If you want to start the application, run `docker-compose up`. Have a look at the `docker-compose.yaml` and make your own configurations if necessary.
+**Option 1: Build and run Docker image**
+1. Navigate to `dataspace-connector`. To build the image, run `docker build -t <IMAGE_NAME:TAG> .` (e.g. `docker build -t dataspaceconnector .`). 
+2. For running your image as a container, follow [these](https://docs.docker.com/get-started/part2/) instructions: `docker run --publish 8080:8080 --detach --name bb <IMAGE_NAME:TAG>`
 
-If you just want to run the built jar file inside a docker image, have a look at the `Snippets` of this project and insert the corresponding lines in the Dockerfile.
+**Option 2: Using Docker Compose**
+1. The `docker-compose.yml` sets up the connector application and a PostgreSQL database. If necessary, make your changes in the `connector.env` and `postgres.env`. Please find more details about setting up different databases [here](https://github.com/FraunhoferISST/DataspaceConnector/wiki/Database-Configuration).
+2. If you are starting the application for the very first time, change `spring.jpa.hibernate.ddl-auto=update` in the `application.properties` to `spring.jpa.hibernate.ddl-auto=create`. 
+3. For starting the application, run `docker-compose up`. Have a look at the `docker-compose.yaml` and make your own configurations if necessary.
+4. For any further container starts, reset the setting of Step 2 to `update`. **Otherwise, changes in the database will be lost and overwritten.** Rebuild the image by running `docker-compose build --no-cache` and then follow Step 3.
+
+If you just want to run a built jar file (with an H2 database) inside a docker image, have a look at the `Dockerfile` inside the [`docker-setup.zip`](https://github.com/FraunhoferISST/DataspaceConnector/releases).
 
 #### Run Tests
 
