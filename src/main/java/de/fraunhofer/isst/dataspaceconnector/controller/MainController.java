@@ -11,6 +11,7 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
  * @version $Id: $Id
  */
 @RestController
+@RequestMapping("/admin/api")
 @Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
 public class MainController {
     /** Constant <code>LOGGER</code> */
@@ -72,7 +74,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @Operation(summary = "Connector Self-description", description = "Get the connector's self-description.")
-    @RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/selfservice"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getSelfService() {
         try {
@@ -93,6 +95,7 @@ public class MainController {
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
+    @Operation(summary = "Get Connector configuration", description = "Get the connector's configuration.")
     @RequestMapping(value = "/example/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getConnector() {
@@ -127,6 +130,8 @@ public class MainController {
                                 ._accessURL_(URI.create("/api/ids/data"))
                                 .build())
                         .build())
+                ._keyStore_(URI.create("file:///conf/keystore.p12"))
+                ._trustStore_(URI.create("file:///conf/truststore.p12"))
                 .build().toRdf(), HttpStatus.OK);
     }
 
@@ -137,9 +142,11 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      * @throws java.io.IOException if any.
      */
+    @Operation(summary = "Get pattern of policy", description = "Get the policy pattern represented by a given JSON string.")
     @RequestMapping(value = "/example/policy-pattern", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getPolicyPattern(@RequestParam("policy") String policy) throws IOException {
+    public ResponseEntity<Object> getPolicyPattern(@Parameter(description = "The JSON string representing a policy", required = true)
+                                                       @RequestParam("policy") String policy) throws IOException {
         return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
     }
 
@@ -149,9 +156,11 @@ public class MainController {
      * @param pattern a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler.Pattern} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
+    @Operation(summary = "Get example policy", description = "Get an example policy for a given policy pattern.")
     @RequestMapping(value = "/example/usage-policy", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getExampleUsagePolicy(@RequestParam("pattern") PolicyHandler.Pattern pattern) {
+    public ResponseEntity<Object> getExampleUsagePolicy(@Parameter(description = "The policy pattern.", required = true)
+                                                            @RequestParam("pattern") PolicyHandler.Pattern pattern) {
         ContractOffer contractOffer = null;
 
         switch (pattern) {

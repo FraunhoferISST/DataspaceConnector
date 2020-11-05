@@ -31,7 +31,7 @@ import java.util.List;
                 "    \"sample\"\n" +
                 "  ],\n" +
                 "  \"owner\": \"https://openweathermap.org/\",\n" +
-                "  \"license\": \"ODbL\",\n" +
+                "  \"license\": \"http://opendatacommons.org/licenses/odbl/1.0/\",\n" +
                 "  \"version\": \"1.0\"\n" +
                 "}\n"
 )
@@ -46,7 +46,7 @@ public class ResourceMetadata implements Serializable {
     @JsonProperty("keywords")
     private List<String> keywords;
 
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     @JsonProperty("policy")
     private String policy;
 
@@ -61,7 +61,7 @@ public class ResourceMetadata implements Serializable {
 
     @NotNull
     @ElementCollection
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     @JsonProperty("representations")
     private List<ResourceRepresentation> representations;
 

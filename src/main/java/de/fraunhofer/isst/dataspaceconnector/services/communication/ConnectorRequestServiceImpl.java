@@ -5,7 +5,6 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.exceptions.HttpClientException;
 import de.fraunhofer.isst.ids.framework.messages.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
-import de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
@@ -41,16 +40,14 @@ public class ConnectorRequestServiceImpl implements ConnectorRequestService {
     /**
      * <p>Constructor for ConnectorRequestServiceImpl.</p>
      *
-     * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer} object.
      * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param keyStoreManager a {@link de.fraunhofer.isst.ids.framework.util.KeyStoreManager} object.
      * @throws de.fraunhofer.isst.ids.framework.exceptions.HttpClientException if any.
      * @throws java.security.KeyManagementException if any.
      * @throws java.security.NoSuchAlgorithmException if any.
      */
-    public ConnectorRequestServiceImpl(ConfigurationContainer configurationContainer, ConfigProducer configProducer,
-                                       TokenProvider tokenProvider) throws HttpClientException, KeyManagementException, NoSuchAlgorithmException {
+    public ConnectorRequestServiceImpl(ConfigurationContainer configurationContainer, TokenProvider tokenProvider)
+            throws HttpClientException, KeyManagementException, NoSuchAlgorithmException {
         this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
 

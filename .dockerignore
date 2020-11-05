@@ -1,4 +1,9 @@
 target/
+images/
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+.gitignore
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
 !**/src/test/**
@@ -28,4 +33,3 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/conf/

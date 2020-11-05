@@ -12,7 +12,7 @@
 	<artifactId>dataspace-connector</artifactId>
 	<version>${project.version}</version>
 	<name>dataspace-connector</name>
-	<description>IDS Connector hosted by the Fraunhofer ISST</description>
+	<description>IDS Connector developed by the Fraunhofer ISST</description>
 	<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector</url>
 	<organization>
 		<name>Fraunhofer Institute for Software and Systems Engineering</name>
@@ -54,8 +54,8 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<project.version>3.2.0</project.version>
-		<framework.version>3.2.1</framework.version>
+		<project.version>3.2.1</project.version>
+		<framework.version>3.2.3</framework.version>
 
 		<java.version>11</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
@@ -183,6 +183,12 @@
 			<version>2.10.0.pr2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.2.5</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -248,7 +254,6 @@
 				<version>3.2.0</version>
 				<configuration>
 					<show>private</show>
-					<defaultAuthor>Julia Pampus</defaultAuthor>
 					<author>true</author>
 				</configuration>
 				<executions>
@@ -280,5 +285,4 @@
 			</resource>
 		</resources>
 	</build>
-
 </project>

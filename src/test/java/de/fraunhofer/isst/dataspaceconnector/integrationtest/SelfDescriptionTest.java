@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,12 +24,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class tests whether the connecter can give a valid selfdescription.
+ *
+ * @author Ronja Quensel
+ * @version $Id: $Id
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SelfDescriptionTest {
-
-    private final String selfDescriptionEndpoint = "/";
+    private final String selfDescriptionEndpoint = "/admin/api/selfservice";
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,6 +56,7 @@ public class SelfDescriptionTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = {"ADMIN"})
     public void getSelfDescription_noResources() throws Exception {
         deleteAllResources();
 
@@ -64,6 +71,7 @@ public class SelfDescriptionTest {
 
     @Test
     @Transactional
+    @WithMockUser(roles = {"ADMIN"})
     public void getSelfDescription_withResources() throws Exception {
         deleteAllResources();
 

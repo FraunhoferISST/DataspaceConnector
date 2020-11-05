@@ -1,7 +1,7 @@
 # Dataspace Connector
 
 **Contact**: [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de)
-| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:julia.pampus@isst.fraunhofer.de).
+| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:info@dataspace-connector.de).
 
 This is an IDS Connector using the specifications of the [IDS Information Model](https://github.com/industrial-data-space/InformationModel) with integration of the [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) for connector configuration and message handling.
 It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
@@ -12,6 +12,8 @@ The connector supports IDS conform message handling with other IDS connectors an
 Basic information about the International Data Spaces reference architecture model can be found [here](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf).
 
 **This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome to contribute to this project when you find a bug, want to suggest an improvement, or have an idea for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).**
+
+**This repository has a `develop` branch in addition to the `master` branch. The idea is to always merge other branches into the `develop` branch (as SNAPSHOT version) and to push the changes from there into the `master` only for releases. This way, the `develop` branch is always up to date, with the risk of small issues, while the `master` only contains official releases.**
 
 ## Content
  
@@ -26,6 +28,7 @@ Basic information about the International Data Spaces reference architecture mod
     - [Configurations](#configurations)  
         - [Proxy](#proxy)  
         - [Authentication](#authentication)  
+        - [Database](#database)
     - [Deployment](#deployment)  
         - [Maven Build](#maven-build)  
         - [Docker Setup](#docker-setup)  
@@ -56,19 +59,19 @@ This is a list of currently implemented features, which is continuously updated.
 
 | Library/Component | Version | License | Owner | Contact |
 | ------ | ------ | ------ | ------ | ------ |
-| IDS Information Model | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Information Model Serializer | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| IDS Framework | 3.2.2 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
-| IDS Broker | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| DAPS | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
+| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) | 3.2.3 | Apache 2.0 | Fraunhofer ISST | [Steffen Biehs](mailto:steffen.biehs@isst.fraunhofer.de) |
+| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | not open source | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [DAPS](https://daps.aisec.fraunhofer.de/) | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
 
 ## Getting started
 
 At first, clone the repository: `git clone https://github.com/FraunhoferISST/DataspaceConnector.git`.
 
-If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the two test setups placed at the corresponding release. 
-Both test setups provide a connector as a data provider, one as a data consumer, and a separated h2 database with an HTTP API running inside an additional spring boot application.
+If you want to deploy the connector yourself, follow the instructions of the [Development Section](#development). If you do not want to build the connector yourself and just want to see how two connectors communicate, take a look at the **two test setups placed at the corresponding [release](https://github.com/FraunhoferISST/DataspaceConnector/releases)**. 
+Both test setups provide a connector as a data provider and one as a data consumer.
 
 ### Java Setup
 
@@ -83,7 +86,7 @@ A more detailed explanation can be found at [Hands-on IDS Communication](https:/
 
 ### Docker Setup 
 
-Extract the provided `docker-setup.zip` file. Make sure you have Docker Compose installed and run `docker-compose up` inside the extracted folder. 
+Extract the provided `docker-setup.zip` file. Make sure you have Docker Compose installed and run `docker-compose build --no-cache` and then `docker-compose up` inside the extracted folder. 
 In doing so, the provided `.jar` files will be built up as Docker Images and started as a data provider running at http://localhost:8080/ and a data consumer running at http://localhost:8081/.
 
 For requesting data from the provider, please remind that all applications are running inside isolated docker containers. So don't request e.g. http://localhost:8080/api/ids/data but http://provider:8080/api/ids/data.
@@ -175,6 +178,14 @@ In case you don't want to provide authentication for your backend maintenance, f
 
 If you want to change the default credentials, go to `application.properties`. The properties are located at `spring.security.user.name=admin` and `spring.security.user.name=password`.
 
+#### Database
+
+The Dataspace Connector uses Spring Data JPA to set up the database and manage interactions with it. Spring Data JPA 
+supports many well-known relational databases out of the box. Thus, the internal H2 can be replaced by e.g. MySQL, 
+PostgreSQL, or Oracle databases with minimal effort.
+
+To use another database for the Connector, follow these steps: [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/Database-configuration)
+
 ### Deployment
 
 In the following, the deployment with Maven and Docker will be explained.
@@ -185,7 +196,7 @@ If you want to build and run locally, ensure that Java 11 is installed. Then, fo
 
 1.  Execute `cd dataspace-connector` and `mvn clean package`.
 2.  The connector can be started by running the Spring Boot Application. Therefore, navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
-3.  If everything worked fine, the connector is available at https://localhost:8080/.
+3.  If everything worked fine, the connector is available at https://localhost:8080/. By default, it is running with an h2 database.
 
 _After successfully building the project, the Javadocs as a static website can be found at `/target/apidocs`. Open the `index.html` in a browser of your choice._
 
@@ -193,10 +204,17 @@ _After successfully building the project, the Javadocs as a static website can b
 
 If you want to deploy in docker and build the maven project with the Dockerfile, follow these steps:
 
-1. Navigate to `dataspace-connector`. To build the image, run `docker build -t <IMAGE_NAME:TAG> .` (e.g. `docker build -t dataspaceconnector .`).
-2. If you want to start the application, run `docker-compose up`. Have a look at the `docker-compose.yaml` and make your own configurations if necessary.
+**Option 1: Build and run Docker image**
+1. Navigate to `dataspace-connector`. To build the image, run `docker build -t <IMAGE_NAME:TAG> .` (e.g. `docker build -t dataspaceconnector .`). 
+2. For running your image as a container, follow [these](https://docs.docker.com/get-started/part2/) instructions: `docker run --publish 8080:8080 --detach --name bb <IMAGE_NAME:TAG>`
 
-If you just want to run the built jar file inside a docker image, have a look at the `Snippets` of this project and insert the corresponding lines in the Dockerfile.
+**Option 2: Using Docker Compose**
+1. The `docker-compose.yml` sets up the connector application and a PostgreSQL database. If necessary, make your changes in the `connector.env` and `postgres.env`. Please find more details about setting up different databases [here](https://github.com/FraunhoferISST/DataspaceConnector/wiki/Database-Configuration).
+2. If you are starting the application for the very first time, change `spring.jpa.hibernate.ddl-auto=update` in the `application.properties` to `spring.jpa.hibernate.ddl-auto=create`. 
+3. For starting the application, run `docker-compose up`. Have a look at the `docker-compose.yaml` and make your own configurations if necessary.
+4. For any further container starts, reset the setting of Step 2 to `update`. **Otherwise, changes in the database will be lost and overwritten.** Rebuild the image by running `docker-compose build --no-cache` and then follow Step 3.
+
+If you just want to run a built jar file (with an H2 database) inside a docker image, have a look at the `Dockerfile` inside the [`docker-setup.zip`](https://github.com/FraunhoferISST/DataspaceConnector/releases).
 
 #### Run Tests
 

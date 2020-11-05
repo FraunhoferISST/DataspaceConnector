@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
-import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -31,6 +33,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     private IdsUtils idsUtils;
 
     private Map<UUID, Resource> offeredResources;
+    private ContractOffer contractOffer;
 
     @Autowired
     /**
@@ -44,6 +47,14 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         this.offeredResourceRepository = offeredResourceRepository;
         this.httpUtils = httpUtils;
         this.idsUtils = idsUtils;
+
+        contractOffer = new ContractOfferBuilder()
+                ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("provide-access")))
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                .build();
 
         offeredResources = new HashMap<>();
         for (OfferedResource resource : offeredResourceRepository.findAll()) {
@@ -74,12 +85,22 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) {
-        OfferedResource resource = new OfferedResource(new Date(), new Date(), resourceMetadata, "");
+        resourceMetadata.setPolicy(contractOffer.toRdf());
+        OfferedResource resource = new OfferedResource(createUuid(), new Date(), new Date(), resourceMetadata, "");
 
         offeredResourceRepository.save(resource);
         offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
 
         return resource.getUuid();
+    }
+
+    @Override
+    public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) {
+        resourceMetadata.setPolicy(contractOffer.toRdf());
+        OfferedResource resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata, "");
+
+        offeredResourceRepository.save(resource);
+        offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
     }
 
     /**
@@ -204,12 +225,30 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
     /** {@inheritDoc} */
     @Override
+    public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation, UUID representationId) {
+        OfferedResource resource = offeredResourceRepository.getOne(resourceId);
+        resource.setModified(new Date());
+
+        if (resource.getResourceMetadata().getRepresentations() == null) {
+            resource.getResourceMetadata().setRepresentations(new ArrayList<>());
+        }
+        representation.setUuid(representationId);
+        resource.getResourceMetadata().getRepresentations().add(representation);
+
+        offeredResourceRepository.save(resource);
+        offeredResources.put(resourceId, idsUtils.getAsResource(resource));
+
+        return representation.getUuid();
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void updateRepresentation(UUID resourceId, UUID representationId, ResourceRepresentation representation) {
         OfferedResource resource = offeredResourceRepository.getOne(resourceId);
         resource.setModified(new Date());
 
         representation.setUuid(representationId);
-        resource.getResourceMetadata().getRepresentations().add(getIndex(resource, representationId), representation);
+        resource.getResourceMetadata().getRepresentations().set(getIndex(resource, representationId), representation);
 
         offeredResourceRepository.save(resource);
         offeredResources.put(resourceId, idsUtils.getAsResource(resource));
@@ -286,6 +325,26 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                 throw new Exception("Could not retrieve data.");
             default:
                 throw new Exception("Could not retrieve data.");
+        }
+    }
+
+    /**
+     * Generates a unique uuid for a resource, if it does not already exist.
+     *
+     * @return Generated uuid
+     */
+    private UUID createUuid() {
+        UUID uuid = UUID.randomUUID();
+        ArrayList<UUID> list = new ArrayList<>();
+
+        for (OfferedResource r : offeredResourceRepository.findAll()) {
+            list.add(r.getUuid());
+        }
+
+        if (!list.contains(uuid)) {
+            return uuid;
+        } else {
+            return createUuid();
         }
     }
 }

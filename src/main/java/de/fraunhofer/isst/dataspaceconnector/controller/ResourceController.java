@@ -54,18 +54,23 @@ public class ResourceController {
     }
 
     /**
-     * Registers a resource with its metadata.
+     * Registers a resource with its metadata and, if wanted, with an already existing id.
      *
      * @param resourceMetadata The resource metadata.
+     * @param uuid The resource uuid.
      * @return The added uuid.
      */
     @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createResource(@RequestBody ResourceMetadata resourceMetadata) {
+    public ResponseEntity<Object> createResource(@RequestBody ResourceMetadata resourceMetadata, @RequestParam(value = "id", required = false) UUID uuid) {
         try {
-            UUID uuid = offeredResourceService.addResource(resourceMetadata);
-            return new ResponseEntity<>("Resource registered with uuid: " + uuid, HttpStatus.CREATED);
+            if (uuid != null) {
+                offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                return new ResponseEntity<>("Resource registered with uuid: " + uuid, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Resource registered with uuid: " + offeredResourceService.addResource(resourceMetadata), HttpStatus.CREATED);
+            }
         } catch (Exception e) {
             LOGGER.error("Resource could not be registered: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -226,14 +231,19 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Get Resource Contract", description = "Get the resource's metadata by its uuid.")
+    @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> addRepresentation(
             @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation) throws IllegalArgumentException {
+            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation,
+            @RequestParam(value = "id", required = false) UUID uuid) throws IllegalArgumentException {
         try {
-            UUID uuid = offeredResourceService.addRepresentation(resourceId, representation);
+            if(uuid != null){
+                offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
+            }else {
+                uuid = offeredResourceService.addRepresentation(resourceId, representation);
+            }
             return new ResponseEntity<>("Representation was saved successfully with uuid: " + uuid, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
@@ -250,7 +260,7 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Get Resource Contract", description = "Get the resource's metadata by its uuid.")
+    @Operation(summary = "Update representation", description = "Update a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<Object> updateRepresentation(
@@ -296,7 +306,7 @@ public class ResourceController {
      * @throws java.lang.IllegalArgumentException if any.
      * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Remove Resource Representation", description = "Get the resource's representation by its uuid.")
+    @Operation(summary = "Remove Resource Representation", description = "Remove a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<Object> deleteRepresentation(

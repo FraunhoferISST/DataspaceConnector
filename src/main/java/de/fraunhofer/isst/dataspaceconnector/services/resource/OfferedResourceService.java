@@ -39,6 +39,14 @@ public interface OfferedResourceService {
     UUID addResource(ResourceMetadata resourceMetadata);
 
     /**
+     * <p>addResourceWithId.</p>
+     *
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @param uuid a {@link java.util.UUID} object.
+     */
+    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid);
+
+    /**
      * <p>addData.</p>
      *
      * @param resourceId a {@link java.util.UUID} object.
@@ -112,6 +120,16 @@ public interface OfferedResourceService {
      * @return a {@link java.util.UUID} object.
      */
     UUID addRepresentation(UUID resourceId, ResourceRepresentation representation);
+
+    /**
+     * <p>addRepresentation.</p>
+     *
+     * @param resourceId a {@link java.util.UUID} object.
+     * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
+     * @param representationId the {@link UUID} that will be used for the new representation
+     * @return a {@link java.util.UUID} object.
+     */
+    UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation, UUID representationId);
 
     /**
      * <p>updateRepresentation.</p>
