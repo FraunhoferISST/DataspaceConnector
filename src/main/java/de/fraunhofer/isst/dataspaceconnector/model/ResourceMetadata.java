@@ -46,7 +46,7 @@ public class ResourceMetadata implements Serializable {
     @JsonProperty("keywords")
     private List<String> keywords;
 
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     @JsonProperty("policy")
     private String policy;
 
@@ -61,7 +61,7 @@ public class ResourceMetadata implements Serializable {
 
     @NotNull
     @ElementCollection
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     @JsonProperty("representations")
     private List<ResourceRepresentation> representations;
 

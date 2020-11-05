@@ -29,7 +29,7 @@ public class OfferedResource implements ConnectorResource{
     private Date modified;
 
     @NotNull
-    @Column(columnDefinition = "BLOB")
+    @Column(columnDefinition = "BYTEA")
     @JsonProperty("metadata")
     private ResourceMetadata resourceMetadata;
 
