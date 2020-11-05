@@ -32,6 +32,12 @@ import java.util.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * This class tests the correct handling of ArtifactRequestMessages.
+ *
+ * @author Ronja Quensel
+ * @version $Id: $Id
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc

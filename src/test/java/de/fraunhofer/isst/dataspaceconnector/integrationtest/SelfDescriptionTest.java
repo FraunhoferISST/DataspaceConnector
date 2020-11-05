@@ -24,6 +24,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+/**
+ * This class tests whether the connecter can give a valid selfdescription.
+ *
+ * @author Ronja Quensel
+ * @version $Id: $Id
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc

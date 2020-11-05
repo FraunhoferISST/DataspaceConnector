@@ -31,6 +31,12 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * This class tests whether the connecter can request and save data from other connectors.
+ *
+ * @author Ronja Quensel
+ * @version $Id: $Id
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc

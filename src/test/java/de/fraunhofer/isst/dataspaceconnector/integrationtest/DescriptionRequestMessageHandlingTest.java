@@ -28,6 +28,12 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * This class tests the correct handling of DescriptionRequestMessages.
+ *
+ * @author Ronja Quensel
+ * @version $Id: $Id
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
