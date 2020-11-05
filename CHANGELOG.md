@@ -1,14 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.2.1-SNAPSHOT]
+## [3.2.1] - 2020-11-05
 
 ### Changed 
 - Update to IDS framework v3.2.3.
 - Move self-service and example endpoints to admin API.
 - Improve Dockerfile.
 - Add key- and truststore to example configuration.
-- Add example policy (provide access) to resource on creation. 
+- Add default policy (provide access) to resource on creation. 
 
 ### Added
 - Update and delete resources from broker.
