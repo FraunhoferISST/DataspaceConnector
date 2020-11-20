@@ -1,10 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.3.0-SNAPSHOT] - 2020-11-13
+## [3.3.0-SNAPSHOT]
 
 ### Added
 - Persistent volume for PostgreSQL in docker-compose
+
+### Changed
+- Remove attribute `system` from BackendSource and add attribute `name` to ResourceRepresentation.
 
 ## [3.2.1] - 2020-11-05
 
