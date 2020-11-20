@@ -152,8 +152,8 @@ public class ArtifactRequestMessageHandlingTest {
 
     private ResourceMetadata getResourceMetadata() {
         ResourceRepresentation representation = new ResourceRepresentation(representationUUID, "text/plain",
-                123, ResourceRepresentation.SourceType.LOCAL, new BackendSource(URI.create("http://uri.com"),
-                "userName", "pasword"), "name");
+                123, "name", new BackendSource(BackendSource.Type.LOCAL, URI.create("http://uri.com"),
+                "userName", "pasword"));
         representation.setUuid(representationUUID);
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",

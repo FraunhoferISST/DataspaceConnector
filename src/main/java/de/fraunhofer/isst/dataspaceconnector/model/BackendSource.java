@@ -18,6 +18,40 @@ import java.net.URI;
         oneOf = BackendSource.class
 )
 public class BackendSource implements Serializable {
+    @Schema(
+            name = "Type",
+            description = "Information of the backend system.",
+            oneOf = Type.class
+    )
+    public enum Type {
+        @JsonProperty("local")
+        LOCAL("local"),
+        @JsonProperty("http-get")
+        HTTP_GET("http-get"),
+        @JsonProperty("http-get-basicauth")
+        HTTP_GET_BASICAUTH("http-get-basicauth"),
+        @JsonProperty("https-get")
+        HTTPS_GET("https-get"),
+        @JsonProperty("https-get-basicauth")
+        HTTPS_GET_BASICAUTH("https-get-basicauth"),
+        @JsonProperty("mongodb")
+        MONGODB("mongodb");
+
+        private final String type;
+
+        Type(String string) {
+            type = string;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    }
+
+    @JsonProperty("type")
+    private Type type;
+
     @JsonProperty("url")
     private URI url;
 
@@ -36,14 +70,34 @@ public class BackendSource implements Serializable {
     /**
      * <p>Constructor for BackendSource.</p>
      *
+     * @param type a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
      * @param url a {@link java.net.URI} object.
      * @param username a {@link java.lang.String} object.
      * @param password a {@link java.lang.String} object.
      */
-    public BackendSource(URI url, String username, String password) {
+    public BackendSource(Type type, URI url, String username, String password) {
+        this.type = type;
         this.url = url;
         this.username = username;
         this.password = password;
+    }
+
+    /**
+     * <p>Getter for the field <code>type</code>.</p>
+     *
+     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
+     */
+    public Type getType() {
+        return type;
+    }
+
+    /**
+     * <p>Setter for the field <code>type</code>.</p>
+     *
+     * @param type a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
+     */
+    public void setType(Type type) {
+        this.type = type;
     }
 
     /**

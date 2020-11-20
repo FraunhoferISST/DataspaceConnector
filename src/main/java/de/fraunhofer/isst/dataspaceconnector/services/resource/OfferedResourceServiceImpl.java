@@ -299,32 +299,30 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * @throws Exception If the data could not be retrieved.
      */
     private String getDataString(OfferedResource resource, ResourceRepresentation representation) throws Exception {
-        String address = null;
-        String username = null;
-        String password = null;
-
         if (representation.getSource() != null) {
-            address = representation.getSource().getUrl().toString();
-            username = representation.getSource().getUsername();
-            password = representation.getSource().getPassword();
-        }
+            String address = representation.getSource().getUrl().toString();
+            String username = representation.getSource().getUsername();
+            String password = representation.getSource().getPassword();
 
-        switch (representation.getSourceType()) {
-            case LOCAL:
-                return resource.getData();
-            case HTTP_GET:
-                return httpUtils.sendHttpGetRequest(address);
-            case HTTP_GET_BASICAUTH:
-                return httpUtils.sendHttpGetRequestWithBasicAuth(address, username, password);
-            case HTTPS_GET:
-                return httpUtils.sendHttpsGetRequest(address);
-            case HTTPS_GET_BASICAUTH:
-                return httpUtils.sendHttpsGetRequestWithBasicAuth(address, username, password);
-            case MONGODB:
-                // TODO
-                throw new Exception("Could not retrieve data.");
-            default:
-                throw new Exception("Could not retrieve data.");
+            switch (representation.getSource().getType()) {
+                case LOCAL:
+                    return resource.getData();
+                case HTTP_GET:
+                    return httpUtils.sendHttpGetRequest(address);
+                case HTTP_GET_BASICAUTH:
+                    return httpUtils.sendHttpGetRequestWithBasicAuth(address, username, password);
+                case HTTPS_GET:
+                    return httpUtils.sendHttpsGetRequest(address);
+                case HTTPS_GET_BASICAUTH:
+                    return httpUtils.sendHttpsGetRequestWithBasicAuth(address, username, password);
+                case MONGODB:
+                    // TODO
+                    throw new Exception("Could not retrieve data.");
+                default:
+                    throw new Exception("Could not retrieve data.");
+            }
+        } else {
+            throw new Exception("Could not retrieve data: backend source missing.");
         }
     }
 
