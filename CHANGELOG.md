@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
 - Move attribute `sourceType` from `ResourceRepresentation` as `type` to `BackendSource`.
+- Remove requested resource list from description response.
 
 ## [3.2.1] - 2020-11-05
 
