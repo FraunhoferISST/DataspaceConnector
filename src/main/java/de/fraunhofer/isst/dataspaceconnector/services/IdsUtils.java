@@ -81,6 +81,7 @@ public class IdsUtils {
                                 .build())
                         ._instance_(Util.asList(new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/" + representation.getUuid()))
                                 ._byteSize_(BigInteger.valueOf(representation.getByteSize()))
+                                ._fileName_(representation.getName())
                                 .build()))
                         .build());
             }
