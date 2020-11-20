@@ -1,6 +1,6 @@
 # Dataspace Connector
 
-**Contact**: [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de)
+**Contact**: [info@dataspace-connector.de](mailto:info@dataspace-connector.de)
 | **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:info@dataspace-connector.de).
 
 This is an IDS Connector using the specifications of the [IDS Information Model](https://github.com/industrial-data-space/InformationModel) with integration of the [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) for connector configuration and message handling.
