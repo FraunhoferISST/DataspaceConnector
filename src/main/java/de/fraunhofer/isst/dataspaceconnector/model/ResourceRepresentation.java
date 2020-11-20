@@ -25,9 +25,9 @@ import java.util.UUID;
                 "      \"source\": {\n" +
                 "        \"url\": \"https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02\",\n" +
                 "        \"username\": \"-\",\n" +
-                "        \"password\": \"-\",\n" +
-                "        \"system\": \"Open Weather Map API\"\n" +
-                "      }\n" +
+                "        \"password\": \"-\"\n" +
+                "      },\n" +
+                "      \"name\": \"Open Weather Map API\"\n" +
                 "    }"
 )
 public class ResourceRepresentation implements Serializable {
@@ -79,6 +79,9 @@ public class ResourceRepresentation implements Serializable {
     @Column(columnDefinition = "BLOB")
     private BackendSource source;
 
+    @JsonProperty("name")
+    private String name;
+
     /**
      * <p>Constructor for ResourceRepresentation.</p>
      */
@@ -93,13 +96,15 @@ public class ResourceRepresentation implements Serializable {
      * @param byteSize   a {@link java.lang.Integer} object.
      * @param sourceType a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation.SourceType} object.
      * @param source     a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource} object.
+     * @param name       a {@link java.lang.String} object.
      */
-    public ResourceRepresentation(UUID uuid, String type, Integer byteSize, SourceType sourceType, BackendSource source) {
+    public ResourceRepresentation(UUID uuid, String type, Integer byteSize, SourceType sourceType, BackendSource source, String name) {
         this.uuid = uuid;
         this.type = type;
         this.byteSize = byteSize;
         this.sourceType = sourceType;
         this.source = source;
+        this.name = name;
     }
 
     /**
@@ -190,5 +195,23 @@ public class ResourceRepresentation implements Serializable {
      */
     public void setSource(BackendSource source) {
         this.source = source;
+    }
+
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

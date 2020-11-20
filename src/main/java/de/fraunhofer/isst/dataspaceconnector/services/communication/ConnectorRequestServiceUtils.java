@@ -116,7 +116,8 @@ public class ConnectorRequestServiceUtils {
                     r.getMediaType().getFilenameExtension(),
                     artifact.getByteSize().intValue(),
                     ResourceRepresentation.SourceType.LOCAL,
-                    null
+                    null,
+                    artifact.getFileName()
             );
             representations.add(representation);
         }
