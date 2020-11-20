@@ -31,7 +31,6 @@ import java.util.ArrayList;
  * @version $Id: $Id
  */
 @RestController
-@RequestMapping("/admin/api")
 @Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
 public class MainController {
     /** Constant <code>LOGGER</code> */
@@ -69,12 +68,32 @@ public class MainController {
     }
 
     /**
+     * Gets connector self-description without catalog.
+     *
+     * @return Self-description or error response.
+     */
+    @Operation(summary = "Public Endpoint for Connector Self-description", description = "Get the connector's reduced self-description.")
+    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> getPublicSelfDescription() {
+        try {
+            BaseConnectorImpl connector = (BaseConnectorImpl) configurationContainer.getConnector();
+            connector.setResourceCatalog(null);
+            connector.setPublicKey(null);
+            return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector), HttpStatus.OK);
+        } catch (IOException e) {
+            LOGGER.error("Could not create self-description: {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Gets connector self-description.
      *
      * @return Self-description or error response.
      */
     @Operation(summary = "Connector Self-description", description = "Get the connector's self-description.")
-    @RequestMapping(value = {"/selfservice"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/api/selfservice"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getSelfService() {
         try {
@@ -96,7 +115,7 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get Connector configuration", description = "Get the connector's configuration.")
-    @RequestMapping(value = "/example/configuration", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/api/example/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getConnector() {
         ArrayList<URI> exceptions = new ArrayList<>();
@@ -143,7 +162,7 @@ public class MainController {
      * @throws java.io.IOException if any.
      */
     @Operation(summary = "Get pattern of policy", description = "Get the policy pattern represented by a given JSON string.")
-    @RequestMapping(value = "/example/policy-pattern", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/api/example/policy-pattern", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(@Parameter(description = "The JSON string representing a policy", required = true)
                                                        @RequestParam("policy") String policy) throws IOException {
@@ -157,7 +176,7 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get example policy", description = "Get an example policy for a given policy pattern.")
-    @RequestMapping(value = "/example/usage-policy", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/api/example/usage-policy", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(@Parameter(description = "The policy pattern.", required = true)
                                                             @RequestParam("pattern") PolicyHandler.Pattern pattern) {
