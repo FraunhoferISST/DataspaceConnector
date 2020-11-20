@@ -27,9 +27,6 @@ public class BackendSource implements Serializable {
     @JsonProperty("password")
     private String password;
 
-    @JsonProperty("system")
-    private String system;
-
     /**
      * <p>Constructor for BackendSource.</p>
      */
@@ -42,13 +39,11 @@ public class BackendSource implements Serializable {
      * @param url a {@link java.net.URI} object.
      * @param username a {@link java.lang.String} object.
      * @param password a {@link java.lang.String} object.
-     * @param system a {@link java.lang.String} object.
      */
-    public BackendSource(URI url, String username, String password, String system) {
+    public BackendSource(URI url, String username, String password) {
         this.url = url;
         this.username = username;
         this.password = password;
-        this.system = system;
     }
 
     /**
@@ -103,23 +98,5 @@ public class BackendSource implements Serializable {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * <p>Getter for the field <code>system</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getSystem() {
-        return system;
-    }
-
-    /**
-     * <p>Setter for the field <code>system</code>.</p>
-     *
-     * @param system a {@link java.lang.String} object.
-     */
-    public void setSystem(String system) {
-        this.system = system;
     }
 }
