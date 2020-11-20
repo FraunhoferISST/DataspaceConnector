@@ -1,7 +1,7 @@
 # Dataspace Connector
 
-**Contact**: [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de)
-| **Issues**: Feel free to report issues using the menu item `Issues` or write an [email](mailto:info@dataspace-connector.de).
+**Contact**: [info@dataspace-connector.de](mailto:info@dataspace-connector.de)
+| **Issues**: Feel free to report issues [here](https://github.com/FraunhoferISST/DataspaceConnector/issues) or write an [email](mailto:info@dataspace-connector.de).
 
 This is an IDS Connector using the specifications of the [IDS Information Model](https://github.com/industrial-data-space/InformationModel) with integration of the [IDS Framework](https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/ids-framework) for connector configuration and message handling.
 It provides a REST API for loading, updating, and deleting simple data resources with data and its metadata, persisted in a local H2 database. Next to the internal database, external HTTP REST endpoints as data sources can be connected as well.
