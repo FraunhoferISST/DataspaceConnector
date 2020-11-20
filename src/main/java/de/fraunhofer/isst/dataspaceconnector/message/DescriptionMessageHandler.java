@@ -103,7 +103,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 BaseConnectorImpl connector = (BaseConnectorImpl) configurationContainer.getConnector();
                 connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
                         ._offeredResource_(offeredResourceService.getResourceList())
-                        ._requestedResource_(requestedResourceService.getRequestedResources())
                         .build()));
                 return BodyResponse.create(responseMessage, serializerProvider.getSerializer().serialize(connector));
             } catch (IOException e) {
