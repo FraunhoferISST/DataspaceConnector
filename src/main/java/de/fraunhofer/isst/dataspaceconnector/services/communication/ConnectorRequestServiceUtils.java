@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.communication;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
@@ -115,9 +116,8 @@ public class ConnectorRequestServiceUtils {
                     UUID.randomUUID(),
                     r.getMediaType().getFilenameExtension(),
                     artifact.getByteSize().intValue(),
-                    ResourceRepresentation.SourceType.LOCAL,
-                    null,
-                    artifact.getFileName()
+                    artifact.getFileName(),
+                    new BackendSource(BackendSource.Type.LOCAL, null, null, null)
             );
             representations.add(representation);
         }
