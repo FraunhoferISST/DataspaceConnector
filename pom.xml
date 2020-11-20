@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>de.fraunhofer.isst</groupId>
 	<artifactId>dataspace-connector</artifactId>
-	<version>${project.version}</version>
+	<version>${revision}</version>
 	<name>dataspace-connector</name>
 	<description>IDS Connector developed by the Fraunhofer ISST</description>
 	<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector</url>
@@ -29,7 +29,7 @@
 			<organization>Fraunhofer Institute for Software and Systems Engineering</organization>
 			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
 			<roles>
-				<role>head</role>
+				<role>lead</role>
 				<role>architect</role>
 				<role>developer</role>
 			</roles>
@@ -37,6 +37,15 @@
 		<developer>
 			<name>Ronja Quensel</name>
 			<email>ronja.quensel@isst.fraunhofer.de</email>
+			<organization>Fraunhofer Institute for Software and Systems Engineering</organization>
+			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Brian-Frederik Jahnke</name>
+			<email>brian-frederik.jahnke@isst.fraunhofer.de</email>
 			<organization>Fraunhofer Institute for Software and Systems Engineering</organization>
 			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
 			<roles>
@@ -54,7 +63,7 @@
 	<inceptionYear>2020</inceptionYear>
 
 	<properties>
-		<project.version>3.3.0-SNAPSHOT</project.version>
+		<revision>3.3.0-SNAPSHOT</revision>
 		<framework.version>3.2.3</framework.version>
 
 		<java.version>11</java.version>
