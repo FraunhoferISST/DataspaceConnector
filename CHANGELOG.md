@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Persistent volume for PostgreSQL in docker-compose
+- Add public endpoint for self-description without resource catalog and public key.
 
 ### Changed
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
