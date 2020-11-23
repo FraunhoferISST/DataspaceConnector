@@ -62,6 +62,66 @@
 	</licenses>
 	<inceptionYear>2020</inceptionYear>
 
+	<!-- 		Profiles		 -->
+	<profiles>
+		<!--
+			 No tests
+
+			 Skip the execution of tests
+		-->
+		<profile>
+			<id>no-tests</id>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+
+		<!--
+			No documentation
+
+			Skip the updating and generation of documention.
+		-->
+		<profile>
+			<id>no-documentation</id>
+			<properties>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
+			</properties>
+		</profile>
+
+		<!--
+			 Release
+
+			Enforce maximal compiler warning levels, perform all tests.
+			This profile overrides profile "no-tests" and profile "no-documentation".
+		-->
+		<!-- Note: Check if the two profiles could just be deactivated (if active).-->
+		<profile>
+			<id>release</id>
+			<properties>
+				<!-- Force override profile "no-tests" and profile "no-documentation" -->
+				<maven.test.skip>false</maven.test.skip>
+				<maven.javadoc.skip>false</maven.javadoc.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<showWarnings>true</showWarnings>
+							<showDeprecation>true</showDeprecation>
+							<failOnWarning>true</failOnWarning>
+							<failOnError>true</failOnError>
+
+							<compilerArgs>
+								<arg>-Xlint:all,-options,-path</arg>
+							</compilerArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<properties>
 		<revision>3.3.0-SNAPSHOT</revision>
 		<framework.version>3.2.3</framework.version>
