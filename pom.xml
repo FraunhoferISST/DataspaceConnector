@@ -352,6 +352,17 @@
 					<include>application.properties</include>
 				</includes>
 			</resource>
+			<resource>
+				<!-- Include project properties to pass pom information to the application -->
+				<!-- NOTE: Check why project.properties cannot be merged into
+							application.properties (Some parsing error pops up)-->
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>project.properties</include>
+					<include>conf/config.json</include>
+				</includes>
+			</resource>
 		</resources>
 	</build>
 </project>

@@ -10,6 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * This is the main application class. The application is started and an openApi bean for the Swagger UI is created.
  *
@@ -37,16 +41,23 @@ public class ConnectorApplication {
     /**
      * Creates the OpenAPI main description.
      *
+     * @throws IOException Throws an exception if the properties cannot be loaded from file.
      * @return The OpenAPI.
      */
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI customOpenAPI() throws IOException {
+        Properties properties = new Properties();
+        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream("project.properties")) {
+            // This function may crash (e.g. ill-formatted file). Let it bubble up.
+            properties.load(inputStream);
+        }
+
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
                         .title("Dataspace Connector API")
                         .description("This is the Dataspace Connector's backend API using springdoc-openapi and OpenAPI 3.")
-                        .version("v3.3.0-SNAPSHOT")
+                        .version(properties.getProperty("version"))
                         .contact(new Contact()
                                 .name("Julia Pampus")
                                 .email("julia.pampus@isst.fraunhofer.de")
