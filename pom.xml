@@ -13,14 +13,14 @@
 	<version>${revision}</version>
 	<name>dataspace-connector</name>
 	<description>IDS Connector developed by the Fraunhofer ISST</description>
-	<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector</url>
+	<url>https://www.dataspace-connector.io/</url>
 	<organization>
 		<name>Fraunhofer Institute for Software and Systems Engineering</name>
 		<url>https://www.isst.fraunhofer.de/</url>
 	</organization>
 	<issueManagement>
-		<system>Gitlab</system>
-		<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector/-/issues</url>
+		<system>Github</system>
+		<url>https://github.com/FraunhoferISST/DataspaceConnector/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>
