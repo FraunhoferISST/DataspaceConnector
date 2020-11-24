@@ -364,22 +364,22 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
 					<include>log4j.xml</include>
 					<include>application.properties</include>
 				</includes>
+				<excludes>
+					<!-- The key files are binary files, which the filtering destroys. -->
+					<exclude>**/*.p12</exclude>
+				</excludes>
 			</resource>
 			<resource>
-				<!-- Include project properties to pass pom information to the application -->
-				<!-- NOTE: Check why project.properties cannot be merged into
-							application.properties (Some parsing error pops up)-->
 				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
+				<filtering>false</filtering>
 				<includes>
-					<include>project.properties</include>
-					<include>conf/config.json</include>
+					<include>**/*.p12</include>
 				</includes>
 			</resource>
 		</resources>
