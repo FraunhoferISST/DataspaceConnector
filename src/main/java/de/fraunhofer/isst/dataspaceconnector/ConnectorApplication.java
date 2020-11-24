@@ -39,10 +39,11 @@ public class ConnectorApplication {
     }
 
     /**
-     * Creates the OpenAPI main description.
+     * Creates the OpenAPI main description. The description contains general project information
+     * such as e.g. title, version and contact information.
      *
+     * @return The OpenAPI description.
      * @throws IOException Throws an exception if the properties cannot be loaded from file.
-     * @return The OpenAPI.
      */
     @Bean
     public OpenAPI customOpenAPI() throws IOException {
@@ -55,14 +56,17 @@ public class ConnectorApplication {
         return new OpenAPI()
                 .components(new Components())
                 .info(new Info()
-                        .title("Dataspace Connector API")
-                        .description("This is the Dataspace Connector's backend API using springdoc-openapi and OpenAPI 3.")
+                        .title(properties.getProperty("title"))
+                        .description(properties.getProperty("project_desc"))
                         .version(properties.getProperty("version"))
                         .contact(new Contact()
-                                .name("Julia Pampus")
-                                .email("julia.pampus@isst.fraunhofer.de")
+                                .name(properties.getProperty("organization_name"))
+                                .url(properties.getProperty("contact_url"))
+                                .email(properties.getProperty("contact_email"))
                         )
-                        .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
+                        .license(new License()
+                                .name(properties.getProperty("licence"))
+                                .url(properties.getProperty("licence_url")))
                 );
     }
 }

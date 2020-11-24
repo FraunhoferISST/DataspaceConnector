@@ -55,9 +55,9 @@
 	</developers>
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
+			<name>${licence_name}</name>
+			<url>${licence_url}</url>
+			<distribution>${licence_distribution}</distribution>
 		</license>
 	</licenses>
 	<inceptionYear>2020</inceptionYear>
@@ -136,6 +136,12 @@
 		<org.json.version>20190722</org.json.version>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
+
+		<email>info@dataspace-connector.de</email>
+
+		<licence_name>Apache License, Version 2.0</licence_name>
+		<licence_url>https://www.apache.org/licenses/LICENSE-2.0.txt</licence_url>
+		<licence_distribution>repo</licence_distribution>
 	</properties>
 
 	<dependencies>
@@ -339,6 +345,19 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<systemPropertyVariables>
+						<propertyName>licence_type</propertyName>
+						<propertyName>licence_url</propertyName>
+						<propertyName>licence_distribution</propertyName>
+						<buildDirectory>${project.build.directory}</buildDirectory>
+					</systemPropertyVariables>
+				</configuration>
 			</plugin>
 		</plugins>
 
