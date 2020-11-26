@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,7 @@ public class UUIDUtils {
      * @param input The string which maybe contains uuids.
      * @return The list of found uuids.
      */
-    public static ArrayList<String> findUuids(@NotNull String input) {
+    public static List<String> findUuids(@NotNull String input) {
         final var pairRegex = Pattern.compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
         final var matcher = pairRegex.matcher(input);
 
