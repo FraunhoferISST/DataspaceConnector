@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.message;
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -80,12 +81,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
                 .build();
 
-        UUID artifactId = uuidFromUri(requestMessage.getRequestedArtifact());
+        UUID artifactId = UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
         URI requestedResource = null;
 
         for (Resource resource : offeredResourceService.getResourceList()) {
             for (Representation representation : resource.getRepresentation()) {
-                UUID representationId = uuidFromUri(representation.getId());
+                UUID representationId = UUIDUtils.uuidFromUri(representation.getId());
 
                 if (representationId.equals(artifactId)) {
                     requestedResource = resource.getId();
@@ -94,7 +95,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         }
 
         try {
-            UUID resourceId = uuidFromUri(requestedResource);
+            UUID resourceId = UUIDUtils.uuidFromUri(requestedResource);
             ResourceMetadata resourceMetadata = offeredResourceService.getMetadata(resourceId);
             try {
                 if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
@@ -112,21 +113,5 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             LOGGER.error("Resource could not be found.");
             return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, "An artifact with the given uuid is not known to the connector: {}" + e.getMessage(), connector.getId(), connector.getOutboundModelVersion());
         }
-    }
-
-    /**
-     * Extracts the uuid from a uri.
-     *
-     * @param uri The base uri.
-     * @return Uuid as String.
-     */
-    private UUID uuidFromUri(URI uri) {
-        Pattern pairRegex = Pattern.compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
-        Matcher matcher = pairRegex.matcher(uri.toString());
-        String uuid = "";
-        while (matcher.find()) {
-            uuid = matcher.group(0);
-        }
-        return UUID.fromString(uuid);
     }
 }
