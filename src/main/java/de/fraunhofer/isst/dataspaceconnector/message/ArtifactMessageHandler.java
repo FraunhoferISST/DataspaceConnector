@@ -16,6 +16,7 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import org.eclipse.rdf4j.util.UUIDable;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,12 +46,11 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /** Constant <code>LOGGER</code> */
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
-    private final TokenProvider provider;
-    private final Connector connector;
+    private final @NotNull TokenProvider provider;
+    private final @NotNull Connector connector;
 
-    // NOTE: Why are they not final?
-    private OfferedResourceService offeredResourceService;
-    private PolicyHandler policyHandler;
+    private final @NotNull OfferedResourceService offeredResourceService;
+    private final @NotNull PolicyHandler policyHandler;
 
     @Autowired
     /**
@@ -60,16 +60,30 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @param provider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
      * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
      * @param policyHandler a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
+     * @throws IllegalArgumentException if one of the passed parameters or the configurated connector is null
      */
-    public ArtifactMessageHandler(OfferedResourceService offeredResourceService, TokenProvider provider,
-                                  ConfigurationContainer configurationContainer, PolicyHandler policyHandler) {
+    // NOTE: Maybe just pass the connector instead of the whole container
+    public ArtifactMessageHandler(@NotNull OfferedResourceService offeredResourceService, @NotNull TokenProvider provider,
+                                  @NotNull ConfigurationContainer configurationContainer, @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
+        if(offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+
+        if(provider == null)
+            throw new IllegalArgumentException("The TokenProvider cannot be null.");
+
+        if(configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        if (policyHandler == null)
+            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+
+        if (configurationContainer.getConnector() == null)
+            throw new IllegalArgumentException("The passed connector cannot be null.");
+
         this.offeredResourceService = offeredResourceService;
         this.provider = provider;
-        // NOTE: Make sure the configurationContainer is not null
         this.connector = configurationContainer.getConnector();
         this.policyHandler = policyHandler;
-
-        // NOTE: Can all the parameters be null as valid argument?
     }
 
     /**
