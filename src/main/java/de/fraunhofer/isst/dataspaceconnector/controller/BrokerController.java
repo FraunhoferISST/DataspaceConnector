@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
@@ -94,7 +93,7 @@ public class BrokerController {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
-        // Make sure the request ist authorized.
+        // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 // Send the update request to the broker
@@ -103,17 +102,11 @@ public class BrokerController {
                         + brokerResponse.body().toString(),
                         HttpStatus.OK);
             } catch (NullPointerException | IOException exception) {
-                // The broker could not be reached.
-                LOGGER.info("Broker communication failed: " + exception.getMessage());
-
-                return new ResponseEntity<>("The communication with the broker failed.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                return brokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
-            LOGGER.warn("Unauthorized call. No DAT token found. Tried to update url at broker to:" +
-                    url);
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            return rejectUnauthorized(url);
         }
     }
 
@@ -126,18 +119,25 @@ public class BrokerController {
     @Operation(summary = "Unregister Connector", description = "Unregister connector at an IDS broker.")
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> unregisterAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
+    public ResponseEntity<String> unregisterAtBroker(
+            @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+                                                         @RequestParam("broker") String url) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(brokerService, "The brokerService cannot be null.");
+
+        // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
-                return new ResponseEntity<>(brokerService.unregisterAtBroker(url).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Send the unregister request to the broker
+                final var brokerResponse = brokerService.unregisterAtBroker(url);
+                return new ResponseEntity<>(brokerResponse.body().toString(), HttpStatus.OK);
+            } catch (NullPointerException | IOException exception) {
+                return brokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return rejectUnauthorized(url);
         }
     }
 
@@ -150,24 +150,31 @@ public class BrokerController {
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> queryBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
+    public ResponseEntity<String> queryBroker(@Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+                                                  @RequestParam("broker") String url) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(brokerService, "The brokerService cannot be null.");
+
+        // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
-            String query = "SELECT ?subject ?predicate ?object\n" +
+            // Send the query request to the broker
+            final var query = "SELECT ?subject ?predicate ?object\n" +
                     "FROM <urn:x-arq:UnionGraph>\n" +
                     "WHERE {\n" +
                     "  ?subject ?predicate ?object\n" +
-                    "}";
+                    "};";
 
             try {
-                return new ResponseEntity<>(brokerService.queryBroker(url, query, null, null, null).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                final var brokerReponse = brokerService.queryBroker(url, query,
+                        null, null, null);
+                return new ResponseEntity<>(brokerReponse.body().string(), HttpStatus.OK);
+            } catch (IOException exception) {
+                return brokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return rejectUnauthorized(url);
         }
     }
 
@@ -237,5 +244,19 @@ public class BrokerController {
             LOGGER.error("No DAT token found");
             return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    private ResponseEntity<String> brokerCommunicationFailed(Exception exception) {
+        // The broker could not be reached.
+        LOGGER.info("Broker communication failed: " + exception.getMessage());
+
+        return new ResponseEntity<>("The communication with the broker failed.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private ResponseEntity<String> rejectUnauthorized(String url){
+        // The request was unauthorized.
+        LOGGER.warn("Unauthorized call. No DAT token found. Tried call with url:" + url);
+        return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
 }
