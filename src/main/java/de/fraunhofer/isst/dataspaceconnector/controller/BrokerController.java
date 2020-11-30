@@ -6,6 +6,7 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
+import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Null;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
@@ -54,9 +56,7 @@ public class BrokerController {
     @Autowired
     public BrokerController(@NotNull TokenProvider tokenProvider,
                             @NotNull ConfigurationContainer configurationContainer,
-                            @NotNull OfferedResourceService offeredResourceService) throws IllegalArgumentException,
-            GeneralSecurityException {
-
+                            @NotNull OfferedResourceService offeredResourceService) throws IllegalArgumentException, GeneralSecurityException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
 
@@ -84,20 +84,35 @@ public class BrokerController {
      * @param url The broker address.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Register Connector", description = "Register or update connector at an IDS broker.")
+    @Operation(summary = "Register Connector",
+            description = "Register or update connector at an IDS broker.")
     @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> updateAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
+    public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
+            , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+                                                 @RequestParam("broker") String url) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(brokerService, "The brokerService cannot be null.");
+
+        // Make sure the request ist authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
-                return new ResponseEntity<>(brokerService.updateAtBroker(url).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Send the update request to the broker
+                final var brokerResponse = brokerService.updateAtBroker(url);
+                return new ResponseEntity<>("The broker answered with: "
+                        + brokerResponse.body().toString(),
+                        HttpStatus.OK);
+            } catch (NullPointerException | IOException exception) {
+                // The broker could not be reached.
+                LOGGER.info("Broker communication failed: " + exception.getMessage());
+
+                return new ResponseEntity<>("The communication with the broker failed.",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-            LOGGER.error("No DAT token found");
+            // The request was unauthorized.
+            LOGGER.warn("Unauthorized call. No DAT token found. Tried to update url at broker to:" +
+                    url);
             return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
         }
     }
