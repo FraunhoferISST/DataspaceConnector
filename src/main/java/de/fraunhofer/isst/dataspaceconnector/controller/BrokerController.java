@@ -30,7 +30,8 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/admin/api/broker")
-@Tag(name = "Connector: IDS Broker Communication", description = "Endpoints for invoking broker communication")
+@Tag(name = "Connector: IDS Broker Communication",
+        description = "Endpoints for invoking broker communication")
 public class BrokerController {
     /**
      * Constant <code>LOGGER</code>
@@ -45,7 +46,8 @@ public class BrokerController {
      * <p>Constructor for BrokerController.</p>
      *
      * @param tokenProvider          a {@link TokenProvider} object.
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param configurationContainer a
+     *                               {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
      * @param offeredResourceService a {@link OfferedResourceService} object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      * @throws GeneralSecurityException - if the framework has an error.
@@ -119,8 +121,8 @@ public class BrokerController {
     @ResponseBody
     public ResponseEntity<String> unregisterAtBroker(
             @Parameter(description = "The url of the broker.",
-            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-                                                         @RequestParam("broker") String url) {
+                    required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+            @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
@@ -150,8 +152,8 @@ public class BrokerController {
     @ResponseBody
     public ResponseEntity<String> queryBroker(
             @Parameter(description = "The url of the broker.",
-            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-                                                  @RequestParam("broker") String url) {
+                    required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+            @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
@@ -184,12 +186,13 @@ public class BrokerController {
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
+    @Operation(summary = "Broker Query Request",
+            description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/resource/{resource-id}/update", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateResourceAtBroker(
             @Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+                    example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
             @RequestParam("broker") String url,
             @Parameter(description = "The resource id.", required = true)
             @PathVariable("resource-id") UUID resourceId) {
@@ -201,13 +204,15 @@ public class BrokerController {
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 // Get the resource
-                final var resource = offeredResourceService.getOfferedResources().get(resourceId);
+                final var resource =
+                        offeredResourceService.getOfferedResources().get(resourceId);
                 if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);
                 } else {
                     // The resource has been received, update at broker
-                    final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
+                    final var brokerResponse =
+                            brokerService.updateResourceAtBroker(url, resource);
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
@@ -231,12 +236,13 @@ public class BrokerController {
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
+    @Operation(summary = "Broker Query Request",
+            description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/update/{resource-id}/remove", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> deleteResourceAtBroker(
             @Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+                    example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
             @RequestParam("broker") String url,
             @Parameter(description = "The resource id.", required = true)
             @PathVariable("resource-id") UUID resourceId) {
@@ -248,11 +254,12 @@ public class BrokerController {
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 // Get the resource
-                final var resource = offeredResourceService.getOfferedResources().get(resourceId);
-                if(resource == null) {
+                final var resource =
+                        offeredResourceService.getOfferedResources().get(resourceId);
+                if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);
-                }else{
+                } else {
                     // The resource has been received, remove from broker
                     final var brokerResponse =
                             brokerService.removeResourceFromBroker(url, resource);
@@ -287,7 +294,7 @@ public class BrokerController {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<String> respondRejectUnauthorized(String url){
+    private ResponseEntity<String> respondRejectUnauthorized(String url) {
         // The request was unauthorized.
         LOGGER.warn("Unauthorized call. No DAT token found. Tried call with url:" + url);
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
