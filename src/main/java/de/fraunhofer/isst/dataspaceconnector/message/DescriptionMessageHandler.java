@@ -30,11 +30,13 @@ import java.net.URI;
 import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
 /**
- * This @{@link de.fraunhofer.isst.dataspaceconnector.message.DescriptionMessageHandler} handles all incoming messages
- * that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as part one in the multipart message. This
- * header must have the correct '@type' reference as defined in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl}
- * JsonTypeName annotation. In this example, the received payload is not defined and will be returned immediately.
- * Usually, the payload would be well defined as well, such that it can be deserialized into a proper Java-Object.
+ * This @{@link de.fraunhofer.isst.dataspaceconnector.message.DescriptionMessageHandler} handles all
+ * incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as
+ * part one in the multipart message. This header must have the correct '@type' reference as
+ * defined in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName
+ * annotation. In this example, the received payload is not defined and will be returned immediately.
+ * Usually, the payload would be well defined as well, such that it can be deserialized into a
+ * proper Java-Object.
  *
  * @author Julia Pampus
  * @version $Id: $Id
