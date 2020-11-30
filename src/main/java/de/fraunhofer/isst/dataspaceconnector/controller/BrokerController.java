@@ -9,6 +9,7 @@ import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -31,29 +33,48 @@ import java.util.UUID;
 @RequestMapping("/admin/api/broker")
 @Tag(name = "Connector: IDS Broker Communication", description = "Endpoints for invoking broker communication")
 public class BrokerController {
-    /** Constant <code>LOGGER</code> */
+    /**
+     * Constant <code>LOGGER</code>
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
     private TokenProvider tokenProvider;
     private BrokerService brokerService;
     private OfferedResourceService offeredResourceService;
 
-    @Autowired
     /**
      * <p>Constructor for BrokerController.</p>
      *
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param keyStoreManager a {@link de.fraunhofer.isst.ids.framework.util.KeyStoreManager} object.
+     * @param tokenProvider          a {@link TokenProvider} object.
+     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param offeredResourceService a {@link OfferedResourceService} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws GeneralSecurityException - if the framework has an error.
      */
-    public BrokerController(TokenProvider tokenProvider, ConfigurationContainer configurationContainer, OfferedResourceService offeredResourceService) {
+    @Autowired
+    public BrokerController(@NotNull TokenProvider tokenProvider,
+                            @NotNull ConfigurationContainer configurationContainer,
+                            @NotNull OfferedResourceService offeredResourceService) throws IllegalArgumentException,
+            GeneralSecurityException {
+
+        if (offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+
+        if (tokenProvider == null)
+            throw new IllegalArgumentException("The TokenProvider cannot be null.");
+
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
         this.tokenProvider = tokenProvider;
         this.offeredResourceService = offeredResourceService;
+
         try {
-            this.brokerService = new BrokerService(configurationContainer, new ClientProvider(configurationContainer),
-                    tokenProvider);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            LOGGER.error("(Framework) Broker Service Error: " + e.getMessage());
+            this.brokerService = new BrokerService(configurationContainer,
+                    new ClientProvider(configurationContainer), tokenProvider);
+        } catch (NoSuchAlgorithmException | KeyManagementException exception) {
+            LOGGER.error("Failed to initialize the broker. Error in the framework.", exception);
+            throw new GeneralSecurityException("Error in the framework.", exception);
         }
     }
 
@@ -138,16 +159,16 @@ public class BrokerController {
     /**
      * Sends a ResourceUpdateMessage to an IDS broker.
      *
-     * @param url The broker address.
+     * @param url        The broker address.
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
-    @RequestMapping(value = "/resource/{resource-id}/update" , method = RequestMethod.POST)
+    @RequestMapping(value = "/resource/{resource-id}/update", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> updateResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
             example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
+                                                         @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
         if (tokenProvider.getTokenJWS() != null) {
             Resource resource;
             try {
@@ -172,7 +193,7 @@ public class BrokerController {
     /**
      * Sends a ResourceUpdateMessage to an IDS broker.
      *
-     * @param url The broker address.
+     * @param url        The broker address.
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
@@ -181,7 +202,7 @@ public class BrokerController {
     @ResponseBody
     public ResponseEntity<Object> deleteResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
             example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
+                                                         @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
         if (tokenProvider.getTokenJWS() != null) {
             Resource resource;
             try {
