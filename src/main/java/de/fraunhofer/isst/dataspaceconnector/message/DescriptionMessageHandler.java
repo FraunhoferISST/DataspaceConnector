@@ -50,7 +50,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
     private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
     private final TokenProvider tokenProvider;
     private final ConfigurationContainer configurationContainer;
     private final SerializerProvider serializerProvider;
@@ -60,7 +59,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * <p>Constructor for DescriptionMessageHandler.</p>
      *
      * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
      * @param provider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
      * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
      * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
@@ -68,15 +66,11 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
-                                     @NotNull RequestedResourceService requestedResourceService,
                                      @NotNull TokenProvider tokenProvider,
                                      @NotNull ConfigurationContainer configurationContainer,
                                      @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException{
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-
-        if (requestedResourceService == null)
-            throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -89,7 +83,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
 
         this.offeredResourceService = offeredResourceService;
-        this.requestedResourceService = requestedResourceService;
         this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
