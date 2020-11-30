@@ -37,7 +37,6 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
  * Usually, the payload would be well defined as well, such that it can be deserialized into a
  * proper Java-Object.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @Component
