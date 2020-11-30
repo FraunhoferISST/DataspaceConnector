@@ -7,7 +7,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
@@ -58,17 +57,22 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * <p>Constructor for DescriptionMessageHandler.</p>
      *
-     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param provider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
+     * @param offeredResourceService a
+     * {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
+     * @param provider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
+     *                object.
      * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * @param configProducer a
+     * {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param serializerProvider a
+     * {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     *
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
                                      @NotNull TokenProvider tokenProvider,
                                      @NotNull ConfigurationContainer configurationContainer,
-                                     @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException{
+                                     @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
 
@@ -91,15 +95,15 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * {@inheritDoc}
      * <p>
-     * This message implements the logic that is needed to handle the message. As it just returns the input as string
-     * the messagePayload-InputStream is converted to a String.
+     * This message implements the logic that is needed to handle the message. As it just returns
+     * the input as string the messagePayload-InputStream is converted to a String.
      *
-     @throws RuntimeException - if the response body failed to be build or requestMessage is null.
+     * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
      */
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
                                          MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null){
+        if (requestMessage == null) {
             LOGGER.error("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
@@ -136,7 +140,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @param requestMessage The message containing the resource request.
      * @return The response message to the passed request.
      * @throws ConnectorConfigurationException - if the connector is not configurated.
-     * @throws RuntimeException - if the response message could not be constructed.
+     * @throws RuntimeException                - if the response message could not be constructed.
      */
     private MessageResponse constructResourceDescription(DescriptionRequestMessageImpl requestMessage) throws RuntimeException {
         try {
@@ -196,12 +200,12 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * Construct a resource catalog description message for the connector.
      *
-     * @param requestId The id of the message requesting resource information.
+     * @param requestId       The id of the message requesting resource information.
      * @param issuerConnector The id of the conenctor requsting the resource information.
      * @return A response message containing the resource catalog of the connector.
      * @throws ConnectorConfigurationException - if the connector is not configurated.
-     * @throws RuntimeException - if the response message could not be constructed or the
-     * connector could not be serialized.
+     * @throws RuntimeException                - if the response message could not be constructed or the
+     *                                         connector could not be serialized.
      */
     private MessageResponse constructConnectorSelfDescription(URI requestId, URI issuerConnector) throws RuntimeException {
         Assert.notNull(serializerProvider, "The SerializerProvider should not be null.");
