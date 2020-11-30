@@ -50,7 +50,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
     private final TokenProvider provider;
-    private final ConfigurationContainer config;
+    private final ConfigurationContainer configurationContainer;
 
     private final OfferedResourceService resourceService;
     private final PolicyHandler policyHandler;
@@ -84,7 +84,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
         this.resourceService = offeredResourceService;
         this.provider = tokenProvider;
-        this.config = configurationContainer;
+        this.configurationContainer = configurationContainer;
         this.policyHandler = policyHandler;
     }
 
@@ -106,7 +106,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
                                          MessagePayload messagePayload) throws RuntimeException {
         Assert.notNull(provider, "The TokenProvider cannot be null.");
-        Assert.notNull(config, "The ConfigurationContainer cannot be null.");
+        Assert.notNull(configurationContainer, "The ConfigurationContainer cannot be null.");
         Assert.notNull(resourceService, "The OfferedResourceService cannot be null.");
         Assert.notNull(policyHandler, "The PolicyHandler cannot be null.");
 
@@ -235,9 +235,9 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     }
 
     private Connector getConnector() throws ConnectorConfigurationException {
-        Assert.notNull(config, "The config cannot be null.");
+        Assert.notNull(configurationContainer, "The config cannot be null.");
 
-        final var connector = config.getConnector();
+        final var connector = configurationContainer.getConnector();
         if (connector == null) {
             // The connector is needed for every answer and cannot be null
             throw new ConnectorConfigurationException("No connector configurated.");
