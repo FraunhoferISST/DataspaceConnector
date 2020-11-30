@@ -223,7 +223,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                         requestMessage.getId(),
                         requestMessage.getRequestedArtifact()));
 
-                return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
+                return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                         "No valid resource id found.",
                         connector.getId(),
                         connector.getOutboundModelVersion());
