@@ -53,22 +53,21 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     private final ConfigurationContainer configurationContainer;
     private final SerializerProvider serializerProvider;
 
-    @Autowired
     /**
      * <p>Constructor for DescriptionMessageHandler.</p>
      *
      * @param offeredResourceService a
      * {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param provider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
+     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
      *                object.
-     * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
-     * @param configProducer a
+     * @param configurationContainer a
      * {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
      * @param serializerProvider a
      * {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
      *
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
+    @Autowired
     public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
                                      @NotNull TokenProvider tokenProvider,
                                      @NotNull ConfigurationContainer configurationContainer,
