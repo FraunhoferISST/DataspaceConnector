@@ -101,6 +101,8 @@ public class ConfigurationController {
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getConfiguration() {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+
         final var config = configurationContainer.getConfigModel();
         if (config != null) {
             // Return the config
