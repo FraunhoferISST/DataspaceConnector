@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
@@ -27,7 +26,6 @@ import java.util.UUID;
 /**
  * This class provides endpoints for the communication with an IDS broker instance.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @RestController
@@ -39,9 +37,9 @@ public class BrokerController {
      */
     public static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
-    private TokenProvider tokenProvider;
-    private BrokerService brokerService;
-    private OfferedResourceService offeredResourceService;
+    private final TokenProvider tokenProvider;
+    private final BrokerService brokerService;
+    private final OfferedResourceService offeredResourceService;
 
     /**
      * <p>Constructor for BrokerController.</p>
@@ -99,14 +97,14 @@ public class BrokerController {
                 // Send the update request to the broker
                 final var brokerResponse = brokerService.updateAtBroker(url);
                 return new ResponseEntity<>("The broker answered with: "
-                        + brokerResponse.body().toString(),
+                        + brokerResponse.body().string(),
                         HttpStatus.OK);
             } catch (NullPointerException | IOException exception) {
-                return brokerCommunicationFailed(exception);
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
-            return rejectUnauthorized(url);
+            return respondRejectUnauthorized(url);
         }
     }
 
@@ -131,13 +129,13 @@ public class BrokerController {
             try {
                 // Send the unregister request to the broker
                 final var brokerResponse = brokerService.unregisterAtBroker(url);
-                return new ResponseEntity<>(brokerResponse.body().toString(), HttpStatus.OK);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
             } catch (NullPointerException | IOException exception) {
-                return brokerCommunicationFailed(exception);
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
-            return rejectUnauthorized(url);
+            return respondRejectUnauthorized(url);
         }
     }
 
@@ -150,7 +148,8 @@ public class BrokerController {
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> queryBroker(@Parameter(description = "The url of the broker.",
+    public ResponseEntity<String> queryBroker(
+            @Parameter(description = "The url of the broker.",
             required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
                                                   @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
@@ -166,15 +165,15 @@ public class BrokerController {
                     "};";
 
             try {
-                final var brokerReponse = brokerService.queryBroker(url, query,
+                final var brokerResponse = brokerService.queryBroker(url, query,
                         null, null, null);
-                return new ResponseEntity<>(brokerReponse.body().string(), HttpStatus.OK);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
             } catch (IOException exception) {
-                return brokerCommunicationFailed(exception);
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
-            return rejectUnauthorized(url);
+            return respondRejectUnauthorized(url);
         }
     }
 
@@ -188,27 +187,40 @@ public class BrokerController {
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/resource/{resource-id}/update", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> updateResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-                                                         @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
-        if (tokenProvider.getTokenJWS() != null) {
-            Resource resource;
-            try {
-                resource = offeredResourceService.getOfferedResources().get(resourceId);
-            } catch (Exception e) {
-                LOGGER.error("Resource could not be found: {}", e.getMessage());
-                return new ResponseEntity<>("Resource not found.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<String> updateResourceAtBroker(
+            @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+            @RequestParam("broker") String url,
+            @Parameter(description = "The resource id.", required = true)
+            @PathVariable("resource-id") UUID resourceId) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(brokerService, "The brokerService cannot be null.");
+        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
 
+        // Make sure the request is authorized.
+        if (tokenProvider.getTokenJWS() != null) {
             try {
-                return new ResponseEntity<>(brokerService.updateResourceAtBroker(url, resource).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Get the resource
+                final var resource = offeredResourceService.getOfferedResources().get(resourceId);
+                if (resource == null) {
+                    // The resource could not be found, reject and inform the requester
+                    return respondResourceNotFound(resourceId);
+                } else {
+                    // The resource has been received, update at broker
+                    final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
+                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+                }
+            } catch (ClassCastException | NullPointerException exception) {
+                // An (implementation) error occurred while receiving the resource
+                LOGGER.error("Resource not be loaded.");
+                return new ResponseEntity<>("Could not load resource.",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
@@ -222,31 +234,52 @@ public class BrokerController {
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/update/{resource-id}/remove", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> deleteResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-                                                         @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
-        if (tokenProvider.getTokenJWS() != null) {
-            Resource resource;
-            try {
-                resource = offeredResourceService.getOfferedResources().get(resourceId);
-            } catch (Exception e) {
-                LOGGER.error("Resource could not be found: {}", e.getMessage());
-                return new ResponseEntity<>("Resource not found.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<String> deleteResourceAtBroker(
+            @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+            @RequestParam("broker") String url,
+            @Parameter(description = "The resource id.", required = true)
+            @PathVariable("resource-id") UUID resourceId) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(brokerService, "The brokerService cannot be null.");
+        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
 
+        // Make sure the request is authorized.
+        if (tokenProvider.getTokenJWS() != null) {
             try {
-                return new ResponseEntity<>(brokerService.removeResourceFromBroker(url, resource).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Get the resource
+                final var resource = offeredResourceService.getOfferedResources().get(resourceId);
+                if(resource == null) {
+                    // The resource could not be found, reject and inform the requester
+                    return respondResourceNotFound(resourceId);
+                }else{
+                    // The resource has been received, remove from broker
+                    final var brokerResponse =
+                            brokerService.removeResourceFromBroker(url, resource);
+                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+                }
+            } catch (ClassCastException | NullPointerException exception) {
+                // An (implementation) error occurred while receiving the resource
+                LOGGER.error("Resource not be loaded.");
+                return new ResponseEntity<>("Could not load resource.",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
+            } catch (IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
-    private ResponseEntity<String> brokerCommunicationFailed(Exception exception) {
+    private ResponseEntity<String> respondResourceNotFound(UUID resourceId) {
+        // The resource could not be found, reject and inform the requester
+        LOGGER.info(String.format("Resource update failed. Resource %s could not be found.",
+                resourceId));
+        return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<String> respondBrokerCommunicationFailed(Exception exception) {
         // The broker could not be reached.
         LOGGER.info("Broker communication failed: " + exception.getMessage());
 
@@ -254,7 +287,7 @@ public class BrokerController {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseEntity<String> rejectUnauthorized(String url){
+    private ResponseEntity<String> respondRejectUnauthorized(String url){
         // The request was unauthorized.
         LOGGER.warn("Unauthorized call. No DAT token found. Tried call with url:" + url);
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
