@@ -164,7 +164,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
                 final var resource = offeredResourceService.getOfferedResources().get(resourceId);
 
-                if (resource == null) {
+                if (resource != null) {
                     // The resource has been found, send the description.
                     return BodyResponse.create(responseMessageHeader, resource.toRdf());
                 } else {
