@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 public class ResourceTypeException extends IllegalArgumentException {
     /**
-     * Construct an UUIDFormatException with the specified detail message and cause.
+     * Construct an ResourceTypeException with the specified detail message and cause.
      *
      * @param msg   The detail message.
      * @param cause The cause.
