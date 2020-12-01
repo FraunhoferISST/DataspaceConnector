@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import org.jetbrains.annotations.NotNull;
 
@@ -7,6 +8,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 /**
@@ -75,5 +77,45 @@ public class UUIDUtils {
             throw new UUIDFormatException("Could not convert string to uuid. This indicates a " +
                     "problem with the uuid pattern.", exception);
         }
+    }
+
+    /**
+     * Generates a unique uuid, if it does not already exist.
+     *
+     * @param doesUuidExistFunc A function checking if a given uuid already exists
+     * @return Generated uuid
+     * @throws UUIDCreationException - if no unique uuid could be generated
+     */
+    public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc) throws UUIDCreationException{
+        return createUUID(doesUuidExistFunc, 32);
+    }
+
+    /**
+     * Generates a unique uuid, if it does not already exist.
+     *
+     * @param doesUuidExistFunc A function checking if a given uuid already exists
+     * @param maxNumTries A maximum number of retries for generating the uuid
+     * @return Generated uuid
+     * @throws UUIDCreationException - if no unique uuid could be generated
+     */
+    public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc, long maxNumTries) throws IllegalArgumentException, UUIDCreationException{
+        if(maxNumTries == 0)
+            throw new IllegalArgumentException("The maximum number of tries must be at least 1.");
+
+        long numTries = 0;
+        while(numTries < maxNumTries) {
+            final var uuid = UUID.randomUUID();
+
+            // Check if the created uuid already exists
+            if(!doesUuidExistFunc.apply(uuid)) {
+                // It does not, the generated uuid is new
+                return uuid;
+            }
+
+            numTries++;
+        }
+
+        throw new UUIDCreationException("Could not create a new uuid. No unused uuid could be " +
+                "found.");
     }
 }
