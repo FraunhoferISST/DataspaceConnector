@@ -102,43 +102,6 @@ public class HttpUtils {
     }
 
     /**
-     * Sends a post request to an external http endpoint.
-     *
-     * @param endpointAddress The requested url.
-     * @param input           an array of {@link byte} objects.
-     * @return The http response code.
-     * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException - if an error occurred when connecting or processing the http
-     * request.
-     */
-    public int sendHttpPostRequest(String endpointAddress, byte[] input) throws MalformedURLException, RuntimeException {
-        try {
-            final var endpoint = new URL(endpointAddress);
-
-            var con = (HttpURLConnection) endpoint.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; utf-8");
-            con.setDoOutput(true);
-
-            try (var os = con.getOutputStream()) {
-                os.write(input, 0, input.length);
-            }
-
-            final var responseCode = con.getResponseCode();
-            con.disconnect();
-
-            return responseCode;
-
-        } catch (MalformedURLException exception) {
-            // The parameter address is not an url.
-            throw exception;
-        } catch (Exception exception) {
-            // Catch all the HTTP, IOExceptions
-            throw new RuntimeException("Failed to send the http get request.", exception);
-        }
-    }
-
-    /**
      * <p>sendHttpsGetRequest.</p>
      *
      * @param address a {@link java.lang.String} object.
