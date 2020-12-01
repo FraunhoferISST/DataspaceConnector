@@ -28,14 +28,10 @@ public class BackendSource implements Serializable {
         LOCAL("local"),
         @JsonProperty("http-get")
         HTTP_GET("http-get"),
-        @JsonProperty("http-get-basicauth")
-        HTTP_GET_BASICAUTH("http-get-basicauth"),
         @JsonProperty("https-get")
         HTTPS_GET("https-get"),
         @JsonProperty("https-get-basicauth")
-        HTTPS_GET_BASICAUTH("https-get-basicauth"),
-        @JsonProperty("mongodb")
-        MONGODB("mongodb");
+        HTTPS_GET_BASICAUTH("https-get-basicauth");
 
         private final String type;
 
