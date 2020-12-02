@@ -23,10 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -116,7 +113,7 @@ public class RequestArtifactTest {
     private ResourceMetadata getResourceMetadata() {
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new ArrayList<>());
+                new HashMap<>());
     }
 
     private String getArtifactResponseMultipart() {

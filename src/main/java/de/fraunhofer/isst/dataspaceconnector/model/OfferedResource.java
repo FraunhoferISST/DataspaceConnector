@@ -106,6 +106,7 @@ public class OfferedResource implements ConnectorResource{
     /** {@inheritDoc} */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
+        this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
@@ -118,6 +119,7 @@ public class OfferedResource implements ConnectorResource{
     /** {@inheritDoc} */
     @Override
     public void setData(String data) {
+        this.setModified(new Date());
         this.data = data;
     }
 }

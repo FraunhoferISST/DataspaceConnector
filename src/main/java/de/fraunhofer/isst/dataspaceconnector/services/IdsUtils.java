@@ -73,7 +73,7 @@ public class IdsUtils {
 
         ArrayList<Representation> representations = new ArrayList<>();
         if (metadata.getRepresentations() != null) {
-            for (ResourceRepresentation representation : metadata.getRepresentations()) {
+            for (ResourceRepresentation representation : metadata.getRepresentations().values()) {
                 representations.add(new RepresentationBuilder(URI.create("https://w3id.org/idsa/autogen/representation/" + representation.getUuid()))
                         ._language_(Language.EN)
                         ._mediaType_(new IANAMediaTypeBuilder()

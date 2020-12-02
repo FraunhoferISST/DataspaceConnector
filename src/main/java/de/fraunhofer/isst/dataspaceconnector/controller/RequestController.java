@@ -110,9 +110,8 @@ public class RequestController {
                                         HttpStatus.INTERNAL_SERVER_ERROR);
                             }
 
-                            return new ResponseEntity<>("Saved at: " + key + "\n"
-                                    + String.format("Success: true\n")
-                                    + String.format("Body: %s", responseAsString), HttpStatus.OK);
+                            return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
+                                            "%s", key, responseAsString), HttpStatus.OK);
 
                         } catch (NullPointerException exception) {
                             // The database response body is null.
@@ -154,31 +153,56 @@ public class RequestController {
      * @return OK or error response.
      * @throws java.io.IOException if any.
      */
-    @Operation(summary = "Description Request", description = "Request metadata from another IDS connector.")
+    @Operation(summary = "Description Request",
+            description = "Request metadata from another IDS connector.")
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestMetadata(
             @Parameter(description = "The URI of the requested IDS connector.", required = true,
-                    example = "https://localhost:8080/api/ids/data") @RequestParam("recipient") URI recipient,
+                    example = "https://localhost:8080/api/ids/data")
+            @RequestParam("recipient") URI recipient,
             @Parameter(description = "The URI of the requested resource.", required = false,
                     example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
             @RequestParam(value = "requestedArtifact", required = false) URI requestedArtifact) throws IOException {
         if (tokenProvider.getTokenJWS() != null) {
-            Response response = requestMessageService.sendDescriptionRequestMessage(recipient, requestedArtifact);
-            String responseAsString = response.body().string();
+            try {
+                final var response = requestMessageService.sendDescriptionRequestMessage(recipient,
+                        requestedArtifact);
 
-            String hint = "";
-            if (requestedArtifact != null) {
-                try {
-                    hint = "Validation key: " + connectorRequestServiceUtils.saveMetadata(responseAsString) + "\n";
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
-                    return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                if(response != null) {
+                    try {
+                        final var responseAsString = response.body().string();
+
+                        String hint = "";
+                        if (requestedArtifact != null) {
+                            try {
+                                hint = "Validation key: " + connectorRequestServiceUtils.saveMetadata(responseAsString) + "\n";
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage());
+                                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                            }
+                        }
+                        return new ResponseEntity<>(hint
+                                + String.format("Success: %s", (response != null)) + "\n"
+                                + String.format("Body: %s", responseAsString), HttpStatus.OK);
+                    } catch (NullPointerException exception) {
+                        // The database response body is null.
+                        LOGGER.error("Could not read response body.", exception);
+                        return new ResponseEntity<>("Failed to parse database response.",
+                                HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
+                }else {
+                    // The response is null
+                    // NOTE: This answer is weird, Saved at: Success False?
+                    return new ResponseEntity<>("Saved at:\n"
+                            + String.format("Success: false\n")
+                            + "Body:", HttpStatus.OK);
                 }
+            }catch(IOException exception) {
+                LOGGER.info("Could not connect to request message service.");
+                return new ResponseEntity<>("Failed to reach to database.",
+                        HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return new ResponseEntity<>(hint
-                    + String.format("Success: %s", (response != null)) + "\n"
-                    + String.format("Body: %s", responseAsString), HttpStatus.OK);
         } else {
             // The request was unauthorized.
             return respondRejectUnauthorized(recipient, requestedArtifact);

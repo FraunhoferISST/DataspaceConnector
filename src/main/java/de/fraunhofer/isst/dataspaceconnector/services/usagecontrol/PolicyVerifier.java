@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.Duration;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -185,7 +186,7 @@ public class PolicyVerifier {
             } else {
                 return allowAccess();
             }
-        } catch (IOException | KeyManagementException | NoSuchAlgorithmException e) {
+        } catch (IOException | RuntimeException e) {
             return inhibitAccess();
         }
     }

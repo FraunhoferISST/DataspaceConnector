@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class provides a model to handle data resource metadata.
@@ -63,7 +65,7 @@ public class ResourceMetadata implements Serializable {
     @ElementCollection
     @Column(columnDefinition = "BYTEA")
     @JsonProperty("representations")
-    private List<ResourceRepresentation> representations;
+    private Map<UUID, ResourceRepresentation> representations;
 
     /**
      * <p>Constructor for ResourceMetadata.</p>
@@ -85,7 +87,7 @@ public class ResourceMetadata implements Serializable {
      * @param representations a {@link java.util.List} object.
      */
     public ResourceMetadata(String title, String description, List<String> keywords, String policy,
-                            URI owner, URI license, String version, List<ResourceRepresentation> representations) {
+                            URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations) {
         this.title = title;
         this.description = description;
         this.keywords = keywords;
@@ -227,7 +229,7 @@ public class ResourceMetadata implements Serializable {
      *
      * @return a {@link java.util.List} object.
      */
-    public List<ResourceRepresentation> getRepresentations() {
+    public Map<UUID, ResourceRepresentation> getRepresentations() {
         return representations;
     }
 
@@ -236,7 +238,7 @@ public class ResourceMetadata implements Serializable {
      *
      * @param representations a {@link java.util.List} object.
      */
-    public void setRepresentations(List<ResourceRepresentation> representations) {
+    public void setRepresentations(Map<UUID, ResourceRepresentation> representations) {
         this.representations = representations;
     }
 

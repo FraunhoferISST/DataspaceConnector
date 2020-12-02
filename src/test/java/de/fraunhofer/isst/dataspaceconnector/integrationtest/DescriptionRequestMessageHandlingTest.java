@@ -5,7 +5,10 @@ import de.fraunhofer.iais.eis.DescriptionResponseMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -23,10 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class tests the correct handling of DescriptionRequestMessages.
@@ -121,6 +121,18 @@ public class DescriptionRequestMessageHandlingTest {
     }
 
     private ResourceMetadata getResourceMetadata() {
+        final var representationId = UUIDUtils.createUUID((UUID x) -> false);
+        final var representation = new ResourceRepresentation();
+        representation.setUuid(representationId);
+        representation.setType("Type");
+        representation.setByteSize(1);
+        representation.setName("Name");
+
+        final var source = new BackendSource();
+        source.setType(BackendSource.Type.LOCAL);
+
+        representation.setSource(source);
+
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"),
                 "{\n" +
                         "  \"@context\" : {\n" +
@@ -145,7 +157,7 @@ public class DescriptionRequestMessageHandlingTest {
                         "  } ]\n" +
                         "}",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new ArrayList<>());
+                Collections.singletonMap(representationId, representation));
     }
 
     private String getHeaderRequestedElementNull() {

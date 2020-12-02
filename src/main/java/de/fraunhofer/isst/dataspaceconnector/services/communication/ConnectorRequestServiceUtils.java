@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
@@ -13,10 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class handles received message content and saves the metadata and data to the internal database.
@@ -109,17 +107,18 @@ public class ConnectorRequestServiceUtils {
             keywords.add(t.getValue());
         }
 
-        List<ResourceRepresentation> representations = new ArrayList<>();
+        var representations = new HashMap<UUID, ResourceRepresentation>();
         for(Representation r : resource.getRepresentation()) {
             Artifact artifact = (Artifact) r.getInstance().get(0);
             ResourceRepresentation representation = new ResourceRepresentation(
-                    UUID.randomUUID(),
+                    UUIDUtils.createUUID((UUID x) -> representations.get(x) != null),
                     r.getMediaType().getFilenameExtension(),
                     artifact.getByteSize().intValue(),
                     artifact.getFileName(),
                     new BackendSource(BackendSource.Type.LOCAL, null, null, null)
             );
-            representations.add(representation);
+
+            representations.put(representation.getUuid(), representation);
         }
 
         return new ResourceMetadata(

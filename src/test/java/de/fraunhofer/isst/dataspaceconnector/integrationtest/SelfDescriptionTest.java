@@ -3,7 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,10 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class tests whether the connecter can give a valid selfdescription.
@@ -90,9 +90,21 @@ public class SelfDescriptionTest {
     }
 
     private ResourceMetadata getResourceMetadata() {
+        final var representationId = UUIDUtils.createUUID((UUID x) -> false);
+        final var representation = new ResourceRepresentation();
+        representation.setUuid(representationId);
+        representation.setType("Type");
+        representation.setByteSize(1);
+        representation.setName("Name");
+
+        final var source = new BackendSource();
+        source.setType(BackendSource.Type.LOCAL);
+
+        representation.setSource(source);
+
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new ArrayList<>());
+                Collections.singletonMap(representationId, representation));
     }
 
     private void deleteAllResources() throws Exception {
