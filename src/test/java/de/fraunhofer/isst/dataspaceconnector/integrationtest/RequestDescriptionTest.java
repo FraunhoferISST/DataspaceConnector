@@ -94,13 +94,13 @@ public class RequestDescriptionTest {
 
     @Test
     @WithMockUser(roles = {"ADMIN"})
-    public void requestArtifactDescription() throws Exception {
+    public void requestArtifactDescription_validMetadata() throws Exception {
         if (!requestedResourceRepository.findAll().isEmpty()) {
             requestedResourceRepository.deleteAll();
         }
 
         when(idsHttpService.send(any(RequestBody.class), any(URI.class)))
-                .thenReturn(getResponse(getArtifactDescriptionMultipart()));
+                .thenReturn(getResponse(getValidArtifactDescriptionMultipart()));
 
         mockMvc.perform(MockMvcRequestBuilders
                 .post(requestDescriptionEndpoint)
@@ -109,6 +109,24 @@ public class RequestDescriptionTest {
 
         Assert.assertEquals(1, requestedResourceRepository.findAll().size());
         Assert.assertTrue(requestedResourceRepository.findAll().get(0).getData().isEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = {"ADMIN"})
+    public void requestArtifactDescription_invalidMetadata() throws Exception {
+        if (!requestedResourceRepository.findAll().isEmpty()) {
+            requestedResourceRepository.deleteAll();
+        }
+
+        when(idsHttpService.send(any(RequestBody.class), any(URI.class)))
+                .thenReturn(getResponse(getInvalidArtifactDescriptionMultipart()));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post(requestDescriptionEndpoint)
+                .param("recipient", recipient.toString())
+                .param("requestedArtifact", requestedArtifact.toString()));
+
+        Assert.assertEquals(0, requestedResourceRepository.findAll().size());
     }
 
     private Response getResponse(String multipartPayload) {
@@ -365,7 +383,7 @@ public class RequestDescriptionTest {
                 "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh--";
     }
 
-    private String getArtifactDescriptionMultipart() {
+    private String getInvalidArtifactDescriptionMultipart() {
         return "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh\r\n" +
                 "Content-Disposition: form-data; name=\"header\"\r\n" +
                 "Content-Type: text/plain;charset=UTF-8\r\n" +
@@ -476,5 +494,131 @@ public class RequestDescriptionTest {
                 "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh--\r\n";
     }
 
+    private String getValidArtifactDescriptionMultipart() {
+        return "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh\r\n" +
+                "Content-Disposition: form-data; name=\"header\"\r\n" +
+                "Content-Type: text/plain;charset=UTF-8\r\n" +
+                "Content-Length: 2119\r\n" +
+                "\r\n" +
+                "{\r\n" +
+                "  \"@context\" : {\r\n" +
+                "    \"ids\" : \"https://w3id.org/idsa/core/\",\r\n" +
+                "    \"idsc\" : \"https://w3id.org/idsa/code/\"\r\n" +
+                "  },\r\n" +
+                "  \"@type\" : \"ids:DescriptionResponseMessage\",\r\n" +
+                "  \"@id\" : \"https://w3id.org/idsa/autogen/descriptionResponseMessage/d4957419-abc9-4529-a534-fc44d3940a19\",\r\n" +
+                "  \"ids:modelVersion\" : \"3.1.0\",\r\n" +
+                "  \"ids:issued\" : {\r\n" +
+                "    \"@value\" : \"2020-10-07T08:23:19.938Z\",\n" +
+                "    \"@type\" : \"http://www.w3.org/2001/XMLSchema#dateTimeStamp\"\r\n" +
+                "  },\r\n" +
+                "  \"ids:issuerConnector\" : {\r\n" +
+                "    \"@id\" : \"https://simpleconnector.ids.isst.fraunhofer.de/58776ebe-f8f8-4a6f-b44b-eeefa47fc04b\"\r\n" +
+                "  },\r\n" +
+                "  \"ids:recipientConnector\" : [ {\r\n" +
+                "    \"@id\" : \"https://simpleconnector.ids.isst.fraunhofer.de/\"\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:securityToken\" : {\r\n" +
+                "    \"@type\" : \"ids:DynamicAttributeToken\",\r\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/dynamicAttributeToken/5ab6804f-900a-471c-a1d1-7dee49f90695\",\r\n" +
+                "    \"ids:tokenValue\" : \"eyJ0eXAiOiJKV1QiLCJraWQiOiJkZWZhdWx0IiwiYWxnIjoiUlMyNTYifQ.eyJpZHNfYXR0cmlidXRlcyI6eyJzZWN1cml0eV9wcm9maWxlIjp7ImF1ZGl0X2xvZ2dpbmciOjB9LCJtZW1iZXJzaGlwIjp0cnVlLCJpZHMtdXJpIjoiaHR0cDovL3NvbWUtdXJpIiwidHJhbnNwb3J0X2NlcnRzX3NoYTI1OCI6ImJhY2I4Nzk1NzU3MzBiYjA4M2YyODNmZDViNjdhOGNiODk2OTQ0ZDFiZTI4YzdiMzIxMTdjZmM3NTdjODFlOTYifSwic2NvcGVzIjpbImlkc19jb25uZWN0b3IiXSwiYXVkIjoiSURTX0Nvbm5lY3RvciIsImlzcyI6Imh0dHBzOi8vZGFwcy5haXNlYy5mcmF1bmhvZmVyLmRlIiwic3ViIjoiQz1ERSxPPUZyYXVuaG9mZXIsT1U9SVNTVCxDTj01ODc3NmViZS1mOGY4LTRhNmYtYjQ0Yi1lZWVmYTQ3ZmMwNGIiLCJuYmYiOjE2MDIxNDQwNzMsImV4cCI6MTYwMjE0NzY3M30.SG1Av3G00ne2tYQMerrJbhg9f24klDMjS5ur1aykIGHrL5AyL2wsLit_5aMhG12DUQ7tPa2o4RHyTCQFAhVKkI9_bwCR9jGBcN6jfVn8vjxQ3mDvNdWOoRURI_3YOAjBlo1TqFLOKBmN3uTsB_ns7LqJDruea07sme5O38NOukHPWxsAnoiH4N9NByxHqxayrFj0buDxJCLKXG3_FQtZBcsGO89geylFec0epehh9pL5QV5nr4xLzVhfrJRgx512KVqr1hNLqfNRWGl0TFoKHyEE5J8IMEihZwF76_4kl_1HZe1HP866yO8ceONfTvRI2sCXmKpP8A02NGhisEF_Mg\",\r\n" +
+                "    \"ids:tokenFormat\" : {\r\n" +
+                "      \"@id\" : \"idsc:JWT\"\r\n" +
+                "    }\r\n" +
+                "  },\r\n" +
+                "  \"ids:senderAgent\" : {\r\n" +
+                "    \"@id\" : \"https://simpleconnector.ids.isst.fraunhofer.de/58776ebe-f8f8-4a6f-b44b-eeefa47fc04b\"\r\n" +
+                "  },\r\n" +
+                "  \"ids:correlationMessage\" : {\r\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/descriptionRequestMessage/3d621945-9839-4a2e-8437-4db7d1f959ca\"\r\n" +
+                "  }\r\n" +
+                "}\r\n" +
+                "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh\r\n" +
+                "Content-Disposition: form-data; name=\"payload\"\r\n" +
+                "Content-Type: text/plain;charset=UTF-8\r\n" +
+                "Content-Length: 822\r\n" +
+                "\r\n" +
+                "{\r\n" +
+                "  \"@context\" : {\r\n" +
+                "    \"ids\" : \"https://w3id.org/idsa/core/\",\r\n" +
+                "    \"idsc\" : \"https://w3id.org/idsa/code/\"\r\n" +
+                "  },\r\n" +
+                "  \"@type\" : \"ids:Resource\",\r\n" +
+                "  \"@id\" : \"https://w3id.org/idsa/autogen/resource/4198281f-1c79-4c87-8584-48262432cdc2\",\r\n" +
+                "  \"ids:contractOffer\": {\n" +
+                "        \"@context\" : {\n" +
+                "      \"ids\" : \"https://w3id.org/idsa/core/\"\n" +
+                "    },\n" +
+                "    \"@type\" : \"ids:ContractOffer\",\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/contractOffer/110e659b-d171-4519-8a65-8a2c297ec296\",\n" +
+                "    \"ids:permission\" : [ {\n" +
+                "      \"@type\" : \"ids:Permission\",\n" +
+                "      \"@id\" : \"https://w3id.org/idsa/autogen/permission/7e1a166d-8c42-492f-afb8-204cea7aacf6\",\n" +
+                "      \"ids:description\" : [ {\n" +
+                "        \"@value\" : \"provide-access\",\n" +
+                "        \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "      } ],\n" +
+                "      \"ids:action\" : [ {\n" +
+                "        \"@id\" : \"idsc:USE\"\n" +
+                "      } ],\n" +
+                "      \"ids:title\" : [ {\n" +
+                "        \"@value\" : \"Example Usage Policy\",\n" +
+                "        \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "      } ]\n" +
+                "    } ]\n" +
+                "  }," +
+                "  \"ids:language\" : [ {\r\n" +
+                "    \"@id\" : \"idsc:EN\"\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:version\" : \"v1.0\",\r\n" +
+                "  \"ids:description\" : [ {\r\n" +
+                "    \"@value\" : \"\",\r\n" +
+                "    \"@language\" : \"en\"\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:title\" : [ {\r\n" +
+                "    \"@value\" : \"Test resource\",\r\n" +
+                "    \"@language\" : \"en\"\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:representation\" : [{\r\n" +
+                "        \"@type\" : \"ids:Representation\",\r\n" +
+                "        \"@id\" : \"https://w3id.org/idsa/autogen/representation/be7c42fc-fe7b-4010-abd1-47dd5d1d10e4\",\r\n" +
+                "        \"ids:instance\" : [ {\r\n" +
+                "          \"@type\" : \"ids:Artifact\",\r\n" +
+                "          \"@id\" : \"https://w3id.org/idsa/autogen/artifact/be7c42fc-fe7b-4010-abd1-47dd5d1d10e4\",\r\n" +
+                "          \"ids:byteSize\" : 105\r\n" +
+                "        } ],\r\n" +
+                "        \"ids:mediaType\" : {\r\n" +
+                "          \"@type\" : \"ids:IANAMediaType\",\r\n" +
+                "          \"@id\" : \"https://w3id.org/idsa/autogen/iANAMediaType/f8708e75-a725-4f28-b709-ebfba57f3b4f\",\r\n" +
+                "          \"ids:filenameExtension\" : \"application/xml\"\r\n" +
+                "        },\r\n" +
+                "        \"ids:language\" : {\r\n" +
+                "          \"@id\" : \"idsc:EN\"\r\n" +
+                "        }\r\n" +
+                "      } ],\r\n" +
+                "  \"ids:standardLicense\" : {\r\n" +
+                "    \"@id\" : \"http://license.com\"\r\n" +
+                "  },\r\n" +
+                "  \"ids:keyword\" : [ {\r\n" +
+                "    \"@value\" : \"test\",\r\n" +
+                "    \"@language\" : \"en\"\r\n" +
+                "  }, {\r\n" +
+                "    \"@value\" : \"resource\",\r\n" +
+                "    \"@language\" : \"en\"\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:publisher\" : {\r\n" +
+                "    \"@id\" : \"http://resource-owner.com\"\r\n" +
+                "  },\r\n" +
+                "  \"ids:resourceEndpoint\" : [ {\r\n" +
+                "    \"@type\" : \"ids:ConnectorEndpoint\",\r\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/connectorEndpoint/e5e2ab04-633a-44b9-87d9-a097ae6da3cf\",\r\n" +
+                "    \"ids:accessURL\" : {\r\n" +
+                "      \"@id\" : \"/api/ids/data\"\r\n" +
+                "    }\r\n" +
+                "  } ],\r\n" +
+                "  \"ids:policy\" : \"{\\r\\n  \\\"@context\\\" : null,\\r\\n  \\\"@type\\\" : null,\\r\\n  \\\"uid\\\" : null,\\r\\n  \\\"obligation\\\" : null,\\r\\n  \\\"permission\\\" : null,\\r\\n  \\\"prohibition\\\" : null\\r\\n}\"\r\n" +
+                "}\r\n" +
+                "--6-68GNd1LWhpTA8tVYaMkSDhNKSL67_C_NYQSh--\r\n";
+    }
 
 }
