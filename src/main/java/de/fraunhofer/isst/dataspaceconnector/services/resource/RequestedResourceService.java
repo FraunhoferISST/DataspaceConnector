@@ -2,6 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceTypeException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 
@@ -22,7 +24,7 @@ public interface RequestedResourceService {
      * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      * @return a {@link java.util.UUID} object.
      */
-    UUID addResource(ResourceMetadata resourceMetadata)  throws ResourceException;
+    UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
 
     /**
      * <p>addData.</p>
@@ -30,7 +32,8 @@ public interface RequestedResourceService {
      * @param id a {@link java.util.UUID} object.
      * @param data a {@link java.lang.String} object.
      */
-    void addData(UUID id, String data) throws ResourceException;
+    void addData(UUID id, String data) throws ResourceNotFoundException, ResourceTypeException,
+            ResourceException;
 
     /**
      * <p>deleteResource.</p>
@@ -45,7 +48,7 @@ public interface RequestedResourceService {
      * @param id a {@link java.util.UUID} object.
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.RequestedResource} object.
      */
-    RequestedResource getResource(UUID id);
+    RequestedResource getResource(UUID id) throws ResourceTypeException;
 
     /**
      * <p>getMetadata.</p>
@@ -53,7 +56,7 @@ public interface RequestedResourceService {
      * @param id a {@link java.util.UUID} object.
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      */
-    ResourceMetadata getMetadata(UUID id);
+    ResourceMetadata getMetadata(UUID id) throws ResourceNotFoundException, ResourceTypeException;
 
     /**
      * <p>getData.</p>
@@ -62,7 +65,8 @@ public interface RequestedResourceService {
      * @return a {@link java.lang.String} object.
      * @throws java.io.IOException if any.
      */
-    String getData(UUID id) throws ResourceException, IOException;
+    String getData(UUID id) throws  ResourceNotFoundException, ResourceTypeException,
+            ResourceException, IOException;
 
     /**
      * <p>getRequestedResources.</p>

@@ -85,7 +85,9 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Publishes the resource data.
      */
     @Override
-    public void addData(UUID resourceId, String data) throws ResourceException{
+    public void addData(UUID resourceId, String data) throws ResourceNotFoundException,
+            ResourceTypeException,
+            ResourceException{
         final var resource = getResource(resourceId);
         if(resource == null)
             throw new ResourceNotFoundException("The resource does not exist.");
@@ -136,7 +138,8 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Gets resource metadata by id.
      */
     @Override
-    public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException {
+    public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
+            ResourceTypeException {
         final var resource = getResource(resourceId);
         if (resource == null)
             throw new ResourceNotFoundException("This resource does not exist.");
@@ -150,7 +153,8 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Gets resource data by id.
      */
     @Override
-    public String getData(UUID resourceId) throws ResourceException, IOException {
+    public String getData(UUID resourceId) throws ResourceNotFoundException,
+            ResourceTypeException, ResourceException, IOException {
         final var resource = getResource(resourceId);
         if (resource == null)
             throw new ResourceNotFoundException("This resource does not exist.");
