@@ -9,4 +9,14 @@ public class ConnectorConfigurationException extends IllegalArgumentException {
     public ConnectorConfigurationException(String msg) {
         super(msg);
     }
+
+    /**
+     * Construct an ConnectorConfigurationException with the specified detail message and cause.
+     *
+     * @param msg   The detail message.
+     * @param cause The cause.
+     */
+    public ConnectorConfigurationException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
 }
