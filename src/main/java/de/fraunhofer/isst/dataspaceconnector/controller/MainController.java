@@ -1,9 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
@@ -13,11 +15,13 @@ import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -27,38 +31,58 @@ import java.util.ArrayList;
 /**
  * This class provides endpoints for basic connector services.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @RestController
 @Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
 public class MainController {
-    /** Constant <code>LOGGER</code> */
-    public static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    private TokenProvider tokenProvider;
-    private ConfigurationContainer configurationContainer;
-    private SerializerProvider serializerProvider;
+    private final TokenProvider tokenProvider;
+    private final ConfigurationContainer configurationContainer;
+    private final SerializerProvider serializerProvider;
 
-    private OfferedResourceService offeredResourceService;
-    private RequestedResourceService requestedResourceService;
+    private final OfferedResourceService offeredResourceService;
+    private final RequestedResourceService requestedResourceService;
 
-    private PolicyHandler policyHandler;
+    private final PolicyHandler policyHandler;
 
-    @Autowired
     /**
      * <p>Constructor for MainController.</p>
      *
-     * @param policyHandler a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
-     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
+     * @param policyHandler            a {@link PolicyHandler} object.
+     * @param tokenProvider            a {@link TokenProvider} object.
+     * @param configurationContainer   a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param serializerProvider       a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * @param offeredResourceService   a {@link OfferedResourceService} object.
+     * @param requestedResourceService a {@link RequestedResourceService} object.
+     * @throws IllegalArgumentException - if one of the parameters is null.
      */
-    public MainController(TokenProvider tokenProvider, ConfigurationContainer configurationContainer,
-                          SerializerProvider serializerProvider, OfferedResourceService offeredResourceService,
-                          RequestedResourceService requestedResourceService, PolicyHandler policyHandler) {
+    @Autowired
+    public MainController(@NotNull TokenProvider tokenProvider,
+                          @NotNull ConfigurationContainer configurationContainer,
+                          @NotNull SerializerProvider serializerProvider,
+                          @NotNull OfferedResourceService offeredResourceService,
+                          @NotNull RequestedResourceService requestedResourceService,
+                          @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
+        if (tokenProvider == null)
+            throw new IllegalArgumentException("The TokenProvider cannot be null");
+
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null");
+
+        if (offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceService cannot be null");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The RequestedResourceService cannot be null");
+
+        if (policyHandler == null)
+            throw new IllegalArgumentException("The PolicyHandler cannot be null");
+
         this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
@@ -72,18 +96,31 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @Operation(summary = "Public Endpoint for Connector Self-description", description = "Get the connector's reduced self-description.")
+    @Operation(summary = "Public Endpoint for Connector Self-description",
+            description = "Get the connector's reduced self-description.")
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getPublicSelfDescription() {
+    public ResponseEntity<String> getPublicSelfDescription() {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
+
         try {
-            BaseConnectorImpl connector = (BaseConnectorImpl) configurationContainer.getConnector();
+            // Modify a connector for exposing the reduced self description
+            var connector = (BaseConnectorImpl) getConnector();
             connector.setResourceCatalog(null);
             connector.setPublicKey(null);
+
             return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector), HttpStatus.OK);
-        } catch (IOException e) {
-            LOGGER.error("Could not create self-description: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ConnectorConfigurationException exception) {
+            // No connector found
+            LOGGER.warn("No connector has been configurated.", exception);
+            return new ResponseEntity<>("No connector is currently available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException exception) {
+            // Could not serialize the connector.
+            LOGGER.error("Could not serialize the connector.", exception);
+            return new ResponseEntity<>("No connector is currently available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,20 +129,27 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @Operation(summary = "Connector Self-description", description = "Get the connector's self-description.")
+    @Operation(summary = "Connector Self-description",
+            description = "Get the connector's self-description.")
     @RequestMapping(value = {"/admin/api/selfservice"}, method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getSelfService() {
+    public ResponseEntity<String> getSelfService() {
         try {
-            BaseConnectorImpl connector = (BaseConnectorImpl) configurationContainer.getConnector();
-            connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                    ._offeredResource_(offeredResourceService.getResourceList())
-                    ._requestedResource_(requestedResourceService.getRequestedResources())
-                    .build()));
+            // Modify a connector for exposing a resource catalog
+            var connector = (BaseConnectorImpl) getConnector();
+            connector.setResourceCatalog(Util.asList(buildResourceCatalog()));
+
             return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector), HttpStatus.OK);
-        } catch (IOException e) {
-            LOGGER.error("Error during creation of the self description: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ConnectorConfigurationException exception) {
+            // No connector found
+            LOGGER.warn("No connector has been configurated.", exception);
+            return new ResponseEntity<>("No connector is currently available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException exception) {
+            // Could not serialize the connector.
+            LOGGER.error("Could not serialize the connector.", exception);
+            return new ResponseEntity<>("No connector is currently available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -114,11 +158,13 @@ public class MainController {
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get Connector configuration", description = "Get the connector's configuration.")
+    @Operation(summary = "Get Connector configuration",
+            description = "Get the connector's configuration.")
     @RequestMapping(value = "/admin/api/example/configuration", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getConnector() {
-        ArrayList<URI> exceptions = new ArrayList<>();
+    public ResponseEntity<String> getConnectorConfiguration() {
+        //NOTE: This needs some cleanup. Skip exception handling.
+        var exceptions = new ArrayList<URI>();
         exceptions.add(URI.create("https://localhost:8080/"));
         exceptions.add(URI.create("http://localhost:8080/"));
 
@@ -159,14 +205,24 @@ public class MainController {
      *
      * @param policy a {@link java.lang.String} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
-     * @throws java.io.IOException if any.
      */
-    @Operation(summary = "Get pattern of policy", description = "Get the policy pattern represented by a given JSON string.")
+    @Operation(summary = "Get pattern of policy",
+            description = "Get the policy pattern represented by a given JSON string.")
     @RequestMapping(value = "/admin/api/example/policy-pattern", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getPolicyPattern(@Parameter(description = "The JSON string representing a policy", required = true)
-                                                       @RequestParam("policy") String policy) throws IOException {
-        return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
+    public ResponseEntity<Object> getPolicyPattern(
+            @Parameter(description = "The JSON string representing a policy", required = true)
+            @RequestParam("policy") String policy) {
+        Assert.notNull(policyHandler, "The policyHandler cannot be null.");
+        try {
+            // Return the policy pattern
+            return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
+        } catch (IOException exception) {
+            // Failed to receive the pattern. Inform the requester.
+            LOGGER.error("Failed to receive policy.", exception);
+            return new ResponseEntity<>("The policy is currently not available.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -175,11 +231,13 @@ public class MainController {
      * @param pattern a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler.Pattern} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get example policy", description = "Get an example policy for a given policy pattern.")
+    @Operation(summary = "Get example policy",
+            description = "Get an example policy for a given policy pattern.")
     @RequestMapping(value = "/admin/api/example/usage-policy", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> getExampleUsagePolicy(@Parameter(description = "The policy pattern.", required = true)
-                                                            @RequestParam("pattern") PolicyHandler.Pattern pattern) {
+    public ResponseEntity<Object> getExampleUsagePolicy(
+            @Parameter(description = "The policy pattern.", required = true)
+            @RequestParam("pattern") PolicyHandler.Pattern pattern) {
         ContractOffer contractOffer = null;
 
         switch (pattern) {
@@ -304,6 +362,26 @@ public class MainController {
                         .build();
                 break;
         }
+
         return new ResponseEntity<>(contractOffer.toRdf(), HttpStatus.OK);
+    }
+
+    private Connector getConnector() throws ConnectorConfigurationException {
+        Assert.notNull(configurationContainer, "The config cannot be null.");
+
+        final var connector = configurationContainer.getConnector();
+        if (connector == null) {
+            // The connector is needed for every answer and cannot be null
+            throw new ConnectorConfigurationException("No connector configurated.");
+        }
+
+        return connector;
+    }
+
+    private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
+        return new ResourceCatalogBuilder()
+                ._offeredResource_(offeredResourceService.getResourceList())
+                ._requestedResource_(requestedResourceService.getRequestedResources())
+                .build();
     }
 }
