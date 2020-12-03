@@ -1,7 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceRepository;
@@ -111,9 +114,21 @@ public class RequestArtifactTest {
     }
 
     private ResourceMetadata getResourceMetadata() {
+        final var representationId = UUIDUtils.createUUID((UUID x) -> false);
+        final var representation = new ResourceRepresentation();
+        representation.setUuid(representationId);
+        representation.setType("Type");
+        representation.setByteSize(1);
+        representation.setName("Name");
+
+        final var source = new BackendSource();
+        source.setType(BackendSource.Type.LOCAL);
+
+        representation.setSource(source);
+
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new HashMap<>());
+                Collections.singletonMap(representationId, representation));
     }
 
     private String getArtifactResponseMultipart() {

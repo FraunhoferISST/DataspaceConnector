@@ -83,6 +83,7 @@ public class OfferedResource implements ConnectorResource{
     @Override
     public void setCreated(Date created) {
         this.created = created;
+        this.modified = new Date();
     }
 
     /** {@inheritDoc} */

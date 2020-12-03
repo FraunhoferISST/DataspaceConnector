@@ -116,6 +116,7 @@ public class RequestedResource implements ConnectorResource{
     /** {@inheritDoc} */
     @Override
     public String getData() {
+        incrementDataAccess();
         return data;
     }
 
@@ -134,12 +135,16 @@ public class RequestedResource implements ConnectorResource{
         return accessed;
     }
 
-    /**
-     * <p>Setter for the field <code>accessed</code>.</p>
-     *
-     * @param accessed a {@link java.lang.Integer} object.
-     */
-    public void setAccessed(Integer accessed) {
-        this.accessed = accessed;
+    ///**
+    // * <p>Setter for the field <code>accessed</code>.</p>
+     //*
+     //* @param accessed a {@link java.lang.Integer} object.
+     //*/
+    //public void setAccessed(Integer accessed) {
+    //    this.accessed = accessed;
+//    }
+
+    private void incrementDataAccess() {
+        this.accessed++;
     }
 }
