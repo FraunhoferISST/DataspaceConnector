@@ -124,9 +124,9 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
         if (resource.isEmpty()) {
             return null;
         } else {
-            final var result = isValidResource(resource.get());
-            if (result.isPresent())
-                throw new ResourceTypeException("The resource is not valid. " + result.get());
+            final var error = isValidResource(resource.get());
+            if (error.isPresent())
+                throw new ResourceTypeException("The resource is not valid. " + error.get());
 
             return resource.get();
         }
@@ -196,9 +196,9 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     private void storeResource(RequestedResource resource) throws ResourceException {
-        final var result = isValidResource(resource);
-        if(result.isPresent())
-            throw new ResourceException("Not a valid resource. " + result.get());
+        final var error = isValidResource(resource);
+        if(error.isPresent())
+            throw new ResourceException("Not a valid resource. " + error.get());
 
         requestedResourceRepository.save(resource);
         requestedResources.put(resource.getUuid(), idsUtils.getAsResource(resource));

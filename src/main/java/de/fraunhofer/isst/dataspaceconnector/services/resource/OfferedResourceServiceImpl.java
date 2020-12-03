@@ -186,9 +186,9 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         if (resource.isEmpty()) {
             return null;
         } else {
-            final var result = isValidResource(resource.get());
-            if (result.isPresent())
-                throw new ResourceTypeException("The resource is not valid. " + result.get());
+            final var error = isValidResource(resource.get());
+            if (error.isPresent())
+                throw new ResourceTypeException("The resource is not valid. " + error.get());
 
             return resource.get();
         }
@@ -347,9 +347,9 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     private void storeResource(OfferedResource resource) throws ResourceException{
-        final var result = isValidResource(resource);
-        if(result.isPresent())
-            throw new ResourceException("Not a valid resource. " + result.get());
+        final var error = isValidResource(resource);
+        if(error.isPresent())
+            throw new ResourceException("Not a valid resource. " + error.get());
 
         offeredResourceRepository.save(resource);
         offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
