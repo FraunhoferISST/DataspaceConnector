@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.Broker;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -8,7 +7,6 @@ import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +22,12 @@ import java.util.UUID;
 /**
  * This class provides endpoints for the communication with an IDS connector instance.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/request")
-@Tag(name = "Connector: IDS Connector Communication", description = "Endpoints for invoking external connector requests")
+@Tag(name = "Connector: IDS Connector Communication",
+        description = "Endpoints for invoking external connector requests")
 public class RequestController {
     /** Constant <code>LOGGER</code> */
     public static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
@@ -38,14 +36,14 @@ public class RequestController {
     private final ConnectorRequestServiceImpl requestMessageService;
     private final ConnectorRequestServiceUtils connectorRequestServiceUtils;
 
-    @Autowired
     /**
      * <p>Constructor for RequestController.</p>
      *
      * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param requestMessageService a {@link de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceImpl} object.
-     * @param connectorRequestServiceUtils a {@link de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceUtils} object.
+     * @param requestMessageService a {@link ConnectorRequestServiceImpl} object.
+     * @param connectorRequestServiceUtils a {@link ConnectorRequestServiceUtils} object.
      */
+    @Autowired
     public RequestController(@NotNull TokenProvider tokenProvider,
                              @NotNull ConnectorRequestServiceImpl requestMessageService,
                              @NotNull ConnectorRequestServiceUtils connectorRequestServiceUtils) {
@@ -70,7 +68,6 @@ public class RequestController {
      * @param requestedArtifact The requested resource uri.
      * @return OK or error response.
      * @param key a {@link java.util.UUID} object.
-     * @throws java.io.IOException if any.
      */
     @Operation(summary = "Artifact Request",
             description = "Request data from another IDS connector. " +
@@ -86,7 +83,7 @@ public class RequestController {
                     example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
             @RequestParam(value = "requestedArtifact") URI requestedArtifact,
             @Parameter(description = "A unique validation key.", required = true)
-            @RequestParam("key") UUID key) throws IOException {
+            @RequestParam("key") UUID key) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(connectorRequestServiceUtils, "The connectorRequestServiceUtils cannot be null.");
         Assert.notNull(requestMessageService, "The requestMessageService cannot be null.");
@@ -95,8 +92,9 @@ public class RequestController {
             if (connectorRequestServiceUtils.resourceExists(key)) {
                 try {
                     // Get the resource
-                    final var response = requestMessageService.sendArtifactRequestMessage(recipient,
-                            requestedArtifact);
+                    final var response =
+                            requestMessageService.sendArtifactRequestMessage(recipient,
+                                    requestedArtifact);
 
                     if (response != null) {
                         try {
@@ -121,12 +119,12 @@ public class RequestController {
                         }
                     } else {
                         // The response is null
-                        // NOTE: This answer is weird, Saved at: Success False?
-                        return new ResponseEntity<>("Saved at: " + key + "\n"
-                                + String.format("Success: false\n")
-                                + "Body:", HttpStatus.OK);
+                        LOGGER.warn("Received no response message.");
+                        return new ResponseEntity<>("Received no response.",
+                                HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 }catch(IOException exception){
+                    // Failed to send a description request message
                     LOGGER.info("Could not connect to request message service.");
                     return new ResponseEntity<>("Failed to reach to database.",
                             HttpStatus.INTERNAL_SERVER_ERROR);
@@ -137,7 +135,8 @@ public class RequestController {
                         "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
                         requestedArtifact.toString(), key.toString()));
 
-                return new ResponseEntity<>("Your key is not valid. Please request metadata first.", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
+                        HttpStatus.FORBIDDEN);
             }
         } else {
             // The request was unauthorized.
@@ -151,7 +150,6 @@ public class RequestController {
      * @param recipient         The target connector uri.
      * @param requestedArtifact The requested resource uri.
      * @return OK or error response.
-     * @throws java.io.IOException if any.
      */
     @Operation(summary = "Description Request",
             description = "Request metadata from another IDS connector.")
@@ -163,28 +161,31 @@ public class RequestController {
             @RequestParam("recipient") URI recipient,
             @Parameter(description = "The URI of the requested resource.", required = false,
                     example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-            @RequestParam(value = "requestedArtifact", required = false) URI requestedArtifact) throws IOException {
+            @RequestParam(value = "requestedArtifact", required = false) URI requestedArtifact) {
         if (tokenProvider.getTokenJWS() != null) {
             try {
-                final var response = requestMessageService.sendDescriptionRequestMessage(recipient,
-                        requestedArtifact);
+                final var response = requestMessageService.sendDescriptionRequestMessage(
+                        recipient, requestedArtifact);
 
                 if(response != null) {
                     try {
                         final var responseAsString = response.body().string();
 
-                        String hint = "";
                         if (requestedArtifact != null) {
+                            // Save the artifact request
                             try {
-                                hint = "Validation key: " + connectorRequestServiceUtils.saveMetadata(responseAsString) + "\n";
+                                final var resource =
+                                        connectorRequestServiceUtils.saveMetadata(responseAsString);
+                                return new ResponseEntity<>(responseAsString + " with " + resource,
+                                        HttpStatus.OK);
                             } catch (Exception e) {
                                 LOGGER.error(e.getMessage());
                                 return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                             }
+                        }else{
+                            // Send self description
+                            return new ResponseEntity<>(responseAsString, HttpStatus.OK);
                         }
-                        return new ResponseEntity<>(hint
-                                + String.format("Success: %s", (response != null)) + "\n"
-                                + String.format("Body: %s", responseAsString), HttpStatus.OK);
                     } catch (NullPointerException exception) {
                         // The database response body is null.
                         LOGGER.error("Could not read response body.", exception);
@@ -193,12 +194,12 @@ public class RequestController {
                     }
                 }else {
                     // The response is null
-                    // NOTE: This answer is weird, Saved at: Success False?
-                    return new ResponseEntity<>("Saved at:\n"
-                            + String.format("Success: false\n")
-                            + "Body:", HttpStatus.OK);
+                    LOGGER.warn("Received no response message.");
+                    return new ResponseEntity<>("Received no response.",
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }catch(IOException exception) {
+                // Failed to send description request message
                 LOGGER.info("Could not connect to request message service.");
                 return new ResponseEntity<>("Failed to reach to database.",
                         HttpStatus.INTERNAL_SERVER_ERROR);
