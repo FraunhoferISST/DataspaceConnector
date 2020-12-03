@@ -200,7 +200,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * Gets resource metadata by id.
      */
     @Override
-    public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException {
+    public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
+            ResourceTypeException {
         final var resource = getResource(resourceId);
         if (resource == null)
             throw new ResourceNotFoundException("This resource does not exist.");
@@ -208,7 +209,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         return resource.getResourceMetadata();
     }
 
-    public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws ResourceNotFoundException {
+    public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws ResourceNotFoundException, ResourceTypeException {
         return getMetadata(resourceId).getRepresentations();
     }
 
@@ -216,7 +217,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * {@inheritDoc}
      */
     @Override
-    public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws ResourceNotFoundException {
+    public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws ResourceNotFoundException, ResourceTypeException {
         return getAllRepresentations(resourceId).get(representationId);
     }
 
@@ -226,7 +227,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * Gets data from local database.
      */
     @Override
-    public String getData(UUID resourceId) throws RuntimeException, ResourceNotFoundException {
+    public String getData(UUID resourceId) throws RuntimeException {
         final var representations = getAllRepresentations(resourceId);
         for (var representationId : representations.keySet()) {
             try {
@@ -266,7 +267,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * {@inheritDoc}
      */
     @Override
-    public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws ResourceException{
+    public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws ResourceException, ResourceTypeException{
         final var uuid = UUIDUtils.createUUID(
                 (UUID x) -> getRepresentation(resourceId, x) != null);
         return addRepresentationWithId(resourceId, representation, uuid);
@@ -277,7 +278,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
-                                        UUID representationId) throws ResourceException{
+                                        UUID representationId) throws ResourceException, ResourceTypeException{
         final var metaData = getMetadata(resourceId);
         if (getRepresentation(resourceId, representationId) != null)
             throw new ResourceException("This representation does already exist.");
@@ -294,7 +295,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public void updateRepresentation(UUID resourceId, UUID representationId,
-                                     ResourceRepresentation representation) throws ResourceException{
+                                     ResourceRepresentation representation) throws ResourceException, ResourceNotFoundException, ResourceTypeException{
         if (getRepresentation(resourceId, representationId) != null) {
             representation.setUuid(representationId);
             var representations = getAllRepresentations(resourceId);
@@ -314,7 +315,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * {@inheritDoc}
      */
     @Override
-    public void deleteRepresentation(UUID resourceId, UUID representationId) throws ResourceException{
+    public void deleteRepresentation(UUID resourceId, UUID representationId) throws ResourceException, ResourceNotFoundException, ResourceTypeException{
         var representations = getAllRepresentations(resourceId);
         if (representations == null || representations.size() == 0)
             throw new ResourceException("This resource metadata has no representations.");
@@ -343,23 +344,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             return Optional.of("The resource representation must have at least one element.");
 
         return Optional.empty();
-    }
-
-    /**
-     * Returns the representation index for further operations.
-     *
-     * @param resource         The resource object.
-     * @param representationId The representation id.
-     * @return The index or -1 when no index could be found
-     */
-    private int getIndex(OfferedResource resource, UUID representationId) {
-        final var representations = resource.getResourceMetadata().getRepresentations();
-        for (var i = 0; i < representations.size(); i++) {
-            if (representations.get(i).getUuid() == representationId)
-                return i;
-        }
-
-        return -1;
     }
 
     private void storeResource(OfferedResource resource) throws ResourceException{
