@@ -30,7 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
- * This class tests whether the connecter can request and save metadata from other connectors.
+ * This class tests whether the connector can request and save metadata from other connectors.
  *
  * @author Ronja Quensel
  * @version $Id: $Id
