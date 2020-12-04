@@ -1,5 +1,7 @@
 # Dataspace Connector
 
+<img src="https://github.com/FraunhoferISST/DataspaceConnector/blob/master/images/ids-ready.png" alt="IDS-ready" width="200"/>
+
 **Contact**: [info@dataspace-connector.de](mailto:info@dataspace-connector.de)
 | **Issues**: Feel free to report issues [here](https://github.com/FraunhoferISST/DataspaceConnector/issues) or write an [email](mailto:info@dataspace-connector.de).
 
