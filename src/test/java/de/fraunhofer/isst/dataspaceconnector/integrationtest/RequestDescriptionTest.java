@@ -84,8 +84,6 @@ public class RequestDescriptionTest {
                 .param("recipient", recipient.toString()))
                 .andReturn().getResponse().getContentAsString();
 
-        //remove first line ("Success: true/false") and first chars of next line ("Body: ") from response
-        response = response.substring(response.indexOf('\n') + 1).substring(6);
         Map<String, String> multipart = MultipartStringParser.stringToMultipart(response);
         String payload = multipart.get("payload");
 
