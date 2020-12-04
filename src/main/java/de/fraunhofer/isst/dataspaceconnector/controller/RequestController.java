@@ -174,9 +174,9 @@ public class RequestController {
                         if (requestedArtifact != null) {
                             // Save the artifact request
                             try {
-                                final var resource =
+                                final var validationKey =
                                         connectorRequestServiceUtils.saveMetadata(responseAsString);
-                                return new ResponseEntity<>(responseAsString + " with " + resource,
+                                return new ResponseEntity<>("Validation: " + validationKey + "\n" + responseAsString,
                                         HttpStatus.OK);
                             } catch (Exception e) {
                                 LOGGER.error(e.getMessage());
@@ -201,7 +201,7 @@ public class RequestController {
             }catch(IOException exception) {
                 // Failed to send description request message
                 LOGGER.info("Could not connect to request message service.");
-                return new ResponseEntity<>("Failed to reach to database.",
+                return new ResponseEntity<>("Failed to send description request message.",
                         HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
