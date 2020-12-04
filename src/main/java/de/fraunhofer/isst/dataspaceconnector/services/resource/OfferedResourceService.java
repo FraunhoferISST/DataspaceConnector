@@ -1,9 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceTypeException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -22,7 +20,7 @@ public interface OfferedResourceService {
     /**
      * <p>getResourceList.</p>
      *
-     * @return a {@link java.util.ArrayList} object.
+     * @return a {@link java.util.List} object.
      */
     ArrayList<Resource> getResourceList();
 
@@ -47,7 +45,7 @@ public interface OfferedResourceService {
      * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      * @param uuid a {@link java.util.UUID} object.
      */
-    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws ResourceException;
+    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws InvalidResourceException, ResourceAlreadyExists;
 
     /**
      * <p>addData.</p>
@@ -63,7 +61,7 @@ public interface OfferedResourceService {
      * @param resourceId a {@link java.util.UUID} object.
      * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      */
-    void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws ResourceException;
+    void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws InvalidResourceException, ResourceNotFoundException  ;
 
     /**
      * <p>updateContract.</p>
@@ -71,14 +69,15 @@ public interface OfferedResourceService {
      * @param resourceId a {@link java.util.UUID} object.
      * @param policy a {@link java.lang.String} object.
      */
-    void updateContract(UUID resourceId, String policy) throws ResourceException;
+    void updateContract(UUID resourceId, String policy) throws ResourceNotFoundException,
+            InvalidResourceException;
 
     /**
      * <p>deleteResource.</p>
      *
      * @param resourceId a {@link java.util.UUID} object.
      */
-    void deleteResource(UUID resourceId);
+    boolean deleteResource(UUID resourceId);
 
     /**
      * <p>getResource.</p>
@@ -86,7 +85,7 @@ public interface OfferedResourceService {
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.OfferedResource} object.
      */
-    OfferedResource getResource(UUID resourceId) throws ResourceTypeException;
+    OfferedResource getResource(UUID resourceId) throws InvalidResourceException;
 
     /**
      * <p>getMetadata.</p>
@@ -95,7 +94,7 @@ public interface OfferedResourceService {
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      */
     ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
-            ResourceTypeException;
+            InvalidResourceException;
 
     /**
      * <p>getData.</p>
@@ -104,7 +103,8 @@ public interface OfferedResourceService {
      * @return a {@link java.lang.String} object.
      * @throws java.lang.Exception if any.
      */
-    String getData(UUID resourceId) throws ResourceNotFoundException, ResourceTypeException;
+    String getData(UUID resourceId) throws ResourceNotFoundException, InvalidResourceException,
+            ResourceException;
 
     /**
      * <p>getDataByRepresentation.</p>
@@ -114,7 +114,7 @@ public interface OfferedResourceService {
      * @return a {@link java.lang.String} object.
      * @throws java.lang.Exception if any.
      */
-    String getDataByRepresentation(UUID resourceId, UUID representationId) throws Exception;
+    String getDataByRepresentation(UUID resourceId, UUID representationId) throws InvalidResourceException, ResourceNotFoundException, ResourceException;
 
     /**
      * <p>addRepresentation.</p>
@@ -123,7 +123,8 @@ public interface OfferedResourceService {
      * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
      * @return a {@link java.util.UUID} object.
      */
-    UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws Exception;
+    UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws
+            ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists;
 
     /**
      * <p>addRepresentation.</p>
@@ -134,7 +135,8 @@ public interface OfferedResourceService {
      * @return a {@link java.util.UUID} object.
      */
     UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
-                                 UUID representationId) throws Exception;
+                                 UUID representationId) throws
+            ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists;
 
     /**
      * <p>updateRepresentation.</p>
@@ -144,7 +146,8 @@ public interface OfferedResourceService {
      * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
      */
     void updateRepresentation(UUID resourceId, UUID representationId,
-                              ResourceRepresentation representation) throws Exception;
+                              ResourceRepresentation representation) throws
+            ResourceNotFoundException, InvalidResourceException;
 
     /**
      * <p>getRepresentation.</p>
@@ -153,7 +156,7 @@ public interface OfferedResourceService {
      * @param representationId a {@link java.util.UUID} object.
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
      */
-    ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws ResourceNotFoundException, ResourceTypeException;
+    ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws ResourceNotFoundException, InvalidResourceException;
 
     /**
      * <p>deleteRepresentation.</p>
@@ -161,5 +164,5 @@ public interface OfferedResourceService {
      * @param resourceId a {@link java.util.UUID} object.
      * @param representationId a {@link java.util.UUID} object.
      */
-    void deleteRepresentation(UUID resourceId, UUID representationId) throws Exception;
+    boolean deleteRepresentation(UUID resourceId, UUID representationId) throws ResourceNotFoundException, InvalidResourceException;
 }

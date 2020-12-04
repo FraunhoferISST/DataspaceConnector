@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceTypeException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
@@ -71,7 +71,7 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Saves the resources with its metadata as external resource or internal resource.
      */
     @Override
-    public UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException {
+    public UUID addResource(ResourceMetadata resourceMetadata) throws InvalidResourceException {
         final var resource = new RequestedResource(new Date(), new Date(), resourceMetadata, "", 0);
 
         storeResource(resource);
@@ -86,8 +86,7 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      */
     @Override
     public void addData(UUID resourceId, String data) throws ResourceNotFoundException,
-            ResourceTypeException,
-            ResourceException{
+            InvalidResourceException{
         final var resource = getResource(resourceId);
         if(resource == null)
             throw new ResourceNotFoundException("The resource does not exist.");
@@ -103,12 +102,14 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Deletes a resource by id.
      */
     @Override
-    public void deleteResource(UUID resourceId) {
+    public boolean deleteResource(UUID resourceId) {
         final var key = requestedResources.remove(resourceId);
         if (key != null) {
             requestedResourceRepository.deleteById(resourceId);
+            return true;
         } else {
             LOGGER.warn("Tried to delete resource that does not exist.");
+            return false;
         }
     }
 
@@ -118,16 +119,13 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Gets a resource by id.
      */
     @Override
-    public RequestedResource getResource(UUID resourceId) throws ResourceTypeException{
+    public RequestedResource getResource(UUID resourceId) throws InvalidResourceException{
         final var resource = requestedResourceRepository.findById(resourceId);
 
         if (resource.isEmpty()) {
             return null;
         } else {
-            final var error = isValidResource(resource.get());
-            if (error.isPresent())
-                throw new ResourceTypeException("The resource is not valid. " + error.get());
-
+            invalidResourceGuard(resource.get());
             return resource.get();
         }
     }
@@ -139,10 +137,10 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      */
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
-            ResourceTypeException {
+            InvalidResourceException {
         final var resource = getResource(resourceId);
         if (resource == null)
-            throw new ResourceNotFoundException("This resource does not exist.");
+            throw new ResourceNotFoundException("The resource does not exist.");
 
         return resource.getResourceMetadata();
     }
@@ -153,23 +151,22 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * Gets resource data by id.
      */
     @Override
-    public String getData(UUID resourceId) throws ResourceNotFoundException,
-            ResourceTypeException, ResourceException, IOException {
+    public String getData(UUID resourceId) throws InvalidResourceException,
+            ResourceNotFoundException, ResourceException {
         final var resource = getResource(resourceId);
         if (resource == null)
-            throw new ResourceNotFoundException("This resource does not exist.");
+            throw new ResourceNotFoundException("The resource does not exist.");
 
-        if (policyHandler.onDataAccess(resource)) {
-            final var data = resource.getData();
-            try {
+        try {
+            if (policyHandler.onDataAccess(resource)) {
+                final var data = resource.getData();
                 storeResource(resource);
-            }catch(ResourceException exception){
-                throw new ResourceException("Failed to make the data access persistent.",
-                        exception);
+                return data;
+            } else{
+                return "Policy Restriction!";
             }
-            return data;
-        } else {
-            return "Policy Restriction!";
+        }catch(IOException exception){
+            throw new ResourceException("Failed to process the policy data accesss.", exception);
         }
     }
 
@@ -179,7 +176,7 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
         return new ArrayList<>(requestedResources.values());
     }
 
-    public Optional<String> isValidResource(RequestedResource resource) {
+    public Optional<String> isValidRequestedResource(RequestedResource resource) {
         if (resource == null)
             return Optional.of("The resource cannot be null.");
 
@@ -195,10 +192,21 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
         return Optional.empty();
     }
 
-    private void storeResource(RequestedResource resource) throws ResourceException {
-        final var error = isValidResource(resource);
+    /**
+     *
+     * @param resource
+     * @throws InvalidResourceException - if the resource is not valid.
+     */
+    private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException{
+        final var error = isValidRequestedResource(resource);
         if(error.isPresent())
-            throw new ResourceException("Not a valid resource. " + error.get());
+            throw new InvalidResourceException(error.get());
+    }
+
+    private void storeResource(RequestedResource resource) throws InvalidResourceException {
+        final var error = isValidRequestedResource(resource);
+        if(error.isPresent())
+            throw new InvalidResourceException("Not a valid resource. " + error.get());
 
         requestedResourceRepository.save(resource);
         requestedResources.put(resource.getUuid(), idsUtils.getAsResource(resource));

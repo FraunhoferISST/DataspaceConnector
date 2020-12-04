@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
@@ -8,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,31 +25,43 @@ import java.util.UUID;
  * {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} including {@link de.fraunhofer.iais.eis.Contract}
  * and {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation}.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/resources")
 @Tag(name = "Connector: Resource Handling", description = "Endpoints  for resource handling")
 public class ResourceController {
-    /** Constant <code>LOGGER</code> */
+    /**
+     * Constant <code>LOGGER</code>
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
-    private OfferedResourceService offeredResourceService;
-    private RequestedResourceService requestedResourceService;
+    private final OfferedResourceService offeredResourceService;
+    private final RequestedResourceService requestedResourceService;
 
-    private PolicyHandler policyHandler;
+    private final PolicyHandler policyHandler;
 
-    @Autowired
     /**
      * <p>Constructor for ResourceController.</p>
      *
-     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
-     * @param policyHandler a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
+     * @param offeredResourceService   a {@link OfferedResourceService} object.
+     * @param requestedResourceService a {@link RequestedResourceService} object.
+     * @param policyHandler            a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
-    public ResourceController(OfferedResourceService offeredResourceService,
-                              PolicyHandler policyHandler, RequestedResourceService requestedResourceService) {
+    @Autowired
+    public ResourceController(@NotNull OfferedResourceService offeredResourceService,
+                              @NotNull PolicyHandler policyHandler,
+                              @NotNull RequestedResourceService requestedResourceService) throws IllegalArgumentException {
+        if (offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+
+        if (policyHandler == null)
+            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
+
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
         this.policyHandler = policyHandler;
@@ -57,23 +71,37 @@ public class ResourceController {
      * Registers a resource with its metadata and, if wanted, with an already existing id.
      *
      * @param resourceMetadata The resource metadata.
-     * @param uuid The resource uuid.
+     * @param uuid             The resource uuid.
      * @return The added uuid.
      */
     @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> createResource(@RequestBody ResourceMetadata resourceMetadata, @RequestParam(value = "id", required = false) UUID uuid) {
+    public ResponseEntity<String> createResource(@RequestBody ResourceMetadata resourceMetadata,
+                                                 @RequestParam(value = "id", required = false) UUID uuid) {
         try {
             if (uuid != null) {
                 offeredResourceService.addResourceWithId(resourceMetadata, uuid);
-                return new ResponseEntity<>("Resource registered with uuid: " + uuid, HttpStatus.CREATED);
+                return new ResponseEntity<>("Resource registered with uuid: " + uuid,
+                        HttpStatus.CREATED);
             } else {
-                return new ResponseEntity<>("Resource registered with uuid: " + offeredResourceService.addResource(resourceMetadata), HttpStatus.CREATED);
+                final var new_uuid = offeredResourceService.addResource(resourceMetadata);
+                return new ResponseEntity<>("Resource registered with uuid: " + new_uuid.toString(),
+                        HttpStatus.CREATED);
             }
-        } catch (Exception e) {
-            LOGGER.error("Resource could not be registered: {}", e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (InvalidResourceException exception) {
+            LOGGER.warn("The resource could not be added. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be added.",
+                    HttpStatus.NOT_ACCEPTABLE);
+        } catch(ResourceAlreadyExists exception) {
+            LOGGER.info("The resource could not be added. It already exists.", exception);
+            return new ResponseEntity<>("The resource could not be added. It already exits.",
+                    HttpStatus.FOUND);
+        } catch(ResourceException exception) {
+            LOGGER.error("The resource could not be added. Something went wrong.", exception);
+            return new ResponseEntity<>("The resource could not be added.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -89,14 +117,20 @@ public class ResourceController {
     @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<Object> updateResource(@Parameter(description = "The resource uuid.", required = true)
-            @PathVariable("resource-id") UUID id, @RequestBody ResourceMetadata resourceMetadata) throws IllegalArgumentException {
+    public ResponseEntity<String> updateResource(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID id,
+            @RequestBody ResourceMetadata resourceMetadata) throws IllegalArgumentException {
         try {
             offeredResourceService.updateResource(id, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            LOGGER.error("Resource could not be updated: {}", e.getMessage());
-            return new ResponseEntity<>("Resource could not be updated: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch(InvalidResourceException exception) {
+            LOGGER.warn("The resource could not be updated. The resource is not valid.", exception);
+            return new ResponseEntity<>("The resource could not be updated.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ResourceNotFoundException  exception) {
+            LOGGER.info("The resource could not be updated. It could not be found.", exception);
+            return new ResponseEntity<>("Resource could not be updated.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -104,23 +138,39 @@ public class ResourceController {
      * Gets resource metadata by id.
      *
      * @param id The resource id.
-     * @return Matadata or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
+     * @return Metadata or an error response.
      */
     @Operation(summary = "Get Resource", description = "Get the resource's metadata by its uuid.")
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getResource(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID id) throws IllegalArgumentException {
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID id)  {
         try {
-            return new ResponseEntity<>(offeredResourceService.getMetadata(id), HttpStatus.OK);
-        } catch (Exception e) {
             try {
-                return new ResponseEntity<>(requestedResourceService.getMetadata(id), HttpStatus.OK);
-            } catch (Exception f) {
-                return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+                // Try to find the data in the offeredResourceService
+                return new ResponseEntity<>(offeredResourceService.getMetadata(id),
+                        HttpStatus.OK);
+            } catch (ResourceNotFoundException offeredResourceServiceException) {
+                try {
+                    // Try to find the data in the requestedResourceService
+                    LOGGER.info("Could not find the resource %s in the offered resources.", offeredResourceServiceException);
+                    return new ResponseEntity<>(requestedResourceService.getMetadata(id),
+                            HttpStatus.OK);
+                } catch (ResourceNotFoundException requestedResourceServiceException) {
+                    // The data could not be found in the offeredResourceService and requestedResourceService
+                    LOGGER.warn(String.format("Could not find the resource %s in the requested " +
+                                    "resources.", id),
+                            offeredResourceServiceException);
+                    return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+                }
             }
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -129,24 +179,28 @@ public class ResourceController {
      *
      * @param id The resource id.
      * @return OK or error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Delete Resource", description = "Delete a resource by its uuid.")
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<Object> deleteResource(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID id) throws IllegalArgumentException {
-        try {
-            offeredResourceService.deleteResource(id);
-            return new ResponseEntity<>("Resource was deleted successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            try {
-                requestedResourceService.deleteResource(id);
-                return new ResponseEntity<>("Resource was deleted successfully", HttpStatus.OK);
-            } catch (Exception f) {
-                LOGGER.error("Resource could not be deleted: {}", e.getMessage());
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<String> deleteResource(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID id) {
+        if (offeredResourceService.deleteResource(id)) {
+            LOGGER.info(String.format("Deleted resource %s from offeredResourceService", id));
+            return new ResponseEntity<>("Resource was deleted successfully from the " +
+                    "offeredResourceService.",
+                    HttpStatus.OK);
+        } else {
+            if (requestedResourceService.deleteResource(id)) {
+                LOGGER.info(String.format("Deleted resource %s from requestedResourceService", id));
+                return new ResponseEntity<>("Resource was deleted successfully from the " +
+                        "requestedResourceService.",
+                        HttpStatus.OK);
+            } else {
+                LOGGER.warn(String.format("Resource %s could not be found.", id));
+                return new ResponseEntity<>("The resource could not be found.",
+                        HttpStatus.NOT_FOUND);
             }
         }
     }
@@ -155,28 +209,36 @@ public class ResourceController {
      * Updates usage policy.
      *
      * @param resourceId The resource id.
+     * @param policy     The resource's usage policy as string.
      * @return OK or an error response.
-     * @param policy The resource's usage policy as string.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Update Resource Contract", description = "Update the resource's usage policy.")
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<Object> updateContract(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "A new resource contract.", required = true) @RequestBody String policy) throws IllegalArgumentException {
+    public ResponseEntity<String> updateContract(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId,
+            @Parameter(description = "A new resource contract.", required = true)
+            @RequestBody String policy) throws IllegalArgumentException {
         try {
             policyHandler.getPattern(policy);
-        } catch (IOException e) {
-            return new ResponseEntity<>("Policy syntax error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        try {
             offeredResourceService.updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+        } catch (IOException exception) {
+            // The policy is not in the correct format.
+            LOGGER.info("The policy is malformed.");
+            return new ResponseEntity<>("Policy syntax error.", HttpStatus.BAD_REQUEST);
+        } catch (ResourceNotFoundException exception) {
+            // The resource could not be found.
+            LOGGER.warn("Resource could not be found. " + resourceId);
+            return new ResponseEntity<>("The resource could not be found.",
+                    HttpStatus.NOT_FOUND);
+        } catch(InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -185,21 +247,39 @@ public class ResourceController {
      *
      * @param resourceId The resource id.
      * @return Contract or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Get Resource Contract", description = "Get the resource's usage policy.")
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getContract(@Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId) throws IllegalArgumentException {
+    public ResponseEntity<String> getContract(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId) throws IllegalArgumentException {
         try {
-            return new ResponseEntity<>(offeredResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
-        } catch (Exception e) {
             try {
-                return new ResponseEntity<>(requestedResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
-            } catch (Exception f) {
-                return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+                // Try to find the data in the offeredResourceService
+                return new ResponseEntity<>(offeredResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
+            } catch (ResourceNotFoundException offeredResourceServiceException) {
+                try {
+                    // Try to find the data in the requestedResourceService
+                    LOGGER.info("Could not find the resource %s in the offered resources.", offeredResourceServiceException);
+                    return new ResponseEntity<>(requestedResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
+                } catch (ResourceNotFoundException requestedResourceServiceException) {
+                    // The data could not be found in the offeredResourceService and requestedResourceService
+                    LOGGER.warn("Could not find the resource %s in the requested resources.",
+                            offeredResourceServiceException);
+                    return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+                }
             }
+        } catch (ResourceNotFoundException exception) {
+            // The resource could not be found.
+            LOGGER.info("Resource could not be found. " + resourceId);
+            return new ResponseEntity<>("The resource could not be found.", HttpStatus.NOT_FOUND);
+        } catch(InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -208,24 +288,33 @@ public class ResourceController {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Get Data Access", description = "Get the number of the resource's data access.")
     @RequestMapping(value = "/{resource-id}/access", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getAccess(@Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId) throws IllegalArgumentException {
+    public ResponseEntity<Object> getAccess(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId) {
         try {
-            return new ResponseEntity<>(requestedResourceService.getResource(resourceId).getAccessed(), HttpStatus.OK);
-        } catch (Exception f) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+            final var resource = requestedResourceService.getResource(resourceId);
+            if (resource == null) {
+                return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+            }
+
+            return new ResponseEntity<>(resource.getAccessed(), HttpStatus.OK);
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
     /**
      * Adds resource representation.
      *
-     * @param resourceId The resource id.
+     * @param resourceId     The resource id.
      * @param representation A new representation.
      * @return OK or an error response.
      * @throws java.lang.IllegalArgumentException if any.
@@ -234,89 +323,138 @@ public class ResourceController {
     @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> addRepresentation(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation,
-            @RequestParam(value = "id", required = false) UUID uuid) throws IllegalArgumentException {
+    public ResponseEntity<String> addRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId,
+            @Parameter(description = "A new resource representation.", required = true)
+            @RequestBody ResourceRepresentation representation,
+            @RequestParam(value = "id", required = false) UUID uuid) {
         try {
-            if(uuid != null){
+            if (uuid != null) {
                 offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
-            }else {
+            } else {
                 uuid = offeredResourceService.addRepresentation(resourceId, representation);
             }
-            return new ResponseEntity<>("Representation was saved successfully with uuid: " + uuid, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+
+            return new ResponseEntity<>("Representation was saved successfully with uuid " + uuid,
+                    HttpStatus.CREATED);
+        } catch(ResourceAlreadyExists exception) {
+            LOGGER.info("The representation could not be added. It already exists.", exception);
+            return new ResponseEntity<>("The representation could not be added. It already exits.",
+                    HttpStatus.FOUND);
+        } catch (ResourceNotFoundException exception) {
+            // The resource could not be found.
+            LOGGER.info("The representation could not be found. " + resourceId);
+            return new ResponseEntity<>("The representation could not be found.",
+                    HttpStatus.NOT_FOUND);
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
     /**
      * Updates resource representation.
      *
-     * @param resourceId The resource id.
+     * @param resourceId       The resource id.
      * @param representationId The representation id.
-     * @param representation A new representation.
+     * @param representation   A new representation.
      * @return OK or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Update representation", description = "Update a resource's representation by its uuid.")
+    @Operation(summary = "Update representation",
+            description = "Update a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<Object> updateRepresentation(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable("representation-id") UUID representationId,
-            @Parameter(description = "A new resource representation.", required = true) @RequestBody ResourceRepresentation representation) throws IllegalArgumentException {
+    public ResponseEntity<String> updateRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") UUID representationId,
+            @Parameter(description = "A new resource representation.", required = true)
+            @RequestBody ResourceRepresentation representation) {
         try {
             offeredResourceService.updateRepresentation(resourceId, representationId, representation);
-            return new ResponseEntity<>("Representation was updated successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
+        } catch (ResourceNotFoundException exception) {
+            LOGGER.info(String.format("The Resource representation %s could not be found.",
+                    resourceId));
+            return new ResponseEntity<>("The representation could not be found.",
+                    HttpStatus.NOT_FOUND);
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
     /**
      * Adds resource representation.
      *
-     * @param resourceId The resource id.
+     * @param resourceId       The resource id.
      * @param representationId The representation id.
      * @return OK or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Get Resource Representation", description = "Get the resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getRepresentation(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable("representation-id") UUID representationId) throws IllegalArgumentException {
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") UUID representationId) {
         try {
-            return new ResponseEntity<>(offeredResourceService.getRepresentation(resourceId, representationId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+            final var representation = offeredResourceService.getRepresentation(resourceId,
+                    representationId);
+            return new ResponseEntity<>(representation, HttpStatus.OK);
+        }catch (ResourceNotFoundException exception) {
+            // The resource could not be found.
+            LOGGER.info(String.format("The Resource representation %s could not be found.", resourceId));
+            return new ResponseEntity<>("The representation could not be found.",
+                    HttpStatus.NOT_FOUND);
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 
     /**
      * Removes resource representation.
      *
-     * @param resourceId The resource id.
+     * @param resourceId       The resource id.
      * @param representationId The representation id.
      * @return OK or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
-    @Operation(summary = "Remove Resource Representation", description = "Remove a resource's representation by its uuid.")
+    @Operation(summary = "Remove Resource Representation",
+            description = "Remove a resource's representation by its uuid.")
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<Object> deleteRepresentation(
-            @Parameter(description = "The resource uuid.", required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable("representation-id") UUID representationId) throws IllegalArgumentException {
+    public ResponseEntity<String> deleteRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") UUID representationId) {
         try {
             offeredResourceService.deleteRepresentation(resourceId, representationId);
             return new ResponseEntity<>("Representation was deleted successfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+        }catch (ResourceNotFoundException exception) {
+            // The resource could not be found.
+            LOGGER.info(String.format("The Resource representation %s could not be found.", resourceId));
+            return new ResponseEntity<>("The representation could not be found.",
+                    HttpStatus.NOT_FOUND);
+        } catch (InvalidResourceException exception) {
+            // The resource has been found but is in an invalid format.
+            LOGGER.warn("The resource could not be received. The resource is not valid.",
+                    exception);
+            return new ResponseEntity<>("The resource could not be received. Not a " +
+                    "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

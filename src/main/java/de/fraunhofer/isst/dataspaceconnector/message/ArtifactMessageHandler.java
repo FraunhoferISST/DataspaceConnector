@@ -92,7 +92,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * the input as string the messagePayload-InputStream is converted to a String.
      *
      * @throws ConnectorConfigurationException - if no connector is configurated.
-     * @throws ResourceTypeException - if the resources found are not identified via uuid.
      * @throws RuntimeException - if the response body failed to be build.
      */
     @Override
@@ -156,12 +155,29 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                             String data = null;
                             try {
                                 data = resourceService.getDataByRepresentation(resourceId, artifactId);
-                            } catch (Exception exception) {
-                                //NOTE: See if this can be made more concrete
-                                throw new IOException(String.format("The data requested by %s for resource %s"
-                                                + " of artifact %s could not be received.",
-                                        requestMessage.getId(), resourceId, artifactId),
-                                        exception);
+                            }catch(ResourceNotFoundException exception) {
+                                LOGGER.info(String.format("Representation %s of resource %s " +
+                                                "requested by %s could not be found.", artifactId,
+                                        resourceId, requestMessage.getId()), exception);
+                                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                                        "Resource not found.", connector.getId(),
+                                        connector.getOutboundModelVersion());
+                            }catch(InvalidResourceException exception) {
+                                LOGGER.info(String.format("Representation %s of resource %s " +
+                                                "requested by %s is not in a valid format.",
+                                        artifactId,
+                                        resourceId, requestMessage.getId()), exception);
+                                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                                        "Resource not found.", connector.getId(),
+                                        connector.getOutboundModelVersion());
+                            }catch(ResourceException exception){
+                                LOGGER.warn(String.format("Representation %s of resource %s " +
+                                                "requested by %s could not be received.",
+                                        artifactId,
+                                        resourceId, requestMessage.getId()), exception);
+                                return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                                        "Something went wrong.", connector.getId(),
+                                        connector.getOutboundModelVersion());
                             }
 
                             Assert.notNull(data, "The data string should not be empty.");
@@ -204,15 +220,36 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                     } catch (ConstraintViolationException exception) {
                         // The response could not be constructed.
                         throw new RuntimeException("Failed to construct the response message.", exception);
+                    } catch (ResourceNotFoundException exception) {
+                        // The resource could be not be found.
+                        LOGGER.info(String.format("The resource %s requested by %s could not be " +
+                                "found.", resourceId, requestMessage.getId()), exception);
+                        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                                "Resource not found.", connector.getId(),
+                                connector.getOutboundModelVersion());
                     }
                 } catch (UUIDFormatException exception) {
                     // The resource from the database is not identified via uuids.
-                    throw new ResourceTypeException(String.format("The resource id %s is not an uuid for"
-                                    + "artifactId %s in request %s",
-                            requestedResource.getId(),
-                            artifactId,
-                            requestMessage.getId()),
-                            exception);
+                    LOGGER.info(String.format("The resource requested by %s is not valid. The " +
+                                    "uuid is not valid.",
+                            requestMessage.getId()), new InvalidResourceException(exception));
+                    return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                            "Resource not found.", connector.getId(),
+                            connector.getOutboundModelVersion());
+                } catch (ResourceNotFoundException exception) {
+                    // The resource could be not be found.
+                    LOGGER.info(String.format("The resource requested by %s could not be " +
+                        "found.", requestMessage.getId()), exception);
+                    return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                            "Resource not found.", connector.getId(),
+                            connector.getOutboundModelVersion());
+                } catch (InvalidResourceException exception) {
+                    // The resource could be not be found.
+                    LOGGER.info(String.format("The resource requested by %s is not valid.",
+                            requestMessage.getId()), exception);
+                    return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                            "Resource not found.", connector.getId(),
+                            connector.getOutboundModelVersion());
                 }
             } catch (UUIDFormatException exception) {
                 // No resource uuid could be found in the request, reject the message.
