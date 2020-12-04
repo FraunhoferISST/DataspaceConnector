@@ -126,7 +126,30 @@ public class RequestArtifactTest {
 
         representation.setSource(source);
 
-        return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
+        String policy = "{\n" +
+                "  \"@context\" : {\n" +
+                "    \"ids\" : \"https://w3id.org/idsa/core/\"\n" +
+                "  },\n" +
+                "  \"@type\" : \"ids:ContractOffer\",\n" +
+                "  \"@id\" : \"https://w3id.org/idsa/autogen/contractOffer/b03ec7da-d208-4dea-91e5-5683703732a9\",\n" +
+                "  \"ids:permission\" : [ {\n" +
+                "    \"@type\" : \"ids:Permission\",\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/429f3e71-df2c-47f4-80f2-7eff27ed4542\",\n" +
+                "    \"ids:action\" : [ {\n" +
+                "      \"@id\" : \"idsc:USE\"\n" +
+                "    } ],\n" +
+                "    \"ids:description\" : [ {\n" +
+                "      \"@value\" : \"provide-access\",\n" +
+                "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "    } ],\n" +
+                "    \"ids:title\" : [ {\n" +
+                "      \"@value\" : \"Example Usage Policy\",\n" +
+                "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "    } ]\n" +
+                "  } ]\n" +
+                "}";
+
+        return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), policy,
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
                 Collections.singletonMap(representationId, representation));
     }
