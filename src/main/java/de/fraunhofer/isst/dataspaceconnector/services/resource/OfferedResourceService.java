@@ -53,7 +53,7 @@ public interface OfferedResourceService {
      * @param resourceId a {@link java.util.UUID} object.
      * @param data a {@link java.lang.String} object.
      */
-    void addData(UUID resourceId, String data) throws ResourceException;
+    void addData(UUID resourceId, String data) throws InvalidResourceException, ResourceNotFoundException;
 
     /**
      * <p>updateResource.</p>
