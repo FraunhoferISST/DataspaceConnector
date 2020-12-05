@@ -29,17 +29,20 @@ import java.security.GeneralSecurityException;
  */
 @Service
 public class HttpUtils {
+
     private final ClientProvider clientProvider;
 
     /**
-     * <p>Constructor for HttpUtils.</p>
+     * Constructor for HttpUtils.
      *
      * @param configurationContainer a {@link ConfigurationContainer} object.
      */
     @Autowired
-    public HttpUtils(@NotNull ConfigurationContainer configurationContainer) throws IllegalArgumentException, GeneralSecurityException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+    public HttpUtils(@NotNull ConfigurationContainer configurationContainer)
+        throws IllegalArgumentException, GeneralSecurityException {
+      if (configurationContainer == null) {
+        throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+      }
 
         this.clientProvider = new ClientProvider(configurationContainer);
 
@@ -52,11 +55,11 @@ public class HttpUtils {
      * @param address The url.
      * @return The http response when http code is ok (200).
      * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException - if an error occurred when connecting or processing the http
-     * request.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
     public String sendHttpGetRequest(String address) throws MalformedURLException,
-            RuntimeException {
+        RuntimeException {
         try {
             final var url = new URL(address);
 
@@ -89,7 +92,7 @@ public class HttpUtils {
             } else {
                 // This function should never be thrown
                 throw new NotImplementedException("Unsupported return value " +
-                        "from getResponseCode.");
+                    "from getResponseCode.");
             }
 
         } catch (MalformedURLException exception) {
@@ -107,10 +110,11 @@ public class HttpUtils {
      * @param address a {@link java.lang.String} object.
      * @return The http body of the response when http code is ok (200).
      * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException - if an error occurred when connecting or processing the http
-     * request.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
-    public String sendHttpsGetRequest(String address) throws MalformedURLException, RuntimeException {
+    public String sendHttpsGetRequest(String address)
+        throws MalformedURLException, RuntimeException {
         try {
             final var request = new Request.Builder().url(address).get().build();
 
@@ -124,7 +128,7 @@ public class HttpUtils {
             } else {
                 // Read the response
                 final var rawResponseString =
-                        new String(response.body().byteStream().readAllBytes());
+                    new String(response.body().byteStream().readAllBytes());
                 response.close();
 
                 return rawResponseString;
@@ -146,18 +150,18 @@ public class HttpUtils {
      * @param password The password.
      * @return The http response when http code is ok (200).
      * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException - if an error occurred when connecting or processing the http
-     * request.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,
-                                                   String password) throws MalformedURLException, RuntimeException {
+        String password) throws MalformedURLException, RuntimeException {
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
         try {
             final var request = new Request.Builder().url(address)
-                    .header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
+                .header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
 
             final var client = clientProvider.getClient();
             final var response = client.newCall(request).execute();
