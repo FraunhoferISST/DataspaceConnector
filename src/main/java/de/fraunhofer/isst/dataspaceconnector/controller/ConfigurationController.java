@@ -26,16 +26,13 @@ import java.io.IOException;
 @RequestMapping("/admin/api")
 @Tag(name = "Connector Configuration", description = "Endpoints for connector configuration")
 public class ConfigurationController {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 
     private final ConfigurationContainer configurationContainer;
     private final SerializerProvider serializerProvider;
 
     /**
-     * Constructor.
+     * Constructor
      *
      * @param configurationContainer The configuration.
      * @param serializerProvider     The serializer.
@@ -64,7 +61,7 @@ public class ConfigurationController {
         try {
             final var serializer = serializerProvider.getSerializer();
             if (serializer == null) {
-                throw new NullPointerException();
+                throw new NullPointerException("No configuration serializer has been set.");
             }
 
             final var old_configurationModel = configurationContainer.getConfigModel();

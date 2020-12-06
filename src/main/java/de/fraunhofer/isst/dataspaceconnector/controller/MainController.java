@@ -48,7 +48,7 @@ public class MainController {
     private final PolicyHandler policyHandler;
 
     /**
-     * <p>Constructor for MainController.</p>
+     * Constructor for MainController.
      *
      * @param policyHandler            a {@link PolicyHandler} object.
      * @param tokenProvider            a {@link TokenProvider} object.
@@ -154,7 +154,7 @@ public class MainController {
     }
 
     /**
-     * <p>getConnector.</p>
+     * Get the configuration of the connector.
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
@@ -201,7 +201,7 @@ public class MainController {
     }
 
     /**
-     * <p>getPolicyPattern.</p>
+     * Get the policy pattern.
      *
      * @param policy a {@link java.lang.String} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
@@ -226,9 +226,9 @@ public class MainController {
     }
 
     /**
-     * <p>getExampleUsagePolicy.</p>
+     * Get an example policy pattern.
      *
-     * @param pattern a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler.Pattern} object.
+     * @param pattern a {@link PolicyHandler.Pattern} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get example policy",

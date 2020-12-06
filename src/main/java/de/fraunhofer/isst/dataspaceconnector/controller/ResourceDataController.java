@@ -33,7 +33,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
     private final RequestedResourceService requestedResourceService;
 
     /**
-     * <p>Constructor for ResourceDataController.</p>
+     * Constructor
      *
      * @param offeredResourceService a {@link OfferedResourceService} object.
      * @param requestedResourceService a {@link RequestedResourceService} object.
@@ -95,11 +95,9 @@ public class ResourceDataController { // Header: Content-Type: application/json
     @RequestMapping(value = "/{resource-id}/data", method = RequestMethod.GET)
     // params = {"type=string"} NOT SUPPORTED with OpenAPI
     @ResponseBody
-    public ResponseEntity<String> getDataById(
-            @Parameter(description = "The resource uuid.", required = true,
-                    example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-            @PathVariable("resource-id") UUID id)
-            throws IllegalArgumentException {
+    public ResponseEntity<String> getDataById(@Parameter(description = "The resource uuid.",
+        required = true, example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @PathVariable("resource-id") UUID id)  {
         try {
             try {
                 return new ResponseEntity<>(offeredResourceService.getData(id), HttpStatus.OK);
@@ -144,7 +142,9 @@ public class ResourceDataController { // Header: Content-Type: application/json
             @PathVariable("representation-id") UUID representationId){
         try {
             try {
-                return new ResponseEntity<>(offeredResourceService.getDataByRepresentation(resourceId, representationId), HttpStatus.OK);
+                return new ResponseEntity<>(
+                    offeredResourceService.getDataByRepresentation(resourceId, representationId),
+                    HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.info(String.format("Could not find resource %s in offeredResourceService",
                         resourceId),  offeredResourceServiceException);

@@ -29,15 +29,14 @@ import java.util.UUID;
 @Tag(name = "Connector: IDS Connector Communication",
         description = "Endpoints for invoking external connector requests")
 public class RequestController {
-    /** Constant <code>LOGGER</code> */
-    public static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
 
     private final TokenProvider tokenProvider;
     private final ConnectorRequestServiceImpl requestMessageService;
     private final ConnectorRequestServiceUtils connectorRequestServiceUtils;
 
     /**
-     * <p>Constructor for RequestController.</p>
+     * Constructor
      *
      * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
      * @param requestMessageService a {@link ConnectorRequestServiceImpl} object.

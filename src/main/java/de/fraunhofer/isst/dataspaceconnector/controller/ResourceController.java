@@ -22,8 +22,8 @@ import java.util.UUID;
 
 /**
  * This class provides endpoints for the internal resource handling. Resources can be created and modified with it's
- * {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} including {@link de.fraunhofer.iais.eis.Contract}
- * and {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation}.
+ * {@link ResourceMetadata} including {@link de.fraunhofer.iais.eis.Contract}
+ * and {@link ResourceRepresentation}.
  *
  * @version $Id: $Id
  */
@@ -31,10 +31,7 @@ import java.util.UUID;
 @RequestMapping("/admin/api/resources")
 @Tag(name = "Connector: Resource Handling", description = "Endpoints  for resource handling")
 public class ResourceController {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
     private final OfferedResourceService offeredResourceService;
     private final RequestedResourceService requestedResourceService;
@@ -42,11 +39,11 @@ public class ResourceController {
     private final PolicyHandler policyHandler;
 
     /**
-     * <p>Constructor for ResourceController.</p>
+     * Constructor
      *
      * @param offeredResourceService   a {@link OfferedResourceService} object.
      * @param requestedResourceService a {@link RequestedResourceService} object.
-     * @param policyHandler            a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
+     * @param policyHandler            a {@link PolicyHandler} object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
@@ -284,7 +281,7 @@ public class ResourceController {
     }
 
     /**
-     * <p>getAccess.</p>
+     * Get how often resource data has been accessed.
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
@@ -317,8 +314,6 @@ public class ResourceController {
      * @param resourceId     The resource id.
      * @param representation A new representation.
      * @return OK or an error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)

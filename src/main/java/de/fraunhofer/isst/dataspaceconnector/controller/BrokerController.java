@@ -33,17 +33,14 @@ import java.util.UUID;
 @Tag(name = "Connector: IDS Broker Communication",
         description = "Endpoints for invoking broker communication")
 public class BrokerController {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
     private final TokenProvider tokenProvider;
     private final BrokerService brokerService;
     private final OfferedResourceService offeredResourceService;
 
     /**
-     * <p>Constructor for BrokerController.</p>
+     * Constructor
      *
      * @param tokenProvider          a {@link TokenProvider} object.
      * @param configurationContainer a
