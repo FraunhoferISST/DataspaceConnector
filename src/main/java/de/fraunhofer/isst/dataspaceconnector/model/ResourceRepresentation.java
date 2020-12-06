@@ -1,6 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.persistence.Column;
@@ -18,18 +22,9 @@ import java.util.UUID;
         name = "ResourceRepresentation",
         description = "Representation of a resource",
         oneOf = ResourceRepresentation.class,
-        example = "{\n" +
-                "      \"type\": \"json\",\n" +
-                "      \"byteSize\": 105,\n" +
-                "      \"name\": \"Open Weather Map API\",\n" +
-                "      \"source\": {\n" +
-                "        \"type\": \"http-get\",\n" +
-                "        \"url\": \"https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02\",\n" +
-                "        \"username\": \"-\",\n" +
-                "        \"password\": \"-\"\n" +
-                "      }\n" +
-                "    }"
+        example = "{\"uuid\":\"55795317-0aaa-4fe1-b336-b2e26a00597f\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}"
 )
+@JsonInclude(Include.NON_NULL)
 public class ResourceRepresentation implements Serializable {
     @Id
     @JsonProperty("uuid")
@@ -159,5 +154,17 @@ public class ResourceRepresentation implements Serializable {
      */
     public void setSource(BackendSource source) {
         this.source = source;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = null;
+        try {
+            jsonString = mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
     }
 }

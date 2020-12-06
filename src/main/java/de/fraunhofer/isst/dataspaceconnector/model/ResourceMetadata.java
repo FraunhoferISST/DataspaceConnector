@@ -1,10 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Collection;
+import java.util.HashMap;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.validation.constraints.NotNull;
@@ -17,27 +24,17 @@ import java.util.UUID;
 /**
  * This class provides a model to handle data resource metadata.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @Schema(
-        name = "ResourceMetadata",
-        description = "Metadata of a resource",
-        oneOf = ResourceMetadata.class,
-        example = "{\n" +
-                "  \"title\": \"Sample Resource\",\n" +
-                "  \"description\": \"This is an example resource containing weather data.\",\n" +
-                "  \"keywords\": [\n" +
-                "    \"weather\",\n" +
-                "    \"data\",\n" +
-                "    \"sample\"\n" +
-                "  ],\n" +
-                "  \"owner\": \"https://openweathermap.org/\",\n" +
-                "  \"license\": \"http://opendatacommons.org/licenses/odbl/1.0/\",\n" +
-                "  \"version\": \"1.0\"\n" +
-                "}\n"
+    name = "ResourceMetadata",
+    description = "Metadata of a resource",
+    oneOf = ResourceMetadata.class,
+    example = "{\"title\":\"ExampleResource\",\"description\":\"ExampleResourceDescription\",\"policy\":\"Example policy\",\"representations\":[{\"uuid\":\"8e3a5056-1e46-42e1-a1c3-37aa08b2aedd\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}]}"
 )
+@JsonInclude(Include.NON_NULL)
 public class ResourceMetadata implements Serializable {
+
     @JsonProperty("title")
     private String title;
 
@@ -65,6 +62,8 @@ public class ResourceMetadata implements Serializable {
     @ElementCollection
     @Column(columnDefinition = "BYTEA")
     @JsonProperty("representations")
+    @JsonSerialize(converter = RepresentationsToJson.class)
+    @JsonDeserialize(converter = JsonToRepresentation.class)
     private Map<UUID, ResourceRepresentation> representations;
 
     /**
@@ -77,17 +76,17 @@ public class ResourceMetadata implements Serializable {
     /**
      * <p>Constructor for ResourceMetadata.</p>
      *
-     * @param title a {@link java.lang.String} object.
-     * @param description a {@link java.lang.String} object.
-     * @param keywords a {@link java.util.List} object.
-     * @param policy a {@link java.lang.String} object.
-     * @param owner a {@link java.net.URI} object.
-     * @param license a {@link java.net.URI} object.
-     * @param version a {@link java.lang.String} object.
+     * @param title           a {@link java.lang.String} object.
+     * @param description     a {@link java.lang.String} object.
+     * @param keywords        a {@link java.util.List} object.
+     * @param policy          a {@link java.lang.String} object.
+     * @param owner           a {@link java.net.URI} object.
+     * @param license         a {@link java.net.URI} object.
+     * @param version         a {@link java.lang.String} object.
      * @param representations a {@link java.util.List} object.
      */
     public ResourceMetadata(String title, String description, List<String> keywords, String policy,
-                            URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations) {
+        URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations) {
         this.title = title;
         this.description = description;
         this.keywords = keywords;
@@ -242,7 +241,9 @@ public class ResourceMetadata implements Serializable {
         this.representations = representations;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
@@ -253,5 +254,37 @@ public class ResourceMetadata implements Serializable {
             e.printStackTrace();
         }
         return jsonString;
+    }
+
+    private static class RepresentationsToJson extends
+        StdConverter<Map<UUID, ResourceRepresentation>, Collection<ResourceRepresentation>> {
+
+        @Override
+        public Collection<ResourceRepresentation> convert(Map<UUID, ResourceRepresentation> value) {
+            return value.values();
+        }
+    }
+
+    private static class JsonToRepresentation extends
+        StdConverter<String, Map<UUID, ResourceRepresentation>> {
+
+        @Override
+        public Map<UUID, ResourceRepresentation> convert(String value) {
+            final var objectMapper = new ObjectMapper();
+            try {
+                final var representations = objectMapper
+                    .readValue(value, ResourceRepresentation[].class);
+                var output = new HashMap<UUID, ResourceRepresentation>();
+                for (var representation : representations) {
+                    output.put(representation.getUuid(), representation);
+                }
+
+                return output;
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
     }
 }

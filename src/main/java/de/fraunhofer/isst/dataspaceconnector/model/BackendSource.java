@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -7,21 +9,22 @@ import java.io.Serializable;
 import java.net.URI;
 
 /**
- * <p>BackendSource class.</p>
+ * BackendSource class.
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 @Schema(
-        name = "BackendSource",
-        description = "Information of the backend system.",
-        oneOf = BackendSource.class
+    name = "BackendSource",
+    description = "Information of the backend system.",
+    oneOf = BackendSource.class
 )
+@JsonInclude(Include.NON_NULL)
 public class BackendSource implements Serializable {
+
     @Schema(
-            name = "Type",
-            description = "Information of the backend system.",
-            oneOf = Type.class
+        name = "Type",
+        description = "Information of the backend system.",
+        oneOf = Type.class
     )
     public enum Type {
         @JsonProperty("local")
@@ -58,16 +61,16 @@ public class BackendSource implements Serializable {
     private String password;
 
     /**
-     * <p>Constructor for BackendSource.</p>
+     * Constructor for BackendSource.
      */
     public BackendSource() {
     }
 
     /**
-     * <p>Constructor for BackendSource.</p>
+     * Constructor for BackendSource.
      *
-     * @param type a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
-     * @param url a {@link java.net.URI} object.
+     * @param type     a {@link Type} object.
+     * @param url      a {@link java.net.URI} object.
      * @param username a {@link java.lang.String} object.
      * @param password a {@link java.lang.String} object.
      */
@@ -79,7 +82,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Getter for the field <code>type</code>.</p>
+     * Getter for the field type.
      *
      * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
      */
@@ -88,7 +91,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Setter for the field <code>type</code>.</p>
+     * Setter for the field type.
      *
      * @param type a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
      */
@@ -97,7 +100,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Getter for the field <code>url</code>.</p>
+     * Getter for the field url.
      *
      * @return a {@link java.net.URI} object.
      */
@@ -106,7 +109,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Setter for the field <code>url</code>.</p>
+     * Setter for the field url.
      *
      * @param url a {@link java.net.URI} object.
      */
@@ -115,7 +118,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Getter for the field <code>username</code>.</p>
+     * Getter for the field username.
      *
      * @return a {@link java.lang.String} object.
      */
@@ -124,7 +127,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Setter for the field <code>username</code>.</p>
+     * Setter for the field username.
      *
      * @param username a {@link java.lang.String} object.
      */
@@ -133,7 +136,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Getter for the field <code>password</code>.</p>
+     * Getter for the field password.
      *
      * @return a {@link java.lang.String} object.
      */
@@ -142,7 +145,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * <p>Setter for the field <code>password</code>.</p>
+     * Setter for the field password.
      *
      * @param password a {@link java.lang.String} object.
      */
