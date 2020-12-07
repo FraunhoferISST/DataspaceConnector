@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public ArrayList<Resource> getResourceList() {
-        return new ArrayList<>(offeredResources.values());
+        return new ArrayList<>(getAllResources().parallelStream().map(resource -> idsUtils.getAsResource(resource)).collect(Collectors.toList()));
     }
 
     /**
@@ -81,7 +82,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public Map<UUID, Resource> getOfferedResources() {
-        return offeredResources;
+        return getAllResources().parallelStream().collect(Collectors.toMap(OfferedResource::getUuid, resource->idsUtils.getAsResource(resource)));
     }
 
     /**
@@ -208,6 +209,10 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             invalidResourceGuard(resource.get());
             return resource.get();
         }
+    }
+
+    public List<OfferedResource> getAllResources() {
+        return offeredResourceRepository.findAll();
     }
 
     /**
@@ -455,4 +460,39 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             throw new ResourceException("The resource has no defined backend.");
         }
     }
+
+//    private void createOrUpdateMetadata(UUID resourceId, ResourceMetadata metadata) {
+//        var resource = getResource(resourceId);
+//        if(resource == null){
+//            // create new resource
+//            addResourceWithId(resourceId, metadata);
+//        }else{
+//            // update existing resource
+//            var tmp = getMetadata(resourceId);
+//            tmp.getRepresentations().keySet().removeAll(metadata.getRepresentations().keySet());
+//
+//            for(var representation : metadata.getRepresentations().values()) {
+//                createOrUpdateRepresentation(resourceId, representation);
+//            }
+//
+//            for(var representationId : tmp.getRepresentations().keySet()) {
+//                deleteRepresentation(resourceId, representationId);
+//            }
+//        }
+//    }
+//
+//    private void createOrUpdateRepresentation(UUID resourceId, ResourceRepresentation representation) {
+//        if(representation.getUuid() == null) {
+//            // create a new representation
+//            addRepresentation(resourceId, representation);
+//        }else{
+//            if(getRepresentation(resourceId, representation.getUuid()) == null) {
+//                // create a new representation
+//                addRepresentationWithId(resourceId, representation, representation.getUuid());
+//            }else{
+//                // update the representation
+//                updateRepresentation(resourceId, representation.getUuid(), representation);
+//            }
+//        }
+//    }
 }
