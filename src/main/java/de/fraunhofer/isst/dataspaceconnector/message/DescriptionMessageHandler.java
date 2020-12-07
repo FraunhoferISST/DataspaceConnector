@@ -16,6 +16,7 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +32,18 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 /**
  * This @{@link de.fraunhofer.isst.dataspaceconnector.message.DescriptionMessageHandler} handles all
  * incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as
- * part one in the multipart message. This header must have the correct '@type' reference as
- * defined in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName
- * annotation. In this example, the received payload is not defined and will be returned immediately.
- * Usually, the payload would be well defined as well, such that it can be deserialized into a
- * proper Java-Object.
+ * part one in the multipart message. This header must have the correct '@type' reference as defined
+ * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation. In
+ * this example, the received payload is not defined and will be returned immediately. Usually, the
+ * payload would be well defined as well, such that it can be deserialized into a proper
+ * Java-Object.
  *
  * @version $Id: $Id
  */
 @Component
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
 public class DescriptionMessageHandler implements MessageHandler<DescriptionRequestMessageImpl> {
+
     /**
      * Constant <code>LOGGER</code>
      */
@@ -55,34 +57,36 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * <p>Constructor for DescriptionMessageHandler.</p>
      *
-     * @param offeredResourceService a
-     * {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
-     *                object.
-     * @param configurationContainer a
-     * {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param serializerProvider a
-     * {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
-     *
+     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService}
+     *                               object.
+     * @param tokenProvider          a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
+     *                               object.
+     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
+     *                               object.
+     * @param serializerProvider     a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider}
+     *                               object.
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
     public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
-                                     @NotNull TokenProvider tokenProvider,
-                                     @NotNull ConfigurationContainer configurationContainer,
-                                     @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (offeredResourceService == null)
+        @NotNull TokenProvider tokenProvider,
+        @NotNull ConfigurationContainer configurationContainer,
+        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+        }
 
-        if (tokenProvider == null)
+        if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
+        }
 
-        if (configurationContainer == null)
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
 
-        if (serializerProvider == null)
+        if (serializerProvider == null) {
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-
+        }
 
         this.offeredResourceService = offeredResourceService;
         this.tokenProvider = tokenProvider;
@@ -96,11 +100,12 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
+     * @throws RuntimeException - if the response body failed to be build or requestMessage is
+     *                          null.
      */
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
-                                         MessagePayload messagePayload) throws RuntimeException {
+        MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.error("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
@@ -115,19 +120,19 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 // Something went wrong (e.g invalid connector config), try to fix it at a higher
                 // level
                 throw new RuntimeException("Failed to construct a resource description.",
-                        exception);
+                    exception);
             }
         } else {
             // No resource has been requested, return a resource catalog
             try {
                 return constructConnectorSelfDescription(requestMessage.getId(),
-                        requestMessage.getIssuerConnector());
+                    requestMessage.getIssuerConnector());
             } catch (RuntimeException exception) {
                 // Something went wrong (e.g invalid connector config), try to fix it at a higher
                 // level
                 throw new RuntimeException("Failed to construct a connector resource catalog " +
-                        "description.",
-                        exception);
+                    "description.",
+                    exception);
             }
         }
     }
@@ -140,7 +145,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @throws ConnectorConfigurationException - if the connector is not configurated.
      * @throws RuntimeException                - if the response message could not be constructed.
      */
-    private MessageResponse constructResourceDescription(DescriptionRequestMessageImpl requestMessage) throws RuntimeException {
+    private MessageResponse constructResourceDescription(
+        DescriptionRequestMessageImpl requestMessage) throws RuntimeException {
         try {
             // Get a local copy of the connector for read access
             final var connector = getConnector();
@@ -148,16 +154,17 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             try {
                 // Create the response header
                 final var responseMessageHeader = new DescriptionResponseMessageBuilder()
-                        ._securityToken_(tokenProvider.getTokenJWS())
-                        ._correlationMessage_(requestMessage.getId())
-                        ._issued_(getGregorianNow())
-                        ._issuerConnector_(connector.getId())
-                        ._modelVersion_(connector.getOutboundModelVersion())
-                        ._senderAgent_(connector.getId())
-                        ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
-                        .build();
+                    ._securityToken_(tokenProvider.getTokenJWS())
+                    ._correlationMessage_(requestMessage.getId())
+                    ._issued_(getGregorianNow())
+                    ._issuerConnector_(connector.getId())
+                    ._modelVersion_(connector.getOutboundModelVersion())
+                    ._senderAgent_(connector.getId())
+                    ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
+                    .build();
 
-                Assert.notNull(responseMessageHeader, "The responseMessageHeader object cannot be null");
+                Assert.notNull(responseMessageHeader,
+                    "The responseMessageHeader object cannot be null");
 
                 // Find the requested resource
                 final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
@@ -169,22 +176,22 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 } else {
                     // The resource has not been found, inform and reject.
                     LOGGER.info(String.format("Resource %s requested by %s could not be found.",
-                            resourceId, requestMessage.getId()));
+                        resourceId, requestMessage.getId()));
 
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
-                            "The resource %s could not be found.", resourceId), connector.getId()
-                            , connector.getOutboundModelVersion());
+                        "The resource %s could not be found.", resourceId), connector.getId()
+                        , connector.getOutboundModelVersion());
                 }
             } catch (UUIDFormatException exception) {
                 // No resource uuid could be found in the request, reject the message.
                 LOGGER.info(String.format("Description requested by %s has no valid uuid: %s.",
-                        requestMessage.getId(),
-                        requestMessage.getRequestedElement()));
+                    requestMessage.getId(),
+                    requestMessage.getRequestedElement()));
 
                 return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                        "No valid resource id found.",
-                        connector.getId(),
-                        connector.getOutboundModelVersion());
+                    "No valid resource id found.",
+                    connector.getId(),
+                    connector.getOutboundModelVersion());
             } catch (ConstraintViolationException exception) {
                 // The response could not be constructed.
                 throw new RuntimeException("Failed to construct the response message.", exception);
@@ -202,10 +209,11 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @param issuerConnector The id of the connector requesting the resource information.
      * @return A response message containing the resource catalog of the connector.
      * @throws ConnectorConfigurationException - if the connector is not configurated.
-     * @throws RuntimeException                - if the response message could not be constructed or the
-     *                                         connector could not be serialized.
+     * @throws RuntimeException                - if the response message could not be constructed or
+     *                                         the connector could not be serialized.
      */
-    private MessageResponse constructConnectorSelfDescription(URI requestId, URI issuerConnector) throws RuntimeException {
+    private MessageResponse constructConnectorSelfDescription(URI requestId, URI issuerConnector)
+        throws RuntimeException {
         Assert.notNull(serializerProvider, "The SerializerProvider should not be null.");
         Assert.notNull(offeredResourceService, "The OfferedResourceService should not be null.");
         Assert.notNull(tokenProvider, "The TokenProvider should not be null.");
@@ -214,25 +222,26 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             // Create a connector with a list of currently offered resources
             var connector = (BaseConnectorImpl) getConnector();
             connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                    ._offeredResource_(offeredResourceService.getResourceList())
-                    .build()));
-
+                ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
+                .build()));
 
             // Create the response header
             final var responseMessageHeader = new DescriptionResponseMessageBuilder()
-                    ._securityToken_(tokenProvider.getTokenJWS())
-                    ._correlationMessage_(requestId)
-                    ._issued_(getGregorianNow())
-                    ._issuerConnector_(connector.getId())
-                    ._modelVersion_(connector.getOutboundModelVersion())
-                    ._senderAgent_(connector.getId())
-                    ._recipientConnector_(Util.asList(issuerConnector))
-                    .build();
+                ._securityToken_(tokenProvider.getTokenJWS())
+                ._correlationMessage_(requestId)
+                ._issued_(getGregorianNow())
+                ._issuerConnector_(connector.getId())
+                ._modelVersion_(connector.getOutboundModelVersion())
+                ._senderAgent_(connector.getId())
+                ._recipientConnector_(Util.asList(issuerConnector))
+                .build();
 
-            Assert.notNull(responseMessageHeader, "The responseMessageHeader object cannot be null");
+            Assert
+                .notNull(responseMessageHeader, "The responseMessageHeader object cannot be null");
 
             // Answer with the resource description
-            return BodyResponse.create(responseMessageHeader, serializerProvider.getSerializer().serialize(connector));
+            return BodyResponse.create(responseMessageHeader,
+                serializerProvider.getSerializer().serialize(connector));
         } catch (ConnectorConfigurationException exception) {
             // The connector must be set.
             throw exception;

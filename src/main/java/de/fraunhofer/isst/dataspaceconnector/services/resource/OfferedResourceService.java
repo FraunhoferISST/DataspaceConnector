@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +22,7 @@ public interface OfferedResourceService {
      *
      * @return a {@link java.util.List} object.
      */
-    ArrayList<Resource> getResourceList();
+    List<Resource> getResourceList();
 
     /**
      * <p>getOfferedResources.</p>

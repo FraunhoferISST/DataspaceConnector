@@ -29,13 +29,13 @@ import java.util.*;
  */
 @Service
 public class OfferedResourceServiceImpl implements OfferedResourceService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OfferedResourceService.class);
 
     private final OfferedResourceRepository offeredResourceRepository;
     private final HttpUtils httpUtils;
     private final IdsUtils idsUtils;
 
-    private final Map<UUID, Resource> offeredResources;
     private final ContractOffer contractOffer;
 
     /**
@@ -47,24 +47,18 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Autowired
     public OfferedResourceServiceImpl(@NotNull OfferedResourceRepository offeredResourceRepository,
-                                      @NotNull HttpUtils httpUtils, @NotNull IdsUtils idsUtils) {
+        @NotNull HttpUtils httpUtils, @NotNull IdsUtils idsUtils) {
         this.offeredResourceRepository = offeredResourceRepository;
         this.httpUtils = httpUtils;
         this.idsUtils = idsUtils;
 
         contractOffer = new ContractOfferBuilder()
-                ._permission_(Util.asList(new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("provide-access")))
-                        ._action_(Util.asList(Action.USE))
-                        .build()))
-                .build();
-
-        // NOTE: This does not scale
-        offeredResources = new HashMap<>();
-        for (OfferedResource resource : offeredResourceRepository.findAll()) {
-            offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
-        }
+            ._permission_(Util.asList(new PermissionBuilder()
+                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                ._description_(Util.asList(new TypedLiteral("provide-access")))
+                ._action_(Util.asList(Action.USE))
+                .build()))
+            .build();
     }
 
     /**
@@ -73,8 +67,9 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * Returns the resource list.
      */
     @Override
-    public ArrayList<Resource> getResourceList() {
-        return new ArrayList<>(getAllResources().parallelStream().map(resource -> idsUtils.getAsResource(resource)).collect(Collectors.toList()));
+    public List<Resource> getResourceList() {
+        return getAllResources().parallelStream().map(idsUtils::getAsResource)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -82,17 +77,18 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public Map<UUID, Resource> getOfferedResources() {
-        return getAllResources().parallelStream().collect(Collectors.toMap(OfferedResource::getUuid, resource->idsUtils.getAsResource(resource)));
+        return getAllResources().parallelStream().collect(Collectors
+            .toMap(OfferedResource::getUuid, idsUtils::getAsResource));
     }
 
     /**
      * {@inheritDoc}
      * <p>
      * Saves the resources with its metadata as external resource or internal resource.
+     *
      * @throws InvalidResourceException - if the resource is not valid.
-     * @throws ResourceAlreadyExists - if the resource does already exists.
-     * @throws ResourceException - if the resource could not be created.
-     * exists.
+     * @throws ResourceAlreadyExists    - if the resource does already exists.
+     * @throws ResourceException        - if the resource could not be created. exists.
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException {
@@ -113,21 +109,22 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param uuid a {@link java.util.UUID} object.
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata}
+     *                         object.
+     * @param uuid             a {@link java.util.UUID} object.
      * @throws InvalidResourceException - if the resource is not valid.
-     * @throws ResourceAlreadyExists - if the resource does already exists.
+     * @throws ResourceAlreadyExists    - if the resource does already exists.
      */
     @Override
     public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws
-            InvalidResourceException, ResourceAlreadyExists {
-        if (getResource(uuid) != null)
+        InvalidResourceException, ResourceAlreadyExists {
+        if (getResource(uuid) != null) {
             throw new ResourceAlreadyExists("The resource does already exist.");
+        }
 
         resourceMetadata.setPolicy(contractOffer.toRdf());
         final var resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata,
-                "");
+            "");
 
         storeResource(resource);
     }
@@ -139,10 +136,11 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public void addData(UUID resourceId, String data) throws InvalidResourceException,
-            ResourceNotFoundException {
+        ResourceNotFoundException {
         final var resource = getResource(resourceId);
-        if (resource == null)
+        if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
+        }
 
         resource.setData(data);
         storeResource(resource);
@@ -155,10 +153,11 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws
-            InvalidResourceException, ResourceNotFoundException {
+        InvalidResourceException, ResourceNotFoundException {
         final var resource = getResource(resourceId);
-        if (resource == null)
+        if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
+        }
 
         resource.setResourceMetadata(resourceMetadata);
         storeResource(resource);
@@ -169,7 +168,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public void updateContract(UUID resourceId, String policy) throws ResourceNotFoundException,
-            InvalidResourceException {
+        InvalidResourceException {
         final var resourceMetadata = getMetadata(resourceId);
 
         // NOTE SAFETY CHECK
@@ -184,14 +183,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
-        final var key = offeredResources.remove(resourceId);
-        if (key != null) {
-            offeredResourceRepository.deleteById(resourceId);
-            return true;
-        } else {
-            LOGGER.warn("Tried to delete resource that does not exist.");
-            return false;
-        }
+        offeredResourceRepository.deleteById(resourceId);
+        return true;
     }
 
     /**
@@ -222,16 +215,17 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
-            InvalidResourceException {
+        InvalidResourceException {
         final var resource = getResource(resourceId);
-        if (resource == null)
+        if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
+        }
 
         return resource.getResourceMetadata();
     }
 
     public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws
-            ResourceNotFoundException, InvalidResourceException {
+        ResourceNotFoundException, InvalidResourceException {
         return getMetadata(resourceId).getRepresentations();
     }
 
@@ -240,7 +234,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws
-            ResourceNotFoundException, InvalidResourceException {
+        ResourceNotFoundException, InvalidResourceException {
         return getAllRepresentations(resourceId).get(representationId);
     }
 
@@ -251,7 +245,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
-            InvalidResourceException, ResourceException  {
+        InvalidResourceException, ResourceException {
         final var representations = getAllRepresentations(resourceId);
         for (var representationId : representations.keySet()) {
             try {
@@ -279,15 +273,16 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
-            InvalidResourceException, ResourceNotFoundException, ResourceException {
+        InvalidResourceException, ResourceNotFoundException, ResourceException {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
         }
 
         final var representation = getRepresentation(resourceId, representationId);
-        if (representation == null)
+        if (representation == null) {
             throw new ResourceNotFoundException("The resource representation does not exist.");
+        }
 
         return getDataString(resource, representation);
     }
@@ -297,15 +292,15 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws
-            ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists{
+        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
         final var uuid = UUIDUtils.createUUID(
-                (UUID x) -> {
-                    try {
-                        return getRepresentation(resourceId, x) != null;
-                    } catch (InvalidResourceException e) {
-                        return false;
-                    }
-                });
+            (UUID x) -> {
+                try {
+                    return getRepresentation(resourceId, x) != null;
+                } catch (InvalidResourceException e) {
+                    return false;
+                }
+            });
 
         return addRepresentationWithId(resourceId, representation, uuid);
     }
@@ -315,11 +310,12 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
-                                        UUID representationId) throws
-            ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists{
+        UUID representationId) throws
+        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
         final var metaData = getMetadata(resourceId);
-        if (getRepresentation(resourceId, representationId) != null)
+        if (getRepresentation(resourceId, representationId) != null) {
             throw new ResourceAlreadyExists("The representation does already exist.");
+        }
 
         representation.setUuid(representationId);
         metaData.getRepresentations().put(representation.getUuid(), representation);
@@ -333,8 +329,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public void updateRepresentation(UUID resourceId, UUID representationId,
-                                     ResourceRepresentation representation) throws
-            ResourceNotFoundException, InvalidResourceException{
+        ResourceRepresentation representation) throws
+        ResourceNotFoundException, InvalidResourceException {
         if (getRepresentation(resourceId, representationId) != null) {
             representation.setUuid(representationId);
             var representations = getAllRepresentations(resourceId);
@@ -346,7 +342,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             updateResource(resourceId, metadata);
         } else {
             LOGGER.warn(String.format("Tried to update representation %s with resource %s.",
-                    representationId, resourceId));
+                representationId, resourceId));
             throw new ResourceNotFoundException("The resource representation does not exist.");
         }
     }
@@ -354,12 +350,13 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
     /**
      * {@inheritDoc}
+     *
      * @throws ResourceNotFoundException - if the resource could not be found.
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException  - if the resource is not valid.
      */
     @Override
     public boolean deleteRepresentation(UUID resourceId, UUID representationId) throws
-            ResourceNotFoundException, InvalidResourceException{
+        ResourceNotFoundException, InvalidResourceException {
         var representations = getAllRepresentations(resourceId);
         if (representations.remove(representationId) != null) {
             var metadata = getMetadata(resourceId);
@@ -369,50 +366,53 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             return true;
         } else {
             LOGGER.warn(String.format("Tried to delete representation %s with resource %s.",
-                    representationId, resourceId));
+                representationId, resourceId));
             return false;
         }
     }
 
     public Optional<String> isValidOfferedResource(OfferedResource resource) {
-        if (resource == null)
+        if (resource == null) {
             return Optional.of("The resource cannot be null.");
+        }
 
-        if (resource.getResourceMetadata() == null)
+        if (resource.getResourceMetadata() == null) {
             return Optional.of("The resource metadata cannot be null.");
+        }
 
-        if (resource.getResourceMetadata().getRepresentations() == null)
+        if (resource.getResourceMetadata().getRepresentations() == null) {
             return Optional.of("The resource representation cannot be null.");
+        }
 
-        if (resource.getResourceMetadata().getRepresentations().size() < 1)
+        if (resource.getResourceMetadata().getRepresentations().size() < 1) {
             return Optional.of("The resource representation must have at least one element.");
+        }
 
         return Optional.empty();
     }
 
     /**
-     *
      * @param resource
      * @throws InvalidResourceException - if the resource is not valid.
      */
-    private void invalidResourceGuard(OfferedResource resource) throws InvalidResourceException{
+    private void invalidResourceGuard(OfferedResource resource) throws InvalidResourceException {
         final var error = isValidOfferedResource(resource);
-        if(error.isPresent())
+        if (error.isPresent()) {
             throw new InvalidResourceException(error.get());
+        }
     }
 
     /**
-     *
      * @param resource
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void storeResource(OfferedResource resource) throws InvalidResourceException {
         final var error = isValidOfferedResource(resource);
-        if(error.isPresent())
+        if (error.isPresent()) {
             throw new InvalidResourceException("Not a valid resource. " + error.get());
+        }
 
         offeredResourceRepository.save(resource);
-        offeredResources.put(resource.getUuid(), idsUtils.getAsResource(resource));
     }
 
     /**
@@ -425,7 +425,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      *                           ill-formatted.
      */
     private String getDataString(OfferedResource resource, ResourceRepresentation representation)
-            throws ResourceException {
+        throws ResourceException {
         if (representation.getSource() != null) {
             try {
                 final var address = representation.getSource().getUrl();
@@ -440,7 +440,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                     case HTTPS_GET:
                         return httpUtils.sendHttpsGetRequest(address.toString());
                     case HTTPS_GET_BASICAUTH:
-                        return httpUtils.sendHttpsGetRequestWithBasicAuth(address.toString(), username,
+                        return httpUtils
+                            .sendHttpsGetRequestWithBasicAuth(address.toString(), username,
                                 password);
                     default:
                         // This exception is only thrown when BackendSource.Type is expanded but this
@@ -451,7 +452,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                 // One of the http requests received a non url as address
                 LOGGER.error("The resource representation is not an url.", exception);
                 throw new ResourceException("The resource source representation is not an url.",
-                        exception);
+                    exception);
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
                 throw new ResourceException("The resource could not be found.", exception);
@@ -460,39 +461,4 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             throw new ResourceException("The resource has no defined backend.");
         }
     }
-
-//    private void createOrUpdateMetadata(UUID resourceId, ResourceMetadata metadata) {
-//        var resource = getResource(resourceId);
-//        if(resource == null){
-//            // create new resource
-//            addResourceWithId(resourceId, metadata);
-//        }else{
-//            // update existing resource
-//            var tmp = getMetadata(resourceId);
-//            tmp.getRepresentations().keySet().removeAll(metadata.getRepresentations().keySet());
-//
-//            for(var representation : metadata.getRepresentations().values()) {
-//                createOrUpdateRepresentation(resourceId, representation);
-//            }
-//
-//            for(var representationId : tmp.getRepresentations().keySet()) {
-//                deleteRepresentation(resourceId, representationId);
-//            }
-//        }
-//    }
-//
-//    private void createOrUpdateRepresentation(UUID resourceId, ResourceRepresentation representation) {
-//        if(representation.getUuid() == null) {
-//            // create a new representation
-//            addRepresentation(resourceId, representation);
-//        }else{
-//            if(getRepresentation(resourceId, representation.getUuid()) == null) {
-//                // create a new representation
-//                addRepresentationWithId(resourceId, representation, representation.getUuid());
-//            }else{
-//                // update the representation
-//                updateRepresentation(resourceId, representation.getUuid(), representation);
-//            }
-//        }
-//    }
 }

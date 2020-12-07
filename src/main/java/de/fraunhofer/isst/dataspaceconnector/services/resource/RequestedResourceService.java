@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -73,5 +73,5 @@ public interface RequestedResourceService {
      *
      * @return a {@link java.util.ArrayList} object.
      */
-    ArrayList<Resource> getRequestedResources();
+    List<Resource> getRequestedResources();
 }

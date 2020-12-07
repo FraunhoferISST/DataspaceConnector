@@ -36,6 +36,7 @@ import java.util.ArrayList;
 @RestController
 @Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
 public class MainController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final TokenProvider tokenProvider;
@@ -52,36 +53,44 @@ public class MainController {
      *
      * @param policyHandler            a {@link PolicyHandler} object.
      * @param tokenProvider            a {@link TokenProvider} object.
-     * @param configurationContainer   a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param serializerProvider       a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * @param configurationContainer   a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
+     *                                 object.
+     * @param serializerProvider       a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider}
+     *                                 object.
      * @param offeredResourceService   a {@link OfferedResourceService} object.
      * @param requestedResourceService a {@link RequestedResourceService} object.
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
     public MainController(@NotNull TokenProvider tokenProvider,
-                          @NotNull ConfigurationContainer configurationContainer,
-                          @NotNull SerializerProvider serializerProvider,
-                          @NotNull OfferedResourceService offeredResourceService,
-                          @NotNull RequestedResourceService requestedResourceService,
-                          @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
-        if (tokenProvider == null)
+        @NotNull ConfigurationContainer configurationContainer,
+        @NotNull SerializerProvider serializerProvider,
+        @NotNull OfferedResourceService offeredResourceService,
+        @NotNull RequestedResourceService requestedResourceService,
+        @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
+        if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null");
+        }
 
-        if (configurationContainer == null)
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+        }
 
-        if (serializerProvider == null)
+        if (serializerProvider == null) {
             throw new IllegalArgumentException("The SerializerProvider cannot be null");
+        }
 
-        if (offeredResourceService == null)
+        if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null");
+        }
 
-        if (requestedResourceService == null)
+        if (requestedResourceService == null) {
             throw new IllegalArgumentException("The RequestedResourceService cannot be null");
+        }
 
-        if (policyHandler == null)
+        if (policyHandler == null) {
             throw new IllegalArgumentException("The PolicyHandler cannot be null");
+        }
 
         this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
@@ -97,7 +106,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @Operation(summary = "Public Endpoint for Connector Self-description",
-            description = "Get the connector's reduced self-description.")
+        description = "Get the connector's reduced self-description.")
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPublicSelfDescription() {
@@ -110,17 +119,18 @@ public class MainController {
             connector.setResourceCatalog(null);
             connector.setPublicKey(null);
 
-            return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector), HttpStatus.OK);
+            return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector),
+                HttpStatus.OK);
         } catch (ConnectorConfigurationException exception) {
             // No connector found
             LOGGER.warn("No connector has been configurated.", exception);
             return new ResponseEntity<>("No connector is currently available.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
             // Could not serialize the connector.
             LOGGER.error("Could not serialize the connector.", exception);
             return new ResponseEntity<>("No connector is currently available.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -130,7 +140,7 @@ public class MainController {
      * @return Self-description or error response.
      */
     @Operation(summary = "Connector Self-description",
-            description = "Get the connector's self-description.")
+        description = "Get the connector's self-description.")
     @RequestMapping(value = {"/admin/api/selfservice"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
@@ -139,17 +149,18 @@ public class MainController {
             var connector = (BaseConnectorImpl) getConnector();
             connector.setResourceCatalog(Util.asList(buildResourceCatalog()));
 
-            return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector), HttpStatus.OK);
+            return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector),
+                HttpStatus.OK);
         } catch (ConnectorConfigurationException exception) {
             // No connector found
             LOGGER.warn("No connector has been configurated.", exception);
             return new ResponseEntity<>("No connector is currently available.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
             // Could not serialize the connector.
             LOGGER.error("Could not serialize the connector.", exception);
             return new ResponseEntity<>("No connector is currently available.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -159,7 +170,7 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get Connector configuration",
-            description = "Get the connector's configuration.")
+        description = "Get the connector's configuration.")
     @RequestMapping(value = "/admin/api/example/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getConnectorConfiguration() {
@@ -169,35 +180,36 @@ public class MainController {
         exceptions.add(URI.create("http://localhost:8080/"));
 
         return new ResponseEntity<>(new ConfigurationModelBuilder()
-                ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
-                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
-                ._connectorProxy_(Util.asList(new ProxyBuilder()
-                        ._noProxy_(exceptions)
-                        ._proxyAuthentication_(new BasicAuthenticationBuilder().build())
-                        ._proxyURI_(URI.create("proxy.dortmund.isst.fraunhofer.de:3128"))
-                        .build()))
-                ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
-                ._connectorDescription_(new BaseConnectorBuilder()
-                        ._maintainer_(URI.create("https://example.com"))
-                        ._curator_(URI.create("https://example.com"))
-                        ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
-                        ._outboundModelVersion_("4.0.0")
-                        ._inboundModelVersion_(Util.asList("4.0.0"))
-                        ._title_(Util.asList(new TypedLiteral("Dataspace Connector")))
-                        ._description_(Util.asList(new TypedLiteral("IDS Connector with static example resources hosted by the Fraunhofer ISST")))
-                        ._version_("v3.0.0")
-                        ._publicKey_(new PublicKeyBuilder()
-                                ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey().getAlgorithm() ?
-                                ._keyValue_(tokenProvider.providePublicKey().getEncoded())
-                                .build()
-                        )
-                        ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                                ._accessURL_(URI.create("/api/ids/data"))
-                                .build())
-                        .build())
-                ._keyStore_(URI.create("file:///conf/keystore.p12"))
-                ._trustStore_(URI.create("file:///conf/truststore.p12"))
-                .build().toRdf(), HttpStatus.OK);
+            ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
+            ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+            ._connectorProxy_(Util.asList(new ProxyBuilder()
+                ._noProxy_(exceptions)
+                ._proxyAuthentication_(new BasicAuthenticationBuilder().build())
+                ._proxyURI_(URI.create("proxy.dortmund.isst.fraunhofer.de:3128"))
+                .build()))
+            ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
+            ._connectorDescription_(new BaseConnectorBuilder()
+                ._maintainer_(URI.create("https://example.com"))
+                ._curator_(URI.create("https://example.com"))
+                ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                ._outboundModelVersion_("4.0.0")
+                ._inboundModelVersion_(Util.asList("4.0.0"))
+                ._title_(Util.asList(new TypedLiteral("Dataspace Connector")))
+                ._description_(Util.asList(new TypedLiteral(
+                    "IDS Connector with static example resources hosted by the Fraunhofer ISST")))
+                ._version_("v3.0.0")
+                ._publicKey_(new PublicKeyBuilder()
+                    ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey().getAlgorithm() ?
+                    ._keyValue_(tokenProvider.providePublicKey().getEncoded())
+                    .build()
+                )
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                    ._accessURL_(URI.create("/api/ids/data"))
+                    .build())
+                .build())
+            ._keyStore_(URI.create("file:///conf/keystore.p12"))
+            ._trustStore_(URI.create("file:///conf/truststore.p12"))
+            .build().toRdf(), HttpStatus.OK);
     }
 
     /**
@@ -207,12 +219,12 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get pattern of policy",
-            description = "Get the policy pattern represented by a given JSON string.")
+        description = "Get the policy pattern represented by a given JSON string.")
     @RequestMapping(value = "/admin/api/example/policy-pattern", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
-            @Parameter(description = "The JSON string representing a policy", required = true)
-            @RequestParam("policy") String policy) {
+        @Parameter(description = "The JSON string representing a policy", required = true)
+        @RequestParam("policy") String policy) {
         Assert.notNull(policyHandler, "The policyHandler cannot be null.");
         try {
             // Return the policy pattern
@@ -221,7 +233,7 @@ public class MainController {
             // Failed to receive the pattern. Inform the requester.
             LOGGER.error("Failed to receive policy.", exception);
             return new ResponseEntity<>("The policy is currently not available.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -232,134 +244,142 @@ public class MainController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get example policy",
-            description = "Get an example policy for a given policy pattern.")
+        description = "Get an example policy for a given policy pattern.")
     @RequestMapping(value = "/admin/api/example/usage-policy", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
-            @Parameter(description = "The policy pattern.", required = true)
-            @RequestParam("pattern") PolicyHandler.Pattern pattern) {
+        @Parameter(description = "The policy pattern.", required = true)
+        @RequestParam("pattern") PolicyHandler.Pattern pattern) {
         ContractOffer contractOffer = null;
 
         switch (pattern) {
             case PROVIDE_ACCESS:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("provide-access")))
-                                ._action_(Util.asList(Action.USE))
-                                .build()))
-                        .build();
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("provide-access")))
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                    .build();
                 break;
             case PROHIBIT_ACCESS:
                 contractOffer = new ContractOfferBuilder()
-                        ._prohibition_(Util.asList(new ProhibitionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("prohibit-access")))
-                                ._action_(Util.asList(Action.USE))
-                                .build()))
-                        .build();
+                    ._prohibition_(Util.asList(new ProhibitionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("prohibit-access")))
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                    .build();
                 break;
             case N_TIMES_USAGE:
                 contractOffer = new NotMoreThanNOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("n-times-usage")))
-                                ._action_(Util.asList(Action.USE))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.COUNT)
-                                        ._operator_(BinaryOperator.LTEQ)
-                                        ._rightOperand_(new RdfResource("5", URI.create("xsd:double")))
-                                        ._pipEndpoint_(URI.create("https://localhost:8080/admin/api/resources/"))
-                                        .build()))
-                                .build()))
-                        .build();
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("n-times-usage")))
+                        ._action_(Util.asList(Action.USE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.COUNT)
+                            ._operator_(BinaryOperator.LTEQ)
+                            ._rightOperand_(new RdfResource("5", URI.create("xsd:double")))
+                            ._pipEndpoint_(
+                                URI.create("https://localhost:8080/admin/api/resources/"))
+                            .build()))
+                        .build()))
+                    .build();
                 break;
             case DURATION_USAGE:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("duration-usage")))
-                                ._action_(Util.asList(Action.USE))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                                        ._operator_(BinaryOperator.SHORTER_EQ)
-                                        ._rightOperand_(new RdfResource("PT4H", URI.create("xsd:duration")))
-                                        .build()))
-                                .build()))
-                        .build();
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("duration-usage")))
+                        ._action_(Util.asList(Action.USE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                            ._operator_(BinaryOperator.SHORTER_EQ)
+                            ._rightOperand_(new RdfResource("PT4H", URI.create("xsd:duration")))
+                            .build()))
+                        .build()))
+                    .build();
                 break;
             case USAGE_DURING_INTERVAL:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("usage-during-interval")))
-                                ._action_(Util.asList(Action.USE))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.AFTER)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z", URI.create("xsd:dateTimeStamp")))
-                                        .build(), new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.BEFORE)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z", URI.create("xsd:dateTimeStamp")))
-                                        .build()))
-                                .build()))
-                        .build();
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("usage-during-interval")))
+                        ._action_(Util.asList(Action.USE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                            ._operator_(BinaryOperator.AFTER)
+                            ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                            .build(), new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                            ._operator_(BinaryOperator.BEFORE)
+                            ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                            .build()))
+                        .build()))
+                    .build();
                 break;
             case USAGE_UNTIL_DELETION:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("usage-until-deletion")))
-                                ._action_(Util.asList(Action.USE))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.AFTER)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z", URI.create("xsd:dateTimeStamp")))
-                                        .build(), new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.BEFORE)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z", URI.create("xsd:dateTimeStamp")))
-                                        .build()))
-                                ._postDuty_(Util.asList(new DutyBuilder()
-                                        ._action_(Util.asList(Action.DELETE))
-                                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                                ._operator_(BinaryOperator.TEMPORAL_EQUALS)
-                                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z", URI.create("xsd:dateTimeStamp")))
-                                                .build()))
-                                        .build()))
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("usage-until-deletion")))
+                        ._action_(Util.asList(Action.USE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                            ._operator_(BinaryOperator.AFTER)
+                            ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                            .build(), new ConstraintBuilder()
+                            ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                            ._operator_(BinaryOperator.BEFORE)
+                            ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                            .build()))
+                        ._postDuty_(Util.asList(new DutyBuilder()
+                            ._action_(Util.asList(Action.DELETE))
+                            ._constraint_(Util.asList(new ConstraintBuilder()
+                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                ._operator_(BinaryOperator.TEMPORAL_EQUALS)
+                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                    URI.create("xsd:dateTimeStamp")))
                                 .build()))
-                        .build();
+                            .build()))
+                        .build()))
+                    .build();
                 break;
             case USAGE_LOGGING:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("usage-logging")))
-                                ._action_(Util.asList(Action.USE))
-                                ._postDuty_(Util.asList(new DutyBuilder()
-                                        ._action_(Util.asList(Action.LOG))
-                                        .build()))
-                                .build()))
-                        .build();
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("usage-logging")))
+                        ._action_(Util.asList(Action.USE))
+                        ._postDuty_(Util.asList(new DutyBuilder()
+                            ._action_(Util.asList(Action.LOG))
+                            .build()))
+                        .build()))
+                    .build();
                 break;
             case USAGE_NOTIFICATION:
                 contractOffer = new ContractOfferBuilder()
-                        ._permission_(Util.asList(new PermissionBuilder()
-                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                                ._description_(Util.asList(new TypedLiteral("usage-notification")))
-                                ._action_(Util.asList(Action.USE))
-                                ._postDuty_(Util.asList(new DutyBuilder()
-                                        ._action_(Util.asList(Action.NOTIFY))
-                                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                                ._leftOperand_(LeftOperand.ENDPOINT)
-                                                ._operator_(BinaryOperator.DEFINES_AS)
-                                                ._rightOperand_(new RdfResource("https://localhost:8000/api/ids/data", URI.create("xsd:anyURI")))
-                                                .build()))
-                                        .build()))
+                    ._permission_(Util.asList(new PermissionBuilder()
+                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                        ._description_(Util.asList(new TypedLiteral("usage-notification")))
+                        ._action_(Util.asList(Action.USE))
+                        ._postDuty_(Util.asList(new DutyBuilder()
+                            ._action_(Util.asList(Action.NOTIFY))
+                            ._constraint_(Util.asList(new ConstraintBuilder()
+                                ._leftOperand_(LeftOperand.ENDPOINT)
+                                ._operator_(BinaryOperator.DEFINES_AS)
+                                ._rightOperand_(
+                                    new RdfResource("https://localhost:8000/api/ids/data",
+                                        URI.create("xsd:anyURI")))
                                 .build()))
-                        .build();
+                            .build()))
+                        .build()))
+                    .build();
                 break;
         }
 
@@ -380,8 +400,8 @@ public class MainController {
 
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
         return new ResourceCatalogBuilder()
-                ._offeredResource_(offeredResourceService.getResourceList())
-                ._requestedResource_(requestedResourceService.getRequestedResources())
-                .build();
+            ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
+            ._requestedResource_(new ArrayList<>(requestedResourceService.getRequestedResources()))
+            .build();
     }
 }
