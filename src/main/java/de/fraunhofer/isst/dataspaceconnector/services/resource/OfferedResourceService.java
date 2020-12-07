@@ -13,7 +13,6 @@ import java.util.UUID;
 /**
  * <p>OfferedResourceService interface.</p>
  *
- * @author Julia Pampus
  * @version $Id: $Id
  */
 public interface OfferedResourceService {
@@ -37,6 +36,7 @@ public interface OfferedResourceService {
      *
      * @param resourceMetadata a {@link ResourceMetadata} object.
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
     UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
 
@@ -45,6 +45,7 @@ public interface OfferedResourceService {
      *
      * @param resourceMetadata a {@link ResourceMetadata} object.
      * @param uuid             a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
     void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws ResourceException;
 
@@ -53,6 +54,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @param data       a {@link java.lang.String} object.
+     * @throws ResourceException - if the resource data could not be added.
      */
     void addData(UUID resourceId, String data) throws ResourceException;
 
@@ -61,6 +63,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId       a {@link java.util.UUID} object.
      * @param resourceMetadata a {@link ResourceMetadata} object.
+     * @throws ResourceException - if the resource could not be updated.
      */
     void updateResource(UUID resourceId, ResourceMetadata resourceMetadata)
         throws ResourceException;
@@ -70,6 +73,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @param policy     a {@link java.lang.String} object.
+     * @throws ResourceException - if the contract could not be updated.
      */
     void updateContract(UUID resourceId, String policy) throws ResourceException;
 
@@ -77,6 +81,7 @@ public interface OfferedResourceService {
      * <p>deleteResource.</p>
      *
      * @param resourceId a {@link java.util.UUID} object.
+     * @return true if the resource was found and deleted.
      */
     boolean deleteResource(UUID resourceId);
 
@@ -85,6 +90,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link OfferedResource} object.
+     * @throws ResourceException - if the resource could not be received.
      */
     OfferedResource getResource(UUID resourceId) throws ResourceException;
 
@@ -93,6 +99,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link ResourceMetadata} object.
+     * @throws ResourceException - if the metadata could not be received.
      */
     ResourceMetadata getMetadata(UUID resourceId) throws ResourceException;
 
@@ -101,7 +108,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
+     * @throws ResourceException - if the resource data could not be received.
      */
     String getData(UUID resourceId) throws ResourceException;
 
@@ -111,7 +118,7 @@ public interface OfferedResourceService {
      * @param resourceId       a {@link java.util.UUID} object.
      * @param representationId a {@link java.util.UUID} object.
      * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
+     * @throws ResourceException - if the resource data could not be received.
      */
     String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 
@@ -121,6 +128,7 @@ public interface OfferedResourceService {
      * @param resourceId     a {@link java.util.UUID} object.
      * @param representation a {@link ResourceRepresentation} object.
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the representation could not be added.
      */
     UUID addRepresentation(UUID resourceId, ResourceRepresentation representation)
         throws ResourceException;
@@ -132,6 +140,7 @@ public interface OfferedResourceService {
      * @param representation   a {@link ResourceRepresentation} object.
      * @param representationId the {@link UUID} that will be used for the new representation
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the representation could not be added.
      */
     UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
         UUID representationId) throws ResourceException;
@@ -142,6 +151,7 @@ public interface OfferedResourceService {
      * @param resourceId       a {@link java.util.UUID} object.
      * @param representationId a {@link java.util.UUID} object.
      * @param representation   a {@link ResourceRepresentation} object.
+     * @throws ResourceException - if the representation could not be updated.
      */
     void updateRepresentation(UUID resourceId, UUID representationId,
         ResourceRepresentation representation) throws ResourceException;
@@ -152,6 +162,7 @@ public interface OfferedResourceService {
      * @param resourceId       a {@link java.util.UUID} object.
      * @param representationId a {@link java.util.UUID} object.
      * @return a {@link ResourceRepresentation} object.
+     * @throws ResourceException - if the representation could not be received.
      */
     ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
         throws ResourceException;
@@ -161,6 +172,7 @@ public interface OfferedResourceService {
      *
      * @param resourceId       a {@link java.util.UUID} object.
      * @param representationId a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
     boolean deleteRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 }
