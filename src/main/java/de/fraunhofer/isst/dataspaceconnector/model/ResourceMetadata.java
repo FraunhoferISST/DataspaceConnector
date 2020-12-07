@@ -3,15 +3,24 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.util.StdConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.validation.constraints.NotNull;
@@ -62,8 +71,8 @@ public class ResourceMetadata implements Serializable {
     @ElementCollection
     @Column(columnDefinition = "BYTEA")
     @JsonProperty("representations")
-    @JsonSerialize(converter = RepresentationsToJson.class)
-    @JsonDeserialize(converter = JsonToRepresentation.class)
+    @JsonSerialize(using = RepresentationsToJson.class)
+    @JsonDeserialize(using = JsonToRepresentation.class)
     private Map<UUID, ResourceRepresentation> representations;
 
     /**
@@ -257,34 +266,46 @@ public class ResourceMetadata implements Serializable {
     }
 
     private static class RepresentationsToJson extends
-        StdConverter<Map<UUID, ResourceRepresentation>, Collection<ResourceRepresentation>> {
+        JsonSerializer<Map<UUID, ResourceRepresentation>> {
 
         @Override
-        public Collection<ResourceRepresentation> convert(Map<UUID, ResourceRepresentation> value) {
-            return value.values();
+        public void serialize(Map<UUID, ResourceRepresentation> value,  JsonGenerator gen, SerializerProvider provider){
+            try {
+                gen.writeObject(value.values());
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
         }
     }
 
     private static class JsonToRepresentation extends
-        StdConverter<String, Map<UUID, ResourceRepresentation>> {
+        JsonDeserializer<Map<UUID, ResourceRepresentation>> {
 
         @Override
-        public Map<UUID, ResourceRepresentation> convert(String value) {
-            final var objectMapper = new ObjectMapper();
+        public Map<UUID, ResourceRepresentation> deserialize(JsonParser p, DeserializationContext ctx) {
             try {
-                final var representations = objectMapper
-                    .readValue(value, ResourceRepresentation[].class);
+                var node = p.readValueAsTree();
+                final var objectMapper = new ObjectMapper();
+
+                var representations = IntStream.range(0, node.size()).boxed()
+                    .map(i -> {
+                        try {
+                            return objectMapper.readValue(node.get(i).toString(), ResourceRepresentation.class);
+                        } catch (IOException e) {
+                            throw new RuntimeException();
+                        }
+                    }).collect(Collectors.toList());
+
                 var output = new HashMap<UUID, ResourceRepresentation>();
                 for (var representation : representations) {
                     output.put(representation.getUuid(), representation);
                 }
 
                 return output;
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+                return null;
             }
-
-            return null;
         }
     }
 }
