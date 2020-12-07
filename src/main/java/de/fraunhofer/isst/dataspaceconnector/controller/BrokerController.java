@@ -25,8 +25,6 @@ import java.util.UUID;
 
 /**
  * This class provides endpoints for the communication with an IDS broker instance.
- *
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/broker")
@@ -41,7 +39,7 @@ public class BrokerController {
     private final OfferedResourceService offeredResourceService;
 
     /**
-     * Constructor
+     * Constructor for BrokerController.
      *
      * @param tokenProvider          a {@link TokenProvider} object.
      * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
@@ -188,9 +186,9 @@ public class BrokerController {
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request",
-        description = "Send a query request to an IDS broker.")
-    @RequestMapping(value = "/resource/{resource-id}/update", method = RequestMethod.POST)
+    @Operation(summary = "Update Resource at Broker",
+        description = "Update an IDS resource at an IDS broker.")
+    @RequestMapping(value = "/update/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateResourceAtBroker(
         @Parameter(description = "The url of the broker.", required = true,
@@ -232,15 +230,15 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Sends a ResourceUnvailableMessage to an IDS broker.
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request",
-        description = "Send a query request to an IDS broker.")
-    @RequestMapping(value = "/update/{resource-id}/remove", method = RequestMethod.POST)
+    @Operation(summary = "Remove Resource from Broker",
+        description = "Remove an IDS resource at an IDS broker.")
+    @RequestMapping(value = "/remove/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> deleteResourceAtBroker(
         @Parameter(description = "The url of the broker.", required = true,
