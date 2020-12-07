@@ -31,8 +31,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/api/broker")
 @Tag(name = "Connector: IDS Broker Communication",
-        description = "Endpoints for invoking broker communication")
+    description = "Endpoints for invoking broker communication")
 public class BrokerController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
     private final TokenProvider tokenProvider;
@@ -43,31 +44,35 @@ public class BrokerController {
      * Constructor
      *
      * @param tokenProvider          a {@link TokenProvider} object.
-     * @param configurationContainer a
-     *                               {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
+     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
+     *                               object.
      * @param offeredResourceService a {@link OfferedResourceService} object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      * @throws GeneralSecurityException - if the framework has an error.
      */
     @Autowired
     public BrokerController(@NotNull TokenProvider tokenProvider,
-                            @NotNull ConfigurationContainer configurationContainer,
-                            @NotNull OfferedResourceService offeredResourceService) throws IllegalArgumentException, GeneralSecurityException {
-        if (offeredResourceService == null)
+        @NotNull ConfigurationContainer configurationContainer,
+        @NotNull OfferedResourceService offeredResourceService)
+        throws IllegalArgumentException, GeneralSecurityException {
+        if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+        }
 
-        if (tokenProvider == null)
+        if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
+        }
 
-        if (configurationContainer == null)
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
 
         this.tokenProvider = tokenProvider;
         this.offeredResourceService = offeredResourceService;
 
         try {
             this.brokerService = new BrokerService(configurationContainer,
-                    new ClientProvider(configurationContainer), tokenProvider);
+                new ClientProvider(configurationContainer), tokenProvider);
         } catch (NoSuchAlgorithmException | KeyManagementException exception) {
             LOGGER.error("Failed to initialize the broker. Error in the framework.", exception);
             throw new GeneralSecurityException("Error in the framework.", exception);
@@ -81,12 +86,12 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Register Connector",
-            description = "Register or update connector at an IDS broker.")
+        description = "Register or update connector at an IDS broker.")
     @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
-            , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-                                                 @RequestParam("broker") String url) {
+        , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+    @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
@@ -96,8 +101,8 @@ public class BrokerController {
                 // Send the update request to the broker
                 final var brokerResponse = brokerService.updateAtBroker(url);
                 return new ResponseEntity<>("The broker answered with: "
-                        + brokerResponse.body().string(),
-                        HttpStatus.OK);
+                    + brokerResponse.body().string(),
+                    HttpStatus.OK);
             } catch (NullPointerException | IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
             }
@@ -117,9 +122,9 @@ public class BrokerController {
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unregisterAtBroker(
-            @Parameter(description = "The url of the broker.",
-                    required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-            @RequestParam("broker") String url) {
+        @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
@@ -148,9 +153,9 @@ public class BrokerController {
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> queryBroker(
-            @Parameter(description = "The url of the broker.",
-                    required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-            @RequestParam("broker") String url) {
+        @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
 
@@ -158,14 +163,14 @@ public class BrokerController {
         if (tokenProvider.getTokenJWS() != null) {
             // Send the query request to the broker
             final var query = "SELECT ?subject ?predicate ?object\n" +
-                    "FROM <urn:x-arq:UnionGraph>\n" +
-                    "WHERE {\n" +
-                    "  ?subject ?predicate ?object\n" +
-                    "};";
+                "FROM <urn:x-arq:UnionGraph>\n" +
+                "WHERE {\n" +
+                "  ?subject ?predicate ?object\n" +
+                "};";
 
             try {
                 final var brokerResponse = brokerService.queryBroker(url, query,
-                        null, null, null);
+                    null, null, null);
                 return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
             } catch (IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
@@ -184,15 +189,15 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request",
-            description = "Send a query request to an IDS broker.")
+        description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/resource/{resource-id}/update", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateResourceAtBroker(
-            @Parameter(description = "The url of the broker.", required = true,
-                    example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-            @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true)
-            @PathVariable("resource-id") UUID resourceId) {
+        @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url,
+        @Parameter(description = "The resource id.", required = true)
+        @PathVariable("resource-id") UUID resourceId) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
         Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
@@ -202,21 +207,21 @@ public class BrokerController {
             try {
                 // Get the resource
                 final var resource =
-                        offeredResourceService.getOfferedResources().get(resourceId);
+                    offeredResourceService.getOfferedResources().get(resourceId);
                 if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);
                 } else {
                     // The resource has been received, update at broker
                     final var brokerResponse =
-                            brokerService.updateResourceAtBroker(url, resource);
+                        brokerService.updateResourceAtBroker(url, resource);
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
                 // An (implementation) error occurred while receiving the resource
                 LOGGER.error("Resource not be loaded.");
                 return new ResponseEntity<>("Could not load resource.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
             }
@@ -234,15 +239,15 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request",
-            description = "Send a query request to an IDS broker.")
+        description = "Send a query request to an IDS broker.")
     @RequestMapping(value = "/update/{resource-id}/remove", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> deleteResourceAtBroker(
-            @Parameter(description = "The url of the broker.", required = true,
-                    example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-            @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true)
-            @PathVariable("resource-id") UUID resourceId) {
+        @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url,
+        @Parameter(description = "The resource id.", required = true)
+        @PathVariable("resource-id") UUID resourceId) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
         Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
@@ -252,21 +257,21 @@ public class BrokerController {
             try {
                 // Get the resource
                 final var resource =
-                        offeredResourceService.getOfferedResources().get(resourceId);
+                    offeredResourceService.getOfferedResources().get(resourceId);
                 if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);
                 } else {
                     // The resource has been received, remove from broker
                     final var brokerResponse =
-                            brokerService.removeResourceFromBroker(url, resource);
+                        brokerService.removeResourceFromBroker(url, resource);
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
                 // An (implementation) error occurred while receiving the resource
                 LOGGER.error("Resource not be loaded.");
                 return new ResponseEntity<>("Could not load resource.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
             }
@@ -279,7 +284,7 @@ public class BrokerController {
     private ResponseEntity<String> respondResourceNotFound(UUID resourceId) {
         // The resource could not be found, reject and inform the requester
         LOGGER.info(String.format("Resource update failed. Resource %s could not be found.",
-                resourceId));
+            resourceId));
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
 
@@ -288,7 +293,7 @@ public class BrokerController {
         LOGGER.info("Broker communication failed: " + exception.getMessage());
 
         return new ResponseEntity<>("The communication with the broker failed.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<String> respondRejectUnauthorized(String url) {

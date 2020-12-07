@@ -12,11 +12,12 @@ import java.net.URI;
  * @version $Id: $Id
  */
 public interface ConnectorRequestService {
+
     /**
      * <p>sendArtifactRequestMessage.</p>
      *
      * @param recipient a {@link java.net.URI} object.
-     * @param artifact a {@link java.net.URI} object.
+     * @param artifact  a {@link java.net.URI} object.
      * @return a {@link okhttp3.Response} object.
      * @throws java.io.IOException if any.
      */
@@ -26,7 +27,7 @@ public interface ConnectorRequestService {
      * <p>sendDescriptionRequestMessage.</p>
      *
      * @param recipient a {@link java.net.URI} object.
-     * @param artifact a {@link java.net.URI} object.
+     * @param artifact  a {@link java.net.URI} object.
      * @return a {@link okhttp3.Response} object.
      * @throws java.io.IOException if any.
      */

@@ -26,6 +26,7 @@ import java.io.IOException;
 @RequestMapping("/admin/api")
 @Tag(name = "Connector Configuration", description = "Endpoints for connector configuration")
 public class ConfigurationController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 
     private final ConfigurationContainer configurationContainer;
@@ -40,12 +41,14 @@ public class ConfigurationController {
      */
     @Autowired
     public ConfigurationController(@NotNull ConfigurationContainer configurationContainer,
-                                   @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (configurationContainer == null)
+        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
 
-        if (serializerProvider == null)
+        if (serializerProvider == null) {
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+        }
 
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
@@ -66,31 +69,31 @@ public class ConfigurationController {
 
             final var old_configurationModel = configurationContainer.getConfigModel();
             final var new_configurationModel =
-                    serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
+                serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
 
             configurationContainer.updateConfiguration(new_configurationModel);
 
             LOGGER.info(String.format("Updated the configuration. Old version: \n%s\nNew version:" +
-                            " %s", old_configurationModel != null ?
-                            old_configurationModel.toRdf() : "No config found.",
-                    new_configurationModel.toRdf()));
+                    " %s", old_configurationModel != null ?
+                    old_configurationModel.toRdf() : "No config found.",
+                new_configurationModel.toRdf()));
 
             return new ResponseEntity<>("Configuration successfully updated.", HttpStatus.OK);
         } catch (NullPointerException exception) {
             LOGGER.error("Failed to receive the serializer.", exception);
 
             return new ResponseEntity<>("Failed to update configuration.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
             LOGGER.error("Failed to deserialize the configuration.", exception);
 
             return new ResponseEntity<>("Failed to update configuration.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ConfigurationUpdateException exception) {
             LOGGER.error("Failed to update the configuration.", exception);
 
             return new ResponseEntity<>("Failed to update configuration.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

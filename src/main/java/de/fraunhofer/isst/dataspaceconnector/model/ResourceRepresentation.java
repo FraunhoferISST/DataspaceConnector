@@ -19,13 +19,14 @@ import java.util.UUID;
  * @version $Id: $Id
  */
 @Schema(
-        name = "ResourceRepresentation",
-        description = "Representation of a resource",
-        oneOf = ResourceRepresentation.class,
-        example = "{\"uuid\":\"55795317-0aaa-4fe1-b336-b2e26a00597f\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}"
+    name = "ResourceRepresentation",
+    description = "Representation of a resource",
+    oneOf = ResourceRepresentation.class,
+    example = "{\"uuid\":\"55795317-0aaa-4fe1-b336-b2e26a00597f\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}"
 )
 @JsonInclude(Include.NON_NULL)
 public class ResourceRepresentation implements Serializable {
+
     @Id
     @JsonProperty("uuid")
     private UUID uuid;
@@ -52,13 +53,14 @@ public class ResourceRepresentation implements Serializable {
     /**
      * <p>Constructor for ResourceRepresentation.</p>
      *
-     * @param uuid       a {@link java.util.UUID} object.
-     * @param type       a {@link java.lang.String} object.
-     * @param byteSize   a {@link java.lang.Integer} object.
-     * @param name       a {@link java.lang.String} object.
-     * @param source     a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource} object.
+     * @param uuid     a {@link java.util.UUID} object.
+     * @param type     a {@link java.lang.String} object.
+     * @param byteSize a {@link java.lang.Integer} object.
+     * @param name     a {@link java.lang.String} object.
+     * @param source   a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource} object.
      */
-    public ResourceRepresentation(UUID uuid, String type, Integer byteSize, String name, BackendSource source) {
+    public ResourceRepresentation(UUID uuid, String type, Integer byteSize, String name,
+        BackendSource source) {
         this.uuid = uuid;
         this.type = type;
         this.byteSize = byteSize;

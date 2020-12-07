@@ -17,13 +17,15 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * This class reads the content of the policy rules and returns needed information to the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
+ * This class reads the content of the policy rules and returns needed information to the {@link
+ * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
  *
  * @author Julia Pampus
  * @version $Id: $Id
  */
 @Component
 public class PolicyReader {
+
     /**
      * Constant <code>LOGGER</code>
      */
@@ -131,6 +133,7 @@ public class PolicyReader {
      * @version $Id: $Id
      */
     public static class TimeInterval {
+
         private String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
         private Date start;

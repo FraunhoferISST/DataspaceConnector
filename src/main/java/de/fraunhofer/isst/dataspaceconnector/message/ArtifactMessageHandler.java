@@ -31,18 +31,19 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 
 /**
  * This @{@link de.fraunhofer.isst.dataspaceconnector.message.ArtifactMessageHandler} handles all
- * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as
- * part one in the multipart message. This header must have the correct '@type' reference as
- * defined in the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName
- * annotation. In this example, the received payload is not defined and will be returned
- * immediately. Usually, the payload would be well defined as well, such that it can be
- * deserialized into a proper Java-Object.
+ * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part
+ * one in the multipart message. This header must have the correct '@type' reference as defined in
+ * the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation. In this
+ * example, the received payload is not defined and will be returned immediately. Usually, the
+ * payload would be well defined as well, such that it can be deserialized into a proper
+ * Java-Object.
  *
  * @version $Id: $Id
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
 public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessageImpl> {
+
     /**
      * Constant <code>LOGGER</code>
      */
@@ -57,29 +58,36 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * <p>Constructor for ArtifactMessageHandler.</p>
      *
-     * @param offeredResourceService a
-     *                               {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService} object.
-     * @param tokenProvider          a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer} object.
-     * @param policyHandler          a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} object.
+     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService}
+     *                               object.
+     * @param tokenProvider          a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
+     *                               object.
+     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer}
+     *                               object.
+     * @param policyHandler          a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
+     *                               object.
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
     public ArtifactMessageHandler(@NotNull OfferedResourceService offeredResourceService,
-                                  @NotNull TokenProvider tokenProvider,
-                                  @NotNull ConfigurationContainer configurationContainer,
-                                  @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
-        if (offeredResourceService == null)
+        @NotNull TokenProvider tokenProvider,
+        @NotNull ConfigurationContainer configurationContainer,
+        @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
+        if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+        }
 
-        if (tokenProvider == null)
+        if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
+        }
 
-        if (configurationContainer == null)
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
 
-        if (policyHandler == null)
+        if (policyHandler == null) {
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+        }
 
         this.resourceService = offeredResourceService;
         this.provider = tokenProvider;
@@ -90,11 +98,11 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * {@inheritDoc}
      * <p>
-     * This message implements the logic that is needed to handle the message. As it returns
-     * the input as string the messagePayload-InputStream is converted to a String.
+     * This message implements the logic that is needed to handle the message. As it returns the
+     * input as string the messagePayload-InputStream is converted to a String.
      *
      * @throws ConnectorConfigurationException - if no connector is configurated.
-     * @throws RuntimeException - if the response body failed to be build.
+     * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
     // NOTE: Why ArtifactRequestMessageImpl (focus on the Impl) part. It defeats the point of having
@@ -102,7 +110,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     // NOTE: This function is really hard to read
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
     public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
-                                         MessagePayload messagePayload) throws RuntimeException {
+        MessagePayload messagePayload) throws RuntimeException {
         Assert.notNull(provider, "The TokenProvider cannot be null.");
         Assert.notNull(configurationContainer, "The ConfigurationContainer cannot be null.");
         Assert.notNull(resourceService, "The OfferedResourceService cannot be null.");
@@ -121,13 +129,14 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 final var requestedResource = findResourceFromArtifactId(artifactId);
                 if (requestedResource == null) {
                     // The resource was not found, reject and inform the requester.
-                    LOGGER.info(String.format("Resource with %s requested by %s could not be found.",
+                    LOGGER
+                        .info(String.format("Resource with %s requested by %s could not be found.",
                             artifactId, requestMessage.getId()));
 
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                            "An artifact with the given uuid is not known to the "
-                                    + "connector.",
-                            connector.getId(), connector.getOutboundModelVersion());
+                        "An artifact with the given uuid is not known to the "
+                            + "connector.",
+                        connector.getId(), connector.getOutboundModelVersion());
                 }
 
                 try {
@@ -139,14 +148,17 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                     final var resourceMetadata = resourceService.getMetadata(resourceId);
                     var canProvisionData = false;
                     try {
-                        canProvisionData = policyHandler.onDataProvision(resourceMetadata.getPolicy());
+                        canProvisionData = policyHandler
+                            .onDataProvision(resourceMetadata.getPolicy());
                     } catch (IOException exception) {
                         // The provisioning failed, reject the request
-                        LOGGER.error(String.format("Failed to provision data for resource %s in request %s.",
+                        LOGGER.error(
+                            String.format("Failed to provision data for resource %s in request %s.",
                                 resourceId, requestMessage.getId()),
-                                exception);
+                            exception);
 
-                        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                        return ErrorResponse
+                            .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                 "The data could not be provisioned.",
                                 connector.getId(), connector.getOutboundModelVersion());
                     }
@@ -156,28 +168,30 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                             // Get the data from source
                             String data = null;
                             try {
-                                data = resourceService.getDataByRepresentation(resourceId, artifactId);
-                            }catch(ResourceNotFoundException exception) {
+                                data = resourceService
+                                    .getDataByRepresentation(resourceId, artifactId);
+                            } catch (ResourceNotFoundException exception) {
                                 LOGGER.info(String.format("Representation %s of resource %s " +
-                                                "requested by %s could not be found.", artifactId,
-                                        resourceId, requestMessage.getId()), exception);
+                                        "requested by %s could not be found.", artifactId,
+                                    resourceId, requestMessage.getId()), exception);
                                 return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                                        "Resource not found.", connector.getId(),
-                                        connector.getOutboundModelVersion());
-                            }catch(InvalidResourceException exception) {
+                                    "Resource not found.", connector.getId(),
+                                    connector.getOutboundModelVersion());
+                            } catch (InvalidResourceException exception) {
                                 LOGGER.info(String.format("Representation %s of resource %s " +
-                                                "requested by %s is not in a valid format.",
-                                        artifactId,
-                                        resourceId, requestMessage.getId()), exception);
+                                        "requested by %s is not in a valid format.",
+                                    artifactId,
+                                    resourceId, requestMessage.getId()), exception);
                                 return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                                        "Resource not found.", connector.getId(),
-                                        connector.getOutboundModelVersion());
-                            }catch(ResourceException exception){
+                                    "Resource not found.", connector.getId(),
+                                    connector.getOutboundModelVersion());
+                            } catch (ResourceException exception) {
                                 LOGGER.warn(String.format("Representation %s of resource %s " +
-                                                "requested by %s could not be received.",
-                                        artifactId,
-                                        resourceId, requestMessage.getId()), exception);
-                                return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                                        "requested by %s could not be received.",
+                                    artifactId,
+                                    resourceId, requestMessage.getId()), exception);
+                                return ErrorResponse
+                                    .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                         "Something went wrong.", connector.getId(),
                                         connector.getOutboundModelVersion());
                             }
@@ -186,83 +200,88 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
                             // Build and send the response
                             final var responseMessage = new ArtifactResponseMessageBuilder()
-                                    ._securityToken_(provider.getTokenJWS())
-                                    ._correlationMessage_(requestMessage.getId())
-                                    ._issued_(getGregorianNow())
-                                    ._issuerConnector_(connector.getId())
-                                    ._modelVersion_(connector.getOutboundModelVersion())
-                                    ._senderAgent_(connector.getId())
-                                    ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
-                                    .build();
+                                ._securityToken_(provider.getTokenJWS())
+                                ._correlationMessage_(requestMessage.getId())
+                                ._issued_(getGregorianNow())
+                                ._issuerConnector_(connector.getId())
+                                ._modelVersion_(connector.getOutboundModelVersion())
+                                ._senderAgent_(connector.getId())
+                                ._recipientConnector_(
+                                    Util.asList(requestMessage.getIssuerConnector()))
+                                .build();
 
-                            Assert.notNull(responseMessage, "The responseMessage object cannot be null");
+                            Assert.notNull(responseMessage,
+                                "The responseMessage object cannot be null");
 
                             return BodyResponse.create(responseMessage, data);
                         } else {
                             // The conditions for reading this resource have not been met.
-                            LOGGER.info(String.format("Request policy restriction detected for request %s. "
-                                            + "Restriction: %s", requestMessage.getId(),
+                            LOGGER.info(
+                                String.format("Request policy restriction detected for request %s. "
+                                        + "Restriction: %s", requestMessage.getId(),
                                     policyHandler.getPattern(resourceMetadata.getPolicy())));
 
                             return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
-                                    "Policy restriction detected: You are not authorized to receive this data.",
-                                    connector.getId(),
-                                    connector.getOutboundModelVersion());
+                                "Policy restriction detected: You are not authorized to receive this data.",
+                                connector.getId(),
+                                connector.getOutboundModelVersion());
                         }
                     } catch (IOException exception) {
                         // The could not be loaded from source.
                         LOGGER.error(String.format("Could not receive data for resource %s with " +
-                                        "representation %s from source as requested by %s.",
-                                resourceId, artifactId, requestMessage.getId()),
-                                exception);
+                                "representation %s from source as requested by %s.",
+                            resourceId, artifactId, requestMessage.getId()),
+                            exception);
 
-                        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                        return ErrorResponse
+                            .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                 "The data could not be read from source.", connector.getId(),
                                 connector.getOutboundModelVersion());
                     } catch (ConstraintViolationException exception) {
                         // The response could not be constructed.
-                        throw new RuntimeException("Failed to construct the response message.", exception);
+                        throw new RuntimeException("Failed to construct the response message.",
+                            exception);
                     } catch (ResourceNotFoundException exception) {
                         // The resource could be not be found.
                         LOGGER.info(String.format("The resource %s requested by %s could not be " +
-                                "found.", resourceId, requestMessage.getId()), exception);
+                            "found.", resourceId, requestMessage.getId()), exception);
                         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                                "Resource not found.", connector.getId(),
-                                connector.getOutboundModelVersion());
+                            "Resource not found.", connector.getId(),
+                            connector.getOutboundModelVersion());
                     }
                 } catch (UUIDFormatException exception) {
                     // The resource from the database is not identified via uuids.
                     LOGGER.info(String.format("The resource requested by %s is not valid. The " +
-                                    "uuid is not valid.",
-                            requestMessage.getId()), new InvalidResourceException(exception));
+                            "uuid is not valid.",
+                        requestMessage.getId()), new InvalidResourceException(exception));
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                            "Resource not found.", connector.getId(),
-                            connector.getOutboundModelVersion());
+                        "Resource not found.", connector.getId(),
+                        connector.getOutboundModelVersion());
                 } catch (ResourceNotFoundException exception) {
                     // The resource could be not be found.
                     LOGGER.info(String.format("The resource requested by %s could not be " +
                         "found.", requestMessage.getId()), exception);
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                            "Resource not found.", connector.getId(),
-                            connector.getOutboundModelVersion());
+                        "Resource not found.", connector.getId(),
+                        connector.getOutboundModelVersion());
                 } catch (InvalidResourceException exception) {
                     // The resource could be not be found.
                     LOGGER.info(String.format("The resource requested by %s is not valid.",
-                            requestMessage.getId()), exception);
+                        requestMessage.getId()), exception);
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                            "Resource not found.", connector.getId(),
-                            connector.getOutboundModelVersion());
+                        "Resource not found.", connector.getId(),
+                        connector.getOutboundModelVersion());
                 }
             } catch (UUIDFormatException exception) {
                 // No resource uuid could be found in the request, reject the message.
                 LOGGER.info(String.format("Resource requested by %s has no valid uuid: %s.",
-                        requestMessage.getId(),
-                        requestMessage.getRequestedArtifact()));
+                    requestMessage.getId(),
+                    requestMessage.getRequestedArtifact()));
 
                 return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                        "No valid resource id found.",
-                        connector.getId(),
-                        connector.getOutboundModelVersion());
+                    "No valid resource id found.",
+                    connector.getId(),
+                    connector.getOutboundModelVersion());
             }
         } catch (ConnectorConfigurationException exception) {
             // The connector must be set.
@@ -289,20 +308,23 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             for (final var representation : resource.getRepresentation()) {
                 final var representationId = UUIDUtils.uuidFromUri(representation.getId());
 
-                if (representationId.equals(artifactId))
+                if (representationId.equals(artifactId)) {
                     return resource;
+                }
             }
         }
 
         return null;
     }
 
-    private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage) throws RequestFormatException {
+    private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
+        throws RequestFormatException {
         try {
             return UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
         } catch (UUIDFormatException exception) {
-            throw new RequestFormatException("The uuid could not extracted from request" + requestMessage.getId(),
-                    exception);
+            throw new RequestFormatException(
+                "The uuid could not extracted from request" + requestMessage.getId(),
+                exception);
         }
     }
 }

@@ -1,10 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-public class ResourceException extends RuntimeException{
+public class ResourceException extends RuntimeException {
+
     /**
      * Construct an ResourceException with the specified detail message and cause.
      *
-     * @param msg   The detail message.
+     * @param msg The detail message.
      */
     public ResourceException(String msg) {
         super(msg);

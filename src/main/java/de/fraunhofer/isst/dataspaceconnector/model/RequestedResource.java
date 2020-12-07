@@ -9,7 +9,8 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2 database.
+ * This class provides a custom data resource with an id, data and metadata to be saved in a h2
+ * database.
  *
  * @author Julia Pampus
  * @version $Id: $Id
@@ -17,7 +18,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table
-public class RequestedResource implements ConnectorResource{
+public class RequestedResource implements ConnectorResource {
+
     @Id
     @GeneratedValue
     @JsonProperty("uuid")
@@ -51,13 +53,15 @@ public class RequestedResource implements ConnectorResource{
     /**
      * <p>Constructor for RequestedResource.</p>
      *
-     * @param created a {@link java.util.Date} object.
-     * @param modified a {@link java.util.Date} object.
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param data a {@link java.lang.String} object.
-     * @param accessed a {@link java.lang.Integer} object.
+     * @param created          a {@link java.util.Date} object.
+     * @param modified         a {@link java.util.Date} object.
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata}
+     *                         object.
+     * @param data             a {@link java.lang.String} object.
+     * @param accessed         a {@link java.lang.Integer} object.
      */
-    public RequestedResource(Date created, Date modified, ResourceMetadata resourceMetadata, String data, Integer accessed) {
+    public RequestedResource(Date created, Date modified, ResourceMetadata resourceMetadata,
+        String data, Integer accessed) {
         this.created = created;
         this.modified = modified;
         this.resourceMetadata = resourceMetadata;
@@ -65,62 +69,82 @@ public class RequestedResource implements ConnectorResource{
         this.accessed = accessed;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.resourceMetadata = resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getData() {
         incrementDataAccess();
         return data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -137,9 +161,9 @@ public class RequestedResource implements ConnectorResource{
 
     ///**
     // * <p>Setter for the field <code>accessed</code>.</p>
-     //*
-     //* @param accessed a {@link java.lang.Integer} object.
-     //*/
+    //*
+    //* @param accessed a {@link java.lang.Integer} object.
+    //*/
     //public void setAccessed(Integer accessed) {
     //    this.accessed = accessed;
 //    }

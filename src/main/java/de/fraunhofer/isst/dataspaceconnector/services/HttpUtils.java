@@ -40,9 +40,9 @@ public class HttpUtils {
     @Autowired
     public HttpUtils(@NotNull ConfigurationContainer configurationContainer)
         throws IllegalArgumentException, GeneralSecurityException {
-      if (configurationContainer == null) {
-        throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
-      }
+        if (configurationContainer == null) {
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+        }
 
         this.clientProvider = new ClientProvider(configurationContainer);
 

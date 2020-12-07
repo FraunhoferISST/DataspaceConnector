@@ -1,10 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-public class ResourceNotFoundException extends RuntimeException{
+public class ResourceNotFoundException extends RuntimeException {
+
     /**
      * Construct an ResourceNotFoundException with the specified detail message and cause.
      *
-     * @param msg   The detail message.
+     * @param msg The detail message.
      */
     public ResourceNotFoundException(String msg) {
         super(msg);

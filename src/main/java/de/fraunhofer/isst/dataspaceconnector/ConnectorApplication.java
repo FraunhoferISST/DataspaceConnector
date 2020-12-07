@@ -15,20 +15,22 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * This is the main application class. The application is started and an openApi bean for the Swagger UI is created.
+ * This is the main application class. The application is started and an openApi bean for the
+ * Swagger UI is created.
  *
  * @author Julia Pampus
  * @version $Id: $Id
  */
 @SpringBootApplication
 @ComponentScan({
-        "de.fraunhofer.isst.ids.framework.messaging.spring.controller",
-        "de.fraunhofer.isst.ids.framework.messaging.spring",
-        "de.fraunhofer.isst.dataspaceconnector",
+    "de.fraunhofer.isst.ids.framework.messaging.spring.controller",
+    "de.fraunhofer.isst.ids.framework.messaging.spring",
+    "de.fraunhofer.isst.dataspaceconnector",
 //        "de.fraunhofer.isst.ids.framework.configurationmanager.controller",
-        "de.fraunhofer.isst.ids.framework.spring.starter"
+    "de.fraunhofer.isst.ids.framework.spring.starter"
 })
 public class ConnectorApplication {
+
     /**
      * <p>main.</p>
      *
@@ -48,25 +50,26 @@ public class ConnectorApplication {
     @Bean
     public OpenAPI customOpenAPI() throws IOException {
         Properties properties = new Properties();
-        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+        try (InputStream inputStream = getClass().getClassLoader()
+            .getResourceAsStream("application.properties")) {
             // This function may crash (e.g. ill-formatted file). Let it bubble up.
             properties.load(inputStream);
         }
 
         return new OpenAPI()
-                .components(new Components())
-                .info(new Info()
-                        .title(properties.getProperty("title"))
-                        .description(properties.getProperty("project_desc"))
-                        .version(properties.getProperty("version"))
-                        .contact(new Contact()
-                                .name(properties.getProperty("organization_name"))
-                                .url(properties.getProperty("contact_url"))
-                                .email(properties.getProperty("contact_email"))
-                        )
-                        .license(new License()
-                                .name(properties.getProperty("licence"))
-                                .url(properties.getProperty("licence_url")))
-                );
+            .components(new Components())
+            .info(new Info()
+                .title(properties.getProperty("title"))
+                .description(properties.getProperty("project_desc"))
+                .version(properties.getProperty("version"))
+                .contact(new Contact()
+                    .name(properties.getProperty("organization_name"))
+                    .url(properties.getProperty("contact_url"))
+                    .email(properties.getProperty("contact_email"))
+                )
+                .license(new License()
+                    .name(properties.getProperty("licence"))
+                    .url(properties.getProperty("licence_url")))
+            );
     }
 }

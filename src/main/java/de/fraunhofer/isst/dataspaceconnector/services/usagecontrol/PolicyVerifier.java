@@ -24,14 +24,18 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * This class provides access permission information for the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} depending on the policy content.
+ * This class provides access permission information for the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
+ * depending on the policy content.
  *
  * @author Julia Pampus
  * @version $Id: $Id
  */
 @Component
 public class PolicyVerifier {
-    /** Constant <code>LOGGER</code> */
+
+    /**
+     * Constant <code>LOGGER</code>
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
     private PolicyReader policyReader;
@@ -46,7 +50,8 @@ public class PolicyVerifier {
      * @param httpUtils a {@link de.fraunhofer.isst.dataspaceconnector.services.HttpUtils} object.
      * @param messageService a {@link de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService} object.
      */
-    public PolicyVerifier(PolicyReader policyReader, MessageService messageService, HttpUtils httpUtils) {
+    public PolicyVerifier(PolicyReader policyReader, MessageService messageService,
+        HttpUtils httpUtils) {
         this.policyReader = policyReader;
         this.messageService = messageService;
         this.httpUtils = httpUtils;
@@ -93,8 +98,8 @@ public class PolicyVerifier {
     /**
      * Notify participant about data access.
      *
-     * @return Success or not (access or inhibition).
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
+     * @return Success or not (access or inhibition).
      */
     public boolean sendNotification(Contract contract) {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
@@ -117,11 +122,12 @@ public class PolicyVerifier {
     /**
      * Checks if the requested access is in the allowed time interval.
      *
-     * @return If this is the case, access is provided.
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
+     * @return If this is the case, access is provided.
      */
     public boolean checkInterval(Contract contract) {
-        PolicyReader.TimeInterval timeInterval = policyReader.getTimeInterval(contract.getPermission().get(0));
+        PolicyReader.TimeInterval timeInterval = policyReader
+            .getTimeInterval(contract.getPermission().get(0));
         Date date = new Date();
 
         if (date.after(timeInterval.getStart()) && date.before(timeInterval.getEnd())) {
@@ -134,7 +140,7 @@ public class PolicyVerifier {
     /**
      * Checks whether the current date is later than the specified one.
      *
-     * @param dateNow      The current date.
+     * @param dateNow   The current date.
      * @param maxAccess The target date.
      * @return True if the date has been already exceeded, false if not.
      */
@@ -146,8 +152,8 @@ public class PolicyVerifier {
      * Adds a duration to a date to get the a date.
      *
      * @param created  The date when the resource was created.
-     * @return True if the resource should be deleted, false if not.
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
+     * @return True if the resource should be deleted, false if not.
      */
     public boolean checkDuration(Date created, Contract contract) {
         Calendar cal = Calendar.getInstance();
@@ -171,16 +177,19 @@ public class PolicyVerifier {
     /**
      * Checks whether the maximum of access number is already reached.
      *
-     * @return If this is not the case, access is provided. Otherwise, data is deleted and access denied.
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
-     * @param uuid a {@link java.util.UUID} object.
+     * @param uuid     a {@link java.util.UUID} object.
+     * @return If this is not the case, access is provided. Otherwise, data is deleted and access
+     * denied.
      */
     public boolean checkFrequency(Contract contract, UUID uuid) {
         int max = policyReader.getMaxAccess(contract.getPermission().get(0));
         URI pip = policyReader.getPipEndpoint(contract.getPermission().get(0));
 
         try {
-            String accessed = httpUtils.sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin", "password");
+            String accessed = httpUtils
+                .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
+                    "password");
             if (Integer.parseInt(accessed) > max) {
                 return inhibitAccess();
             } else {
@@ -192,10 +201,11 @@ public class PolicyVerifier {
     }
 
     /**
-     * Checks if the duration since resource creation or the max date for resource access has been already exceeded.
+     * Checks if the duration since resource creation or the max date for resource access has been
+     * already exceeded.
      *
-     * @return True if the resource should be deleted, false if not.
      * @param rule a {@link de.fraunhofer.iais.eis.Rule} object.
+     * @return True if the resource should be deleted, false if not.
      * @throws java.text.ParseException if any.
      */
     public boolean checkForDelete(Rule rule) throws ParseException {

@@ -269,7 +269,8 @@ public class ResourceMetadata implements Serializable {
         JsonSerializer<Map<UUID, ResourceRepresentation>> {
 
         @Override
-        public void serialize(Map<UUID, ResourceRepresentation> value,  JsonGenerator gen, SerializerProvider provider){
+        public void serialize(Map<UUID, ResourceRepresentation> value, JsonGenerator gen,
+            SerializerProvider provider) {
             try {
                 gen.writeObject(value.values());
             } catch (IOException exception) {
@@ -282,7 +283,8 @@ public class ResourceMetadata implements Serializable {
         JsonDeserializer<Map<UUID, ResourceRepresentation>> {
 
         @Override
-        public Map<UUID, ResourceRepresentation> deserialize(JsonParser p, DeserializationContext ctx) {
+        public Map<UUID, ResourceRepresentation> deserialize(JsonParser p,
+            DeserializationContext ctx) {
             try {
                 var node = p.readValueAsTree();
                 final var objectMapper = new ObjectMapper();
@@ -290,7 +292,8 @@ public class ResourceMetadata implements Serializable {
                 var representations = IntStream.range(0, node.size()).boxed()
                     .map(i -> {
                         try {
-                            return objectMapper.readValue(node.get(i).toString(), ResourceRepresentation.class);
+                            return objectMapper
+                                .readValue(node.get(i).toString(), ResourceRepresentation.class);
                         } catch (IOException e) {
                             throw new RuntimeException();
                         }

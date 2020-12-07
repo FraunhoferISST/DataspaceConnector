@@ -9,7 +9,8 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2 database.
+ * This class provides a custom data resource with an id, data and metadata to be saved in a h2
+ * database.
  *
  * @author Julia Pampus
  * @version $Id: $Id
@@ -17,7 +18,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table
-public class OfferedResource implements ConnectorResource{
+public class OfferedResource implements ConnectorResource {
+
     @Id
     @JsonProperty("uuid")
     private UUID uuid;
@@ -47,13 +49,15 @@ public class OfferedResource implements ConnectorResource{
     /**
      * <p>Constructor for OfferedResource.</p>
      *
-     * @param uuid a {@link java.util.Date} object.
-     * @param created a {@link java.util.Date} object.
-     * @param modified a {@link java.util.Date} object.
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param data a {@link java.lang.String} object.
+     * @param uuid             a {@link java.util.Date} object.
+     * @param created          a {@link java.util.Date} object.
+     * @param modified         a {@link java.util.Date} object.
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata}
+     *                         object.
+     * @param data             a {@link java.lang.String} object.
      */
-    public OfferedResource(UUID uuid, Date created, Date modified, ResourceMetadata resourceMetadata, String data) {
+    public OfferedResource(UUID uuid, Date created, Date modified,
+        ResourceMetadata resourceMetadata, String data) {
         this.uuid = uuid;
         this.created = created;
         this.modified = modified;
@@ -61,63 +65,83 @@ public class OfferedResource implements ConnectorResource{
         this.data = data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
         this.modified = new Date();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getData() {
         return data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(String data) {
         this.setModified(new Date());

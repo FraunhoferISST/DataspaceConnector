@@ -14,4 +14,5 @@ import java.util.UUID;
  */
 @Repository
 public interface OfferedResourceRepository extends JpaRepository<OfferedResource, UUID> {
+
 }

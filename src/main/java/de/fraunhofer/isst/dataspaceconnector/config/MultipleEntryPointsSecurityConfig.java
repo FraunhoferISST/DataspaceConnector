@@ -11,7 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 /**
- * This class creates an admin role for spring basic security setup used in {@link de.fraunhofer.isst.dataspaceconnector.config.ConfigurationAdapter}.
+ * This class creates an admin role for spring basic security setup used in {@link
+ * de.fraunhofer.isst.dataspaceconnector.config.ConfigurationAdapter}.
  *
  * @author Julia Pampus
  * @version $Id: $Id
@@ -35,9 +36,9 @@ public class MultipleEntryPointsSecurityConfig {
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User
-                .withUsername(username)
-                .password(encoder().encode(password))
-                .roles("ADMIN").build());
+            .withUsername(username)
+            .password(encoder().encode(password))
+            .roles("ADMIN").build());
         return manager;
     }
 

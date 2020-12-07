@@ -1,10 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-public class ResourceAlreadyExists extends ResourceException{
+public class ResourceAlreadyExists extends ResourceException {
+
     /**
      * Construct an InvalidResourceException with the specified detail message and cause.
      *
-     * @param msg   The detail message.
+     * @param msg The detail message.
      */
     public ResourceAlreadyExists(String msg) {
         super(msg);

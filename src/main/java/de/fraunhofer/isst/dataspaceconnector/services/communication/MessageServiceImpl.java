@@ -24,7 +24,10 @@ import java.net.URI;
  */
 @Service
 public class MessageServiceImpl implements MessageService {
-    /** Constant <code>LOGGER</code> */
+
+    /**
+     * Constant <code>LOGGER</code>
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     private Connector connector;
@@ -39,23 +42,26 @@ public class MessageServiceImpl implements MessageService {
      * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
      * @param idsHttpService a {@link de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService} object.
      */
-    public MessageServiceImpl(ConfigurationContainer configurationContainer, TokenProvider tokenProvider,
-                              IDSHttpService idsHttpService) {
+    public MessageServiceImpl(ConfigurationContainer configurationContainer,
+        TokenProvider tokenProvider,
+        IDSHttpService idsHttpService) {
         this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
         this.idsHttpService = idsHttpService;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response sendLogMessage() throws IOException {
         LogMessage message = new LogMessageBuilder()
-                ._issued_(Util.getGregorianNow())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._issuerConnector_(connector.getId())
-                ._senderAgent_(connector.getId())
-                ._securityToken_(tokenProvider.getTokenJWS())
-                .build();
+            ._issued_(Util.getGregorianNow())
+            ._modelVersion_(connector.getOutboundModelVersion())
+            ._issuerConnector_(connector.getId())
+            ._senderAgent_(connector.getId())
+            ._securityToken_(tokenProvider.getTokenJWS())
+            .build();
 
         MultipartBody body = InfomodelMessageBuilder.messageWithString(message, "");
         LOGGER.info("TO IMPLEMENT | NOT SENT: " + body);
@@ -63,17 +69,19 @@ public class MessageServiceImpl implements MessageService {
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response sendNotificationMessage(String recipient) throws IOException {
         NotificationMessage message = new NotificationMessageBuilder()
-                ._issued_(Util.getGregorianNow())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._issuerConnector_(connector.getId())
-                ._senderAgent_(connector.getId())
-                ._securityToken_(tokenProvider.getTokenJWS())
-                ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(URI.create(recipient)))
-                .build();
+            ._issued_(Util.getGregorianNow())
+            ._modelVersion_(connector.getOutboundModelVersion())
+            ._issuerConnector_(connector.getId())
+            ._senderAgent_(connector.getId())
+            ._securityToken_(tokenProvider.getTokenJWS())
+            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(URI.create(recipient)))
+            .build();
 
         MultipartBody body = InfomodelMessageBuilder.messageWithString(message, "");
         LOGGER.info("TO IMPLEMENT | NOT SENT: " + body);

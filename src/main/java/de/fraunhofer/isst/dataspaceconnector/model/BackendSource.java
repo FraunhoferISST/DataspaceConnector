@@ -21,42 +21,12 @@ import java.net.URI;
 @JsonInclude(Include.NON_NULL)
 public class BackendSource implements Serializable {
 
-    @Schema(
-        name = "Type",
-        description = "Information of the backend system.",
-        oneOf = Type.class
-    )
-    public enum Type {
-        @JsonProperty("local")
-        LOCAL("local"),
-        @JsonProperty("http-get")
-        HTTP_GET("http-get"),
-        @JsonProperty("https-get")
-        HTTPS_GET("https-get"),
-        @JsonProperty("https-get-basicauth")
-        HTTPS_GET_BASICAUTH("https-get-basicauth");
-
-        private final String type;
-
-        Type(String string) {
-            type = string;
-        }
-
-        @Override
-        public String toString() {
-            return type;
-        }
-    }
-
     @JsonProperty("type")
     private Type type;
-
     @JsonProperty("url")
     private URI url;
-
     @JsonProperty("username")
     private String username;
-
     @JsonProperty("password")
     private String password;
 
@@ -151,5 +121,32 @@ public class BackendSource implements Serializable {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Schema(
+        name = "Type",
+        description = "Information of the backend system.",
+        oneOf = Type.class
+    )
+    public enum Type {
+        @JsonProperty("local")
+        LOCAL("local"),
+        @JsonProperty("http-get")
+        HTTP_GET("http-get"),
+        @JsonProperty("https-get")
+        HTTPS_GET("https-get"),
+        @JsonProperty("https-get-basicauth")
+        HTTPS_GET_BASICAUTH("https-get-basicauth");
+
+        private final String type;
+
+        Type(String string) {
+            type = string;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
     }
 }

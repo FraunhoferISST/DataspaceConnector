@@ -29,7 +29,10 @@ import java.util.ArrayList;
 @Component
 @EnableScheduling
 public class PolicyEnforcement {
-    /** Constant <code>LOGGER</code> */
+
+    /**
+     * Constant <code>LOGGER</code>
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
 
     private PolicyVerifier policyVerifier;
@@ -48,8 +51,10 @@ public class PolicyEnforcement {
      * @param requestedResourceRepository a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceRepository} object.
      * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
      */
-    public PolicyEnforcement(PolicyVerifier policyVerifier, RequestedResourceService requestedResourceService,
-                             RequestedResourceRepository requestedResourceRepository, SerializerProvider serializerProvider) {
+    public PolicyEnforcement(PolicyVerifier policyVerifier,
+        RequestedResourceService requestedResourceService,
+        RequestedResourceRepository requestedResourceRepository,
+        SerializerProvider serializerProvider) {
         this.policyVerifier = policyVerifier;
         this.requestedResourceService = requestedResourceService;
         this.requestedResourceRepository = requestedResourceRepository;
@@ -57,8 +62,7 @@ public class PolicyEnforcement {
     }
 
     /**
-     * Checks all resources every minute.
-     * 1000 = 1 sec * 60 * 60 = every hour (3600000)
+     * Checks all resources every minute. 1000 = 1 sec * 60 * 60 = every hour (3600000)
      */
     @Scheduled(fixedDelay = 60000)
     public void schedule() {
@@ -74,13 +78,14 @@ public class PolicyEnforcement {
      * Checks all know resources and its policies to delete them if necessary.
      *
      * @throws java.text.ParseException if any.
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException      if any.
      */
     public void checkResources() throws ParseException, IOException {
         for (RequestedResource resource : requestedResourceRepository.findAll()) {
             String policy = resource.getResourceMetadata().getPolicy();
             try {
-                Contract contract = serializerProvider.getSerializer().deserialize(policy, Contract.class);
+                Contract contract = serializerProvider.getSerializer()
+                    .deserialize(policy, Contract.class);
                 if (contract.getPermission() != null && contract.getPermission().get(0) != null) {
                     Permission permission = contract.getPermission().get(0);
                     ArrayList<? extends Duty> postDuties = permission.getPostDuty();
@@ -96,7 +101,8 @@ public class PolicyEnforcement {
                 }
 
             } catch (IOException e) {
-                throw new IOException("The policy could not be read. Please check the policy syntax.");
+                throw new IOException(
+                    "The policy could not be read. Please check the policy syntax.");
             }
         }
     }

@@ -24,18 +24,19 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 
 /**
  * This @{@link de.fraunhofer.isst.dataspaceconnector.message.NotificationMessageHandler} handles
- * all incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl}
- * as part one in the multipart message. This header must have the correct '@type' reference as
- * defined in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName
- * annotation. In this example, the received payload is not defined and will be returned
- * immediately. Usually, the payload would be well defined as well, such that it can be
- * deserialized into a proper Java-Object.
+ * all incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as
+ * part one in the multipart message. This header must have the correct '@type' reference as defined
+ * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation. In
+ * this example, the received payload is not defined and will be returned immediately. Usually, the
+ * payload would be well defined as well, such that it can be deserialized into a proper
+ * Java-Object.
  *
  * @version $Id: $Id
  */
 @Component
 @SupportedMessageType(NotificationMessageImpl.class)
 public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
+
     /**
      * Constant <code>LOGGER</code>
      */
@@ -46,12 +47,14 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
     @Autowired
     public NotificationMessageHandler(@NotNull ConfigurationContainer configurationContainer,
-                                      @NotNull TokenProvider tokenProvider) throws IllegalArgumentException {
-        if (tokenProvider == null)
+        @NotNull TokenProvider tokenProvider) throws IllegalArgumentException {
+        if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
+        }
 
-        if (configurationContainer == null)
+        if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
 
         this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
@@ -71,22 +74,22 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      */
     @Override
     public MessageResponse handleMessage(NotificationMessageImpl message,
-                                         MessagePayload messagePayload) throws RuntimeException {
+        MessagePayload messagePayload) throws RuntimeException {
         try {
             final var connector = getConnector();
 
             final var responseMsgHeader = new MessageProcessedNotificationMessageBuilder()
-                    ._securityToken_(tokenProvider.getTokenJWS())
-                    ._correlationMessage_(message.getId())
-                    ._issued_(getGregorianNow())
-                    ._issuerConnector_(connector.getId())
-                    ._modelVersion_(connector.getOutboundModelVersion())
-                    ._senderAgent_(connector.getId())
-                    ._recipientConnector_(Util.asList(message.getIssuerConnector()))
-                    .build();
+                ._securityToken_(tokenProvider.getTokenJWS())
+                ._correlationMessage_(message.getId())
+                ._issued_(getGregorianNow())
+                ._issuerConnector_(connector.getId())
+                ._modelVersion_(connector.getOutboundModelVersion())
+                ._senderAgent_(connector.getId())
+                ._recipientConnector_(Util.asList(message.getIssuerConnector()))
+                .build();
 
             LOGGER.info(String.format("Received notification from %s with message: %s",
-                    message.getId(), messagePayload));
+                message.getId(), messagePayload));
 
             return BodyResponse.create(responseMsgHeader, "Message received.");
 

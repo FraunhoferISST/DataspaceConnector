@@ -10,6 +10,7 @@ import java.util.UUID;
  * @version $Id: $Id
  */
 public interface ConnectorResource {
+
     /**
      * <p>getUuid.</p>
      *
@@ -62,7 +63,8 @@ public interface ConnectorResource {
     /**
      * <p>setResourceMetadata.</p>
      *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata}
+     *                         object.
      */
     void setResourceMetadata(ResourceMetadata resourceMetadata);
 
