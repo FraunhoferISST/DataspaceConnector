@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-public class ResourceException extends Exception{
+public class ResourceException extends RuntimeException{
     /**
      * Construct an ResourceException with the specified detail message and cause.
      *

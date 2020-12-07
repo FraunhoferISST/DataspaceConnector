@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.communication;
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -101,8 +102,8 @@ public class ConnectorRequestServiceUtils {
     public boolean resourceExists(UUID resourceId) {
         try {
             return requestedResourceService.getResource(resourceId) != null;
-        } catch (InvalidResourceException e) {
-            return true;
+        } catch (ResourceException exception) {
+            return false;
         }
     }
 
