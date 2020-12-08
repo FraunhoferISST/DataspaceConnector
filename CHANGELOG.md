@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.4.0-SNAPSHOT]
+## [4.0.0-SNAPSHOT]
 
 ### Added
 - Persistent volume for PostgreSQL in docker-compose
