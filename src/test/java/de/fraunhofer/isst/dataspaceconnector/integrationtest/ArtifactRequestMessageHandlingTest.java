@@ -157,7 +157,7 @@ public class ArtifactRequestMessageHandlingTest {
         representation.setUuid(representationUUID);
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                Collections.singletonList(representation));
+                Collections.singletonMap(representation.getUuid(), representation));
     }
 
     private String getArtifactRequestMessageHeader(UUID requestedArtifact) {

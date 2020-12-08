@@ -73,6 +73,10 @@
       "@id" : "https://localhost:8080/"
     }, {
       "@id" : "http://localhost:8080/"
+    }, {
+      "@id" : "https://localhost:8081/"
+    }, {
+      "@id" : "http://localhost:8081/"
     } ]
   } ]
 }

@@ -2,9 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector.services.communication;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
@@ -13,20 +15,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * This class handles received message content and saves the metadata and data to the internal database.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class handles received message content and saves the metadata and data to the internal
+ * database.
  */
 @Service
 public class ConnectorRequestServiceUtils {
-    /** Constant <code>LOGGER</code> */
+
     public static final Logger LOGGER = LoggerFactory.getLogger(ConnectorRequestServiceUtils.class);
 
     private RequestedResourceService requestedResourceService;
@@ -34,18 +31,16 @@ public class ConnectorRequestServiceUtils {
 
     @Autowired
     /**
-     * <p>Constructor for ConnectorRequestServiceUtils.</p>
-     *
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * Constructor for ConnectorRequestServiceUtils.
      */
-    public ConnectorRequestServiceUtils(RequestedResourceService requestedResourceService, SerializerProvider serializerProvider) {
+    public ConnectorRequestServiceUtils(RequestedResourceService requestedResourceService,
+        SerializerProvider serializerProvider) {
         this.requestedResourceService = requestedResourceService;
         this.serializerProvider = serializerProvider;
     }
 
     /**
-     * Saves the metadata in the internal database.
+     * Saves the metadata to the internal database.
      *
      * @param response The data resource as string.
      * @return The UUID of the created resource.
@@ -57,11 +52,13 @@ public class ConnectorRequestServiceUtils {
         String payload = map.get("payload");
 
         try {
-            serializerProvider.getSerializer().deserialize(header, DescriptionResponseMessage.class);
+            serializerProvider.getSerializer()
+                .deserialize(header, DescriptionResponseMessage.class);
 //            ObjectMapper mapper = new ObjectMapper();
 //            ResourceMetadata resourceMetadata = mapper.readValue(payload, ResourceMetadata.class);
 
-            Resource resource = serializerProvider.getSerializer().deserialize(payload, ResourceImpl.class);
+            Resource resource = serializerProvider.getSerializer()
+                .deserialize(payload, ResourceImpl.class);
             return requestedResourceService.addResource(deserializeMetadata(resource));
         } catch (Exception e) {
             throw new Exception("Metadata could not be saved: " + e.getMessage());
@@ -69,9 +66,9 @@ public class ConnectorRequestServiceUtils {
     }
 
     /**
-     * Saves the data string in the internal database.
+     * Saves the data string to the internal database.
      *
-     * @param response The data resource as string.
+     * @param response   The data resource as string.
      * @param resourceId The resource uuid.
      * @throws java.lang.Exception if any.
      */
@@ -94,43 +91,48 @@ public class ConnectorRequestServiceUtils {
     }
 
     /**
-     * <p>resourceExists.</p>
+     * Checks if a resource exists.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @return a boolean.
+     * @param resourceId The resource uuid.
+     * @return true if the resource exists.
      */
     public boolean resourceExists(UUID resourceId) {
-        return requestedResourceService.getResource(resourceId) != null;
+        try {
+            return requestedResourceService.getResource(resourceId) != null;
+        } catch (ResourceException exception) {
+            return false;
+        }
     }
 
     private ResourceMetadata deserializeMetadata(Resource resource) {
         List<String> keywords = new ArrayList<>();
-        for(TypedLiteral t : resource.getKeyword()) {
+        for (TypedLiteral t : resource.getKeyword()) {
             keywords.add(t.getValue());
         }
 
-        List<ResourceRepresentation> representations = new ArrayList<>();
-        for(Representation r : resource.getRepresentation()) {
+        var representations = new HashMap<UUID, ResourceRepresentation>();
+        for (Representation r : resource.getRepresentation()) {
             Artifact artifact = (Artifact) r.getInstance().get(0);
             ResourceRepresentation representation = new ResourceRepresentation(
-                    UUID.randomUUID(),
-                    r.getMediaType().getFilenameExtension(),
-                    artifact.getByteSize().intValue(),
-                    artifact.getFileName(),
-                    new BackendSource(BackendSource.Type.LOCAL, null, null, null)
+                UUIDUtils.createUUID((UUID x) -> representations.get(x) != null),
+                r.getMediaType().getFilenameExtension(),
+                artifact.getByteSize().intValue(),
+                artifact.getFileName(),
+                new BackendSource(BackendSource.Type.LOCAL, null, null, null)
             );
-            representations.add(representation);
+
+            representations.put(representation.getUuid(), representation);
         }
 
         return new ResourceMetadata(
-                resource.getTitle().get(0).getValue(),
-                resource.getDescription().get(0).getValue(),
-                keywords,
-                resource.getContractOffer().get(0).toRdf(),
-                resource.getPublisher(),
-                resource.getStandardLicense(),
-                resource.getVersion(),
-                representations
+            resource.getTitle().get(0).getValue(),
+            resource.getDescription().get(0).getValue(),
+            keywords,
+            resource.getContractOffer().get(0).toRdf(),
+            resource.getPublisher(),
+            resource.getStandardLicense(),
+            resource.getVersion(),
+            representations
         );
     }
 }

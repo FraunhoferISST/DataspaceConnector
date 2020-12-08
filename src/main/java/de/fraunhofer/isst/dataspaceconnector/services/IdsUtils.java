@@ -1,13 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,40 +20,58 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import org.springframework.util.Assert;
 
 /**
- * This class provides methods to map local connector models to IDS-specific Information Model objects.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class provides methods to map local connector models to IDS Information Model objects.
  */
 @Service
 public class IdsUtils {
-    /** Constant <code>LOGGER</code> */
-    public static final Logger LOGGER = LoggerFactory.getLogger(IdsUtils.class);
 
-    private ConfigurationContainer configurationContainer;
-    private SerializerProvider serializerProvider;
-    private String language;
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdsUtils.class);
 
-    @Autowired
+    private final ConfigurationContainer configurationContainer;
+    private final SerializerProvider serializerProvider;
+
     /**
-     * <p>Constructor for IdsUtils.</p>
+     * Constructor for IdsUtils.
      *
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
-    public IdsUtils(ConfigurationContainer configurationContainer, SerializerProvider serializerProvider) {
+    @Autowired
+    public IdsUtils(@NotNull ConfigurationContainer configurationContainer,
+        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (configurationContainer == null) {
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        }
+
+        if (serializerProvider == null) {
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+        }
+
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
+    }
 
-        language = configurationContainer.getConnector().getLabel().get(0).getLanguage();
+    /**
+     * Returns current IDS base connector object.
+     *
+     * @return The {@link de.fraunhofer.iais.eis.Connector} object from the IDS Framework.
+     * @throws ConnectorConfigurationException If the connector was not found.
+     */
+    public Connector getConnector() throws ConnectorConfigurationException {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+
+        final var connector = configurationContainer.getConnector();
+        if (connector == null) {
+            // The connector is needed for every answer and cannot be null
+            throw new ConnectorConfigurationException("No connector configurated.");
+        }
+
+        return connector;
     }
 
     /**
@@ -60,44 +79,72 @@ public class IdsUtils {
      *
      * @param resource The connector resource.
      * @return The Information Model resource.
+     * @throws RuntimeException - if the Information Model object could not be build.
      */
-    public Resource getAsResource(ConnectorResource resource) {
-        ResourceMetadata metadata = resource.getResourceMetadata();
+    public Resource getAsResource(ConnectorResource resource) throws RuntimeException {
+        final var language = getDefaultLanguage();
+        final var metadata = resource.getResourceMetadata();
+        if (metadata == null) {
+            throw new NullPointerException("The metadata cannot be null.");
+        }
 
-        ArrayList<TypedLiteral> keywords = new ArrayList<>();
+        // Get the list of keywords
+        var keywords = new ArrayList<TypedLiteral>();
         if (metadata.getKeywords() != null) {
-            for (String keyword : metadata.getKeywords()) {
+            for (var keyword : metadata.getKeywords()) {
                 keywords.add(new TypedLiteral(keyword, language));
             }
         }
 
-        ArrayList<Representation> representations = new ArrayList<>();
+        // Get the list of representations
+        var representations = new ArrayList<Representation>();
         if (metadata.getRepresentations() != null) {
-            for (ResourceRepresentation representation : metadata.getRepresentations()) {
-                representations.add(new RepresentationBuilder(URI.create("https://w3id.org/idsa/autogen/representation/" + representation.getUuid()))
+            for (var representation : metadata.getRepresentations().values()) {
+                try {
+                    representations.add(new RepresentationBuilder(URI.create(
+                        "https://w3id.org/idsa/autogen/representation/" + representation.getUuid()))
                         ._language_(Language.EN)
                         ._mediaType_(new IANAMediaTypeBuilder()
-                                ._filenameExtension_(representation.getType())
-                                .build())
-                        ._instance_(Util.asList(new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/" + representation.getUuid()))
-                                ._byteSize_(BigInteger.valueOf(representation.getByteSize()))
-                                ._fileName_(representation.getName())
-                                .build()))
+                            ._filenameExtension_(representation.getType())
+                            .build())
+                        ._instance_(Util.asList(new ArtifactBuilder(URI.create(
+                            "https://w3id.org/idsa/autogen/artifact/" + representation.getUuid()))
+                            ._byteSize_(BigInteger.valueOf(representation.getByteSize()))
+                            ._fileName_(representation.getName())
+                            .build()))
                         .build());
+                } catch (ConstraintViolationException exception) {
+                    throw new RuntimeException("Failed to build resource representation.",
+                        exception);
+                }
             }
         }
 
-        Contract contract = null;
-        if (resource.getResourceMetadata().getPolicy() != null) {
+        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
+
+        // Get the list of contracts
+        var contracts = new ArrayList<ContractOffer>();
+        if (metadata.getPolicy() != null) {
             try {
-                contract = serializerProvider.getSerializer().deserialize(resource.getResourceMetadata().getPolicy(), Contract.class);
-            } catch (IOException e) {
-                LOGGER.error("Could not deserialize contract: " + e.getMessage());
+                final var contract =
+                    serializerProvider.getSerializer().deserialize(metadata.getPolicy(),
+                        Contract.class);
+                contracts.add((ContractOffer) contract);
+            } catch (IOException exception) {
+                LOGGER.error(String.format("Could not deserialize contract.\nContract: [%s]",
+                    metadata.getPolicy()),
+                    exception);
+                throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
 
-        return new ResourceBuilder(URI.create("https://w3id.org/idsa/autogen/resource/" + resource.getUuid()))
-                ._contractOffer_(Util.asList((ContractOffer) contract))
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+
+        // Build the ids resource
+        try {
+            return new ResourceBuilder(
+                URI.create("https://w3id.org/idsa/autogen/resource/" + resource.getUuid()))
+                ._contractOffer_(contracts)
                 ._created_(getGregorianOf(resource.getCreated()))
                 ._description_(Util.asList(new TypedLiteral(metadata.getDescription(), language)))
                 ._keyword_(keywords)
@@ -105,11 +152,16 @@ public class IdsUtils {
                 ._modified_(getGregorianOf(resource.getModified()))
                 ._publisher_(metadata.getOwner())
                 ._representation_(representations)
-                ._resourceEndpoint_(Util.asList(configurationContainer.getConnector().getHasDefaultEndpoint()))
+                ._resourceEndpoint_(
+                    Util.asList(configurationContainer.getConnector().getHasDefaultEndpoint()))
                 ._standardLicense_(metadata.getLicense())
                 ._title_(Util.asList(new TypedLiteral(metadata.getTitle(), language)))
                 ._version_(metadata.getVersion())
                 .build();
+        } catch (ConstraintViolationException | NullPointerException exception) {
+            // The build failed or the connector is null.
+            throw new RuntimeException("Failed to build information model resource.", exception);
+        }
     }
 
     /**
@@ -123,26 +175,54 @@ public class IdsUtils {
         c.setTime(date);
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
-        } catch (DatatypeConfigurationException e) {
-            LOGGER.error(e.getMessage());
-            return null;
+        } catch (DatatypeConfigurationException exception) {
+            // Rethrow but do not register in function header
+            throw new RuntimeException(exception);
         }
     }
 
     /**
-     * Converts a string to XMLGregorianCalendar format.
+     * Gets the default language, which is the first set language of the connector.
      *
-     * @param string The string.
-     * @return The XMLGregorianCalendar object or null.
+     * @return The default language of the connector
+     * @throws ConnectorConfigurationException - if the connector is null or no language is
+     *                                         configurated.
      */
-    private XMLGregorianCalendar stringToDate(String string) {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        Date date = null;
+    private String getDefaultLanguage() throws ConnectorConfigurationException {
         try {
-            date = format.parse(string);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            return getLanguage(0);
+        } catch (IndexOutOfBoundsException exception) {
+            throw new ConnectorConfigurationException("No default language has been set.");
         }
-        return getGregorianOf(date);
+    }
+
+    /***
+     * Gets a language from the connector.
+     *
+     * @param index Index of the language.
+     * @return The language at the passed index.
+     * @throws ConnectorConfigurationException - if the connector is null or no language is set.
+     * @throws IndexOutOfBoundsException - if no language could be found at the passed index.
+     */
+    private String getLanguage(int index)
+        throws ConnectorConfigurationException, IndexOutOfBoundsException {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+        try {
+            final var label = configurationContainer.getConnector().getLabel();
+            if (label.size() == 0) {
+                throw new ConnectorConfigurationException("No language has been set.");
+            }
+
+            final var language = label.get(index).getLanguage();
+
+            if (language.isEmpty()) {
+                throw new ConnectorConfigurationException("No language has been set.");
+            }
+
+            return language;
+        } catch (NullPointerException exception) {
+            throw new ConnectorConfigurationException("The connector language configuration could" +
+                " not be received.", exception);
+        }
     }
 }

@@ -12,29 +12,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class provides policy pattern recognition and calls the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} on data request or access.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class provides policy pattern recognition and calls the {@link
+ * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} on data request or
+ * access.
  */
 @Component
 public class PolicyHandler {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
-    /** Constant <code>contract</code> */
-    public static Contract contract;
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
+
+    public static Contract contract;
     private PolicyVerifier policyVerifier;
     private SerializerProvider serializerProvider;
 
     @Autowired
     /**
-     * <p>Constructor for PolicyHandler.</p>
-     *
-     * @param policyVerifier a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * Constructor for PolicyHandler.
      */
     public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider) {
         this.policyVerifier = policyVerifier;
@@ -48,7 +41,7 @@ public class PolicyHandler {
      * @return The recognized policy pattern.
      * @throws java.io.IOException if any.
      */
-    public Pattern getPattern(String policy) throws IOException{
+    public Pattern getPattern(String policy) throws IOException {
         try {
             contract = serializerProvider.getSerializer().deserialize(policy, Contract.class);
         } catch (IOException e) {
@@ -78,7 +71,8 @@ public class PolicyHandler {
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
                         return Pattern.DURATION_USAGE;
                     } else {
-                        throw new IOException("The recognized policy pattern is not supported by this connector.");
+                        throw new IOException(
+                            "The recognized policy pattern is not supported by this connector.");
                     }
                 }
             } else {
@@ -89,21 +83,24 @@ public class PolicyHandler {
                     } else if (action == Action.LOG) {
                         return Pattern.USAGE_LOGGING;
                     } else {
-                        throw new IOException("The recognized policy pattern is not supported by this connector.");
+                        throw new IOException(
+                            "The recognized policy pattern is not supported by this connector.");
                     }
                 } else {
                     return Pattern.PROVIDE_ACCESS;
                 }
             }
         } else {
-            throw new IOException("The recognized policy pattern is not supported by this connector.");
+            throw new IOException(
+                "The recognized policy pattern is not supported by this connector.");
         }
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on artifact request as provider).
+     * Implements the policy restrictions depending on the policy pattern type (on artifact request
+     * as provider).
      *
-     * @param policy  The resource's usage policy.
+     * @param policy The resource's usage policy.
      * @return Whether the data can be accessed.
      * @throws java.io.IOException if any.
      */
@@ -122,9 +119,10 @@ public class PolicyHandler {
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on data access as consumer).
+     * Implements the policy restrictions depending on the policy pattern type (on data access as
+     * consumer).
      *
-     * @param dataResource  The accessed resource.
+     * @param dataResource The accessed resource.
      * @return Whether the data can be accessed.
      * @throws java.io.IOException if any.
      */
@@ -154,42 +152,32 @@ public class PolicyHandler {
          */
         PROVIDE_ACCESS("PROVIDE_ACCESS"),
         /**
-         * Default pattern if no other is detected.
-         * v2.0: NO_POLICY("no-policy")
+         * Default pattern if no other is detected. v2.0: NO_POLICY("no-policy")
          */
         PROHIBIT_ACCESS("PROHIBIT_ACCESS"),
         /**
-         * Type: NotMoreThanN
-         * v2.0: COUNT_ACCESS("count-access")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/NTimesUsageTemplates/N_TIMES_USAGE_OFFER_TEMPLATE.jsonld
+         * Type: NotMoreThanN v2.0: COUNT_ACCESS("count-access") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/NTimesUsageTemplates/N_TIMES_USAGE_OFFER_TEMPLATE.jsonld
          */
         N_TIMES_USAGE("N_TIMES_USAGE"),
         /**
-         * Type: DurationOffer
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/DURATION_USAGE_OFFER_TEMPLATE.jsonld
+         * Type: DurationOffer https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/DURATION_USAGE_OFFER_TEMPLATE.jsonld
          */
         DURATION_USAGE("DURATION_USAGE"),
         /**
-         * Type: IntervalUsage
-         * v2.0: TIME_INTERVAL("time-interval")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_DURING_INTERVAL_OFFER_TEMPLATE.jsonld
+         * Type: IntervalUsage v2.0: TIME_INTERVAL("time-interval") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_DURING_INTERVAL_OFFER_TEMPLATE.jsonld
          */
         USAGE_DURING_INTERVAL("USAGE_DURING_INTERVAL"),
         /**
-         * Type: DeleteAfterInterval
-         * v2.0: DELETE_AFTER("delete-after")
+         * Type: DeleteAfterInterval v2.0: DELETE_AFTER("delete-after")
          * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_UNTIL_DELETION_OFFER_TEMPLATE.jsonld
          */
         USAGE_UNTIL_DELETION("USAGE_UNTIL_DELETION"),
         /**
-         * Type: Logging
-         * v2.0: LOG_ACCESS("log-access")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageLoggingTemplates/USAGE_LOGGING_OFFER_TEMPLATE.jsonld
+         * Type: Logging v2.0: LOG_ACCESS("log-access") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageLoggingTemplates/USAGE_LOGGING_OFFER_TEMPLATE.jsonld
          */
         USAGE_LOGGING("USAGE_LOGGING"),
         /**
-         * Type: Notification
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld
+         * Type: Notification https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld
          */
         USAGE_NOTIFICATION("USAGE_NOTIFICATION");
 

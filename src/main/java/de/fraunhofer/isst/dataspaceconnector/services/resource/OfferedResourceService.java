@@ -1,159 +1,149 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 /**
- * <p>OfferedResourceService interface.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * OfferedResourceService interface.
  */
 public interface OfferedResourceService {
-    /**
-     * <p>getResourceList.</p>
-     *
-     * @return a {@link java.util.ArrayList} object.
-     */
-    ArrayList<Resource> getResourceList();
 
     /**
-     * <p>getOfferedResources.</p>
+     * Returns resource list.
+     *
+     * @return a {@link java.util.List} object.
+     */
+    List<Resource> getResourceList();
+
+    /**
+     * Returns offered resources.
      *
      * @return a {@link java.util.Map} object.
      */
     Map<UUID, Resource> getOfferedResources();
 
     /**
-     * <p>addResource.</p>
+     * Adds resource.
      *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
-    UUID addResource(ResourceMetadata resourceMetadata);
+    UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
 
     /**
-     * <p>addResourceWithId.</p>
+     * Adds resource with id.
      *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param uuid a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
-    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid);
+    void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws ResourceException;
 
     /**
-     * <p>addData.</p>
+     * Adds data.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param data a {@link java.lang.String} object.
+     * @throws ResourceException - if the resource data could not be added.
      */
-    void addData(UUID resourceId, String data);
+    void addData(UUID resourceId, String data) throws ResourceException;
 
     /**
-     * <p>updateResource.</p>
+     * Updates resource.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @throws ResourceException - if the resource could not be updated.
      */
-    void updateResource(UUID resourceId, ResourceMetadata resourceMetadata);
+    void updateResource(UUID resourceId, ResourceMetadata resourceMetadata)
+        throws ResourceException;
 
     /**
-     * <p>updateContract.</p>
+     * Updates contract.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param policy a {@link java.lang.String} object.
+     * @throws ResourceException - if the contract could not be updated.
      */
-    void updateContract(UUID resourceId, String policy);
+    void updateContract(UUID resourceId, String policy) throws ResourceException;
 
     /**
-     * <p>deleteResource.</p>
+     * Deletes resource.
      *
-     * @param resourceId a {@link java.util.UUID} object.
+     * @return true if the resource was found and deleted.
      */
-    void deleteResource(UUID resourceId);
+    boolean deleteResource(UUID resourceId);
 
     /**
-     * <p>getResource.</p>
+     * Returns resource.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.OfferedResource} object.
+     * @return a {@link OfferedResource} object.
+     * @throws ResourceException - if the resource could not be received.
      */
-    OfferedResource getResource(UUID resourceId);
+    OfferedResource getResource(UUID resourceId) throws ResourceException;
 
     /**
-     * <p>getMetadata.</p>
+     * Gets metadata.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @return a {@link ResourceMetadata} object.
+     * @throws ResourceException - if the metadata could not be received.
      */
-    ResourceMetadata getMetadata(UUID resourceId);
+    ResourceMetadata getMetadata(UUID resourceId) throws ResourceException;
 
     /**
-     * <p>getData.</p>
+     * Returns data.
      *
-     * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
+     * @throws ResourceException - if the resource data could not be received.
      */
-    String getData(UUID resourceId) throws Exception;
+    String getData(UUID resourceId) throws ResourceException;
 
     /**
-     * <p>getDataByRepresentation.</p>
+     * Returns data by representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representationId a {@link java.util.UUID} object.
      * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
+     * @throws ResourceException - if the resource data could not be received.
      */
-    String getDataByRepresentation(UUID resourceId, UUID representationId) throws Exception;
+    String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 
     /**
-     * <p>addRepresentation.</p>
+     * Adds representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the representation could not be added.
      */
-    UUID addRepresentation(UUID resourceId, ResourceRepresentation representation);
+    UUID addRepresentation(UUID resourceId, ResourceRepresentation representation)
+        throws ResourceException;
 
     /**
-     * <p>addRepresentation.</p>
+     * Adds representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
-     * @param representationId the {@link UUID} that will be used for the new representation
      * @return a {@link java.util.UUID} object.
+     * @throws ResourceException - if the representation could not be added.
      */
-    UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation, UUID representationId);
+    UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
+        UUID representationId) throws ResourceException;
 
     /**
-     * <p>updateRepresentation.</p>
+     * Updates representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representationId a {@link java.util.UUID} object.
-     * @param representation a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
+     * @throws ResourceException - if the representation could not be updated.
      */
-    void updateRepresentation(UUID resourceId, UUID representationId, ResourceRepresentation representation);
+    void updateRepresentation(UUID resourceId, UUID representationId,
+        ResourceRepresentation representation) throws ResourceException;
 
     /**
-     * <p>getRepresentation.</p>
+     * Returns representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representationId a {@link java.util.UUID} object.
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation} object.
+     * @return a {@link ResourceRepresentation} object.
+     * @throws ResourceException - if the representation could not be received.
      */
-    ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId);
+    ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
+        throws ResourceException;
 
     /**
-     * <p>deleteRepresentation.</p>
+     * Deletes representation.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @param representationId a {@link java.util.UUID} object.
+     * @throws ResourceException - if the resource could not be added.
      */
-    void deleteRepresentation(UUID resourceId, UUID representationId);
+    boolean deleteRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 }

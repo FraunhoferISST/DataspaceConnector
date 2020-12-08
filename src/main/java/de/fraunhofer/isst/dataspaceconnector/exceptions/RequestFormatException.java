@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-public class RequestFormatException extends IllegalArgumentException{
+public class RequestFormatException extends IllegalArgumentException {
+
     /**
      * Construct an RequestFormatException with the specified detail message and cause.
      *

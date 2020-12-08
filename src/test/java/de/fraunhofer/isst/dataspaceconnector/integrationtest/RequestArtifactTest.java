@@ -1,7 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceRepository;
@@ -23,16 +26,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.lang.reflect.Field;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
- * This class tests whether the connecter can request and save data from other connectors.
+ * This class tests whether the connector can request and save data from other connectors.
  *
  * @author Ronja Quensel
  * @version $Id: $Id
@@ -114,9 +114,44 @@ public class RequestArtifactTest {
     }
 
     private ResourceMetadata getResourceMetadata() {
-        return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), "policy",
+        final var representationId = UUIDUtils.createUUID((UUID x) -> false);
+        final var representation = new ResourceRepresentation();
+        representation.setUuid(representationId);
+        representation.setType("Type");
+        representation.setByteSize(1);
+        representation.setName("Name");
+
+        final var source = new BackendSource();
+        source.setType(BackendSource.Type.LOCAL);
+
+        representation.setSource(source);
+
+        String policy = "{\n" +
+                "  \"@context\" : {\n" +
+                "    \"ids\" : \"https://w3id.org/idsa/core/\"\n" +
+                "  },\n" +
+                "  \"@type\" : \"ids:ContractOffer\",\n" +
+                "  \"@id\" : \"https://w3id.org/idsa/autogen/contractOffer/b03ec7da-d208-4dea-91e5-5683703732a9\",\n" +
+                "  \"ids:permission\" : [ {\n" +
+                "    \"@type\" : \"ids:Permission\",\n" +
+                "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/429f3e71-df2c-47f4-80f2-7eff27ed4542\",\n" +
+                "    \"ids:action\" : [ {\n" +
+                "      \"@id\" : \"idsc:USE\"\n" +
+                "    } ],\n" +
+                "    \"ids:description\" : [ {\n" +
+                "      \"@value\" : \"provide-access\",\n" +
+                "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "    } ],\n" +
+                "    \"ids:title\" : [ {\n" +
+                "      \"@value\" : \"Example Usage Policy\",\n" +
+                "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n" +
+                "    } ]\n" +
+                "  } ]\n" +
+                "}";
+
+        return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"), policy,
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new ArrayList<>());
+                Collections.singletonMap(representationId, representation));
     }
 
     private String getArtifactResponseMultipart() {

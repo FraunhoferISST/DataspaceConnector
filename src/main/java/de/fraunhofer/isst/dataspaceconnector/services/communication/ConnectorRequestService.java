@@ -6,36 +6,30 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * <p>ConnectorRequestService interface.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * ConnectorRequestService interface.
  */
 public interface ConnectorRequestService {
+
     /**
-     * <p>sendArtifactRequestMessage.</p>
+     * Sends artifact request message.
      *
-     * @param recipient a {@link java.net.URI} object.
-     * @param artifact a {@link java.net.URI} object.
-     * @return a {@link okhttp3.Response} object.
+     * @return  the http response.
      * @throws java.io.IOException if any.
      */
     Response sendArtifactRequestMessage(URI recipient, URI artifact) throws IOException;
 
     /**
-     * <p>sendDescriptionRequestMessage.</p>
+     * Sends description request message.
      *
-     * @param recipient a {@link java.net.URI} object.
-     * @param artifact a {@link java.net.URI} object.
-     * @return a {@link okhttp3.Response} object.
+     * @return the http response.
      * @throws java.io.IOException if any.
      */
     Response sendDescriptionRequestMessage(URI recipient, URI artifact) throws IOException;
 
     /**
-     * <p>sendContractRequestMessage.</p>
+     * Sends contract request message.
      *
-     * @return a {@link okhttp3.Response} object.
+     * @return the http response.
      */
     Response sendContractRequestMessage();
 }
