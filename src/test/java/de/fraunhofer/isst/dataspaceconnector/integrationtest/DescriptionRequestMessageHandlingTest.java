@@ -1,9 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 
-import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -97,7 +94,26 @@ public class DescriptionRequestMessageHandlingTest {
         String responsePayload = multipart.get(PAYLOAD_MULTIPART_NAME);
 
         serializer.deserialize(responseHeader, DescriptionResponseMessage.class);
-        Assert.assertEquals(offeredResourceService.getOfferedResources().get(resourceId).toRdf(), responsePayload);
+//        Assert.assertEquals(offeredResourceService.getOfferedResources().get(resourceId).toRdf(), responsePayload);
+        Resource resourceFromDatabase = offeredResourceService.getOfferedResources().get(resourceId);
+        Resource resourceFromRequest = serializer.deserialize(responsePayload, Resource.class);
+        Assert.assertEquals(resourceFromDatabase.getId(), resourceFromRequest.getId());
+        Assert.assertEquals(resourceFromDatabase.getCreated(), resourceFromRequest.getCreated());
+        Assert.assertEquals(resourceFromDatabase.getLanguage(), resourceFromRequest.getLanguage());
+        Assert.assertEquals(resourceFromDatabase.getVersion(), resourceFromRequest.getVersion());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getDescription()),
+                serializer.serialize(resourceFromRequest.getDescription()));
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getContractOffer()),
+                serializer.serialize(resourceFromRequest.getContractOffer()));
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getKeyword()),
+                serializer.serialize(resourceFromRequest.getKeyword()));
+        Assert.assertEquals(resourceFromDatabase.getModified(), resourceFromRequest.getModified());
+        Assert.assertEquals(resourceFromDatabase.getPublisher(), resourceFromRequest.getPublisher());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getResourceEndpoint()),
+                serializer.serialize(resourceFromRequest.getResourceEndpoint()));
+        Assert.assertEquals(resourceFromDatabase.getRepresentation().get(0).getId(), resourceFromRequest.getRepresentation().get(0).getId());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getRepresentation().get(0).getInstance()),
+                serializer.serialize(resourceFromRequest.getRepresentation().get(0).getInstance()));
     }
 
     @Test

@@ -34,7 +34,7 @@ import java.util.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class SelfDescriptionTest {
-    private final String selfDescriptionEndpoint = "/admin/api/selfservice";
+    private final String selfDescriptionEndpoint = "/admin/api/self-description";
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,14 +133,6 @@ public class SelfDescriptionTest {
     private void deleteAllResources() throws Exception {
         offeredResourceRepository.deleteAll();
         requestedResourceRepository.deleteAll();
-
-        Field offeredResourcesMapField = OfferedResourceServiceImpl.class.getDeclaredField("offeredResources");
-        offeredResourcesMapField.setAccessible(true);
-        offeredResourcesMapField.set(offeredResourceService, new HashMap<UUID, Resource>());
-
-        Field requestedResourcesMapField = RequestedResourceServiceImpl.class.getDeclaredField("requestedResources");
-        requestedResourcesMapField.setAccessible(true);
-        requestedResourcesMapField.set(requestedResourceService, new HashMap<UUID, Resource>());
     }
 
 }
