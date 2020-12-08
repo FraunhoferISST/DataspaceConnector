@@ -17,16 +17,12 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * This class reads the content of the policy rules and returns needed information to the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class reads the content of the policy rules and returns needed information to the {@link
+ * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
  */
 @Component
 public class PolicyReader {
-    /**
-     * Constant <code>LOGGER</code>
-     */
+
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyReader.class);
 
     /**
@@ -125,48 +121,36 @@ public class PolicyReader {
     }
 
     /**
-     * <p>TimeInterval class.</p>
-     *
-     * @author Julia Pampus
-     * @version $Id: $Id
+     * Inner class for a time interval format.
      */
     public static class TimeInterval {
+
         private String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
         private Date start;
         private Date end;
 
         /**
-         * <p>Constructor for TimeInterval.</p>
+         * Constructor for TimeInterval.
          */
         public TimeInterval() {
         }
 
         /**
-         * <p>Constructor for TimeInterval.</p>
+         * Constructor for TimeInterval.
          *
-         * @param start a {@link Date} object.
-         * @param end   a {@link Date} object.
+         * @param start The start date.
+         * @param end   The end date.
          */
         public TimeInterval(Date start, Date end) {
             this.start = start;
             this.end = end;
         }
 
-        /**
-         * <p>Getter for the field <code>start</code>.</p>
-         *
-         * @return a {@link Date} object.
-         */
         public Date getStart() {
             return start;
         }
 
-        /**
-         * <p>Setter for the field <code>start</code>.</p>
-         *
-         * @param start a {@link String} object.
-         */
         public void setStart(String start) {
             try {
                 this.start = new SimpleDateFormat(DATE_FORMAT_PATTERN).parse(start);
@@ -175,20 +159,10 @@ public class PolicyReader {
             }
         }
 
-        /**
-         * <p>Getter for the field <code>end</code>.</p>
-         *
-         * @return a {@link Date} object.
-         */
         public Date getEnd() {
             return end;
         }
 
-        /**
-         * <p>Setter for the field <code>end</code>.</p>
-         *
-         * @param end a {@link String} object.
-         */
         public void setEnd(String end) {
             try {
                 this.end = new SimpleDateFormat(DATE_FORMAT_PATTERN).parse(end);

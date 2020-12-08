@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 
-import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -23,10 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * This class tests the correct handling of DescriptionRequestMessages.
@@ -97,7 +94,26 @@ public class DescriptionRequestMessageHandlingTest {
         String responsePayload = multipart.get(PAYLOAD_MULTIPART_NAME);
 
         serializer.deserialize(responseHeader, DescriptionResponseMessage.class);
-        Assert.assertEquals(offeredResourceService.getOfferedResources().get(resourceId).toRdf(), responsePayload);
+//        Assert.assertEquals(offeredResourceService.getOfferedResources().get(resourceId).toRdf(), responsePayload);
+        Resource resourceFromDatabase = offeredResourceService.getOfferedResources().get(resourceId);
+        Resource resourceFromRequest = serializer.deserialize(responsePayload, Resource.class);
+        Assert.assertEquals(resourceFromDatabase.getId(), resourceFromRequest.getId());
+        Assert.assertEquals(resourceFromDatabase.getCreated(), resourceFromRequest.getCreated());
+        Assert.assertEquals(resourceFromDatabase.getLanguage(), resourceFromRequest.getLanguage());
+        Assert.assertEquals(resourceFromDatabase.getVersion(), resourceFromRequest.getVersion());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getDescription()),
+                serializer.serialize(resourceFromRequest.getDescription()));
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getContractOffer()),
+                serializer.serialize(resourceFromRequest.getContractOffer()));
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getKeyword()),
+                serializer.serialize(resourceFromRequest.getKeyword()));
+        Assert.assertEquals(resourceFromDatabase.getModified(), resourceFromRequest.getModified());
+        Assert.assertEquals(resourceFromDatabase.getPublisher(), resourceFromRequest.getPublisher());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getResourceEndpoint()),
+                serializer.serialize(resourceFromRequest.getResourceEndpoint()));
+        Assert.assertEquals(resourceFromDatabase.getRepresentation().get(0).getId(), resourceFromRequest.getRepresentation().get(0).getId());
+        Assert.assertEquals(serializer.serialize(resourceFromDatabase.getRepresentation().get(0).getInstance()),
+                serializer.serialize(resourceFromRequest.getRepresentation().get(0).getInstance()));
     }
 
     @Test
@@ -121,6 +137,18 @@ public class DescriptionRequestMessageHandlingTest {
     }
 
     private ResourceMetadata getResourceMetadata() {
+        final var representationId = UUIDUtils.createUUID((UUID x) -> false);
+        final var representation = new ResourceRepresentation();
+        representation.setUuid(representationId);
+        representation.setType("Type");
+        representation.setByteSize(1);
+        representation.setName("Name");
+
+        final var source = new BackendSource();
+        source.setType(BackendSource.Type.LOCAL);
+
+        representation.setSource(source);
+
         return new ResourceMetadata("Test resource", "", Arrays.asList("test", "resource"),
                 "{\n" +
                         "  \"@context\" : {\n" +
@@ -145,7 +173,7 @@ public class DescriptionRequestMessageHandlingTest {
                         "  } ]\n" +
                         "}",
                 URI.create("http://resource-owner.com"), URI.create("http://license.com"), "v1.0",
-                new ArrayList<>());
+                Collections.singletonMap(representationId, representation));
     }
 
     private String getHeaderRequestedElementNull() {

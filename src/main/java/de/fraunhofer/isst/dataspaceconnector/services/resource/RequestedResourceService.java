@@ -1,72 +1,64 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
- * <p>RequestedResourceService interface.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * RequestedResourceService interface.
  */
 public interface RequestedResourceService {
-    /**
-     * <p>addResource.</p>
-     *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @return a {@link java.util.UUID} object.
-     */
-    UUID addResource(ResourceMetadata resourceMetadata);
 
     /**
-     * <p>addData.</p>
+     * Adds resource.
      *
-     * @param id a {@link java.util.UUID} object.
-     * @param data a {@link java.lang.String} object.
+     * @throws ResourceException - if the resource could not be added.
      */
-    void addData(UUID id, String data);
+    UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
 
     /**
-     * <p>deleteResource.</p>
+     * Adds data.
      *
-     * @param id a {@link java.util.UUID} object.
+     * @throws ResourceException - if the data could not be added.
      */
-    void deleteResource(UUID id);
+    void addData(UUID id, String data) throws ResourceException;
 
     /**
-     * <p>getResource.</p>
+     * Deletes resource.
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.RequestedResource} object.
+     * @return true if the resource could be found and be deleted.
      */
-    RequestedResource getResource(UUID id);
+    boolean deleteResource(UUID id);
 
     /**
-     * <p>getMetadata.</p>
+     * Returns resource
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @throws ResourceException - if the resource could not be found.
      */
-    ResourceMetadata getMetadata(UUID id);
+    RequestedResource getResource(UUID id) throws ResourceException;
 
     /**
-     * <p>getData.</p>
+     * Returns metadata.
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
+     * @throws ResourceException - if the metadata could not be found.
      */
-    String getData(UUID id) throws IOException;
+    ResourceMetadata getMetadata(UUID id) throws ResourceException;
 
     /**
-     * <p>getRequestedResources.</p>
+     * Returns data.
      *
-     * @return a {@link java.util.ArrayList} object.
+     * @throws ResourceException - if the data could not be received.
      */
-    ArrayList<Resource> getRequestedResources();
+    String getData(UUID id) throws ResourceException;
+
+    /**
+     * Returns requested resources as list.
+     *
+     * @return a list of resources.
+     */
+    List<Resource> getRequestedResources();
 }

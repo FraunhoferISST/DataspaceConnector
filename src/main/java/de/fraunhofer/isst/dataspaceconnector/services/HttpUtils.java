@@ -2,174 +2,185 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
-import okhttp3.OkHttpClient;
+import io.jsonwebtoken.lang.Assert;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.http.HttpHeaders;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.security.GeneralSecurityException;
 
 /**
  * This class builds up http or https endpoint connections.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Service
 public class HttpUtils {
 
-    private ClientProvider clientProvider;
+    private final ClientProvider clientProvider;
 
-    @Autowired
     /**
-     * <p>Constructor for HttpUtils.</p>
+     * Constructor for HttpUtils.
      *
-     * @param configurationModel a {@link de.fraunhofer.iais.eis.ConfigurationModel} object.
-     * @param keyStoreManager a {@link de.fraunhofer.isst.ids.framework.util.KeyStoreManager} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws GeneralSecurityException - if the framework has an error.
      */
-    public HttpUtils(ConfigurationContainer configurationContainer) throws NoSuchAlgorithmException, KeyManagementException {
+    @Autowired
+    public HttpUtils(@NotNull ConfigurationContainer configurationContainer)
+        throws IllegalArgumentException, GeneralSecurityException {
+        if (configurationContainer == null) {
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+        }
+
         this.clientProvider = new ClientProvider(configurationContainer);
+
+        Assert.notNull(clientProvider, "The clientProvider cannot be null.");
     }
 
     /**
      * Sends a get request to an external http endpoint.
      *
      * @param address The url.
-     * @return The http response.
-     * @throws java.io.IOException if any.
+     * @return The http response when http code is ok (200).
+     * @throws MalformedURLException - if the input address is not a valid url.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
-    public String sendHttpGetRequest(String address) throws IOException {
-        URL url = new URL(address);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
+    public String sendHttpGetRequest(String address) throws MalformedURLException,
+        RuntimeException {
+        try {
+            final var url = new URL(address);
 
-        int status = con.getResponseCode();
-        if (status == 200) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-            String inputLine;
-            StringBuilder content = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
+            var con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+
+            final var responseCodeOk = 200;
+            final var responseCodeUnauthorized = 401;
+            final var responseMalformed = -1;
+
+            final var responseCode = con.getResponseCode();
+
+            if (responseCode == responseCodeOk) {
+                // Request was ok, read the response
+                try (var in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                    var content = new StringBuilder();
+                    var inputLine = "";
+                    while ((inputLine = in.readLine()) != null) {
+                        content.append(inputLine);
+                    }
+
+                    return content.toString();
+                }
+            } else if (responseCode == responseCodeUnauthorized) {
+                // The request is not authorized
+                throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
+            } else if (responseCode == responseMalformed) {
+                // The response code could not be read
+                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
+            } else {
+                // This function should never be thrown
+                throw new NotImplementedException("Unsupported return value " +
+                    "from getResponseCode.");
             }
-            in.close();
-            con.disconnect();
 
-            return content.toString();
-        } else {
-            return null;
+        } catch (MalformedURLException exception) {
+            // The parameter address is not an url.
+            throw exception;
+        } catch (Exception exception) {
+            // Catch all the HTTP, IOExceptions
+            throw new RuntimeException("Failed to send the http get request.", exception);
         }
-    }
-
-    /**
-     * Sends a post request to an external http endpoint.
-     *
-     * @param endpoint The requested url.
-     * @return Response as string.
-     * @param input an array of {@link byte} objects.
-     * @throws java.io.IOException if any.
-     */
-    public int sendHttpPostRequest(String endpoint, byte[] input) throws IOException {
-        URL url = new URL(endpoint);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json; utf-8");
-        con.setDoOutput(true);
-
-        try (OutputStream os = con.getOutputStream()) {
-            os.write(input, 0, input.length);
-        }
-
-        int responseCode = con.getResponseCode();
-        con.disconnect();
-
-        return responseCode;
-    }
-
-    /**
-     * <p>sendHttpGetRequestWithBasicAuth.</p>
-     *
-     * @param address a {@link java.lang.String} object.
-     * @param username a {@link java.lang.String} object.
-     * @param password a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     */
-    public String sendHttpGetRequestWithBasicAuth(String address, String username, String password) {
-        return null;
     }
 
     /**
      * <p>sendHttpsGetRequest.</p>
      *
      * @param address a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws java.io.IOException if any.
-     * @throws java.security.KeyManagementException if any.
-     * @throws java.security.NoSuchAlgorithmException if any.
+     * @return The http body of the response when http code is ok (200).
+     * @throws MalformedURLException - if the input address is not a valid url.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
-    public String sendHttpsGetRequest(String address) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-        Request request = new Request.Builder()
-                .url(address)
-                .get()
-                .build();
+    public String sendHttpsGetRequest(String address)
+        throws MalformedURLException, RuntimeException {
+        try {
+            final var request = new Request.Builder().url(address).get().build();
 
-        OkHttpClient client = clientProvider.getClient();
-        Response response = client.newCall(request).execute();
+            var client = clientProvider.getClient();
+            Response response = client.newCall(request).execute();
 
-        if (response.code() < 200 || response.code() >= 300) {
-            response.close();
-            throw new IOException("Not OK");
-        } else {
-            String rawResponseString = new String(response.body().byteStream().readAllBytes());
-            response.close();
+            if (response.code() < 200 || response.code() >= 300) {
+                response.close();
+                // Not the expected response code
+                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
+            } else {
+                // Read the response
+                final var rawResponseString =
+                    new String(response.body().byteStream().readAllBytes());
+                response.close();
 
-            return rawResponseString;
+                return rawResponseString;
+            }
+        } catch (MalformedURLException exception) {
+            // The parameter address is not an url.
+            throw exception;
+        } catch (Exception exception) {
+            // Catch all the HTTP, IOExceptions
+            throw new RuntimeException("Failed to send the http get request.", exception);
         }
     }
 
     /**
      * Sends a get request with basic authentication to an external https endpoint.
      *
-     * @param address The url.
+     * @param address  The url.
      * @param username The username.
      * @param password The password.
-     * @return The http response.
-     * @throws java.io.IOException if any.
-     * @throws java.security.KeyManagementException if any.
-     * @throws java.security.NoSuchAlgorithmException if any.
+     * @return The http response when http code is ok (200).
+     * @throws MalformedURLException - if the input address is not a valid url.
+     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     *                               request.
      */
-    public String sendHttpsGetRequestWithBasicAuth(String address, String username, String password) throws IOException, KeyManagementException, NoSuchAlgorithmException {
-        String auth = username + ":" + password;
-        byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-        String authHeader = "Basic " + new String(encodedAuth);
+    public String sendHttpsGetRequestWithBasicAuth(String address, String username,
+        String password) throws MalformedURLException, RuntimeException {
+        final var auth = username + ":" + password;
+        final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
+        final var authHeader = "Basic " + new String(encodedAuth);
 
-        Request request = new Request.Builder()
-                .url(address)
-                .header(HttpHeaders.AUTHORIZATION, authHeader)
-                .get()
-                .build();
+        try {
+            final var request = new Request.Builder().url(address)
+                .header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
 
-        OkHttpClient client = clientProvider.getClient();
-        Response response = client.newCall(request).execute();
+            final var client = clientProvider.getClient();
+            final var response = client.newCall(request).execute();
 
-        if (response.code() < 200 || response.code() >= 300) {
-            response.close();
-            throw new IOException("Not OK");
-        } else {
-            String rawResponseString = new String(response.body().byteStream().readAllBytes());
-            response.close();
+            if (response.code() < 200 || response.code() >= 300) {
+                response.close();
+                // Not the expected response code
+                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
+            } else {
+                String rawResponseString = new String(response.body().byteStream().readAllBytes());
+                response.close();
 
-            return rawResponseString;
+                return rawResponseString;
+            }
+        } catch (MalformedURLException exception) {
+            // The parameter address is not an url.
+            throw exception;
+        } catch (Exception exception) {
+            // Catch all the HTTP, IOExceptions
+            throw new RuntimeException("Failed to send the http get request.", exception);
         }
     }
 }
