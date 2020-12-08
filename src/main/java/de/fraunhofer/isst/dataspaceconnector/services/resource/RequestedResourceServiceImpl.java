@@ -22,30 +22,18 @@ import java.util.*;
 /**
  * This class implements all methods of {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService}.
  * It provides database resource handling for all requested resources.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Service
 public class RequestedResourceServiceImpl implements RequestedResourceService {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(RequestedResourceServiceImpl.class);
 
     private final RequestedResourceRepository requestedResourceRepository;
     private final IdsUtils idsUtils;
-
     private final PolicyHandler policyHandler;
 
     /**
-     * <p>Constructor for RequestedResourceServiceImpl.</p>
-     *
-     * @param requestedResourceRepository a {@link RequestedResourceRepository} object.
-     * @param idsUtils                    a {@link de.fraunhofer.isst.dataspaceconnector.services.IdsUtils}
-     *                                    object.
-     * @param policyHandler               a {@link PolicyHandler} object.
+     * Constructor for RequestedResourceServiceImpl.
      */
     @Autowired
     public RequestedResourceServiceImpl(
@@ -70,8 +58,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Saves the resources with its metadata as external resource or internal resource.
      */
     @Override
@@ -84,8 +70,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Publishes the resource data.
      */
     @Override
@@ -102,8 +86,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Deletes a resource by id.
      */
     @Override
@@ -113,8 +95,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets a resource by id.
      */
     @Override
@@ -134,8 +114,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets resource metadata by id.
      */
     @Override
@@ -150,8 +128,6 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets resource data by id.
      */
     @Override

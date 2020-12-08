@@ -13,9 +13,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 /**
  * This class creates an admin role for spring basic security setup used in {@link
  * de.fraunhofer.isst.dataspaceconnector.config.ConfigurationAdapter}.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Configuration
 @EnableWebSecurity
@@ -27,11 +24,6 @@ public class MultipleEntryPointsSecurityConfig {
     @Value("${spring.security.user.password}")
     private String password;
 
-    /**
-     * <p>userDetailsService.</p>
-     *
-     * @return a {@link org.springframework.security.core.userdetails.UserDetailsService} object.
-     */
     @Bean
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
@@ -42,11 +34,6 @@ public class MultipleEntryPointsSecurityConfig {
         return manager;
     }
 
-    /**
-     * <p>encoder.</p>
-     *
-     * @return a {@link org.springframework.security.crypto.password.PasswordEncoder} object.
-     */
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();

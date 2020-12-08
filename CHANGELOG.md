@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [3.3.0-SNAPSHOT]
+## [4.4.0-SNAPSHOT]
 
 ### Added
 - Persistent volume for PostgreSQL in docker-compose
@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
 - Move attribute `sourceType` from `ResourceRepresentation` as `type` to `BackendSource`.
 - Remove requested resource list from description response.
+- Rename broker communication endpoints.
 
 ## [3.2.1] - 2020-11-05
 

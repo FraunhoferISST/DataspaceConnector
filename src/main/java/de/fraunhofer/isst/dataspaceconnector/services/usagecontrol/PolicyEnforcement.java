@@ -22,34 +22,21 @@ import java.util.ArrayList;
 
 /**
  * This class implements automated policy check and usage control enforcement.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Component
 @EnableScheduling
 public class PolicyEnforcement {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
 
     private PolicyVerifier policyVerifier;
-
     private RequestedResourceService requestedResourceService;
     private RequestedResourceRepository requestedResourceRepository;
-
     private SerializerProvider serializerProvider;
 
     @Autowired
     /**
-     * <p>Constructor for PolicyEnforcement.</p>
-     *
-     * @param policyVerifier a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} object.
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
-     * @param requestedResourceRepository a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceRepository} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * Constructor for PolicyEnforcement.
      */
     public PolicyEnforcement(PolicyVerifier policyVerifier,
         RequestedResourceService requestedResourceService,

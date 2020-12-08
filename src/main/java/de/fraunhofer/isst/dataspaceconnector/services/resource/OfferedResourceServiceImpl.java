@@ -24,8 +24,6 @@ import java.util.*;
 /**
  * This class implements all methods of {@link OfferedResourceService}. It provides database
  * resource handling for all offered resources.
- *
- * @version $Id: $Id
  */
 @Service
 public class OfferedResourceServiceImpl implements OfferedResourceService {
@@ -35,15 +33,10 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     private final OfferedResourceRepository offeredResourceRepository;
     private final HttpUtils httpUtils;
     private final IdsUtils idsUtils;
-
     private final ContractOffer contractOffer;
 
     /**
-     * <p>Constructor for OfferedResourceServiceImpl.</p>
-     *
-     * @param offeredResourceRepository a {@link OfferedResourceRepository} object.
-     * @param httpUtils                 a {@link HttpUtils} object.
-     * @param idsUtils                  a {@link IdsUtils} object.
+     * Constructor for OfferedResourceServiceImpl.
      */
     @Autowired
     public OfferedResourceServiceImpl(@NotNull OfferedResourceRepository offeredResourceRepository,
@@ -62,8 +55,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Returns the resource list.
      */
     @Override
@@ -82,8 +73,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Saves the resources with its metadata as external resource or internal resource.
      *
      * @throws InvalidResourceException - if the resource is not valid.
@@ -109,9 +98,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata}
-     *                         object.
-     * @param uuid             a {@link java.util.UUID} object.
      * @throws InvalidResourceException - if the resource is not valid.
      * @throws ResourceAlreadyExists    - if the resource does already exists.
      */
@@ -130,8 +116,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Publishes the resource data.
      */
     @Override
@@ -147,8 +131,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Updates resource metadata by id.
      */
     @Override
@@ -177,8 +159,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Deletes a resource by id.
      */
     @Override
@@ -188,8 +168,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets a resource by id.
      */
     @Override
@@ -209,8 +187,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets resource metadata by id.
      */
     @Override
@@ -239,8 +215,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets data from local database.
      */
     @Override
@@ -267,8 +241,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Gets data from local or external data source.
      */
     @Override

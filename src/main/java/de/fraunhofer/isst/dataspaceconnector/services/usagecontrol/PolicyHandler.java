@@ -15,31 +15,19 @@ import java.util.ArrayList;
  * This class provides policy pattern recognition and calls the {@link
  * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} on data request or
  * access.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Component
 public class PolicyHandler {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
-    /**
-     * Constant <code>contract</code>
-     */
-    public static Contract contract;
 
+    public static Contract contract;
     private PolicyVerifier policyVerifier;
     private SerializerProvider serializerProvider;
 
     @Autowired
     /**
-     * <p>Constructor for PolicyHandler.</p>
-     *
-     * @param policyVerifier a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * Constructor for PolicyHandler.
      */
     public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider) {
         this.policyVerifier = policyVerifier;

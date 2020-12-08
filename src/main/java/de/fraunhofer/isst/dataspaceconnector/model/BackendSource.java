@@ -10,8 +10,6 @@ import java.net.URI;
 
 /**
  * BackendSource class.
- *
- * @version $Id: $Id
  */
 @Schema(
     name = "BackendSource",
@@ -37,12 +35,7 @@ public class BackendSource implements Serializable {
     }
 
     /**
-     * Constructor for BackendSource.
-     *
-     * @param type     a {@link Type} object.
-     * @param url      a {@link java.net.URI} object.
-     * @param username a {@link java.lang.String} object.
-     * @param password a {@link java.lang.String} object.
+     * Constructor with parameters for BackendSource.
      */
     public BackendSource(Type type, URI url, String username, String password) {
         this.type = type;

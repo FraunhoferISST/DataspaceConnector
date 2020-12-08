@@ -24,16 +24,10 @@ import java.security.NoSuchAlgorithmException;
  * This class implements all methods of {@link de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestService}.
  * It provides message handling for all outgoing connector communication by passing IDS messages to
  * the IDS framework.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Service
 public class ConnectorRequestServiceImpl implements ConnectorRequestService {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(ConnectorRequestServiceImpl.class);
 
     private Connector connector;
@@ -42,10 +36,8 @@ public class ConnectorRequestServiceImpl implements ConnectorRequestService {
 
     @Autowired
     /**
-     * <p>Constructor for ConnectorRequestServiceImpl.</p>
+     * Constructor for ConnectorRequestServiceImpl.
      *
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer} object.
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
      * @throws de.fraunhofer.isst.ids.framework.exceptions.HttpClientException if any.
      * @throws java.security.KeyManagementException if any.
      * @throws java.security.NoSuchAlgorithmException if any.
@@ -61,8 +53,6 @@ public class ConnectorRequestServiceImpl implements ConnectorRequestService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Builds and sends an ArtifactRequestMessage.
      */
     @Override
@@ -82,8 +72,6 @@ public class ConnectorRequestServiceImpl implements ConnectorRequestService {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Builds and sends an DescriptionRequestMessage.
      */
     @Override

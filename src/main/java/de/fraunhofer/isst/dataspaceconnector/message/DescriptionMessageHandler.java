@@ -1,13 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.message;
 
-import de.fraunhofer.iais.eis.*;
+import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
+import de.fraunhofer.iais.eis.DescriptionResponseMessageBuilder;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -16,6 +22,8 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -23,11 +31,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.io.IOException;
-import java.net.URI;
-
-import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
 /**
  * This @{@link de.fraunhofer.isst.dataspaceconnector.message.DescriptionMessageHandler} handles all
@@ -37,41 +40,28 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
  * this example, the received payload is not defined and will be returned immediately. Usually, the
  * payload would be well defined as well, such that it can be deserialized into a proper
  * Java-Object.
- *
- * @version $Id: $Id
  */
 @Component
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
 public class DescriptionMessageHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
     private final OfferedResourceService offeredResourceService;
     private final TokenProvider tokenProvider;
-    private final ConfigurationContainer configurationContainer;
     private final SerializerProvider serializerProvider;
+    private final IdsUtils idsUtils;
 
     /**
-     * <p>Constructor for DescriptionMessageHandler.</p>
+     * Constructor for DescriptionMessageHandler.
      *
-     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService}
-     *                               object.
-     * @param tokenProvider          a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
-     *                               object.
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
-     *                               object.
-     * @param serializerProvider     a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider}
-     *                               object.
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
     public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
         @NotNull TokenProvider tokenProvider,
-        @NotNull ConfigurationContainer configurationContainer,
-        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
+        @NotNull SerializerProvider serializerProvider,
+        @NotNull IdsUtils idsUtils) throws IllegalArgumentException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
         }
@@ -80,23 +70,21 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
         }
 
-        if (configurationContainer == null) {
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
-
         if (serializerProvider == null) {
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
         }
 
+        if (idsUtils == null) {
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        }
+
         this.offeredResourceService = offeredResourceService;
         this.tokenProvider = tokenProvider;
-        this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
+        this.idsUtils = idsUtils;
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
@@ -138,7 +126,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     }
 
     /**
-     * Construct the response message for a given resource description request message.
+     * Constructs the response message for a given resource description request message.
      *
      * @param requestMessage The message containing the resource request.
      * @return The response message to the passed request.
@@ -149,7 +137,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
         DescriptionRequestMessageImpl requestMessage) throws RuntimeException {
         try {
             // Get a local copy of the connector for read access
-            final var connector = getConnector();
+            final var connector = idsUtils.getConnector();
 
             try {
                 // Create the response header
@@ -203,7 +191,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     }
 
     /**
-     * Construct a resource catalog description message for the connector.
+     * Constructs a resource catalog description message for the connector.
      *
      * @param requestId       The id of the message requesting resource information.
      * @param issuerConnector The id of the connector requesting the resource information.
@@ -220,7 +208,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
         try {
             // Create a connector with a list of currently offered resources
-            var connector = (BaseConnectorImpl) getConnector();
+            var connector = (BaseConnectorImpl) idsUtils.getConnector();
             connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
                 ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
                 .build()));
@@ -252,17 +240,5 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             // The connector could not be serialized.
             throw new RuntimeException("Failed to serialize the connector.", exception);
         }
-    }
-
-    private Connector getConnector() throws ConnectorConfigurationException {
-        Assert.notNull(configurationContainer, "The config cannot be null.");
-
-        final var connector = configurationContainer.getConnector();
-        if (connector == null) {
-            // The connector is needed for every answer and cannot be null
-            throw new ConnectorConfigurationException("No connector configurated.");
-        }
-
-        return connector;
     }
 }

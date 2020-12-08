@@ -19,8 +19,6 @@ import java.io.IOException;
 
 /**
  * This class provides endpoints for connector configurations via a connected config manager.
- *
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api")
@@ -33,10 +31,8 @@ public class ConfigurationController {
     private final SerializerProvider serializerProvider;
 
     /**
-     * Constructor
+     * Constructor for ConfigurationController.
      *
-     * @param configurationContainer The configuration.
-     * @param serializerProvider     The serializer.
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
@@ -108,7 +104,7 @@ public class ConfigurationController {
             // Return the config
             return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
         } else {
-            // No configuration configurated
+            // No configuration configured
             LOGGER.info("No configuration could be found.");
             return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
         }

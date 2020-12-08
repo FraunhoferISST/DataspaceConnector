@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.communication;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -21,16 +20,10 @@ import java.util.*;
 /**
  * This class handles received message content and saves the metadata and data to the internal
  * database.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Service
 public class ConnectorRequestServiceUtils {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(ConnectorRequestServiceUtils.class);
 
     private RequestedResourceService requestedResourceService;
@@ -38,10 +31,7 @@ public class ConnectorRequestServiceUtils {
 
     @Autowired
     /**
-     * <p>Constructor for ConnectorRequestServiceUtils.</p>
-     *
-     * @param requestedResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * Constructor for ConnectorRequestServiceUtils.
      */
     public ConnectorRequestServiceUtils(RequestedResourceService requestedResourceService,
         SerializerProvider serializerProvider) {
@@ -50,7 +40,7 @@ public class ConnectorRequestServiceUtils {
     }
 
     /**
-     * Saves the metadata in the internal database.
+     * Saves the metadata to the internal database.
      *
      * @param response The data resource as string.
      * @return The UUID of the created resource.
@@ -76,7 +66,7 @@ public class ConnectorRequestServiceUtils {
     }
 
     /**
-     * Saves the data string in the internal database.
+     * Saves the data string to the internal database.
      *
      * @param response   The data resource as string.
      * @param resourceId The resource uuid.
@@ -101,10 +91,10 @@ public class ConnectorRequestServiceUtils {
     }
 
     /**
-     * <p>resourceExists.</p>
+     * Checks if a resource exists.
      *
-     * @param resourceId a {@link java.util.UUID} object.
-     * @return a boolean.
+     * @param resourceId The resource uuid.
+     * @return true if the resource exists.
      */
     public boolean resourceExists(UUID resourceId) {
         try {

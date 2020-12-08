@@ -20,8 +20,6 @@ import java.util.UUID;
 
 /**
  * This class provides endpoints for the internal resource handling.
- *
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/resources")
@@ -34,10 +32,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
     private final RequestedResourceService requestedResourceService;
 
     /**
-     * Constructor
+     * Constructor for ResourceDataController.
      *
-     * @param offeredResourceService   a {@link OfferedResourceService} object.
-     * @param requestedResourceService a {@link RequestedResourceService} object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired

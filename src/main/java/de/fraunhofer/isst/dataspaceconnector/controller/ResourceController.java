@@ -24,8 +24,6 @@ import java.util.UUID;
  * This class provides endpoints for the internal resource handling. Resources can be created and
  * modified with it's {@link ResourceMetadata} including {@link de.fraunhofer.iais.eis.Contract} and
  * {@link ResourceRepresentation}.
- *
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/resources")
@@ -36,15 +34,11 @@ public class ResourceController {
 
     private final OfferedResourceService offeredResourceService;
     private final RequestedResourceService requestedResourceService;
-
     private final PolicyHandler policyHandler;
 
     /**
-     * Constructor
+     * Constructor for ResourceController.
      *
-     * @param offeredResourceService   a {@link OfferedResourceService} object.
-     * @param requestedResourceService a {@link RequestedResourceService} object.
-     * @param policyHandler            a {@link PolicyHandler} object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired

@@ -17,9 +17,6 @@ import java.util.Properties;
 /**
  * This is the main application class. The application is started and an openApi bean for the
  * Swagger UI is created.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @SpringBootApplication
 @ComponentScan({
@@ -31,11 +28,6 @@ import java.util.Properties;
 })
 public class ConnectorApplication {
 
-    /**
-     * <p>main.</p>
-     *
-     * @param args an array of {@link java.lang.String} objects.
-     */
     public static void main(String[] args) {
         SpringApplication.run(ConnectorApplication.class, args);
     }

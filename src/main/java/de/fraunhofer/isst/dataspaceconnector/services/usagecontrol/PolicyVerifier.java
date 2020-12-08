@@ -26,16 +26,10 @@ import java.util.UUID;
 /**
  * This class provides access permission information for the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
  * depending on the policy content.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Component
 public class PolicyVerifier {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
     private PolicyReader policyReader;
@@ -44,11 +38,8 @@ public class PolicyVerifier {
 
     @Autowired
     /**
-     * <p>Constructor for PolicyVerifier.</p>
+     * Constructor for PolicyVerifier.
      *
-     * @param policyReader a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyReader} object.
-     * @param httpUtils a {@link de.fraunhofer.isst.dataspaceconnector.services.HttpUtils} object.
-     * @param messageService a {@link de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService} object.
      */
     public PolicyVerifier(PolicyReader policyReader, MessageService messageService,
         HttpUtils httpUtils) {

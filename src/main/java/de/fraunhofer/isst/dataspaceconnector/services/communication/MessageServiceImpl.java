@@ -17,17 +17,11 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * <p>MessageServiceImpl class.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * MessageServiceImpl class.
  */
 @Service
 public class MessageServiceImpl implements MessageService {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(MessageServiceImpl.class);
 
     private Connector connector;
@@ -36,11 +30,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     /**
-     * <p>Constructor for MessageServiceImpl.</p>
-     *
-     * @param connector a {@link de.fraunhofer.iais.eis.Connector} object.
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param idsHttpService a {@link de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService} object.
+     * Constructor for MessageServiceImpl.
      */
     public MessageServiceImpl(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider,

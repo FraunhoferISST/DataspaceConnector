@@ -7,22 +7,23 @@ import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the communication with an IDS connector instance.
- *
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/request")
@@ -37,17 +38,15 @@ public class RequestController {
     private final ConnectorRequestServiceUtils connectorRequestServiceUtils;
 
     /**
-     * Constructor
+     * Constructor for RequestController
      *
-     * @param tokenProvider                a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
-     *                                     object.
-     * @param requestMessageService        a {@link ConnectorRequestServiceImpl} object.
-     * @param connectorRequestServiceUtils a {@link ConnectorRequestServiceUtils} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
     public RequestController(@NotNull TokenProvider tokenProvider,
         @NotNull ConnectorRequestServiceImpl requestMessageService,
-        @NotNull ConnectorRequestServiceUtils connectorRequestServiceUtils) {
+        @NotNull ConnectorRequestServiceUtils connectorRequestServiceUtils)
+        throws IllegalArgumentException {
         if (tokenProvider == null) {
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
         }
@@ -167,6 +166,11 @@ public class RequestController {
         @Parameter(description = "The URI of the requested resource.", required = false,
             example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact", required = false) URI requestedArtifact) {
+        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
+        Assert.notNull(connectorRequestServiceUtils,
+            "The connectorRequestServiceUtils cannot be null.");
+        Assert.notNull(requestMessageService, "The requestMessageService cannot be null.");
+
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 final var response = requestMessageService.sendDescriptionRequestMessage(

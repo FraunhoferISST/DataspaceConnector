@@ -23,12 +23,10 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import org.springframework.util.Assert;
 
 /**
- * This class provides methods to map local connector models to IDS-specific Information Model
- * objects.
- *
- * @version $Id: $Id
+ * This class provides methods to map local connector models to IDS Information Model objects.
  */
 @Service
 public class IdsUtils {
@@ -41,10 +39,6 @@ public class IdsUtils {
     /**
      * Constructor for IdsUtils.
      *
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer}
-     *                               object.
-     * @param serializerProvider     a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider}
-     *                               object.
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
@@ -60,6 +54,24 @@ public class IdsUtils {
 
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
+    }
+
+    /**
+     * Returns current IDS base connector object.
+     *
+     * @return The {@link de.fraunhofer.iais.eis.Connector} object from the IDS Framework.
+     * @throws ConnectorConfigurationException If the connector was not found.
+     */
+    public Connector getConnector() throws ConnectorConfigurationException {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
+
+        final var connector = configurationContainer.getConnector();
+        if (connector == null) {
+            // The connector is needed for every answer and cannot be null
+            throw new ConnectorConfigurationException("No connector configurated.");
+        }
+
+        return connector;
     }
 
     /**
@@ -108,6 +120,8 @@ public class IdsUtils {
             }
         }
 
+        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
+
         // Get the list of contracts
         var contracts = new ArrayList<ContractOffer>();
         if (metadata.getPolicy() != null) {
@@ -123,6 +137,8 @@ public class IdsUtils {
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
+
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
 
         // Build the ids resource
         try {
@@ -166,7 +182,7 @@ public class IdsUtils {
     }
 
     /**
-     * Get the default language, which is the first set language of the connector
+     * Gets the default language, which is the first set language of the connector.
      *
      * @return The default language of the connector
      * @throws ConnectorConfigurationException - if the connector is null or no language is
@@ -181,7 +197,7 @@ public class IdsUtils {
     }
 
     /***
-     * Get a language from the connector
+     * Gets a language from the connector.
      *
      * @param index Index of the language.
      * @return The language at the passed index.
@@ -190,6 +206,7 @@ public class IdsUtils {
      */
     private String getLanguage(int index)
         throws ConnectorConfigurationException, IndexOutOfBoundsException {
+        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
         try {
             final var label = configurationContainer.getConnector().getLabel();
             if (label.size() == 0) {

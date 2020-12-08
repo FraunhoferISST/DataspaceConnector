@@ -9,69 +9,56 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * <p>RequestedResourceService interface.</p>
- *
- * @version $Id: $Id
+ * RequestedResourceService interface.
  */
 public interface RequestedResourceService {
 
     /**
-     * <p>addResource.</p>
+     * Adds resource.
      *
-     * @param resourceMetadata a {@link ResourceMetadata} object.
-     * @return a {@link java.util.UUID} object.
      * @throws ResourceException - if the resource could not be added.
      */
     UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
 
     /**
-     * <p>addData.</p>
+     * Adds data.
      *
-     * @param id   a {@link java.util.UUID} object.
-     * @param data a {@link java.lang.String} object.
      * @throws ResourceException - if the data could not be added.
      */
     void addData(UUID id, String data) throws ResourceException;
 
     /**
-     * <p>deleteResource.</p>
+     * Deletes resource.
      *
-     * @param id a {@link java.util.UUID} object.
      * @return true if the resource could be found and be deleted.
      */
     boolean deleteResource(UUID id);
 
     /**
-     * <p>getResource.</p>
+     * Returns resource
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link RequestedResource} object.
      * @throws ResourceException - if the resource could not be found.
      */
     RequestedResource getResource(UUID id) throws ResourceException;
 
     /**
-     * <p>getMetadata.</p>
+     * Returns metadata.
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link ResourceMetadata} object.
      * @throws ResourceException - if the metadata could not be found.
      */
     ResourceMetadata getMetadata(UUID id) throws ResourceException;
 
     /**
-     * <p>getData.</p>
+     * Returns data.
      *
-     * @param id a {@link java.util.UUID} object.
-     * @return a {@link java.lang.String} object.
      * @throws ResourceException - if the data could not be received.
      */
     String getData(UUID id) throws ResourceException;
 
     /**
-     * <p>getRequestedResources.</p>
+     * Returns requested resources as list.
      *
-     * @return a {@link java.util.ArrayList} object.
+     * @return a list of resources.
      */
     List<Resource> getRequestedResources();
 }

@@ -1,13 +1,24 @@
 package de.fraunhofer.isst.dataspaceconnector.message;
 
-import de.fraunhofer.iais.eis.*;
+import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+
+import de.fraunhofer.iais.eis.ArtifactRequestMessage;
+import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
+import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -15,19 +26,14 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorRe
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import java.io.IOException;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import java.io.IOException;
-import java.util.UUID;
-
-import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
 /**
  * This @{@link de.fraunhofer.isst.dataspaceconnector.message.ArtifactMessageHandler} handles all
@@ -37,42 +43,28 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
  * example, the received payload is not defined and will be returned immediately. Usually, the
  * payload would be well defined as well, such that it can be deserialized into a proper
  * Java-Object.
- *
- * @version $Id: $Id
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
 public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
-    /**
-     * Constant <code>LOGGER</code>
-     */
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
     private final TokenProvider provider;
-    private final ConfigurationContainer configurationContainer;
-
     private final OfferedResourceService resourceService;
     private final PolicyHandler policyHandler;
+    private final IdsUtils idsUtils;
 
     /**
-     * <p>Constructor for ArtifactMessageHandler.</p>
+     * Constructor for ArtifactMessageHandler.
      *
-     * @param offeredResourceService a {@link de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService}
-     *                               object.
-     * @param tokenProvider          a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider}
-     *                               object.
-     * @param configurationContainer a {@link de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer}
-     *                               object.
-     * @param policyHandler          a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
-     *                               object.
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
     public ArtifactMessageHandler(@NotNull OfferedResourceService offeredResourceService,
         @NotNull TokenProvider tokenProvider,
-        @NotNull ConfigurationContainer configurationContainer,
-        @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
+        @NotNull PolicyHandler policyHandler,
+        @NotNull IdsUtils idsUtils) throws IllegalArgumentException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
         }
@@ -81,23 +73,21 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
         }
 
-        if (configurationContainer == null) {
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
-
         if (policyHandler == null) {
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
         }
 
+        if (idsUtils == null) {
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        }
+
         this.resourceService = offeredResourceService;
         this.provider = tokenProvider;
-        this.configurationContainer = configurationContainer;
         this.policyHandler = policyHandler;
+        this.idsUtils = idsUtils;
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
@@ -112,13 +102,13 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
         Assert.notNull(provider, "The TokenProvider cannot be null.");
-        Assert.notNull(configurationContainer, "The ConfigurationContainer cannot be null.");
+        Assert.notNull(idsUtils, "The IdsUtils cannot be null.");
         Assert.notNull(resourceService, "The OfferedResourceService cannot be null.");
         Assert.notNull(policyHandler, "The PolicyHandler cannot be null.");
 
         try {
             // Get a local copy of the connector for read access
-            final var connector = getConnector();
+            final var connector = idsUtils.getConnector();
 
             try {
                 // Extract the artifact id
@@ -287,18 +277,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             // The connector must be set.
             throw exception;
         }
-    }
-
-    private Connector getConnector() throws ConnectorConfigurationException {
-        Assert.notNull(configurationContainer, "The config cannot be null.");
-
-        final var connector = configurationContainer.getConnector();
-        if (connector == null) {
-            // The connector is needed for every answer and cannot be null
-            throw new ConnectorConfigurationException("No connector configurated.");
-        }
-
-        return connector;
     }
 
     private Resource findResourceFromArtifactId(UUID artifactId) {

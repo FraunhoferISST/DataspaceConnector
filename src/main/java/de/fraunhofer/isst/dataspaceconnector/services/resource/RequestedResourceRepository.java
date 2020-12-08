@@ -7,10 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 /**
- * <p>RequestedResourceRepository interface.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * RequestedResourceRepository interface.
  */
 @Repository
 public interface RequestedResourceRepository extends JpaRepository<RequestedResource, UUID> {

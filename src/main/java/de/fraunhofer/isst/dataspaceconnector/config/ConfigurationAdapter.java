@@ -10,16 +10,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 /**
  * This class configures admin rights for all backend endpoints behind "/admin" using the role
  * defined in {@link de.fraunhofer.isst.dataspaceconnector.config.MultipleEntryPointsSecurityConfig}.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @Configuration
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -32,11 +26,6 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
         http.headers().frameOptions().disable();
     }
 
-    /**
-     * <p>authenticationEntryPoint.</p>
-     *
-     * @return a {@link org.springframework.security.web.AuthenticationEntryPoint} object.
-     */
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();

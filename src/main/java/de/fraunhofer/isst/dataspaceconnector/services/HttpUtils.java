@@ -24,8 +24,6 @@ import java.security.GeneralSecurityException;
 
 /**
  * This class builds up http or https endpoint connections.
- *
- * @version $Id: $Id
  */
 @Service
 public class HttpUtils {
@@ -35,7 +33,8 @@ public class HttpUtils {
     /**
      * Constructor for HttpUtils.
      *
-     * @param configurationContainer a {@link ConfigurationContainer} object.
+     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws GeneralSecurityException - if the framework has an error.
      */
     @Autowired
     public HttpUtils(@NotNull ConfigurationContainer configurationContainer)
