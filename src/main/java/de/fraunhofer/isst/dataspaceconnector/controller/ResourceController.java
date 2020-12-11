@@ -175,34 +175,56 @@ public class ResourceController {
     public ResponseEntity<Object> getResource(
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID id) {
+        final var endpointPath = "/admin/api/resources/{resource-id}";
+        LOGGER.info("Received request for resource lookup."
+                + " [endpoint=({}), uuid=({})]",
+            endpointPath, id);
+
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                return new ResponseEntity<>(offeredResourceService.getMetadata(id),
-                    HttpStatus.OK);
+                final var responseEntity = new ResponseEntity<Object>(
+                    offeredResourceService.getMetadata(id), HttpStatus.OK);
+                LOGGER.info("Successfully received the resource."
+                        + " [endpoint=({}), resourceId=({})]",
+                    endpointPath, id);
+                return responseEntity;
             } catch (ResourceNotFoundException offeredResourceServiceException) {
+                LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
+                        + " [endpoint=({}), exception=({}), resourceId=({})]",
+                    endpointPath, offeredResourceServiceException.getMessage(), id);
                 try {
                     // Try to find the data in the requestedResourceService
-                    LOGGER.info("Could not find the resource %s in the offered resources.",
-                        offeredResourceServiceException);
-                    return new ResponseEntity<>(requestedResourceService.getMetadata(id),
-                        HttpStatus.OK);
+                    final var responseEntity = new ResponseEntity<Object>(
+                        requestedResourceService.getMetadata(id), HttpStatus.OK);
+                    LOGGER.info("Successfully received the resource. "
+                            + "[endpoint=({}), resourceId=({})]",
+                        endpointPath, id);
+                    return responseEntity;
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
+                    LOGGER
+                        .debug("Failed to receive the resource from the RequestedResourcesService."
+                                + " [endpoint=({}),exception=({}), resourceId=({})]",
+                            endpointPath, requestedResourceServiceException.getMessage(), id);
                     // The data could not be found in the offeredResourceService and requestedResourceService
-                    LOGGER.warn(String.format("Could not find the resource %s in the requested " +
-                            "resources.", id),
-                        offeredResourceServiceException);
+                    LOGGER.info("Failed to receive the resource. The resource does not exist. "
+                            + "[endpoint=({}), exception=({}), resourceId=({})]",
+                        endpointPath, requestedResourceServiceException.getMessage(), id);
                     return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
-            return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+            LOGGER.info("Failed to receive the resource. The resource is not valid."
+                    + " [endpoint=({}), exception=({}), resourceId=({})]",
+                endpointPath, exception.getMessage(), id);
+            return new ResponseEntity<>(
+                "The resource could not be received. Not a valid resource format.",
+                HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to receive the resource. Caught unhandled resource exception. "
+                    + "[endpoint=({}), exception=({}) ,resourceId=({})]",
+                endpointPath, exception.getMessage(), id);
             return new ResponseEntity<>("Resource could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
