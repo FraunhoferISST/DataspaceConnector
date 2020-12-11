@@ -124,8 +124,6 @@ public class ResourceController {
      * @param id               The resource id.
      * @param resourceMetadata The updated metadata.
      * @return OK or error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
@@ -133,19 +131,33 @@ public class ResourceController {
     public ResponseEntity<String> updateResource(
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID id,
-        @RequestBody ResourceMetadata resourceMetadata) throws IllegalArgumentException {
+        @RequestBody ResourceMetadata resourceMetadata) {
+        final var endpointPath = "/admin/api/resources/resource";
+        LOGGER.info("Received request for resource updating."
+                + " [endpoint=({}), uuid=({}), metadata=({})]",
+            endpointPath, id, resourceMetadata);
+
         try {
             offeredResourceService.updateResource(id, resourceMetadata);
+            LOGGER.info("Successfully updated the resource."
+                    + " [endpoint=({}), resourceId=({}), metadata=({})]",
+                endpointPath, id, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
-            LOGGER.warn("The resource could not be updated. The resource is not valid.", exception);
+            LOGGER.info("Failed to update the resource. The resource is not valid."
+                    + " [endpoint=({}), exception=({}), resourceId=({}), metadata=({})]",
+                endpointPath, exception.getMessage(), id, resourceMetadata);
             return new ResponseEntity<>("The resource could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.info("The resource could not be updated. It could not be found.", exception);
+            LOGGER.info("Failed to update the resource. The resource could not be found."
+                    + " [endpoint=({}), exception=({}), resourceId=({}), metadata=({})]",
+                endpointPath, exception.getMessage(), id, resourceMetadata);
             return new ResponseEntity<>("Resource could not be updated.", HttpStatus.NOT_FOUND);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to update the resource. Caught unhandled resource exception."
+                    + " [endpoint=({}), exception=({}), resourceId=({}), metadata=({})]",
+                endpointPath, exception.getMessage(), id, resourceMetadata);
             return new ResponseEntity<>("Resource could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
