@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.logging.log4j.ThreadContext;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,27 +76,43 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<String> createResource(@RequestBody ResourceMetadata resourceMetadata,
         @RequestParam(value = "id", required = false) UUID uuid) {
+        final var endpointPath = "/admin/api/resources/resource";
+        LOGGER.info(
+            "Received request for resource creation. [endpoint=({}), uuid=({}), metadata=({})]",
+            endpointPath, uuid, resourceMetadata);
+
         try {
             if (uuid != null) {
                 offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                LOGGER.info(
+                    "Successfully added a new resource. [endpoint=({}), uuid=({}), metadata=({})]",
+                    endpointPath, uuid, resourceMetadata);
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
                 final var new_uuid = offeredResourceService.addResource(resourceMetadata);
+                LOGGER.info(
+                    "Successfully added a new resource. [endpoint=({}), uuid=({}), metadata=({})]",
+                    endpointPath, null, resourceMetadata);
                 return new ResponseEntity<>("Resource registered with uuid: " + new_uuid.toString(),
                     HttpStatus.CREATED);
             }
         } catch (InvalidResourceException exception) {
-            LOGGER.warn("The resource could not be added. The resource is not valid.",
-                exception);
+            LOGGER.warn(
+                "Failed to add resource. The resource is not valid. [endpoint=({}), uuid=({}), metadata=({}), exception=({})]",
+                endpointPath, uuid, resourceMetadata, exception);
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.NOT_ACCEPTABLE);
         } catch (ResourceAlreadyExists exception) {
-            LOGGER.info("The resource could not be added. It already exists.", exception);
+            LOGGER.warn(
+                "Failed to add resource. The resource already exists. [endpoint=({}), uuid=({}), metadata=({}), exception=({})]",
+                endpointPath, uuid, resourceMetadata, exception);
             return new ResponseEntity<>("The resource could not be added. It already exits.",
                 HttpStatus.FOUND);
         } catch (ResourceException exception) {
-            LOGGER.error("The resource could not be added. Something went wrong.", exception);
+            LOGGER.error(
+                "Failed to add resource. Something went wrong. [endpoint=({}), uuid=({}), metadata=({}), exception=({})]",
+                endpointPath, uuid, resourceMetadata, exception);
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
