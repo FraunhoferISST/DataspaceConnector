@@ -523,23 +523,39 @@ public class ResourceController {
         @PathVariable("representation-id") UUID representationId,
         @Parameter(description = "A new resource representation.", required = true)
         @RequestBody ResourceRepresentation representation) {
+        final var endpointPath = "/admin/api/resources/{resource-id}/{representation-id}";
+        LOGGER.info("Received request for updating a resource representation."
+                + " [endpoint=({}), resourceId=({}), representationId=({}), representation=({})]",
+            endpointPath, resourceId, representationId, representation);
+
         try {
             offeredResourceService
                 .updateRepresentation(resourceId, representationId, representation);
+            LOGGER.info("Successfully update a resource representation."
+                    + " [endpoint=({}), resourceId=({}), representationId=({}), representation=({})]",
+                endpointPath, resourceId, representationId, representation);
             return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.info(String.format("The Resource representation %s could not be found.",
-                resourceId));
+            LOGGER.info(
+                "Failed to update the resource representation. The resource does not exist."
+                    + " [endpoint=({}), exception=({}) resourceId=({}), representationId=({}), representation=({})]",
+                endpointPath, exception.getMessage(), resourceId, representationId,
+                representation);
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
+            LOGGER.info("Failed to update the resource representation. The resource is not valid."
+                    + " [endpoint=({}), exception=({}) resourceId=({}), representationId=({}), representation=({})]",
+                endpointPath, exception.getMessage(), resourceId, representationId, representation);
             LOGGER.warn("The resource could not be received. The resource is not valid.",
                 exception);
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to update the resource representation. Something went wrong."
+                    + " [endpoint=({}), exception=({}) resourceId=({}), representationId=({}), representation=({})]",
+                endpointPath, exception.getMessage(), resourceId, representationId, representation);
             return new ResponseEntity<>("The representation could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
