@@ -85,16 +85,16 @@ public class ResourceController {
             if (uuid != null) {
                 offeredResourceService.addResourceWithId(resourceMetadata, uuid);
                 LOGGER.info("Successfully added a new resource."
-                        + " [endpoint=({}), requestType=({}), uuid=({}), metadata=({})]",
-                    endpointPath, endpointType, uuid, resourceMetadata);
+                        + " [creationId=({}), endpoint=({}), requestType=({}), uuid=({}), metadata=({})]",
+                    uuid, endpointPath, endpointType, uuid, resourceMetadata);
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
-                final var new_uuid = offeredResourceService.addResource(resourceMetadata);
+                final var newUuid = offeredResourceService.addResource(resourceMetadata);
                 LOGGER.info("Successfully added a new resource."
-                        + " [endpoint=({}), requestType=({}), uuid=({}), metadata=({})]",
-                    endpointPath, endpointType, null, resourceMetadata);
-                return new ResponseEntity<>("Resource registered with uuid: " + new_uuid.toString(),
+                        + " [creationId=({}), endpoint=({}), requestType=({}), uuid=({}), metadata=({})]",
+                    newUuid, endpointPath, endpointType, null, resourceMetadata);
+                return new ResponseEntity<>("Resource registered with uuid: " + newUuid.toString(),
                     HttpStatus.CREATED);
             }
         } catch (InvalidResourceException exception) {
@@ -484,19 +484,22 @@ public class ResourceController {
             endpointPath, endpointType, resourceId, uuid, representation);
 
         try {
+            UUID newUuid = null;
             if (uuid != null) {
-                offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
+                newUuid = offeredResourceService
+                    .addRepresentationWithId(resourceId, representation, uuid);
                 LOGGER.info("Successfully added a new resource representation. "
-                        + "[endpoint=({}), requestType=({}), resourceId=({}), uuid=({}), representation=({})]",
-                    endpointPath, endpointType, resourceId, uuid, representation);
+                        + "[creationId=({}), endpoint=({}), requestType=({}), resourceId=({}), uuid=({}), representation=({})]",
+                    newUuid, endpointPath, endpointType, resourceId, uuid, representation);
             } else {
-                uuid = offeredResourceService.addRepresentation(resourceId, representation);
+                newUuid = offeredResourceService.addRepresentation(resourceId, representation);
                 LOGGER.info("Successfully added a new resource representation. "
-                        + "[endpoint=({}), requestType=({}), resourceId=({}), uuid=({}), representation=({})]",
-                    endpointPath, endpointType, resourceId, null, representation);
+                        + "[creationId=({}), endpoint=({}), requestType=({}), resourceId=({}), uuid=({}), representation=({})]",
+                    newUuid, endpointPath, endpointType, resourceId, null, representation);
             }
 
-            return new ResponseEntity<>("Representation was saved successfully with uuid " + uuid,
+            return new ResponseEntity<>(
+                "Representation was saved successfully with uuid " + newUuid,
                 HttpStatus.CREATED);
         } catch (ResourceAlreadyExists exception) {
             LOGGER.info("Failed to add resource representation. The representation already exists."
