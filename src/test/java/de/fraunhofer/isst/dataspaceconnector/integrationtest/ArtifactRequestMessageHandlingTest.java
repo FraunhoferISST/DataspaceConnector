@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.message.ArtifactMessageHandler;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
@@ -53,7 +53,7 @@ public class ArtifactRequestMessageHandlingTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private OfferedResourceService offeredResourceService;
+    private OfferedResourceServiceImpl offeredResourceService;
 
     @Autowired
     private Serializer serializer;

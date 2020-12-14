@@ -3,8 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,8 +33,7 @@ public class ResourceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
     private final PolicyHandler policyHandler;
 
     /**
@@ -42,9 +42,9 @@ public class ResourceController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceController(@NotNull OfferedResourceService offeredResourceService,
+    public ResourceController(@NotNull OfferedResourceServiceImpl offeredResourceService,
         @NotNull PolicyHandler policyHandler,
-        @NotNull RequestedResourceService requestedResourceService)
+        @NotNull RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -77,7 +77,7 @@ public class ResourceController {
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
             if (uuid != null) {
-                offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                ((OfferedResourceServiceImpl) offeredResourceService).addResourceWithId(resourceMetadata, uuid);
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
@@ -118,7 +118,7 @@ public class ResourceController {
         @PathVariable("resource-id") UUID id,
         @RequestBody ResourceMetadata resourceMetadata) throws IllegalArgumentException {
         try {
-            offeredResourceService.updateResource(id, resourceMetadata);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateResource(id, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             LOGGER.warn("The resource could not be updated. The resource is not valid.", exception);
@@ -227,7 +227,7 @@ public class ResourceController {
         @RequestBody String policy) throws IllegalArgumentException {
         try {
             policyHandler.getPattern(policy);
-            offeredResourceService.updateContract(resourceId, policy);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
         } catch (IOException exception) {
             // The policy is not in the correct format.
@@ -313,7 +313,7 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
         try {
-            final var resource = requestedResourceService.getResource(resourceId);
+            final var resource = ((RequestedResourceServiceImpl) requestedResourceService).getResource(resourceId);
             if (resource == null) {
                 return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
             }
@@ -350,9 +350,9 @@ public class ResourceController {
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
             if (uuid != null) {
-                offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
+                ((OfferedResourceServiceImpl) offeredResourceService).addRepresentationWithId(resourceId, representation, uuid);
             } else {
-                uuid = offeredResourceService.addRepresentation(resourceId, representation);
+                uuid = ((OfferedResourceServiceImpl) offeredResourceService).addRepresentation(resourceId, representation);
             }
 
             return new ResponseEntity<>("Representation was saved successfully with uuid " + uuid,
@@ -399,7 +399,7 @@ public class ResourceController {
         @Parameter(description = "A new resource representation.", required = true)
         @RequestBody ResourceRepresentation representation) {
         try {
-            offeredResourceService
+            ((OfferedResourceServiceImpl) offeredResourceService)
                 .updateRepresentation(resourceId, representationId, representation);
             return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
@@ -475,7 +475,7 @@ public class ResourceController {
         @Parameter(description = "The representation uuid.", required = true)
         @PathVariable("representation-id") UUID representationId) {
         try {
-            offeredResourceService.deleteRepresentation(resourceId, representationId);
+            ((OfferedResourceServiceImpl) offeredResourceService).deleteRepresentation(resourceId, representationId);
             return new ResponseEntity<>("Representation was deleted successfully", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.

@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -40,7 +41,7 @@ public class BrokerController {
 
     private final TokenProvider tokenProvider;
     private final BrokerService brokerService;
-    private final OfferedResourceService offeredResourceService;
+    private final ResourceService resourceService;
 
     /**
      * Constructor for BrokerController.
@@ -51,7 +52,7 @@ public class BrokerController {
     @Autowired
     public BrokerController(@NotNull TokenProvider tokenProvider,
         @NotNull ConfigurationContainer configurationContainer,
-        @NotNull OfferedResourceService offeredResourceService)
+        @NotNull OfferedResourceServiceImpl offeredResourceService)
         throws IllegalArgumentException, GeneralSecurityException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -66,7 +67,7 @@ public class BrokerController {
         }
 
         this.tokenProvider = tokenProvider;
-        this.offeredResourceService = offeredResourceService;
+        this.resourceService = offeredResourceService;
 
         try {
             this.brokerService = new BrokerService(configurationContainer,
@@ -198,14 +199,14 @@ public class BrokerController {
         @PathVariable("resource-id") UUID resourceId) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
-        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
+        Assert.notNull(resourceService, "The offeredResourceService cannot be null.");
 
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 // Get the resource
                 final var resource =
-                    offeredResourceService.getOfferedResources().get(resourceId);
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
                 if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);
@@ -248,14 +249,14 @@ public class BrokerController {
         @PathVariable("resource-id") UUID resourceId) {
         Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
         Assert.notNull(brokerService, "The brokerService cannot be null.");
-        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
+        Assert.notNull(resourceService, "The offeredResourceService cannot be null.");
 
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
                 // Get the resource
                 final var resource =
-                    offeredResourceService.getOfferedResources().get(resourceId);
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
                 if (resource == null) {
                     // The resource could not be found, reject and inform the requester
                     return respondResourceNotFound(resourceId);

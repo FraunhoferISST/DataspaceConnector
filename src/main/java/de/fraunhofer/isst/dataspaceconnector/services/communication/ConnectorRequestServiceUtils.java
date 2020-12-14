@@ -7,7 +7,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import org.slf4j.Logger;
@@ -26,16 +27,16 @@ public class ConnectorRequestServiceUtils {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ConnectorRequestServiceUtils.class);
 
-    private RequestedResourceService requestedResourceService;
+    private ResourceService resourceService;
     private SerializerProvider serializerProvider;
 
     @Autowired
     /**
      * Constructor for ConnectorRequestServiceUtils.
      */
-    public ConnectorRequestServiceUtils(RequestedResourceService requestedResourceService,
+    public ConnectorRequestServiceUtils(RequestedResourceServiceImpl requestedResourceService,
         SerializerProvider serializerProvider) {
-        this.requestedResourceService = requestedResourceService;
+        this.resourceService = requestedResourceService;
         this.serializerProvider = serializerProvider;
     }
 
@@ -59,7 +60,7 @@ public class ConnectorRequestServiceUtils {
 
             Resource resource = serializerProvider.getSerializer()
                 .deserialize(payload, ResourceImpl.class);
-            return requestedResourceService.addResource(deserializeMetadata(resource));
+            return resourceService.addResource(deserializeMetadata(resource));
         } catch (Exception e) {
             throw new Exception("Metadata could not be saved: " + e.getMessage());
         }
@@ -84,7 +85,7 @@ public class ConnectorRequestServiceUtils {
         }
 
         try {
-            requestedResourceService.addData(resourceId, payload);
+            resourceService.addData(resourceId, payload);
         } catch (Exception e) {
             throw new Exception("Data could not be saved: " + e.getMessage());
         }
@@ -98,7 +99,7 @@ public class ConnectorRequestServiceUtils {
      */
     public boolean resourceExists(UUID resourceId) {
         try {
-            return requestedResourceService.getResource(resourceId) != null;
+            return resourceService.getResource(resourceId) != null;
         } catch (ResourceException exception) {
             return false;
         }

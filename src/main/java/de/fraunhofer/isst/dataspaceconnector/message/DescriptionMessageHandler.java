@@ -13,7 +13,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -47,7 +48,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
-    private final OfferedResourceService offeredResourceService;
+    private final ResourceService resourceService;
     private final TokenProvider tokenProvider;
     private final SerializerProvider serializerProvider;
     private final IdsUtils idsUtils;
@@ -58,7 +59,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public DescriptionMessageHandler(@NotNull OfferedResourceService offeredResourceService,
+    public DescriptionMessageHandler(@NotNull OfferedResourceServiceImpl offeredResourceService,
         @NotNull TokenProvider tokenProvider,
         @NotNull SerializerProvider serializerProvider,
         @NotNull IdsUtils idsUtils) throws IllegalArgumentException {
@@ -78,7 +79,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
         }
 
-        this.offeredResourceService = offeredResourceService;
+        this.resourceService = offeredResourceService;
         this.tokenProvider = tokenProvider;
         this.serializerProvider = serializerProvider;
         this.idsUtils = idsUtils;
@@ -156,7 +157,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
                 // Find the requested resource
                 final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
-                final var resource = offeredResourceService.getOfferedResources().get(resourceId);
+                final var resource = ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
 
                 if (resource != null) {
                     // The resource has been found, send the description.
@@ -203,14 +204,14 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     private MessageResponse constructConnectorSelfDescription(URI requestId, URI issuerConnector)
         throws RuntimeException {
         Assert.notNull(serializerProvider, "The SerializerProvider should not be null.");
-        Assert.notNull(offeredResourceService, "The OfferedResourceService should not be null.");
+        Assert.notNull(resourceService, "The OfferedResourceService should not be null.");
         Assert.notNull(tokenProvider, "The TokenProvider should not be null.");
 
         try {
             // Create a connector with a list of currently offered resources
             var connector = (BaseConnectorImpl) idsUtils.getConnector();
             connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
+                ._offeredResource_(new ArrayList<>(resourceService.getResources()))
                 .build()));
 
             // Create the response header

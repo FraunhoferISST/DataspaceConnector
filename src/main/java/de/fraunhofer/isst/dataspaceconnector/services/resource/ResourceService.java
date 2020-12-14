@@ -1,24 +1,28 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * RequestedResourceService interface.
  */
-public interface RequestedResourceService {
+public interface ResourceService {
 
     /**
      * Adds resource.
      *
      * @throws ResourceException - if the resource could not be added.
      */
-    UUID addResource(ResourceMetadata resourceMetadata) throws ResourceException;
+    UUID addResource(ResourceMetadata metadata) throws ResourceException;
 
     /**
      * Adds data.
@@ -39,7 +43,7 @@ public interface RequestedResourceService {
      *
      * @throws ResourceException - if the resource could not be found.
      */
-    RequestedResource getResource(UUID id) throws ResourceException;
+    ConnectorResource getResource(UUID id) throws ResourceException;
 
     /**
      * Returns metadata.
@@ -60,5 +64,22 @@ public interface RequestedResourceService {
      *
      * @return a list of resources.
      */
-    List<Resource> getRequestedResources();
+    List<Resource> getResources();
+
+    /**
+     * Returns data by representation.
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws ResourceException - if the resource data could not be received.
+     */
+    String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
+
+    /**
+     * Returns representation.
+     *
+     * @return a {@link ResourceRepresentation} object.
+     * @throws ResourceException - if the representation could not be received.
+     */
+    ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
+        throws ResourceException;
 }

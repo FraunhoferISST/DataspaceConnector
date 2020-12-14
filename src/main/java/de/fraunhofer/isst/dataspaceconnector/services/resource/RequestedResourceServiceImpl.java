@@ -2,11 +2,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.resource;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import java.util.stream.Collectors;
@@ -20,11 +21,11 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * This class implements all methods of {@link de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService}.
+ * This class implements all methods of {@link ResourceService}.
  * It provides database resource handling for all requested resources.
  */
 @Service
-public class RequestedResourceServiceImpl implements RequestedResourceService {
+public class RequestedResourceServiceImpl implements ResourceService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(RequestedResourceServiceImpl.class);
 
@@ -147,7 +148,7 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
                 return "Policy Restriction!";
             }
         } catch (IOException exception) {
-            throw new ResourceException("Failed to process the policy data accesss.", exception);
+            throw new ResourceException("Failed to process the policy data access.", exception);
         }
     }
 
@@ -155,9 +156,24 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      * {@inheritDoc}
      */
     @Override
-    public List<Resource> getRequestedResources() {
+    public List<Resource> getResources() {
         return getAllResources().parallelStream().map(idsUtils::getAsResource)
             .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets data from local or external data source.
+     */
+    @Override
+    public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
+        OperationNotSupportedException {
+        throw new OperationNotSupportedException("Operation not supported.");
+    }
+
+    @Override
+    public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
+        throws OperationNotSupportedException {
+        throw new OperationNotSupportedException("Operation not supported.");
     }
 
     public Optional<String> isValidRequestedResource(RequestedResource resource) {
