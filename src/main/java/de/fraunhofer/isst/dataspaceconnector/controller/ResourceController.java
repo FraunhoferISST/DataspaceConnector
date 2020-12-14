@@ -484,7 +484,7 @@ public class ResourceController {
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
             LOGGER.info("Failed to add resource representation. The resource does not exist."
-                    + "[endpoint=({}), exception=({}), resourceId=({}), uuid=({}), representation=({})]",
+                    + " [endpoint=({}), exception=({}), resourceId=({}), uuid=({}), representation=({})]",
                 endpointPath, exception.getMessage(), resourceId, uuid, representation);
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
