@@ -19,14 +19,14 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Root level="error">
+        <Root level="info">
+            <AppenderRef ref="RollingFile"/>
         </Root>
         <Logger name="org.springframework" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
         <Logger name="de.fraunhofer.isst.dataspaceconnector.controller" level="info">
             <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="RollingFile"/>
         </Logger>
     </Loggers>
 </Configuration>
