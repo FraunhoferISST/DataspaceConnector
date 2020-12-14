@@ -409,21 +409,33 @@ public class ResourceController {
     public ResponseEntity<Object> getAccess(
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
+        final var endpointPath = "/admin/api/resources/{resource-id}/access";
+        LOGGER.info("Received request for a resource access lookup. [endpoint=({}), uuid=({})]",
+            endpointPath, resourceId);
+
         try {
             final var resource = requestedResourceService.getResource(resourceId);
             if (resource == null) {
+                LOGGER.info("Failed to received the resource access. The resource does not exist. "
+                    + "[endpoint=({}), uuid=({})]", endpointPath, resourceId);
                 return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
             }
 
+            LOGGER.info("Successfully received the resource access. [endpoint=({}), uuid=({})]",
+                endpointPath, resourceId);
             return new ResponseEntity<>(resource.getAccessed(), HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.info("Failed to receive the resource access. The resource is not valid. "
+                    + "[endpoint=({}), exception=({}), uuid=({})]",
+                endpointPath, exception.getMessage(), resourceId);
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn(
+                "Failed to receive the resource access. Caught unhandled resource exception."
+                    + " [endpoint=({}), exception=({}), uuid=({})]",
+                endpointPath, exception.getMessage(), resourceId);
             return new ResponseEntity<>("Access counter could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
