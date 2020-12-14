@@ -91,9 +91,20 @@ public class RequestedResourceServiceImpl implements RequestedResourceService {
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
-        requestedResourceRepository.deleteById(resourceId);
-        LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
-        return true;
+        try {
+            if (getResource(resourceId) != null) {
+                requestedResourceRepository.deleteById(resourceId);
+                LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+                return true;
+            }
+        }catch(InvalidResourceException exception){
+            // The resource exists, delete it
+            requestedResourceRepository.deleteById(resourceId);
+            LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+            return true;
+        }
+
+        return false;
     }
 
     /**
