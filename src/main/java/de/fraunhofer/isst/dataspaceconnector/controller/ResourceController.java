@@ -287,28 +287,44 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId,
         @Parameter(description = "A new resource contract.", required = true)
-        @RequestBody String policy) throws IllegalArgumentException {
+        @RequestBody String policy) {
+        final var endpointPath = "/admin/api/resources/{resource-id}";
+        LOGGER.info("Received request for updating a resource contract."
+                + " [endpoint=({}), uuid=({}), policy=({})]",
+            endpointPath, resourceId, policy);
+
         try {
             policyHandler.getPattern(policy);
             offeredResourceService.updateContract(resourceId, policy);
+            LOGGER.info("Successfully updated a resource contract. "
+                    + "[endpoint=({}), uuid=({}), policy=({})]",
+                endpointPath, resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
         } catch (IOException exception) {
             // The policy is not in the correct format.
-            LOGGER.info("The policy is malformed.");
+            LOGGER.info("Failed to update the resource contract. The policy is malformed. "
+                    + "[endpoint=({}), exception=({}), uuid=({}), policy=({})]",
+                endpointPath, exception.getMessage(), resourceId, policy);
             return new ResponseEntity<>("Policy syntax error.", HttpStatus.BAD_REQUEST);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.warn("Resource could not be found. " + resourceId);
+            LOGGER.info("Failed to update the resource contract. The resource does not exist. "
+                    + "[endpoint=({}), exception=({}), uuid=({}), policy=({})]",
+                endpointPath, exception.getMessage(), resourceId, policy);
             return new ResponseEntity<>("The resource could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.info("Failed to update the resource contract. The resource is not valid. "
+                    + "[endpoint=({}), exception=({}), uuid=({}), policy=({})]",
+                endpointPath, exception.getMessage(), resourceId, policy);
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn(
+                "Failed to update the resource contract. Caught unhandled resource exception. "
+                    + "[endpoint=({}), exception=({}), uuid=({}), policy=({})]",
+                endpointPath, exception.getMessage(), resourceId, policy);
             return new ResponseEntity<>("Resource could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
