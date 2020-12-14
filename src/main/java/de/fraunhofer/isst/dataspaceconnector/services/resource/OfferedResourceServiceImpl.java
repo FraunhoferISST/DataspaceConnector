@@ -169,9 +169,20 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
-        offeredResourceRepository.deleteById(resourceId);
-        LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
-        return true;
+        try {
+            if (getResource(resourceId) != null) {
+                offeredResourceRepository.deleteById(resourceId);
+                LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+                return true;
+            }
+        }catch(InvalidResourceException exception){
+            // The resource exists, delete it
+            offeredResourceRepository.deleteById(resourceId);
+            LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+            return true;
+        }
+
+        return false;
     }
 
     /**
