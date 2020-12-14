@@ -9,7 +9,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.logging.log4j.ThreadContext;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,29 +243,26 @@ public class ResourceController {
         @PathVariable("resource-id") UUID id) {
         final var endpointPath = "/admin/api/resources/{resource-id}";
         LOGGER.info("Received request for resource deletion."
-                + " [endpoint=({}), uuid=({})]",
-            endpointPath, id);
+                + " [endpoint=({}), uuid=({})]", endpointPath, id);
 
         if (offeredResourceService.deleteResource(id)) {
             LOGGER.info("Successfully deleted resource from the OfferedResourcesService."
-                    + " [endpoint=({}), uuid=({})]",
-                endpointPath, id);
+                    + " [endpoint=({}), uuid=({})]", endpointPath, id);
             return new ResponseEntity<>("Resource was deleted successfully.",
                 HttpStatus.OK);
         } else {
             LOGGER.debug("Failed to delete the resource from the OfferedResourcesService."
-                    + " [endpoint=({}), resourceId=({})]",
-                endpointPath, id);
+                    + " [endpoint=({}), resourceId=({})]", endpointPath, id);
             if (requestedResourceService.deleteResource(id)) {
                 LOGGER.info("Successfully deleted resource from the RequestedResourcesService."
-                        + " [endpoint=({}), uuid=({})]",
-                    endpointPath, id);
+                        + " [endpoint=({}), uuid=({})]", endpointPath, id);
                 return new ResponseEntity<>("Resource was deleted successfully.",
                     HttpStatus.OK);
             } else {
+                LOGGER.debug("Failed to delete the resource from the RequestedResourcesService."
+                        + " [endpoint=({}), resourceId=({})]", endpointPath, id);
                 LOGGER.info("Failed to delete the resource. The resource does not exist."
-                        + " [endpoint=({}), uuid=({})]",
-                    endpointPath, id);
+                        + " [endpoint=({}), uuid=({})]", endpointPath, id);
                 return new ResponseEntity<>("The resource could not be found.",
                     HttpStatus.NOT_FOUND);
             }
@@ -341,39 +337,61 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<String> getContract(
         @Parameter(description = "The resource uuid.", required = true)
-        @PathVariable("resource-id") UUID resourceId) throws IllegalArgumentException {
+        @PathVariable("resource-id") UUID resourceId) {
+        final var endpointPath = "/admin/api/resources/{resource-id}/contract";
+        LOGGER.info("Received request for a resource contract lookup. [endpoint=({}), uuid=({})]",
+            endpointPath, resourceId);
+
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                return new ResponseEntity<>(
-                    offeredResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
+                final var policy = offeredResourceService.getMetadata(resourceId).getPolicy();
+                LOGGER.info(
+                    "Successfully received the resource contract. [endpoint=({}), uuid=({})]",
+                    endpointPath, resourceId);
+                return new ResponseEntity<>(policy, HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
+                LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
+                        + " [endpoint=({}), exception=({}), resourceId=({})]",
+                    endpointPath, offeredResourceServiceException.getMessage(), resourceId);
                 try {
                     // Try to find the data in the requestedResourceService
-                    LOGGER.info("Could not find the resource %s in the offered resources.",
-                        offeredResourceServiceException);
-                    return new ResponseEntity<>(
-                        requestedResourceService.getMetadata(resourceId).getPolicy(),
-                        HttpStatus.OK);
+                    final var policy = requestedResourceService.getMetadata(resourceId).getPolicy();
+                    LOGGER.info("Successfully received the resource contract. "
+                        + "[endpoint=({}), uuid=({})]", endpointPath, resourceId);
+                    return new ResponseEntity<>(policy, HttpStatus.OK);
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
                     // The data could not be found in the offeredResourceService and requestedResourceService
-                    LOGGER.warn("Could not find the resource %s in the requested resources.",
-                        offeredResourceServiceException);
+                    LOGGER
+                        .debug("Failed to receive the resource from the RequestedResourcesService."
+                                + " [endpoint=({}), exception=({}), resourceId=({})]",
+                            endpointPath, requestedResourceServiceException.getMessage(),
+                            resourceId);
+                    LOGGER.info(
+                        "Failed to receive the resource contract. The resource does not exist."
+                            + " [endpoint=({}), exception=({}), resourceId=({})]",
+                        endpointPath, requestedResourceServiceException.getMessage(), resourceId);
                     return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.info("Resource could not be found. " + resourceId);
+            LOGGER.info("Failed to receive the resource contract. The resource does not exist."
+                    + " [endpoint=({}), exception=({}), resourceId=({})]",
+                endpointPath, exception.getMessage(), resourceId);
             return new ResponseEntity<>("The resource could not be found.", HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.info("Failed to receive the resource contract. The resource is not valid. "
+                    + "[endpoint=({}), exception=({}), uuid=({})]",
+                endpointPath, exception.getMessage(), resourceId);
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn(
+                "Failed to receive the resource contract. Caught unhandled resource exception. "
+                    + "[endpoint=({}), exception=({}), uuid=({})]",
+                endpointPath, exception.getMessage(), resourceId);
             return new ResponseEntity<>("Contract could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
