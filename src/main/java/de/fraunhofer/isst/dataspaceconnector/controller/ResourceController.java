@@ -242,19 +242,31 @@ public class ResourceController {
     public ResponseEntity<String> deleteResource(
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID id) {
+        final var endpointPath = "/admin/api/resources/{resource-id}";
+        LOGGER.info("Received request for resource deletion."
+                + " [endpoint=({}), uuid=({})]",
+            endpointPath, id);
+
         if (offeredResourceService.deleteResource(id)) {
-            LOGGER.info(String.format("Deleted resource %s from offeredResourceService", id));
-            return new ResponseEntity<>("Resource was deleted successfully from the " +
-                "offeredResourceService.",
+            LOGGER.info("Successfully deleted resource from the OfferedResourcesService."
+                    + " [endpoint=({}), uuid=({})]",
+                endpointPath, id);
+            return new ResponseEntity<>("Resource was deleted successfully.",
                 HttpStatus.OK);
         } else {
+            LOGGER.debug("Failed to delete the resource from the OfferedResourcesService."
+                    + " [endpoint=({}), resourceId=({})]",
+                endpointPath, id);
             if (requestedResourceService.deleteResource(id)) {
-                LOGGER.info(String.format("Deleted resource %s from requestedResourceService", id));
-                return new ResponseEntity<>("Resource was deleted successfully from the " +
-                    "requestedResourceService.",
+                LOGGER.info("Successfully deleted resource from the RequestedResourcesService."
+                        + " [endpoint=({}), uuid=({})]",
+                    endpointPath, id);
+                return new ResponseEntity<>("Resource was deleted successfully.",
                     HttpStatus.OK);
             } else {
-                LOGGER.warn(String.format("Resource %s could not be found.", id));
+                LOGGER.info("Failed to delete the resource. The resource does not exist."
+                        + " [endpoint=({}), uuid=({})]",
+                    endpointPath, id);
                 return new ResponseEntity<>("The resource could not be found.",
                     HttpStatus.NOT_FOUND);
             }
