@@ -3,8 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,8 +29,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataController.class);
 
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
 
     /**
      * Constructor for ResourceDataController.
@@ -37,8 +37,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceDataController(@NotNull OfferedResourceService offeredResourceService,
-        @NotNull RequestedResourceService requestedResourceService)
+    public ResourceDataController(@NotNull OfferedResourceServiceImpl offeredResourceService,
+        @NotNull RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");

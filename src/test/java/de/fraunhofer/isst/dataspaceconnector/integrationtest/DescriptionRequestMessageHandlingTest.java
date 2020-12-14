@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import org.junit.Assert;
@@ -46,7 +46,7 @@ public class DescriptionRequestMessageHandlingTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private OfferedResourceService offeredResourceService;
+    private OfferedResourceServiceImpl offeredResourceService;
 
     @Autowired
     private OfferedResourceRepository offeredResourceRepository;

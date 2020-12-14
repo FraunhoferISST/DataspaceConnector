@@ -22,13 +22,13 @@ import java.net.MalformedURLException;
 import java.util.*;
 
 /**
- * This class implements all methods of {@link OfferedResourceService}. It provides database
+ * This class implements all methods of {@link ResourceService}. It provides database
  * resource handling for all offered resources.
  */
 @Service
-public class OfferedResourceServiceImpl implements OfferedResourceService {
+public class OfferedResourceServiceImpl implements ResourceService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OfferedResourceService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OfferedResourceServiceImpl.class);
 
     private final OfferedResourceRepository offeredResourceRepository;
     private final HttpUtils httpUtils;
@@ -58,7 +58,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * Returns the resource list.
      */
     @Override
-    public List<Resource> getResourceList() {
+    public List<Resource> getResources() {
         return getAllResources().parallelStream().map(idsUtils::getAsResource)
             .collect(Collectors.toList());
     }
@@ -66,7 +66,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public Map<UUID, Resource> getOfferedResources() {
         return getAllResources().parallelStream().collect(Collectors
             .toMap(OfferedResource::getUuid, idsUtils::getAsResource));
@@ -101,7 +100,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * @throws InvalidResourceException - if the resource is not valid.
      * @throws ResourceAlreadyExists    - if the resource does already exists.
      */
-    @Override
     public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws
         InvalidResourceException, ResourceAlreadyExists {
         if (getResource(uuid) != null) {
@@ -135,7 +133,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * Updates resource metadata by id.
      */
-    @Override
     public void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws
         InvalidResourceException, ResourceNotFoundException {
         final var resource = getResource(resourceId);
@@ -152,7 +149,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void updateContract(UUID resourceId, String policy) throws ResourceNotFoundException,
         InvalidResourceException {
         final var resourceMetadata = getMetadata(resourceId);
@@ -280,7 +276,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws
         ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
         final var uuid = UUIDUtils.createUUID(
@@ -298,7 +293,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
         UUID representationId) throws
         ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
@@ -320,7 +314,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     /**
      * {@inheritDoc}
      */
-    @Override
     public void updateRepresentation(UUID resourceId, UUID representationId,
         ResourceRepresentation representation) throws
         ResourceNotFoundException, InvalidResourceException {
@@ -349,7 +342,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * @throws ResourceNotFoundException - if the resource could not be found.
      * @throws InvalidResourceException  - if the resource is not valid.
      */
-    @Override
     public boolean deleteRepresentation(UUID resourceId, UUID representationId) throws
         ResourceNotFoundException, InvalidResourceException {
         var representations = getAllRepresentations(resourceId);
@@ -390,7 +382,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * @param resource
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void invalidResourceGuard(OfferedResource resource) throws InvalidResourceException {
@@ -402,7 +393,6 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     }
 
     /**
-     * @param resource
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void storeResource(OfferedResource resource) throws InvalidResourceException {

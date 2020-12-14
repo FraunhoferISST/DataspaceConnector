@@ -3,6 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
@@ -33,8 +36,7 @@ public class ResourceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
     private final PolicyHandler policyHandler;
 
     /**
@@ -43,9 +45,9 @@ public class ResourceController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceController(@NotNull OfferedResourceService offeredResourceService,
+    public ResourceController(@NotNull OfferedResourceServiceImpl offeredResourceService,
         @NotNull PolicyHandler policyHandler,
-        @NotNull RequestedResourceService requestedResourceService)
+        @NotNull RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null) {
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -78,7 +80,7 @@ public class ResourceController {
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
             if (uuid != null) {
-                offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                ((OfferedResourceServiceImpl) offeredResourceService).addResourceWithId(resourceMetadata, uuid);
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
@@ -119,7 +121,7 @@ public class ResourceController {
         @PathVariable("resource-id") UUID resourceId,
         @RequestBody ResourceMetadata resourceMetadata) {
         try {
-            offeredResourceService.updateResource(resourceId, resourceMetadata);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateResource(resourceId, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
@@ -233,7 +235,7 @@ public class ResourceController {
         @RequestBody String policy) {
         try {
             policyHandler.getPattern(policy);
-            offeredResourceService.updateContract(resourceId, policy);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
         } catch (IOException exception) {
             // The policy is not in the correct format.
@@ -326,7 +328,7 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
         try {
-            final var resource = requestedResourceService.getResource(resourceId);
+            final var resource = ((RequestedResourceServiceImpl) requestedResourceService).getResource(resourceId);
             if (resource == null) {
                 LOGGER
                     .debug("Failed to received the resource access. The resource does not exist.");
@@ -367,10 +369,9 @@ public class ResourceController {
         try {
             UUID newUuid = null;
             if (uuid != null) {
-                newUuid = offeredResourceService
-                    .addRepresentationWithId(resourceId, representation, uuid);
+                newUuid = ((OfferedResourceServiceImpl) offeredResourceService).addRepresentationWithId(resourceId, representation, uuid);
             } else {
-                newUuid = offeredResourceService.addRepresentation(resourceId, representation);
+                newUuid ((OfferedResourceServiceImpl) offeredResourceService).addRepresentation(resourceId, representation);
             }
 
             return new ResponseEntity<>(
@@ -424,7 +425,7 @@ public class ResourceController {
         @Parameter(description = "A new resource representation.", required = true)
         @RequestBody ResourceRepresentation representation) {
         try {
-            offeredResourceService
+            ((OfferedResourceServiceImpl) offeredResourceService)
                 .updateRepresentation(resourceId, representationId, representation);
             return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
@@ -505,7 +506,7 @@ public class ResourceController {
         @Parameter(description = "The representation uuid.", required = true)
         @PathVariable("representation-id") UUID representationId) {
         try {
-            if (offeredResourceService.deleteRepresentation(resourceId, representationId)) {
+            if (((OfferedResourceServiceImpl) offeredResourceService).deleteRepresentation(resourceId, representationId)) {
                 return new ResponseEntity<>("Representation was deleted successfully",
                     HttpStatus.OK);
             } else {

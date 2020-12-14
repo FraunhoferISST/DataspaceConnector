@@ -7,8 +7,9 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,8 +37,7 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final SerializerProvider serializerProvider;
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
 
     /**
@@ -47,8 +47,8 @@ public class MainController {
      */
     @Autowired
     public MainController(@NotNull SerializerProvider serializerProvider,
-        @NotNull OfferedResourceService offeredResourceService,
-        @NotNull RequestedResourceService requestedResourceService,
+        @NotNull OfferedResourceServiceImpl offeredResourceService,
+        @NotNull RequestedResourceServiceImpl requestedResourceService,
         @NotNull IdsUtils idsUtils)
         throws IllegalArgumentException {
         if (serializerProvider == null) {
@@ -147,8 +147,8 @@ public class MainController {
         Assert.notNull(requestedResourceService, "The requestedResourceService cannot be null.");
 
         return new ResourceCatalogBuilder()
-            ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
-            ._requestedResource_(new ArrayList<>(requestedResourceService.getRequestedResources()))
+            ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
+            ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))
             .build();
     }
 }

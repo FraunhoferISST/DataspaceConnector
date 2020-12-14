@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.integrationtest;
 
 import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -20,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.transaction.Transactional;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.*;
 
@@ -40,10 +38,10 @@ public class SelfDescriptionTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private OfferedResourceService offeredResourceService;
+    private OfferedResourceServiceImpl offeredResourceService;
 
     @Autowired
-    private RequestedResourceService requestedResourceService;
+    private RequestedResourceServiceImpl requestedResourceService;
 
     @Autowired
     private OfferedResourceRepository offeredResourceRepository;

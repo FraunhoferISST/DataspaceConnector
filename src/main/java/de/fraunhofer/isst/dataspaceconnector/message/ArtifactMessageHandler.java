@@ -17,7 +17,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
@@ -51,7 +52,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
     private final TokenProvider provider;
-    private final OfferedResourceService resourceService;
+    private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
     private final IdsUtils idsUtils;
 
@@ -61,7 +62,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
-    public ArtifactMessageHandler(@NotNull OfferedResourceService offeredResourceService,
+    public ArtifactMessageHandler(@NotNull OfferedResourceServiceImpl offeredResourceService,
         @NotNull TokenProvider tokenProvider,
         @NotNull PolicyHandler policyHandler,
         @NotNull IdsUtils idsUtils) throws IllegalArgumentException {
@@ -282,7 +283,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     private Resource findResourceFromArtifactId(UUID artifactId) {
         Assert.notNull(resourceService, "The resource service cannot be null.");
 
-        for (final var resource : resourceService.getResourceList()) {
+        for (final var resource : resourceService.getResources()) {
             for (final var representation : resource.getRepresentation()) {
                 final var representationId = UUIDUtils.uuidFromUri(representation.getId());
 
