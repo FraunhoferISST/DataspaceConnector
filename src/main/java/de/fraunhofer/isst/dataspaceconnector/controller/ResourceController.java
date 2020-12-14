@@ -175,8 +175,7 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID id) {
         final var endpointPath = "/admin/api/resources/{resource-id}";
-        LOGGER.info("Received request for resource lookup."
-                + " [endpoint=({}), uuid=({})]",
+        LOGGER.info("Received request for resource lookup. [endpoint=({}), uuid=({})]",
             endpointPath, id);
 
         try {
