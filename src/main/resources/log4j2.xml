@@ -25,6 +25,9 @@
         <Logger name="org.springframework" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
+        <Logger name="org.hibernate" level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
         <Logger name="de.fraunhofer.isst.dataspaceconnector.controller" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
