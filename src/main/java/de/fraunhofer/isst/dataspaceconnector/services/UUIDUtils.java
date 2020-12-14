@@ -124,4 +124,8 @@ public class UUIDUtils {
         throw new UUIDCreationException("Could not create a new uuid. No unused uuid could be " +
             "found.");
     }
+
+    public static UUID generateUUID(){
+        return createUUID(uuid -> false);
+    }
 }
