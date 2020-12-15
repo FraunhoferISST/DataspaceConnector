@@ -7,8 +7,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceSe
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,17 +47,14 @@ public class ResourceController {
         @NotNull PolicyHandler policyHandler,
         @NotNull RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
-        if (offeredResourceService == null) {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (policyHandler == null) {
+        if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-        }
 
-        if (requestedResourceService == null) {
+        if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
 
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;

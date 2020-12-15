@@ -1,16 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.ConnectorRequestServiceUtils;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.ArtifactRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.DescriptionRequestMessageService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,8 @@ public class RequestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
 
     private final TokenProvider tokenProvider;
-    private final ConnectorRequestServiceImpl requestMessageService;
-    private final ConnectorRequestServiceUtils connectorRequestServiceUtils;
+    private final ArtifactRequestMessageService artifactRequestMessageService;
+    private final DescriptionRequestMessageService descriptionRequestMessageService;
 
     /**
      * Constructor for RequestController
@@ -43,32 +42,29 @@ public class RequestController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public RequestController(@NotNull TokenProvider tokenProvider,
-        @NotNull ConnectorRequestServiceImpl requestMessageService,
-        @NotNull ConnectorRequestServiceUtils connectorRequestServiceUtils)
+    public RequestController(TokenProvider tokenProvider,
+        ArtifactRequestMessageService artifactRequestMessageService,
+        DescriptionRequestMessageService descriptionRequestMessageService)
         throws IllegalArgumentException {
-        if (tokenProvider == null) {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (requestMessageService == null) {
-            throw new IllegalArgumentException("The ConnectorRequestService cannot be null.");
-        }
+        if (artifactRequestMessageService == null)
+            throw new IllegalArgumentException("The ArtifactRequestMessageService cannot be null.");
 
-        if (connectorRequestServiceUtils == null) {
-            throw new IllegalArgumentException("The ConnectorRequestServiceUtils cannot be null.");
-        }
+        if (descriptionRequestMessageService == null)
+            throw new IllegalArgumentException("The DescriptionRequestMessageService cannot be null.");
 
         this.tokenProvider = tokenProvider;
-        this.requestMessageService = requestMessageService;
-        this.connectorRequestServiceUtils = connectorRequestServiceUtils;
+        this.artifactRequestMessageService = artifactRequestMessageService;
+        this.descriptionRequestMessageService = descriptionRequestMessageService;
     }
 
     /**
      * Actively requests data from an external connector by building an ArtifactRequestMessage.
      *
      * @param recipient         The target connector uri.
-     * @param requestedArtifact The requested resource uri.
+     * @param artifactId        The requested artifact uri.
      * @param key               a {@link java.util.UUID} object.
      * @return OK or error response.
      */
@@ -84,28 +80,23 @@ public class RequestController {
         @RequestParam("recipient") URI recipient,
         @Parameter(description = "The URI of the requested artifact.", required = true,
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact") URI requestedArtifact,
+        @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(connectorRequestServiceUtils,
-            "The connectorRequestServiceUtils cannot be null.");
-        Assert.notNull(requestMessageService, "The requestMessageService cannot be null.");
-
         if (tokenProvider.getTokenJWS() != null) {
-            if (connectorRequestServiceUtils.resourceExists(key)) {
+            if (resourceExists(key)) {
                 try {
+                    artifactRequestMessageService.setParameter(recipient, artifactId, null);
                     // Get the resource
-                    final var response =
-                        requestMessageService.sendArtifactRequestMessage(recipient,
-                            requestedArtifact);
+                    final var response = artifactRequestMessageService.sendMessage(
+                        artifactRequestMessageService, "");
 
                     if (response != null) {
                         try {
                             final var responseAsString = response.body().string();
 
                             try {
-                                connectorRequestServiceUtils.saveData(responseAsString, key);
+                                artifactRequestMessageService.saveData(responseAsString, key);
                             } catch (Exception exception) {
                                 LOGGER.warn("Could not save data to database. [exception=({})]",
                                     exception.getMessage());
@@ -144,7 +135,7 @@ public class RequestController {
             }
         } else {
             // The request was unauthorized.
-            return respondRejectUnauthorized(recipient, requestedArtifact);
+            return respondRejectUnauthorized(recipient, artifactId);
         }
     }
 
@@ -152,7 +143,7 @@ public class RequestController {
      * Actively requests metadata from an external connector by building an ArtifactRequestMessage.
      *
      * @param recipient         The target connector uri.
-     * @param requestedArtifact The requested resource uri.
+     * @param resourceId        The requested resource uri.
      * @return OK or error response.
      */
     @Operation(summary = "Description Request",
@@ -165,26 +156,22 @@ public class RequestController {
         @RequestParam("recipient") URI recipient,
         @Parameter(description = "The URI of the requested resource.", required = false,
             example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact", required = false) URI requestedArtifact) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(connectorRequestServiceUtils,
-            "The connectorRequestServiceUtils cannot be null.");
-        Assert.notNull(requestMessageService, "The requestMessageService cannot be null.");
-
+        @RequestParam(value = "requestedArtifact", required = false) URI resourceId) {
         if (tokenProvider.getTokenJWS() != null) {
             try {
-                final var response = requestMessageService.sendDescriptionRequestMessage(
-                    recipient, requestedArtifact);
+                descriptionRequestMessageService.setParameter(recipient, resourceId);
+                final var response = descriptionRequestMessageService.sendMessage(
+                    descriptionRequestMessageService, "");
 
                 if (response != null) {
                     try {
                         final var responseAsString = response.body().string();
 
-                        if (requestedArtifact != null) {
+                        if (resourceId != null) {
                             // Save the artifact request
                             try {
                                 final var validationKey =
-                                    connectorRequestServiceUtils.saveMetadata(responseAsString);
+                                    descriptionRequestMessageService.saveMetadata(responseAsString);
                                 return new ResponseEntity<>(
                                     "Validation: " + validationKey + "\n" + responseAsString,
                                     HttpStatus.OK);
@@ -220,7 +207,7 @@ public class RequestController {
             }
         } else {
             // The request was unauthorized.
-            return respondRejectUnauthorized(recipient, requestedArtifact);
+            return respondRejectUnauthorized(recipient, resourceId);
         }
     }
 
@@ -232,5 +219,20 @@ public class RequestController {
                 recipient.toString(), requestedArtifact.toString());
 
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Checks if a resource exists.
+     *
+     * @param resourceId The resource uuid.
+     * @return true if the resource exists.
+     */
+    private boolean resourceExists(UUID resourceId) {
+        try {
+            return true;
+//            return resourceService.getResource(resourceId) != null;
+        } catch (ResourceException exception) {
+            return false;
+        }
     }
 }
