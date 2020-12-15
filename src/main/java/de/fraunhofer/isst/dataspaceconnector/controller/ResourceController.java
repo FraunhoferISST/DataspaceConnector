@@ -7,8 +7,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceSe
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -143,7 +141,7 @@ public class ResourceController {
             requestId, endpointPath, endpointType, resourceId, resourceMetadata);
 
         try {
-            ((OfferedResourceServiceImpl) offeredResourceService).updateResource(id, resourceMetadata);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateResource(resourceId, resourceMetadata);
             LOGGER.info("Successfully updated the resource. [id=({})]", requestId);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {

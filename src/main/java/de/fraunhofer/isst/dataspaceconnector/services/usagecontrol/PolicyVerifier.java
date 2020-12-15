@@ -3,7 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.NotificationMessageService;
 import de.fraunhofer.isst.ids.framework.exceptions.HttpClientException;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -33,7 +35,8 @@ public class PolicyVerifier {
     public static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
     private PolicyReader policyReader;
-    private MessageService messageService;
+    private NotificationMessageService notificationMessageService;
+    private LogMessageService logMessageService;
     private HttpUtils httpUtils;
 
     @Autowired
@@ -41,10 +44,11 @@ public class PolicyVerifier {
      * Constructor for PolicyVerifier.
      *
      */
-    public PolicyVerifier(PolicyReader policyReader, MessageService messageService,
-        HttpUtils httpUtils) {
+    public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
+        NotificationMessageService notificationMessageService, HttpUtils httpUtils) {
         this.policyReader = policyReader;
-        this.messageService = messageService;
+        this.logMessageService = logMessageService;
+        this.notificationMessageService = notificationMessageService;
         this.httpUtils = httpUtils;
     }
 
@@ -72,17 +76,12 @@ public class PolicyVerifier {
      * @return Success or not (access or inhibition).
      */
     public boolean logAccess() {
-        try {
-            Response response = messageService.sendLogMessage();
-            if (response != null && response.code() == 200) {
-                return allowAccess();
-            } else {
-                LOGGER.error("NOT LOGGED");
-                return allowAccess();
-            }
-        } catch (HttpClientException | IOException e) {
-            LOGGER.error(e.getMessage());
-            return inhibitAccess();
+        Response response = logMessageService.sendMessage(logMessageService, "");
+        if (response != null && response.code() == 200) {
+            return allowAccess();
+        } else {
+            LOGGER.error("NOT LOGGED");
+            return allowAccess();
         }
     }
 
@@ -96,17 +95,13 @@ public class PolicyVerifier {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
         String recipient = policyReader.getEndpoint(rule);
 
-        try {
-            Response response = messageService.sendNotificationMessage(recipient);
-            if (response != null && response.code() == 200) {
-                return allowAccess();
-            } else {
-                LOGGER.error("NOT NOTIFIED");
-                return allowAccess();
-            }
-        } catch (HttpClientException | IOException e) {
-            LOGGER.error(e.getMessage());
-            return inhibitAccess();
+        notificationMessageService.setParameter(URI.create(recipient));
+        Response response = notificationMessageService.sendMessage(notificationMessageService, "");
+        if (response != null && response.code() == 200) {
+            return allowAccess();
+        } else {
+            LOGGER.error("NOT NOTIFIED");
+            return allowAccess();
         }
     }
 
