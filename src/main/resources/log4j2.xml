@@ -37,5 +37,8 @@
         <Logger name="de.fraunhofer.isst.dataspaceconnector.controller" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
+        <Logger name="de.fraunhofer.isst.dataspaceconnector.config" level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
     </Loggers>
 </Configuration>
