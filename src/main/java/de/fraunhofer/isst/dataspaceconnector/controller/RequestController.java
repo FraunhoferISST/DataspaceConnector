@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.ArtifactRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.DescriptionRequestMessageService;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,9 @@ public class RequestController {
     private final TokenProvider tokenProvider;
     private final ArtifactRequestMessageService artifactRequestMessageService;
     private final DescriptionRequestMessageService descriptionRequestMessageService;
+
+    private Response response;
+    private String responseAsString;
 
     /**
      * Constructor for RequestController
@@ -83,60 +88,55 @@ public class RequestController {
         @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key) {
-        if (tokenProvider.getTokenJWS() != null) {
-            if (resourceExists(key)) {
-                try {
-                    artifactRequestMessageService.setParameter(recipient, artifactId, null);
-                    // Get the resource
-                    final var response = artifactRequestMessageService.sendMessage(
-                        artifactRequestMessageService, "");
-
-                    if (response != null) {
-                        try {
-                            final var responseAsString = response.body().string();
-
-                            try {
-                                artifactRequestMessageService.saveData(responseAsString, key);
-                            } catch (Exception exception) {
-                                LOGGER.error("Could not save data to database.", exception);
-                                return new ResponseEntity<>("Failed to save to database.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
-                            }
-
-                            return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
-                                "%s", key, responseAsString), HttpStatus.OK);
-
-                        } catch (NullPointerException exception) {
-                            // The database response body is null.
-                            LOGGER.error("Could not read response body.", exception);
-                            return new ResponseEntity<>("Failed to parse database response.",
-                                HttpStatus.INTERNAL_SERVER_ERROR);
-                        }
-                    } else {
-                        // The response is null
-                        LOGGER.warn("Received no response message.");
-                        return new ResponseEntity<>("Received no response.",
-                            HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                } catch (IOException exception) {
-                    // Failed to send a description request message
-                    LOGGER.info("Could not connect to request message service.");
-                    return new ResponseEntity<>("Failed to reach to database.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } else {
-                // The resource does not exist
-                LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: " +
-                        "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
-                    artifactId.toString(), key.toString()));
-
-                return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
-                    HttpStatus.FORBIDDEN);
-            }
-        } else {
+        if (tokenProvider.getTokenJWS() == null) {
             // The request was unauthorized.
             return respondRejectUnauthorized(recipient, artifactId);
         }
+
+        if (!resourceExists(key)) {
+            // The resource does not exist
+            LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: " +
+                    "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
+                artifactId.toString(), key.toString()));
+
+            return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
+                HttpStatus.FORBIDDEN);
+        }
+
+        try {
+            artifactRequestMessageService.setParameter(recipient, artifactId, null);
+            response = artifactRequestMessageService.sendMessage(artifactRequestMessageService, "");
+        } catch (MessageException exception) {
+            // Failed to send a description request message
+            LOGGER.info("Could not connect to request message service.");
+            return new ResponseEntity<>("Failed to send an ids message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (response == null) {
+            LOGGER.warn("Received no response message.");
+            return new ResponseEntity<>("Received no response.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
+            responseAsString = response.body().string();
+        } catch (IOException exception) {
+            LOGGER.error("Could not read response body.", exception);
+            return new ResponseEntity<>("Failed to parse response.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
+            artifactRequestMessageService.saveData(responseAsString, key);
+        } catch (Exception exception) {
+            LOGGER.error("Could not save data to database.", exception);
+            return new ResponseEntity<>("Failed to save to database.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
+            "%s", key, responseAsString), HttpStatus.OK);
     }
 
     /**
@@ -156,55 +156,51 @@ public class RequestController {
         @RequestParam("recipient") URI recipient,
         @Parameter(description = "The URI of the requested resource.", required = false,
             example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact", required = false) URI resourceId) {
-        if (tokenProvider.getTokenJWS() != null) {
+        @RequestParam(value = "requestedResource", required = false) URI resourceId) {
+        if (tokenProvider.getTokenJWS() == null) {
+            // The request was unauthorized.
+            return respondRejectUnauthorized(recipient, resourceId);
+        }
+
+        try {
+            descriptionRequestMessageService.setParameter(recipient, resourceId);
+            response = descriptionRequestMessageService.sendMessage(descriptionRequestMessageService, "");
+        } catch (MessageException exception) {
+            // Failed to send description request message
+            LOGGER.info("Could not connect to request message service. " + exception.getMessage());
+            return new ResponseEntity<>("Failed to send description request message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (response == null) {
+            LOGGER.warn("Received no response message.");
+            return new ResponseEntity<>("Received no response.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
+            responseAsString = response.body().string();
+        } catch (IOException exception) {
+            LOGGER.error("Could not read response body.", exception);
+            return new ResponseEntity<>("Failed to parse response.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (resourceId != null) {
+            // Save the artifact request
             try {
-                descriptionRequestMessageService.setParameter(recipient, resourceId);
-                final var response = descriptionRequestMessageService.sendMessage(
-                    descriptionRequestMessageService, "");
-
-                if (response != null) {
-                    try {
-                        final var responseAsString = response.body().string();
-
-                        if (resourceId != null) {
-                            // Save the artifact request
-                            try {
-                                final var validationKey =
-                                    descriptionRequestMessageService.saveMetadata(responseAsString);
-                                return new ResponseEntity<>(
-                                    "Validation: " + validationKey + "\n" + responseAsString,
-                                    HttpStatus.OK);
-                            } catch (Exception e) {
-                                LOGGER.error(e.getMessage());
-                                return new ResponseEntity<>(e.getMessage(),
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
-                            }
-                        } else {
-                            // Send self description
-                            return new ResponseEntity<>(responseAsString, HttpStatus.OK);
-                        }
-                    } catch (NullPointerException exception) {
-                        // The database response body is null.
-                        LOGGER.error("Could not read response body.", exception);
-                        return new ResponseEntity<>("Failed to parse database response.",
-                            HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                } else {
-                    // The response is null
-                    LOGGER.warn("Received no response message.");
-                    return new ResponseEntity<>("Received no response.",
-                        HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            } catch (IOException exception) {
-                // Failed to send description request message
-                LOGGER.info("Could not connect to request message service. " + exception.getMessage());
-                return new ResponseEntity<>("Failed to send description request message.",
+                final var validationKey =
+                    descriptionRequestMessageService.saveMetadata(responseAsString, resourceId);
+                return new ResponseEntity<>("Validation: " + validationKey +
+                    "\n" + responseAsString, HttpStatus.OK);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+                return new ResponseEntity<>(e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
-            // The request was unauthorized.
-            return respondRejectUnauthorized(recipient, resourceId);
+            // Return self-description
+            return new ResponseEntity<>(responseAsString, HttpStatus.OK);
         }
     }
 

@@ -1,17 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.services.communication;
 
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessage;
-import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -19,23 +18,17 @@ import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.exceptions.HttpClientException;
-import de.fraunhofer.isst.ids.framework.messages.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import okhttp3.MultipartBody;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +110,7 @@ public class DescriptionRequestMessageService extends MessageService {
      * @return The UUID of the created resource.
      * @throws java.lang.Exception if any.
      */
-    public UUID saveMetadata(String response) throws Exception {
+    public UUID saveMetadata(String response, URI resourceId) throws Exception {
         Map<String, String> map = MultipartStringParser.stringToMultipart(response);
         final var header = map.get("header");
         final var payload = map.get("payload");
@@ -125,52 +118,103 @@ public class DescriptionRequestMessageService extends MessageService {
         try {
             serializerProvider.getSerializer().deserialize(header, DescriptionResponseMessage.class);
         } catch (Exception e) {
-            throw new Exception("Wrong message type: " + header);
+            throw new Exception("Wrong message type: \n" + header);
         }
 
         Resource resource;
         try {
             resource = serializerProvider.getSerializer().deserialize(payload, ResourceImpl.class);
         } catch (Exception e) {
-            throw new Exception("Metadata could not be deserialized: " + payload);
+            resource = findResource(payload, resourceId);
+        }
+
+        ResourceMetadata metadata;
+        try {
+            metadata = deserializeMetadata(resource);
+        } catch (Exception e) {
+            throw new Exception("Metadata could not be deserialized: " + e.getMessage());
         }
 
         try {
-            return resourceService.addResource(deserializeMetadata(resource));
+            return resourceService.addResource(metadata);
         } catch (Exception e) {
             throw new Exception("Metadata could not be saved: " + e.getMessage());
         }
     }
 
+    private Resource findResource(String payload, URI resourceId) throws Exception {
+        Resource resource = null;
+        try {
+            Connector connector = serializerProvider.getSerializer().deserialize(payload, BaseConnector.class);
+            if (connector.getResourceCatalog() != null && !connector.getResourceCatalog().isEmpty()) {
+                for (Resource r : connector.getResourceCatalog().get(0).getOfferedResource()) {
+                    if (r.getId().equals(resourceId)) {
+                        resource = r;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception("Response could not be deserialized: " + payload);
+        }
+        return resource;
+    }
+
     private ResourceMetadata deserializeMetadata(Resource resource) {
-        List<String> keywords = new ArrayList<>();
-        for (TypedLiteral t : resource.getKeyword()) {
-            keywords.add(t.getValue());
+        var metadata = new ResourceMetadata();
+
+        if (resource.getKeyword() != null) {
+            List<String> keywords = new ArrayList<>();
+            for (TypedLiteral t : resource.getKeyword()) {
+                keywords.add(t.getValue());
+            }
+            metadata.setKeywords(keywords);
         }
 
-        var representations = new HashMap<UUID, ResourceRepresentation>();
-        for (Representation r : resource.getRepresentation()) {
-            Artifact artifact = (Artifact) r.getInstance().get(0);
-            ResourceRepresentation representation = new ResourceRepresentation(
-                UUIDUtils.createUUID((UUID x) -> representations.get(x) != null),
-                r.getMediaType().getFilenameExtension(),
-                artifact.getByteSize().intValue(),
-                artifact.getFileName(),
-                new BackendSource(BackendSource.Type.LOCAL, null, null, null)
-            );
+        if (resource.getRepresentation() != null) {
+            var representations = new HashMap<UUID, ResourceRepresentation>();
+            for (Representation r : resource.getRepresentation()) {
+                int byteSize = 0;
+                String name = null;
+                String type = null;
+                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
+                    Artifact artifact = (Artifact) r.getInstance().get(0);
+                    if (artifact.getByteSize() != null)
+                        byteSize = artifact.getByteSize().intValue();
+                    if (artifact.getFileName() != null)
+                        name = artifact.getFileName();
+                    if (r.getMediaType() != null)
+                        type = r.getMediaType().getFilenameExtension();
+                }
 
-            representations.put(representation.getUuid(), representation);
+                ResourceRepresentation representation = new ResourceRepresentation(
+                    UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
+                    new BackendSource(BackendSource.Type.LOCAL, null, null, null)
+                );
+
+                representations.put(representation.getUuid(), representation);
+            }
+            metadata.setRepresentations(representations);
         }
 
-        return new ResourceMetadata(
-            resource.getTitle().get(0).getValue(),
-            resource.getDescription().get(0).getValue(),
-            keywords,
-            resource.getContractOffer().get(0).toRdf(),
-            resource.getPublisher(),
-            resource.getStandardLicense(),
-            resource.getVersion(),
-            representations
-        );
+        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
+            metadata.setTitle(resource.getTitle().get(0).getValue());
+
+        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
+            metadata.setDescription(resource.getDescription().get(0).getValue());
+
+        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
+            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
+
+        if (resource.getPublisher() != null)
+            metadata.setOwner(resource.getPublisher());
+
+        if (resource.getStandardLicense() != null)
+            metadata.setLicense(resource.getStandardLicense());
+
+        if (resource.getVersion() != null)
+            metadata.setVersion(resource.getVersion());
+
+        return metadata;
     }
 }
