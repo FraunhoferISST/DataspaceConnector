@@ -67,6 +67,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
 
         storeResource(resource);
 
+        LOGGER.info("Added a new resource. [resource=({})]", resource);
         return resource.getUuid();
     }
 
@@ -84,6 +85,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
         resource.setData(data);
 
         storeResource(resource);
+        LOGGER.info("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
     }
 
     /**
@@ -91,8 +93,20 @@ public class RequestedResourceServiceImpl implements ResourceService {
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
-        requestedResourceRepository.deleteById(resourceId);
-        return true;
+        try {
+            if (getResource(resourceId) != null) {
+                requestedResourceRepository.deleteById(resourceId);
+                LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+                return true;
+            }
+        } catch(InvalidResourceException exception){
+            // The resource exists, delete it
+            requestedResourceRepository.deleteById(resourceId);
+            LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -145,9 +159,11 @@ public class RequestedResourceServiceImpl implements ResourceService {
                 storeResource(resource);
                 return data;
             } else {
+                LOGGER.warn("Failed to access the resource. The resource is policy restricted. [resourceId=({})]", resourceId);
                 return "Policy Restriction!";
             }
         } catch (IOException exception) {
+            LOGGER.debug("Failed to process the policy data access. [resourceId=({}), exception=({})]", resourceId, exception);
             throw new ResourceException("Failed to process the policy data access.", exception);
         }
     }
@@ -203,16 +219,14 @@ public class RequestedResourceServiceImpl implements ResourceService {
     private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException {
         final var error = isValidRequestedResource(resource);
         if (error.isPresent()) {
+            LOGGER.debug("Failed resource validation. [error=({}), resource=({})]", error.get(), resource);
             throw new InvalidResourceException(error.get());
         }
     }
 
     private void storeResource(RequestedResource resource) throws InvalidResourceException {
-        final var error = isValidRequestedResource(resource);
-        if (error.isPresent()) {
-            throw new InvalidResourceException("Not a valid resource. " + error.get());
-        }
-
+        invalidResourceGuard(resource);
         requestedResourceRepository.save(resource);
+        LOGGER.debug("Made resource persistent. [resource=({})]", resource);
     }
 }
