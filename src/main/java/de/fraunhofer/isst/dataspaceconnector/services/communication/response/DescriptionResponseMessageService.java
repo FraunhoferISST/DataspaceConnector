@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.communication;
+package de.fraunhofer.isst.dataspaceconnector.services.communication.response;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
@@ -15,6 +15,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -35,9 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DescriptionRequestMessageService extends MessageService {
+public class DescriptionResponseMessageService extends MessageService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseMessageService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
@@ -46,7 +47,7 @@ public class DescriptionRequestMessageService extends MessageService {
     private URI recipient, resourceId;
 
     @Autowired
-    public DescriptionRequestMessageService(ConfigurationContainer configurationContainer,
+    public DescriptionResponseMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService) {
         super(idsHttpService);
@@ -108,7 +109,7 @@ public class DescriptionRequestMessageService extends MessageService {
      *
      * @param response The data resource as string.
      * @return The UUID of the created resource.
-     * @throws java.lang.Exception if any.
+     * @throws Exception if any.
      */
     public UUID saveMetadata(String response, URI resourceId) throws Exception {
         Map<String, String> map = MultipartStringParser.stringToMultipart(response);

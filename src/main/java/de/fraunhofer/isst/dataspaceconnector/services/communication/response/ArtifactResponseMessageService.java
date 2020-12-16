@@ -1,38 +1,31 @@
-package de.fraunhofer.isst.dataspaceconnector.services.communication;
+package de.fraunhofer.isst.dataspaceconnector.services.communication.response;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.exceptions.HttpClientException;
-import de.fraunhofer.isst.ids.framework.messages.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
-import okhttp3.MultipartBody;
-import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArtifactRequestMessageService extends MessageService {
+public class ArtifactResponseMessageService extends MessageService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResponseMessageService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
@@ -41,7 +34,7 @@ public class ArtifactRequestMessageService extends MessageService {
     private URI recipient, artifactId, contractId;
 
     @Autowired
-    public ArtifactRequestMessageService(ConfigurationContainer configurationContainer,
+    public ArtifactResponseMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService) {
         super(idsHttpService);
@@ -94,7 +87,7 @@ public class ArtifactRequestMessageService extends MessageService {
      *
      * @param response   The data resource as string.
      * @param resourceId The resource uuid.
-     * @throws java.lang.Exception if any.
+     * @throws Exception if any.
      */
     public void saveData(String response, UUID resourceId) throws Exception {
         Map<String, String> map = MultipartStringParser.stringToMultipart(response);
@@ -104,7 +97,7 @@ public class ArtifactRequestMessageService extends MessageService {
         try {
             serializerProvider.getSerializer().deserialize(header, ArtifactResponseMessage.class);
         } catch (Exception e) {
-            throw new Exception("Rejection Message received: " + payload);
+            throw new Exception("Rejection Message received: " + response);
         }
 
         try {

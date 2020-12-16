@@ -38,6 +38,14 @@ public abstract class MessageService {
 
     public abstract URI getRecipient();
 
+    /**
+     * Send ids message with header and payload using the IDS Framework.
+     *
+     * @param service The corresponding service to the message type.
+     * @param payload The message payload.
+     * @return The http response.
+     * @throws MessageException - if a header could not be built or the message could not be sent.
+     */
     public Response sendMessage(MessageService service, String payload) throws MessageException {
         Message message;
         try {
