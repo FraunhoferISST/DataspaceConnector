@@ -1,7 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageResponseService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.request.ArtifactRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.request.DescriptionRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.response.ArtifactResponseMessageService;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -128,32 +131,30 @@ public class RequestController {
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Read response.
-        if (response != null) {
-            try {
-                responseAsString = response.body().string();
-            } catch (IOException exception) {
-                LOGGER.error("Could not read response body.", exception);
-                return new ResponseEntity<>("Failed to parse response.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            LOGGER.warn("Received no response message.");
-            return new ResponseEntity<>("Received no response.",
+        Map<ResponseType, String> map;
+        try {
+            map = artifactResponseMessageService.readResponse(response);
+        } catch (MessageResponseException e) {
+            LOGGER.error("Could not read response body.", e);
+            return new ResponseEntity<>("Failed to read response. " + e.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        final var payload = map.get(ResponseType.ARTIFACT_RESPONSE);
+        if (payload == null) {
+            return returnRejectionMessage(map);
         }
 
         try {
             // Save data to database.
-            artifactResponseMessageService.saveData(responseAsString, key);
+            artifactResponseMessageService.saveData(payload, key);
+            return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
+                "%s", key, payload), HttpStatus.OK);
         } catch (Exception exception) {
             LOGGER.error("Could not save data to database.", exception);
             return new ResponseEntity<>("Failed to save to database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
-            "%s", key, responseAsString), HttpStatus.OK);
     }
 
     /**
@@ -184,42 +185,40 @@ public class RequestController {
             descriptionRequestMessageService.setParameter(recipient, resourceId);
             response = descriptionRequestMessageService.sendMessage(descriptionRequestMessageService, "");
         } catch (MessageException exception) {
-            // Failed to send description request message
+            // Failed to send description request message.
             LOGGER.info("Could not connect to request message service. " + exception.getMessage());
             return new ResponseEntity<>("Failed to send description request message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        // Read response.
-        if (response != null) {
-            try {
-                responseAsString = response.body().string();
-            } catch (IOException exception) {
-                LOGGER.error("Could not read response body.", exception);
-                return new ResponseEntity<>("Failed to parse response.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } else {
-            LOGGER.warn("Received no response message.");
-            return new ResponseEntity<>("Received no response.",
+        Map<ResponseType, String> map;
+        try {
+            map = descriptionResponseMessageService.readResponse(response);
+        } catch (MessageResponseException e) {
+            LOGGER.error("Could not read response body.", e);
+            return new ResponseEntity<>("Failed to read response.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        final var payload = map.get(ResponseType.DESCRIPTION_RESPONSE);
+        if (payload == null) {
+            return returnRejectionMessage(map);
         }
 
         if (resourceId != null) {
             // Save metadata to database.
             try {
-                final var validationKey =
-                    descriptionResponseMessageService.saveMetadata(responseAsString, resourceId);
+                final var validationKey = descriptionResponseMessageService.saveMetadata(payload, resourceId);
                 return new ResponseEntity<>("Validation: " + validationKey +
-                    "\n" + responseAsString, HttpStatus.OK);
+                    "\n" + payload, HttpStatus.OK);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
-                return new ResponseEntity<>(e.getMessage(),
+                return new ResponseEntity<>("Failed to save to database.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Return self-description.
-            return new ResponseEntity<>(responseAsString, HttpStatus.OK);
+            return new ResponseEntity<>(map.get(ResponseType.DESCRIPTION_RESPONSE), HttpStatus.OK);
         }
     }
 
@@ -230,6 +229,16 @@ public class RequestController {
             recipient.toString(), requestedArtifact.toString()));
 
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+    }
+
+    private ResponseEntity<String> returnRejectionMessage(Map<ResponseType, String> map) {
+        if (map.get(ResponseType.REJECTION) != null) {
+            return new ResponseEntity<>("Rejection Message: "
+                + map.get(ResponseType.REJECTION), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Unexpected response: \n" + map,
+                HttpStatus.OK);
+        }
     }
 
     /**

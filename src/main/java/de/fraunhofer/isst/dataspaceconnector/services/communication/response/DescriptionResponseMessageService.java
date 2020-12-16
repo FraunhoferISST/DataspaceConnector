@@ -11,10 +11,12 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
@@ -24,19 +26,21 @@ import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DescriptionResponseMessageService extends MessageService {
+public class DescriptionResponseMessageService extends MessageResponseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseMessageService.class);
 
@@ -50,7 +54,7 @@ public class DescriptionResponseMessageService extends MessageService {
     public DescriptionResponseMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService) {
-        super(idsHttpService);
+        super(idsHttpService, serializerProvider);
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -112,21 +116,11 @@ public class DescriptionResponseMessageService extends MessageService {
      * @throws Exception if any.
      */
     public UUID saveMetadata(String response, URI resourceId) throws Exception {
-        Map<String, String> map = MultipartStringParser.stringToMultipart(response);
-        final var header = map.get("header");
-        final var payload = map.get("payload");
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, DescriptionResponseMessage.class);
-        } catch (Exception e) {
-            throw new Exception("Wrong message type: \n" + header);
-        }
-
         Resource resource;
         try {
-            resource = serializerProvider.getSerializer().deserialize(payload, ResourceImpl.class);
+            resource = serializerProvider.getSerializer().deserialize(response, ResourceImpl.class);
         } catch (Exception e) {
-            resource = findResource(payload, resourceId);
+            resource = findResource(response, resourceId);
         }
 
         ResourceMetadata metadata;

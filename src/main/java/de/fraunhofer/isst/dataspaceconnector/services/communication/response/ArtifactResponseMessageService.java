@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArtifactResponseMessageService extends MessageService {
+public class ArtifactResponseMessageService extends MessageResponseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResponseMessageService.class);
 
@@ -37,7 +38,7 @@ public class ArtifactResponseMessageService extends MessageService {
     public ArtifactResponseMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService) {
-        super(idsHttpService);
+        super(idsHttpService, serializerProvider);
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -90,18 +91,8 @@ public class ArtifactResponseMessageService extends MessageService {
      * @throws Exception if any.
      */
     public void saveData(String response, UUID resourceId) throws Exception {
-        Map<String, String> map = MultipartStringParser.stringToMultipart(response);
-        String header = map.get("header");
-        String payload = map.get("payload");
-
         try {
-            serializerProvider.getSerializer().deserialize(header, ArtifactResponseMessage.class);
-        } catch (Exception e) {
-            throw new Exception("Rejection Message received: " + response);
-        }
-
-        try {
-            resourceService.addData(resourceId, payload);
+            resourceService.addData(resourceId, response);
         } catch (Exception e) {
             throw new Exception("Data could not be saved: " + e.getMessage());
         }

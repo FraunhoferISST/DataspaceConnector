@@ -52,7 +52,7 @@ public abstract class MessageService {
             message = service.buildHeader();
         } catch (MessageBuilderException e) {
             LOGGER.info("Message could not be built. " + e.getMessage());
-            return null;
+            throw new MessageBuilderException("Message could not be built.");
         }
 
         try {
@@ -60,7 +60,7 @@ public abstract class MessageService {
             return idsHttpService.send(body, service.getRecipient());
         } catch (MessageNotSentException | IOException e) {
             LOGGER.info("Message could not be sent. " + e.getMessage());
-            return null;
+            throw new MessageBuilderException("Message could not be sent.");
         }
     }
 }
