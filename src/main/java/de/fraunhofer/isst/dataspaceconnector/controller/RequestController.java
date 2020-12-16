@@ -2,8 +2,10 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.ArtifactRequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.DescriptionRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.request.ArtifactRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.request.DescriptionRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.response.DescriptionResponseMessageService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,6 +39,8 @@ public class RequestController {
     private final TokenProvider tokenProvider;
     private final ArtifactRequestMessageService artifactRequestMessageService;
     private final DescriptionRequestMessageService descriptionRequestMessageService;
+    private final ArtifactResponseMessageService artifactResponseMessageService;
+    private final DescriptionResponseMessageService descriptionResponseMessageService;
 
     private Response response;
     private String responseAsString;
@@ -49,7 +53,9 @@ public class RequestController {
     @Autowired
     public RequestController(TokenProvider tokenProvider,
         ArtifactRequestMessageService artifactRequestMessageService,
-        DescriptionRequestMessageService descriptionRequestMessageService)
+        DescriptionRequestMessageService descriptionRequestMessageService,
+        ArtifactResponseMessageService artifactResponseMessageService,
+        DescriptionResponseMessageService descriptionResponseMessageService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -60,9 +66,17 @@ public class RequestController {
         if (descriptionRequestMessageService == null)
             throw new IllegalArgumentException("The DescriptionRequestMessageService cannot be null.");
 
+        if (artifactResponseMessageService == null)
+            throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
+
+        if (descriptionResponseMessageService == null)
+            throw new IllegalArgumentException("The DescriptionResponseMessageService cannot be null.");
+
         this.tokenProvider = tokenProvider;
         this.artifactRequestMessageService = artifactRequestMessageService;
         this.descriptionRequestMessageService = descriptionRequestMessageService;
+        this.artifactResponseMessageService = artifactResponseMessageService;
+        this.descriptionResponseMessageService = descriptionResponseMessageService;
     }
 
     /**
@@ -104,6 +118,7 @@ public class RequestController {
         }
 
         try {
+            // Send ArtifactRequestMessage.
             artifactRequestMessageService.setParameter(recipient, artifactId, null);
             response = artifactRequestMessageService.sendMessage(artifactRequestMessageService, "");
         } catch (MessageException exception) {
@@ -113,6 +128,7 @@ public class RequestController {
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        // Read response.
         if (response == null) {
             LOGGER.warn("Received no response message.");
             return new ResponseEntity<>("Received no response.",
@@ -130,7 +146,8 @@ public class RequestController {
         }
 
         try {
-            artifactRequestMessageService.saveData(responseAsString, key);
+            // Save data to database.
+            artifactResponseMessageService.saveData(responseAsString, key);
         } catch (Exception exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                 exception.getMessage());
@@ -166,6 +183,7 @@ public class RequestController {
         }
 
         try {
+            // Send DescriptionRequestMessage.
             descriptionRequestMessageService.setParameter(recipient, resourceId);
             response = descriptionRequestMessageService.sendMessage(descriptionRequestMessageService, "");
         } catch (MessageException exception) {
@@ -175,6 +193,7 @@ public class RequestController {
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        // Read response.
         if (response == null) {
             LOGGER.warn("Received no response message.");
             return new ResponseEntity<>("Received no response.",
@@ -191,10 +210,10 @@ public class RequestController {
         }
 
         if (resourceId != null) {
-            // Save the artifact request
+            // Save metadata to database.
             try {
                 final var validationKey =
-                    descriptionRequestMessageService.saveMetadata(responseAsString, resourceId);
+                    descriptionResponseMessageService.saveMetadata(responseAsString, resourceId);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\n" + responseAsString, HttpStatus.OK);
             } catch (Exception e) {
@@ -211,8 +230,7 @@ public class RequestController {
 
     private ResponseEntity<String> respondRejectUnauthorized(URI recipient, URI requestedArtifact) {
         // The request was unauthorized.
-        LOGGER
-            .debug(
+        LOGGER.debug(
                 "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
                 recipient.toString(), requestedArtifact.toString());
 
