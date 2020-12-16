@@ -68,21 +68,22 @@ public class ResourceDataController { // Header: Content-Type: application/json
             example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @PathVariable("resource-id") UUID id,
         @Parameter(description = "The resource data.", required = true, example = "Data String")
-        @RequestParam("data") String data)
-        throws IllegalArgumentException {
+        @RequestParam("data") String data) {
         try {
             offeredResourceService.addData(id, data);
             return new ResponseEntity<>("Resource published", HttpStatus.CREATED);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.info(String.format("The resource %s does not exist.", id), exception);
+            LOGGER.debug("The resource does not exist. [id=({})]", id);
             return new ResponseEntity<>("The resource does not exist.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
-            LOGGER.warn(String.format("Resource %s is not valid.", id), exception);
-            return new ResponseEntity<>("Failed to store resource.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            LOGGER.debug("Resource is not valid. [id=({}), exception=({})]", id,
+                exception.getMessage());
+            return new ResponseEntity<>("Failed to store resource. Resource not valid.",
+                HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Caught unhandled resource exception. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The resource could not be published.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -105,26 +106,28 @@ public class ResourceDataController { // Header: Content-Type: application/json
             try {
                 return new ResponseEntity<>(offeredResourceService.getData(id), HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
-                LOGGER
-                    .info(String.format("Could not find resource %s in offeredResourceService", id)
-                        , offeredResourceServiceException);
+                LOGGER.debug(
+                    "Could not find resource in OfferedResourceService. [id=({}), exception=({})]",
+                    id, offeredResourceServiceException.getMessage());
 
                 try {
                     return new ResponseEntity<>(requestedResourceService.getData(id),
                         HttpStatus.OK);
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
-                    LOGGER.info(
-                        String.format("Could not find resource %s in requestedResourceService", id)
-                        , offeredResourceServiceException);
+                    LOGGER.debug(
+                        "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
+                        id, requestedResourceServiceException.getMessage());
+                    LOGGER.debug("Could not find resource. [id=({})]", id);
                     return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (InvalidResourceException exception) {
-            LOGGER.warn(String.format("The resource %s could be found but was invalid.", id),
-                exception);
+            LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
+                id, exception.getMessage());
             return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
         } catch (ResourceException exception) {
-            LOGGER.error(String.format("Failed to load resource %s.", id), exception);
+            LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", id,
+                exception.getMessage());
             return new ResponseEntity<>("Something went wrong.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -152,26 +155,29 @@ public class ResourceDataController { // Header: Content-Type: application/json
                     offeredResourceService.getDataByRepresentation(resourceId, representationId),
                     HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
-                LOGGER.info(String.format("Could not find resource %s in offeredResourceService",
-                    resourceId), offeredResourceServiceException);
+                LOGGER.debug(
+                    "Could not find resource in OfferedResourceService. [id=({}), exception=({})]",
+                    resourceId, offeredResourceServiceException.getMessage());
 
                 try {
                     return new ResponseEntity<>(requestedResourceService.getData(resourceId),
                         HttpStatus.OK);
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
-                    LOGGER.info(String.format("Could not find resource %s in " +
-                            "requestedResourceService", resourceId)
-                        , requestedResourceServiceException);
+                    LOGGER.debug(
+                        "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
+                        resourceId, offeredResourceServiceException.getMessage());
+                    LOGGER.debug("Could not find resource. [id=({})]", resourceId);
                     return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (InvalidResourceException exception) {
-            LOGGER
-                .warn(String.format("The resource %s could be found but was invalid.", resourceId),
-                    exception);
+            LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
+                resourceId, exception.getMessage());
             return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
         } catch (ResourceException exception) {
-            LOGGER.error(String.format("Failed to load resource %s.", resourceId), exception);
+            LOGGER
+                .warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
+                    exception.getMessage());
             return new ResponseEntity<>("Something went wrong.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
