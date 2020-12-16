@@ -1,10 +1,10 @@
-package de.fraunhofer.isst.dataspaceconnector.services.communication;
+package de.fraunhofer.isst.dataspaceconnector.services.communication.notification;
 
 import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.LogMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
@@ -16,16 +16,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogMessageService extends MessageService {
+public class NotificationMessageService extends MessageService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(LogMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
     private URI recipient;
 
     @Autowired
-    public LogMessageService(ConfigurationContainer configurationContainer,
+    public NotificationMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService) {
         super(idsHttpService);
 
@@ -37,23 +37,26 @@ public class LogMessageService extends MessageService {
 
         this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
-
-        recipient = URI.create("https://ch-ids.aisec.fraunhofer.de/logs/messages/");
     }
 
     @Override
     public Message buildHeader() throws MessageException {
-        return new LogMessageBuilder()
+        return new NotificationMessageBuilder()
             ._issued_(Util.getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._issuerConnector_(connector.getId())
             ._senderAgent_(connector.getId())
             ._securityToken_(tokenProvider.getTokenJWS())
+            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
             .build();
     }
 
     @Override
     public URI getRecipient() {
         return recipient;
+    }
+
+    public void setParameter(URI recipient) {
+        this.recipient = recipient;
     }
 }
