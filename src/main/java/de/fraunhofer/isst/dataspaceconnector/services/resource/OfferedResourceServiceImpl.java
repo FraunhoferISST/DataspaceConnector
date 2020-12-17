@@ -113,7 +113,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             "");
 
         storeResource(resource);
-        LOGGER.info("Added a new resource. [uuid=({}), metadata=({})]", uuid, resourceMetadata);
+        LOGGER.debug("Added a new resource. [uuid=({}), metadata=({})]", uuid, resourceMetadata);
     }
 
     /**
@@ -129,7 +129,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
         resource.setData(data);
         storeResource(resource);
-        LOGGER.info("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
+        LOGGER.debug("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
     }
 
     /**
@@ -145,7 +145,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
         resource.setResourceMetadata(resourceMetadata);
         storeResource(resource);
-        LOGGER.info("Updated resource. [resourceId=({}), metadata=({})]", resourceId,
+        LOGGER.debug("Updated resource. [resourceId=({}), metadata=({})]", resourceId,
             resourceMetadata);
     }
 
@@ -160,7 +160,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         // NOTE SAFETY CHECK
         resourceMetadata.setPolicy(policy);
         updateResource(resourceId, resourceMetadata);
-        LOGGER.info("Updated contract of resource. [resourceId=({}), policy=({})]", resourceId,
+        LOGGER.debug("Updated contract of resource. [resourceId=({}), policy=({})]", resourceId,
             policy);
     }
 
@@ -172,13 +172,13 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         try {
             if (getResource(resourceId) != null) {
                 offeredResourceRepository.deleteById(resourceId);
-                LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+                LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
                 return true;
             }
         }catch(InvalidResourceException exception){
             // The resource exists, delete it
             offeredResourceRepository.deleteById(resourceId);
-            LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+            LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
             return true;
         }
 
@@ -333,11 +333,11 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             metadata.setRepresentations(representations);
 
             updateResource(resourceId, metadata);
-            LOGGER.info(
+            LOGGER.debug(
                 "Updated representation of resource. [resourceId=({}), representationId=({}), representation=({})]",
                 resourceId, representationId, representation);
         } else {
-            LOGGER.warn("Failed to update resource representation. It does not exist. [resourceId=({}), representationId=({}), representation=({})]", resourceId, representationId, representation);
+            LOGGER.debug("Failed to update resource representation. It does not exist. [resourceId=({}), representationId=({}), representation=({})]", resourceId, representationId, representation);
             throw new ResourceNotFoundException("The resource representation does not exist.");
         }
     }
@@ -358,11 +358,11 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             metadata.setRepresentations(representations);
 
             updateResource(resourceId, metadata);
-            LOGGER.info("Deleted resource representation. [resourceId=({}), representationId=({})]",
+            LOGGER.debug("Deleted resource representation. [resourceId=({}), representationId=({})]",
                 resourceId, representationId);
             return true;
         } else {
-            LOGGER.warn(
+            LOGGER.debug(
                 "Failed to delete resource representation. It does not exist. [resourceId=({}), representationId=({})]",
                 resourceId, representationId);
             return false;
