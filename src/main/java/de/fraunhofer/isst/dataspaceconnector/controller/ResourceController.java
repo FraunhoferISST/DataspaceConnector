@@ -1,26 +1,32 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceAlreadyExists;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
+import java.io.IOException;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the internal resource handling. Resources can be created and
@@ -43,9 +49,9 @@ public class ResourceController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceController(@NotNull OfferedResourceServiceImpl offeredResourceService,
-        @NotNull PolicyHandler policyHandler,
-        @NotNull RequestedResourceServiceImpl requestedResourceService)
+    public ResourceController(OfferedResourceServiceImpl offeredResourceService,
+        PolicyHandler policyHandler,
+        RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -150,17 +156,15 @@ public class ResourceController {
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                final var responseEntity = new ResponseEntity<Object>(
+                return new ResponseEntity<>(
                     offeredResourceService.getMetadata(resourceId), HttpStatus.OK);
-                return responseEntity;
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
                     + " [exception=({})]", offeredResourceServiceException.getMessage());
                 try {
                     // Try to find the data in the requestedResourceService
-                    final var responseEntity = new ResponseEntity<Object>(
+                    return new ResponseEntity<>(
                         requestedResourceService.getMetadata(resourceId), HttpStatus.OK);
-                    return responseEntity;
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
                     LOGGER
                         .debug("Failed to receive the resource from the RequestedResourcesService."
@@ -362,7 +366,7 @@ public class ResourceController {
         @RequestBody ResourceRepresentation representation,
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
-            UUID newUuid = null;
+            UUID newUuid;
             if (uuid != null) {
                 newUuid = ((OfferedResourceServiceImpl) offeredResourceService).addRepresentationWithId(resourceId, representation, uuid);
             } else {
