@@ -84,8 +84,8 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                 ._recipientConnector_(Util.asList(message.getIssuerConnector()))
                 .build();
 
-            LOGGER.info(String.format("Received notification from %s with message: %s",
-                message.getId(), messagePayload));
+            LOGGER.debug("Received notification. [id=({}), payload=({})]",
+                message.getId(), messagePayload);
 
             return BodyResponse.create(responseMsgHeader, "Message received.");
 

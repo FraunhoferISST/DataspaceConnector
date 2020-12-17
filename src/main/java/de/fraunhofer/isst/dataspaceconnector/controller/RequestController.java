@@ -112,10 +112,7 @@ public class RequestController {
 
         if (!resourceExists(key)) {
             // The resource does not exist
-            LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: " +
-                    "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
-                artifactId.toString(), key.toString()));
-
+            LOGGER.debug("Failed data request due to invalid key.");
             return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
                 HttpStatus.FORBIDDEN);
         }
@@ -126,8 +123,9 @@ public class RequestController {
             response = artifactRequestMessageService.sendMessage(artifactRequestMessageService, "");
         } catch (MessageException exception) {
             // Failed to send a description request message
-            LOGGER.info("Could not connect to request message service.");
-            return new ResponseEntity<>("Failed to send an ids message.",
+            LOGGER.warn("Could not connect to request message service. [exception=({})]",
+                exception.getMessage());
+            return new ResponseEntity<>("Failed to reach database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -135,8 +133,9 @@ public class RequestController {
         try {
             map = artifactResponseMessageService.readResponse(response);
         } catch (MessageResponseException e) {
-            LOGGER.error("Could not read response body.", e);
-            return new ResponseEntity<>("Failed to read response. " + e.getMessage(),
+            // The response is null
+            LOGGER.warn("Received no response message.");
+            return new ResponseEntity<>("Received no response.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -151,7 +150,8 @@ public class RequestController {
             return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
                 "%s", key, payload), HttpStatus.OK);
         } catch (Exception exception) {
-            LOGGER.error("Could not save data to database.", exception);
+            LOGGER.warn("Could not save data to database. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("Failed to save to database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -185,8 +185,9 @@ public class RequestController {
             descriptionRequestMessageService.setParameter(recipient, resourceId);
             response = descriptionRequestMessageService.sendMessage(descriptionRequestMessageService, "");
         } catch (MessageException exception) {
-            // Failed to send description request message.
-            LOGGER.info("Could not connect to request message service. " + exception.getMessage());
+            // Failed to send description request message
+            LOGGER.warn("Could not connect to request message service. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("Failed to send description request message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -195,8 +196,9 @@ public class RequestController {
         try {
             map = descriptionResponseMessageService.readResponse(response);
         } catch (MessageResponseException e) {
-            LOGGER.error("Could not read response body.", e);
-            return new ResponseEntity<>("Failed to read response.",
+            // The response is null
+            LOGGER.warn("Received no response message.");
+            return new ResponseEntity<>("Received no response.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -212,8 +214,9 @@ public class RequestController {
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\n" + payload, HttpStatus.OK);
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                return new ResponseEntity<>("Failed to save to database.",
+                LOGGER.error("Caught unhandled exception. [exception=({})]",
+                    e.getMessage());
+                return new ResponseEntity<>(e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
@@ -224,9 +227,10 @@ public class RequestController {
 
     private ResponseEntity<String> respondRejectUnauthorized(URI recipient, URI requestedArtifact) {
         // The request was unauthorized.
-        LOGGER.warn(String.format("Unauthorized call. No DAT token found. Tried call with " +
-                "recipient %s and requestedArtifact %s.",
-            recipient.toString(), requestedArtifact.toString()));
+        LOGGER
+            .debug(
+                "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
+                recipient.toString(), requestedArtifact.toString());
 
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }

@@ -73,7 +73,9 @@ public class BrokerController {
             this.brokerService = new BrokerService(configurationContainer,
                 new ClientProvider(configurationContainer), tokenProvider);
         } catch (NoSuchAlgorithmException | KeyManagementException exception) {
-            LOGGER.error("Failed to initialize the broker. Error in the framework.", exception);
+            LOGGER
+                .error("Failed to initialize the broker. Error in the framework. [exception=({})]",
+                    exception.getMessage());
             throw new GeneralSecurityException("Error in the framework.", exception);
         }
     }
@@ -218,7 +220,7 @@ public class BrokerController {
                 }
             } catch (ClassCastException | NullPointerException exception) {
                 // An (implementation) error occurred while receiving the resource
-                LOGGER.error("Resource not be loaded.");
+                LOGGER.error("Resource not loaded. [exception=({})]", exception.getMessage());
                 return new ResponseEntity<>("Could not load resource.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (IOException exception) {
@@ -268,7 +270,7 @@ public class BrokerController {
                 }
             } catch (ClassCastException | NullPointerException exception) {
                 // An (implementation) error occurred while receiving the resource
-                LOGGER.error("Resource not be loaded.");
+                LOGGER.error("Resource not loaded. [exception=({})]", exception.getMessage());
                 return new ResponseEntity<>("Could not load resource.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
             } catch (IOException exception) {
@@ -282,14 +284,14 @@ public class BrokerController {
 
     private ResponseEntity<String> respondResourceNotFound(UUID resourceId) {
         // The resource could not be found, reject and inform the requester
-        LOGGER.info(String.format("Resource update failed. Resource %s could not be found.",
-            resourceId));
+        LOGGER
+            .debug("Resource update failed. Resource not be found. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<String> respondBrokerCommunicationFailed(Exception exception) {
         // The broker could not be reached.
-        LOGGER.info("Broker communication failed: " + exception.getMessage());
+        LOGGER.debug("Broker communication failed. [exception=({})]", exception.getMessage());
 
         return new ResponseEntity<>("The communication with the broker failed.",
             HttpStatus.INTERNAL_SERVER_ERROR);
@@ -297,7 +299,7 @@ public class BrokerController {
 
     private ResponseEntity<String> respondRejectUnauthorized(String url) {
         // The request was unauthorized.
-        LOGGER.warn("Unauthorized call. No DAT token found. Tried call with url:" + url);
+        LOGGER.debug("Unauthorized call. No DAT token found. [url=({})]", url);
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
 }

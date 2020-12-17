@@ -68,26 +68,17 @@ public class ConfigurationController {
                 serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
 
             configurationContainer.updateConfiguration(new_configurationModel);
-
-            LOGGER.info(String.format("Updated the configuration. Old version: \n%s\nNew version:" +
-                    " %s", old_configurationModel != null ?
-                    old_configurationModel.toRdf() : "No config found.",
-                new_configurationModel.toRdf()));
-
             return new ResponseEntity<>("Configuration successfully updated.", HttpStatus.OK);
         } catch (NullPointerException exception) {
-            LOGGER.error("Failed to receive the serializer.", exception);
-
+            LOGGER.warn("Failed to receive the serializer. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
-            LOGGER.error("Failed to deserialize the configuration.", exception);
-
+            LOGGER.warn("Failed to deserialize the configuration. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ConfigurationUpdateException exception) {
-            LOGGER.error("Failed to update the configuration.", exception);
-
+            LOGGER.warn("Failed to update the configuration. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }

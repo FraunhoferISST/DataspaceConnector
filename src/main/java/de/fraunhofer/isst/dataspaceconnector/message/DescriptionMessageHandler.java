@@ -96,7 +96,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
-            LOGGER.error("Cannot respond when there is no request.");
+            LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
 
@@ -164,8 +164,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                     return BodyResponse.create(responseMessageHeader, resource.toRdf());
                 } else {
                     // The resource has not been found, inform and reject.
-                    LOGGER.info(String.format("Resource %s requested by %s could not be found.",
-                        resourceId, requestMessage.getId()));
+                    LOGGER.debug("Resource could not be found. [id=({}), resourceId=({})]",
+                        resourceId, requestMessage.getId());
 
                     return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                         "The resource %s could not be found.", resourceId), connector.getId()
@@ -173,9 +173,10 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 }
             } catch (UUIDFormatException exception) {
                 // No resource uuid could be found in the request, reject the message.
-                LOGGER.info(String.format("Description requested by %s has no valid uuid: %s.",
-                    requestMessage.getId(),
-                    requestMessage.getRequestedElement()));
+                LOGGER.debug(
+                    "Description has no valid uuid. [id=({}), requestedElement=({}), exception=({})].",
+                    requestMessage.getId(), requestMessage.getRequestedElement(),
+                    exception.getMessage());
 
                 return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                     "No valid resource id found.",
