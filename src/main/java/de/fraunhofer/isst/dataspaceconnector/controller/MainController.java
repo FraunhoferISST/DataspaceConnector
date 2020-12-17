@@ -15,13 +15,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -46,26 +44,21 @@ public class MainController {
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public MainController(@NotNull SerializerProvider serializerProvider,
-        @NotNull OfferedResourceServiceImpl offeredResourceService,
-        @NotNull RequestedResourceServiceImpl requestedResourceService,
-        @NotNull IdsUtils idsUtils)
-        throws IllegalArgumentException {
-        if (serializerProvider == null) {
+    public MainController(SerializerProvider serializerProvider,
+        OfferedResourceServiceImpl offeredResourceService,
+        RequestedResourceServiceImpl requestedResourceService,
+        IdsUtils idsUtils) throws IllegalArgumentException {
+        if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-        }
 
-        if (offeredResourceService == null) {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (requestedResourceService == null) {
+        if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
 
         this.serializerProvider = serializerProvider;
         this.offeredResourceService = offeredResourceService;
@@ -83,11 +76,8 @@ public class MainController {
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPublicSelfDescription() {
-        Assert.notNull(idsUtils, "The idsUtils cannot be null.");
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-
         try {
-            // Modify a connector for exposing the reduced self description
+            // Modify a connector for exposing the reduced self-description
             var connector = (BaseConnectorImpl) idsUtils.getConnector();
             connector.setResourceCatalog(null);
             connector.setPublicKey(null);
@@ -118,9 +108,6 @@ public class MainController {
     @RequestMapping(value = {"/admin/api/self-description"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
-        Assert.notNull(idsUtils, "The idsUtils cannot be null.");
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-
         try {
             // Modify a connector for exposing a resource catalog
             var connector = (BaseConnectorImpl) idsUtils.getConnector();
@@ -143,9 +130,6 @@ public class MainController {
     }
 
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
-        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
-        Assert.notNull(requestedResourceService, "The requestedResourceService cannot be null.");
-
         return new ResourceCatalogBuilder()
             ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
             ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))

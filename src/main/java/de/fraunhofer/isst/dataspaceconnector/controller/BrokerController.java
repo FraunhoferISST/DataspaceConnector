@@ -6,7 +6,6 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
-import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +14,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,21 +48,18 @@ public class BrokerController {
      * @throws GeneralSecurityException - if the framework has an error.
      */
     @Autowired
-    public BrokerController(@NotNull TokenProvider tokenProvider,
-        @NotNull ConfigurationContainer configurationContainer,
-        @NotNull OfferedResourceServiceImpl offeredResourceService)
+    public BrokerController(TokenProvider tokenProvider,
+        ConfigurationContainer configurationContainer,
+        OfferedResourceServiceImpl offeredResourceService)
         throws IllegalArgumentException, GeneralSecurityException {
-        if (offeredResourceService == null) {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (tokenProvider == null) {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (configurationContainer == null) {
+        if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
 
         this.tokenProvider = tokenProvider;
         this.resourceService = offeredResourceService;
@@ -93,9 +88,6 @@ public class BrokerController {
     public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
         , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
     @RequestParam("broker") String url) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(brokerService, "The brokerService cannot be null.");
-
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
@@ -126,9 +118,6 @@ public class BrokerController {
         @Parameter(description = "The url of the broker.",
             required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
         @RequestParam("broker") String url) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(brokerService, "The brokerService cannot be null.");
-
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
@@ -157,9 +146,6 @@ public class BrokerController {
         @Parameter(description = "The url of the broker.",
             required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
         @RequestParam("broker") String url) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(brokerService, "The brokerService cannot be null.");
-
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             // Send the query request to the broker
@@ -199,10 +185,6 @@ public class BrokerController {
         @RequestParam("broker") String url,
         @Parameter(description = "The resource id.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(brokerService, "The brokerService cannot be null.");
-        Assert.notNull(resourceService, "The offeredResourceService cannot be null.");
-
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
@@ -249,10 +231,6 @@ public class BrokerController {
         @RequestParam("broker") String url,
         @Parameter(description = "The resource id.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-        Assert.notNull(brokerService, "The brokerService cannot be null.");
-        Assert.notNull(resourceService, "The offeredResourceService cannot be null.");
-
         // Make sure the request is authorized.
         if (tokenProvider.getTokenJWS() != null) {
             try {
@@ -282,23 +260,27 @@ public class BrokerController {
         }
     }
 
+    /**
+     * If the resource could not be found, reject and inform the requester.
+     */
     private ResponseEntity<String> respondResourceNotFound(UUID resourceId) {
-        // The resource could not be found, reject and inform the requester
-        LOGGER
-            .debug("Resource update failed. Resource not be found. [resourceId=({})]", resourceId);
+        LOGGER.debug("Resource update failed. Resource not be found. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * The broker could not be reached.
+     */
     private ResponseEntity<String> respondBrokerCommunicationFailed(Exception exception) {
-        // The broker could not be reached.
         LOGGER.debug("Broker communication failed. [exception=({})]", exception.getMessage());
-
         return new ResponseEntity<>("The communication with the broker failed.",
             HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * The request was unauthorized.
+     */
     private ResponseEntity<String> respondRejectUnauthorized(String url) {
-        // The request was unauthorized.
         LOGGER.debug("Unauthorized call. No DAT token found. [url=({})]", url);
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
