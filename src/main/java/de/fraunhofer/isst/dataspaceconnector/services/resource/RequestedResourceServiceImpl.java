@@ -205,10 +205,6 @@ public class RequestedResourceServiceImpl implements ResourceService {
             return Optional.of("The resource representation cannot be null.");
         }
 
-        if (resource.getResourceMetadata().getRepresentations().size() < 1) {
-            return Optional.of("The resource representation must have at least one element.");
-        }
-
         return Optional.empty();
     }
 
