@@ -311,7 +311,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         metaData.getRepresentations().put(representation.getUuid(), representation);
 
         updateResource(resourceId, metaData);
-        LOGGER.info(
+        LOGGER.debug(
             "Added representation to resource. [resourceId=({}), representationId=({}), representation=({})]",
             resourceId, representationId, representation);
         return representationId;
@@ -451,7 +451,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                     exception);
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
-                LOGGER.warn("Failed to find the resource. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
+                LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
                 throw new ResourceException("The resource could not be found.", exception);
             }
         } else {
