@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.message;
 
 import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -21,19 +22,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This @{@link de.fraunhofer.isst.dataspaceconnector.message.NotificationMessageHandler} handles
- * all incoming messages that have a {@link de.fraunhofer.iais.eis.NotificationMessageImpl} as
+ * This @{@link ContractMessageHandler} handles
+ * all incoming messages that have a {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
- * in the {@link de.fraunhofer.iais.eis.NotificationMessageImpl} JsonTypeName annotation. In
+ * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation. In
  * this example, the received payload is not defined and will be returned immediately. Usually, the
  * payload would be well defined as well, such that it can be deserialized into a proper
  * Java-Object.
  */
 @Component
-@SupportedMessageType(NotificationMessageImpl.class)
-public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
+@SupportedMessageType(ContractRequestMessageImpl.class)
+public class ContractMessageHandler implements MessageHandler<ContractRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestMessageImpl.class);
 
     private final TokenProvider tokenProvider;
     private final IdsUtils idsUtils;
@@ -44,15 +45,13 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public NotificationMessageHandler(@NotNull IdsUtils idsUtils,
-        @NotNull TokenProvider tokenProvider) throws IllegalArgumentException {
-        if (tokenProvider == null) {
+    public ContractMessageHandler(IdsUtils idsUtils,
+        TokenProvider tokenProvider) throws IllegalArgumentException {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
 
         this.tokenProvider = tokenProvider;
         this.idsUtils = idsUtils;
@@ -69,7 +68,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(NotificationMessageImpl message,
+    public MessageResponse handleMessage(ContractRequestMessageImpl message,
         MessagePayload messagePayload) throws RuntimeException {
         try {
             final var connector = idsUtils.getConnector();

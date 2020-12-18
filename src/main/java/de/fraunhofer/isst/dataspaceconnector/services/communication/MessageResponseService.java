@@ -42,7 +42,7 @@ public abstract class MessageResponseService extends MessageService{
         this.serializerProvider = serializerProvider;
     }
 
-    public Map<ResponseType, String> readResponse(Response response) {
+    public Map<ResponseType, String> handleResponse(Response response) {
         String responseAsString;
         if (response == null)
             throw new MessageResponseException("Body is empty.");

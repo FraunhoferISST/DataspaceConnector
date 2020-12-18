@@ -7,6 +7,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.communication.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
@@ -22,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +39,7 @@ public class MainController {
     private final SerializerProvider serializerProvider;
     private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
+    private final NegotiationService negotiationService;
 
     /**
      * Constructor for MainController.
@@ -47,7 +50,8 @@ public class MainController {
     public MainController(SerializerProvider serializerProvider,
         OfferedResourceServiceImpl offeredResourceService,
         RequestedResourceServiceImpl requestedResourceService,
-        IdsUtils idsUtils) throws IllegalArgumentException {
+        IdsUtils idsUtils, NegotiationService negotiationService)
+        throws IllegalArgumentException {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
@@ -60,10 +64,14 @@ public class MainController {
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
+        if (negotiationService == null)
+            throw new IllegalArgumentException("The NegotiationService cannot be null.");
+
         this.serializerProvider = serializerProvider;
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
         this.idsUtils = idsUtils;
+        this.negotiationService = negotiationService;
     }
 
     /**
@@ -126,6 +134,40 @@ public class MainController {
                 exception.getMessage());
             return new ResponseEntity<>("No connector is currently available.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Turns policy negotiation on or off.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Policy Negotiation Status", description = "Turn the policy negotiation on or off.")
+    @RequestMapping(value = {"negotiation"}, method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
+        negotiationService.setStatus(status);
+
+        if (negotiationService.isStatus()) {
+            return new ResponseEntity<>("Policy Negotiation was turned on.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Policy Negotiation was turned off.", HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Returns policy negotiation status.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Policy Negotiation Status Check", description = "Return the policy negotiation status.")
+    @RequestMapping(value = {"negotiation"}, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getNegotiationStatus() {
+        if (negotiationService.isStatus()) {
+            return new ResponseEntity<>("Policy Negotiation is turned on.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Policy Negotiation is turned off.", HttpStatus.OK);
         }
     }
 
