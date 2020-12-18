@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.*;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import org.slf4j.Logger;

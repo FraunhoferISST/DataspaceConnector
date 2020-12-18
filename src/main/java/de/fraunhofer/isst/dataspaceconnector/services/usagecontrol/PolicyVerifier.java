@@ -2,9 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.services.HttpUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.notification.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.notification.NotificationMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.NotificationMessageService;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
 import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
