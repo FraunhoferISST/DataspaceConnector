@@ -170,7 +170,7 @@ public class IdsUtils {
      * @param date The date object.
      * @return The XMLGregorianCalendar object or null.
      */
-    private XMLGregorianCalendar getGregorianOf(Date date) {
+    public XMLGregorianCalendar getGregorianOf(Date date) {
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(date);
         try {

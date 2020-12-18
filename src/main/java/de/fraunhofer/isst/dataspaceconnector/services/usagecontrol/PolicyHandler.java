@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import org.slf4j.Logger;
@@ -42,11 +43,7 @@ public class PolicyHandler {
      * @throws java.io.IOException if any.
      */
     public Pattern getPattern(String policy) throws IOException {
-        try {
-            contract = serializerProvider.getSerializer().deserialize(policy, Contract.class);
-        } catch (IOException e) {
-            throw new IOException("The policy could not be read. Please check the policy syntax.");
-        }
+        contract = validateContract(policy);
 
         if (contract.getProhibition() != null && contract.getProhibition().get(0) != null) {
             return Pattern.PROHIBIT_ACCESS;
@@ -93,6 +90,15 @@ public class PolicyHandler {
         } else {
             throw new IOException(
                 "The recognized policy pattern is not supported by this connector.");
+        }
+    }
+
+    public Contract validateContract(String contract) throws UnsupportedPatternException {
+        try {
+            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
+        } catch (Exception e) {
+            LOGGER.debug("Policy pattern is not supported.");
+            throw new UnsupportedPatternException("Pattern not supported.");
         }
     }
 

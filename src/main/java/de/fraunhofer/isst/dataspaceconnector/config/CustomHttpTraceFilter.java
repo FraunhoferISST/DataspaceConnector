@@ -35,7 +35,7 @@ public class CustomHttpTraceFilter extends OncePerRequestFilter {
         final var requestWrapper = new ContentCachingRequestWrapper(request);
         final var responseWrapper = new ContentCachingResponseWrapper(response);
 
-        traceId = UUIDUtils.generateUUID();
+//        traceId = UUIDUtils.generateUUID();
         beforeRequest(requestWrapper);
 
         try {

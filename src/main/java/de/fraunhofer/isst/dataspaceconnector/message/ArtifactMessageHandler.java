@@ -62,25 +62,21 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
-    public ArtifactMessageHandler(@NotNull OfferedResourceServiceImpl offeredResourceService,
-        @NotNull TokenProvider tokenProvider,
-        @NotNull PolicyHandler policyHandler,
-        @NotNull IdsUtils idsUtils) throws IllegalArgumentException {
-        if (offeredResourceService == null) {
+    public ArtifactMessageHandler(OfferedResourceServiceImpl offeredResourceService,
+        TokenProvider tokenProvider,
+        PolicyHandler policyHandler,
+        IdsUtils idsUtils) throws IllegalArgumentException {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (tokenProvider == null) {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (policyHandler == null) {
+        if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
 
         this.resourceService = offeredResourceService;
         this.provider = tokenProvider;
@@ -102,11 +98,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
     public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
-        Assert.notNull(provider, "The TokenProvider cannot be null.");
-        Assert.notNull(idsUtils, "The IdsUtils cannot be null.");
-        Assert.notNull(resourceService, "The OfferedResourceService cannot be null.");
-        Assert.notNull(policyHandler, "The PolicyHandler cannot be null.");
-
         try {
             // Get a local copy of the connector for read access
             final var connector = idsUtils.getConnector();
@@ -281,8 +272,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     }
 
     private Resource findResourceFromArtifactId(UUID artifactId) {
-        Assert.notNull(resourceService, "The resource service cannot be null.");
-
         for (final var resource : resourceService.getResources()) {
             for (final var representation : resource.getRepresentation()) {
                 final var representationId = UUIDUtils.uuidFromUri(representation.getId());
