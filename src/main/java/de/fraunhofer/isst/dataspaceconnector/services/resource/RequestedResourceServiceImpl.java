@@ -67,7 +67,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
 
         storeResource(resource);
 
-        LOGGER.info("Added a new resource. [resource=({})]", resource);
+        LOGGER.debug("Added a new resource. [resource=({})]", resource);
         return resource.getUuid();
     }
 
@@ -85,7 +85,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
         resource.setData(data);
 
         storeResource(resource);
-        LOGGER.info("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
+        LOGGER.debug("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
     }
 
     /**
@@ -96,13 +96,13 @@ public class RequestedResourceServiceImpl implements ResourceService {
         try {
             if (getResource(resourceId) != null) {
                 requestedResourceRepository.deleteById(resourceId);
-                LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+                LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
                 return true;
             }
         } catch(InvalidResourceException exception){
             // The resource exists, delete it
             requestedResourceRepository.deleteById(resourceId);
-            LOGGER.info("Deleted resource. [resourceId=({})]", resourceId);
+            LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
             return true;
         }
 
@@ -159,7 +159,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
                 storeResource(resource);
                 return data;
             } else {
-                LOGGER.warn("Failed to access the resource. The resource is policy restricted. [resourceId=({})]", resourceId);
+                LOGGER.debug("Failed to access the resource. The resource is policy restricted. [resourceId=({})]", resourceId);
                 return "Policy Restriction!";
             }
         } catch (IOException exception) {
