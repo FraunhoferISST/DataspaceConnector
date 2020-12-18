@@ -1,15 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageResponseService.ResponseType;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.request.ArtifactRequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.request.DescriptionRequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.response.ArtifactResponseMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.response.DescriptionResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService.ResponseType;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseMessageService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

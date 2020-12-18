@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
