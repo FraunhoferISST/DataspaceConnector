@@ -93,8 +93,8 @@ For requesting data from the provider, please remind that all applications are r
 
 ## Example Setup
 
-An instance of the Dataspace Connector v2.0 is currently available in the IDS Lab at https://simpleconnector.ids.isst.fraunhofer.de/. 
-It can only be reached from inside a VPN network. To get your IP address unblocked, please contact [Julia Pampus](mailto:julia.pampus@isst.fraunhofer.de).
+An instance of the Dataspace Connector v3.0.0 is currently available in the IDS Lab at https://simpleconnector.ids.isst.fraunhofer.de/. 
+It can only be reached from inside a VPN network. To get your IP address unblocked, please contact [us](mailto:info@dataspace-connector.de).
 * The connector self-description is available at https://simpleconnector.ids.isst.fraunhofer.de/ (GET).
 * The **open endpoint for IDS communication** is https://simpleconnector.ids.isst.fraunhofer.de/api/ids/data (POST).
 * The backend API (available at `/admin/api`) and its endpoints are only accessible to users with credentials. 
