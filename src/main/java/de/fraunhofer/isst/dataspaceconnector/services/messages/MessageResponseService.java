@@ -110,7 +110,7 @@ public abstract class MessageResponseService extends MessageService{
 
         try {
             serializerProvider.getSerializer().deserialize(header, ContractRejectionMessage.class);
-            return ResponseType.REJECTION;
+            return ResponseType.CONTRACT_REJECTION;
         } catch (IOException ignored) { }
 
         try {
@@ -136,6 +136,7 @@ public abstract class MessageResponseService extends MessageService{
         OPERATION_RESULT("OPERATION_RESULT"),
         PARTICIPANT_RESPONSE("PARTICIPANT_RESPONSE"),
         REJECTION("REJECTION"),
+        CONTRACT_REJECTION("CONTRACT_REJECTION"),
         RESULT("RESULT"),
         UPLOAD_RESPONSE("UPLOAD_RESPONSE");
 
