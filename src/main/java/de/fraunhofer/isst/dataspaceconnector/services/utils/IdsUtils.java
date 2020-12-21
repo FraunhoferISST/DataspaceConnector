@@ -1,6 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferImpl;
+import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
+import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
@@ -8,22 +20,19 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationEx
 import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import org.springframework.util.Assert;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This class provides methods to map local connector models to IDS Information Model objects.
@@ -42,15 +51,13 @@ public class IdsUtils {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public IdsUtils(@NotNull ConfigurationContainer configurationContainer,
-        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (configurationContainer == null) {
+    public IdsUtils(ConfigurationContainer configurationContainer,
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
 
-        if (serializerProvider == null) {
+        if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-        }
 
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
@@ -63,8 +70,6 @@ public class IdsUtils {
      * @throws ConnectorConfigurationException If the connector was not found.
      */
     public Connector getConnector() throws ConnectorConfigurationException {
-        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
-
         final var connector = configurationContainer.getConnector();
         if (connector == null) {
             // The connector is needed for every answer and cannot be null
@@ -120,8 +125,6 @@ public class IdsUtils {
             }
         }
 
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-
         // Get the list of contracts
         var contracts = new ArrayList<ContractOffer>();
         if (metadata.getPolicy() != null) {
@@ -129,6 +132,10 @@ public class IdsUtils {
                 final var contract =
                     serializerProvider.getSerializer().deserialize(metadata.getPolicy(),
                         Contract.class);
+                ContractOfferImpl contractOffer = (ContractOfferImpl) contract;
+                contractOffer.setContractDate(
+                    de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow());
+                contractOffer.setProvider(getConnector().getId());
                 contracts.add((ContractOffer) contract);
             } catch (IOException exception) {
                 LOGGER.error(String.format("Could not deserialize contract.\nContract: [%s]",
@@ -137,8 +144,6 @@ public class IdsUtils {
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
-
-        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
 
         // Build the ids resource
         try {
@@ -206,7 +211,6 @@ public class IdsUtils {
      */
     private String getLanguage(int index)
         throws ConnectorConfigurationException, IndexOutOfBoundsException {
-        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
         try {
             final var label = configurationContainer.getConnector().getLabel();
             if (label.size() == 0) {
