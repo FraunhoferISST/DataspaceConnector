@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -36,13 +36,30 @@ public class PolicyHandler {
     }
 
     /**
-     * Reads the properties of an odrl policy to automatically recognize the policy pattern.
+     * Deserializes a contract object from a string.
+     *
+     * @return The contract.
+     * @throws RequestFormatException - if the string could not be deserialized.
+     */
+    public Contract validateContract(String contract) throws RequestFormatException {
+        try {
+            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
+        } catch (Exception e) {
+            LOGGER.debug("Policy pattern is not supported.");
+            throw new RequestFormatException("Contract could not be deserialized. ", e);
+        }
+    }
+
+    /**
+     * Reads the properties of an ODRL policy to automatically recognize the policy pattern.
      *
      * @param policy The parsed policy object.
      * @return The recognized policy pattern.
-     * @throws java.io.IOException if any.
+     * @throws UnsupportedPatternException - if no pattern could be recognized.
+     * @throws RequestFormatException - if the string could not be deserialized.
      */
-    public Pattern getPattern(String policy) throws IOException {
+    public Pattern getPattern(String policy) throws UnsupportedPatternException,
+        RequestFormatException {
         contract = validateContract(policy);
 
         if (contract.getProhibition() != null && contract.getProhibition().get(0) != null) {
@@ -68,7 +85,7 @@ public class PolicyHandler {
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
                         return Pattern.DURATION_USAGE;
                     } else {
-                        throw new IOException(
+                        throw new UnsupportedPatternException(
                             "The recognized policy pattern is not supported by this connector.");
                     }
                 }
@@ -80,7 +97,7 @@ public class PolicyHandler {
                     } else if (action == Action.LOG) {
                         return Pattern.USAGE_LOGGING;
                     } else {
-                        throw new IOException(
+                        throw new UnsupportedPatternException(
                             "The recognized policy pattern is not supported by this connector.");
                     }
                 } else {
@@ -88,17 +105,8 @@ public class PolicyHandler {
                 }
             }
         } else {
-            throw new IOException(
+            throw new UnsupportedPatternException(
                 "The recognized policy pattern is not supported by this connector.");
-        }
-    }
-
-    public Contract validateContract(String contract) throws UnsupportedPatternException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
-        } catch (Exception e) {
-            LOGGER.debug("Policy pattern is not supported.");
-            throw new UnsupportedPatternException("Pattern not supported.");
         }
     }
 
@@ -108,9 +116,11 @@ public class PolicyHandler {
      *
      * @param policy The resource's usage policy.
      * @return Whether the data can be accessed.
-     * @throws java.io.IOException if any.
+     * @throws UnsupportedPatternException - if no pattern could be recognized.
+     * @throws RequestFormatException - if the string could not be deserialized.
      */
-    public boolean onDataProvision(String policy) throws IOException {
+    public boolean onDataProvision(String policy) throws UnsupportedPatternException,
+        RequestFormatException {
         switch (getPattern(policy)) {
             case PROVIDE_ACCESS:
                 return policyVerifier.allowAccess();
@@ -130,9 +140,11 @@ public class PolicyHandler {
      *
      * @param dataResource The accessed resource.
      * @return Whether the data can be accessed.
-     * @throws java.io.IOException if any.
+     * @throws UnsupportedPatternException - if no pattern could be recognized.
+     * @throws RequestFormatException - if the string could not be deserialized.
      */
-    public boolean onDataAccess(RequestedResource dataResource) throws IOException {
+    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
+        RequestFormatException{
         String policy = dataResource.getResourceMetadata().getPolicy();
 
         switch (getPattern(policy)) {
