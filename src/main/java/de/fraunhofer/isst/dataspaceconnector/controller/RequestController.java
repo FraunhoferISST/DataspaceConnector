@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -8,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationServic
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseMessageService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,6 +47,7 @@ public class RequestController {
     private final DescriptionRequestMessageService descriptionRequestMessageService;
     private final ArtifactResponseMessageService artifactResponseMessageService;
     private final DescriptionResponseMessageService descriptionResponseMessageService;
+    private final ContractResponseMessageService contractResponseMessageService;
     private final NegotiationService negotiationService;
 
     /**
@@ -58,6 +61,7 @@ public class RequestController {
         DescriptionRequestMessageService descriptionRequestMessageService,
         ArtifactResponseMessageService artifactResponseMessageService,
         DescriptionResponseMessageService descriptionResponseMessageService,
+        ContractResponseMessageService contractResponseMessageService,
         NegotiationService negotiationService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
@@ -75,6 +79,9 @@ public class RequestController {
         if (descriptionResponseMessageService == null)
             throw new IllegalArgumentException("The DescriptionResponseMessageService cannot be null.");
 
+        if (contractResponseMessageService == null)
+            throw new IllegalArgumentException("The ContractResponseMessageService cannot be null.");
+
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
 
@@ -83,6 +90,7 @@ public class RequestController {
         this.descriptionRequestMessageService = descriptionRequestMessageService;
         this.artifactResponseMessageService = artifactResponseMessageService;
         this.descriptionResponseMessageService = descriptionResponseMessageService;
+        this.contractResponseMessageService = contractResponseMessageService;
         this.negotiationService = negotiationService;
     }
 
@@ -155,6 +163,52 @@ public class RequestController {
     }
 
     /**
+     * Sends a contract request to a connector by building an ContractRequestMessage.
+     *
+     * @return OK or error response.
+     */
+    @Operation(summary = "Contract Request",
+        description = "Send a contract request to another IDS connector.")
+    @RequestMapping(value = "/contract", method = RequestMethod.POST)
+    @ResponseBody
+    public ResponseEntity<String> requestContract(
+        @Parameter(description = "The URI of the requested IDS connector.", required = true,
+            example = "https://localhost:8080/api/ids/data")
+        @RequestParam("recipient") URI recipient,
+        @Parameter(description = "The contract offer for the requested resource.")
+        @RequestBody(required = false) String contractOffer) {
+        if (tokenProvider.getTokenJWS() == null) {
+            return respondRejectUnauthorized(recipient, null);
+        }
+
+        // Start policy negotiation.
+        Map<ResponseType, String> map;
+        try {
+            Response response = negotiationService.startSequence(contractOffer, recipient);
+            try {
+                map = contractResponseMessageService.handleResponse(response);
+            } catch (MessageResponseException e) {
+                // The response is null
+                LOGGER.warn("Received no response message.");
+                return new ResponseEntity<>("Received no response.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (ContractException| MessageException exception) {
+            LOGGER.warn("Contract negotiation failed. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Contract negotiation has failed. "
+                + exception.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Check response.
+        if (!negotiationService.contractAccepted(map)) {
+            return returnRejectionMessage(map);
+        }
+
+        return new ResponseEntity<>(String.format("Successful negotiation. Contract"
+            + "agreement: %s", negotiationService.getAgreementId()), HttpStatus.OK);
+    }
+
+    /**
      * Requests data from an external connector by building an ArtifactRequestMessage.
      *
      * @param recipient         The target connector uri.
@@ -176,9 +230,7 @@ public class RequestController {
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key,
-        @Parameter(description = "The contract offer for the requested resource.")
-        @RequestBody(required = false) String contractOffer) {
+        @RequestParam("key") UUID key) {
         if (tokenProvider.getTokenJWS() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -189,26 +241,6 @@ public class RequestController {
             return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
                 HttpStatus.FORBIDDEN);
         }
-
-//        if (negotiationService.isStatus()) {
-//            // Start policy negotiation.
-//            try {
-//                Response response = negotiationService.startSequence(contractOffer, recipient);
-//                Map<ResponseType, String> map;
-//                try {
-//                    map = artifactResponseMessageService.handleResponse(response);
-//                } catch (MessageResponseException e) {
-//                    // The response is null
-//                    LOGGER.warn("Received no response message.");
-//                    return new ResponseEntity<>("Received no response.",
-//                        HttpStatus.INTERNAL_SERVER_ERROR);
-//                }
-//            } catch (ContractException exception) {
-//                LOGGER.warn("Contract negotiation failed. [exception=({})]", exception.getMessage());
-//                return new ResponseEntity<>("Contract negotiation has failed. "
-//                    + exception.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
 
         Response response;
         try {
@@ -259,17 +291,26 @@ public class RequestController {
      * @return An http response.
      */
     private ResponseEntity<String> respondRejectUnauthorized(URI recipient, URI requestedArtifact) {
-        LOGGER.debug(
+        if (requestedArtifact != null) {
+            LOGGER.debug(
                 "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
                 recipient.toString(), requestedArtifact.toString());
+        } else {
+            LOGGER.debug(
+                "Unauthorized call. No DAT token found. [recipient=({})]", recipient.toString());
+        }
+
 
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
 
     private ResponseEntity<String> returnRejectionMessage(Map<ResponseType, String> map) {
         if (map.get(ResponseType.REJECTION) != null) {
-            return new ResponseEntity<>("Rejection Message: "
+            return new ResponseEntity<>(ResponseType.REJECTION + ": "
                 + map.get(ResponseType.REJECTION), HttpStatus.OK);
+        } else if (map.get(ResponseType.CONTRACT_REJECTION) != null) {
+            return new ResponseEntity<>(ResponseType.CONTRACT_REJECTION + ": "
+                + map.get(ResponseType.CONTRACT_REJECTION), HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Unexpected response: \n" + map,
                 HttpStatus.OK);

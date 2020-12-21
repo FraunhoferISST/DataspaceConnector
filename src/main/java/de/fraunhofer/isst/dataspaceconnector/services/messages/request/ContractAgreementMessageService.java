@@ -2,13 +2,16 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.request;
 
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
@@ -21,9 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContractRequestMessageService extends MessageService {
+public class ContractAgreementMessageService extends MessageService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ContractAgreementMessageService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
@@ -31,7 +34,7 @@ public class ContractRequestMessageService extends MessageService {
     private URI recipient, contractId;
 
     @Autowired
-    public ContractRequestMessageService(ConfigurationContainer configurationContainer,
+    public ContractAgreementMessageService(ConfigurationContainer configurationContainer,
         TokenProvider tokenProvider, IDSHttpService idsHttpService, IdsUtils idsUtils) {
         super(idsHttpService);
 
@@ -51,7 +54,7 @@ public class ContractRequestMessageService extends MessageService {
 
     @Override
     public Message buildHeader() throws MessageBuilderException {
-        return new ContractRequestMessageBuilder()
+        return new ContractAgreementMessageBuilder()
             ._issued_(Util.getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._issuerConnector_(connector.getId())
@@ -72,9 +75,9 @@ public class ContractRequestMessageService extends MessageService {
         this.contractId = contractId;
     }
 
-    public ContractRequest buildContractRequest(Contract contract) {
-        return new ContractRequestBuilder()
-            ._consumer_(connector.getMaintainer())
+    public ContractAgreement buildContractAgreement(Contract contract) {
+        return new ContractAgreementBuilder()
+            ._consumer_(contract.getConsumer())
             ._provider_(contract.getProvider())
             ._contractDate_(idsUtils.getGregorianOf(new Date()))
             ._obligation_(contract.getObligation())
