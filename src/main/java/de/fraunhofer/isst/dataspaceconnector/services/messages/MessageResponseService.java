@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.AccessTokenResponseMessage;
 import de.fraunhofer.iais.eis.AppRegistrationResponseMessage;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractRejectionMessage;
 import de.fraunhofer.iais.eis.ContractResponseMessage;
 import de.fraunhofer.iais.eis.DescriptionResponseMessage;
 import de.fraunhofer.iais.eis.OperationResultMessage;
@@ -106,10 +107,17 @@ public abstract class MessageResponseService extends MessageService{
             serializerProvider.getSerializer().deserialize(header, RejectionMessage.class);
             return ResponseType.REJECTION;
         } catch (IOException ignored) { }
+
+        try {
+            serializerProvider.getSerializer().deserialize(header, ContractRejectionMessage.class);
+            return ResponseType.REJECTION;
+        } catch (IOException ignored) { }
+
         try {
             serializerProvider.getSerializer().deserialize(header, ResultMessage.class);
             return ResponseType.RESULT;
         } catch (IOException ignored) { }
+
         try {
             serializerProvider.getSerializer().deserialize(header, UploadResponseMessage.class);
             return ResponseType.UPLOAD_RESPONSE;
