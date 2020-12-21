@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -236,7 +238,7 @@ public class ResourceController {
             policyHandler.getPattern(policy);
             ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
-        } catch (IOException exception) {
+        } catch (UnsupportedPatternException |RequestFormatException exception) {
             // The policy is not in the correct format.
             LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
                 + "[exception=({})]", exception.getMessage());
