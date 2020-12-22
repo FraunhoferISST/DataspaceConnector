@@ -85,7 +85,11 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         }
         trace.parameterMap += "}";
 
-        trace.body = request.getBody();
+        try{
+            trace.body = new String(request.getRequestBody(), "UTF-8");
+        }catch(IOException exception){
+            exception.printStackTrace();
+        }
 
         eventHandler.sendHttpTraceEvent(trace);
     }

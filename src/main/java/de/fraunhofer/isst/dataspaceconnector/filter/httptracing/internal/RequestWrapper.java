@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import com.google.common.primitives.Bytes;
+
+import java.io.*;
+import java.util.Arrays;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -14,64 +14,62 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class RequestWrapper extends HttpServletRequestWrapper {
 
-    String body;
+    private byte[] requestBody = new byte[0];
+    private boolean isBufferFilled = false;
 
-    public RequestWrapper(HttpServletRequest request) throws IOException {
+    public RequestWrapper(HttpServletRequest request) {
         super(request);
+    }
 
-        // Read the request
-        var stringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = null;
-        try {
-            var inputStream = request.getInputStream();
-            if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                var charBuffer = new char[128];
-                var bytesRead = -1;
-                while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
-                    stringBuilder.append(charBuffer, 0, bytesRead);
-                }
-            }
-        } finally {
-            if (bufferedReader != null) {
-                bufferedReader.close();
-            }
+    public byte[] getRequestBody() throws IOException {
+        if (isBufferFilled) {
+            return Arrays.copyOf(requestBody, requestBody.length);
         }
 
-        body = stringBuilder.toString();
+        var inputStream = super.getInputStream();
+        if(inputStream != null){
+            var buffer = new byte[128];
+            var bytesRead = 0;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                requestBody = Bytes.concat(requestBody, Arrays.copyOfRange(buffer, 0, bytesRead));
+            }
+
+            isBufferFilled = true;
+        }
+
+        return requestBody;
     }
 
     @Override
-    public ServletInputStream getInputStream() {
-        final var byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
-        return new ServletInputStream() {
-            @Override
-            public boolean isFinished() {
-                return false;
-            }
-
-            @Override
-            public boolean isReady() {
-                return false;
-            }
-
-            @Override
-            public void setReadListener(ReadListener readListener) {
-                // Nothing
-            }
-
-            public int read() {
-                return byteArrayInputStream.read();
-            }
-        };
+    public ServletInputStream getInputStream() throws IOException {
+        return new CustomServletInputStream(getRequestBody());
     }
 
-    @Override
-    public BufferedReader getReader() {
-        return new BufferedReader(new InputStreamReader(getInputStream()));
-    }
+    private static class CustomServletInputStream extends ServletInputStream {
+        private ByteArrayInputStream buffer;
 
-    public String getBody() {
-        return this.body;
+        public CustomServletInputStream(byte[] contents) {
+            this.buffer = new ByteArrayInputStream(contents);
+        }
+
+        @Override
+        public int read() throws IOException {
+            return buffer.read();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return buffer.available() == 0;
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setReadListener(ReadListener listener) {
+            throw new RuntimeException("Not implemented");
+        }
     }
 }
