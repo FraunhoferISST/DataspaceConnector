@@ -150,7 +150,7 @@ public class RequestController {
             try {
                 final var validationKey = descriptionResponseMessageService.saveMetadata(payload, resourceId);
                 return new ResponseEntity<>("Validation: " + validationKey +
-                    "\n" + payload, HttpStatus.OK);
+                    "\nResponse: \n" + payload, HttpStatus.OK);
             } catch (Exception e) {
                 LOGGER.error("Caught unhandled exception. [exception=({})]",
                     e.getMessage());
