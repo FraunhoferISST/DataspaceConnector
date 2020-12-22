@@ -197,10 +197,10 @@ public class RequestController {
                 return new ResponseEntity<>("Received no response.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        } catch (ContractException| MessageException exception) {
+        } catch (IllegalArgumentException| MessageException exception) {
             LOGGER.warn("Contract negotiation failed. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Contract negotiation has failed. "
-                + exception.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         URI agreementId = negotiationService.contractAccepted(map);
