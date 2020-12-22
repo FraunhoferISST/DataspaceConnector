@@ -7,6 +7,7 @@ import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessage;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.RequestMessage;
@@ -43,13 +44,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link ContractMessageHandler} handles all incoming messages that have a
- * {@link de.fraunhofer.iais.eis.ContractRequestMessage} as part one in the multipart message.
+ * {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} as part one in the multipart message.
  * This header must have the correct '@type' reference as defined in the
- * {@link de.fraunhofer.iais.eis.ContractRequestMessage} JsonTypeName annotation.
+ * {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(ContractRequestMessage.class)
-public class ContractMessageHandler implements MessageHandler<ContractRequestMessage> {
+@SupportedMessageType(ContractRequestMessageImpl.class)
+public class ContractMessageHandler implements MessageHandler<ContractRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractMessageHandler.class);
 
@@ -120,7 +121,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(ContractRequestMessage requestMessage,
+    public MessageResponse handleMessage(ContractRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.warn("Cannot respond when there is no request.");

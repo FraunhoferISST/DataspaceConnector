@@ -40,13 +40,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link ArtifactMessageHandler} handles all
- * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessage} as part
+ * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part
  * one in the multipart message. This header must have the correct '@type' reference as defined in
  * the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
-public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessage> {
+public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
@@ -103,7 +103,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      */
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
-    public MessageResponse handleMessage(ArtifactRequestMessage requestMessage,
+    public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.warn("Cannot respond when there is no request.");

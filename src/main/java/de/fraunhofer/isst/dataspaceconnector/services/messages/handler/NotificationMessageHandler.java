@@ -5,6 +5,7 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessage;
+import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
@@ -26,13 +27,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link NotificationMessageHandler} handles
- * all incoming messages that have a {@link de.fraunhofer.iais.eis.NotificationMessage} as
+ * all incoming messages that have a {@link de.fraunhofer.iais.eis.NotificationMessageImpl} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
- * in the {@link de.fraunhofer.iais.eis.NotificationMessage} JsonTypeName annotation.
+ * in the {@link de.fraunhofer.iais.eis.NotificationMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(NotificationMessage.class)
-public class NotificationMessageHandler implements MessageHandler<NotificationMessage> {
+@SupportedMessageType(NotificationMessageImpl.class)
+public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
@@ -74,7 +75,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(NotificationMessage message,
+    public MessageResponse handleMessage(NotificationMessageImpl message,
         MessagePayload messagePayload) throws RuntimeException {
         if (message == null) {
             LOGGER.warn("Cannot respond when there is no request.");
@@ -90,6 +91,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         }
 
         try {
+            // Build response header.
             final var responseMsgHeader = new MessageProcessedNotificationMessageBuilder()
                 ._securityToken_(tokenProvider.getTokenJWS())
                 ._correlationMessage_(message.getId())
