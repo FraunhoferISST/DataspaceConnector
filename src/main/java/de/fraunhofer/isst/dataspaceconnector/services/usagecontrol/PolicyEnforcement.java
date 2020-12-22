@@ -27,12 +27,12 @@ import java.util.ArrayList;
 @EnableScheduling
 public class PolicyEnforcement {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
 
-    private PolicyVerifier policyVerifier;
-    private ResourceService resourceService;
-    private RequestedResourceRepository requestedResourceRepository;
-    private SerializerProvider serializerProvider;
+    private final PolicyVerifier policyVerifier;
+    private final ResourceService resourceService;
+    private final RequestedResourceRepository requestedResourceRepository;
+    private final SerializerProvider serializerProvider;
 
     @Autowired
     /**
@@ -41,7 +41,19 @@ public class PolicyEnforcement {
     public PolicyEnforcement(PolicyVerifier policyVerifier,
         RequestedResourceServiceImpl requestedResourceService,
         RequestedResourceRepository requestedResourceRepository,
-        SerializerProvider serializerProvider) {
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (policyVerifier == null)
+            throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The RequestedResourceServiceImpl cannot be null.");
+
+        if (requestedResourceRepository == null)
+            throw new IllegalArgumentException("The RequestedResourceRepository cannot be null.");
+
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.policyVerifier = policyVerifier;
         this.resourceService = requestedResourceService;
         this.requestedResourceRepository = requestedResourceRepository;

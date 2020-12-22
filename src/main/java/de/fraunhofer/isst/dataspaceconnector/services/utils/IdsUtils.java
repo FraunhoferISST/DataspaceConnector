@@ -7,12 +7,10 @@ import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferImpl;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
@@ -129,18 +127,14 @@ public class IdsUtils {
         var contracts = new ArrayList<ContractOffer>();
         if (metadata.getPolicy() != null) {
             try {
-                final var contract =
+                final var contractOffer = (ContractOfferImpl)
                     serializerProvider.getSerializer().deserialize(metadata.getPolicy(),
-                        Contract.class);
-                ContractOfferImpl contractOffer = (ContractOfferImpl) contract;
-                contractOffer.setContractDate(
-                    de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow());
+                        ContractOffer.class);
                 contractOffer.setProvider(getConnector().getId());
-                contracts.add((ContractOffer) contract);
+                contracts.add(contractOffer);
             } catch (IOException exception) {
-                LOGGER.error(String.format("Could not deserialize contract.\nContract: [%s]",
-                    metadata.getPolicy()),
-                    exception);
+                LOGGER.debug(String.format("Could not deserialize contract.\nContract: [%s]",
+                    metadata.getPolicy()), exception);
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }

@@ -9,17 +9,18 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * This class implements all methods of {@link ResourceService}.
@@ -38,21 +39,16 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * Constructor for RequestedResourceServiceImpl.
      */
     @Autowired
-    public RequestedResourceServiceImpl(
-        @NotNull RequestedResourceRepository requestedResourceRepository,
-        @NotNull IdsUtils idsUtils,
-        @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
-        if (requestedResourceRepository == null) {
+    public RequestedResourceServiceImpl(RequestedResourceRepository requestedResourceRepository,
+        IdsUtils idsUtils, PolicyHandler policyHandler) throws IllegalArgumentException {
+        if (requestedResourceRepository == null)
             throw new IllegalArgumentException("The RequestedResourceRepository cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
 
-        if (policyHandler == null) {
+        if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-        }
 
         this.requestedResourceRepository = requestedResourceRepository;
         this.idsUtils = idsUtils;
@@ -154,18 +150,13 @@ public class RequestedResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException("The resource does not exist.");
         }
 
-        try {
-            if (policyHandler.onDataAccess(resource)) {
-                final var data = resource.getData();
-                storeResource(resource);
-                return data;
-            } else {
-                LOGGER.debug("Failed to access the resource. The resource is policy restricted. [resourceId=({})]", resourceId);
-                return "Policy Restriction!";
-            }
-        } catch (IOException exception) {
-            LOGGER.debug("Failed to process the policy data access. [resourceId=({}), exception=({})]", resourceId, exception);
-            throw new ResourceException("Failed to process the policy data access.", exception);
+        if (policyHandler.onDataAccess(resource)) {
+            final var data = resource.getData();
+            storeResource(resource);
+            return data;
+        } else {
+            LOGGER.debug("Failed to access the resource. The resource is policy restricted. [resourceId=({})]", resourceId);
+            return "Policy Restriction!";
         }
     }
 

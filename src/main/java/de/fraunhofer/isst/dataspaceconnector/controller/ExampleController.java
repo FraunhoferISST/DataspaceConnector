@@ -24,12 +24,12 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -136,10 +136,10 @@ public class ExampleController {
         try {
             // Return the policy pattern
             return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
-        } catch (IOException exception) {
+        } catch (ContractException exception) {
             // Failed to receive the pattern. Inform the requester.
-            LOGGER.error("Failed to receive policy.", exception);
-            return new ResponseEntity<>("The policy is currently not available.",
+            LOGGER.error("Failed to read policy.", exception);
+            return new ResponseEntity<>("The policy is invalid.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

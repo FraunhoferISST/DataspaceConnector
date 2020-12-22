@@ -9,8 +9,9 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationServic
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,8 +48,8 @@ public class RequestController {
     private final DescriptionRequestMessageService descriptionRequestMessageService;
     private final ArtifactResponseMessageService artifactResponseMessageService;
     private final DescriptionResponseMessageService descriptionResponseMessageService;
-    private final ContractResponseMessageService contractResponseMessageService;
     private final NegotiationService negotiationService;
+    private final ResourceService resourceService;
 
     /**
      * Constructor for RequestController
@@ -61,8 +62,8 @@ public class RequestController {
         DescriptionRequestMessageService descriptionRequestMessageService,
         ArtifactResponseMessageService artifactResponseMessageService,
         DescriptionResponseMessageService descriptionResponseMessageService,
-        ContractResponseMessageService contractResponseMessageService,
-        NegotiationService negotiationService)
+        NegotiationService negotiationService,
+        RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -79,19 +80,19 @@ public class RequestController {
         if (descriptionResponseMessageService == null)
             throw new IllegalArgumentException("The DescriptionResponseMessageService cannot be null.");
 
-        if (contractResponseMessageService == null)
-            throw new IllegalArgumentException("The ContractResponseMessageService cannot be null.");
-
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The RequestedResourceServiceImpl cannot be null.");
 
         this.tokenProvider = tokenProvider;
         this.artifactRequestMessageService = artifactRequestMessageService;
         this.descriptionRequestMessageService = descriptionRequestMessageService;
         this.artifactResponseMessageService = artifactResponseMessageService;
         this.descriptionResponseMessageService = descriptionResponseMessageService;
-        this.contractResponseMessageService = contractResponseMessageService;
         this.negotiationService = negotiationService;
+        this.resourceService = requestedResourceService;
     }
 
     /**
@@ -175,6 +176,9 @@ public class RequestController {
         @Parameter(description = "The URI of the requested IDS connector.", required = true,
             example = "https://localhost:8080/api/ids/data")
         @RequestParam("recipient") URI recipient,
+        @Parameter(description = "The URI of the requested artifact.", required = true,
+            example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+        @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "The contract offer for the requested resource.")
         @RequestBody(required = false) String contractOffer) {
         if (tokenProvider.getTokenJWS() == null) {
@@ -184,9 +188,9 @@ public class RequestController {
         // Start policy negotiation.
         Map<ResponseType, String> map;
         try {
-            Response response = negotiationService.startSequence(contractOffer, recipient);
+            Response response = negotiationService.startSequence(contractOffer, artifactId, recipient);
             try {
-                map = contractResponseMessageService.handleResponse(response);
+                map = descriptionResponseMessageService.handleResponse(response);
             } catch (MessageResponseException e) {
                 // The response is null
                 LOGGER.warn("Received no response message.");
@@ -199,13 +203,14 @@ public class RequestController {
                 + exception.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        URI agreementId = negotiationService.contractAccepted(map);
         // Check response.
-        if (!negotiationService.contractAccepted(map)) {
+        if (agreementId == null) {
             return returnRejectionMessage(map);
         }
 
         return new ResponseEntity<>(String.format("Successful negotiation. Contract"
-            + "agreement: %s", negotiationService.getAgreementId()), HttpStatus.OK);
+            + "agreement: %s", agreementId), HttpStatus.OK);
     }
 
     /**
@@ -229,6 +234,9 @@ public class RequestController {
         @Parameter(description = "The URI of the requested artifact.", required = true,
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact") URI artifactId,
+        @Parameter(description = "The URI of the contract agreement.", required = false,
+            example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+        @RequestParam(value = "contractAgreement", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key) {
         if (tokenProvider.getTokenJWS() == null) {
@@ -245,7 +253,7 @@ public class RequestController {
         Response response;
         try {
             // Send ArtifactRequestMessage.
-            artifactRequestMessageService.setParameter(recipient, artifactId, null);
+            artifactRequestMessageService.setParameter(recipient, artifactId, contractId);
             response = artifactRequestMessageService.sendMessage(artifactRequestMessageService, "");
         } catch (MessageException exception) {
             // Failed to send a description request message
@@ -325,8 +333,7 @@ public class RequestController {
      */
     private boolean resourceExists(UUID resourceId) {
         try {
-            return true;
-//            return resourceService.getResource(resourceId) != null;
+            return resourceService.getResource(resourceId) != null;
         } catch (ResourceException exception) {
             return false;
         }

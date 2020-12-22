@@ -20,17 +20,24 @@ import java.util.ArrayList;
 @Component
 public class PolicyHandler {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
 
-    public static Contract contract;
-    private PolicyVerifier policyVerifier;
-    private SerializerProvider serializerProvider;
+    private static Contract contract;
+    private final PolicyVerifier policyVerifier;
+    private final SerializerProvider serializerProvider;
 
     @Autowired
     /**
      * Constructor for PolicyHandler.
      */
-    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider) {
+    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
+        throws IllegalArgumentException {
+        if (policyVerifier == null)
+            throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
+
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
     }
