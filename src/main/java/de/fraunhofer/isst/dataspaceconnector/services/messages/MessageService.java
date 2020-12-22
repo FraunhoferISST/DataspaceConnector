@@ -55,8 +55,6 @@ public abstract class MessageService {
             throw new MessageBuilderException("Message could not be built.", e);
         }
 
-        LOGGER.info(message.toRdf());
-
         try {
             MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
             return idsHttpService.send(body, service.getRecipient());

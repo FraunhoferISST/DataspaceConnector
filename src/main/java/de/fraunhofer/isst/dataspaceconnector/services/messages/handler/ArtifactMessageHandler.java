@@ -11,6 +11,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -33,6 +34,7 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import java.net.URI;
 import java.util.UUID;
+import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -250,6 +252,14 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 "No valid resource id found.",
                 connector.getId(),
                 connector.getOutboundModelVersion());
+        } catch (ContractAgreementNotFoundException exception) {
+            LOGGER.warn("Could not load contract from database. "
+                    + "[id=({}), contractId=({}),exception=({})]",
+                requestMessage.getId(), requestMessage.getTransferContract(), exception.getMessage());
+            return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Could not find contract agreement by transfer contract id.",
+                connector.getId(), connector.getOutboundModelVersion());
         } catch (ContractException exception) {
             LOGGER.warn("Could not deserialize contract. "
                     + "[id=({}), contractId=({}),exception=({})]",
@@ -304,10 +314,18 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 return false;
             } else {
                 UUID uuid = UUIDUtils.uuidFromUri(contractId);
+
                 ResourceContract contract = contractAgreementService.getContract(uuid);
+                String contractToString;
+                try {
+                    contractToString = contract.getContract();
+                } catch (Exception e) {
+                    throw new ContractAgreementNotFoundException("Contract could not be loaded "
+                        + "from database.");
+                }
 
                 try {
-                    return contractIsValid(artifactId, contract.getContract());
+                    return contractIsValid(artifactId, contractToString);
                 } catch (ContractException exception) {
                     throw new ContractException("Could not deserialize contract.");
                 }
