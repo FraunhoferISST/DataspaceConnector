@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -29,13 +30,13 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link DescriptionMessageHandler} handles all
- * incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessage} as
+ * incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
- * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessage} JsonTypeName annotation.
+ * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(DescriptionRequestMessage.class)
-public class DescriptionMessageHandler implements MessageHandler<DescriptionRequestMessage> {
+@SupportedMessageType(DescriptionRequestMessageImpl.class)
+public class DescriptionMessageHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
@@ -74,7 +75,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      *                          null.
      */
     @Override
-    public MessageResponse handleMessage(DescriptionRequestMessage requestMessage,
+    public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.warn("Cannot respond when there is no request.");
