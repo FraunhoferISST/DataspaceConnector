@@ -96,12 +96,13 @@ public class MainController {
                 HttpStatus.OK);
         } catch (ConnectorConfigurationException exception) {
             // No connector found
-            LOGGER.warn("No connector has been configurated.", exception);
+            LOGGER.warn("No connector has been configurated.");
             return new ResponseEntity<>("No connector is currently available.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
             // Could not serialize the connector.
-            LOGGER.error("Could not serialize the connector.", exception);
+            LOGGER.warn("Could not serialize the connector. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("No connector is currently available.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -129,12 +130,13 @@ public class MainController {
                 HttpStatus.OK);
         } catch (ConnectorConfigurationException exception) {
             // No connector found
-            LOGGER.warn("No connector has been configurated.", exception);
+            LOGGER.warn("No connector has been configurated.");
             return new ResponseEntity<>("No connector is currently available.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IOException exception) {
             // Could not serialize the connector.
-            LOGGER.error("Could not serialize the connector.", exception);
+            LOGGER.warn("Could not serialize the connector. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("No connector is currently available.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }

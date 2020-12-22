@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
@@ -81,21 +82,23 @@ public class ResourceController {
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
-                final var new_uuid = offeredResourceService.addResource(resourceMetadata);
-                return new ResponseEntity<>("Resource registered with uuid: " + new_uuid.toString(),
+                final var newUuid = offeredResourceService.addResource(resourceMetadata);
+                return new ResponseEntity<>("Resource registered with uuid: " + newUuid.toString(),
                     HttpStatus.CREATED);
             }
         } catch (InvalidResourceException exception) {
-            LOGGER.warn("The resource could not be added. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to add resource. The resource is not valid. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.NOT_ACCEPTABLE);
         } catch (ResourceAlreadyExists exception) {
-            LOGGER.info("The resource could not be added. It already exists.", exception);
+            LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The resource could not be added. It already exits.",
                 HttpStatus.FOUND);
         } catch (ResourceException exception) {
-            LOGGER.error("The resource could not be added. Something went wrong.", exception);
+            LOGGER.warn("Failed to add resource. Something went wrong. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -104,31 +107,32 @@ public class ResourceController {
     /**
      * Updates resource metadata by id.
      *
-     * @param id               The resource id.
+     * @param resourceId       The resource id.
      * @param resourceMetadata The updated metadata.
      * @return OK or error response.
-     * @throws java.lang.IllegalArgumentException if any.
-     * @throws java.lang.IllegalArgumentException if any.
      */
     @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateResource(
         @Parameter(description = "The resource uuid.", required = true)
-        @PathVariable("resource-id") UUID id,
-        @RequestBody ResourceMetadata resourceMetadata) throws IllegalArgumentException {
+        @PathVariable("resource-id") UUID resourceId,
+        @RequestBody ResourceMetadata resourceMetadata) {
         try {
-            offeredResourceService.updateResource(id, resourceMetadata);
+            offeredResourceService.updateResource(resourceId, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
-            LOGGER.warn("The resource could not be updated. The resource is not valid.", exception);
+            LOGGER.debug("Failed to update the resource. The resource is not valid. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be updated.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.info("The resource could not be updated. It could not be found.", exception);
+            LOGGER.debug("Failed to update the resource. The resource could not be found."
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Resource could not be updated.", HttpStatus.NOT_FOUND);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to update the resource. Something went wrong."
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Resource could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -137,7 +141,7 @@ public class ResourceController {
     /**
      * Gets resource metadata by id.
      *
-     * @param id The resource id.
+     * @param resourceId The resource id.
      * @return Metadata or an error response.
      */
     @Operation(summary = "Get Resource", description = "Get the resource's metadata by its uuid.")
@@ -145,35 +149,40 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<Object> getResource(
         @Parameter(description = "The resource uuid.", required = true)
-        @PathVariable("resource-id") UUID id) {
+        @PathVariable("resource-id") UUID resourceId) {
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                return new ResponseEntity<>(offeredResourceService.getMetadata(id),
-                    HttpStatus.OK);
+                final var responseEntity = new ResponseEntity<Object>(
+                    offeredResourceService.getMetadata(resourceId), HttpStatus.OK);
+                return responseEntity;
             } catch (ResourceNotFoundException offeredResourceServiceException) {
+                LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
+                    + " [exception=({})]", offeredResourceServiceException.getMessage());
                 try {
                     // Try to find the data in the requestedResourceService
-                    LOGGER.info("Could not find the resource %s in the offered resources.",
-                        offeredResourceServiceException);
-                    return new ResponseEntity<>(requestedResourceService.getMetadata(id),
-                        HttpStatus.OK);
+                    final var responseEntity = new ResponseEntity<Object>(
+                        requestedResourceService.getMetadata(resourceId), HttpStatus.OK);
+                    return responseEntity;
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
+                    LOGGER
+                        .debug("Failed to receive the resource from the RequestedResourcesService."
+                            + " [exception=({})]", requestedResourceServiceException.getMessage());
                     // The data could not be found in the offeredResourceService and requestedResourceService
-                    LOGGER.warn(String.format("Could not find the resource %s in the requested " +
-                            "resources.", id),
-                        offeredResourceServiceException);
+                    LOGGER.debug("Failed to receive the resource. The resource does not exist.");
                     return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
-            return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+            LOGGER.debug("Failed to receive the resource. The resource is not valid."
+                + " [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>(
+                "The resource could not be received. Not a valid resource format.",
+                HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to receive the resource. Something went wrong. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Resource could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -182,7 +191,7 @@ public class ResourceController {
     /**
      * Deletes resource by id.
      *
-     * @param id The resource id.
+     * @param resourceId The resource id.
      * @return OK or error response.
      */
     @Operation(summary = "Delete Resource", description = "Delete a resource by its uuid.")
@@ -190,20 +199,17 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<String> deleteResource(
         @Parameter(description = "The resource uuid.", required = true)
-        @PathVariable("resource-id") UUID id) {
-        if (offeredResourceService.deleteResource(id)) {
-            LOGGER.info(String.format("Deleted resource %s from offeredResourceService", id));
-            return new ResponseEntity<>("Resource was deleted successfully from the " +
-                "offeredResourceService.",
+        @PathVariable("resource-id") UUID resourceId) {
+        if (offeredResourceService.deleteResource(resourceId)) {
+            return new ResponseEntity<>("Resource was deleted successfully.",
                 HttpStatus.OK);
         } else {
-            if (requestedResourceService.deleteResource(id)) {
-                LOGGER.info(String.format("Deleted resource %s from requestedResourceService", id));
-                return new ResponseEntity<>("Resource was deleted successfully from the " +
-                    "requestedResourceService.",
-                    HttpStatus.OK);
+            LOGGER.debug("Failed to delete the resource from the OfferedResourcesService.");
+            if (requestedResourceService.deleteResource(resourceId)) {
+                return new ResponseEntity<>("Resource was deleted successfully.", HttpStatus.OK);
             } else {
-                LOGGER.warn(String.format("Resource %s could not be found.", id));
+                LOGGER.debug("Failed to delete the resource from the RequestedResourcesService.");
+                LOGGER.debug("Failed to delete the resource. The resource does not exist.");
                 return new ResponseEntity<>("The resource could not be found.",
                     HttpStatus.NOT_FOUND);
             }
@@ -224,28 +230,31 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId,
         @Parameter(description = "A new resource contract.", required = true)
-        @RequestBody String policy) throws IllegalArgumentException {
+        @RequestBody String policy) {
         try {
             policyHandler.getPattern(policy);
             offeredResourceService.updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
         } catch (IOException exception) {
             // The policy is not in the correct format.
-            LOGGER.info("The policy is malformed.");
+            LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Policy syntax error.", HttpStatus.BAD_REQUEST);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.warn("Resource could not be found. " + resourceId);
+            LOGGER.debug("Failed to update the resource contract. The resource does not exist. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to update the resource contract. The resource is not valid. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
+                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to update the resource contract. Something went wrong. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Resource could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -262,39 +271,43 @@ public class ResourceController {
     @ResponseBody
     public ResponseEntity<String> getContract(
         @Parameter(description = "The resource uuid.", required = true)
-        @PathVariable("resource-id") UUID resourceId) throws IllegalArgumentException {
+        @PathVariable("resource-id") UUID resourceId) {
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                return new ResponseEntity<>(
-                    offeredResourceService.getMetadata(resourceId).getPolicy(), HttpStatus.OK);
+                final var policy = offeredResourceService.getMetadata(resourceId).getPolicy();
+                return new ResponseEntity<>(policy, HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
+                LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
+                    + " [exception=({})]", offeredResourceServiceException.getMessage());
                 try {
                     // Try to find the data in the requestedResourceService
-                    LOGGER.info("Could not find the resource %s in the offered resources.",
-                        offeredResourceServiceException);
-                    return new ResponseEntity<>(
-                        requestedResourceService.getMetadata(resourceId).getPolicy(),
-                        HttpStatus.OK);
+                    final var policy = requestedResourceService.getMetadata(resourceId).getPolicy();
+                    return new ResponseEntity<>(policy, HttpStatus.OK);
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
                     // The data could not be found in the offeredResourceService and requestedResourceService
-                    LOGGER.warn("Could not find the resource %s in the requested resources.",
-                        offeredResourceServiceException);
+                    LOGGER
+                        .debug("Failed to receive the resource from the RequestedResourcesService."
+                            + "exception=({})]", requestedResourceServiceException.getMessage());
+                    LOGGER.debug(
+                        "Failed to receive the resource contract. The resource does not exist.");
                     return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.info("Resource could not be found. " + resourceId);
+            LOGGER.debug("Failed to receive the resource contract. The resource does not exist."
+                + "exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be found.", HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to receive the resource contract. The resource is not valid. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to receive the resource contract. Something went wrong. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Contract could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -315,18 +328,21 @@ public class ResourceController {
         try {
             final var resource = requestedResourceService.getResource(resourceId);
             if (resource == null) {
+                LOGGER
+                    .debug("Failed to received the resource access. The resource does not exist.");
                 return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
             }
 
             return new ResponseEntity<>(resource.getAccessed(), HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to receive the resource access. The resource is not valid. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to receive the resource access. Something went wrong."
+                + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Access counter could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -349,31 +365,40 @@ public class ResourceController {
         @RequestBody ResourceRepresentation representation,
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
+            UUID newUuid = null;
             if (uuid != null) {
-                offeredResourceService.addRepresentationWithId(resourceId, representation, uuid);
+                newUuid = offeredResourceService
+                    .addRepresentationWithId(resourceId, representation, uuid);
             } else {
-                uuid = offeredResourceService.addRepresentation(resourceId, representation);
+                newUuid = offeredResourceService.addRepresentation(resourceId, representation);
             }
 
-            return new ResponseEntity<>("Representation was saved successfully with uuid " + uuid,
+            return new ResponseEntity<>(
+                "Representation was saved successfully with uuid " + newUuid,
                 HttpStatus.CREATED);
         } catch (ResourceAlreadyExists exception) {
-            LOGGER.info("The representation could not be added. It already exists.", exception);
+            LOGGER.debug("Failed to add resource representation. The representation already exists."
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be added. It already exits.",
                 HttpStatus.FOUND);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.info("The representation could not be found. " + resourceId);
+            LOGGER.debug(
+                "Failed to add resource representation. The resource does not exist. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug(
+                "Failed to add resource representation. The resource is not valid. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn(
+                "Failed to add resource representation. Something went wrong. [exception=({})]",
+                exception.getMessage());
             return new ResponseEntity<>("The representation could not be added.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -403,18 +428,20 @@ public class ResourceController {
                 .updateRepresentation(resourceId, representationId, representation);
             return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.info(String.format("The Resource representation %s could not be found.",
-                resourceId));
+            LOGGER
+                .debug("Failed to update the resource representation. The resource does not exist."
+                    + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to update the resource representation. The resource is not valid."
+                + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to update the resource representation. Something went wrong."
+                + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be updated.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -436,23 +463,26 @@ public class ResourceController {
         @Parameter(description = "The representation uuid.", required = true)
         @PathVariable("representation-id") UUID representationId) {
         try {
-            final var representation = offeredResourceService.getRepresentation(resourceId,
-                representationId);
+            final var representation =
+                offeredResourceService.getRepresentation(resourceId, representationId);
             return new ResponseEntity<>(representation, HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.info(
-                String.format("The Resource representation %s could not be found.", resourceId));
+            LOGGER.debug(
+                "Failed to received the resource representation. The resource does not exist. "
+                    + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER
+                .debug("Failed to received the resource representation. The resource is not valid. "
+                    + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to received the resource representation. Something went wrong. "
+                + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -475,22 +505,29 @@ public class ResourceController {
         @Parameter(description = "The representation uuid.", required = true)
         @PathVariable("representation-id") UUID representationId) {
         try {
-            offeredResourceService.deleteRepresentation(resourceId, representationId);
-            return new ResponseEntity<>("Representation was deleted successfully", HttpStatus.OK);
+            if (offeredResourceService.deleteRepresentation(resourceId, representationId)) {
+                return new ResponseEntity<>("Representation was deleted successfully",
+                    HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("The representation could not be found.",
+                    HttpStatus.NOT_FOUND);
+            }
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
-            LOGGER.info(
-                String.format("The Resource representation %s could not be found.", resourceId));
+            LOGGER.debug(
+                "Failed to delete the resource representation. The resource could not be found."
+                    + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be found.",
                 HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             // The resource has been found but is in an invalid format.
-            LOGGER.warn("The resource could not be received. The resource is not valid.",
-                exception);
+            LOGGER.debug("Failed to delete the resource representation. The resource is not valid."
+                + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
                 "valid resource format.", HttpStatus.EXPECTATION_FAILED);
         } catch (ResourceException exception) {
-            LOGGER.warn("Caught unhandled resource exception.", exception);
+            LOGGER.warn("Failed to delete the resource representation. Something went wrong."
+                + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be received.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }

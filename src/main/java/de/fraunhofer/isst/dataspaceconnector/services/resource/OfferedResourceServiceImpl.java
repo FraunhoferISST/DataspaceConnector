@@ -113,6 +113,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             "");
 
         storeResource(resource);
+        LOGGER.debug("Added a new resource. [uuid=({}), metadata=({})]", uuid, resourceMetadata);
     }
 
     /**
@@ -128,6 +129,7 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
         resource.setData(data);
         storeResource(resource);
+        LOGGER.debug("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
     }
 
     /**
@@ -143,6 +145,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
 
         resource.setResourceMetadata(resourceMetadata);
         storeResource(resource);
+        LOGGER.debug("Updated resource. [resourceId=({}), metadata=({})]", resourceId,
+            resourceMetadata);
     }
 
     /**
@@ -156,6 +160,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         // NOTE SAFETY CHECK
         resourceMetadata.setPolicy(policy);
         updateResource(resourceId, resourceMetadata);
+        LOGGER.debug("Updated contract of resource. [resourceId=({}), policy=({})]", resourceId,
+            policy);
     }
 
     /**
@@ -163,8 +169,20 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
-        offeredResourceRepository.deleteById(resourceId);
-        return true;
+        try {
+            if (getResource(resourceId) != null) {
+                offeredResourceRepository.deleteById(resourceId);
+                LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
+                return true;
+            }
+        }catch(InvalidResourceException exception){
+            // The resource exists, delete it
+            offeredResourceRepository.deleteById(resourceId);
+            LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -226,10 +244,10 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                 return getDataByRepresentation(resourceId, representationId);
             } catch (ResourceException exception) {
                 // The resource is incomplete or wrong.
-                LOGGER.warn("Resource exception.");
+                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
             } catch (RuntimeException exception) {
                 // The resource could not be received.
-                LOGGER.warn("Failed to get resource data.");
+                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
             }
         }
 
@@ -293,6 +311,9 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
         metaData.getRepresentations().put(representation.getUuid(), representation);
 
         updateResource(resourceId, metaData);
+        LOGGER.debug(
+            "Added representation to resource. [resourceId=({}), representationId=({}), representation=({})]",
+            resourceId, representationId, representation);
         return representationId;
     }
 
@@ -312,9 +333,11 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             metadata.setRepresentations(representations);
 
             updateResource(resourceId, metadata);
+            LOGGER.debug(
+                "Updated representation of resource. [resourceId=({}), representationId=({}), representation=({})]",
+                resourceId, representationId, representation);
         } else {
-            LOGGER.warn(String.format("Tried to update representation %s with resource %s.",
-                representationId, resourceId));
+            LOGGER.debug("Failed to update resource representation. It does not exist. [resourceId=({}), representationId=({}), representation=({})]", resourceId, representationId, representation);
             throw new ResourceNotFoundException("The resource representation does not exist.");
         }
     }
@@ -335,10 +358,13 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
             metadata.setRepresentations(representations);
 
             updateResource(resourceId, metadata);
+            LOGGER.debug("Deleted resource representation. [resourceId=({}), representationId=({})]",
+                resourceId, representationId);
             return true;
         } else {
-            LOGGER.warn(String.format("Tried to delete representation %s with resource %s.",
-                representationId, resourceId));
+            LOGGER.debug(
+                "Failed to delete resource representation. It does not exist. [resourceId=({}), representationId=({})]",
+                resourceId, representationId);
             return false;
         }
     }
@@ -370,7 +396,8 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
     private void invalidResourceGuard(OfferedResource resource) throws InvalidResourceException {
         final var error = isValidOfferedResource(resource);
         if (error.isPresent()) {
-            throw new InvalidResourceException(error.get());
+            LOGGER.debug("Failed resource validation. [error=({}), resource=({})]", error.get(), resource);
+            throw new InvalidResourceException("Not a valid resource. " + error.get());
         }
     }
 
@@ -379,12 +406,9 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void storeResource(OfferedResource resource) throws InvalidResourceException {
-        final var error = isValidOfferedResource(resource);
-        if (error.isPresent()) {
-            throw new InvalidResourceException("Not a valid resource. " + error.get());
-        }
-
+        invalidResourceGuard(resource);
         offeredResourceRepository.save(resource);
+        LOGGER.debug("Made resource persistent. [resource=({})]", resource);
     }
 
     /**
@@ -422,14 +446,16 @@ public class OfferedResourceServiceImpl implements OfferedResourceService {
                 }
             } catch (MalformedURLException exception) {
                 // One of the http requests received a non url as address
-                LOGGER.error("The resource representation is not an url.", exception);
+                LOGGER.debug("Failed to resolve the target address. The resource representation is not an url. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
                 throw new ResourceException("The resource source representation is not an url.",
                     exception);
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
+                LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
                 throw new ResourceException("The resource could not be found.", exception);
             }
         } else {
+            LOGGER.debug("Failed to receive the resource. The resource has no defined backend. [resource=({}), representation=({}))]", resource, representation);
             throw new ResourceException("The resource has no defined backend.");
         }
     }
