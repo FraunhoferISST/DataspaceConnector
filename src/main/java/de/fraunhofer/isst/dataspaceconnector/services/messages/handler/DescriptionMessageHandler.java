@@ -71,8 +71,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @throws RuntimeException - if the response body failed to be build or requestMessage is
-     *                          null.
+     * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
      */
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
@@ -82,6 +81,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
 
+        // Check if version is supported.
         if (!descriptionResponseMessageService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
@@ -90,29 +90,21 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 connector.getId(), connector.getOutboundModelVersion());
         }
 
-        descriptionResponseMessageService.setParameter(requestMessage.getIssuerConnector(),
-            requestMessage.getId());
-
-        // Check if a concrete resource has been requested
+        // Check if a specific resource has been requested.
         if (requestMessage.getRequestedElement() != null) {
-            // A specific resource has been requested
             try {
                 return constructResourceDescription(requestMessage);
             } catch (RuntimeException exception) {
-                // Something went wrong (e.g invalid connector config), try to fix it at a higher
-                // level
-                throw new RuntimeException("Failed to construct a resource description.",
-                    exception);
+                // Something went wrong (e.g invalid config), try to fix it at a higher level.
+                throw new RuntimeException("Failed to construct a resource.", exception);
             }
         } else {
             // No resource has been requested, return a resource catalog
             try {
                 return constructConnectorSelfDescription(requestMessage);
             } catch (RuntimeException exception) {
-                // Something went wrong (e.g invalid connector config), try to fix it at a higher
-                // level
-                throw new RuntimeException("Failed to construct a self-description.",
-                    exception);
+                // Something went wrong (e.g invalid config), try to fix it at a higher level.
+                throw new RuntimeException("Failed to construct a self-description.", exception);
             }
         }
     }
@@ -128,15 +120,19 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     public MessageResponse constructResourceDescription(DescriptionRequestMessage requestMessage)
         throws RuntimeException {
         try {
-            // Find the requested resource
+            // Find the requested resource.
             final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
-            final var resource = ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
+            final var resource = ((OfferedResourceServiceImpl) resourceService)
+                .getOfferedResources().get(resourceId);
 
             if (resource != null) {
-                // The resource has been found, send the description.
-                return BodyResponse.create(descriptionResponseMessageService.buildHeader(), resource.toRdf());
+                // If the resource has been found, send the description.
+                descriptionResponseMessageService.setParameter(requestMessage.getIssuerConnector(),
+                    requestMessage.getId());
+                return BodyResponse.create(descriptionResponseMessageService.buildHeader(),
+                    resource.toRdf());
             } else {
-                // The resource has not been found, inform and reject.
+                // If the resource has not been found, inform and reject.
                 LOGGER.debug("Resource could not be found. [id=({}), resourceId=({})]",
                     resourceId, requestMessage.getId());
 
@@ -145,7 +141,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                     , connector.getOutboundModelVersion());
             }
         } catch (UUIDFormatException exception) {
-            // No resource uuid could be found in the request, reject the message.
+            // If no resource uuid could be found in the request, reject the message.
             LOGGER.debug(
                 "Description has no valid uuid. [id=({}), requestedElement=({}), exception=({})].",
                 requestMessage.getId(), requestMessage.getRequestedElement(),
@@ -175,13 +171,15 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     public MessageResponse constructConnectorSelfDescription(
         DescriptionRequestMessage requestMessage) throws RuntimeException {
         try {
-            // Create a connector with a list of currently offered resources
+            // Create a connector with a list of offered resources.
             var connector = (BaseConnectorImpl) this.connector;
             connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
                 ._offeredResource_(new ArrayList<>(resourceService.getResources()))
                 .build()));
 
-            // Answer with the resource description
+            // Answer with the resource description.
+            descriptionResponseMessageService.setParameter(requestMessage.getIssuerConnector(),
+                requestMessage.getId());
             return BodyResponse.create(descriptionResponseMessageService.buildHeader(),
                 connector.toRdf());
         } catch (ConstraintViolationException | MessageBuilderException exception) {

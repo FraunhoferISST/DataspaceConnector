@@ -110,6 +110,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
 
+        // Check if version is supported.
         if (!artifactResponseMessageService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
@@ -119,10 +120,13 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         }
 
         try {
+            // Find artifact and matching resource.
             final var artifactId = extractArtifactIdFromRequest(requestMessage);
             final var requestedResource = findResourceFromArtifactId(artifactId);
 
-            if (!checkTransferContract(requestMessage.getTransferContract(), requestMessage.getRequestedArtifact())) {
+            // Check if the transferred contract matches the requested artifact.
+            if (!checkTransferContract(requestMessage.getTransferContract(),
+                requestMessage.getRequestedArtifact())) {
                 LOGGER.debug("Contract agreement could not be found. [id=({}), contractId=({})]",
                     requestMessage.getId(), requestMessage.getTransferContract());
 
@@ -144,16 +148,17 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             }
 
             try {
+                // Find the requested resource and its metadata.
                 final var resourceId = UUIDUtils.uuidFromUri(requestedResource.getId());
                 final var resourceMetadata = resourceService.getMetadata(resourceId);
 
                 try {
+                    // Check if the policy allows data access.
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
-                        // Get the data from source
                         String data;
                         try {
-                            data = resourceService
-                                .getDataByRepresentation(resourceId, artifactId);
+                            // Get the data from source.
+                            data = resourceService.getDataByRepresentation(resourceId, artifactId);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -181,6 +186,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                                     connector.getOutboundModelVersion());
                         }
 
+                        // Build artifact response.
                         artifactResponseMessageService.setParameter(
                             requestMessage.getIssuerConnector(),
                             requestMessage.getTransferContract(),
@@ -193,7 +199,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                                 + "[id=({}), pattern=({})]",
                             requestMessage.getId(),
                             policyHandler.getPattern(resourceMetadata.getPolicy()));
-
                         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                             "Policy restriction detected: You are not authorized to receive this data.",
                             connector.getId(),
@@ -241,7 +246,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 "Resource has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getRequestedArtifact(),
                 exception.getMessage());
-
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "No valid resource id found.",
                 connector.getId(),
@@ -276,7 +280,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Extract the artifact id.
      *
-     * @throws RequestFormatException - if uuid could not be extraced.
+     * @throws RequestFormatException - if uuid could not be extracted.
      */
     private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
         throws RequestFormatException {
@@ -313,8 +317,14 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         }
     }
 
+    /**
+     * Checks if the contract refers to the requested artifact.
+     *
+     * @throws ContractException - if the contract could not be deserialized.
+     */
     private boolean contractIsValid(URI artifactId, String contract) throws ContractException {
-        ContractAgreement contractAgreement = (ContractAgreement) policyHandler.validateContract(contract);
+        ContractAgreement contractAgreement =
+            (ContractAgreement) policyHandler.validateContract(contract);
 
         final var obligations = contractAgreement.getObligation();
         final var permissions = contractAgreement.getPermission();

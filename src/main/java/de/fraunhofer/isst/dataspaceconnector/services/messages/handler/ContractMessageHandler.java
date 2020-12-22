@@ -6,7 +6,6 @@ import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestMessage;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -14,6 +13,7 @@ import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
@@ -130,6 +130,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
             this.requestMessage = requestMessage;
         }
 
+        // Check if version is supported.
         if (!messageResponseService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
@@ -157,29 +158,30 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                     "Malformed payload.",
                     connector.getId(), connector.getOutboundModelVersion());
         }
+
         try {
-            return checkContractRequest(requestMessage, payload);
+            // Check the contract content.
+            return checkContractRequest(payload);
         } catch (RuntimeException exception) {
-            // Something went wrong (e.g invalid connector config), try to fix it at a higher
-            // level
-            throw new RuntimeException("Failed to construct a resource description.",
-                exception);
+            // Something went wrong (e.g invalid config), try to fix it at a higher level.
+            throw new RuntimeException("Failed to construct a resource description.", exception);
         }
     }
 
     /**
-     * Checks if the contract request content by the consumer complies with the contract offer by the provider.
+     * Checks if the contract request content by the consumer complies with the contract offer by
+     * the provider.
      *
      * @param payload The message payload containing a contract request.
      * @return A message response to the requesting connector.
      */
-    public MessageResponse checkContractRequest(RequestMessage message, String payload)
+    public MessageResponse checkContractRequest(String payload)
         throws RuntimeException {
         ContractRequest contractRequest;
         try {
             // Deserialize string to contract object.
             contractRequest = (ContractRequest) policyHandler.validateContract(payload);
-            // Load contract offer from metadata
+            // Load contract offer from metadata.
             ContractOffer contractOffer = (ContractOffer) contractRequest; // TODO get contract offer from db
 
             // Check if the contract request has the same content as the stored contract offer.
@@ -188,6 +190,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 && negotiationService.compareRule(contractRequest.getProhibition(), contractOffer.getProhibition())) {
                 return acceptContract(contractRequest);
             } else {
+                // If differences have been detected.
                 return rejectContract();
             }
         } catch (UUIDFormatException exception) {
@@ -195,11 +198,15 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 "Resource has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getTransferContract(),
                 exception.getMessage());
-
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "No valid resource id found.",
                 connector.getId(),
                 connector.getOutboundModelVersion());
+        } catch (MessageBuilderException exception) {
+            return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Response could not be constructed.",
+                connector.getId(), connector.getOutboundModelVersion());
         } catch (RuntimeException exception) {
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
@@ -209,15 +216,19 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     }
 
     /**
-     * Accept contract by building a {@link ContractAgreement} and sending it as payload with a {@link ContractAgreementMessage}.
+     * Accept contract by building a {@link ContractAgreement} and sending it as payload with a
+     * {@link ContractAgreementMessage}.
      *
      * @param contractRequest The contract request object from the data consumer.
      * @return The message response to the requesting connector.
      */
-    private MessageResponse acceptContract(ContractRequest contractRequest) throws UUIDFormatException {
+    private MessageResponse acceptContract(ContractRequest contractRequest)
+        throws UUIDFormatException, MessageBuilderException {
+        // Turn the accepted contract request into a contract agreement.
         ContractAgreement contractAgreement =
             contractAgreementMessageService.buildContractAgreement(contractRequest);
 
+        // Build message header.
         Message message = contractAgreementMessageService.buildHeader();
 
         // Save contract agreement to database.
@@ -230,6 +241,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 throw new MessageException("Response body is empty.");
             }
         } catch (MessageException exception) {
+            // Log if the message could not be sent to the clearing house.
             LOGGER.warn("Could not connect to clearing house. " + exception.getMessage());
         }
 
@@ -252,7 +264,8 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
             ._senderAgent_(connector.getId())
             ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(requestMessage.getIssuerConnector()))
             ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
-            ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
+            ._contractRejectionReason_(new TypedLiteral(
+                "Contract not accepted.", "en"))
             .build(), "Contract rejected.");
     }
 }
