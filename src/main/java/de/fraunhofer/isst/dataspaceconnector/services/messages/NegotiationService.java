@@ -9,6 +9,7 @@ import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -67,20 +68,20 @@ public class NegotiationService {
      * Deserialize contract and send it as contract request message.
      *
      * @return The http response.
-     * @throws ContractException - if the contract could not be read.
+     * @throws IllegalArgumentException - if the contract could not be deserialized.
      * @throws MessageException - if the contract request message could not be sent.
      */
     public Response startSequence(String contractAsString, URI artifactId, URI recipient)
-        throws ContractException, MessageException {
+        throws IllegalArgumentException, MessageException {
         this.recipient = recipient;
 
         Contract contract;
         try {
             contract = policyHandler.validateContract(contractAsString);
-        } catch (UnsupportedPatternException exception) {
+        } catch (RequestFormatException exception) {
             LOGGER.warn("Could not deserialize contract. [exception=({})]",
                 exception.getMessage());
-            throw new UnsupportedPatternException("Malformed contract. " + exception.getMessage());
+            throw new RequestFormatException("Malformed contract. " + exception.getMessage());
         }
 
         ContractRequest request = fillContract(artifactId,
