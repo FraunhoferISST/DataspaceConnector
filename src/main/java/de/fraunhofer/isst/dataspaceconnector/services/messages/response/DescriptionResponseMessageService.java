@@ -1,24 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
+import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
+import de.fraunhofer.iais.eis.DescriptionResponseMessageBuilder;
 import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
+import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -37,20 +39,18 @@ public class DescriptionResponseMessageService extends MessageResponseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseMessageService.class);
 
-    private final Connector connector;
     private final TokenProvider tokenProvider;
     private final SerializerProvider serializerProvider;
     private final ResourceService resourceService;
-    private URI recipient, resourceId;
+    private Connector connector;
+    private URI recipient, correlationMessageId;
 
     @Autowired
-    public DescriptionResponseMessageService(ConfigurationContainer configurationContainer,
-        TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
-        RequestedResourceServiceImpl requestedResourceService) {
-        super(idsHttpService, serializerProvider);
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+    public DescriptionResponseMessageService(TokenProvider tokenProvider,
+        IDSHttpService idsHttpService, SerializerProvider serializerProvider,
+        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils)
+        throws IllegalArgumentException {
+        super(idsHttpService, idsUtils, serializerProvider);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -61,44 +61,33 @@ public class DescriptionResponseMessageService extends MessageResponseService {
         if (requestedResourceService == null)
             throw new IllegalArgumentException("The ResourceService cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.connector = idsUtils.getConnector();
         this.tokenProvider = tokenProvider;
         this.serializerProvider = serializerProvider;
         this.resourceService = requestedResourceService;
     }
 
     @Override
-    public RequestMessage buildHeader() throws MessageBuilderException {
-        if (resourceId == null) {
-            return new DescriptionRequestMessageBuilder()
-                ._issued_(Util.getGregorianNow())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._issuerConnector_(connector.getId())
-                ._senderAgent_(connector.getId())
-                ._securityToken_(tokenProvider.getTokenJWS())
-                ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
-                .build();
-        } else {
-            return new DescriptionRequestMessageBuilder()
-                ._issued_(Util.getGregorianNow())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._issuerConnector_(connector.getId())
-                ._senderAgent_(connector.getId())
-                ._requestedElement_(resourceId)
-                ._securityToken_(tokenProvider.getTokenJWS())
-                ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
-                .build();
-        }
+    public ResponseMessage buildHeader() throws MessageBuilderException {
+        return new DescriptionResponseMessageBuilder()
+            ._securityToken_(tokenProvider.getTokenJWS())
+            ._correlationMessage_(correlationMessageId)
+            ._issued_(getGregorianNow())
+            ._issuerConnector_(connector.getId())
+            ._modelVersion_(connector.getOutboundModelVersion())
+            ._senderAgent_(connector.getId())
+            ._recipientConnector_(Util.asList(recipient))
+            .build();
     }
 
     @Override
     public URI getRecipient() {
-        return recipient;
+        return null;
     }
 
-    public void setParameter(URI recipient, URI resourceId) {
+    public void setParameter(URI recipient, URI correlationMessageId) {
         this.recipient = recipient;
-        this.resourceId = resourceId;
+        this.correlationMessageId = correlationMessageId;
     }
 
     /**
@@ -130,6 +119,12 @@ public class DescriptionResponseMessageService extends MessageResponseService {
         }
     }
 
+    /**
+     * Find a resource from a connector's resource catalog.
+     *
+     * @return The resource object.
+     * @throws Exception - if the payload could not be parsed to a base connector.
+     */
     private Resource findResource(String payload, URI resourceId) throws Exception {
         Resource resource = null;
         try {
@@ -148,6 +143,11 @@ public class DescriptionResponseMessageService extends MessageResponseService {
         return resource;
     }
 
+    /**
+     * Maps a received Infomodel resource to the internal metadata model.
+     *
+     * @return the metadata object.
+     */
     private ResourceMetadata deserializeMetadata(Resource resource) {
         var metadata = new ResourceMetadata();
 

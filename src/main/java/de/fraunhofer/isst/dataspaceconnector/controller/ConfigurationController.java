@@ -56,7 +56,6 @@ public class ConfigurationController {
                 throw new NullPointerException("No configuration serializer has been set.");
             }
 
-            final var old_configurationModel = configurationContainer.getConfigModel();
             final var new_configurationModel =
                 serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
 

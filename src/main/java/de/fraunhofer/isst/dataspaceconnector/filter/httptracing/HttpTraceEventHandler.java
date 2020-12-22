@@ -27,7 +27,7 @@ public class HttpTraceEventHandler {
     }
 
     /**
-     * Raise a HttpTraceEvent.
+     * Raise an HttpTraceEvent.
      * @param trace The http trace that others should be notified about.
      */
     public void sendHttpTraceEvent(HttpTrace trace) {

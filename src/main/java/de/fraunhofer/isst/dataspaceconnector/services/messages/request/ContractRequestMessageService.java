@@ -7,9 +7,8 @@ import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -31,12 +30,9 @@ public class ContractRequestMessageService extends MessageService {
     private URI recipient, contractId;
 
     @Autowired
-    public ContractRequestMessageService(ConfigurationContainer configurationContainer,
-        TokenProvider tokenProvider, IDSHttpService idsHttpService, IdsUtils idsUtils) {
+    public ContractRequestMessageService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        IdsUtils idsUtils) throws IllegalArgumentException {
         super(idsHttpService);
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -44,7 +40,7 @@ public class ContractRequestMessageService extends MessageService {
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.connector = idsUtils.getConnector();
         this.tokenProvider = tokenProvider;
         this.idsUtils = idsUtils;
     }
@@ -77,6 +73,7 @@ public class ContractRequestMessageService extends MessageService {
             ._consumer_(connector.getMaintainer())
             ._provider_(contract.getProvider())
             ._contractDate_(idsUtils.getGregorianOf(new Date()))
+            ._contractStart_(idsUtils.getGregorianOf(new Date()))
             ._obligation_(contract.getObligation())
             ._permission_(contract.getPermission())
             ._prohibition_(contract.getProhibition())

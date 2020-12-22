@@ -1,14 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
-import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
+import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+
+import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -27,16 +28,17 @@ public class ArtifactResponseMessageService extends MessageResponseService {
     private final Connector connector;
     private final TokenProvider tokenProvider;
     private final ResourceService resourceService;
-    private URI recipient, artifactId, contractId;
+    private URI recipient, contractId, correlationMessageId;
 
     @Autowired
-    public ArtifactResponseMessageService(ConfigurationContainer configurationContainer,
-        TokenProvider tokenProvider, IDSHttpService idsHttpService, SerializerProvider serializerProvider,
-        RequestedResourceServiceImpl requestedResourceService) {
-        super(idsHttpService, serializerProvider);
+    public ArtifactResponseMessageService(TokenProvider tokenProvider,
+        IDSHttpService idsHttpService, SerializerProvider serializerProvider,
+        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils)
+        throws IllegalArgumentException {
+        super(idsHttpService, idsUtils, serializerProvider);
 
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        if (idsUtils == null)
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -44,20 +46,20 @@ public class ArtifactResponseMessageService extends MessageResponseService {
         if (requestedResourceService == null)
             throw new IllegalArgumentException("The ResourceService cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.connector = idsUtils.getConnector();
         this.tokenProvider = tokenProvider;
         this.resourceService = requestedResourceService;
     }
 
     @Override
     public Message buildHeader() throws MessageBuilderException {
-        return new ArtifactRequestMessageBuilder()
-            ._issued_(Util.getGregorianNow())
-            ._modelVersion_(connector.getOutboundModelVersion())
-            ._issuerConnector_(connector.getId())
-            ._senderAgent_(connector.getId())
-            ._requestedArtifact_(artifactId)
+        return new ArtifactResponseMessageBuilder()
             ._securityToken_(tokenProvider.getTokenJWS())
+            ._correlationMessage_(correlationMessageId)
+            ._issued_(getGregorianNow())
+            ._issuerConnector_(connector.getId())
+            ._modelVersion_(connector.getOutboundModelVersion())
+            ._senderAgent_(connector.getId())
             ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
             ._transferContract_(contractId)
             .build();
@@ -68,10 +70,10 @@ public class ArtifactResponseMessageService extends MessageResponseService {
         return recipient;
     }
 
-    public void setParameter(URI recipient, URI artifactId, URI contractId) {
+    public void setParameter(URI recipient, URI contractId, URI correlationMessageId) {
         this.recipient = recipient;
-        this.artifactId = artifactId;
         this.contractId = contractId;
+        this.correlationMessageId = correlationMessageId;
     }
 
     /**

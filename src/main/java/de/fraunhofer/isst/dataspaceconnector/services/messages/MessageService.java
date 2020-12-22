@@ -51,17 +51,17 @@ public abstract class MessageService {
         try {
             message = service.buildHeader();
         } catch (MessageBuilderException e) {
-            LOGGER.info("Message could not be built. " + e.getMessage());
+            LOGGER.warn("Message could not be built. " + e.getMessage());
             throw new MessageBuilderException("Message could not be built.", e);
         }
 
-        String s = message.toRdf();
+        LOGGER.info(message.toRdf());
 
         try {
             MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
             return idsHttpService.send(body, service.getRecipient());
         } catch (MessageNotSentException | IOException e) {
-            LOGGER.info("Message could not be sent. " + e.getMessage());
+            LOGGER.warn("Message could not be sent. " + e.getMessage());
             throw new MessageBuilderException("Message could not be sent.", e);
         }
     }

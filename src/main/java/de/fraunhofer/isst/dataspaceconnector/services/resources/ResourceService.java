@@ -4,7 +4,6 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import java.util.List;
 import java.util.UUID;

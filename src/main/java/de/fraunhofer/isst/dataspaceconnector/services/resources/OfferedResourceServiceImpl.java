@@ -44,8 +44,17 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * Constructor for OfferedResourceServiceImpl.
      */
     @Autowired
-    public OfferedResourceServiceImpl(@NotNull OfferedResourceRepository offeredResourceRepository,
-        @NotNull HttpUtils httpUtils, @NotNull IdsUtils idsUtils) {
+    public OfferedResourceServiceImpl(OfferedResourceRepository offeredResourceRepository,
+        HttpUtils httpUtils, IdsUtils idsUtils) throws IllegalArgumentException {
+        if (offeredResourceRepository == null)
+            throw new IllegalArgumentException("The OfferedResourceRepository cannot be null.");
+
+        if (httpUtils == null)
+            throw new IllegalArgumentException("The HttpUtils cannot be null.");
+
+        if (idsUtils == null)
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+
         this.offeredResourceRepository = offeredResourceRepository;
         this.httpUtils = httpUtils;
         this.idsUtils = idsUtils;

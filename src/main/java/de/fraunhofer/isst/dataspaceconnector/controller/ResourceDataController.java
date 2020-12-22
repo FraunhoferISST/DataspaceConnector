@@ -41,8 +41,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
      */
     @Autowired
     public ResourceDataController(OfferedResourceServiceImpl offeredResourceService,
-        RequestedResourceServiceImpl requestedResourceService)
-        throws IllegalArgumentException {
+        RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
 

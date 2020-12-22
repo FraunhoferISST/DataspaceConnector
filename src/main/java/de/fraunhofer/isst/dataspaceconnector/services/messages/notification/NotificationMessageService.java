@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -25,17 +25,17 @@ public class NotificationMessageService extends MessageService {
     private URI recipient;
 
     @Autowired
-    public NotificationMessageService(ConfigurationContainer configurationContainer,
-        TokenProvider tokenProvider, IDSHttpService idsHttpService) {
+    public NotificationMessageService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        IdsUtils idsUtils) throws IllegalArgumentException {
         super(idsHttpService);
 
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        if (idsUtils == null)
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.connector = idsUtils.getConnector();
         this.tokenProvider = tokenProvider;
     }
 

@@ -12,7 +12,10 @@ import de.fraunhofer.iais.eis.ParticipantResponseMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.ResultMessage;
 import de.fraunhofer.iais.eis.UploadResponseMessage;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
@@ -32,18 +35,41 @@ public abstract class MessageResponseService extends MessageService{
     public static final Logger LOGGER = LoggerFactory.getLogger(MessageResponseService.class);
 
     private final SerializerProvider serializerProvider;
+    private final IdsUtils idsUtils;
 
     @Autowired
-    public MessageResponseService(IDSHttpService idsHttpService, SerializerProvider serializerProvider) {
+    public MessageResponseService(IDSHttpService idsHttpService, IdsUtils idsUtils,
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
         super(idsHttpService);
+
+        if (idsUtils == null)
+            throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
         this.serializerProvider = serializerProvider;
+        this.idsUtils = idsUtils;
     }
 
-    public Map<ResponseType, String> handleResponse(Response response) {
+    /**
+     * Checks if the outbound model version of the requesting connector is listed in the inbound model versions.
+     *
+     * @param versionString The outbound model version of the requesting connector.
+     * @return True on no hit, hence incompatibility.
+     */
+    public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
+        final var connector = idsUtils.getConnector();
+
+        for (String version : connector.getInboundModelVersion()) {
+            if (version.equals(versionString)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<ResponseType, String> handleResponse(Response response) throws MessageException {
         String responseAsString;
         if (response == null)
             throw new MessageResponseException("Body is empty.");

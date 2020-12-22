@@ -23,7 +23,7 @@ import java.util.Date;
 @Component
 public class PolicyReader {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyReader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyReader.class);
 
     /**
      * Gets the access frequency of a policy.

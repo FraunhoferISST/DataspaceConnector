@@ -2,19 +2,23 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
+import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
-import de.fraunhofer.iais.eis.NotificationMessageImpl;
+import de.fraunhofer.iais.eis.NotificationMessage;
+import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,21 +26,19 @@ import org.springframework.stereotype.Component;
 
 /**
  * This @{@link NotificationMessageHandler} handles
- * all incoming messages that have a {@link de.fraunhofer.iais.eis.NotificationMessageImpl} as
+ * all incoming messages that have a {@link de.fraunhofer.iais.eis.NotificationMessage} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
- * in the {@link de.fraunhofer.iais.eis.NotificationMessageImpl} JsonTypeName annotation. In
- * this example, the received payload is not defined and will be returned immediately. Usually, the
- * payload would be well defined as well, such that it can be deserialized into a proper
- * Java-Object.
+ * in the {@link de.fraunhofer.iais.eis.NotificationMessage} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(NotificationMessageImpl.class)
-public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
+@SupportedMessageType(NotificationMessage.class)
+public class NotificationMessageHandler implements MessageHandler<NotificationMessage> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
     private final TokenProvider tokenProvider;
-    private final IdsUtils idsUtils;
+    private final MessageResponseService messageResponseService;
+    private final Connector connector;
 
     /**
      * Constructor for NotificationMessageHandler.
@@ -44,18 +46,21 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public NotificationMessageHandler(@NotNull IdsUtils idsUtils,
-        @NotNull TokenProvider tokenProvider) throws IllegalArgumentException {
-        if (tokenProvider == null) {
+    public NotificationMessageHandler(IdsUtils idsUtils,
+        ArtifactResponseMessageService messageResponseService,
+        TokenProvider tokenProvider) throws IllegalArgumentException {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
+
+        if (messageResponseService == null)
+            throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
 
         this.tokenProvider = tokenProvider;
-        this.idsUtils = idsUtils;
+        this.connector = idsUtils.getConnector();
+        this.messageResponseService = messageResponseService;
     }
 
     /**
@@ -69,11 +74,22 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(NotificationMessageImpl message,
+    public MessageResponse handleMessage(NotificationMessage message,
         MessagePayload messagePayload) throws RuntimeException {
-        try {
-            final var connector = idsUtils.getConnector();
+        if (message == null) {
+            LOGGER.warn("Cannot respond when there is no request.");
+            throw new IllegalArgumentException("The requestMessage cannot be null.");
+        }
 
+        if (!messageResponseService.versionSupported(message.getModelVersion())) {
+            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            return ErrorResponse.withDefaultHeader(
+                RejectionReason.VERSION_NOT_SUPPORTED,
+                "Information model version not supported.",
+                connector.getId(), connector.getOutboundModelVersion());
+        }
+
+        try {
             final var responseMsgHeader = new MessageProcessedNotificationMessageBuilder()
                 ._securityToken_(tokenProvider.getTokenJWS())
                 ._correlationMessage_(message.getId())
@@ -88,13 +104,12 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                 message.getId(), messagePayload);
 
             return BodyResponse.create(responseMsgHeader, "Message received.");
-
-        } catch (ConnectorConfigurationException exception) {
-            // The connector must be set.
-            throw exception;
         } catch (ConstraintViolationException exception) {
             // The response could not be constructed.
-            throw new RuntimeException("Failed to construct the response message.", exception);
+            return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Response could not be constructed.",
+                connector.getId(), connector.getOutboundModelVersion());
         }
     }
 }

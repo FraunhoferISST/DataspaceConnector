@@ -27,12 +27,12 @@ import java.util.UUID;
 @Component
 public class PolicyVerifier {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
-    private PolicyReader policyReader;
-    private NotificationMessageService notificationMessageService;
-    private LogMessageService logMessageService;
-    private HttpUtils httpUtils;
+    private final PolicyReader policyReader;
+    private final NotificationMessageService notificationMessageService;
+    private final LogMessageService logMessageService;
+    private final HttpUtils httpUtils;
 
     @Autowired
     /**
@@ -40,7 +40,20 @@ public class PolicyVerifier {
      *
      */
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
-        NotificationMessageService notificationMessageService, HttpUtils httpUtils) {
+        NotificationMessageService notificationMessageService, HttpUtils httpUtils)
+        throws IllegalArgumentException {
+        if (policyReader == null)
+            throw new IllegalArgumentException("The PolicyReader cannot be null.");
+
+        if (logMessageService == null)
+            throw new IllegalArgumentException("The LogMessageService cannot be null.");
+
+        if (notificationMessageService == null)
+            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
+
+        if (httpUtils == null)
+            throw new IllegalArgumentException("The HttpUtils cannot be null.");
+
         this.policyReader = policyReader;
         this.logMessageService = logMessageService;
         this.notificationMessageService = notificationMessageService;
@@ -95,7 +108,7 @@ public class PolicyVerifier {
         if (response != null && response.code() == 200) {
             return allowAccess();
         } else {
-            LOGGER.error("NOT NOTIFIED");
+            LOGGER.warn("NOT NOTIFIED");
             return allowAccess();
         }
     }

@@ -52,8 +52,7 @@ public class ResourceController {
      */
     @Autowired
     public ResourceController(OfferedResourceServiceImpl offeredResourceService,
-        PolicyHandler policyHandler,
-        RequestedResourceServiceImpl requestedResourceService)
+        PolicyHandler policyHandler, RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -238,7 +237,7 @@ public class ResourceController {
             policyHandler.getPattern(policy);
             ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
-        } catch (UnsupportedPatternException |RequestFormatException exception) {
+        } catch (UnsupportedPatternException | RequestFormatException exception) {
             // The policy is not in the correct format.
             LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
                 + "[exception=({})]", exception.getMessage());
