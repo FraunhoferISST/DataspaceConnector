@@ -82,6 +82,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
 
+        // Check if version is supported.
         if (!messageResponseService.versionSupported(message.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
@@ -101,9 +102,6 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                 ._senderAgent_(connector.getId())
                 ._recipientConnector_(Util.asList(message.getIssuerConnector()))
                 .build();
-
-            LOGGER.debug("Received notification. [id=({}), payload=({})]",
-                message.getId(), messagePayload);
 
             return BodyResponse.create(responseMsgHeader, "Message received.");
         } catch (ConstraintViolationException exception) {
