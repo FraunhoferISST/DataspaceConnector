@@ -4,14 +4,13 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
-import de.fraunhofer.iais.eis.NotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
@@ -38,7 +37,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
     private final TokenProvider tokenProvider;
-    private final MessageResponseService messageResponseService;
+    private final ResponseService responseService;
     private final Connector connector;
 
     /**
@@ -48,7 +47,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      */
     @Autowired
     public NotificationMessageHandler(IdsUtils idsUtils,
-        ArtifactResponseMessageService messageResponseService,
+        ArtifactResponseService messageResponseService,
         TokenProvider tokenProvider) throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -61,7 +60,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
         this.tokenProvider = tokenProvider;
         this.connector = idsUtils.getConnector();
-        this.messageResponseService = messageResponseService;
+        this.responseService = messageResponseService;
     }
 
     /**
@@ -83,7 +82,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         }
 
         // Check if version is supported.
-        if (!messageResponseService.versionSupported(message.getModelVersion())) {
+        if (!responseService.versionSupported(message.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,

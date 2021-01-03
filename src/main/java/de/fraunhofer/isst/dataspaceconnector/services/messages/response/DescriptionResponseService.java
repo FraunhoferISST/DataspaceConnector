@@ -16,7 +16,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
@@ -35,9 +36,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DescriptionResponseMessageService extends MessageResponseService {
+public class DescriptionResponseService extends ResponseService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseService.class);
 
     private final TokenProvider tokenProvider;
     private final SerializerProvider serializerProvider;
@@ -46,11 +47,11 @@ public class DescriptionResponseMessageService extends MessageResponseService {
     private URI recipient, correlationMessageId;
 
     @Autowired
-    public DescriptionResponseMessageService(TokenProvider tokenProvider,
+    public DescriptionResponseService(TokenProvider tokenProvider,
         IDSHttpService idsHttpService, SerializerProvider serializerProvider,
-        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils)
-        throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider);
+        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
+        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
+        super(idsHttpService, idsUtils, serializerProvider, resourceService);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");

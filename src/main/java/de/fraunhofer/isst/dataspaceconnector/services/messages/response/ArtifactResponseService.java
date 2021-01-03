@@ -6,7 +6,8 @@ import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
@@ -21,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ArtifactResponseMessageService extends MessageResponseService {
+public class ArtifactResponseService extends ResponseService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResponseMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResponseService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
@@ -31,11 +32,11 @@ public class ArtifactResponseMessageService extends MessageResponseService {
     private URI recipient, contractId, correlationMessageId;
 
     @Autowired
-    public ArtifactResponseMessageService(TokenProvider tokenProvider,
+    public ArtifactResponseService(TokenProvider tokenProvider,
         IDSHttpService idsHttpService, SerializerProvider serializerProvider,
-        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils)
-        throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider);
+        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
+        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
+        super(idsHttpService, idsUtils, serializerProvider, resourceService);
 
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");

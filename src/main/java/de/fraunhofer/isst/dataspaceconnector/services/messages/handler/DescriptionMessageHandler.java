@@ -11,7 +11,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
@@ -40,7 +40,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
-    private final DescriptionResponseMessageService descriptionResponseMessageService;
+    private final DescriptionResponseService descriptionResponseMessageService;
     private final ResourceService resourceService;
     private final Connector connector;
 
@@ -51,7 +51,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      */
     @Autowired
     public DescriptionMessageHandler(IdsUtils idsUtils,
-        DescriptionResponseMessageService descriptionResponseMessageService,
+        DescriptionResponseService descriptionResponseMessageService,
         OfferedResourceServiceImpl offeredResourceService) throws IllegalArgumentException {
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
@@ -99,7 +99,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                 throw new RuntimeException("Failed to construct a resource.", exception);
             }
         } else {
-            // No resource has been requested, return a resource catalog
+            // No resource has been requested, return a resource catalog.
             try {
                 return constructConnectorSelfDescription(requestMessage);
             } catch (RuntimeException exception) {
@@ -137,8 +137,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
                     resourceId, requestMessage.getId());
 
                 return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
-                    "The resource %s could not be found.", resourceId), connector.getId()
-                    , connector.getOutboundModelVersion());
+                    "The resource %s could not be found.", resourceId),
+                    connector.getId(), connector.getOutboundModelVersion());
             }
         } catch (UUIDFormatException exception) {
             // If no resource uuid could be found in the request, reject the message.
@@ -149,8 +149,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "No valid resource id found.",
-                connector.getId(),
-                connector.getOutboundModelVersion());
+                connector.getId(), connector.getOutboundModelVersion());
         } catch (ConstraintViolationException | MessageBuilderException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(

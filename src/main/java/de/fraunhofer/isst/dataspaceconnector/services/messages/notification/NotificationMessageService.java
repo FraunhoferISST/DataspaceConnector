@@ -4,7 +4,8 @@ import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NotificationMessageService extends MessageService {
+public class NotificationMessageService extends RequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageService.class);
 
@@ -26,8 +27,9 @@ public class NotificationMessageService extends MessageService {
 
     @Autowired
     public NotificationMessageService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
-        IdsUtils idsUtils) throws IllegalArgumentException {
-        super(idsHttpService);
+        IdsUtils idsUtils, OfferedResourceServiceImpl resourceService)
+        throws IllegalArgumentException {
+        super(idsHttpService, resourceService);
 
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");

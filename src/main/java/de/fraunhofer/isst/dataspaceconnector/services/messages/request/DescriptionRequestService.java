@@ -4,8 +4,8 @@ import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
@@ -17,26 +17,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DescriptionRequestMessageService extends MessageService {
+public class DescriptionRequestService extends RequestService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestMessageService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestService.class);
 
     private final Connector connector;
     private final TokenProvider tokenProvider;
     private URI recipient, resourceId;
 
     @Autowired
-    public DescriptionRequestMessageService(IdsUtils idsUtils, TokenProvider tokenProvider,
-        IDSHttpService idsHttpService, ConfigurationContainer configurationContainer) throws IllegalArgumentException {
-        super(idsHttpService);
-
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+    public DescriptionRequestService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService)
+        throws IllegalArgumentException {
+        super(idsHttpService, resourceService);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
     }
 

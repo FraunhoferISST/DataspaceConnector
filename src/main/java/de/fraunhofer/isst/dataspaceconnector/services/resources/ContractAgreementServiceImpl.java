@@ -32,7 +32,7 @@ public class ContractAgreementServiceImpl implements ContractAgreementService {
 
     @Override
     public ResourceContract getContract(UUID uuid) {
-        return contractAgreementRepository.getOne(uuid);
+        return contractAgreementRepository.findById(uuid).get();
     }
 
     @Override

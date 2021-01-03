@@ -3,9 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
@@ -17,9 +17,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResource
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.repositories.ContractAgreementRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
@@ -34,7 +34,6 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import java.net.URI;
 import java.util.UUID;
-import javax.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +53,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
     private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
-    private final ArtifactResponseMessageService artifactResponseMessageService;
+    private final ArtifactResponseService responseService;
+    private final ArtifactRequestService requestService;
     private final NegotiationService negotiationService;
     private final Connector connector;
     private final ContractAgreementService contractAgreementService;
@@ -67,7 +67,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     @Autowired
     public ArtifactMessageHandler(OfferedResourceServiceImpl offeredResourceService,
         PolicyHandler policyHandler, IdsUtils idsUtils, NegotiationService negotiationService,
-        ArtifactResponseMessageService artifactResponseMessageService,
+        ArtifactResponseService responseService,
+        ArtifactRequestService requestService,
         ContractAgreementService contractAgreementService)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
@@ -79,8 +80,11 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
-        if (artifactResponseMessageService == null)
-            throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
+        if (responseService == null)
+            throw new IllegalArgumentException("The ArtifactResponseService cannot be null.");
+
+        if (requestService == null)
+            throw new IllegalArgumentException("The ArtifactRequestService cannot be null.");
 
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
@@ -91,7 +95,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
         this.connector = idsUtils.getConnector();
-        this.artifactResponseMessageService = artifactResponseMessageService;
+        this.responseService = responseService;
+        this.requestService = requestService;
         this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
     }
@@ -113,7 +118,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         }
 
         // Check if version is supported.
-        if (!artifactResponseMessageService.versionSupported(requestMessage.getModelVersion())) {
+        if (!responseService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -124,7 +129,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         try {
             // Find artifact and matching resource.
             final var artifactId = extractArtifactIdFromRequest(requestMessage);
-            final var requestedResource = findResourceFromArtifactId(artifactId);
+            final var requestedResource = requestService.findResourceFromArtifactId(artifactId);
 
             // Check if the transferred contract matches the requested artifact.
             if (!checkTransferContract(requestMessage.getTransferContract(),
@@ -155,7 +160,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 final var resourceMetadata = resourceService.getMetadata(resourceId);
 
                 try {
-                    // Check if the policy allows data access.
+                    // Check if the policy allows data access. TODO: Change to contract agreement. (later)
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
                         String data;
                         try {
@@ -189,12 +194,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                         }
 
                         // Build artifact response.
-                        artifactResponseMessageService.setParameter(
+                        responseService.setParameter(
                             requestMessage.getIssuerConnector(),
                             requestMessage.getTransferContract(),
                             requestMessage.getId());
 
-                        return BodyResponse.create(artifactResponseMessageService.buildHeader(), data);
+                        return BodyResponse.create(responseService.buildHeader(), data);
                     } else {
                         // The conditions for reading this resource have not been met.
                         LOGGER.debug("Request policy restriction detected for request."
@@ -272,22 +277,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     }
 
     /**
-     * Find the requested resource.
-     */
-    private Resource findResourceFromArtifactId(UUID artifactId) {
-        for (final var resource : resourceService.getResources()) {
-            for (final var representation : resource.getRepresentation()) {
-                final var representationId = UUIDUtils.uuidFromUri(representation.getId());
-
-                if (representationId.equals(artifactId)) {
-                    return resource;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Extract the artifact id.
      *
      * @throws RequestFormatException - if uuid could not be extracted.
@@ -324,51 +313,18 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                         + "from database.");
                 }
 
+                Contract agreement;
                 try {
-                    return contractIsValid(artifactId, contractToString);
-                } catch (ContractException exception) {
+                    agreement = policyHandler.validateContract(contractToString);
+                } catch (RequestFormatException exception) {
                     throw new ContractException("Could not deserialize contract.");
                 }
+
+                URI extractedId = requestService.getArtifactIdFromContract(agreement);
+                return extractedId.equals(artifactId);
             }
         } else {
             return true;
         }
-    }
-
-    /**
-     * Checks if the contract refers to the requested artifact.
-     *
-     * @throws ContractException - if the contract could not be deserialized.
-     */
-    private boolean contractIsValid(URI artifactId, String contract) throws ContractException {
-        ContractAgreement contractAgreement =
-            (ContractAgreement) policyHandler.validateContract(contract);
-
-        final var obligations = contractAgreement.getObligation();
-        final var permissions = contractAgreement.getPermission();
-        final var prohibitions = contractAgreement.getProhibition();
-
-        if (obligations != null && !obligations.isEmpty()) {
-            for (Rule r : obligations) {
-                if (!r.getTarget().equals(artifactId))
-                    return false;
-            }
-        }
-
-        if (permissions != null && !permissions.isEmpty()) {
-            for (Rule r : permissions) {
-                if (!r.getTarget().equals(artifactId))
-                    return false;
-            }
-        }
-
-        if (prohibitions != null && !prohibitions.isEmpty()) {
-            for (Rule r : prohibitions) {
-                if (!r.getTarget().equals(artifactId))
-                    return false;
-            }
-        }
-
-        return true;
     }
 }
