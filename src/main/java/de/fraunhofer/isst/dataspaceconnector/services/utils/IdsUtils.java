@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.ContractOfferImpl;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.Language;
@@ -127,11 +128,20 @@ public class IdsUtils {
         if (metadata.getPolicy() != null) {
             try {
                 // Add the provider to the contract offer.
-                final var contractOffer = (ContractOfferImpl)
-                    serializerProvider.getSerializer().deserialize(metadata.getPolicy(),
-                        ContractOffer.class);
-                contractOffer.setProvider(getConnector().getId());
-                contracts.add(contractOffer);
+                final var contractOffer = serializerProvider.getSerializer()
+                    .deserialize(metadata.getPolicy(), ContractOffer.class);
+                contracts.add(new ContractOfferBuilder()
+                    ._permission_(contractOffer.getPermission())
+                    ._prohibition_(contractOffer.getProhibition())
+                    ._obligation_(contractOffer.getObligation())
+                    ._contractStart_(contractOffer.getContractStart())
+                    ._contractDate_(contractOffer.getContractDate())
+                    ._consumer_(contractOffer.getConsumer())
+                    ._provider_(getConnector().getId())
+                    ._contractEnd_(contractOffer.getContractEnd())
+                    ._contractAnnex_(contractOffer.getContractAnnex())
+                    ._contractDocument_(contractOffer.getContractDocument())
+                    .build());
             } catch (IOException exception) {
                 LOGGER.debug(String.format("Could not deserialize contract.\nContract: [%s]",
                     metadata.getPolicy()), exception);
