@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Contract method in request controller.
 - Add http tracing and improved logging.
 - Add class for example resources.
+- Add custom profiles.
 
 ### Changed
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
@@ -26,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - Change package structure.
 - Add abstract class to resource service implementations.
 - Adapt policy handler.
+- Improve `pom.xml` and dependencies.
 
 ### Fixed
 - Update connector of configuration container before sending a broker message.
