@@ -184,7 +184,7 @@ public class PolicyVerifier {
             String accessed = httpUtils
                 .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
                     "password");
-            if (Integer.parseInt(accessed) > max) {
+            if (Integer.parseInt(accessed) >= max) {
                 return inhibitAccess();
             } else {
                 return allowAccess();
