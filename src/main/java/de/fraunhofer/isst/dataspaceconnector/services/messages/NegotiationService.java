@@ -137,6 +137,7 @@ public class NegotiationService {
 
             /*Response response; TODO: Error "Incoming Messages must be subtype of RequestMessage
                                   or NotificationMessage!" (Framework Issue)
+                                  TODO: Update resource contract for enforcement. (later
             try {
                 // Get correlation message.
                 URI correlationMessage;
