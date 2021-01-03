@@ -107,10 +107,10 @@ public class BrokerController {
                 return new ResponseEntity<>("The broker answered with: "
                     + brokerResponse.body().string(),
                     HttpStatus.OK);
-            } catch (NullPointerException | IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
             } catch (ConfigurationUpdateException e) {
                 return respondUpdateError(url);
+            } catch (NullPointerException | IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
@@ -138,10 +138,10 @@ public class BrokerController {
                 // Send the unregister request to the broker
                 final var brokerResponse = brokerService.unregisterAtBroker(url);
                 return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-            } catch (NullPointerException | IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
             } catch (ConfigurationUpdateException e) {
                 return respondUpdateError(url);
+            } catch (NullPointerException | IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
             // The request was unauthorized.
