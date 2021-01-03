@@ -15,6 +15,7 @@ import de.fraunhofer.iais.eis.UploadResponseMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
@@ -30,17 +31,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public abstract class MessageResponseService extends MessageService{
+public abstract class ResponseService extends RequestService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(MessageResponseService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ResponseService.class);
 
     private final SerializerProvider serializerProvider;
     private final IdsUtils idsUtils;
+    private String header;
 
     @Autowired
-    public MessageResponseService(IDSHttpService idsHttpService, IdsUtils idsUtils,
-        SerializerProvider serializerProvider) throws IllegalArgumentException {
-        super(idsHttpService);
+    public ResponseService(IDSHttpService idsHttpService, IdsUtils idsUtils,
+        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService)
+        throws IllegalArgumentException {
+        super(idsHttpService, resourceService);
 
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
@@ -74,7 +77,7 @@ public abstract class MessageResponseService extends MessageService{
         if (response == null)
             throw new MessageResponseException("Body is empty.");
 
-        String header, payload;
+        String payload;
         try {
             responseAsString = response.body().string();
 
@@ -150,6 +153,10 @@ public abstract class MessageResponseService extends MessageService{
         } catch (IOException ignored) { }
 
         return null;
+    }
+
+    public String getHeader() {
+        return header;
     }
 
     public enum ResponseType {

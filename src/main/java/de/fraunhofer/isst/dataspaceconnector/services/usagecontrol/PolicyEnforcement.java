@@ -98,7 +98,6 @@ public class PolicyEnforcement {
                         }
                     }
                 }
-
             } catch (IOException e) {
                 throw new IOException(
                     "The policy could not be read. Please check the policy syntax.");

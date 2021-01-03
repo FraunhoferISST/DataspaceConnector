@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService.ResponseType;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -44,10 +44,11 @@ public class RequestController {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
 
     private final TokenProvider tokenProvider;
-    private final ArtifactRequestMessageService artifactRequestMessageService;
-    private final DescriptionRequestMessageService descriptionRequestMessageService;
-    private final ArtifactResponseMessageService artifactResponseMessageService;
-    private final DescriptionResponseMessageService descriptionResponseMessageService;
+    private final ArtifactRequestService artifactRequestService;
+    private final DescriptionRequestService descriptionRequestService;
+    private final ArtifactResponseService artifactResponseService;
+    private final DescriptionResponseService descriptionResponseService;
+    private final ContractResponseService contractResponseService;
     private final NegotiationService negotiationService;
     private final ResourceService resourceService;
 
@@ -58,27 +59,31 @@ public class RequestController {
      */
     @Autowired
     public RequestController(TokenProvider tokenProvider,
-        ArtifactRequestMessageService artifactRequestMessageService,
-        DescriptionRequestMessageService descriptionRequestMessageService,
-        ArtifactResponseMessageService artifactResponseMessageService,
-        DescriptionResponseMessageService descriptionResponseMessageService,
+        ArtifactRequestService artifactRequestService,
+        DescriptionRequestService descriptionRequestService,
+        ArtifactResponseService artifactResponseService,
+        DescriptionResponseService descriptionResponseService,
+        ContractResponseService contractResponseService,
         NegotiationService negotiationService,
         RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        if (artifactRequestMessageService == null)
-            throw new IllegalArgumentException("The ArtifactRequestMessageService cannot be null.");
+        if (artifactRequestService == null)
+            throw new IllegalArgumentException("The ArtifactRequestService cannot be null.");
 
-        if (descriptionRequestMessageService == null)
-            throw new IllegalArgumentException("The DescriptionRequestMessageService cannot be null.");
+        if (descriptionRequestService == null)
+            throw new IllegalArgumentException("The DescriptionRequestService cannot be null.");
 
-        if (artifactResponseMessageService == null)
-            throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
+        if (artifactResponseService == null)
+            throw new IllegalArgumentException("The ArtifactResponseService cannot be null.");
 
-        if (descriptionResponseMessageService == null)
-            throw new IllegalArgumentException("The DescriptionResponseMessageService cannot be null.");
+        if (descriptionResponseService == null)
+            throw new IllegalArgumentException("The DescriptionResponseService cannot be null.");
+
+        if (contractResponseService == null)
+            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
 
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
@@ -87,10 +92,11 @@ public class RequestController {
             throw new IllegalArgumentException("The RequestedResourceServiceImpl cannot be null.");
 
         this.tokenProvider = tokenProvider;
-        this.artifactRequestMessageService = artifactRequestMessageService;
-        this.descriptionRequestMessageService = descriptionRequestMessageService;
-        this.artifactResponseMessageService = artifactResponseMessageService;
-        this.descriptionResponseMessageService = descriptionResponseMessageService;
+        this.artifactRequestService = artifactRequestService;
+        this.descriptionRequestService = descriptionRequestService;
+        this.artifactResponseService = artifactResponseService;
+        this.descriptionResponseService = descriptionResponseService;
+        this.contractResponseService = contractResponseService;
         this.negotiationService = negotiationService;
         this.resourceService = requestedResourceService;
     }
@@ -120,8 +126,8 @@ public class RequestController {
         Response response;
         try {
             // Send DescriptionRequestMessage.
-            descriptionRequestMessageService.setParameter(recipient, resourceId);
-            response = descriptionRequestMessageService.sendMessage(descriptionRequestMessageService, "");
+            descriptionRequestService.setParameter(recipient, resourceId);
+            response = descriptionRequestService.sendMessage("");
         } catch (MessageException exception) {
             // Failed to send description request message.
             LOGGER.info("Could not connect to request message service. " + exception.getMessage());
@@ -131,7 +137,7 @@ public class RequestController {
 
         Map<ResponseType, String> map;
         try {
-            map = descriptionResponseMessageService.handleResponse(response);
+            map = descriptionResponseService.handleResponse(response);
         } catch (MessageResponseException e) {
             // The response is null.
             LOGGER.warn("Could not read response body. [exception=({})]",
@@ -148,7 +154,8 @@ public class RequestController {
         if (resourceId != null) {
             // Save metadata to database.
             try {
-                final var validationKey = descriptionResponseMessageService.saveMetadata(payload, resourceId);
+                final var validationKey = descriptionResponseService
+                    .saveMetadata(payload, resourceId);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (Exception e) {
@@ -185,12 +192,14 @@ public class RequestController {
             return respondRejectUnauthorized(recipient, null);
         }
 
-        // Start policy negotiation.
         Map<ResponseType, String> map;
         try {
-            Response response = negotiationService.startSequence(contractOffer, artifactId, recipient);
+            // Start policy negotiation.
+            Response response = negotiationService
+                .sendContractRequest(contractOffer, artifactId, recipient);
             try {
-                map = descriptionResponseMessageService.handleResponse(response);
+                // Read response.
+                map = contractResponseService.handleResponse(response);
             } catch (MessageResponseException e) {
                 // The response is null
                 LOGGER.warn("Received no response message.");
@@ -203,13 +212,13 @@ public class RequestController {
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        URI agreementId = negotiationService.contractAccepted(map);
-        // Check response.
+        // Get contract id.
+        URI agreementId = negotiationService.contractAccepted(map, contractResponseService.getHeader());
         if (agreementId == null) {
             return returnRejectionMessage(map);
         }
 
-        return new ResponseEntity<>(String.format("Successful negotiation. Contract"
+        return new ResponseEntity<>(String.format("Negotiation has been successful. Contract "
             + "agreement: %s", agreementId), HttpStatus.OK);
     }
 
@@ -256,8 +265,8 @@ public class RequestController {
         Response response;
         try {
             // Send ArtifactRequestMessage.
-            artifactRequestMessageService.setParameter(recipient, artifactId, contractId);
-            response = artifactRequestMessageService.sendMessage(artifactRequestMessageService, "");
+            artifactRequestService.setParameter(recipient, artifactId, contractId);
+            response = artifactRequestService.sendMessage("");
         } catch (MessageException exception) {
             // Failed to send a description request message
             LOGGER.info("Could not connect to request message service.");
@@ -267,7 +276,7 @@ public class RequestController {
 
         Map<ResponseType, String> map;
         try {
-            map = artifactResponseMessageService.readResponse(response);
+            map = artifactResponseService.readResponse(response);
         } catch (MessageResponseException exception) {
             LOGGER.warn("Could not read response body. [exception=({})]",
                 exception.getMessage());
@@ -282,8 +291,8 @@ public class RequestController {
 
         try {
             // Save data to database.
-            artifactResponseMessageService.saveData(payload, key);
-            return new ResponseEntity<>(String.format("Saved at: %s \nResponse: " +
+            artifactResponseService.saveData(payload, key);
+            return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
                 "%s", key, payload), HttpStatus.OK);
         } catch (Exception exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
@@ -308,6 +317,9 @@ public class RequestController {
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * Checks for rejection or contract rejection message.
+     */
     private ResponseEntity<String> returnRejectionMessage(Map<ResponseType, String> map) {
         if (map.get(ResponseType.REJECTION) != null) {
             return new ResponseEntity<>(ResponseType.REJECTION + ": "

@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferImpl;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
@@ -123,10 +122,11 @@ public class IdsUtils {
             }
         }
 
-        // Get the list of contracts
+        // Get the list of contracts.
         var contracts = new ArrayList<ContractOffer>();
         if (metadata.getPolicy() != null) {
             try {
+                // Add the provider to the contract offer.
                 final var contractOffer = (ContractOfferImpl)
                     serializerProvider.getSerializer().deserialize(metadata.getPolicy(),
                         ContractOffer.class);
@@ -139,7 +139,7 @@ public class IdsUtils {
             }
         }
 
-        // Build the ids resource
+        // Build the ids resource.
         try {
             return new ResourceBuilder(
                 URI.create("https://w3id.org/idsa/autogen/resource/" + resource.getUuid()))

@@ -1,9 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestImpl;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.PermissionImpl;
@@ -14,11 +17,14 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService.ResponseType;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractAgreementMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,22 +40,25 @@ public class NegotiationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final PolicyHandler policyHandler;
-    private final ContractRequestMessageService contractRequestMessageService;
-    private final ContractAgreementMessageService contractAgreementMessageService;
+    private final ContractRequestService contractRequestService;
+    private final ContractResponseService contractResponseService;
     private final SerializerProvider serializerProvider;
+    private Connector connector;
+
     private boolean status;
     private URI recipient;
 
     @Autowired
-    public NegotiationService(ContractRequestMessageService contractRequestMessageService,
-        ContractAgreementMessageService contractAgreementMessageService,
-        PolicyHandler policyHandler, SerializerProvider serializerProvider)
+    public NegotiationService(ContractRequestService contractRequestService,
+        ContractResponseService contractResponseService,
+        PolicyHandler policyHandler, SerializerProvider serializerProvider,
+        ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
-        if (contractRequestMessageService == null)
-            throw new IllegalArgumentException("The ContractRequestMessageService cannot be null.");
+        if (contractRequestService == null)
+            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
 
-        if (contractAgreementMessageService == null)
-            throw new IllegalArgumentException("The ContractAgreementMessageService cannot be null.");
+        if (contractResponseService == null)
+            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
 
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
@@ -57,11 +66,15 @@ public class NegotiationService {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
-        this.contractRequestMessageService = contractRequestMessageService;
-        this.contractAgreementMessageService = contractAgreementMessageService;
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        this.contractRequestService = contractRequestService;
+        this.contractResponseService = contractResponseService;
         this.policyHandler = policyHandler;
         this.status = true;
         this.serializerProvider = serializerProvider;
+        this.connector = configurationContainer.getConnector();
     }
 
     /**
@@ -71,12 +84,13 @@ public class NegotiationService {
      * @throws IllegalArgumentException - if the contract could not be deserialized.
      * @throws MessageException - if the contract request message could not be sent.
      */
-    public Response startSequence(String contractAsString, URI artifactId, URI recipient)
+    public Response sendContractRequest(String contractAsString, URI artifactId, URI recipient)
         throws IllegalArgumentException, MessageException {
         this.recipient = recipient;
 
         Contract contract;
         try {
+            // Validate contract input.
             contract = policyHandler.validateContract(contractAsString);
         } catch (RequestFormatException exception) {
             LOGGER.warn("Could not deserialize contract. [exception=({})]",
@@ -84,16 +98,16 @@ public class NegotiationService {
             throw new RequestFormatException("Malformed contract. " + exception.getMessage());
         }
 
-        ContractRequest request = fillContract(artifactId,
-            contractRequestMessageService.buildContractRequest(contract));
+        // Build contract request. TODO: Change to curator or maintainer?
+        ContractRequest request = fillContract(artifactId, connector.getId(),
+            contractRequestService.buildContractRequest(contract));
 
         try {
             // Send ContractRequestMessage.
-            contractRequestMessageService.setParameter(recipient, request.getId());
-            return contractRequestMessageService.sendMessage(contractRequestMessageService,
-                request.toRdf());
+            contractRequestService.setParameter(recipient, request.getId());
+            return contractRequestService.sendMessage(request.toRdf());
         } catch (MessageException exception) {
-            // Failed to send a contract request message
+            // Failed to send a contract request message.
             LOGGER.warn("Could not connect to request message service. [exception=({})]",
                 exception.getMessage());
             throw new MessageNotSentException("Error in message service. " + exception.getMessage());
@@ -107,12 +121,13 @@ public class NegotiationService {
     * @throws ContractException - if the contract could not be read.
     * @throws MessageException - if the contract request message could not be sent.
     */
-    public URI contractAccepted(Map<ResponseType, String> map)
-        throws ContractException, MessageException {
+    public URI contractAccepted(Map<ResponseType, String> map, String header) throws ContractException,
+        MessageException {
         final var payload = map.get(ResponseType.CONTRACT_AGREEMENT);
         if (payload != null) {
             Contract contract;
             try {
+                // Validate received contract.
                 contract = policyHandler.validateContract(payload);
             } catch (UnsupportedPatternException exception) {
                 LOGGER.warn("Could not deserialize contract. [exception=({})]",
@@ -120,14 +135,23 @@ public class NegotiationService {
                 throw new UnsupportedPatternException("Malformed contract. " + exception.getMessage());
             }
 
-            ContractAgreement agreement = contractAgreementMessageService.buildContractAgreement(contract);
-
-            Response response;
+            /*Response response; TODO: Error "Incoming Messages must be subtype of RequestMessage
+                                  or NotificationMessage!" (Framework Issue)
             try {
+                // Get correlation message.
+                URI correlationMessage;
+                try {
+                    ContractAgreementMessage message = serializerProvider.getSerializer()
+                        .deserialize(header, ContractAgreementMessage.class);
+                    correlationMessage = message.getCorrelationMessage();
+                } catch (IOException exception) {
+                    throw new MessageResponseException("Could not read contract agreement.");
+                }
+
                 // Send ContractAgreementMessage to recipient.
-                contractAgreementMessageService.setParameter(recipient);
-                response = contractAgreementMessageService
-                    .sendMessage(contractAgreementMessageService, agreement.toRdf());
+                contractResponseService.setParameter(recipient, correlationMessage, contract.getId());
+                ContractAgreement agreement = contractResponseService.buildContractAgreement(contract);
+                response = contractResponseService.sendMessage(agreement.toRdf());
             } catch (MessageException exception) {
                 // Failed to send a contract agreement message
                 LOGGER.warn("Could not connect to request message service. [exception=({})]",
@@ -135,48 +159,16 @@ public class NegotiationService {
                 throw new MessageNotSentException("Could not send contract agreement message. "
                     + exception.getMessage());
             }
+            if (response != null) {
+                LOGGER.warn("Received unexpected response" + response.body().toString());
+            } else {
+                return null;
+            }*/
 
             return contract.getId();
         } else {
             return null;
         }
-    }
-
-    /**
-     * Compare the content of to rule lists to each other.
-     *
-     * @param request List of rules of the contract request.
-     * @param offer List of rules of the contract offer.
-     * @return True is the content is equal, false if any difference is detected.
-     */
-    public boolean compareRule(ArrayList<? extends Rule> request, ArrayList<? extends Rule> offer) {
-        if (request == null && offer == null) {
-            return true;
-        } else if (request == null) {
-            return false;
-        } else if (offer == null) {
-            return false;
-        }
-
-        if (request.size() != offer.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < request.size(); i++) {
-            Rule requestRule = request.get(i);
-            Rule offerRule = offer.get(i);
-            try {
-                String requestString = serializerProvider.getSerializer().serializePlainJson(requestRule);
-                String offerString = serializerProvider.getSerializer().serializePlainJson(offerRule);
-                if (!requestString.equals(offerString)) {
-                    return false;
-                }
-            } catch (JsonProcessingException e) {
-                return false;
-            }
-            i++;
-        }
-        return true;
     }
 
     public boolean isStatus() {
@@ -187,7 +179,13 @@ public class NegotiationService {
         this.status = status;
     }
 
-    private ContractRequest fillContract(URI artifactId, ContractRequest contractRequest) {
+    /**
+     * Add artifact id to every rule in this contract.
+     *
+     * @return A valid contract request.
+     */
+    private ContractRequest fillContract(URI artifactId, URI consumer,
+        ContractRequest contractRequest) {
         ContractRequestImpl request = (ContractRequestImpl) contractRequest;
 
         final var obligations = request.getObligation();
@@ -195,23 +193,76 @@ public class NegotiationService {
         final var prohibitions = request.getProhibition();
 
         if (obligations != null && !obligations.isEmpty()) {
-            for (Rule r : obligations) {
+            for (Rule r : obligations)
                 ((DutyImpl) r).setTarget(artifactId);
-            }
         }
 
         if (permissions != null && !permissions.isEmpty()) {
-            for (Rule r : permissions) {
+            for (Rule r : permissions)
                 ((PermissionImpl) r).setTarget(artifactId);
-            }
         }
 
         if (prohibitions != null && !prohibitions.isEmpty()) {
-            for (Rule r : prohibitions) {
+            for (Rule r : prohibitions)
                 ((ProhibitionImpl) r).setTarget(artifactId);
-            }
         }
 
+        // Add consumer to contract.
+        request.setConsumer(consumer);
         return request;
+    }
+
+    /**
+     * Compare the contracts to each other.
+     *
+     * @return True is the content is equal, false if any difference is detected.
+     */
+    public boolean compareContracts(ContractRequest request, Contract offer)
+        throws JsonProcessingException{
+        if (request == null || offer == null)
+            return false;
+
+        String requestPermission = null;
+        if (request.getPermission() != null)
+            requestPermission = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        String offerPermission = null;
+        if (offer.getPermission() != null)
+            offerPermission = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        String requestProhibition = null;
+        if (request.getProhibition() != null)
+            requestProhibition = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        String offerProhibition = null;
+        if (offer.getProhibition() != null)
+            offerProhibition = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        String requestObligation = null;
+        if (request.getObligation() != null)
+            requestObligation = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        String offerObligation = null;
+        if (offer.getObligation() != null)
+            offerObligation = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+
+        return compareRules(requestPermission, offerPermission)
+            && compareRules(requestProhibition, offerProhibition)
+            && compareRules(requestObligation, offerObligation);
+    }
+
+    /**
+     * Compare the content of the rule lists to each other.
+     *
+     * @return True is the content is equal, false if any difference is detected.
+     */
+    public boolean compareRules(String request, String offer) {
+        if (request == null && offer == null)
+            return true;
+
+        if (request == null || offer == null)
+            return false;
+
+        return request.equals(offer);
     }
 }

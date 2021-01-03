@@ -84,7 +84,7 @@ public class PolicyVerifier {
      * @return Success or not (access or inhibition).
      */
     public boolean logAccess() {
-        Response response = logMessageService.sendMessage(logMessageService, "");
+        Response response = logMessageService.sendMessage("");
         if (response != null && response.code() == 200) {
             return allowAccess();
         } else {
@@ -104,7 +104,7 @@ public class PolicyVerifier {
         String recipient = policyReader.getEndpoint(rule);
 
         notificationMessageService.setParameter(URI.create(recipient));
-        Response response = notificationMessageService.sendMessage(notificationMessageService, "");
+        Response response = notificationMessageService.sendMessage("");
         if (response != null && response.code() == 200) {
             return allowAccess();
         } else {

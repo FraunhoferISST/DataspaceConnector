@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessage;
@@ -10,18 +11,21 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.RequestMessage;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractAgreementMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
@@ -33,9 +37,9 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.Message
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
-import okhttp3.Response;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,12 +60,13 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
 
     private final Connector connector;
     private final NegotiationService negotiationService;
-    private final MessageResponseService messageResponseService;
     private final PolicyHandler policyHandler;
-    private final ContractAgreementMessageService contractAgreementMessageService;
+    private final ContractResponseService responseService;
+    private final ContractRequestService requestService;
     private final TokenProvider tokenProvider;
     private final ContractAgreementService contractAgreementService;
     private final LogMessageService logMessageService;
+    private final ResourceService resourceService;
     private RequestMessage requestMessage;
 
     /**
@@ -71,10 +76,12 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      */
     @Autowired
     public ContractMessageHandler(IdsUtils idsUtils, NegotiationService negotiationService,
-        ArtifactResponseMessageService messageResponseService, PolicyHandler policyHandler,
-        ContractAgreementMessageService contractAgreementMessageService,
+        ArtifactResponseService messageResponseService, PolicyHandler policyHandler,
         ContractAgreementService contractAgreementService,
-        LogMessageService logMessageService, TokenProvider tokenProvider)
+        ContractResponseService responseService,
+        ContractRequestService requestService,
+        LogMessageService logMessageService, TokenProvider tokenProvider,
+        OfferedResourceServiceImpl offeredResourceService)
         throws IllegalArgumentException {
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
@@ -88,11 +95,14 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
 
-        if (contractAgreementMessageService == null)
+        if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementMessageService cannot be null.");
 
-        if (contractAgreementService == null)
-            throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
+        if (responseService == null)
+            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
+
+        if (requestService == null)
+            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
 
         if (logMessageService == null)
             throw new IllegalArgumentException("The LogMessageService cannot be null.");
@@ -100,14 +110,18 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
+        if (offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
+
         this.connector = idsUtils.getConnector();
         this.negotiationService = negotiationService;
-        this.messageResponseService = messageResponseService;
         this.policyHandler = policyHandler;
-        this.contractAgreementMessageService = contractAgreementMessageService;
         this.contractAgreementService = contractAgreementService;
+        this.responseService = responseService;
+        this.requestService = requestService;
         this.logMessageService = logMessageService;
         this.tokenProvider = tokenProvider;
+        this.resourceService = offeredResourceService;
     }
 
     /**
@@ -131,7 +145,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         }
 
         // Check if version is supported.
-        if (!messageResponseService.versionSupported(requestMessage.getModelVersion())) {
+        if (!responseService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -175,19 +189,18 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @param payload The message payload containing a contract request.
      * @return A message response to the requesting connector.
      */
-    public MessageResponse checkContractRequest(String payload)
-        throws RuntimeException {
-        ContractRequest contractRequest;
+    public MessageResponse checkContractRequest(String payload) throws RuntimeException {
         try {
             // Deserialize string to contract object.
-            contractRequest = (ContractRequest) policyHandler.validateContract(payload);
+            final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
+
+            // Get artifact id from contract request.
+            URI artifactId = requestService.getArtifactIdFromContract(contractRequest);
             // Load contract offer from metadata.
-            ContractOffer contractOffer = (ContractOffer) contractRequest; // TODO get contract offer from db
+            ContractOffer contractOffer = getContractOfferByArtifact(artifactId);
 
             // Check if the contract request has the same content as the stored contract offer.
-            if (negotiationService.compareRule(contractRequest.getObligation(), contractOffer.getObligation())
-                && negotiationService.compareRule(contractRequest.getPermission(), contractOffer.getPermission())
-                && negotiationService.compareRule(contractRequest.getProhibition(), contractOffer.getProhibition())) {
+            if (negotiationService.compareContracts(contractRequest, contractOffer)) {
                 return acceptContract(contractRequest);
             } else {
                 // If differences have been detected.
@@ -202,17 +215,37 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 "No valid resource id found.",
                 connector.getId(),
                 connector.getOutboundModelVersion());
+        } catch (ResourceNotFoundException exception) {
+            // The resource could be not be found.
+            LOGGER.debug("The artifact could not be found. [id=({}), exception=({})]",
+                requestMessage.getId(), exception.getMessage());
+            return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                "Artifact not found.", connector.getId(),
+                connector.getOutboundModelVersion());
         } catch (MessageBuilderException exception) {
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
                 connector.getId(), connector.getOutboundModelVersion());
-        } catch (RuntimeException exception) {
+        } catch (RuntimeException | JsonProcessingException exception) {
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Malformed contract request.",
                 connector.getId(), connector.getOutboundModelVersion());
         }
+    }
+
+    /**
+     * Gets the contract offer by artifact id.
+     *
+     * @return The resource's contract offer.
+     */
+    private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
+        UUID uuid = UUIDUtils.uuidFromUri(artifactId);
+        Resource resource = requestService.findResourceFromArtifactId(uuid);
+        if (resource == null)
+            throw new ResourceNotFoundException("Artifact not known.");
+        return resource.getContractOffer().get(0);
     }
 
     /**
@@ -224,26 +257,26 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      */
     private MessageResponse acceptContract(ContractRequest contractRequest)
         throws UUIDFormatException, MessageBuilderException {
-        // Turn the accepted contract request into a contract agreement.
-        ContractAgreement contractAgreement =
-            contractAgreementMessageService.buildContractAgreement(contractRequest);
 
+        responseService.setParameter(
+            requestMessage.getIssuerConnector(), requestMessage.getId(), null);
+        // Turn the accepted contract request into a contract agreement.
+        ContractAgreement contractAgreement = responseService.buildContractAgreement(contractRequest);
         // Build message header.
-        Message message = contractAgreementMessageService.buildHeader();
+        Message message = responseService.buildHeader();
 
         // Save contract agreement to database.
         UUID uuid = UUIDUtils.uuidFromUri(contractAgreement.getId());
         contractAgreementService.addContract(new ResourceContract(uuid, contractAgreement.toRdf()));
-        // Send ContractAgreement to the ClearingHouse.
-        try {
-            Response response = logMessageService.sendMessage(logMessageService, contractAgreement.toRdf());
-            if (response == null) {
-                throw new MessageException("Response body is empty.");
-            }
-        } catch (MessageException exception) {
-            // Log if the message could not be sent to the clearing house.
-            LOGGER.warn("Could not connect to clearing house. " + exception.getMessage());
-        }
+        // Send ContractAgreement to the ClearingHouse. TODO: Activate Clearing House communication as soon as it accepts IM 4.
+//        try {
+//            Response response = logMessageService.sendMessage(contractAgreement.toRdf());
+//            if (response == null)
+//                throw new MessageException("Response body is empty.");
+//        } catch (MessageException exception) {
+//            // Log if the message could not be sent to the clearing house.
+//            LOGGER.warn("Could not connect to clearing house. " + exception.getMessage());
+//        }
 
         // Send response to the data consumer.
         return BodyResponse.create(message, contractAgreement.toRdf());
@@ -254,7 +287,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      *
      * @return A contract rejection message.
      */
-    private MessageResponse rejectContract() {
+    private MessageResponse rejectContract() { // TODO: Change to Error Response. (Framework Issue)
         return BodyResponse.create(new ContractRejectionMessageBuilder()
             ._securityToken_(tokenProvider.getTokenJWS())
             ._correlationMessage_(requestMessage.getId())
@@ -264,8 +297,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
             ._senderAgent_(connector.getId())
             ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(requestMessage.getIssuerConnector()))
             ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
-            ._contractRejectionReason_(new TypedLiteral(
-                "Contract not accepted.", "en"))
+            ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
             .build(), "Contract rejected.");
     }
 }

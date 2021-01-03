@@ -113,7 +113,7 @@ public class MainController {
      */
     @Operation(summary = "Connector Self-description",
         description = "Get the connector's self-description.")
-    @RequestMapping(value = {"/admin/api/self-description"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/api/connector"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
         try {
@@ -143,7 +143,7 @@ public class MainController {
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status", description = "Turn the policy negotiation on or off.")
-    @RequestMapping(value = {"negotiation"}, method = RequestMethod.PUT)
+    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
         negotiationService.setStatus(status);
@@ -161,7 +161,7 @@ public class MainController {
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status Check", description = "Return the policy negotiation status.")
-    @RequestMapping(value = {"negotiation"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getNegotiationStatus() {
         if (negotiationService.isStatus()) {
