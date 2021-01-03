@@ -139,7 +139,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
                 return ErrorResponse.withDefaultHeader(
                     RejectionReason.BAD_PARAMETERS,
-                    "Missing contract request or wrong contract.",
+                    "Missing transfer contract or wrong contract.",
                     connector.getId(), connector.getOutboundModelVersion());
             }
 

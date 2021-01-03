@@ -245,7 +245,7 @@ public class RequestController {
         @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "The URI of the contract agreement.", required = false,
             example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "contractAgreement", required = false) URI contractId,
+        @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key) {
         if (tokenProvider.getTokenJWS() == null) {
