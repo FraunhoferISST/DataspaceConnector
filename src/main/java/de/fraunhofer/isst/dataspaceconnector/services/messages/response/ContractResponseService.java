@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
@@ -30,15 +31,19 @@ public class ContractResponseService extends ResponseService {
     private URI recipient, correlationMessage, contractId;
 
     @Autowired
-    public ContractResponseService(TokenProvider tokenProvider,
-        IDSHttpService idsHttpService, IdsUtils idsUtils, SerializerProvider serializerProvider,
-        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
+    public ContractResponseService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        IdsUtils idsUtils, SerializerProvider serializerProvider,
+        OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         super(idsHttpService, idsUtils, serializerProvider, resourceService);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
     }
 

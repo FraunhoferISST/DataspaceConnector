@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 public class InvalidResourceException extends ResourceException {
 
     /**
-     * Construct a InvalidResourceException with the specified detail message and cause.
+     * Construct an InvalidResourceException with the specified detail message and cause.
      *
      * @param msg The detail message.
      */
@@ -12,7 +12,7 @@ public class InvalidResourceException extends ResourceException {
     }
 
     /**
-     * Construct a InvalidResourceException with the specified detail message and cause.
+     * Construct an InvalidResourceException with the specified detail message and cause.
      *
      * @param msg   The detail message.
      * @param cause The cause.
@@ -22,7 +22,7 @@ public class InvalidResourceException extends ResourceException {
     }
 
     /**
-     * Construct a InvalidResourceException with the specified detail cause.
+     * Construct an InvalidResourceException with the specified detail cause.
      *
      * @param cause The cause.
      */

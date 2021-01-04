@@ -23,7 +23,7 @@ public class HttpTraceEventHandler {
     @Async
     @EventListener
     public void handleHttpTraceEvent(HttpTrace trace) {
-        LOGGER.trace("{}", trace);
+        LOGGER.info("{}", trace);
     }
 
     /**

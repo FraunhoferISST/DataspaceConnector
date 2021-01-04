@@ -10,7 +10,6 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
@@ -22,6 +21,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourc
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -50,7 +50,8 @@ public class DescriptionResponseService extends ResponseService {
     public DescriptionResponseService(TokenProvider tokenProvider,
         IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
-        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
+        OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         super(idsHttpService, idsUtils, serializerProvider, resourceService);
 
         if (tokenProvider == null)
@@ -62,7 +63,10 @@ public class DescriptionResponseService extends ResponseService {
         if (requestedResourceService == null)
             throw new IllegalArgumentException("The ResourceService cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
         this.serializerProvider = serializerProvider;
         this.resourceService = requestedResourceService;
@@ -154,7 +158,7 @@ public class DescriptionResponseService extends ResponseService {
 
         if (resource.getKeyword() != null) {
             List<String> keywords = new ArrayList<>();
-            for (TypedLiteral t : resource.getKeyword()) {
+            for (var t : resource.getKeyword()) {
                 keywords.add(t.getValue());
             }
             metadata.setKeywords(keywords);

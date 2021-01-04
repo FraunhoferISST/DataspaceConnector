@@ -61,7 +61,7 @@ public abstract class RequestService {
         try {
             message = buildHeader();
         } catch (MessageBuilderException e) {
-            LOGGER.warn("Message could not be built. " + e.getMessage());
+            LOGGER.warn("Message could not be built. {}", e.getMessage());
             throw new MessageBuilderException("Message could not be built.", e);
         }
 
