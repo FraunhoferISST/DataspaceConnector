@@ -19,7 +19,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 /**
  * Use this class to log all incoming and outgoing http traffic.
  */
-//@Component
+@Component
 @Order(1)
 public class HttpTraceFilter extends OncePerRequestFilter {
 

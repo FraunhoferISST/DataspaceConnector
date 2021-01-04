@@ -11,6 +11,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceS
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -35,7 +36,8 @@ public class ArtifactResponseService extends ResponseService {
     public ArtifactResponseService(TokenProvider tokenProvider,
         IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
-        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
+        OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         super(idsHttpService, idsUtils, serializerProvider, resourceService);
 
         if (idsUtils == null)
@@ -47,7 +49,10 @@ public class ArtifactResponseService extends ResponseService {
         if (requestedResourceService == null)
             throw new IllegalArgumentException("The ResourceService cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
         this.resourceService = requestedResourceService;
     }

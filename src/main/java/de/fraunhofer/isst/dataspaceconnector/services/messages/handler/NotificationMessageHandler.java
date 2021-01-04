@@ -11,7 +11,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -46,20 +46,20 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public NotificationMessageHandler(IdsUtils idsUtils,
-        ArtifactResponseService messageResponseService,
-        TokenProvider tokenProvider) throws IllegalArgumentException {
+    public NotificationMessageHandler(ConfigurationContainer configurationContainer,
+        ArtifactResponseService messageResponseService, TokenProvider tokenProvider)
+        throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (messageResponseService == null)
             throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
 
         this.tokenProvider = tokenProvider;
-        this.connector = idsUtils.getConnector();
+        this.connector = configurationContainer.getConnector();
         this.responseService = messageResponseService;
     }
 

@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -26,18 +26,18 @@ public class ArtifactRequestService extends RequestService {
     private URI recipient, artifactId, contractId;
 
     @Autowired
-    public ArtifactRequestService(IdsUtils idsUtils, TokenProvider tokenProvider,
-        IDSHttpService idsHttpService, OfferedResourceServiceImpl resourceService)
-        throws IllegalArgumentException {
+    public ArtifactRequestService(ConfigurationContainer configurationContainer,
+        TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
         super(idsHttpService, resourceService);
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
     }
 

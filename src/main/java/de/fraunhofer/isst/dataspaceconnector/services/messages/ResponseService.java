@@ -64,7 +64,7 @@ public abstract class ResponseService extends RequestService {
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
         final var connector = idsUtils.getConnector();
 
-        for (String version : connector.getInboundModelVersion()) {
+        for (var version : connector.getInboundModelVersion()) {
             if (version.equals(versionString)) {
                 return true;
             }

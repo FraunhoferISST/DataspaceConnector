@@ -4,9 +4,7 @@ import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
@@ -24,8 +22,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreemen
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -66,10 +64,10 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      */
     @Autowired
     public ArtifactMessageHandler(OfferedResourceServiceImpl offeredResourceService,
-        PolicyHandler policyHandler, IdsUtils idsUtils, NegotiationService negotiationService,
-        ArtifactResponseService responseService,
-        ArtifactRequestService requestService,
-        ContractAgreementService contractAgreementService)
+        PolicyHandler policyHandler, NegotiationService negotiationService,
+        ArtifactResponseService responseService, ArtifactRequestService requestService,
+        ContractAgreementService contractAgreementService,
+        ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -77,8 +75,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (responseService == null)
             throw new IllegalArgumentException("The ArtifactResponseService cannot be null.");
@@ -94,7 +92,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
         this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
-        this.connector = idsUtils.getConnector();
+        this.connector = configurationContainer.getConnector();
         this.responseService = responseService;
         this.requestService = requestService;
         this.negotiationService = negotiationService;

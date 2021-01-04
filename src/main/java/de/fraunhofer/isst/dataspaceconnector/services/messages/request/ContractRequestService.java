@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
@@ -32,8 +33,8 @@ public class ContractRequestService extends RequestService {
 
     @Autowired
     public ContractRequestService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
-        IdsUtils idsUtils, OfferedResourceServiceImpl resourceService)
-        throws IllegalArgumentException {
+        IdsUtils idsUtils, OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         super(idsHttpService, resourceService);
 
         if (tokenProvider == null)
@@ -42,7 +43,10 @@ public class ContractRequestService extends RequestService {
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
 
-        this.connector = idsUtils.getConnector();
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        this.connector = configurationContainer.getConnector();
         this.tokenProvider = tokenProvider;
         this.idsUtils = idsUtils;
     }

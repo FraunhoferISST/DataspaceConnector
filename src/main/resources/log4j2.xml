@@ -28,7 +28,7 @@
         <Logger name="org.hibernate" level="error">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-        <Logger name="de.fraunhofer.isst.dataspaceconnector" level="debug">
+        <Logger name="de.fraunhofer.isst.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
     </Loggers>

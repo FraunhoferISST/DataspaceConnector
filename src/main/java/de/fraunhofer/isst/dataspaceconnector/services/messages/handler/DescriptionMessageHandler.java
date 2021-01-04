@@ -14,8 +14,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
@@ -50,21 +50,21 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public DescriptionMessageHandler(IdsUtils idsUtils,
+    public DescriptionMessageHandler(ConfigurationContainer configurationContainer,
         DescriptionResponseService descriptionResponseMessageService,
         OfferedResourceServiceImpl offeredResourceService) throws IllegalArgumentException {
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (descriptionResponseMessageService == null)
-            throw new IllegalArgumentException("The DescriptionResponseMessageService cannot be null.");
+            throw new IllegalArgumentException("The DescriptionResponseService cannot be null.");
 
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
 
         this.descriptionResponseMessageService = descriptionResponseMessageService;
         this.resourceService = offeredResourceService;
-        this.connector = idsUtils.getConnector();
+        this.connector = configurationContainer.getConnector();
     }
 
     /**
