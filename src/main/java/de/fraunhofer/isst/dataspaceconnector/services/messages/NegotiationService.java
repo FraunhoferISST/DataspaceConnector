@@ -1,12 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestImpl;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.PermissionImpl;
@@ -17,16 +13,13 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Map;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -43,7 +36,7 @@ public class NegotiationService {
     private final ContractRequestService contractRequestService;
     private final ContractResponseService contractResponseService;
     private final SerializerProvider serializerProvider;
-    private Connector connector;
+    private final ConfigurationContainer configurationContainer;
 
     private boolean status;
     private URI recipient;
@@ -74,7 +67,7 @@ public class NegotiationService {
         this.policyHandler = policyHandler;
         this.status = true;
         this.serializerProvider = serializerProvider;
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -97,6 +90,9 @@ public class NegotiationService {
                 exception.getMessage());
             throw new RequestFormatException("Malformed contract. " + exception.getMessage());
         }
+
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         // Build contract request. TODO: Change to curator or maintainer?
         ContractRequest request = fillContract(artifactId, connector.getId(),
@@ -137,7 +133,7 @@ public class NegotiationService {
 
             /*Response response; TODO: Error "Incoming Messages must be subtype of RequestMessage
                                   or NotificationMessage!" (Framework Issue)
-                                  TODO: Update resource contract for enforcement. (later
+                                  TODO: Update resource contract for enforcement. (later)
             try {
                 // Get correlation message.
                 URI correlationMessage;

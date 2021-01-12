@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.notification;
 
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -21,7 +20,7 @@ public class NotificationMessageService extends RequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageService.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
     private URI recipient;
 
@@ -37,12 +36,15 @@ public class NotificationMessageService extends RequestService {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public Message buildHeader() throws MessageException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return new NotificationMessageBuilder()
             ._issued_(Util.getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())

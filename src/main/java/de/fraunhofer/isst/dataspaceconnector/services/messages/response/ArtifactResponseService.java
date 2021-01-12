@@ -3,7 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
 import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
@@ -27,7 +26,7 @@ public class ArtifactResponseService extends ResponseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResponseService.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
     private final ResourceService resourceService;
     private URI recipient, contractId, correlationMessageId;
@@ -52,13 +51,16 @@ public class ArtifactResponseService extends ResponseService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
         this.resourceService = requestedResourceService;
     }
 
     @Override
     public Message buildHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return new ArtifactResponseMessageBuilder()
             ._securityToken_(tokenProvider.getTokenJWS())
             ._correlationMessage_(correlationMessageId)

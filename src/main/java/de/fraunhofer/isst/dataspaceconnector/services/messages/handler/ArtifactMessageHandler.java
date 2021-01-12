@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -54,8 +53,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     private final ArtifactResponseService responseService;
     private final ArtifactRequestService requestService;
     private final NegotiationService negotiationService;
-    private final Connector connector;
     private final ContractAgreementService contractAgreementService;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for ArtifactMessageHandler.
@@ -92,11 +91,11 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
         this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
-        this.connector = configurationContainer.getConnector();
         this.responseService = responseService;
         this.requestService = requestService;
         this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -114,6 +113,9 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
+
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
         if (!responseService.versionSupported(requestMessage.getModelVersion())) {

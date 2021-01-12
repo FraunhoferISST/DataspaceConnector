@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -42,7 +41,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
     private final DescriptionResponseService descriptionResponseMessageService;
     private final ResourceService resourceService;
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for DescriptionMessageHandler.
@@ -64,7 +63,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
         this.descriptionResponseMessageService = descriptionResponseMessageService;
         this.resourceService = offeredResourceService;
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -80,6 +79,9 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
+
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
         if (!descriptionResponseMessageService.versionSupported(requestMessage.getModelVersion())) {
@@ -119,6 +121,9 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      */
     public MessageResponse constructResourceDescription(DescriptionRequestMessage requestMessage)
         throws RuntimeException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         try {
             // Find the requested resource.
             final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
@@ -169,10 +174,12 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      */
     public MessageResponse constructConnectorSelfDescription(
         DescriptionRequestMessage requestMessage) throws RuntimeException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
         try {
             // Create a connector with a list of offered resources.
-            var connector = (BaseConnectorImpl) this.connector;
-            connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
+            var connectorImpl = (BaseConnectorImpl) connector;
+            connectorImpl.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
                 ._offeredResource_(new ArrayList<>(resourceService.getResources()))
                 .build()));
 
@@ -180,7 +187,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             descriptionResponseMessageService.setParameter(requestMessage.getIssuerConnector(),
                 requestMessage.getId());
             return BodyResponse.create(descriptionResponseMessageService.buildHeader(),
-                connector.toRdf());
+                connectorImpl.toRdf());
         } catch (ConstraintViolationException | MessageBuilderException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(

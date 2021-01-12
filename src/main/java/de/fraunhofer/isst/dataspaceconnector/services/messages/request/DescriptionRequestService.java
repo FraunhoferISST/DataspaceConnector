@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.request;
 
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
@@ -21,7 +20,7 @@ public class DescriptionRequestService extends RequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestService.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
     private URI recipient, resourceId;
 
@@ -34,12 +33,15 @@ public class DescriptionRequestService extends RequestService {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public RequestMessage buildHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         if (resourceId == null) {
             return new DescriptionRequestMessageBuilder()
                 ._issued_(Util.getGregorianNow())

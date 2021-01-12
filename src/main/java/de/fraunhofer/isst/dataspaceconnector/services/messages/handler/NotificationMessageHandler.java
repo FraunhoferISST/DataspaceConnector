@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -38,7 +37,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
     private final TokenProvider tokenProvider;
     private final ResponseService responseService;
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for NotificationMessageHandler.
@@ -59,7 +58,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
 
         this.tokenProvider = tokenProvider;
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.responseService = messageResponseService;
     }
 
@@ -80,6 +79,9 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
         }
+
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
         if (!responseService.versionSupported(message.getModelVersion())) {

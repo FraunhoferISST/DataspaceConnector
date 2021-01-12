@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractOffer;
@@ -58,7 +57,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractMessageHandler.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final NegotiationService negotiationService;
     private final PolicyHandler policyHandler;
     private final ContractResponseService responseService;
@@ -112,7 +111,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.negotiationService = negotiationService;
         this.policyHandler = policyHandler;
         this.contractAgreementService = contractAgreementService;
@@ -142,6 +141,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         } else {
             this.requestMessage = requestMessage;
         }
+
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
         if (!responseService.versionSupported(requestMessage.getModelVersion())) {
@@ -189,6 +191,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @return A message response to the requesting connector.
      */
     public MessageResponse checkContractRequest(String payload) throws RuntimeException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         try {
             // Deserialize string to contract object.
             final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
@@ -287,6 +292,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @return A contract rejection message.
      */
     private MessageResponse rejectContract() { // TODO: Change to Error Response. (Framework Issue)
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return BodyResponse.create(new ContractRejectionMessageBuilder()
             ._securityToken_(tokenProvider.getTokenJWS())
             ._correlationMessage_(requestMessage.getId())

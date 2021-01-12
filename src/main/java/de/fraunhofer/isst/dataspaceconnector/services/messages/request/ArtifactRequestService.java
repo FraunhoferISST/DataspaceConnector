@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.request;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
@@ -21,7 +20,7 @@ public class ArtifactRequestService extends RequestService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestService.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
     private URI recipient, artifactId, contractId;
 
@@ -37,12 +36,15 @@ public class ArtifactRequestService extends RequestService {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public Message buildHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return new ArtifactRequestMessageBuilder()
             ._issued_(Util.getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())

@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
-import de.fraunhofer.iais.eis.Connector;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
@@ -26,7 +25,7 @@ public class ContractResponseService extends ResponseService {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractResponseService.class);
 
-    private final Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
     private URI recipient, correlationMessage, contractId;
 
@@ -43,12 +42,15 @@ public class ContractResponseService extends ResponseService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public Message buildHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return new ContractAgreementMessageBuilder()
             ._issued_(Util.getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())

@@ -43,7 +43,7 @@ public class DescriptionResponseService extends ResponseService {
     private final TokenProvider tokenProvider;
     private final SerializerProvider serializerProvider;
     private final ResourceService resourceService;
-    private Connector connector;
+    private final ConfigurationContainer configurationContainer;
     private URI recipient, correlationMessageId;
 
     @Autowired
@@ -66,7 +66,7 @@ public class DescriptionResponseService extends ResponseService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.connector = configurationContainer.getConnector();
+        this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
         this.serializerProvider = serializerProvider;
         this.resourceService = requestedResourceService;
@@ -74,6 +74,9 @@ public class DescriptionResponseService extends ResponseService {
 
     @Override
     public ResponseMessage buildHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         return new DescriptionResponseMessageBuilder()
             ._securityToken_(tokenProvider.getTokenJWS())
             ._correlationMessage_(correlationMessageId)

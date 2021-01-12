@@ -60,17 +60,17 @@ public abstract class RequestService {
         Message message;
         try {
             message = buildHeader();
-        } catch (MessageBuilderException e) {
-            LOGGER.warn("Message could not be built. {}", e.getMessage());
-            throw new MessageBuilderException("Message could not be built.", e);
+        } catch (MessageBuilderException exception) {
+            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
+            throw new MessageBuilderException("Message could not be built.", exception);
         }
 
         try {
             MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
             return idsHttpService.send(body, getRecipient());
-        } catch (MessageNotSentException | IOException e) {
-            LOGGER.warn("Message could not be sent. " + e.getMessage());
-            throw new MessageBuilderException("Message could not be sent.", e);
+        } catch (MessageNotSentException | IOException exception) {
+            LOGGER.warn("Message could not be sent. [exception=({})]" + exception.getMessage());
+            throw new MessageBuilderException("Message could not be sent.", exception);
         }
     }
 
