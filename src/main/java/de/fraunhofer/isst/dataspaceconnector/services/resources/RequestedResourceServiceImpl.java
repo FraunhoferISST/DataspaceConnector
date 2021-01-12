@@ -96,7 +96,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
                 LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
                 return true;
             }
-        }catch(InvalidResourceException exception){
+        } catch(InvalidResourceException exception){
             // The resource exists, delete it
             requestedResourceRepository.deleteById(resourceId);
             LOGGER.debug("Deleted resource. [resourceId=({})]", resourceId);
