@@ -246,7 +246,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      */
     private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
         UUID uuid = UUIDUtils.uuidFromUri(artifactId);
-        Resource resource = requestService.findResourceFromArtifactId(uuid);
+        final var resource = requestService.findResourceFromArtifactId(uuid);
         if (resource == null)
             throw new ResourceNotFoundException("Artifact not known.");
         return resource.getContractOffer().get(0);

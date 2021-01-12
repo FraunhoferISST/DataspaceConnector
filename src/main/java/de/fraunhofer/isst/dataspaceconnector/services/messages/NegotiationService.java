@@ -225,7 +225,7 @@ public class NegotiationService {
 
         String offerPermission = null;
         if (offer.getPermission() != null)
-            offerPermission = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+            offerPermission = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
 
         String requestProhibition = null;
         if (request.getProhibition() != null)
@@ -233,7 +233,7 @@ public class NegotiationService {
 
         String offerProhibition = null;
         if (offer.getProhibition() != null)
-            offerProhibition = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+            offerProhibition = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
 
         String requestObligation = null;
         if (request.getObligation() != null)
@@ -241,7 +241,7 @@ public class NegotiationService {
 
         String offerObligation = null;
         if (offer.getObligation() != null)
-            offerObligation = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+            offerObligation = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
 
         return compareRules(requestPermission, offerPermission)
             && compareRules(requestProhibition, offerProhibition)
