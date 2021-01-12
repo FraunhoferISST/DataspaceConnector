@@ -138,7 +138,7 @@ public class RequestController {
         Map<ResponseType, String> map;
         try {
             map = descriptionResponseService.handleResponse(response);
-        } catch (MessageResponseException e) {
+        } catch (MessageResponseException exception) {
             // The response is null.
             LOGGER.warn("Could not read response body. [exception=({})]",
                 exception.getMessage());
@@ -276,7 +276,7 @@ public class RequestController {
 
         Map<ResponseType, String> map;
         try {
-            map = artifactResponseService.readResponse(response);
+            map = artifactResponseService.handleResponse(response);
         } catch (MessageResponseException exception) {
             LOGGER.warn("Could not read response body. [exception=({})]",
                 exception.getMessage());

@@ -369,9 +369,11 @@ public class ResourceController {
         try {
             UUID newUuid;
             if (uuid != null) {
-                newUuid = ((OfferedResourceServiceImpl) offeredResourceService).addRepresentationWithId(resourceId, representation, uuid);
+                newUuid = ((OfferedResourceServiceImpl) offeredResourceService)
+                    .addRepresentationWithId(resourceId, representation, uuid);
             } else {
-                newUuid ((OfferedResourceServiceImpl) offeredResourceService).addRepresentation(resourceId, representation);
+                newUuid = ((OfferedResourceServiceImpl) offeredResourceService)
+                    .addRepresentation(resourceId, representation);
             }
 
             return new ResponseEntity<>(
