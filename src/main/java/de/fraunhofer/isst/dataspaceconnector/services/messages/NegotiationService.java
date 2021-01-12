@@ -5,7 +5,9 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestImpl;
 import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
@@ -20,6 +22,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -214,34 +218,58 @@ public class NegotiationService {
      *
      * @return True is the content is equal, false if any difference is detected.
      */
-    public boolean compareContracts(ContractRequest request, Contract offer)
+    public boolean compareContracts(Contract request, Contract offer)
         throws JsonProcessingException{
         if (request == null || offer == null)
             return false;
 
         String requestPermission = null;
-        if (request.getPermission() != null)
-            requestPermission = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+        if (request.getPermission() != null) {
+            // Remove target from rule.
+            var permissions = new ArrayList<>();
+            for (var p : request.getPermission()) {
+                var permission = (PermissionImpl) p;
+                permission.setTarget(null);
+                permissions.add(permission);
+            }
+            requestPermission = serializerProvider.getSerializer().serializePlainJson(permissions);
+        }
 
         String offerPermission = null;
         if (offer.getPermission() != null)
             offerPermission = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
 
         String requestProhibition = null;
-        if (request.getProhibition() != null)
-            requestProhibition = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+        if (request.getProhibition() != null) {
+            // Remove target from rule.
+            var prohibitions = new ArrayList<>();
+            for (var p : request.getProhibition()) {
+                var prohibition = (ProhibitionImpl) p;
+                prohibition.setTarget(null);
+                prohibitions.add(prohibition);
+            }
+            requestProhibition = serializerProvider.getSerializer().serializePlainJson(prohibitions);
+        }
 
         String offerProhibition = null;
         if (offer.getProhibition() != null)
-            offerProhibition = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
+            offerProhibition = serializerProvider.getSerializer().serializePlainJson(offer.getProhibition());
 
         String requestObligation = null;
-        if (request.getObligation() != null)
-            requestObligation = serializerProvider.getSerializer().serializePlainJson(request.getPermission());
+        if (request.getObligation() != null) {
+            // Remove target from rule.
+            var obligations = new ArrayList<>();
+            for (var p : request.getObligation()) {
+                var obligation = (DutyImpl) p;
+                obligation.setTarget(null);
+                obligations.add(obligation);
+            }
+            requestProhibition = serializerProvider.getSerializer().serializePlainJson(obligations);
+        }
 
         String offerObligation = null;
         if (offer.getObligation() != null)
-            offerObligation = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
+            offerObligation = serializerProvider.getSerializer().serializePlainJson(offer.getObligation());
 
         return compareRules(requestPermission, offerPermission)
             && compareRules(requestProhibition, offerProhibition)
@@ -253,7 +281,7 @@ public class NegotiationService {
      *
      * @return True is the content is equal, false if any difference is detected.
      */
-    public boolean compareRules(String request, String offer) {
+    private boolean compareRules(String request, String offer) {
         if (request == null && offer == null)
             return true;
 
