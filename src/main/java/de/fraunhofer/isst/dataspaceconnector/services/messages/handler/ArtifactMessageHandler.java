@@ -263,7 +263,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                 requestMessage.getId(), requestMessage.getTransferContract(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
-                "Could not find contract agreement by transfer contract id.",
+                "Invalid transfer contract id.",
                 connector.getId(), connector.getOutboundModelVersion());
         } catch (ContractException exception) {
             LOGGER.warn("Could not deserialize contract. "
@@ -302,11 +302,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
             if (contractId == null) {
                 return false;
             } else {
-                UUID uuid = UUIDUtils.uuidFromUri(contractId);
-
-                ResourceContract contract = contractAgreementService.getContract(uuid);
                 String contractToString;
                 try {
+                    UUID uuid = UUIDUtils.uuidFromUri(contractId);
+                    // Get contract agreement from database.
+                    ResourceContract contract = contractAgreementService.getContract(uuid);
+                    // Get contract from database entry.
                     contractToString = contract.getContract();
                 } catch (Exception e) {
                     throw new ContractAgreementNotFoundException("Contract could not be loaded "
