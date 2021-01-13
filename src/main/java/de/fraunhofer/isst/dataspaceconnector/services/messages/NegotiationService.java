@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestImpl;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.Permission;
@@ -25,6 +26,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.xml.datatype.XMLGregorianCalendar;
+import kotlin.contracts.ContractBuilder;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -218,76 +221,105 @@ public class NegotiationService {
      *
      * @return True is the content is equal, false if any difference is detected.
      */
-    public boolean compareContracts(Contract request, Contract offer)
-        throws JsonProcessingException{
+    public boolean compareContracts(Contract request, Contract offer) {
         if (request == null || offer == null)
             return false;
 
-        String requestPermission = null;
-        if (request.getPermission() != null) {
-            // Remove target from rule.
-            var permissions = new ArrayList<>();
-            for (var p : request.getPermission()) {
-                var permission = (PermissionImpl) p;
-                permission.setTarget(null);
-                permissions.add(permission);
-            }
-            requestPermission = serializerProvider.getSerializer().serializePlainJson(permissions);
+        boolean permissions;
+        if (request.getPermission() != null && offer.getPermission() != null) {
+            permissions = comparePermissions(request.getPermission(), offer.getPermission());
+        } else {
+            permissions = true;
         }
 
-        String offerPermission = null;
-        if (offer.getPermission() != null)
-            offerPermission = serializerProvider.getSerializer().serializePlainJson(offer.getPermission());
-
-        String requestProhibition = null;
-        if (request.getProhibition() != null) {
-            // Remove target from rule.
-            var prohibitions = new ArrayList<>();
-            for (var p : request.getProhibition()) {
-                var prohibition = (ProhibitionImpl) p;
-                prohibition.setTarget(null);
-                prohibitions.add(prohibition);
-            }
-            requestProhibition = serializerProvider.getSerializer().serializePlainJson(prohibitions);
+        boolean prohibitions;
+        if (request.getProhibition() != null && offer.getProhibition() != null) {
+            prohibitions = compareRules(request.getProhibition(), offer.getProhibition());
+        } else {
+            prohibitions = true;
         }
 
-        String offerProhibition = null;
-        if (offer.getProhibition() != null)
-            offerProhibition = serializerProvider.getSerializer().serializePlainJson(offer.getProhibition());
-
-        String requestObligation = null;
-        if (request.getObligation() != null) {
-            // Remove target from rule.
-            var obligations = new ArrayList<>();
-            for (var p : request.getObligation()) {
-                var obligation = (DutyImpl) p;
-                obligation.setTarget(null);
-                obligations.add(obligation);
-            }
-            requestProhibition = serializerProvider.getSerializer().serializePlainJson(obligations);
+        boolean obligations;
+        if (request.getObligation() != null && offer.getObligation() != null) {
+            obligations = compareRules(request.getObligation(), offer.getObligation());
+        } else {
+            obligations = true;
         }
 
-        String offerObligation = null;
-        if (offer.getObligation() != null)
-            offerObligation = serializerProvider.getSerializer().serializePlainJson(offer.getObligation());
-
-        return compareRules(requestPermission, offerPermission)
-            && compareRules(requestProhibition, offerProhibition)
-            && compareRules(requestObligation, offerObligation);
+        return permissions && prohibitions && obligations;
     }
 
     /**
-     * Compare the content of the rule lists to each other.
+     * Compares the content of two permissions.
      *
      * @return True is the content is equal, false if any difference is detected.
      */
-    private boolean compareRules(String request, String offer) {
-        if (request == null && offer == null)
-            return true;
-
-        if (request == null || offer == null)
+    private boolean comparePermissions(
+        ArrayList<? extends Permission> request, ArrayList<? extends Permission> offer) {
+        if (request.size() != offer.size())
             return false;
 
-        return request.equals(offer);
+        for (int i = 0; i < request.size(); i++) {
+            if (request.get(i).getPostDuty() != null && offer.get(i).getPostDuty() != null) {
+                for (int j = 0; i < request.get(i).getPostDuty().size(); i++) {
+                    if (!request.get(i).getPostDuty().get(j).toRdf()
+                        .equals(offer.get(i).getPostDuty().get(j).toRdf()))
+                        return false;
+                }
+            }
+
+            if (request.get(i).getPreDuty() != null && offer.get(i).getPreDuty() != null) {
+                for (int j = 0; i < request.get(i).getPreDuty().size(); i++) {
+                    if (!request.get(i).getPreDuty().get(j).toRdf()
+                        .equals(offer.get(i).getPreDuty().get(j).toRdf()))
+                        return false;
+                }
+            }
+
+            if (request.get(i).getConstraint() != null && offer.get(i).getConstraint() != null) {
+                for (int j = 0; i < request.get(i).getConstraint().size(); i++) {
+                    if (!request.get(i).getConstraint().get(j).toRdf()
+                        .equals(offer.get(i).getConstraint().get(j).toRdf()))
+                        return false;
+                }
+            }
+
+            if (!request.get(i).getAction().get(0).toRdf()
+                .equals(offer.get(i).getAction().get(0).toRdf()))
+                return false;
+
+            i++;
+        }
+
+        return true;
+    }
+
+    /**
+     * Compares the content of two prohibitions or obligations.
+     *
+     * @return True is the content is equal, false if any difference is detected.
+     */
+    private boolean compareRules(
+        ArrayList<? extends Rule> request, ArrayList<? extends Rule> offer) {
+        if (request.size() != offer.size())
+            return false;
+
+        for (int i = 0; i < request.size(); i++) {
+            if (request.get(i).getConstraint() != null && offer.get(i).getConstraint() != null) {
+                for (int j = 0; i < request.get(i).getConstraint().size(); i++) {
+                    if (!request.get(i).getConstraint().get(j).toRdf()
+                        .equals(offer.get(i).getConstraint().get(j).toRdf()))
+                        return false;
+                }
+            }
+
+            if (!request.get(i).getAction().get(0).toRdf()
+                .equals(offer.get(i).getAction().get(0).toRdf()))
+                return false;
+
+            i++;
+        }
+
+        return true;
     }
 }

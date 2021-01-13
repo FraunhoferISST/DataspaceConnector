@@ -231,7 +231,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
                 connector.getId(), connector.getOutboundModelVersion());
-        } catch (RuntimeException | JsonProcessingException exception) {
+        } catch (RuntimeException exception) {
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Malformed contract request.",
