@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Add http tracing and improved logging.
 - Add class for example resources.
 - Add custom profiles.
+- Add negotiation service.
 
 ### Changed
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
