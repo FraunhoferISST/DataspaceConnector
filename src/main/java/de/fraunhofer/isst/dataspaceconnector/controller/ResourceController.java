@@ -3,7 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;

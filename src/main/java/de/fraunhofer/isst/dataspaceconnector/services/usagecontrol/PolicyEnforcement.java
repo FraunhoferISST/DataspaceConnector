@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;

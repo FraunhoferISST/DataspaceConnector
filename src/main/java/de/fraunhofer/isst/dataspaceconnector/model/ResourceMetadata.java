@@ -13,11 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.util.StdConverter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
