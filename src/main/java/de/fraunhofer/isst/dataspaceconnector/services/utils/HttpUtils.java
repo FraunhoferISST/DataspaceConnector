@@ -2,13 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
@@ -18,6 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 
 /**
  * This class builds up http or https endpoint connections.

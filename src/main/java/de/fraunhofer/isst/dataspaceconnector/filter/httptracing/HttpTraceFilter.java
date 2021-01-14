@@ -2,18 +2,20 @@ package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
 import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 /**
@@ -24,7 +26,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 public class HttpTraceFilter extends OncePerRequestFilter {
 
     private UUID traceId;
-    private HttpTraceEventHandler eventHandler;
+    private final HttpTraceEventHandler eventHandler;
 
     public HttpTraceFilter(HttpTraceEventHandler eventHandler) {
         this.eventHandler = eventHandler;
@@ -86,7 +88,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         trace.parameterMap += "}";
 
         try{
-            trace.body = new String(request.getRequestBody(), "UTF-8");
+            trace.body = new String(request.getRequestBody(), StandardCharsets.UTF_8);
         }catch(IOException exception){
             exception.printStackTrace();
         }

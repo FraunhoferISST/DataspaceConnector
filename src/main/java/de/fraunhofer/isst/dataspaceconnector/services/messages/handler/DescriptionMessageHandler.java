@@ -1,10 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.BaseConnectorImpl;
-import de.fraunhofer.iais.eis.DescriptionRequestMessage;
-import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
@@ -21,11 +17,12 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyRes
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * This @{@link DescriptionMessageHandler} handles all

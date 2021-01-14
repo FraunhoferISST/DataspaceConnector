@@ -1,15 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
-import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
-
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.BaseConnector;
-import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.DescriptionResponseMessageBuilder;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceImpl;
-import de.fraunhofer.iais.eis.ResponseMessage;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
@@ -25,15 +16,18 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
+import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
 
 @Service
 public class DescriptionResponseService extends ResponseService {

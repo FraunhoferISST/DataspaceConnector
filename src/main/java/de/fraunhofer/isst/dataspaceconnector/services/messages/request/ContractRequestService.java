@@ -1,10 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.request;
 
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
-import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
@@ -13,12 +9,13 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import java.net.URI;
-import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Date;
 
 @Service
 public class ContractRequestService extends RequestService {

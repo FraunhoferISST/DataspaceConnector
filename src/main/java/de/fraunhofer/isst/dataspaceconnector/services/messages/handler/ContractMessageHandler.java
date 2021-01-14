@@ -1,16 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
-import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.RequestMessage;
-import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
@@ -35,15 +25,16 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorRe
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * This @{@link ContractMessageHandler} handles all incoming messages that have a

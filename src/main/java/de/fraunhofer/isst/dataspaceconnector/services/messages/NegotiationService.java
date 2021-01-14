@@ -1,16 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.ContractRequestImpl;
-import de.fraunhofer.iais.eis.DutyImpl;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionImpl;
-import de.fraunhofer.iais.eis.Prohibition;
-import de.fraunhofer.iais.eis.ProhibitionImpl;
-import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
@@ -22,17 +12,15 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.response.Contract
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import javax.xml.datatype.XMLGregorianCalendar;
-import kotlin.contracts.ContractBuilder;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
 
 @Service
 public class NegotiationService {
