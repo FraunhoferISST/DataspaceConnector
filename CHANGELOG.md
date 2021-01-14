@@ -9,6 +9,12 @@ All notable changes to this project will be documented in this file.
 - Add example controller class for example endpoints.
 - Add exception classes.
 - Create UUIDUtils for uuid handling.
+- Add Controller endpoints for contract negotiation.
+- Contract method in request controller.
+- Add http tracing and improved logging.
+- Add class for example resources.
+- Add custom profiles.
+- Add negotiation service.
 
 ### Changed
 - Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
@@ -17,6 +23,15 @@ All notable changes to this project will be documented in this file.
 - Rename broker communication endpoints.
 - Improve exception handling.
 - Migrate `ResourceRepresentation` to map.
+- Change object handling and model classes.
+- Improve message handler and sending request messages: `de.fraunhofer.isst.dataspaceconnector.services.messages`.
+- Change package structure.
+- Add abstract class to resource service implementations.
+- Adapt policy handler.
+- Improve `pom.xml` and dependencies.
+
+### Fixed
+- Update connector of configuration container before sending a broker message.
 
 ## [3.2.1] - 2020-11-05
 

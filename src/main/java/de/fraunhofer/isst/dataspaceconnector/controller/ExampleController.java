@@ -24,21 +24,19 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,15 +60,13 @@ public class ExampleController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ExampleController(@NotNull TokenProvider tokenProvider,
-        @NotNull PolicyHandler policyHandler) throws IllegalArgumentException {
-        if (tokenProvider == null) {
+    public ExampleController(TokenProvider tokenProvider,
+        PolicyHandler policyHandler) throws IllegalArgumentException {
+        if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
-        }
 
-        if (policyHandler == null) {
+        if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-        }
 
         this.tokenProvider = tokenProvider;
         this.policyHandler = policyHandler;
@@ -86,8 +82,6 @@ public class ExampleController {
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getConnectorConfiguration() {
-        Assert.notNull(tokenProvider, "The tokenProvider cannot be null.");
-
         //NOTE: This needs some cleanup. Skip exception handling.
         var exceptions = new ArrayList<URI>();
         exceptions.add(URI.create("https://localhost:8080/"));
@@ -139,14 +133,13 @@ public class ExampleController {
     public ResponseEntity<Object> getPolicyPattern(
         @Parameter(description = "The JSON string representing a policy", required = true)
         @RequestBody String policy) {
-        Assert.notNull(policyHandler, "The policyHandler cannot be null.");
         try {
             // Return the policy pattern
             return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
-        } catch (IOException exception) {
+        } catch (ContractException exception) {
             // Failed to receive the pattern. Inform the requester.
-            LOGGER.error("Failed to receive policy.", exception);
-            return new ResponseEntity<>("The policy is currently not available.",
+            LOGGER.error("Failed to read policy.", exception);
+            return new ResponseEntity<>("The policy is invalid.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

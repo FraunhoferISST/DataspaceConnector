@@ -1,6 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
@@ -9,16 +14,20 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
+import java.io.IOException;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the internal resource handling. Resources can be created and
@@ -32,8 +41,7 @@ public class ResourceController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
 
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
     private final PolicyHandler policyHandler;
 
     /**
@@ -42,21 +50,17 @@ public class ResourceController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceController(@NotNull OfferedResourceService offeredResourceService,
-        @NotNull PolicyHandler policyHandler,
-        @NotNull RequestedResourceService requestedResourceService)
+    public ResourceController(OfferedResourceServiceImpl offeredResourceService,
+        PolicyHandler policyHandler, RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
-        if (offeredResourceService == null) {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (policyHandler == null) {
+        if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-        }
 
-        if (requestedResourceService == null) {
+        if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
 
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
@@ -77,7 +81,7 @@ public class ResourceController {
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
             if (uuid != null) {
-                offeredResourceService.addResourceWithId(resourceMetadata, uuid);
+                ((OfferedResourceServiceImpl) offeredResourceService).addResourceWithId(resourceMetadata, uuid);
                 return new ResponseEntity<>("Resource registered with uuid: " + uuid,
                     HttpStatus.CREATED);
             } else {
@@ -118,7 +122,7 @@ public class ResourceController {
         @PathVariable("resource-id") UUID resourceId,
         @RequestBody ResourceMetadata resourceMetadata) {
         try {
-            offeredResourceService.updateResource(resourceId, resourceMetadata);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateResource(resourceId, resourceMetadata);
             return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
@@ -152,17 +156,15 @@ public class ResourceController {
         try {
             try {
                 // Try to find the data in the offeredResourceService
-                final var responseEntity = new ResponseEntity<Object>(
+                return new ResponseEntity<>(
                     offeredResourceService.getMetadata(resourceId), HttpStatus.OK);
-                return responseEntity;
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.debug("Failed to receive the resource from the OfferedResourcesService."
                     + " [exception=({})]", offeredResourceServiceException.getMessage());
                 try {
                     // Try to find the data in the requestedResourceService
-                    final var responseEntity = new ResponseEntity<Object>(
+                    return new ResponseEntity<>(
                         requestedResourceService.getMetadata(resourceId), HttpStatus.OK);
-                    return responseEntity;
                 } catch (ResourceNotFoundException requestedResourceServiceException) {
                     LOGGER
                         .debug("Failed to receive the resource from the RequestedResourcesService."
@@ -232,9 +234,9 @@ public class ResourceController {
         @RequestBody String policy) {
         try {
             policyHandler.getPattern(policy);
-            offeredResourceService.updateContract(resourceId, policy);
+            ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
             return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
-        } catch (IOException exception) {
+        } catch (UnsupportedPatternException | RequestFormatException exception) {
             // The policy is not in the correct format.
             LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
                 + "[exception=({})]", exception.getMessage());
@@ -325,7 +327,7 @@ public class ResourceController {
         @Parameter(description = "The resource uuid.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
         try {
-            final var resource = requestedResourceService.getResource(resourceId);
+            final var resource = ((RequestedResourceServiceImpl) requestedResourceService).getResource(resourceId);
             if (resource == null) {
                 LOGGER
                     .debug("Failed to received the resource access. The resource does not exist.");
@@ -364,12 +366,13 @@ public class ResourceController {
         @RequestBody ResourceRepresentation representation,
         @RequestParam(value = "id", required = false) UUID uuid) {
         try {
-            UUID newUuid = null;
+            UUID newUuid;
             if (uuid != null) {
-                newUuid = offeredResourceService
+                newUuid = ((OfferedResourceServiceImpl) offeredResourceService)
                     .addRepresentationWithId(resourceId, representation, uuid);
             } else {
-                newUuid = offeredResourceService.addRepresentation(resourceId, representation);
+                newUuid = ((OfferedResourceServiceImpl) offeredResourceService)
+                    .addRepresentation(resourceId, representation);
             }
 
             return new ResponseEntity<>(
@@ -423,7 +426,7 @@ public class ResourceController {
         @Parameter(description = "A new resource representation.", required = true)
         @RequestBody ResourceRepresentation representation) {
         try {
-            offeredResourceService
+            ((OfferedResourceServiceImpl) offeredResourceService)
                 .updateRepresentation(resourceId, representationId, representation);
             return new ResponseEntity<>("Representation was updated successfully.", HttpStatus.OK);
         } catch (ResourceNotFoundException exception) {
@@ -504,7 +507,7 @@ public class ResourceController {
         @Parameter(description = "The representation uuid.", required = true)
         @PathVariable("representation-id") UUID representationId) {
         try {
-            if (offeredResourceService.deleteRepresentation(resourceId, representationId)) {
+            if (((OfferedResourceServiceImpl) offeredResourceService).deleteRepresentation(resourceId, representationId)) {
                 return new ResponseEntity<>("Representation was deleted successfully",
                     HttpStatus.OK);
             } else {

@@ -4,10 +4,8 @@ import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import io.jsonwebtoken.lang.Assert;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +34,13 @@ public class ConfigurationController {
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public ConfigurationController(@NotNull ConfigurationContainer configurationContainer,
-        @NotNull SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (configurationContainer == null) {
+    public ConfigurationController(ConfigurationContainer configurationContainer,
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
 
-        if (serializerProvider == null) {
+        if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-        }
 
         this.configurationContainer = configurationContainer;
         this.serializerProvider = serializerProvider;
@@ -54,16 +50,12 @@ public class ConfigurationController {
     @RequestMapping(value = "/configuration", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateConfiguration(@RequestBody String updatedConfiguration) {
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
-
         try {
             final var serializer = serializerProvider.getSerializer();
             if (serializer == null) {
                 throw new NullPointerException("No configuration serializer has been set.");
             }
 
-            final var old_configurationModel = configurationContainer.getConfigModel();
             final var new_configurationModel =
                 serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
 
@@ -88,8 +80,6 @@ public class ConfigurationController {
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getConfiguration() {
-        Assert.notNull(configurationContainer, "The configurationContainer cannot be null.");
-
         final var config = configurationContainer.getConfigModel();
         if (config != null) {
             // Return the config

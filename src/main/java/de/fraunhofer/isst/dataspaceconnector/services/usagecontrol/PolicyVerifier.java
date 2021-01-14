@@ -2,9 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.services.HttpUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.communication.MessageService;
-import de.fraunhofer.isst.ids.framework.exceptions.HttpClientException;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.NotificationMessageService;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,21 +27,36 @@ import java.util.UUID;
 @Component
 public class PolicyVerifier {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
-    private PolicyReader policyReader;
-    private MessageService messageService;
-    private HttpUtils httpUtils;
+    private final PolicyReader policyReader;
+    private final NotificationMessageService notificationMessageService;
+    private final LogMessageService logMessageService;
+    private final HttpUtils httpUtils;
 
     @Autowired
     /**
      * Constructor for PolicyVerifier.
      *
      */
-    public PolicyVerifier(PolicyReader policyReader, MessageService messageService,
-        HttpUtils httpUtils) {
+    public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
+        NotificationMessageService notificationMessageService, HttpUtils httpUtils)
+        throws IllegalArgumentException {
+        if (policyReader == null)
+            throw new IllegalArgumentException("The PolicyReader cannot be null.");
+
+        if (logMessageService == null)
+            throw new IllegalArgumentException("The LogMessageService cannot be null.");
+
+        if (notificationMessageService == null)
+            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
+
+        if (httpUtils == null)
+            throw new IllegalArgumentException("The HttpUtils cannot be null.");
+
         this.policyReader = policyReader;
-        this.messageService = messageService;
+        this.logMessageService = logMessageService;
+        this.notificationMessageService = notificationMessageService;
         this.httpUtils = httpUtils;
     }
 
@@ -69,17 +84,12 @@ public class PolicyVerifier {
      * @return Success or not (access or inhibition).
      */
     public boolean logAccess() {
-        try {
-            Response response = messageService.sendLogMessage();
-            if (response != null && response.code() == 200) {
-                return allowAccess();
-            } else {
-                LOGGER.error("NOT LOGGED");
-                return allowAccess();
-            }
-        } catch (HttpClientException | IOException e) {
-            LOGGER.error(e.getMessage());
-            return inhibitAccess();
+        Response response = logMessageService.sendMessage("");
+        if (response != null && response.code() == 200) {
+            return allowAccess();
+        } else {
+            LOGGER.error("NOT LOGGED");
+            return allowAccess();
         }
     }
 
@@ -93,17 +103,13 @@ public class PolicyVerifier {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
         String recipient = policyReader.getEndpoint(rule);
 
-        try {
-            Response response = messageService.sendNotificationMessage(recipient);
-            if (response != null && response.code() == 200) {
-                return allowAccess();
-            } else {
-                LOGGER.error("NOT NOTIFIED");
-                return allowAccess();
-            }
-        } catch (HttpClientException | IOException e) {
-            LOGGER.error(e.getMessage());
-            return inhibitAccess();
+        notificationMessageService.setParameter(URI.create(recipient));
+        Response response = notificationMessageService.sendMessage("");
+        if (response != null && response.code() == 200) {
+            return allowAccess();
+        } else {
+            LOGGER.warn("NOT NOTIFIED");
+            return allowAccess();
         }
     }
 
@@ -178,7 +184,7 @@ public class PolicyVerifier {
             String accessed = httpUtils
                 .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
                     "password");
-            if (Integer.parseInt(accessed) > max) {
+            if (Integer.parseInt(accessed) >= max) {
                 return inhibitAccess();
             } else {
                 return allowAccess();
