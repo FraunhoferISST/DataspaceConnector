@@ -1,20 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.Constraint;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.Duty;
-import de.fraunhofer.iais.eis.LeftOperand;
-import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * This class provides policy pattern recognition and calls the {@link

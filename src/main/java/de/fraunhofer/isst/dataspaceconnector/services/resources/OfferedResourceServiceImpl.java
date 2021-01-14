@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources;
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -15,9 +15,7 @@ import de.fraunhofer.isst.dataspaceconnector.repositories.OfferedResourceReposit
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.NotImplementedException;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class implements all methods of {@link ResourceService}. It provides database
@@ -247,7 +246,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      */
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
-        InvalidResourceException, ResourceException {
+            ResourceException {
         final var representations = getAllRepresentations(resourceId);
         for (var representationId : representations.keySet()) {
             try {
@@ -273,7 +272,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      */
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
-        InvalidResourceException, ResourceNotFoundException, ResourceException {
+            ResourceNotFoundException, ResourceException {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");

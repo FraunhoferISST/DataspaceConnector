@@ -125,7 +125,7 @@ public class PolicyReader {
      */
     public static class TimeInterval {
 
-        private String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        private final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
         private Date start;
         private Date end;

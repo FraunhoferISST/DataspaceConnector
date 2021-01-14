@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-
 public class OperationNotSupportedException extends ResourceException {
 
     /**

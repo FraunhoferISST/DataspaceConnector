@@ -2,12 +2,13 @@ package de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal;
 
 import com.google.common.primitives.Bytes;
 
-import java.io.*;
-import java.util.Arrays;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Use this class to wrap incoming HTTP requests too read the message payload multiple times.
@@ -46,7 +47,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     }
 
     private static class CustomServletInputStream extends ServletInputStream {
-        private ByteArrayInputStream buffer;
+        private final ByteArrayInputStream buffer;
 
         public CustomServletInputStream(byte[] contents) {
             this.buffer = new ByteArrayInputStream(contents);

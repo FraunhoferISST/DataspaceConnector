@@ -1,26 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.BaseConnectorBuilder;
-import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
-import de.fraunhofer.iais.eis.BinaryOperator;
-import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
-import de.fraunhofer.iais.eis.ConnectorDeployMode;
-import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ConnectorStatus;
-import de.fraunhofer.iais.eis.ConstraintBuilder;
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractOfferBuilder;
-import de.fraunhofer.iais.eis.DutyBuilder;
-import de.fraunhofer.iais.eis.KeyType;
-import de.fraunhofer.iais.eis.LeftOperand;
-import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.iais.eis.NotMoreThanNOfferBuilder;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.ProhibitionBuilder;
-import de.fraunhofer.iais.eis.ProxyBuilder;
-import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
@@ -30,19 +10,15 @@ import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.net.URI;
-import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/admin/api/example")

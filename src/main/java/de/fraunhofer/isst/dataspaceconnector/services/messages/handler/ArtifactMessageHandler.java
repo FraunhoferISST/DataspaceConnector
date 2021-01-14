@@ -29,12 +29,13 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyRes
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
-import java.net.URI;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.UUID;
 
 /**
  * This @{@link ArtifactMessageHandler} handles all

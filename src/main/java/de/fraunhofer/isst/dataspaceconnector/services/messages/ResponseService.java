@@ -1,17 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.AccessTokenResponseMessage;
-import de.fraunhofer.iais.eis.AppRegistrationResponseMessage;
-import de.fraunhofer.iais.eis.ArtifactResponseMessage;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
-import de.fraunhofer.iais.eis.ContractRejectionMessage;
-import de.fraunhofer.iais.eis.ContractResponseMessage;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
-import de.fraunhofer.iais.eis.OperationResultMessage;
-import de.fraunhofer.iais.eis.ParticipantResponseMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.ResultMessage;
-import de.fraunhofer.iais.eis.UploadResponseMessage;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
@@ -20,15 +9,16 @@ import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import okhttp3.Response;
 import org.apache.commons.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public abstract class ResponseService extends RequestService {

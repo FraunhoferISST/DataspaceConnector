@@ -11,15 +11,16 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.messages.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
-import java.io.IOException;
-import java.net.URI;
-import java.util.UUID;
 import okhttp3.MultipartBody;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
 
 /**
  * Abstract class for building and sending ids messages.
