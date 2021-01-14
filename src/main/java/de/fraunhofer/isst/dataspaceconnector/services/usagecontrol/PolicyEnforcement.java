@@ -5,8 +5,9 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -27,23 +27,35 @@ import java.util.ArrayList;
 @EnableScheduling
 public class PolicyEnforcement {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
 
-    private PolicyVerifier policyVerifier;
-    private RequestedResourceService requestedResourceService;
-    private RequestedResourceRepository requestedResourceRepository;
-    private SerializerProvider serializerProvider;
+    private final PolicyVerifier policyVerifier;
+    private final ResourceService resourceService;
+    private final RequestedResourceRepository requestedResourceRepository;
+    private final SerializerProvider serializerProvider;
 
     @Autowired
     /**
      * Constructor for PolicyEnforcement.
      */
     public PolicyEnforcement(PolicyVerifier policyVerifier,
-        RequestedResourceService requestedResourceService,
+        RequestedResourceServiceImpl requestedResourceService,
         RequestedResourceRepository requestedResourceRepository,
-        SerializerProvider serializerProvider) {
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
+        if (policyVerifier == null)
+            throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The RequestedResourceServiceImpl cannot be null.");
+
+        if (requestedResourceRepository == null)
+            throw new IllegalArgumentException("The RequestedResourceRepository cannot be null.");
+
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.policyVerifier = policyVerifier;
-        this.requestedResourceService = requestedResourceService;
+        this.resourceService = requestedResourceService;
         this.requestedResourceRepository = requestedResourceRepository;
         this.serializerProvider = serializerProvider;
     }
@@ -81,12 +93,11 @@ public class PolicyEnforcement {
                         Action action = postDuties.get(0).getAction().get(0);
                         if (action == Action.DELETE) {
                             if (policyVerifier.checkForDelete(postDuties.get(0))) {
-                                requestedResourceService.deleteResource(resource.getUuid());
+                                resourceService.deleteResource(resource.getUuid());
                             }
                         }
                     }
                 }
-
             } catch (IOException e) {
                 throw new IOException(
                     "The policy could not be read. Please check the policy syntax.");

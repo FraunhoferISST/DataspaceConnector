@@ -12,15 +12,13 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.UUID;
 
-/**
- * ResourceRepresentation class.
- */
+/** ResourceRepresentation class. */
 @Schema(
     name = "ResourceRepresentation",
     description = "Representation of a resource",
     oneOf = ResourceRepresentation.class,
-    example = "{\"uuid\":\"55795317-0aaa-4fe1-b336-b2e26a00597f\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}"
-)
+    example =
+        "{\"uuid\":\"55795317-0aaa-4fe1-b336-b2e26a00597f\",\"type\":\"JSON\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"http-get\",\"url\":\"https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02\"}}")
 @JsonInclude(Include.NON_NULL)
 public class ResourceRepresentation implements Serializable {
 

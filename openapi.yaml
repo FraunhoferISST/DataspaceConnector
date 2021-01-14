@@ -27,13 +27,13 @@ tags:
   - name: 'Connector: IDS Broker Communication'
     description: Endpoints for invoking broker communication
 paths:
-  /admin/api/broker/remove/{resource-id}:
+  /admin/api/broker/update/{resource-id}:
     post:
       tags:
         - 'Connector: IDS Broker Communication'
-      summary: Remove Resource from Broker
-      description: Remove an IDS resource at an IDS broker.
-      operationId: deleteResourceAtBroker
+      summary: Update Resource at Broker
+      description: Update an IDS resource at an IDS broker.
+      operationId: updateResourceAtBroker
       parameters:
         - name: broker
           in: query
@@ -56,13 +56,13 @@ paths:
             '*/*':
               schema:
                 type: string
-  /admin/api/broker/update/{resource-id}:
+  /admin/api/broker/remove/{resource-id}:
     post:
       tags:
         - 'Connector: IDS Broker Communication'
-      summary: Update Resource at Broker
-      description: Update an IDS resource at an IDS broker.
-      operationId: updateResourceAtBroker
+      summary: Remove Resource from Broker
+      description: Remove an IDS resource at an IDS broker.
+      operationId: deleteResourceAtBroker
       parameters:
         - name: broker
           in: query
@@ -144,6 +144,19 @@ paths:
           schema:
             type: string
           example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              description: Database query (SparQL)
+              example: |-
+                SELECT ?subject ?predicate ?object
+                FROM <urn:x-arq:UnionGraph>
+                WHERE {
+                  ?subject ?predicate ?object
+                };
+        required: true
       responses:
         "200":
           description: OK
@@ -238,6 +251,39 @@ paths:
             '*/*':
               schema:
                 type: object
+  /admin/api/negotiation:
+    get:
+      tags:
+        - 'Connector: Selfservice'
+      summary: Endpoint for Policy Negotiation Status Check
+      description: Return the policy negotiation status.
+      operationId: getNegotiationStatus
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - 'Connector: Selfservice'
+      summary: Endpoint for Policy Negotiation Status
+      description: Turn the policy negotiation on or off.
+      operationId: setNegotiationStatus
+      parameters:
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
   /:
     get:
       tags:
@@ -252,7 +298,7 @@ paths:
             '*/*':
               schema:
                 type: string
-  /admin/api/self-description:
+  /admin/api/connector:
     get:
       tags:
         - 'Connector: Selfservice'
@@ -282,7 +328,7 @@ paths:
             type: string
             format: uri
           example: https://localhost:8080/api/ids/data
-        - name: requestedArtifact
+        - name: requestedResource
           in: query
           description: The URI of the requested resource.
           required: false
@@ -323,6 +369,14 @@ paths:
             type: string
             format: uri
           example: https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9
+        - name: contractAgreement
+          in: query
+          description: The URI of the contract agreement.
+          required: false
+          schema:
+            type: string
+            format: uri
+          example: https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9
         - name: key
           in: query
           description: A unique validation key.
@@ -330,6 +384,43 @@ paths:
           schema:
             type: string
             format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/request/contract:
+    post:
+      tags:
+        - 'Connector: IDS Connector Communication'
+      summary: Contract Request
+      description: Send a contract request to another IDS connector.
+      operationId: requestContract
+      parameters:
+        - name: recipient
+          in: query
+          description: The URI of the requested IDS connector.
+          required: true
+          schema:
+            type: string
+            format: uri
+          example: https://localhost:8080/api/ids/data
+        - name: requestedArtifact
+          in: query
+          description: The URI of the requested artifact.
+          required: true
+          schema:
+            type: string
+            format: uri
+          example: https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              description: The contract offer for the requested resource.
       responses:
         "200":
           description: OK
@@ -429,6 +520,97 @@ paths:
             '*/*':
               schema:
                 type: object
+  /admin/api/resources/{resource-id}/{representation-id}:
+    get:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Get Resource Representation
+      description: Get the resource's representation by its uuid.
+      operationId: getRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+    put:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Update representation
+      description: Update a resource's representation by its uuid.
+      operationId: updateRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceRepresentation'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Remove Resource Representation
+      description: Remove a resource's representation by its uuid.
+      operationId: deleteRepresentation
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: representation-id
+          in: path
+          description: The representation uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
   /admin/api/resources/{resource-id}/contract:
     get:
       tags:
@@ -540,13 +722,13 @@ paths:
             '*/*':
               schema:
                 type: string
-  /admin/api/resources/{resource-id}/{representation-id}:
+  /admin/api/resources/{resource-id}/{representation-id}/data:
     get:
       tags:
-        - 'Connector: Resource Handling'
-      summary: Get Resource Representation
-      description: Get the resource's representation by its uuid.
-      operationId: getRepresentation
+        - 'Backend: Resource Data Handling'
+      summary: Request Data String by Representation
+      description: Get the resource's data as a string by representation.
+      operationId: getDataByRepresentation
       parameters:
         - name: resource-id
           in: path
@@ -555,68 +737,7 @@ paths:
           schema:
             type: string
             format: uuid
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: object
-    put:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Update representation
-      description: Update a resource's representation by its uuid.
-      operationId: updateRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResourceRepresentation'
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-    delete:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Remove Resource Representation
-      description: Remove a resource's representation by its uuid.
-      operationId: deleteRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
+          example: a4212311-86e4-40b3-ace3-ef29cd687cf9
         - name: representation-id
           in: path
           description: The representation uuid.
@@ -683,36 +804,6 @@ paths:
             '*/*':
               schema:
                 type: string
-  /admin/api/resources/{resource-id}/{representation-id}/data:
-    get:
-      tags:
-        - 'Backend: Resource Data Handling'
-      summary: Request Data String by Representation
-      description: Get the resource's data as a string by representation.
-      operationId: getDataByRepresentation
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-          example: a4212311-86e4-40b3-ace3-ef29cd687cf9
-        - name: representation-id
-          in: path
-          description: The representation uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
 components:
   schemas:
     BackendSource:
@@ -736,6 +827,31 @@ components:
       description: Information of the backend system.
       oneOf:
         - $ref: '#/components/schemas/BackendSource'
+    ResourceRepresentation:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        type:
+          type: string
+        byteSize:
+          type: integer
+          format: int32
+        name:
+          type: string
+        source:
+          $ref: '#/components/schemas/BackendSource'
+      description: A new resource representation.
+      example:
+        uuid: 55795317-0aaa-4fe1-b336-b2e26a00597f
+        type: XML
+        byteSize: 101
+        name: Example Representation
+        source:
+          type: local
+      oneOf:
+        - $ref: '#/components/schemas/ResourceRepresentation'
     ResourceMetadata:
       required:
         - representations
@@ -777,28 +893,3 @@ components:
               type: local
       oneOf:
         - $ref: '#/components/schemas/ResourceMetadata'
-    ResourceRepresentation:
-      type: object
-      properties:
-        uuid:
-          type: string
-          format: uuid
-        type:
-          type: string
-        byteSize:
-          type: integer
-          format: int32
-        name:
-          type: string
-        source:
-          $ref: '#/components/schemas/BackendSource'
-      description: A new resource representation.
-      example:
-        uuid: 55795317-0aaa-4fe1-b336-b2e26a00597f
-        type: XML
-        byteSize: 101
-        name: Example Representation
-        source:
-          type: local
-      oneOf:
-        - $ref: '#/components/schemas/ResourceRepresentation'

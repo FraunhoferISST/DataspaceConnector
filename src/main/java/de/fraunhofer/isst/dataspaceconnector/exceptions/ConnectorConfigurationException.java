@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
 public class ConnectorConfigurationException extends IllegalArgumentException {
 
     /**
-     * Construct an ConnectorConfigurationException with the specified detail message.
+     * Construct a ConnectorConfigurationException with the specified detail message.
      *
      * @param msg The detail message.
      */
@@ -12,7 +12,7 @@ public class ConnectorConfigurationException extends IllegalArgumentException {
     }
 
     /**
-     * Construct an ConnectorConfigurationException with the specified detail message and cause.
+     * Construct a ConnectorConfigurationException with the specified detail message and cause.
      *
      * @param msg   The detail message.
      * @param cause The cause.

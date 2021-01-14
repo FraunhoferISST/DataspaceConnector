@@ -6,23 +6,24 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.IdsUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,9 +37,9 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final SerializerProvider serializerProvider;
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
+    private final NegotiationService negotiationService;
 
     /**
      * Constructor for MainController.
@@ -46,31 +47,31 @@ public class MainController {
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
-    public MainController(@NotNull SerializerProvider serializerProvider,
-        @NotNull OfferedResourceService offeredResourceService,
-        @NotNull RequestedResourceService requestedResourceService,
-        @NotNull IdsUtils idsUtils)
+    public MainController(SerializerProvider serializerProvider,
+        OfferedResourceServiceImpl offeredResourceService,
+        RequestedResourceServiceImpl requestedResourceService,
+        IdsUtils idsUtils, NegotiationService negotiationService)
         throws IllegalArgumentException {
-        if (serializerProvider == null) {
+        if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-        }
 
-        if (offeredResourceService == null) {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (requestedResourceService == null) {
+        if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
 
-        if (idsUtils == null) {
+        if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
-        }
+
+        if (negotiationService == null)
+            throw new IllegalArgumentException("The NegotiationService cannot be null.");
 
         this.serializerProvider = serializerProvider;
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
         this.idsUtils = idsUtils;
+        this.negotiationService = negotiationService;
     }
 
     /**
@@ -83,11 +84,8 @@ public class MainController {
     @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPublicSelfDescription() {
-        Assert.notNull(idsUtils, "The idsUtils cannot be null.");
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-
         try {
-            // Modify a connector for exposing the reduced self description
+            // Modify a connector for exposing the reduced self-description
             var connector = (BaseConnectorImpl) idsUtils.getConnector();
             connector.setResourceCatalog(null);
             connector.setPublicKey(null);
@@ -115,12 +113,9 @@ public class MainController {
      */
     @Operation(summary = "Connector Self-description",
         description = "Get the connector's self-description.")
-    @RequestMapping(value = {"/admin/api/self-description"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/admin/api/connector"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
-        Assert.notNull(idsUtils, "The idsUtils cannot be null.");
-        Assert.notNull(serializerProvider, "The serializerProvider cannot be null.");
-
         try {
             // Modify a connector for exposing a resource catalog
             var connector = (BaseConnectorImpl) idsUtils.getConnector();
@@ -142,13 +137,44 @@ public class MainController {
         }
     }
 
-    private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
-        Assert.notNull(offeredResourceService, "The offeredResourceService cannot be null.");
-        Assert.notNull(requestedResourceService, "The requestedResourceService cannot be null.");
+    /**
+     * Turns policy negotiation on or off.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Policy Negotiation Status", description = "Turn the policy negotiation on or off.")
+    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
+        negotiationService.setStatus(status);
 
+        if (negotiationService.isStatus()) {
+            return new ResponseEntity<>("Policy Negotiation was turned on.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Policy Negotiation was turned off.", HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Returns policy negotiation status.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Policy Negotiation Status Check", description = "Return the policy negotiation status.")
+    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getNegotiationStatus() {
+        if (negotiationService.isStatus()) {
+            return new ResponseEntity<>("Policy Negotiation is turned on.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Policy Negotiation is turned off.", HttpStatus.OK);
+        }
+    }
+
+    private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
         return new ResourceCatalogBuilder()
-            ._offeredResource_(new ArrayList<>(offeredResourceService.getResourceList()))
-            ._requestedResource_(new ArrayList<>(requestedResourceService.getRequestedResources()))
+            ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
+            ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))
             .build();
     }
 }

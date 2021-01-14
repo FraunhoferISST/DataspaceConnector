@@ -1,22 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.RequestedResourceService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.jetbrains.annotations.NotNull;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the internal resource handling.
@@ -28,8 +32,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataController.class);
 
-    private final OfferedResourceService offeredResourceService;
-    private final RequestedResourceService requestedResourceService;
+    private final ResourceService offeredResourceService, requestedResourceService;
 
     /**
      * Constructor for ResourceDataController.
@@ -37,16 +40,13 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ResourceDataController(@NotNull OfferedResourceService offeredResourceService,
-        @NotNull RequestedResourceService requestedResourceService)
-        throws IllegalArgumentException {
-        if (offeredResourceService == null) {
+    public ResourceDataController(OfferedResourceServiceImpl offeredResourceService,
+        RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
+        if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
 
-        if (requestedResourceService == null) {
+        if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
 
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
