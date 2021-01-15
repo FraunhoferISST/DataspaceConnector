@@ -10,14 +10,4 @@ public class UnsupportedPatternException extends ContractException {
     public UnsupportedPatternException(String msg) {
         super(msg);
     }
-
-    /**
-     * Construct an UnsupportedPatternException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public UnsupportedPatternException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 }
