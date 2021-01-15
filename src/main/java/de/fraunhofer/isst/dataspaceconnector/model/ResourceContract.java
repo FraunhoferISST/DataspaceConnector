@@ -18,7 +18,7 @@ import java.util.UUID;
 public class ResourceContract {
     @Id
     @JsonProperty("uuid")
-    private UUID uuid;
+    private UUID id;
 
     @JsonProperty("contract")
     @Column(columnDefinition = "TEXT")
@@ -35,24 +35,8 @@ public class ResourceContract {
      *
      * @param contract a {@link String} object.
      */
-    public ResourceContract(UUID uuid, String contract) {
-        this.uuid = uuid;
-        this.contract = contract;
-    }
-
-    public UUID getId() {
-        return uuid;
-    }
-
-    public void setId(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getContract() {
-        return contract;
-    }
-
-    public void setContract(String contract) {
+    public ResourceContract(UUID id, String contract) {
+        this.id = id;
         this.contract = contract;
     }
 }
