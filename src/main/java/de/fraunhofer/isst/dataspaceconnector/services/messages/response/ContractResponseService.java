@@ -10,8 +10,6 @@ import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,6 @@ import java.net.URI;
 
 @Service
 public class ContractResponseService extends ResponseService {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractResponseService.class);
 
     private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;
