@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.repositories.ContractAgreementRepos
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,10 +29,5 @@ public class ContractAgreementServiceImpl implements ContractAgreementService {
     @Override
     public ResourceContract getContract(UUID uuid) {
         return contractAgreementRepository.findById(uuid).get();
-    }
-
-    @Override
-    public List<ResourceContract> getContracts() {
-        return contractAgreementRepository.findAll();
     }
 }
