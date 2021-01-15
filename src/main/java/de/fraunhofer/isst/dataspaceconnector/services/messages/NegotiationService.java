@@ -112,7 +112,7 @@ public class NegotiationService {
     * @throws ContractException - if the contract could not be read.
     * @throws MessageException - if the contract request message could not be sent.
     */
-    public URI contractAccepted(Map<ResponseType, String> map, String header) throws ContractException,
+    public URI contractAccepted(Map<ResponseType, String> map, @SuppressWarnings("unused") String header) throws ContractException,
         MessageException {
         final var payload = map.get(ResponseType.CONTRACT_AGREEMENT);
         if (payload != null) {

@@ -15,6 +15,7 @@ import java.util.UUID;
  */
 public class ExampleResources {
 
+    @SuppressWarnings("unused")
     public static OfferedResource getExampleResource() {
         return new OfferedResource(
             UUIDUtils.createUUID((UUID x) -> false),
