@@ -20,13 +20,4 @@ public class MessageException extends RuntimeException {
     public MessageException(String msg, Throwable cause) {
         super(msg, cause);
     }
-
-    /**
-     * Construct a MessageException with the specified detail cause.
-     *
-     * @param cause The cause.
-     */
-    public MessageException(Throwable cause) {
-        super(cause);
-    }
 }

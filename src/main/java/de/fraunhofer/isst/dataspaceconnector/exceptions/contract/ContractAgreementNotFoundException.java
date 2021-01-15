@@ -10,14 +10,4 @@ public class ContractAgreementNotFoundException extends ContractException {
     public ContractAgreementNotFoundException(String msg) {
         super(msg);
     }
-
-    /**
-     * Construct an UnsupportedPatternException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public ContractAgreementNotFoundException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 }

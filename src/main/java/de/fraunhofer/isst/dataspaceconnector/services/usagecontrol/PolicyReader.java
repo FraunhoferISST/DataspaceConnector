@@ -132,17 +132,6 @@ public class PolicyReader {
         public TimeInterval() {
         }
 
-        /**
-         * Constructor for TimeInterval.
-         *
-         * @param start The start date.
-         * @param end   The end date.
-         */
-        public TimeInterval(Date start, Date end) {
-            this.start = start;
-            this.end = end;
-        }
-
         public Date getStart() {
             return start;
         }
