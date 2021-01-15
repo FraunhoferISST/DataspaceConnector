@@ -48,7 +48,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(requestWrapper, responseWrapper);
         } finally {
-            afterRequest(requestWrapper, responseWrapper);
+            afterRequest(responseWrapper);
             responseWrapper.copyBodyToResponse();
         }
     }
@@ -96,7 +96,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         eventHandler.sendHttpTraceEvent(trace);
     }
 
-    private void afterRequest(RequestWrapper requestWrapper,
+    private void afterRequest(
         ContentCachingResponseWrapper responseWrapper) throws IOException {
         final var trace = new HttpTrace();
         trace.id = traceId;
