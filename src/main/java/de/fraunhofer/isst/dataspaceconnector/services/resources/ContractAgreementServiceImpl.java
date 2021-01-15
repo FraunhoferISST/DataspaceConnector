@@ -2,8 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ContractAgreementRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +10,6 @@ import java.util.UUID;
 
 @Service
 public class ContractAgreementServiceImpl implements ContractAgreementService {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractAgreementServiceImpl.class);
 
     private final ContractAgreementRepository contractAgreementRepository;
 

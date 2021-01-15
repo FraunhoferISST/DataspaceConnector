@@ -3,8 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -22,8 +20,6 @@ import java.util.Date;
  */
 @Component
 public class PolicyReader {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyReader.class);
 
     /**
      * Gets the access frequency of a policy.
