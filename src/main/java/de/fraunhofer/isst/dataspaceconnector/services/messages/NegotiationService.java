@@ -29,11 +29,14 @@ public class NegotiationService {
 
     private final PolicyHandler policyHandler;
     private final ContractRequestService contractRequestService;
+    @SuppressWarnings("unused")
     private final ContractResponseService contractResponseService;
+    @SuppressWarnings("unused")
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
     private boolean status;
+    @SuppressWarnings("unused")
     private URI recipient;
 
     @Autowired
