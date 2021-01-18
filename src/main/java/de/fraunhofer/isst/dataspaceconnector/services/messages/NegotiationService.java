@@ -29,14 +29,14 @@ public class NegotiationService {
 
     private final PolicyHandler policyHandler;
     private final ContractRequestService contractRequestService;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final ContractResponseService contractResponseService;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
     private boolean status;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private URI recipient;
 
     @Autowired

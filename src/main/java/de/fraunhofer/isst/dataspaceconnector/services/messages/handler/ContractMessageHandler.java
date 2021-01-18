@@ -53,7 +53,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     private final ContractRequestService requestService;
     private final TokenProvider tokenProvider;
     private final ContractAgreementService contractAgreementService;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
     private RequestMessage requestMessage;
 
