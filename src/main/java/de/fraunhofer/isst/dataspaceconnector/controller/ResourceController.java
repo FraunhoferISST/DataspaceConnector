@@ -239,6 +239,11 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Update Resource Contract", description = "Update the resource's usage policy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateContract(
