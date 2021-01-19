@@ -37,6 +37,7 @@ public class ExampleResources {
         return metadata;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static String getExamplePolicy() {
         return "Example policy";
     }
