@@ -187,7 +187,7 @@ public class ResourceController {
                 + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>(
                 "The resource could not be received. Not a valid resource format.",
-                HttpStatus.EXPECTATION_FAILED);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to receive the resource. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
