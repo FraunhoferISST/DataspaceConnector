@@ -207,6 +207,9 @@ public class ResourceController {
      * @return OK or error response.
      */
     @Operation(summary = "Delete Resource", description = "Delete a resource by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<String> deleteResource(
