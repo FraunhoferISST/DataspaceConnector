@@ -34,11 +34,11 @@ public class PolicyVerifier {
     private final LogMessageService logMessageService;
     private final HttpUtils httpUtils;
 
-    @Autowired
     /**
      * Constructor for PolicyVerifier.
      *
      */
+    @Autowired
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
         NotificationMessageService notificationMessageService, HttpUtils httpUtils)
         throws IllegalArgumentException {

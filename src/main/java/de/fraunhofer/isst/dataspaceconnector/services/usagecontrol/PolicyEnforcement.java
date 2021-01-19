@@ -34,10 +34,10 @@ public class PolicyEnforcement {
     private final RequestedResourceRepository requestedResourceRepository;
     private final SerializerProvider serializerProvider;
 
-    @Autowired
     /**
      * Constructor for PolicyEnforcement.
      */
+    @Autowired
     public PolicyEnforcement(PolicyVerifier policyVerifier,
         RequestedResourceServiceImpl requestedResourceService,
         RequestedResourceRepository requestedResourceRepository,
