@@ -5,6 +5,8 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
  * the string does not have the appropriate format.
  */
 public class UUIDFormatException extends IllegalArgumentException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a UUIDFormatException with the specified detail message and cause.

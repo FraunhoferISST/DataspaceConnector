@@ -20,6 +20,8 @@ import java.net.URI;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class BackendSource implements Serializable {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("type")
     private Type type;

@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.message;
 
 public class MessageException extends RuntimeException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a MessageException with the specified detail message and cause.
