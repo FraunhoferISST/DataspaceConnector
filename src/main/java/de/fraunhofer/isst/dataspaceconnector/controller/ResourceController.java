@@ -117,6 +117,11 @@ public class ResourceController {
      * @return OK or error response.
      */
     @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateResource(
