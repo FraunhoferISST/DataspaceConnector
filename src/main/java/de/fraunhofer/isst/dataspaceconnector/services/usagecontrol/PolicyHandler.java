@@ -26,10 +26,10 @@ public class PolicyHandler {
     private final PolicyVerifier policyVerifier;
     private final SerializerProvider serializerProvider;
 
-    @Autowired
     /**
      * Constructor for PolicyHandler.
      */
+    @Autowired
     public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
         throws IllegalArgumentException {
         if (policyVerifier == null)
