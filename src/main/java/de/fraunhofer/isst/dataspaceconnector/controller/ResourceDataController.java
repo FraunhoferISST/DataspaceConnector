@@ -148,6 +148,10 @@ public class ResourceDataController { // Header: Content-Type: application/json
      */
     @Operation(summary = "Request Data String by Representation",
         description = "Get the resource's data as a string by representation.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}/data", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getDataByRepresentation(
