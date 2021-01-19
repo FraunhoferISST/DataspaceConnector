@@ -99,6 +99,10 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @return Raw data or an error response.
      */
     @Operation(summary = "Request Data String", description = "Get the resource's data as a string.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/data", method = RequestMethod.GET)
     // params = {"type=string"} NOT SUPPORTED with OpenAPI
     @ResponseBody
