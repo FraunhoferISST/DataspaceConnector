@@ -95,7 +95,7 @@ public class ResourceController {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added. It already exits.",
-                HttpStatus.FOUND);
+                HttpStatus.CONFLICT);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to add resource. Something went wrong. [exception=({})]",
                 exception.getMessage());
