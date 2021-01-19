@@ -14,6 +14,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +90,7 @@ public class ResourceController {
             LOGGER.debug("Failed to add resource. The resource is not valid. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
-                HttpStatus.NOT_ACCEPTABLE);
+                HttpStatus.BAD_REQUEST);
         } catch (ResourceAlreadyExists exception) {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
