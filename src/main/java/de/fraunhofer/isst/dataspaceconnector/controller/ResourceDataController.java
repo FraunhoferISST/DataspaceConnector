@@ -8,6 +8,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourc
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,11 @@ public class ResourceDataController { // Header: Content-Type: application/json
      */
     @Operation(summary = "Publish Resource Data String",
         description = "Publish resource data as string.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Resource created"),
+        @ApiResponse(responseCode = "400", description = "Invalid resource"),
+        @ApiResponse(responseCode = "404", description = "Not found"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/data", method = {RequestMethod.PUT})
     @ResponseBody
     public ResponseEntity<String> publishResource(
@@ -67,7 +74,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
         @RequestParam("data") String data) {
         try {
             offeredResourceService.addData(id, data);
-            return new ResponseEntity<>("Resource published", HttpStatus.CREATED);
+            return new ResponseEntity<>("", HttpStatus.CREATED);
         } catch (ResourceNotFoundException exception) {
             LOGGER.debug("The resource does not exist. [id=({})]", id);
             return new ResponseEntity<>("The resource does not exist.",
@@ -76,7 +83,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
             LOGGER.debug("Resource is not valid. [id=({}), exception=({})]", id,
                 exception.getMessage());
             return new ResponseEntity<>("Failed to store resource. Resource not valid.",
-                HttpStatus.EXPECTATION_FAILED);
+                HttpStatus.BAD_REQUEST);
         } catch (ResourceException exception) {
             LOGGER.warn("Caught unhandled resource exception. [exception=({})]",
                 exception.getMessage());
@@ -163,13 +170,13 @@ public class ResourceDataController { // Header: Content-Type: application/json
                         "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
                         resourceId, offeredResourceServiceException.getMessage());
                     LOGGER.debug("Could not find resource. [id=({})]", resourceId);
-                    return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+                    return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
                 }
             }
         } catch (InvalidResourceException exception) {
             LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
                 resourceId, exception.getMessage());
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
         } catch (ResourceException exception) {
             LOGGER
                 .warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
