@@ -155,6 +155,10 @@ public class ResourceController {
      * @return Metadata or an error response.
      */
     @Operation(summary = "Get Resource", description = "Get the resource's metadata by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getResource(
