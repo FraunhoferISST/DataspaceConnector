@@ -37,6 +37,8 @@ import java.util.stream.IntStream;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class ResourceMetadata implements Serializable {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("title")
     private String title;

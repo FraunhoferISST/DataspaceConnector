@@ -23,6 +23,8 @@ import java.util.UUID;
 @Data
 @JsonInclude(Include.NON_NULL)
 public class ResourceRepresentation implements Serializable {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     @Id
     @JsonProperty("uuid")

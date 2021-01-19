@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 public class UUIDCreationException extends RuntimeException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a UUIDCreationException with the specified detail message.

@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 public class ConnectorConfigurationException extends IllegalArgumentException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a ConnectorConfigurationException with the specified detail message.
