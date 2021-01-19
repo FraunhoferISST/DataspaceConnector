@@ -64,7 +64,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         trace.headers = "{";
         var headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
-            var key = (String) headerNames.nextElement();
+            var key = headerNames.nextElement();
             var value = request.getHeader(key);
             trace.headers += key + ": " + value;
 
@@ -77,7 +77,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         trace.parameterMap = "{";
         var parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
-            var key = (String) parameterNames.nextElement();
+            var key = parameterNames.nextElement();
             var value = request.getHeader(key);
             trace.parameterMap += key + ": " + value;
 
