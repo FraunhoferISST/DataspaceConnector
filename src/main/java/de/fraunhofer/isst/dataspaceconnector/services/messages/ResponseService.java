@@ -45,8 +45,9 @@ public abstract class ResponseService extends RequestService {
      * Checks if the outbound model version of the requesting connector is listed in the inbound model versions.
      *
      * @param versionString The outbound model version of the requesting connector.
-     * @return True on no hit, hence incompatibility.
+     * @return False on no hit, hence incompatibility.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
         final var connector = idsUtils.getConnector();
 
