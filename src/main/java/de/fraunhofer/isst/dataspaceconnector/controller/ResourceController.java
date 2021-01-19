@@ -72,6 +72,11 @@ public class ResourceController {
      * @return The added uuid.
      */
     @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> createResource(@RequestBody ResourceMetadata resourceMetadata,
