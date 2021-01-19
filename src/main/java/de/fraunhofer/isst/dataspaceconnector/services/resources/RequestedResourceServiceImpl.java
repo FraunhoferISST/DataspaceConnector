@@ -201,7 +201,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * @param resource
+     * @param resource The resource to be validated
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException {
