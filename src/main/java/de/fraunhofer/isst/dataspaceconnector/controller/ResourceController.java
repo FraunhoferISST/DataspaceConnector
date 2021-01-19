@@ -130,7 +130,7 @@ public class ResourceController {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be updated.",
-                HttpStatus.EXPECTATION_FAILED);
+                HttpStatus.BAD_REQUEST);
         } catch (ResourceNotFoundException exception) {
             LOGGER.debug("Failed to update the resource. The resource could not be found."
                 + "[exception=({})]", exception.getMessage());
