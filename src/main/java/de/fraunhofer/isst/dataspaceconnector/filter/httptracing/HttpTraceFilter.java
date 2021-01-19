@@ -97,7 +97,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
     }
 
     private void afterRequest(
-        ContentCachingResponseWrapper responseWrapper) throws IOException {
+        ContentCachingResponseWrapper responseWrapper) {
         final var trace = new HttpTrace();
         trace.id = traceId;
         trace.timestamp = LocalDateTime.now();
