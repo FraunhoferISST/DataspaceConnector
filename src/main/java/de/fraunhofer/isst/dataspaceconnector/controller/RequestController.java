@@ -15,6 +15,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -106,6 +108,9 @@ public class RequestController {
      */
     @Operation(summary = "Description Request",
         description = "Request metadata from another IDS connector.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestMetadata(
