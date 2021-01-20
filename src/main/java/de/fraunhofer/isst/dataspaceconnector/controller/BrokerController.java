@@ -126,6 +126,10 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Unregister Connector", description = "Unregister connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unregisterAtBroker(
