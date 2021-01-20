@@ -14,6 +14,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +72,11 @@ public class ResourceController {
      * @return The added uuid.
      */
     @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Resource created"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> createResource(@RequestBody ResourceMetadata resourceMetadata,
@@ -88,12 +95,12 @@ public class ResourceController {
             LOGGER.debug("Failed to add resource. The resource is not valid. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
-                HttpStatus.NOT_ACCEPTABLE);
+                HttpStatus.BAD_REQUEST);
         } catch (ResourceAlreadyExists exception) {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added. It already exits.",
-                HttpStatus.FOUND);
+                HttpStatus.CONFLICT);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to add resource. Something went wrong. [exception=({})]",
                 exception.getMessage());
@@ -110,6 +117,11 @@ public class ResourceController {
      * @return OK or error response.
      */
     @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateResource(
@@ -123,7 +135,7 @@ public class ResourceController {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be updated.",
-                HttpStatus.EXPECTATION_FAILED);
+                HttpStatus.BAD_REQUEST);
         } catch (ResourceNotFoundException exception) {
             LOGGER.debug("Failed to update the resource. The resource could not be found."
                 + "[exception=({})]", exception.getMessage());
@@ -143,6 +155,10 @@ public class ResourceController {
      * @return Metadata or an error response.
      */
     @Operation(summary = "Get Resource", description = "Get the resource's metadata by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getResource(
@@ -175,7 +191,7 @@ public class ResourceController {
                 + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>(
                 "The resource could not be received. Not a valid resource format.",
-                HttpStatus.EXPECTATION_FAILED);
+                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to receive the resource. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
@@ -191,6 +207,9 @@ public class ResourceController {
      * @return OK or error response.
      */
     @Operation(summary = "Delete Resource", description = "Delete a resource by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found")})
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<String> deleteResource(
@@ -220,6 +239,11 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Update Resource Contract", description = "Update the resource's usage policy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid resource"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateContract(
@@ -247,7 +271,7 @@ public class ResourceController {
             LOGGER.debug("Failed to update the resource contract. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.BAD_REQUEST);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to update the resource contract. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
@@ -263,6 +287,10 @@ public class ResourceController {
      * @return Contract or an error response.
      */
     @Operation(summary = "Get Resource Contract", description = "Get the resource's usage policy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getContract(
@@ -300,7 +328,7 @@ public class ResourceController {
             LOGGER.debug("Failed to receive the resource contract. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to receive the resource contract. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
@@ -316,6 +344,10 @@ public class ResourceController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get Data Access", description = "Get the number of the resource's data access.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/access", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getAccess(
@@ -335,7 +367,7 @@ public class ResourceController {
             LOGGER.debug("Failed to receive the resource access. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to receive the resource access. Something went wrong."
                 + " [exception=({})]", exception.getMessage());
@@ -352,6 +384,12 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Representation created"),
+            @ApiResponse(responseCode = "400", description = "Invalid representation"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "Representation already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> addRepresentation(
@@ -377,7 +415,7 @@ public class ResourceController {
             LOGGER.debug("Failed to add resource representation. The representation already exists."
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be added. It already exits.",
-                HttpStatus.FOUND);
+                HttpStatus.CONFLICT);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
             LOGGER.debug(
@@ -391,7 +429,7 @@ public class ResourceController {
                 "Failed to add resource representation. The resource is not valid. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.BAD_REQUEST);
         } catch (ResourceException exception) {
             LOGGER.warn(
                 "Failed to add resource representation. Something went wrong. [exception=({})]",
@@ -411,6 +449,11 @@ public class ResourceController {
      */
     @Operation(summary = "Update representation",
         description = "Update a resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid representation"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateRepresentation(
@@ -435,7 +478,7 @@ public class ResourceController {
             LOGGER.debug("Failed to update the resource representation. The resource is not valid."
                 + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.BAD_REQUEST);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to update the resource representation. Something went wrong."
                 + " [exception=({})]", exception.getMessage());
@@ -452,6 +495,10 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Get Resource Representation", description = "Get the resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getRepresentation(
@@ -476,7 +523,7 @@ public class ResourceController {
                 .debug("Failed to received the resource representation. The resource is not valid. "
                     + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to received the resource representation. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
@@ -494,6 +541,10 @@ public class ResourceController {
      */
     @Operation(summary = "Remove Resource Representation",
         description = "Remove a resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<String> deleteRepresentation(
@@ -521,7 +572,7 @@ public class ResourceController {
             LOGGER.debug("Failed to delete the resource representation. The resource is not valid."
                 + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to delete the resource representation. Something went wrong."
                 + " [exception=({})]", exception.getMessage());

@@ -15,6 +15,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -106,6 +108,10 @@ public class RequestController {
      */
     @Operation(summary = "Description Request",
         description = "Request metadata from another IDS connector.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestMetadata(
@@ -173,6 +179,10 @@ public class RequestController {
      */
     @Operation(summary = "Contract Request",
         description = "Send a contract request to another IDS connector.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/contract", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestContract(
@@ -230,6 +240,11 @@ public class RequestController {
         description = "Request data from another IDS connector. " +
             "INFO: Before an artifact can be requested, the metadata must be queried. The key" +
             " generated in this process must be passed in the artifact query.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestData(

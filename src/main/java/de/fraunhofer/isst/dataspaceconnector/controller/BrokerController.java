@@ -15,6 +15,8 @@ import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +90,10 @@ public class BrokerController {
      */
     @Operation(summary = "Register Connector",
         description = "Register or update connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
@@ -120,6 +126,10 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Unregister Connector", description = "Unregister connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unregisterAtBroker(
@@ -151,6 +161,10 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> queryBroker(
@@ -188,6 +202,11 @@ public class BrokerController {
      */
     @Operation(summary = "Update Resource at Broker",
         description = "Update an IDS resource at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/update/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateResourceAtBroker(
@@ -234,6 +253,11 @@ public class BrokerController {
      */
     @Operation(summary = "Remove Resource from Broker",
         description = "Remove an IDS resource at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/remove/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> deleteResourceAtBroker(
