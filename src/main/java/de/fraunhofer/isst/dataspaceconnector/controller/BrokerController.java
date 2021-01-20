@@ -253,6 +253,11 @@ public class BrokerController {
      */
     @Operation(summary = "Remove Resource from Broker",
         description = "Remove an IDS resource at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/remove/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> deleteResourceAtBroker(
