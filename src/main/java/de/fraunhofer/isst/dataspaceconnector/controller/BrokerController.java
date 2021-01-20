@@ -15,6 +15,8 @@ import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +90,10 @@ public class BrokerController {
      */
     @Operation(summary = "Register Connector",
         description = "Register or update connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
