@@ -242,10 +242,10 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                     "Resource not found.", connector.getId(),
                     connector.getOutboundModelVersion());
             }
-        } catch (UUIDFormatException exception) {
+        } catch (UUIDFormatException | RequestFormatException exception) {
             // No resource uuid could be found in the request, reject the message.
             LOGGER.debug(
-                "Resource has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
+                "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getRequestedArtifact(),
                 exception.getMessage());
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
