@@ -473,7 +473,7 @@ public class ResourceController {
             LOGGER.debug("Failed to update the resource representation. The resource is not valid."
                 + " [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.BAD_REQUEST);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to update the resource representation. Something went wrong."
                 + " [exception=({})]", exception.getMessage());
