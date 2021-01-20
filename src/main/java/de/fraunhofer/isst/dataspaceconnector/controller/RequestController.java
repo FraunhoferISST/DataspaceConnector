@@ -112,7 +112,7 @@ public class RequestController {
         @Parameter(description = "The URI of the requested IDS connector.", required = true,
             example = "https://localhost:8080/api/ids/data")
         @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested resource.", required = false,
+        @Parameter(description = "The URI of the requested resource.",
             example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedResource", required = false) URI resourceId) {
         if (tokenProvider.getTokenJWS() == null) {
@@ -239,7 +239,7 @@ public class RequestController {
         @Parameter(description = "The URI of the requested artifact.", required = true,
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The URI of the contract agreement.", required = false,
+        @Parameter(description = "The URI of the contract agreement.",
             example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)

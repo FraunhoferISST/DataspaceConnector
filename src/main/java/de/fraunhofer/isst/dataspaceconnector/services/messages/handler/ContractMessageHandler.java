@@ -13,8 +13,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractR
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -55,8 +53,8 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     private final ContractRequestService requestService;
     private final TokenProvider tokenProvider;
     private final ContractAgreementService contractAgreementService;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
-    private final ResourceService resourceService;
     private RequestMessage requestMessage;
 
     /**
@@ -69,8 +67,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         NegotiationService negotiationService, ArtifactResponseService messageResponseService,
         PolicyHandler policyHandler, ContractAgreementService contractAgreementService,
         ContractResponseService responseService, ContractRequestService requestService,
-        LogMessageService logMessageService, TokenProvider tokenProvider,
-        OfferedResourceServiceImpl offeredResourceService)
+        LogMessageService logMessageService, TokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -99,9 +96,6 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        if (offeredResourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
-
         this.configurationContainer = configurationContainer;
         this.negotiationService = negotiationService;
         this.policyHandler = policyHandler;
@@ -110,7 +104,6 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         this.requestService = requestService;
         this.logMessageService = logMessageService;
         this.tokenProvider = tokenProvider;
-        this.resourceService = offeredResourceService;
     }
 
     /**

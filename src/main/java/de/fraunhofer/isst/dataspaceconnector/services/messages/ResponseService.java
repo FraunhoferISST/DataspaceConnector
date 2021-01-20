@@ -11,8 +11,6 @@ import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import okhttp3.Response;
 import org.apache.commons.fileupload.FileUploadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +20,6 @@ import java.util.Map;
 
 @Service
 public abstract class ResponseService extends RequestService {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(ResponseService.class);
 
     private final SerializerProvider serializerProvider;
     private final IdsUtils idsUtils;
@@ -49,8 +45,9 @@ public abstract class ResponseService extends RequestService {
      * Checks if the outbound model version of the requesting connector is listed in the inbound model versions.
      *
      * @param versionString The outbound model version of the requesting connector.
-     * @return True on no hit, hence incompatibility.
+     * @return False on no hit, hence incompatibility.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
         final var connector = idsUtils.getConnector();
 

@@ -1,15 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.message;
 
 public class MessageBuilderException extends MessageException {
-
-    /**
-     * Construct a MessageBuilderException with the specified detail message and cause.
-     *
-     * @param msg The detail message.
-     */
-    public MessageBuilderException(String msg) {
-        super(msg);
-    }
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a MessageBuilderException with the specified detail message and cause.

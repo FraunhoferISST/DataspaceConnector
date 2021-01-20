@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.contract;
 
 public class UnsupportedPatternException extends ContractException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct an UnsupportedPatternException with the specified detail message and cause.
@@ -9,15 +11,5 @@ public class UnsupportedPatternException extends ContractException {
      */
     public UnsupportedPatternException(String msg) {
         super(msg);
-    }
-
-    /**
-     * Construct an UnsupportedPatternException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public UnsupportedPatternException(String msg, Throwable cause) {
-        super(msg, cause);
     }
 }

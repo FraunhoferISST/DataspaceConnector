@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 
 public class ResourceNotFoundException extends RuntimeException {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     /**
      * Construct a ResourceNotFoundException with the specified detail message and cause.
@@ -9,15 +11,5 @@ public class ResourceNotFoundException extends RuntimeException {
      */
     public ResourceNotFoundException(String msg) {
         super(msg);
-    }
-
-    /**
-     * Construct a ResourceNotFoundException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public ResourceNotFoundException(String msg, Throwable cause) {
-        super(msg, cause);
     }
 }

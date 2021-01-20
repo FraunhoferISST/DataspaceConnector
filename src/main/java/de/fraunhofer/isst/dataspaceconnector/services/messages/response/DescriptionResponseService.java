@@ -16,8 +16,6 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +29,6 @@ import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.U
 
 @Service
 public class DescriptionResponseService extends ResponseService {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionResponseService.class);
 
     private final TokenProvider tokenProvider;
     private final SerializerProvider serializerProvider;

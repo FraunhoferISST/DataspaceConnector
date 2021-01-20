@@ -15,6 +15,7 @@ import java.util.UUID;
  */
 public class ExampleResources {
 
+    @SuppressWarnings("unused")
     public static OfferedResource getExampleResource() {
         return new OfferedResource(
             UUIDUtils.createUUID((UUID x) -> false),
@@ -36,6 +37,7 @@ public class ExampleResources {
         return metadata;
     }
 
+    @SuppressWarnings("SameReturnValue")
     public static String getExamplePolicy() {
         return "Example policy";
     }

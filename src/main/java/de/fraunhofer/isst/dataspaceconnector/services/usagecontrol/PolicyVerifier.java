@@ -34,11 +34,11 @@ public class PolicyVerifier {
     private final LogMessageService logMessageService;
     private final HttpUtils httpUtils;
 
-    @Autowired
     /**
      * Constructor for PolicyVerifier.
      *
      */
+    @Autowired
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
         NotificationMessageService notificationMessageService, HttpUtils httpUtils)
         throws IllegalArgumentException {
@@ -65,6 +65,7 @@ public class PolicyVerifier {
      *
      * @return Access allowed.
      */
+    @SuppressWarnings("SameReturnValue")
     public boolean allowAccess() {
         return true;
     }
@@ -74,6 +75,7 @@ public class PolicyVerifier {
      *
      * @return Access denied.
      */
+    @SuppressWarnings("SameReturnValue")
     public boolean inhibitAccess() {
         return false;
     }

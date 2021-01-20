@@ -204,6 +204,7 @@ public class IdsUtils {
      * @throws ConnectorConfigurationException - if the connector is null or no language is set.
      * @throws IndexOutOfBoundsException - if no language could be found at the passed index.
      */
+    @SuppressWarnings("SameParameterValue")
     private String getLanguage(int index)
         throws ConnectorConfigurationException, IndexOutOfBoundsException {
         try {

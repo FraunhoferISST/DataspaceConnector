@@ -9,8 +9,6 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
 import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +17,6 @@ import java.util.Date;
 
 @Service
 public class ContractRequestService extends RequestService {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestService.class);
 
     private final ConfigurationContainer configurationContainer;
     private final TokenProvider tokenProvider;

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -16,8 +17,11 @@ import java.net.URI;
     description = "Information of the backend system.",
     oneOf = BackendSource.class
 )
+@Data
 @JsonInclude(Include.NON_NULL)
 public class BackendSource implements Serializable {
+    //Default serial version uid
+    private static final long serialVersionUID = 1L;
 
     @JsonProperty("type")
     private Type type;
@@ -41,78 +45,6 @@ public class BackendSource implements Serializable {
         this.type = type;
         this.url = url;
         this.username = username;
-        this.password = password;
-    }
-
-    /**
-     * Getter for the field type.
-     *
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
-     */
-    public Type getType() {
-        return type;
-    }
-
-    /**
-     * Setter for the field type.
-     *
-     * @param type a {@link de.fraunhofer.isst.dataspaceconnector.model.BackendSource.Type} object.
-     */
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    /**
-     * Getter for the field url.
-     *
-     * @return a {@link java.net.URI} object.
-     */
-    public URI getUrl() {
-        return url;
-    }
-
-    /**
-     * Setter for the field url.
-     *
-     * @param url a {@link java.net.URI} object.
-     */
-    public void setUrl(URI url) {
-        this.url = url;
-    }
-
-    /**
-     * Getter for the field username.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Setter for the field username.
-     *
-     * @param username a {@link java.lang.String} object.
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * Getter for the field password.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Setter for the field password.
-     *
-     * @param password a {@link java.lang.String} object.
-     */
-    public void setPassword(String password) {
         this.password = password;
     }
 
