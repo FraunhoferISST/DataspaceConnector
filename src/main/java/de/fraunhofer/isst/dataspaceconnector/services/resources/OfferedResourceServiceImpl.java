@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
@@ -88,7 +88,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * Saves the resources with its metadata as external resource or internal resource.
      *
      * @throws InvalidResourceException - if the resource is not valid.
-     * @throws ResourceAlreadyExists    - if the resource does already exists.
+     * @throws ResourceAlreadyExistsException    - if the resource does already exists.
      * @throws ResourceException        - if the resource could not be created. exists.
      */
     @Override
@@ -111,12 +111,12 @@ public class OfferedResourceServiceImpl implements ResourceService {
 
     /**
      * @throws InvalidResourceException - if the resource is not valid.
-     * @throws ResourceAlreadyExists    - if the resource does already exists.
+     * @throws ResourceAlreadyExistsException    - if the resource does already exists.
      */
     public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws
-        InvalidResourceException, ResourceAlreadyExists {
+        InvalidResourceException, ResourceAlreadyExistsException {
         if (getResource(uuid) != null) {
-            throw new ResourceAlreadyExists("The resource does already exist.");
+            throw new ResourceAlreadyExistsException("The resource does already exist.");
         }
 
         resourceMetadata.setPolicy(contractOffer.toRdf());
@@ -290,7 +290,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * {@inheritDoc}
      */
     public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws
-        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
+        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExistsException {
         final var uuid = UUIDUtils.createUUID(
             (UUID x) -> {
                 try {
@@ -308,10 +308,10 @@ public class OfferedResourceServiceImpl implements ResourceService {
      */
     public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
         UUID representationId) throws
-        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExists {
+        ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExistsException {
         final var metaData = getMetadata(resourceId);
         if (getRepresentation(resourceId, representationId) != null) {
-            throw new ResourceAlreadyExists("The representation does already exist.");
+            throw new ResourceAlreadyExistsException("The representation does already exist.");
         }
 
         representation.setUuid(representationId);

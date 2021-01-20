@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
+import java.util.Map;
 import okhttp3.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,12 +83,13 @@ public class PolicyVerifier {
 
     /**
      * Saves the access date into the database.
+     * TODO: Validate response in more detail.
      *
      * @return Success or not (access or inhibition).
      */
     public boolean logAccess() {
-        Response response = logMessageService.sendMessage("");
-        if (response != null && response.code() == 200) {
+        Map<String, String> response = logMessageService.sendMessage("");
+        if (response != null) {
             return allowAccess();
         } else {
             LOGGER.error("NOT LOGGED");
@@ -97,6 +99,7 @@ public class PolicyVerifier {
 
     /**
      * Notify participant about data access.
+     * TODO: Validate response in more detail.
      *
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
      * @return Success or not (access or inhibition).
@@ -106,8 +109,8 @@ public class PolicyVerifier {
         String recipient = policyReader.getEndpoint(rule);
 
         notificationMessageService.setParameter(URI.create(recipient));
-        Response response = notificationMessageService.sendMessage("");
-        if (response != null && response.code() == 200) {
+        Map<String, String> response = notificationMessageService.sendMessage("");
+        if (response != null) {
             return allowAccess();
         } else {
             LOGGER.warn("NOT NOTIFIED");

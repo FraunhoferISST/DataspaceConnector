@@ -1,7 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.*;
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
@@ -16,23 +27,22 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreemen
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * This @{@link ContractMessageHandler} handles all incoming messages that have a
@@ -51,7 +61,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     private final PolicyHandler policyHandler;
     private final ContractResponseService responseService;
     private final ContractRequestService requestService;
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final ContractAgreementService contractAgreementService;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
@@ -67,7 +77,8 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         NegotiationService negotiationService, ArtifactResponseService messageResponseService,
         PolicyHandler policyHandler, ContractAgreementService contractAgreementService,
         ContractResponseService responseService, ContractRequestService requestService,
-        LogMessageService logMessageService, TokenProvider tokenProvider)
+        LogMessageService logMessageService, DapsTokenProvider tokenProvider,
+        OfferedResourceServiceImpl offeredResourceService)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -280,13 +291,13 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         var connector = configurationContainer.getConnector();
 
         return BodyResponse.create(new ContractRejectionMessageBuilder()
-            ._securityToken_(tokenProvider.getTokenJWS())
+            ._securityToken_(tokenProvider.getDAT())
             ._correlationMessage_(requestMessage.getId())
-            ._issued_(de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow())
+            ._issued_(getGregorianNow())
             ._issuerConnector_(connector.getId())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._senderAgent_(connector.getId())
-            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(requestMessage.getIssuerConnector()))
+            ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
             ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
             ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
             .build(), "Contract rejected.");

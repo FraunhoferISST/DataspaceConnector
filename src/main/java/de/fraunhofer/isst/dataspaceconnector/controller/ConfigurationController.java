@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

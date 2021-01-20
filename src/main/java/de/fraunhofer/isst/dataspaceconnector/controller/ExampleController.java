@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +29,7 @@ public class ExampleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleController.class);
 
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final PolicyHandler policyHandler;
 
     /**
@@ -38,7 +38,7 @@ public class ExampleController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ExampleController(TokenProvider tokenProvider,
+    public ExampleController(DapsTokenProvider tokenProvider,
         PolicyHandler policyHandler) throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -87,7 +87,7 @@ public class ExampleController {
                 ._version_("v3.0.0")
                 ._publicKey_(new PublicKeyBuilder()
                     ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey().getAlgorithm() ?
-                    ._keyValue_(tokenProvider.providePublicKey().getEncoded())
+                    ._keyValue_(tokenProvider.provideDapsToken().getBytes())
                     .build()
                 )
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()

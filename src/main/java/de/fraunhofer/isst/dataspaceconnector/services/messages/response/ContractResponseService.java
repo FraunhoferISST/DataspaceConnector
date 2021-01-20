@@ -1,15 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
-import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +23,11 @@ import java.net.URI;
 public class ContractResponseService extends ResponseService {
 
     private final ConfigurationContainer configurationContainer;
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private URI recipient, correlationMessage, contractId;
 
     @Autowired
-    public ContractResponseService(TokenProvider tokenProvider, IDSHttpService idsHttpService,
+    public ContractResponseService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         IdsUtils idsUtils, SerializerProvider serializerProvider,
         OfferedResourceServiceImpl resourceService,
         ConfigurationContainer configurationContainer) throws IllegalArgumentException {
@@ -45,12 +49,12 @@ public class ContractResponseService extends ResponseService {
         var connector = configurationContainer.getConnector();
 
         return new ContractAgreementMessageBuilder()
-            ._issued_(Util.getGregorianNow())
+            ._issued_(getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._issuerConnector_(connector.getId())
             ._senderAgent_(connector.getId())
-            ._securityToken_(tokenProvider.getTokenJWS())
-            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
+            ._securityToken_(tokenProvider.getDAT())
+            ._recipientConnector_(Util.asList(recipient))
             ._correlationMessage_(correlationMessage)
             .build();
     }

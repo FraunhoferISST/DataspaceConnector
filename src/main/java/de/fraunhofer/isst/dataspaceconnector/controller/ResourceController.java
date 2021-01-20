@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -411,7 +411,7 @@ public class ResourceController {
             return new ResponseEntity<>(
                 "Representation was saved successfully with uuid " + newUuid,
                 HttpStatus.CREATED);
-        } catch (ResourceAlreadyExists exception) {
+        } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource representation. The representation already exists."
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be added. It already exits.",

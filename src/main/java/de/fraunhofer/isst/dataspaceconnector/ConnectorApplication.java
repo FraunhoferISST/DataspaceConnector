@@ -20,11 +20,11 @@ import java.util.Properties;
  */
 @SpringBootApplication
 @ComponentScan({
-    "de.fraunhofer.isst.ids.framework.messaging.spring.controller",
-    "de.fraunhofer.isst.ids.framework.messaging.spring",
+    "de.fraunhofer.isst.ids.framework.messaging",
     "de.fraunhofer.isst.dataspaceconnector",
-//        "de.fraunhofer.isst.ids.framework.configurationmanager.controller",
-    "de.fraunhofer.isst.ids.framework.spring.starter"
+    "de.fraunhofer.isst.ids.framework.communication",
+    "de.fraunhofer.isst.ids.framework.configuration",
+    "de.fraunhofer.isst.ids.framework.daps"
 })
 public class ConnectorApplication {
 

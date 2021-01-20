@@ -1,34 +1,41 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ArtifactRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import okhttp3.Response;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the communication with an IDS connector instance.
@@ -41,9 +48,10 @@ public class RequestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
 
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final ArtifactRequestService artifactRequestService;
     private final DescriptionRequestService descriptionRequestService;
+    private final ContractRequestService contractRequestService;
     private final ArtifactResponseService artifactResponseService;
     private final DescriptionResponseService descriptionResponseService;
     private final ContractResponseService contractResponseService;
@@ -56,9 +64,10 @@ public class RequestController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public RequestController(TokenProvider tokenProvider,
+    public RequestController(DapsTokenProvider tokenProvider,
         ArtifactRequestService artifactRequestService,
         DescriptionRequestService descriptionRequestService,
+        ContractRequestService contractRequestService,
         ArtifactResponseService artifactResponseService,
         DescriptionResponseService descriptionResponseService,
         ContractResponseService contractResponseService,
@@ -73,6 +82,9 @@ public class RequestController {
 
         if (descriptionRequestService == null)
             throw new IllegalArgumentException("The DescriptionRequestService cannot be null.");
+
+        if (contractRequestService == null)
+            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
 
         if (artifactResponseService == null)
             throw new IllegalArgumentException("The ArtifactResponseService cannot be null.");
@@ -92,6 +104,7 @@ public class RequestController {
         this.tokenProvider = tokenProvider;
         this.artifactRequestService = artifactRequestService;
         this.descriptionRequestService = descriptionRequestService;
+        this.contractRequestService = contractRequestService;
         this.artifactResponseService = artifactResponseService;
         this.descriptionResponseService = descriptionResponseService;
         this.contractResponseService = contractResponseService;
@@ -121,37 +134,42 @@ public class RequestController {
         @Parameter(description = "The URI of the requested resource.",
             example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedResource", required = false) URI resourceId) {
-        if (tokenProvider.getTokenJWS() == null) {
+        if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, resourceId);
         }
 
-        Response response;
+        Map<String, String> response;
         try {
             // Send DescriptionRequestMessage.
             descriptionRequestService.setParameter(recipient, resourceId);
             response = descriptionRequestService.sendMessage("");
-        } catch (MessageException exception) {
-            // Failed to send description request message.
-            LOGGER.info("Could not connect to request message service. " + exception.getMessage());
+        } catch (MessageBuilderException exception) {
+            // Failed to send the description request message.
+            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to send description request message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        Map<ResponseType, String> map;
-        try {
-            map = descriptionResponseService.handleResponse(response);
         } catch (MessageResponseException exception) {
-            // The response is null.
-            LOGGER.warn("Could not read response body. [exception=({})]",
-                exception.getMessage());
-            return new ResponseEntity<>("Failed to parse response.",
+            // Failed to read the description response message.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        final var payload = map.get(ResponseType.DESCRIPTION_RESPONSE);
-        if (payload == null) {
-            return returnRejectionMessage(map);
+        String header, payload;
+        try {
+            header = response.get("header");
+            payload = response.get("payload");
+        } catch (Exception exception) {
+            // Failed to read the message parts.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        // Get response message type.
+        final var messageType = descriptionResponseService.getResponseType(header);
+        if (messageType != ResponseType.DESCRIPTION_RESPONSE)
+            return returnRejectionMessage(messageType, response);
 
         if (resourceId != null) {
             // Save metadata to database.
@@ -160,15 +178,15 @@ public class RequestController {
                     .saveMetadata(payload, resourceId);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
-            } catch (Exception e) {
-                LOGGER.error("Caught unhandled exception. [exception=({})]",
-                    e.getMessage());
-                return new ResponseEntity<>(e.getMessage(),
+            } catch (InvalidResourceException exception) {
+                LOGGER.info("Could not save metadata to database. [exception=({})]",
+                    exception.getMessage());
+                return new ResponseEntity<>(exception.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Return self-description.
-            return new ResponseEntity<>(map.get(ResponseType.DESCRIPTION_RESPONSE), HttpStatus.OK);
+            return new ResponseEntity<>(payload, HttpStatus.OK);
         }
     }
 
@@ -194,38 +212,74 @@ public class RequestController {
         @RequestParam(value = "requestedArtifact") URI artifactId,
         @Parameter(description = "The contract offer for the requested resource.")
         @RequestBody(required = false) String contractOffer) {
-        if (tokenProvider.getTokenJWS() == null) {
+        if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, null);
         }
 
-        Map<ResponseType, String> map;
+        Map<String, String> response;
         try {
             // Start policy negotiation.
-            Response response = negotiationService
-                .sendContractRequest(contractOffer, artifactId, recipient);
-            try {
-                // Read response.
-                map = contractResponseService.handleResponse(response);
-            } catch (MessageResponseException e) {
-                // The response is null
-                LOGGER.warn("Received no response message.");
-                return new ResponseEntity<>("Received no response.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (IllegalArgumentException| MessageException exception) {
-            LOGGER.warn("Contract negotiation failed. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Contract negotiation has failed. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            final var request = negotiationService.buildContractRequest(contractOffer, artifactId);
+            // Send ContractRequestMessage.
+            contractRequestService.setParameter(recipient, request.getId());
+            response = contractRequestService.sendMessage(request.toRdf());
+        } catch (IllegalArgumentException exception) {
+            LOGGER.warn("Failed to build contract request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to build contract request.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageBuilderException exception) {
+            // Failed to send the contract request message.
+            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to send contract request message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageResponseException exception) {
+            // Failed to read the contract response message.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        String header, payload;
+        try {
+            header = response.get("header");
+            payload = response.get("payload");
+        } catch (Exception exception) {
+            // Failed to read the message parts.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        // Get response message type.
+        final var messageType = contractResponseService.getResponseType(header);
+        // TODO Add further responses (on contract offer or contract response).
+        if (messageType != ResponseType.CONTRACT_AGREEMENT)
+            return returnRejectionMessage(messageType, response);
 
         // Get contract id.
-        URI agreementId = negotiationService.contractAccepted(map, contractResponseService.getHeader());
-        if (agreementId == null) {
-            return returnRejectionMessage(map);
+        URI agreementId;
+        try {
+            agreementId = negotiationService.contractAccepted(header, payload);
+        } catch (ContractException exception) {
+            // Failed to read the contract.
+            LOGGER.info("Could not read contract. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the received contract.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageException exception) {
+            // Failed to send contract agreement confirmation.
+            LOGGER.info("Failed to send contract agreement. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Negotiation sequence was not fully completed.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(String.format("Negotiation has been successful. Contract "
-            + "agreement: %s", agreementId), HttpStatus.OK);
+        if (agreementId == null) {
+            // Failed to read the contract agreement.
+            LOGGER.info("Received invalid contract agreement.");
+            return new ResponseEntity<>("Received invalid contract agreement.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(String.valueOf(agreementId), HttpStatus.OK);
     }
 
     /**
@@ -259,53 +313,58 @@ public class RequestController {
         @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key) {
-        if (tokenProvider.getTokenJWS() == null) {
+        if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
 
         if (!resourceExists(key)) {
-            // The resource does not exist
+            // The resource does not exist.
             LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: " +
                     "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
                 artifactId.toString(), key.toString()));
-
             return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
                 HttpStatus.FORBIDDEN);
         }
 
-        Response response;
+        Map<String, String> response;
         try {
             // Send ArtifactRequestMessage.
             artifactRequestService.setParameter(recipient, artifactId, contractId);
             response = artifactRequestService.sendMessage("");
-        } catch (MessageException exception) {
-            // Failed to send a description request message
-            LOGGER.info("Could not connect to request message service.");
-            return new ResponseEntity<>("Failed to send an ids message.",
+        } catch (MessageBuilderException exception) {
+            // Failed to send the artifact request message.
+            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to send artifact request message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        Map<ResponseType, String> map;
-        try {
-            map = artifactResponseService.handleResponse(response);
         } catch (MessageResponseException exception) {
-            LOGGER.warn("Could not read response body. [exception=({})]",
-                exception.getMessage());
-            return new ResponseEntity<>("Failed to parse response.",
+            // Failed to read the artifact response message.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        final var payload = map.get(ResponseType.ARTIFACT_RESPONSE);
-        if (payload == null) {
-            return returnRejectionMessage(map);
+        String header, payload;
+        try {
+            header = response.get("header");
+            payload = response.get("payload");
+        } catch (Exception exception) {
+            // Failed to read the message parts.
+            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to read the ids response message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        // Get response message type.
+        final var messageType = artifactResponseService.getResponseType(header);
+        if (messageType != ResponseType.ARTIFACT_RESPONSE)
+            return returnRejectionMessage(messageType, response);
 
         try {
             // Save data to database.
             artifactResponseService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
                 "%s", key, payload), HttpStatus.OK);
-        } catch (Exception exception) {
+        } catch (ResourceException exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("Failed to save to database.",
@@ -331,16 +390,16 @@ public class RequestController {
     /**
      * Checks for rejection or contract rejection message.
      */
-    private ResponseEntity<String> returnRejectionMessage(Map<ResponseType, String> map) {
-        if (map.get(ResponseType.REJECTION) != null) {
+    private ResponseEntity<String> returnRejectionMessage(ResponseType responseType,
+        Map<String, String> response) {
+        if (responseType == ResponseType.REJECTION) {
             return new ResponseEntity<>(ResponseType.REJECTION + ": "
-                + map.get(ResponseType.REJECTION), HttpStatus.OK);
-        } else if (map.get(ResponseType.CONTRACT_REJECTION) != null) {
+                + response.get("payload"), HttpStatus.OK);
+        } else if (responseType == ResponseType.CONTRACT_REJECTION) {
             return new ResponseEntity<>(ResponseType.CONTRACT_REJECTION + ": "
-                + map.get(ResponseType.CONTRACT_REJECTION), HttpStatus.OK);
+                + response.get("payload"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Unexpected response: \n" + map,
-                HttpStatus.OK);
+            return new ResponseEntity<>("Unexpected response: \n" + response, HttpStatus.OK);
         }
     }
 

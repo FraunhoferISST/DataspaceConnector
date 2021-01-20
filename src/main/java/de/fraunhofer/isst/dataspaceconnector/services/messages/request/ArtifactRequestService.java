@@ -1,14 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.request;
 
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.RequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util;
-import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +22,12 @@ import java.net.URI;
 public class ArtifactRequestService extends RequestService {
 
     private final ConfigurationContainer configurationContainer;
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private URI recipient, artifactId, contractId;
 
     @Autowired
     public ArtifactRequestService(ConfigurationContainer configurationContainer,
-        TokenProvider tokenProvider, IDSHttpService idsHttpService,
+        DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         OfferedResourceServiceImpl resourceService) throws IllegalArgumentException {
         super(idsHttpService, resourceService);
 
@@ -43,13 +47,13 @@ public class ArtifactRequestService extends RequestService {
         var connector = configurationContainer.getConnector();
 
         return new ArtifactRequestMessageBuilder()
-            ._issued_(Util.getGregorianNow())
+            ._issued_(getGregorianNow())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._issuerConnector_(connector.getId())
             ._senderAgent_(connector.getId())
             ._requestedArtifact_(artifactId)
-            ._securityToken_(tokenProvider.getTokenJWS())
-            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
+            ._securityToken_(tokenProvider.getDAT())
+            ._recipientConnector_(Util.asList(recipient))
             ._transferContract_(contractId)
             .build();
     }

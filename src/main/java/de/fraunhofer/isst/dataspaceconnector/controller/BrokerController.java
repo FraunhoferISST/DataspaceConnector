@@ -7,11 +7,10 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import de.fraunhofer.isst.ids.framework.util.ClientProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -26,9 +25,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -43,8 +39,8 @@ public class BrokerController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
-    private final TokenProvider tokenProvider;
-    private final BrokerService brokerService;
+    private final DapsTokenProvider tokenProvider;
+    private final IDSBrokerService brokerService;
     private final ResourceService resourceService;
     private final ConfigurationContainer configurationContainer;
 
@@ -52,13 +48,13 @@ public class BrokerController {
      * Constructor for BrokerController.
      *
      * @throws IllegalArgumentException - if any of the parameters is null.
-     * @throws GeneralSecurityException - if the framework has an error.
      */
     @Autowired
-    public BrokerController(TokenProvider tokenProvider,
+    public BrokerController(DapsTokenProvider tokenProvider,
         ConfigurationContainer configurationContainer,
-        OfferedResourceServiceImpl offeredResourceService)
-        throws IllegalArgumentException, GeneralSecurityException {
+        OfferedResourceServiceImpl offeredResourceService,
+        IDSBrokerService brokerService)
+        throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
 
@@ -68,18 +64,13 @@ public class BrokerController {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
+        if (brokerService == null)
+            throw new IllegalArgumentException("The IDSBrokerService cannot be null.");
+
         this.tokenProvider = tokenProvider;
         this.resourceService = offeredResourceService;
         this.configurationContainer = configurationContainer;
-
-        try {
-            this.brokerService = new BrokerService(configurationContainer,
-                new ClientProvider(configurationContainer), tokenProvider);
-        } catch (NoSuchAlgorithmException | KeyManagementException exception) {
-            LOGGER.error("Failed to initialize the broker. Error in the framework. "
-                    + "[exception=({})]", exception.getMessage());
-            throw new GeneralSecurityException("Error in the framework.", exception);
-        }
+        this.brokerService = brokerService;
     }
 
     /**
@@ -100,11 +91,11 @@ public class BrokerController {
         , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
     @RequestParam("broker") String url) {
         // Make sure the request is authorized.
-        if (tokenProvider.getTokenJWS() != null) {
+        if (tokenProvider.getDAT() != null) {
             try {
                 updateConfigModel();
                 // Send the update request to the broker
-                final var brokerResponse = brokerService.updateAtBroker(url);
+                final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
                 return new ResponseEntity<>("The broker answered with: "
                     + brokerResponse.body().string(),
                     HttpStatus.OK);
@@ -137,7 +128,7 @@ public class BrokerController {
             required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
         @RequestParam("broker") String url) {
         // Make sure the request is authorized.
-        if (tokenProvider.getTokenJWS() != null) {
+        if (tokenProvider.getDAT() != null) {
             try {
                 updateConfigModel();
                 // Send the unregister request to the broker
@@ -178,7 +169,7 @@ public class BrokerController {
                 "  ?subject ?predicate ?object\n" +
                 "};") @RequestBody String query) {
         // Make sure the request is authorized.
-        if (tokenProvider.getTokenJWS() != null) {
+        if (tokenProvider.getDAT() != null) {
             // Send the query request to the broker
             try {
                 final var brokerResponse = brokerService.queryBroker(url, query,
@@ -216,7 +207,7 @@ public class BrokerController {
         @Parameter(description = "The resource id.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
         // Make sure the request is authorized.
-        if (tokenProvider.getTokenJWS() != null) {
+        if (tokenProvider.getDAT() != null) {
             try {
                 // Get the resource
                 final var resource =
@@ -267,7 +258,7 @@ public class BrokerController {
         @Parameter(description = "The resource id.", required = true)
         @PathVariable("resource-id") UUID resourceId) {
         // Make sure the request is authorized.
-        if (tokenProvider.getTokenJWS() != null) {
+        if (tokenProvider.getDAT() != null) {
             try {
                 // Get the resource
                 final var resource =
