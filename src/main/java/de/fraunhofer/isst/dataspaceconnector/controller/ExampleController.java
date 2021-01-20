@@ -134,6 +134,7 @@ public class ExampleController {
      */
     @Operation(summary = "Get example policy",
         description = "Get an example policy for a given policy pattern.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = "/usage-policy", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
