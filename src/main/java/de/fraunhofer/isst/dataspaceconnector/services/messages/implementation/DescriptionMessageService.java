@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DescriptionMessageService extends MessageService {
 
+    private final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageService.class);
+
     private final ConfigurationContainer configurationContainer;
     private final DapsTokenProvider tokenProvider;
     private final ResourceService resourceService;

@@ -101,7 +101,7 @@ public class ResourceController {
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.BAD_REQUEST);
-        } catch (ResourceAlreadyExists exception) {
+        } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added. It already exits.",
