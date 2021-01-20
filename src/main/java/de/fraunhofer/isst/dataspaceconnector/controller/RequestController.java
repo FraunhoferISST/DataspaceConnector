@@ -238,6 +238,10 @@ public class RequestController {
         description = "Request data from another IDS connector. " +
             "INFO: Before an artifact can be requested, the metadata must be queried. The key" +
             " generated in this process must be passed in the artifact query.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestData(
