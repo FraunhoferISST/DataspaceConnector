@@ -9,16 +9,15 @@ import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepos
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
 
 /**
  * This class implements automated policy check and usage control enforcement.

@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;

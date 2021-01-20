@@ -1,13 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -20,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
  * This @{@link NotificationMessageHandler} handles
@@ -36,7 +32,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
     private final DapsTokenProvider tokenProvider;
-    private final ResponseService responseService;
+    private final NotificationMessageService messageService;
     private final ConfigurationContainer configurationContainer;
 
     /**
@@ -46,7 +42,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      */
     @Autowired
     public NotificationMessageHandler(ConfigurationContainer configurationContainer,
-        ArtifactResponseService messageResponseService, DapsTokenProvider tokenProvider)
+        NotificationMessageService notificationMessageService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -54,12 +50,12 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        if (messageResponseService == null)
-            throw new IllegalArgumentException("The ArtifactResponseMessageService cannot be null.");
+        if (notificationMessageService == null)
+            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
 
         this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
-        this.responseService = messageResponseService;
+        this.messageService = notificationMessageService;
     }
 
     /**
@@ -84,7 +80,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!responseService.versionSupported(message.getModelVersion())) {
+        if (!messageService.versionSupported(message.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -94,18 +90,9 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
         try {
             // Build response header.
-            final var responseMsgHeader = new MessageProcessedNotificationMessageBuilder()
-                ._securityToken_(tokenProvider.getDAT())
-                ._correlationMessage_(message.getId())
-                ._issued_(getGregorianNow())
-                ._issuerConnector_(connector.getId())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._senderAgent_(connector.getId())
-                ._recipientConnector_(Util.asList(message.getIssuerConnector()))
-                .build();
-
-            return BodyResponse.create(responseMsgHeader, "Message received.");
-        } catch (ConstraintViolationException exception) {
+            messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
+            return BodyResponse.create(messageService.buildResponseHeader(), "Message received.");
+        } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,

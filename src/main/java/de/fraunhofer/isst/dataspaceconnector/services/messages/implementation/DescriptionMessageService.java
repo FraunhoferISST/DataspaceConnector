@@ -1,23 +1,26 @@
-package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
+package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessageBuilder;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
-import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
@@ -38,42 +41,63 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DescriptionResponseService extends ResponseService {
+public class DescriptionMessageService extends MessageService {
 
-    private final DapsTokenProvider tokenProvider;
-    private final SerializerProvider serializerProvider;
-    private final ResourceService resourceService;
     private final ConfigurationContainer configurationContainer;
-    private URI recipient, correlationMessageId;
+    private final DapsTokenProvider tokenProvider;
+    private final ResourceService resourceService;
+    private URI recipient, resourceId, correlationMessageId;
 
     @Autowired
-    public DescriptionResponseService(DapsTokenProvider tokenProvider,
-        IDSHttpService idsHttpService, SerializerProvider serializerProvider,
-        RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
-        OfferedResourceServiceImpl resourceService,
-        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
+    public DescriptionMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
+        ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
+        IdsUtils idsUtils, SerializerProvider serializerProvider,
+        RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
         super(idsHttpService, idsUtils, serializerProvider, resourceService);
-
-        if (tokenProvider == null)
-            throw new IllegalArgumentException("The TokenProvider cannot be null.");
-
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-
-        if (requestedResourceService == null)
-            throw new IllegalArgumentException("The ResourceService cannot be null.");
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
+        if (tokenProvider == null)
+            throw new IllegalArgumentException("The TokenProvider cannot be null.");
+
+        if (requestedResourceService == null)
+            throw new IllegalArgumentException("The ResourceService cannot be null.");
+
         this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
-        this.serializerProvider = serializerProvider;
         this.resourceService = requestedResourceService;
     }
 
     @Override
-    public ResponseMessage buildHeader() throws MessageBuilderException {
+    public RequestMessage buildRequestHeader() throws MessageBuilderException {
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
+        if (resourceId == null) {
+            return new DescriptionRequestMessageBuilder()
+                ._issued_(getGregorianNow())
+                ._modelVersion_(connector.getOutboundModelVersion())
+                ._issuerConnector_(connector.getId())
+                ._senderAgent_(connector.getId())
+                ._securityToken_(tokenProvider.getDAT())
+                ._recipientConnector_(Util.asList(recipient))
+                .build();
+        } else {
+            return new DescriptionRequestMessageBuilder()
+                ._issued_(getGregorianNow())
+                ._modelVersion_(connector.getOutboundModelVersion())
+                ._issuerConnector_(connector.getId())
+                ._senderAgent_(connector.getId())
+                ._requestedElement_(resourceId)
+                ._securityToken_(tokenProvider.getDAT())
+                ._recipientConnector_(Util.asList(recipient))
+                .build();
+        }
+    }
+
+    @Override
+    public Message buildResponseHeader() throws MessageException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
@@ -90,10 +114,15 @@ public class DescriptionResponseService extends ResponseService {
 
     @Override
     public URI getRecipient() {
-        return null;
+        return recipient;
     }
 
-    public void setParameter(URI recipient, URI correlationMessageId) {
+    public void setRequestParameters(URI recipient, URI resourceId) {
+        this.recipient = recipient;
+        this.resourceId = resourceId;
+    }
+
+    public void setResponseParameters(URI recipient, URI correlationMessageId) {
         this.recipient = recipient;
         this.correlationMessageId = correlationMessageId;
     }
@@ -110,7 +139,7 @@ public class DescriptionResponseService extends ResponseService {
         InvalidResourceException {
         Resource resource;
         try {
-            resource = serializerProvider.getSerializer().deserialize(response, ResourceImpl.class);
+            resource = getSerializerProvider().getSerializer().deserialize(response, ResourceImpl.class);
         } catch (Exception e) {
             resource = findResource(response, resourceId);
         }
@@ -140,7 +169,7 @@ public class DescriptionResponseService extends ResponseService {
     private Resource findResource(String payload, URI resourceId) throws InvalidResourceException {
         Resource resource = null;
         try {
-            Connector connector = serializerProvider.getSerializer().deserialize(payload, BaseConnector.class);
+            Connector connector = getSerializerProvider().getSerializer().deserialize(payload, BaseConnector.class);
             if (connector.getResourceCatalog() != null && !connector.getResourceCatalog().isEmpty()) {
                 for (Resource r : connector.getResourceCatalog().get(0).getOfferedResource()) {
                     if (r.getId().equals(resourceId)) {

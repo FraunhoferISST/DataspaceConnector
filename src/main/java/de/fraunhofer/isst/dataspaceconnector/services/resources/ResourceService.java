@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceExcepti
 import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-
 import java.util.List;
 import java.util.UUID;
 

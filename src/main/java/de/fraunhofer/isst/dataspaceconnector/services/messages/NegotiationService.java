@@ -1,24 +1,27 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestImpl;
+import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import java.net.URI;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
 
 @Service
 public class NegotiationService {
@@ -26,26 +29,19 @@ public class NegotiationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final PolicyHandler policyHandler;
-    private final ContractRequestService contractRequestService;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final ContractResponseService contractResponseService;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private final ContractMessageService messageService;
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
     private boolean status;
 
     @Autowired
-    public NegotiationService(ContractRequestService contractRequestService,
-        ContractResponseService contractResponseService,
+    public NegotiationService(ContractMessageService contractMessageService,
         PolicyHandler policyHandler, SerializerProvider serializerProvider,
         ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
-        if (contractRequestService == null)
-            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
-
-        if (contractResponseService == null)
-            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
+        if (contractMessageService == null)
+            throw new IllegalArgumentException("The ContractMessageService cannot be null.");
 
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
@@ -56,8 +52,7 @@ public class NegotiationService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.contractRequestService = contractRequestService;
-        this.contractResponseService = contractResponseService;
+        this.messageService = contractMessageService;
         this.policyHandler = policyHandler;
         this.status = true;
         this.serializerProvider = serializerProvider;
@@ -87,7 +82,7 @@ public class NegotiationService {
 
         // Build contract request. TODO: Change to curator or maintainer?
         return fillContract(artifactId, connector.getId(),
-            contractRequestService.buildContractRequest(contract));
+            messageService.buildContractRequest(contract));
     }
 
     /**
@@ -125,7 +120,7 @@ public class NegotiationService {
                 }
 
                 // Send ContractAgreementMessage to recipient.
-                contractResponseService.setParameter(recipient, correlationMessage, contract.getId());
+                contractResponseService.setResponseParameters(recipient, correlationMessage, contract.getId());
                 ContractAgreement agreement = contractResponseService.buildContractAgreement(contract);
                 response = contractResponseService.sendMessage(agreement.toRdf());
             } catch (MessageException exception) {
