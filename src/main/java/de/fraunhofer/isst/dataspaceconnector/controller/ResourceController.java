@@ -541,6 +541,10 @@ public class ResourceController {
      */
     @Operation(summary = "Remove Resource Representation",
         description = "Remove a resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
     public ResponseEntity<String> deleteRepresentation(
