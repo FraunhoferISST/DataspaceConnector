@@ -287,6 +287,10 @@ public class ResourceController {
      * @return Contract or an error response.
      */
     @Operation(summary = "Get Resource Contract", description = "Get the resource's usage policy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getContract(
