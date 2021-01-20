@@ -409,7 +409,7 @@ public class ResourceController {
             LOGGER.debug("Failed to add resource representation. The representation already exists."
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be added. It already exits.",
-                HttpStatus.FOUND);
+                HttpStatus.CONFLICT);
         } catch (ResourceNotFoundException exception) {
             // The resource could not be found.
             LOGGER.debug(
