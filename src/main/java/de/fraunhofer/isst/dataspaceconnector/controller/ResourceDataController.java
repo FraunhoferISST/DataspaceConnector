@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondResourceNotFound;
+
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
@@ -80,9 +83,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
             offeredResourceService.addData(id, data);
             return new ResponseEntity<>("", HttpStatus.CREATED);
         } catch (ResourceNotFoundException exception) {
-            LOGGER.debug("The resource does not exist. [id=({})]", id);
-            return new ResponseEntity<>("The resource does not exist.",
-                HttpStatus.NOT_FOUND);
+            return respondResourceNotFound(id);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Resource is not valid. [id=({}), exception=({})]", id,
                 exception.getMessage());
@@ -135,11 +136,17 @@ public class ResourceDataController { // Header: Content-Type: application/json
         } catch (InvalidResourceException exception) {
             LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
                 id, exception.getMessage());
-            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
-        } catch (ResourceException exception) {
+            return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+        } catch (ContractException exception) {
+            LOGGER.debug("The policy cannot be enforced. [id=({}), exception=({})]",
+                id, exception.getMessage());
+            return new ResponseEntity<>("The deposited policy cannot be enforced.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", id,
                 exception.getMessage());
-            return new ResponseEntity<>("Something went wrong.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Something went wrong.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -189,11 +196,16 @@ public class ResourceDataController { // Header: Content-Type: application/json
             LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
                 resourceId, exception.getMessage());
             return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
-        } catch (ResourceException exception) {
-            LOGGER
-                .warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
-                    exception.getMessage());
-            return new ResponseEntity<>("Something went wrong.", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ContractException exception) {
+            LOGGER.debug("The policy cannot be enforced. [id=({}), exception=({})]",
+                resourceId, exception.getMessage());
+            return new ResponseEntity<>("The deposited policy cannot be enforced.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception exception) {
+            LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
+                exception.getMessage());
+            return new ResponseEntity<>("Something went wrong.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
