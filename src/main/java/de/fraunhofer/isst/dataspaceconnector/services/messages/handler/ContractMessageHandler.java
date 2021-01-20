@@ -14,6 +14,7 @@ import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -195,9 +196,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 // If differences have been detected.
                 return rejectContract();
             }
-        } catch (UUIDFormatException exception) {
+        } catch (UUIDFormatException | RequestFormatException exception) {
             LOGGER.debug(
-                "Resource has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
+                "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getTransferContract(),
                 exception.getMessage());
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
