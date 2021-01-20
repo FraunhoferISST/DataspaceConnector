@@ -344,6 +344,10 @@ public class ResourceController {
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get Data Access", description = "Get the number of the resource's data access.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/access", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getAccess(
