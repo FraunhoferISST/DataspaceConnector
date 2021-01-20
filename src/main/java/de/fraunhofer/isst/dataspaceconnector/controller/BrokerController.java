@@ -161,6 +161,10 @@ public class BrokerController {
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> queryBroker(
