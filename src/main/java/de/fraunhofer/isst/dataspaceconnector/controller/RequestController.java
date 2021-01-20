@@ -178,6 +178,9 @@ public class RequestController {
      */
     @Operation(summary = "Contract Request",
         description = "Send a contract request to another IDS connector.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/contract", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestContract(
