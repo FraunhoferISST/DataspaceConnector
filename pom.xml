@@ -30,7 +30,6 @@
 			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
 			<roles>
 				<role>lead</role>
-				<role>architect</role>
 				<role>developer</role>
 			</roles>
 		</developer>
@@ -125,7 +124,7 @@
 
 	<properties>
 		<revision>4.0.0-SNAPSHOT</revision>
-		<framework.version>3.2.3</framework.version>
+		<ids-framework.version>4.0.1</ids-framework.version>
 
 		<java.version>11</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
@@ -148,8 +147,24 @@
 		<!-- IDS Framework -->
 		<dependency>
 			<groupId>de.fraunhofer.isst.ids.framework</groupId>
-			<artifactId>spring-starter</artifactId>
-			<version>${framework.version}</version>
+			<artifactId>base</artifactId>
+			<version>${ids-framework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fraunhofer.isst.ids.framework</groupId>
+			<artifactId>messaging</artifactId>
+			<version>${ids-framework.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>

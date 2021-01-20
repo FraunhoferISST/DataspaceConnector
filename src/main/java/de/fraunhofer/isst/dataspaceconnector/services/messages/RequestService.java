@@ -6,21 +6,23 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import de.fraunhofer.isst.ids.framework.messages.InfomodelMessageBuilder;
-import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
+import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 import okhttp3.MultipartBody;
-import okhttp3.Response;
+import org.apache.commons.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.UUID;
 
 /**
  * Abstract class for building and sending ids messages.
@@ -57,7 +59,7 @@ public abstract class RequestService {
      * @return The http response.
      * @throws MessageException - if a header could not be built or the message could not be sent.
      */
-    public Response sendMessage(String payload) throws MessageException {
+    public Map<String, String> sendMessage(String payload) throws MessageException {
         Message message;
         try {
             message = buildHeader();
@@ -68,8 +70,11 @@ public abstract class RequestService {
 
         try {
             MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
-            return idsHttpService.send(body, getRecipient());
-        } catch (MessageNotSentException | IOException exception) {
+            return idsHttpService.sendAndCheckDat(body, getRecipient());
+        } catch (ClaimsException exception) {
+            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]" + exception.getMessage());
+            throw new MessageResponseException("Unexpected message answer.", exception);
+        } catch (MessageNotSentException | FileUploadException | IOException exception) {
             LOGGER.warn("Message could not be sent. [exception=({})]" + exception.getMessage());
             throw new MessageBuilderException("Message could not be sent.", exception);
         }

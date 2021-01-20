@@ -5,14 +5,12 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import okhttp3.Response;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,6 @@ public class NegotiationService {
     private final ConfigurationContainer configurationContainer;
 
     private boolean status;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private URI recipient;
 
     @Autowired
     public NegotiationService(ContractRequestService contractRequestService,
@@ -73,12 +69,9 @@ public class NegotiationService {
      *
      * @return The http response.
      * @throws IllegalArgumentException - if the contract could not be deserialized.
-     * @throws MessageException - if the contract request message could not be sent.
      */
-    public Response sendContractRequest(String contractAsString, URI artifactId, URI recipient)
-        throws IllegalArgumentException, MessageException {
-        this.recipient = recipient;
-
+    public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
+        throws IllegalArgumentException {
         Contract contract;
         try {
             // Validate contract input.
@@ -93,19 +86,8 @@ public class NegotiationService {
         var connector = configurationContainer.getConnector();
 
         // Build contract request. TODO: Change to curator or maintainer?
-        ContractRequest request = fillContract(artifactId, connector.getId(),
+        return fillContract(artifactId, connector.getId(),
             contractRequestService.buildContractRequest(contract));
-
-        try {
-            // Send ContractRequestMessage.
-            contractRequestService.setParameter(recipient, request.getId());
-            return contractRequestService.sendMessage(request.toRdf());
-        } catch (MessageException exception) {
-            // Failed to send a contract request message.
-            LOGGER.warn("Could not connect to request message service. [exception=({})]",
-                exception.getMessage());
-            throw new MessageNotSentException("Error in message service. " + exception.getMessage());
-        }
     }
 
     /**
@@ -115,10 +97,9 @@ public class NegotiationService {
     * @throws ContractException - if the contract could not be read.
     * @throws MessageException - if the contract request message could not be sent.
     */
-    public URI contractAccepted(Map<ResponseType, String> map, @SuppressWarnings("unused") String header) throws ContractException,
+    public URI contractAccepted(@SuppressWarnings("unused") String header, String payload) throws ContractException,
         MessageException {
-        final var payload = map.get(ResponseType.CONTRACT_AGREEMENT);
-        if (payload != null) {
+        if (payload != null && !payload.equals("")) {
             Contract contract;
             try {
                 // Validate received contract.
@@ -179,9 +160,8 @@ public class NegotiationService {
      *
      * @return A valid contract request.
      */
-    private ContractRequest fillContract(URI artifactId, URI consumer,
-        ContractRequest contractRequest) {
-        ContractRequestImpl request = (ContractRequestImpl) contractRequest;
+    private ContractRequest fillContract(URI artifactId, URI consumer, ContractRequest contract) {
+        ContractRequestImpl request = (ContractRequestImpl) contract;
 
         final var obligations = request.getObligation();
         final var permissions = request.getPermission();

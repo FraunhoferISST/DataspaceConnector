@@ -1,35 +1,38 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.response;
 
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+
 import de.fraunhofer.iais.eis.ArtifactResponseMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import java.net.URI;
 import java.util.UUID;
-
-import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class ArtifactResponseService extends ResponseService {
 
     private final ConfigurationContainer configurationContainer;
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final ResourceService resourceService;
     private URI recipient, contractId, correlationMessageId;
 
     @Autowired
-    public ArtifactResponseService(TokenProvider tokenProvider,
+    public ArtifactResponseService(DapsTokenProvider tokenProvider,
         IDSHttpService idsHttpService, SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService, IdsUtils idsUtils,
         OfferedResourceServiceImpl resourceService,
@@ -59,13 +62,13 @@ public class ArtifactResponseService extends ResponseService {
         var connector = configurationContainer.getConnector();
 
         return new ArtifactResponseMessageBuilder()
-            ._securityToken_(tokenProvider.getTokenJWS())
+            ._securityToken_(tokenProvider.getDAT())
             ._correlationMessage_(correlationMessageId)
             ._issued_(getGregorianNow())
             ._issuerConnector_(connector.getId())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._senderAgent_(connector.getId())
-            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(recipient))
+            ._recipientConnector_(Util.asList(recipient))
             ._transferContract_(contractId)
             .build();
     }
@@ -86,13 +89,13 @@ public class ArtifactResponseService extends ResponseService {
      *
      * @param response   The data resource as string.
      * @param resourceId The resource uuid.
-     * @throws Exception if any.
+     * @throws ResourceException if any.
      */
-    public void saveData(String response, UUID resourceId) throws Exception {
+    public void saveData(String response, UUID resourceId) throws ResourceException {
         try {
             resourceService.addData(resourceId, response);
         } catch (Exception e) {
-            throw new Exception("Data could not be saved: " + e.getMessage());
+            throw new ResourceException("Data could not be saved. " + e.getMessage());
         }
     }
 }

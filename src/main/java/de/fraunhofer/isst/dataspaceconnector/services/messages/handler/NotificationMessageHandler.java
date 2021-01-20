@@ -9,19 +9,19 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationEx
 import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow;
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
  * This @{@link NotificationMessageHandler} handles
@@ -35,7 +35,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final ResponseService responseService;
     private final ConfigurationContainer configurationContainer;
 
@@ -46,7 +46,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      */
     @Autowired
     public NotificationMessageHandler(ConfigurationContainer configurationContainer,
-        ArtifactResponseService messageResponseService, TokenProvider tokenProvider)
+        ArtifactResponseService messageResponseService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -95,7 +95,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         try {
             // Build response header.
             final var responseMsgHeader = new MessageProcessedNotificationMessageBuilder()
-                ._securityToken_(tokenProvider.getTokenJWS())
+                ._securityToken_(tokenProvider.getDAT())
                 ._correlationMessage_(message.getId())
                 ._issued_(getGregorianNow())
                 ._issuerConnector_(connector.getId())

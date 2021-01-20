@@ -6,8 +6,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
-import de.fraunhofer.isst.ids.framework.spring.starter.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import okhttp3.Response;
 import org.apache.commons.fileupload.FileUploadException;
@@ -78,7 +78,7 @@ public abstract class ResponseService extends RequestService {
         return new HashMap<>() {{ put(getResponseType(header), payload); }};
     }
 
-    private ResponseType getResponseType(String header) {
+    public ResponseType getResponseType(String header) {
         try {
             serializerProvider.getSerializer().deserialize(header, AccessTokenResponseMessage.class);
             return ResponseType.ACCESS_TOKEN_RESPONSE;
