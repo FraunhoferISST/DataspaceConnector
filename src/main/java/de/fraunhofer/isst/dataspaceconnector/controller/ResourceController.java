@@ -384,6 +384,12 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Representation created"),
+            @ApiResponse(responseCode = "400", description = "Invalid representation"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "Representation already exists"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> addRepresentation(
