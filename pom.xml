@@ -113,7 +113,8 @@
 							<failOnError>true</failOnError>
 
 							<compilerArgs>
-								<arg>-Xlint:all,-options,-path</arg>
+								<arg>-Xlint:all</arg>
+								<arg>-Xlint:-processing</arg>
 							</compilerArgs>
 						</configuration>
 					</plugin>
