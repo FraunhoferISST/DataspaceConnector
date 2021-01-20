@@ -89,12 +89,10 @@ public class ResourceController {
         try {
             if (uuid != null) {
                 ((OfferedResourceServiceImpl) offeredResourceService).addResourceWithId(resourceMetadata, uuid);
-                return new ResponseEntity<>("Resource registered with uuid: " + uuid,
-                    HttpStatus.CREATED);
+                return new ResponseEntity<>(uuid.toString(), HttpStatus.CREATED);
             } else {
                 final var newUuid = offeredResourceService.addResource(resourceMetadata);
-                return new ResponseEntity<>("Resource registered with uuid: " + newUuid.toString(),
-                    HttpStatus.CREATED);
+                return new ResponseEntity<>(newUuid.toString(), HttpStatus.CREATED);
             }
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to add resource. The resource is not valid. [exception=({})]",
@@ -104,7 +102,7 @@ public class ResourceController {
         } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
-            return new ResponseEntity<>("The resource could not be added. It already exits.",
+            return new ResponseEntity<>("The resource could not be added. It already exists.",
                 HttpStatus.CONFLICT);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to add resource. Something went wrong. [exception=({})]",
@@ -135,7 +133,7 @@ public class ResourceController {
         @RequestBody ResourceMetadata resourceMetadata) {
         try {
             ((OfferedResourceServiceImpl) offeredResourceService).updateResource(resourceId, resourceMetadata);
-            return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Resource was updated successfully.", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
@@ -259,7 +257,7 @@ public class ResourceController {
         try {
             policyHandler.getPattern(policy);
             ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
-            return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Contract was updated successfully.", HttpStatus.OK);
         } catch (UnsupportedPatternException | RequestFormatException exception) {
             // The policy is not in the correct format.
             LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
@@ -413,9 +411,7 @@ public class ResourceController {
                     .addRepresentation(resourceId, representation);
             }
 
-            return new ResponseEntity<>(
-                "Representation was saved successfully with uuid " + newUuid,
-                HttpStatus.CREATED);
+            return new ResponseEntity<>(newUuid.toString(), HttpStatus.CREATED);
         } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource representation. The representation already exists."
                 + "[exception=({})]", exception.getMessage());
@@ -559,7 +555,7 @@ public class ResourceController {
         @PathVariable("representation-id") UUID representationId) {
         try {
             if (((OfferedResourceServiceImpl) offeredResourceService).deleteRepresentation(resourceId, representationId)) {
-                return new ResponseEntity<>("Representation was deleted successfully",
+                return new ResponseEntity<>("Representation was deleted successfully.",
                     HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("The representation could not be found.",
