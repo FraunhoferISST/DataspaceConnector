@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondBrokerCommunicationFailed;
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondRejectUnauthorized;
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondResourceNotFound;
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondUpdateError;
+
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.Resource;
@@ -224,10 +230,7 @@ public class BrokerController {
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
-                // An (implementation) error occurred while receiving the resource.
-                LOGGER.error("Resource not loaded. [exception=({})]", exception.getMessage());
-                return new ResponseEntity<>("Could not load resource.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                return respondResourceCouldNotBeLoaded(resourceId);
             } catch (IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
             }
@@ -274,10 +277,7 @@ public class BrokerController {
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
-                // An (implementation) error occurred while receiving the resource
-                LOGGER.error("Resource not loaded. [exception=({})]", exception.getMessage());
-                return new ResponseEntity<>("Could not load resource.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                return respondResourceCouldNotBeLoaded(resourceId);
             } catch (IOException exception) {
                 return respondBrokerCommunicationFailed(exception);
             }
@@ -303,38 +303,5 @@ public class BrokerController {
         configurationModel.setConnectorDescription(connector);
 
         configurationContainer.updateConfiguration(configurationModel);
-    }
-
-    /**
-     * If the resource could not be found, reject and inform the requester.
-     */
-    private ResponseEntity<String> respondResourceNotFound(UUID resourceId) {
-        LOGGER.debug("Resource update failed. Resource not be found. [resourceId=({})]", resourceId);
-        return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
-    }
-
-    /**
-     * The broker could not be reached.
-     */
-    private ResponseEntity<String> respondBrokerCommunicationFailed(Exception exception) {
-        LOGGER.debug("Broker communication failed. [exception=({})]", exception.getMessage());
-        return new ResponseEntity<>("The communication with the broker failed.",
-            HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
-     * The request was unauthorized.
-     */
-    private ResponseEntity<String> respondRejectUnauthorized(String url) {
-        LOGGER.debug("Unauthorized call. No DAT token found. [url=({})]", url);
-        return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
-    }
-
-    /**
-     * If the configuration/connector could not be updated.
-     */
-    private ResponseEntity<String> respondUpdateError(String url) {
-        LOGGER.debug("Configuration error. Could not build current connector. [url=({})]", url);
-        return new ResponseEntity<>("Configuration error.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
