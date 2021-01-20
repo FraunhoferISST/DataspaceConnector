@@ -9,6 +9,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler
 import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,6 +57,7 @@ public class ExampleController {
      */
     @Operation(summary = "Get Connector configuration",
         description = "Get the connector's configuration.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getConnectorConfiguration() {
