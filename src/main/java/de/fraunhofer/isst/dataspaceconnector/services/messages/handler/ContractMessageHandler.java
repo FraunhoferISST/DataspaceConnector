@@ -75,8 +75,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         NegotiationService negotiationService, PolicyHandler policyHandler,
         ContractAgreementService contractAgreementService,
         ContractMessageService messageService,
-        LogMessageService logMessageService, DapsTokenProvider tokenProvider,
-        OfferedResourceServiceImpl offeredResourceService)
+        LogMessageService logMessageService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
