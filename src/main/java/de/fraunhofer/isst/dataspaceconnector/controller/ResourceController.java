@@ -495,6 +495,10 @@ public class ResourceController {
      * @return OK or an error response.
      */
     @Operation(summary = "Get Resource Representation", description = "Get the resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getRepresentation(
