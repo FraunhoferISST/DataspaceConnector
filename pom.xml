@@ -127,8 +127,7 @@
 		<framework.version>3.2.3</framework.version>
 
 		<java.version>11</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
