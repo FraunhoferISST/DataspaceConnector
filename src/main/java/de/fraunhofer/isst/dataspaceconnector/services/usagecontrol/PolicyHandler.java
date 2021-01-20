@@ -30,6 +30,8 @@ public class PolicyHandler {
     private final PolicyVerifier policyVerifier;
     private final SerializerProvider serializerProvider;
 
+    private boolean ignoreUnsupportedPatterns;
+
     /**
      * Constructor for PolicyHandler.
      */
@@ -44,6 +46,7 @@ public class PolicyHandler {
 
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
+        this.ignoreUnsupportedPatterns = false;
     }
 
     /**
@@ -156,9 +159,18 @@ public class PolicyHandler {
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{
-        String policy = dataResource.getResourceMetadata().getPolicy();
+        final var policy = dataResource.getResourceMetadata().getPolicy();
+        Pattern pattern;
+        try {
+            pattern = getPattern(policy);
+        } catch (UnsupportedPatternException exception) {
+            if (!ignoreUnsupportedPatterns)
+                throw new UnsupportedPatternException(exception.getMessage());
+            else
+                pattern = Pattern.PROVIDE_ACCESS;
+        }
 
-        switch (getPattern(policy)) {
+        switch (pattern) {
             case USAGE_DURING_INTERVAL:
             case USAGE_UNTIL_DELETION:
                 return policyVerifier.checkInterval(contract);
@@ -173,6 +185,14 @@ public class PolicyHandler {
             default:
                 return true;
         }
+    }
+
+    public boolean isIgnoreUnsupportedPatterns() {
+        return ignoreUnsupportedPatterns;
+    }
+
+    public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
+        this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
     }
 
     public enum Pattern {

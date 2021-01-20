@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -142,8 +143,8 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * Gets resource data by id.
      */
     @Override
-    public String getData(UUID resourceId) throws
-            ResourceNotFoundException, ResourceException {
+    public String getData(UUID resourceId) throws ResourceNotFoundException,
+        ResourceException, ContractException {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");

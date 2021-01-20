@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationServic
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,6 +43,7 @@ public class MainController {
     private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
     private final NegotiationService negotiationService;
+    private final PolicyHandler policyHandler;
 
     /**
      * Constructor for MainController.
@@ -52,8 +54,8 @@ public class MainController {
     public MainController(SerializerProvider serializerProvider,
         OfferedResourceServiceImpl offeredResourceService,
         RequestedResourceServiceImpl requestedResourceService,
-        IdsUtils idsUtils, NegotiationService negotiationService)
-        throws IllegalArgumentException {
+        IdsUtils idsUtils, NegotiationService negotiationService,
+        PolicyHandler policyHandler) throws IllegalArgumentException {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
@@ -69,11 +71,15 @@ public class MainController {
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
 
+        if (policyHandler == null)
+            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+
         this.serializerProvider = serializerProvider;
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
         this.idsUtils = idsUtils;
         this.negotiationService = negotiationService;
+        this.policyHandler = policyHandler;
     }
 
     /**
@@ -178,6 +184,48 @@ public class MainController {
             return new ResponseEntity<>("Policy Negotiation is turned on.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Policy Negotiation is turned off.", HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Allows requesting data without policy enforcement.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Allowing Unsupported Patterns",
+        description = "Allow requesting data without policy enforcement.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
+    @ResponseBody
+    public ResponseEntity<String> getPatternStatus(@RequestParam("status") boolean status) {
+        policyHandler.setIgnoreUnsupportedPatterns(status);
+
+        if (policyHandler.isIgnoreUnsupportedPatterns()) {
+            return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
+                HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Data cannot be accessed with an unsupported pattern.",
+                HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Returns unsupported pattern status.
+     *
+     * @return Http ok or error response.
+     */
+    @Operation(summary = "Endpoint for Pattern Checking",
+        description = "Return if unsupported patterns are ignored when requesting data.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> getPatternStatus() {
+        if (policyHandler.isIgnoreUnsupportedPatterns()) {
+            return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
+                HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Data cannot be accessed with an unsupported pattern.",
+                HttpStatus.OK);
         }
     }
 
