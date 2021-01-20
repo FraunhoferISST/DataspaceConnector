@@ -83,6 +83,9 @@ public class ConfigurationController {
 
     @Hidden
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "404", description = "Not found")})
     @ResponseBody
     public ResponseEntity<String> getConfiguration() {
         final var config = configurationContainer.getConfigModel();
