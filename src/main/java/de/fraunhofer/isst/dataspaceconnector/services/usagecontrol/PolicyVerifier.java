@@ -2,24 +2,22 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.NotificationMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
-import java.util.Map;
-import okhttp3.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.Duration;
 import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * This class provides access permission information for the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
@@ -108,7 +106,7 @@ public class PolicyVerifier {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
         String recipient = policyReader.getEndpoint(rule);
 
-        notificationMessageService.setParameter(URI.create(recipient));
+        notificationMessageService.setRequestParameters(URI.create(recipient));
         Map<String, String> response = notificationMessageService.sendMessage("");
         if (response != null) {
             return allowAccess();

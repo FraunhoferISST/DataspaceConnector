@@ -2,14 +2,13 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This class offers support functions for working with uuids.
