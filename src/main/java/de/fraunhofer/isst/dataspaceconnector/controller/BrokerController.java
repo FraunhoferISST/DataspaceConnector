@@ -99,11 +99,9 @@ public class BrokerController {
         if (tokenProvider.getDAT() != null) {
             try {
                 updateConfigModel();
-                // Send the update request to the broker
+                // Send the update request to the broker.
                 final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
-                return new ResponseEntity<>("The broker answered with: "
-                    + brokerResponse.body().string(),
-                    HttpStatus.OK);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
             } catch (ConfigurationUpdateException e) {
                 return respondUpdateError(url);
             } catch (NullPointerException | IOException exception) {
@@ -175,7 +173,7 @@ public class BrokerController {
                 "};") @RequestBody String query) {
         // Make sure the request is authorized.
         if (tokenProvider.getDAT() != null) {
-            // Send the query request to the broker
+            // Send the query request to the broker.
             try {
                 final var brokerResponse = brokerService.queryBroker(url, query,
                     null, null, null);
@@ -218,16 +216,15 @@ public class BrokerController {
                 final var resource =
                     ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
                 if (resource == null) {
-                    // The resource could not be found, reject and inform the requester
+                    // The resource could not be found, reject and inform the requester.
                     return respondResourceNotFound(resourceId);
                 } else {
-                    // The resource has been received, update at broker
-                    final var brokerResponse =
-                        brokerService.updateResourceAtBroker(url, resource);
+                    // The resource has been received, update at broker.
+                    final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
-                // An (implementation) error occurred while receiving the resource
+                // An (implementation) error occurred while receiving the resource.
                 LOGGER.error("Resource not loaded. [exception=({})]", exception.getMessage());
                 return new ResponseEntity<>("Could not load resource.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -269,12 +266,11 @@ public class BrokerController {
                 final var resource =
                     ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
                 if (resource == null) {
-                    // The resource could not be found, reject and inform the requester
+                    // The resource could not be found, reject and inform the requester.
                     return respondResourceNotFound(resourceId);
                 } else {
-                    // The resource has been received, remove from broker
-                    final var brokerResponse =
-                        brokerService.removeResourceFromBroker(url, resource);
+                    // The resource has been received, remove from broker.
+                    final var brokerResponse = brokerService.removeResourceFromBroker(url, resource);
                     return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
                 }
             } catch (ClassCastException | NullPointerException exception) {
@@ -302,7 +298,8 @@ public class BrokerController {
             ._offeredResource_((ArrayList<Resource>) resourceService.getResources())
             .build()));
 
-        ConfigurationModelImpl configurationModel = (ConfigurationModelImpl) configurationContainer.getConfigModel();
+        ConfigurationModelImpl configurationModel =
+            (ConfigurationModelImpl) configurationContainer.getConfigModel();
         configurationModel.setConnectorDescription(connector);
 
         configurationContainer.updateConfiguration(configurationModel);
