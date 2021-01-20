@@ -449,6 +449,11 @@ public class ResourceController {
      */
     @Operation(summary = "Update representation",
         description = "Update a resource's representation by its uuid.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Invalid representation"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateRepresentation(
