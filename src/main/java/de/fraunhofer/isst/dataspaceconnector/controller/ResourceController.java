@@ -519,7 +519,7 @@ public class ResourceController {
                 .debug("Failed to received the resource representation. The resource is not valid. "
                     + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to received the resource representation. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
