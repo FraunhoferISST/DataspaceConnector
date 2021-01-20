@@ -107,6 +107,9 @@ public class ExampleController {
      */
     @Operation(summary = "Get pattern of policy",
         description = "Get the policy pattern represented by a given JSON string.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/policy-validation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
