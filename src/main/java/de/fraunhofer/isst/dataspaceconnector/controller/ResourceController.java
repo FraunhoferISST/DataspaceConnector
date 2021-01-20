@@ -324,7 +324,7 @@ public class ResourceController {
             LOGGER.debug("Failed to receive the resource contract. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The resource could not be received. Not a " +
-                "valid resource format.", HttpStatus.EXPECTATION_FAILED);
+                "valid resource format.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to receive the resource contract. Something went wrong. "
                 + "[exception=({})]", exception.getMessage());
