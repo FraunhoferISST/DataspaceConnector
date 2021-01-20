@@ -167,6 +167,7 @@ public class MainController {
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status Check", description = "Return the policy negotiation status.")
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getNegotiationStatus() {
