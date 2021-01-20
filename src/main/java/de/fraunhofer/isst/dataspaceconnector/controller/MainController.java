@@ -115,6 +115,9 @@ public class MainController {
      */
     @Operation(summary = "Connector Self-description",
         description = "Get the connector's self-description.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = {"/admin/api/connector"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
