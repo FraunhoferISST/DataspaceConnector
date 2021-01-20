@@ -110,6 +110,7 @@ public class RequestController {
         description = "Request metadata from another IDS connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
@@ -180,6 +181,7 @@ public class RequestController {
         description = "Send a contract request to another IDS connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/contract", method = RequestMethod.POST)
     @ResponseBody
@@ -240,6 +242,7 @@ public class RequestController {
             " generated in this process must be passed in the artifact query.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
