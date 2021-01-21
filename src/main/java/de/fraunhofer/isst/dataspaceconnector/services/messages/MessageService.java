@@ -104,10 +104,10 @@ public abstract class MessageService {
             MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
             return idsHttpService.sendAndCheckDat(body, getRecipient());
         } catch (ClaimsException exception) {
-            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]" + exception.getMessage());
+            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
             throw new MessageResponseException("Unexpected message answer.", exception);
         } catch (MessageNotSentException | FileUploadException | IOException exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]" + exception.getMessage());
+            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
             throw new MessageBuilderException("Message could not be sent.", exception);
         }
     }
@@ -134,8 +134,8 @@ public abstract class MessageService {
      * Find the requested resource.
      */
     public Resource findResourceFromArtifactId(UUID artifactId) {
-        for (final var resource : resourceService.getResources()) {
-            for (final var representation : resource.getRepresentation()) {
+        for (var resource : resourceService.getResources()) {
+            for (var representation : resource.getRepresentation()) {
                 final var representationId = UUIDUtils.uuidFromUri(representation.getId());
 
                 if (representationId.equals(artifactId)) {
