@@ -79,7 +79,7 @@ public class PolicyEnforcement {
      * Checks all known resources and their policies to delete them if necessary.
      *
      * @throws java.text.ParseException if a date from a policy cannot be parsed.
-     * @throws java.io.IOException      - if an error occurs while deserializing a contract.
+     * @throws java.io.IOException if an error occurs while deserializing a contract.
      */
     public void checkResources() throws ParseException, IOException {
         for (RequestedResource resource : requestedResourceRepository.findAll()) {

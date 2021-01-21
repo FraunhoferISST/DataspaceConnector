@@ -59,7 +59,7 @@ public class UUIDUtils {
      * @param index the index when more then one UUID is found. Set to a negative number when the
      *              last UUID should be extracted.
      * @return the extracted uuid.
-     * @throws UUIDFormatException       - if the URI does not contain a parsable UUID.
+     * @throws UUIDFormatException if the URI does not contain a parsable UUID.
      * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
     public static UUID uuidFromUri(@NotNull URI uri, int index) throws UUIDFormatException,

@@ -49,7 +49,7 @@ public class HttpUtils {
      * @param address the URL.
      * @return the HTTP response if HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpGetRequest(String address) throws MalformedURLException,
@@ -104,7 +104,7 @@ public class HttpUtils {
      * @param address the URL.
      * @return the HTTP body of the response when HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequest(String address)
@@ -144,7 +144,7 @@ public class HttpUtils {
      * @param password The password.
      * @return The HTTP response when HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,

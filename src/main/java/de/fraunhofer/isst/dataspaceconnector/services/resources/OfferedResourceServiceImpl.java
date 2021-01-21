@@ -450,7 +450,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param representationId ID of the representation
      * @return true, if the the representation was deleted; false otherwise
      * @throws ResourceNotFoundException if the resource could not be found.
-     * @throws InvalidResourceException  - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      */
     public boolean deleteRepresentation(UUID resourceId, UUID representationId) throws
         ResourceNotFoundException, InvalidResourceException {
