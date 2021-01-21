@@ -15,17 +15,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * This class reads the content of the policy rules and returns needed information to the {@link
+ * This class reads the content of the policy rules and returns required information to the {@link
  * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
  */
 @Component
 public class PolicyReader {
 
     /**
-     * Gets the access frequency of a policy.
+     * Gets the allowed number of accesses defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The time frequency.
+     * @param rule the policy rule object.
+     * @return the number of allowed accesses.
      */
     public Integer getMaxAccess(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -43,10 +43,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the time interval of a policy.
+     * Gets the time interval defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The time interval.
+     * @param rule the policy rule object.
+     * @return the time interval.
      */
     public TimeInterval getTimeInterval(Rule rule) {
         TimeInterval timeInterval = new TimeInterval();
@@ -62,10 +62,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the log path value of a policy.
+     * Gets the endpoint value to send notifications to defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The found value.
+     * @param rule the policy rule object.
+     * @return the endpoint value.
      */
     public String getEndpoint(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -73,10 +73,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the log path value of a policy.
+     * Gets the PIP endpoint path value defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The found value.
+     * @param rule the policy rule object.
+     * @return the pip endpoint value.
      */
     public URI getPipEndpoint(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -84,11 +84,11 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the date value of a policy.
+     * Gets the date value defined in a policy.
      *
-     * @param rule The policy constraint object.
-     * @return The date or null.
-     * @throws java.text.ParseException if any.
+     * @param rule the policy constraint object.
+     * @return the date or null.
+     * @throws java.text.ParseException - if the date cannot be parsed.
      */
     public Date getDate(Rule rule) throws ParseException {
         Constraint constraint = rule.getConstraint().get(0);
@@ -100,11 +100,11 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the duration value of a policy.
+     * Gets the duration value defined in a policy.
      *
-     * @param rule The policy constraint object.
-     * @return The duration or null.
-     * @throws javax.xml.datatype.DatatypeConfigurationException if any.
+     * @param rule the policy constraint object.
+     * @return the duration or null.
+     * @throws javax.xml.datatype.DatatypeConfigurationException - if the duration cannot be parsed.
      */
     public Duration getDuration(Rule rule) throws DatatypeConfigurationException {
         Constraint constraint = rule.getConstraint().get(0);
@@ -136,6 +136,10 @@ public class PolicyReader {
             return start;
         }
 
+        /**
+         * Sets the start of a time interval.
+         * @param start string containing a date formatted as specified in {@link TimeInterval#DATE_FORMAT_PATTERN}
+         */
         public void setStart(String start) {
             try {
                 this.start = new SimpleDateFormat(DATE_FORMAT_PATTERN).parse(start);
@@ -148,6 +152,10 @@ public class PolicyReader {
             return end;
         }
 
+        /**
+         * Sets the end of a time interval.
+         * @param end string containing a date formatted as specified in {@link TimeInterval#DATE_FORMAT_PATTERN}
+         */
         public void setEnd(String end) {
             try {
                 this.end = new SimpleDateFormat(DATE_FORMAT_PATTERN).parse(end);

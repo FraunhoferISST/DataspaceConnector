@@ -14,6 +14,10 @@ import java.util.UUID;
  */
 public class ExampleResources {
 
+    /**
+     * Creates an example resource.
+     * @return example resource.
+     */
     @SuppressWarnings("unused")
     public static OfferedResource getExampleResource() {
         return new OfferedResource(
@@ -24,6 +28,10 @@ public class ExampleResources {
             getExampleData());
     }
 
+    /**
+     * Creates example metadata.
+     * @return example metadata.
+     */
     public static ResourceMetadata getExampleMetadata() {
         final var metadata = new ResourceMetadata();
         metadata.setRepresentations(
@@ -36,11 +44,19 @@ public class ExampleResources {
         return metadata;
     }
 
+    /**
+     * Creates an example policy.
+     * @return example policy.
+     */
     @SuppressWarnings("SameReturnValue")
     public static String getExamplePolicy() {
         return "Example policy";
     }
 
+    /**
+     * Creates example data.
+     * @return example data.
+     */
     public static String getExampleData() {
         return "<note>\n"
             + "<to>Everyone</to>\n"
@@ -50,6 +66,10 @@ public class ExampleResources {
             + "</note>";
     }
 
+    /**
+     * Creates an example representation.
+     * @return example representation.
+     */
     public static ResourceRepresentation getExampleResourceRepresentation() {
         final var representation = new ResourceRepresentation();
         representation.setUuid(UUIDUtils.createUUID((UUID x) -> false));
@@ -61,6 +81,10 @@ public class ExampleResources {
         return representation;
     }
 
+    /**
+     * Creates an example backend source.
+     * @return example backend source.
+     */
     public static BackendSource getExampleBackendSource() {
         final var source = new BackendSource();
         source.setType(BackendSource.Type.LOCAL);

@@ -27,9 +27,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * Contains methods required for policy negotiation.
+ */
 @Service
 public class NegotiationService {
 
@@ -42,6 +44,11 @@ public class NegotiationService {
 
     private boolean status;
 
+    /**
+     * Constructor for NegotiationService.
+     *
+     * @throws IllegalArgumentException - if any of the parameters is null.
+     */
     @Autowired
     public NegotiationService(ContractMessageService contractMessageService,
         PolicyHandler policyHandler, SerializerProvider serializerProvider,
@@ -67,8 +74,11 @@ public class NegotiationService {
     }
 
     /**
-     * Deserialize contract and send it as contract request message.
+     * Deserializes a contract, adds a given artifact ID to the contract's rules and sends it as contract request
+     * message.
      *
+     * @param contractAsString the contract as string.
+     * @param artifactId ID of the artifact.
      * @return The http response.
      * @throws IllegalArgumentException - if the contract could not be deserialized.
      */
@@ -93,12 +103,15 @@ public class NegotiationService {
     }
 
     /**
-    * Check if the contract request has been successful. If yes, send a contract agreement message.
-    *
-    * @return The contract agreement id.
-    * @throws ContractException - if the contract could not be read.
-    * @throws MessageException - if the contract request message could not be sent.
-    */
+     * Checks if the contract request has been successful and, if so, sends a contract agreement message.
+     *
+     * @param recipient recipient of the contract agreement message.
+     * @param header message header.
+     * @param payload message payload.
+     * @return the contract agreement ID.
+     * @throws ContractException - if the contract could not be read.
+     * @throws MessageException - if the contract request message could not be sent.
+     */
     public URI contractAccepted(URI recipient, String header, String payload) throws ContractException,
         MessageException {
         if (payload != null && !payload.equals("")) {
@@ -150,17 +163,28 @@ public class NegotiationService {
         }
     }
 
+    /**
+     * Returns the status.
+     * @return the status.
+     */
     public boolean isStatus() {
         return status;
     }
 
+    /**
+     * Sets the status.
+     * @param status the status.
+     */
     public void setStatus(boolean status) {
         this.status = status;
     }
 
     /**
-     * Add artifact id to every rule in this contract.
+     * Adds an artifact ID to every rule in a given contract contract.
      *
+     * @param artifactId ID of the artifact
+     * @param consumer consumer of the contract request
+     * @param contract the contract
      * @return A valid contract request.
      */
     private ContractRequest fillContract(URI artifactId, URI consumer, ContractRequest contract) {
@@ -191,9 +215,11 @@ public class NegotiationService {
     }
 
     /**
-     * Compare the contracts to each other.
+     * Compares two contracts to each other.
      *
-     * @return True is the content is equal, false if any difference is detected.
+     * @param request the requested contract
+     * @param offer the offered contract
+     * @return true, if the contracts are equal; false otherwise
      */
     public boolean compareContracts(Contract request, Contract offer) {
         if (request == null || offer == null)
@@ -224,9 +250,11 @@ public class NegotiationService {
     }
 
     /**
-     * Compares the content of two permissions.
+     * Compares the content of two permissions lists.
      *
-     * @return True is the content is equal, false if any difference is detected.
+     * @param request list of requested permissions
+     * @param offer list of offered permissions
+     * @return true, if the contents are equal; false otherwise
      */
     private boolean comparePermissions(
         ArrayList<? extends Permission> request, ArrayList<? extends Permission> offer) {
@@ -273,9 +301,11 @@ public class NegotiationService {
     }
 
     /**
-     * Compares the content of two prohibitions or obligations.
+     * Compares the content of two lists of prohibitions or obligations.
      *
-     * @return True is the content is equal, false if any difference is detected.
+     * @param request list of requested prohibitions or obligations
+     * @param offer list of offered prohibitions or obligations
+     * @return true, if the contents are equal; false otherwise
      */
     private boolean compareRules(
         ArrayList<? extends Rule> request, ArrayList<? extends Rule> offer) {

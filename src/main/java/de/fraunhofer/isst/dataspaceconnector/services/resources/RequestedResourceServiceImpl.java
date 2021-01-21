@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class implements all methods of {@link ResourceService}.
- * It provides database resource handling for all requested resources.
+ * It provides methods for performing the CRUD operations for requested resources.
  */
 @Service
 public class RequestedResourceServiceImpl implements ResourceService {
@@ -37,6 +37,8 @@ public class RequestedResourceServiceImpl implements ResourceService {
 
     /**
      * Constructor for RequestedResourceServiceImpl.
+     *
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
     public RequestedResourceServiceImpl(RequestedResourceRepository requestedResourceRepository,
@@ -56,7 +58,11 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Saves the resources with its metadata as external resource or internal resource.
+     * Saves the resource with its metadata.
+     *
+     * @param resourceMetadata the resource's metadata.
+     * @return the UUID of the newly created resource.
+     * @throws InvalidResourceException - if the resource is not valid.
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) throws InvalidResourceException {
@@ -69,7 +75,12 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Publishes the resource data.
+     * Publishes resource data by ID.
+     *
+     * @param resourceId ID of the resource
+     * @param data data as string
+     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException - if the resource is invalid
      */
     @Override
     public void addData(UUID resourceId, String data) throws ResourceNotFoundException,
@@ -86,7 +97,10 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Deletes a resource by id.
+     * Deletes a resource by ID.
+     *
+     * @param resourceId ID of the resource
+     * @return true, if the the resource was deleted; false otherwise
      */
     @Override
     public boolean deleteResource(UUID resourceId) {
@@ -107,7 +121,10 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Gets a resource by id.
+     * Gets a resource by ID.
+     *
+     * @param resourceId ID of the resource
+     * @return the resource
      */
     @Override
     public RequestedResource getResource(UUID resourceId) throws InvalidResourceException {
@@ -126,7 +143,11 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Gets resource metadata by id.
+     * Gets resource metadata by ID.
+     *
+     * @param resourceId ID of the resource
+     * @return the metadata
+     * @throws ResourceNotFoundException - if the resource could not be found
      */
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
@@ -140,7 +161,13 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Gets resource data by id.
+     * Gets resource data by ID.
+     *
+     * @param resourceId ID of the resource
+     * @return the data
+     * @throws ResourceNotFoundException - if the resource could not be found.
+     * @throws ResourceException - if the data could not be retrieved.
+     * @throws ContractException - if the policy could not be parsed or the policy pattern in not supported.
      */
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
@@ -161,7 +188,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns all requested resources as a list.
      */
     @Override
     public List<Resource> getResources() {
@@ -170,7 +197,12 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Gets data from local or external data source.
+     * Gets data from the local database or an external data source.
+     *
+     * @param resourceId ID of the resource
+     * @param representationId ID of the representation
+     * @return resource data as string
+     * @throws OperationNotSupportedException - always
      */
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
@@ -178,12 +210,25 @@ public class RequestedResourceServiceImpl implements ResourceService {
         throw new OperationNotSupportedException("Operation not supported.");
     }
 
+    /**
+     * Gets a resource representation by ID.
+     *
+     * @param resourceId ID of the resource
+     * @param representationId ID of the representation
+     * @return the representation
+     * @throws OperationNotSupportedException - always
+     */
     @Override
     public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
         throws OperationNotSupportedException {
         throw new OperationNotSupportedException("Operation not supported.");
     }
 
+    /**
+     * Checks if a given requested resource is valid.
+     * @param resource the requested resource
+     * @return an optional string: empty, if the resource is valid; contains error description otherwise
+     */
     public Optional<String> isValidRequestedResource(RequestedResource resource) {
         if (resource == null) {
             return Optional.of("The resource cannot be null.");
@@ -201,7 +246,9 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * @param resource The resource to be validated
+     * Validates a requested resource.
+     *
+     * @param resource the resource to be validated
      * @throws InvalidResourceException - if the resource is not valid.
      */
     private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException {

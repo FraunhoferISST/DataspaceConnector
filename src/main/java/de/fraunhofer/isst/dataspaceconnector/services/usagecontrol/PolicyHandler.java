@@ -34,6 +34,8 @@ public class PolicyHandler {
 
     /**
      * Constructor for PolicyHandler.
+     *
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
     public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
@@ -52,8 +54,9 @@ public class PolicyHandler {
     /**
      * Deserializes a contract object from a string.
      *
-     * @return The contract.
-     * @throws RequestFormatException - if the string could not be deserialized.
+     * @param contract the contract as a string.
+     * @return the contract.
+     * @throws RequestFormatException - if the string is not a valid contract and could thus not be deserialized.
      */
     public Contract validateContract(String contract) throws RequestFormatException {
         try {
@@ -67,8 +70,8 @@ public class PolicyHandler {
     /**
      * Reads the properties of an ODRL policy to automatically recognize the policy pattern.
      *
-     * @param policy The parsed policy object.
-     * @return The recognized policy pattern.
+     * @param policy the policy as a string.
+     * @return the recognized policy pattern.
      * @throws UnsupportedPatternException - if no pattern could be recognized.
      * @throws RequestFormatException - if the string could not be deserialized.
      */
@@ -125,11 +128,10 @@ public class PolicyHandler {
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on artifact request
-     * as provider).
+     * Implements the policy restrictions depending on the policy pattern type on data provision (as provider).
      *
-     * @param policy The resource's usage policy.
-     * @return Whether the data can be accessed.
+     * @param policy the resource's usage policy.
+     * @return whether the data can be provided.
      * @throws UnsupportedPatternException - if no pattern could be recognized.
      * @throws RequestFormatException - if the string could not be deserialized.
      */
@@ -149,11 +151,10 @@ public class PolicyHandler {
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on data access as
-     * consumer).
+     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
      *
-     * @param dataResource The accessed resource.
-     * @return Whether the data can be accessed.
+     * @param dataResource the accessed resource.
+     * @return whether the data can be accessed.
      * @throws UnsupportedPatternException - if no pattern could be recognized.
      * @throws RequestFormatException - if the string could not be deserialized.
      */
@@ -187,10 +188,18 @@ public class PolicyHandler {
         }
     }
 
+    /**
+     * Returns the current value of {@link PolicyHandler#ignoreUnsupportedPatterns}.
+     * @return true, if unsupported patterns in policies are ignored; false otherwise.
+     */
     public boolean isIgnoreUnsupportedPatterns() {
         return ignoreUnsupportedPatterns;
     }
 
+    /**
+     * Sets whether unsupported patterns in policies should be ignored.
+     * @param ignoreUnsupportedPatterns true, if unsupported patterns in policies should be ignored; false otherwise.
+     */
     public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
         this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
     }

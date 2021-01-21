@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * RequestedResourceService interface.
+ * RequestedResourceService interface. Contains methods for performing CRUD operations on resources.
  */
 public interface ResourceService {
 
@@ -35,28 +35,28 @@ public interface ResourceService {
     boolean deleteResource(UUID id);
 
     /**
-     * Returns resource
+     * Finds resource by ID
      *
      * @throws ResourceException - if the resource could not be found.
      */
     ConnectorResource getResource(UUID id) throws ResourceException;
 
     /**
-     * Returns metadata.
+     * Finds metadata by ID.
      *
      * @throws ResourceException - if the metadata could not be found.
      */
     ResourceMetadata getMetadata(UUID id) throws ResourceException;
 
     /**
-     * Returns data.
+     * Finds data by ID.
      *
-     * @throws ResourceException - if the data could not be received.
+     * @throws ResourceException - if the data could not be retrieved.
      */
     String getData(UUID id) throws ResourceException;
 
     /**
-     * Returns requested resources as list.
+     * Returns all resources as list.
      *
      * @return a list of resources.
      */
@@ -65,16 +65,20 @@ public interface ResourceService {
     /**
      * Returns data by representation.
      *
-     * @return a {@link java.lang.String} object.
-     * @throws ResourceException - if the resource data could not be received.
+     * @param resourceId ID of the resource.
+     * @param representationId ID of the representation.
+     * @return resource data as string.
+     * @throws ResourceException - if the resource data could not be retrieved.
      */
     String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 
     /**
-     * Returns representation.
+     * Finds representation by ID.
      *
+     * @param resourceId ID of the resource.
+     * @param representationId ID of the representation.
      * @return a {@link ResourceRepresentation} object.
-     * @throws ResourceException - if the representation could not be received.
+     * @throws ResourceException - if the representation could not be retrieved.
      */
     ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
         throws ResourceException;

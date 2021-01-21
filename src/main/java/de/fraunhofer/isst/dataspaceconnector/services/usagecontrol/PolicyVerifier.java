@@ -20,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * This class provides access permission information for the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler}
- * depending on the policy content.
+ * This class provides access permission information for the
+ * {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler} depending on the policy content.
  */
 @Component
 public class PolicyVerifier {
@@ -36,6 +36,7 @@ public class PolicyVerifier {
     /**
      * Constructor for PolicyVerifier.
      *
+     * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
@@ -62,7 +63,7 @@ public class PolicyVerifier {
     /**
      * Allows data access.
      *
-     * @return Access allowed.
+     * @return true.
      */
     @SuppressWarnings("SameReturnValue")
     public boolean allowAccess() {
@@ -72,7 +73,7 @@ public class PolicyVerifier {
     /**
      * Inhibits data access.
      *
-     * @return Access denied.
+     * @return false.
      */
     @SuppressWarnings("SameReturnValue")
     public boolean inhibitAccess() {
@@ -80,11 +81,11 @@ public class PolicyVerifier {
     }
 
     /**
-     * Saves the access date into the database.
+     * Saves the access date into the database and allows the access only if that operation was successful.
      * TODO: Validate response in more detail.
      * TODO: Add log message.
      *
-     * @return Success or not (access or inhibition).
+     * @return true, if the access was logged; false otherwise.
      */
     public boolean logAccess() {
         Map<String, String> response;
@@ -103,11 +104,11 @@ public class PolicyVerifier {
     }
 
     /**
-     * Notify participant about data access.
+     * Notifies a participant about data access and allows the access only if that operation was successful.
      * TODO: Validate response in more detail.
      *
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
-     * @return Success or not (access or inhibition).
+     * @return true, if the participant was notified; false otherwise.
      */
     public boolean sendNotification(Contract contract) {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
@@ -134,7 +135,7 @@ public class PolicyVerifier {
      * Checks if the requested access is in the allowed time interval.
      *
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
-     * @return If this is the case, access is provided.
+     * @return true, if the current date is within the time interval; false otherwise.
      */
     public boolean checkInterval(Contract contract) {
         PolicyReader.TimeInterval timeInterval = policyReader
@@ -151,20 +152,20 @@ public class PolicyVerifier {
     /**
      * Checks whether the current date is later than the specified one.
      *
-     * @param dateNow   The current date.
-     * @param maxAccess The target date.
-     * @return True if the date has been already exceeded, false if not.
+     * @param dateNow   the current date.
+     * @param maxAccess the target date.
+     * @return true, if the current date is later than the target date; false otherwise.
      */
     public boolean checkDate(Date dateNow, Date maxAccess) {
         return dateNow.after(maxAccess);
     }
 
     /**
-     * Adds a duration to a date to get the a date.
+     * Adds a duration to a given date and checks if the duration has already been exceeded.
      *
-     * @param created  The date when the resource was created.
+     * @param created  the date when the resource was created.
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
-     * @return True if the resource should be deleted, false if not.
+     * @return true, the duration has not been exceeded; false otherwise.
      */
     public boolean checkDuration(Date created, Contract contract) {
         Calendar cal = Calendar.getInstance();
@@ -186,12 +187,11 @@ public class PolicyVerifier {
     }
 
     /**
-     * Checks whether the maximum of access number is already reached.
+     * Checks whether the maximum number of accesses has already been reached.
      *
      * @param contract a {@link de.fraunhofer.iais.eis.Contract} object.
      * @param uuid     a {@link java.util.UUID} object.
-     * @return If this is not the case, access is provided. Otherwise, data is deleted and access
-     * denied.
+     * @return true, if the maximum number of accesses has not been reached yet; false otherwise.
      */
     public boolean checkFrequency(Contract contract, UUID uuid) {
         int max = policyReader.getMaxAccess(contract.getPermission().get(0));
@@ -212,12 +212,12 @@ public class PolicyVerifier {
     }
 
     /**
-     * Checks if the duration since resource creation or the max date for resource access has been
-     * already exceeded.
+     * Checks if the specified duration since resource creation or the specified maximum date for resource access
+     * has already been exceeded.
      *
      * @param rule a {@link de.fraunhofer.iais.eis.Rule} object.
-     * @return True if the resource should be deleted, false if not.
-     * @throws java.text.ParseException if any.
+     * @return true, if the duration or date has been exceeded; false otherwise.
+     * @throws java.text.ParseException - if a duration cannot be parsed.
      */
     public boolean checkForDelete(Rule rule) throws ParseException {
         Date max = policyReader.getDate(rule);
