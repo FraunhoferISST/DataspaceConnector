@@ -30,7 +30,6 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
     public static final Logger LOGGER = LoggerFactory.getLogger(NotificationMessageHandler.class);
 
-    private final DapsTokenProvider tokenProvider;
     private final NotificationMessageService messageService;
     private final ConfigurationContainer configurationContainer;
 
@@ -39,23 +38,18 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      *
      * @param configurationContainer The container with the configuration
      * @param notificationMessageService The service responsible for notifications
-     * @param tokenProvider The provider for token
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public NotificationMessageHandler(ConfigurationContainer configurationContainer,
         NotificationMessageService notificationMessageService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
-        if (tokenProvider == null)
-            throw new IllegalArgumentException("The TokenProvider cannot be null.");
-
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (notificationMessageService == null)
             throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
 
-        this.tokenProvider = tokenProvider;
         this.configurationContainer = configurationContainer;
         this.messageService = notificationMessageService;
     }
