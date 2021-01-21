@@ -46,6 +46,7 @@ public class ContractAgreementServiceImpl implements ContractAgreementService {
      */
     @Override
     public ResourceContract getContract(UUID uuid) {
+        //noinspection OptionalGetWithoutIsPresent
         return contractAgreementRepository.findById(uuid).get();
     }
 }
