@@ -1,12 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.UUID;
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.Data;
+import java.util.UUID;
 
 /**
  * This class provides a model to handle agreed resource contracts.

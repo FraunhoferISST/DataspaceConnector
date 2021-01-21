@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
-
 import de.fraunhofer.iais.eis.LogMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.Util;
@@ -13,11 +11,12 @@ import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
-import java.net.URI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
  * The service for log messages

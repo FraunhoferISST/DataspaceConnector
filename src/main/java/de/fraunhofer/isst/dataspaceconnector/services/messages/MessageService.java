@@ -1,20 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.AccessTokenResponseMessage;
-import de.fraunhofer.iais.eis.AppRegistrationResponseMessage;
-import de.fraunhofer.iais.eis.ArtifactResponseMessage;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
-import de.fraunhofer.iais.eis.ContractRejectionMessage;
-import de.fraunhofer.iais.eis.ContractResponseMessage;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
-import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.OperationResultMessage;
-import de.fraunhofer.iais.eis.ParticipantResponseMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResultMessage;
-import de.fraunhofer.iais.eis.UploadResponseMessage;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -28,16 +14,17 @@ import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 import okhttp3.MultipartBody;
 import org.apache.commons.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Abstract class for building and sending IDS messages.

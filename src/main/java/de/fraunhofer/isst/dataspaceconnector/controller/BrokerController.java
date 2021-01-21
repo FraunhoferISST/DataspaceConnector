@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondBrokerCommunicationFailed;
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondRejectUnauthorized;
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondResourceNotFound;
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondUpdateError;
-
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.Resource;
@@ -23,21 +17,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.*;
 
 /**
  * This class provides endpoints for the communication with an IDS broker instance.

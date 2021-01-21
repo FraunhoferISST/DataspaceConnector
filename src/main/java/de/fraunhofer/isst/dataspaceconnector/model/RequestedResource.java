@@ -1,15 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import lombok.Data;
 
 /**
  * This class describes a resource requested.

@@ -1,15 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestImpl;
-import de.fraunhofer.iais.eis.DutyImpl;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionImpl;
-import de.fraunhofer.iais.eis.ProhibitionImpl;
-import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
@@ -20,14 +11,15 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Contains methods required for policy negotiation.
