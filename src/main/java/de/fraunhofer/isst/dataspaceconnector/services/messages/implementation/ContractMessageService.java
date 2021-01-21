@@ -121,7 +121,7 @@ public class ContractMessageService extends MessageService {
     }
 
     /**
-     * Set the response parameters for the artifact message
+     * Set the response parameters for the message
      *
      * @param recipient The recipient of the response
      * @param correlationMessage The correlation message
