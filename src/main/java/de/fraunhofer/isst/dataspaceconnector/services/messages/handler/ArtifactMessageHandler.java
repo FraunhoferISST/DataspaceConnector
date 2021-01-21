@@ -282,6 +282,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Extract the artifact id.
      *
+     * @param requestMessage The artifact request message
+     * @return The artifact id
      * @throws RequestFormatException - if uuid could not be extracted.
      */
     private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
