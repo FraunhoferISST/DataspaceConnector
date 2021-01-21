@@ -12,8 +12,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2
- * database.
+ * This class describes a resource requested.
  */
 @Data
 @Entity
@@ -157,7 +156,7 @@ public class RequestedResource implements ConnectorResource {
     public Integer getAccessed() {
         return accessed;
     }
-    
+
     private void incrementDataAccess() {
         this.accessed++;
     }
