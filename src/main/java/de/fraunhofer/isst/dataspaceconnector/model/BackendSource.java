@@ -40,6 +40,11 @@ public class BackendSource implements Serializable {
 
     /**
      * Constructor with parameters for BackendSource.
+     *
+     * @param type The backend type
+     * @param url The access url of the backend
+     * @param username The username for authentication
+     * @param password The password for authentication
      */
     public BackendSource(Type type, URI url, String username, String password) {
         this.type = type;
