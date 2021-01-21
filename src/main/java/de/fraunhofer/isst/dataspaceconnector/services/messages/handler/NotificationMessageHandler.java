@@ -38,6 +38,9 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Constructor for NotificationMessageHandler.
      *
+     * @param configurationContainer The container with the configuration
+     * @param notificationMessageService The service responsible for notifications
+     * @param tokenProvider The provider for token
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
