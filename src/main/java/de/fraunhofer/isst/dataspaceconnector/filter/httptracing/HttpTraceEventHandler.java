@@ -25,6 +25,10 @@ public class HttpTraceEventHandler {
         this.publisher = publisher;
     }
 
+    /**
+     * Processes raised HttpTraceEvents
+     * @param trace The HttpTrace that needs to be processed
+     */
     @Async
     @EventListener
     public void handleHttpTraceEvent(HttpTrace trace) {
