@@ -62,7 +62,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public UUID getUuid() {
@@ -70,7 +70,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setUuid(UUID uuid) {
@@ -78,7 +78,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Date getCreated() {
@@ -86,7 +86,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setCreated(Date created) {
@@ -95,7 +95,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Date getModified() {
@@ -103,7 +103,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setModified(Date modified) {
@@ -111,7 +111,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public ResourceMetadata getResourceMetadata() {
@@ -119,7 +119,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
@@ -128,7 +128,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String getData() {
@@ -136,7 +136,7 @@ public class OfferedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setData(String data) {

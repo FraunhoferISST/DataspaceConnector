@@ -68,7 +68,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public UUID getUuid() {
@@ -76,7 +76,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setUuid(UUID uuid) {
@@ -84,7 +84,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Date getCreated() {
@@ -92,7 +92,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setCreated(Date created) {
@@ -100,7 +100,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Date getModified() {
@@ -108,7 +108,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setModified(Date modified) {
@@ -116,7 +116,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public ResourceMetadata getResourceMetadata() {
@@ -124,7 +124,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
@@ -132,7 +132,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String getData() {
@@ -141,7 +141,7 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setData(String data) {
