@@ -50,7 +50,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @param configurationContainer  The container with the configuration
      * @param messageService The service for sending messages
      * @param offeredResourceService The service for offered resources
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public DescriptionMessageHandler(ConfigurationContainer configurationContainer,
@@ -77,7 +77,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @param requestMessage The request message
      * @param messagePayload The request message payload
      * @return The message response
-     * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
+     * @throws RuntimeException if the response body failed to be build or requestMessage is null.
      */
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,

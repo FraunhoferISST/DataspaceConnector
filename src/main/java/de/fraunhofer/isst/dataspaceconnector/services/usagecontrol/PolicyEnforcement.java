@@ -36,7 +36,7 @@ public class PolicyEnforcement {
     /**
      * Constructor for PolicyEnforcement.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public PolicyEnforcement(PolicyVerifier policyVerifier,
@@ -78,7 +78,7 @@ public class PolicyEnforcement {
     /**
      * Checks all known resources and their policies to delete them if necessary.
      *
-     * @throws java.text.ParseException - if a date from a policy cannot be parsed.
+     * @throws java.text.ParseException if a date from a policy cannot be parsed.
      * @throws java.io.IOException      - if an error occurs while deserializing a contract.
      */
     public void checkResources() throws ParseException, IOException {

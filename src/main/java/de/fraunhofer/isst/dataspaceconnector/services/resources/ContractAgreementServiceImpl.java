@@ -19,7 +19,7 @@ public class ContractAgreementServiceImpl implements ContractAgreementService {
     /**
      * Constructor for ContractAgreementServiceImpl.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public ContractAgreementServiceImpl(ContractAgreementRepository contractAgreementRepository)

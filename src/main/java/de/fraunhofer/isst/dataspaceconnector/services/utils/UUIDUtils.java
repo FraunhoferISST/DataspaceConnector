@@ -41,7 +41,7 @@ public class UUIDUtils {
      *
      * @param uri The URI from which the UUID should be extracted.
      * @return the extracted UUID.
-     * @throws UUIDFormatException - if the URI does not contain a parsable UUID.
+     * @throws UUIDFormatException if the URI does not contain a parsable UUID.
      */
     public static UUID uuidFromUri(@NotNull URI uri) throws UUIDFormatException {
         try {
@@ -60,7 +60,7 @@ public class UUIDUtils {
      *              last UUID should be extracted.
      * @return the extracted uuid.
      * @throws UUIDFormatException       - if the URI does not contain a parsable UUID.
-     * @throws IndexOutOfBoundsException - if no UUID can be found at the given index.
+     * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
     public static UUID uuidFromUri(@NotNull URI uri, int index) throws UUIDFormatException,
         IndexOutOfBoundsException {
@@ -86,7 +86,7 @@ public class UUIDUtils {
      *
      * @param doesUuidExistFunc a function checking if a given UUID already exists
      * @return generated UUID
-     * @throws UUIDCreationException - if no unique UUID could be generated
+     * @throws UUIDCreationException if no unique UUID could be generated
      */
     public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc)
             throws UUIDCreationException {
@@ -99,7 +99,7 @@ public class UUIDUtils {
      * @param doesUuidExistFunc a function checking if a given UUID already exists
      * @param maxNumTries       a maximum number of retries for generating the UUID
      * @return generated UUID
-     * @throws UUIDCreationException - if no unique UUID could be generated
+     * @throws UUIDCreationException if no unique UUID could be generated
      */
     public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc, long maxNumTries)
             throws IllegalArgumentException, UUIDCreationException {

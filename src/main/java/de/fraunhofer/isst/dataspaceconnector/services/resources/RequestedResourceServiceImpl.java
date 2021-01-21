@@ -38,7 +38,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
     /**
      * Constructor for RequestedResourceServiceImpl.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public RequestedResourceServiceImpl(RequestedResourceRepository requestedResourceRepository,
@@ -62,7 +62,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
      *
      * @param resourceMetadata the resource's metadata.
      * @return the UUID of the newly created resource.
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      */
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) throws InvalidResourceException {
@@ -79,8 +79,8 @@ public class RequestedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @param data data as string
-     * @throws ResourceNotFoundException - if the resource could not be found
-     * @throws InvalidResourceException - if the resource is invalid
+     * @throws ResourceNotFoundException if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid
      */
     @Override
     public void addData(UUID resourceId, String data) throws ResourceNotFoundException,
@@ -147,7 +147,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @return the metadata
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
@@ -165,9 +165,9 @@ public class RequestedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @return the data
-     * @throws ResourceNotFoundException - if the resource could not be found.
-     * @throws ResourceException - if the data could not be retrieved.
-     * @throws ContractException - if the policy could not be parsed or the policy pattern in not supported.
+     * @throws ResourceNotFoundException if the resource could not be found.
+     * @throws ResourceException if the data could not be retrieved.
+     * @throws ContractException if the policy could not be parsed or the policy pattern in not supported.
      */
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
@@ -202,7 +202,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
      * @return resource data as string
-     * @throws OperationNotSupportedException - always
+     * @throws OperationNotSupportedException always
      */
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
@@ -216,7 +216,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
      * @return the representation
-     * @throws OperationNotSupportedException - always
+     * @throws OperationNotSupportedException always
      */
     @Override
     public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
@@ -249,7 +249,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * Validates a requested resource.
      *
      * @param resource the resource to be validated
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      */
     private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException {
         final var error = isValidRequestedResource(resource);

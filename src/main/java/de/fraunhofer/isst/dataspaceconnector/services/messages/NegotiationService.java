@@ -47,7 +47,7 @@ public class NegotiationService {
     /**
      * Constructor for NegotiationService.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public NegotiationService(ContractMessageService contractMessageService,
@@ -80,7 +80,7 @@ public class NegotiationService {
      * @param contractAsString the contract as string.
      * @param artifactId ID of the artifact.
      * @return The http response.
-     * @throws IllegalArgumentException - if the contract could not be deserialized.
+     * @throws IllegalArgumentException if the contract could not be deserialized.
      */
     public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
         throws IllegalArgumentException {
@@ -109,8 +109,8 @@ public class NegotiationService {
      * @param header message header.
      * @param payload message payload.
      * @return the contract agreement ID.
-     * @throws ContractException - if the contract could not be read.
-     * @throws MessageException - if the contract request message could not be sent.
+     * @throws ContractException if the contract could not be read.
+     * @throws MessageException if the contract request message could not be sent.
      */
     public URI contractAccepted(URI recipient, String header, String payload) throws ContractException,
         MessageException {

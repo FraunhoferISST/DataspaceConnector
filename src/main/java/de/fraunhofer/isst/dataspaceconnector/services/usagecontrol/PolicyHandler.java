@@ -35,7 +35,7 @@ public class PolicyHandler {
     /**
      * Constructor for PolicyHandler.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
@@ -56,7 +56,7 @@ public class PolicyHandler {
      *
      * @param contract the contract as a string.
      * @return the contract.
-     * @throws RequestFormatException - if the string is not a valid contract and could thus not be deserialized.
+     * @throws RequestFormatException if the string is not a valid contract and could thus not be deserialized.
      */
     public Contract validateContract(String contract) throws RequestFormatException {
         try {
@@ -72,8 +72,8 @@ public class PolicyHandler {
      *
      * @param policy the policy as a string.
      * @return the recognized policy pattern.
-     * @throws UnsupportedPatternException - if no pattern could be recognized.
-     * @throws RequestFormatException - if the string could not be deserialized.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
     public Pattern getPattern(String policy) throws UnsupportedPatternException,
         RequestFormatException {
@@ -132,8 +132,8 @@ public class PolicyHandler {
      *
      * @param policy the resource's usage policy.
      * @return whether the data can be provided.
-     * @throws UnsupportedPatternException - if no pattern could be recognized.
-     * @throws RequestFormatException - if the string could not be deserialized.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
     public boolean onDataProvision(String policy) throws UnsupportedPatternException,
         RequestFormatException {
@@ -155,8 +155,8 @@ public class PolicyHandler {
      *
      * @param dataResource the accessed resource.
      * @return whether the data can be accessed.
-     * @throws UnsupportedPatternException - if no pattern could be recognized.
-     * @throws RequestFormatException - if the string could not be deserialized.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{

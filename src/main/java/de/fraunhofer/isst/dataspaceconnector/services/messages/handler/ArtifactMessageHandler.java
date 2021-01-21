@@ -106,7 +106,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @param requestMessage The request message
      * @param messagePayload The message payload
      * @return The response message
-     * @throws RuntimeException - if the response body failed to be build.
+     * @throws RuntimeException if the response body failed to be build.
      */
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
@@ -284,7 +284,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      *
      * @param requestMessage The artifact request message
      * @return The artifact id
-     * @throws RequestFormatException - if uuid could not be extracted.
+     * @throws RequestFormatException if uuid could not be extracted.
      */
     private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
         throws RequestFormatException {

@@ -55,7 +55,7 @@ public class RequestController {
     /**
      * Constructor for RequestController
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public RequestController(DapsTokenProvider tokenProvider,

@@ -38,7 +38,7 @@ public class ConfigurationController {
     /**
      * Constructor for ConfigurationController.
      *
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public ConfigurationController(ConfigurationContainer configurationContainer,

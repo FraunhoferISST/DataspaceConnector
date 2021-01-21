@@ -49,7 +49,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
     /**
      * Constructor for OfferedResourceServiceImpl.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public OfferedResourceServiceImpl(OfferedResourceRepository offeredResourceRepository,
@@ -102,7 +102,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceMetadata the resource's metadata.
      * @return the UUID of the newly created resource.
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      * @throws ResourceAlreadyExistsException    - if the resource does already exists.
      * @throws ResourceException        - if the resource could not be created.
      */
@@ -129,7 +129,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceMetadata the resource's metadata.
      * @param uuid the ID
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      * @throws ResourceAlreadyExistsException    - if the resource does already exists.
      */
     public void addResourceWithId(ResourceMetadata resourceMetadata, UUID uuid) throws
@@ -151,8 +151,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @param data data as string
-     * @throws ResourceNotFoundException - if the resource could not be found
-     * @throws InvalidResourceException - if the resource is invalid
+     * @throws ResourceNotFoundException if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid
      */
     @Override
     public void addData(UUID resourceId, String data) throws InvalidResourceException,
@@ -172,8 +172,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @param resourceMetadata the updated metadata
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     public void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws
         InvalidResourceException, ResourceNotFoundException {
@@ -193,8 +193,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @param policy the updated policy
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     public void updateContract(UUID resourceId, String policy) throws ResourceNotFoundException,
         InvalidResourceException {
@@ -261,8 +261,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * Gets resource metadata by ID.
      *
      * @return the metadata
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
@@ -280,8 +280,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @return the map
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws
         ResourceNotFoundException, InvalidResourceException {
@@ -294,8 +294,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource.
      * @param representationId ID of the representation
      * @return the representation
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
     public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws
@@ -308,8 +308,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @return resource data as string
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
@@ -340,8 +340,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representationId ID of the represenation
      * @return resource data as string
-     * @throws ResourceNotFoundException - if the resource could not be found
-     * @throws ResourceException - if the resource data could not be retrieved
+     * @throws ResourceNotFoundException if the resource could not be found
+     * @throws ResourceException if the resource data could not be retrieved
      */
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
@@ -365,9 +365,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representation the representation
      * @return ID of the newly created representation
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
-     * @throws ResourceAlreadyExistsException - if the representation already exists
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
+     * @throws ResourceAlreadyExistsException if the representation already exists
      */
     public UUID addRepresentation(UUID resourceId, ResourceRepresentation representation) throws
         ResourceNotFoundException, InvalidResourceException, ResourceAlreadyExistsException {
@@ -390,9 +390,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param representation the representation
      * @param representationId ID of the representation
      * @return ID of the newly created representation
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
-     * @throws ResourceAlreadyExistsException - if the representation already exists
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
+     * @throws ResourceAlreadyExistsException if the representation already exists
      */
     public UUID addRepresentationWithId(UUID resourceId, ResourceRepresentation representation,
         UUID representationId) throws
@@ -418,8 +418,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
      * @param representation the updated representation
-     * @throws InvalidResourceException - if the resource is invalid.
-     * @throws ResourceNotFoundException - if the resource could not be found
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     public void updateRepresentation(UUID resourceId, UUID representationId,
         ResourceRepresentation representation) throws
@@ -449,7 +449,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
      * @return true, if the the representation was deleted; false otherwise
-     * @throws ResourceNotFoundException - if the resource could not be found.
+     * @throws ResourceNotFoundException if the resource could not be found.
      * @throws InvalidResourceException  - if the resource is not valid.
      */
     public boolean deleteRepresentation(UUID resourceId, UUID representationId) throws
@@ -496,7 +496,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * Validates an offered resource.
      *
      * @param resource the resource to be validated
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      */
     private void invalidResourceGuard(OfferedResource resource) throws InvalidResourceException {
         final var error = isValidOfferedResource(resource);
@@ -509,7 +509,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
     /**
      * Saves a resource after validating it.
      *
-     * @throws InvalidResourceException - if the resource is not valid.
+     * @throws InvalidResourceException if the resource is not valid.
      */
     private void storeResource(OfferedResource resource) throws InvalidResourceException {
         invalidResourceGuard(resource);
@@ -523,7 +523,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @param resource       the connector resource object.
      * @param representation the representation.
      * @return resource data as string
-     * @throws ResourceException - if the resource source is not defined or source url is
+     * @throws ResourceException if the resource source is not defined or source url is
      *                           ill-formatted.
      */
     private String getDataString(OfferedResource resource, ResourceRepresentation representation)

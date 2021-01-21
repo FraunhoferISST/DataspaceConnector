@@ -36,7 +36,7 @@ public class PolicyVerifier {
     /**
      * Constructor for PolicyVerifier.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
@@ -217,7 +217,7 @@ public class PolicyVerifier {
      *
      * @param rule a {@link de.fraunhofer.iais.eis.Rule} object.
      * @return true, if the duration or date has been exceeded; false otherwise.
-     * @throws java.text.ParseException - if a duration cannot be parsed.
+     * @throws java.text.ParseException if a duration cannot be parsed.
      */
     public boolean checkForDelete(Rule rule) throws ParseException {
         Date max = policyReader.getDate(rule);

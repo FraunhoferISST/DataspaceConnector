@@ -45,7 +45,7 @@ public class IdsUtils {
     /**
      * Constructor for IdsUtils.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public IdsUtils(ConfigurationContainer configurationContainer,
@@ -81,7 +81,7 @@ public class IdsUtils {
      *
      * @param resource the connector resource.
      * @return the Information Model resource.
-     * @throws RuntimeException - if the Information Model object could not be build.
+     * @throws RuntimeException if the Information Model object could not be build.
      */
     public Resource getAsResource(ConnectorResource resource) throws RuntimeException {
         final var language = getDefaultLanguage();
@@ -193,7 +193,7 @@ public class IdsUtils {
      * Gets the default language, which is the first set language of the connector.
      *
      * @return the default language of the connector.
-     * @throws ConnectorConfigurationException - if the connector is null or no language is
+     * @throws ConnectorConfigurationException if the connector is null or no language is
      *                                         configured.
      */
     private String getDefaultLanguage() throws ConnectorConfigurationException {
@@ -209,8 +209,8 @@ public class IdsUtils {
      *
      * @param index index of the language.
      * @return the language at the passed index.
-     * @throws ConnectorConfigurationException - if the connector is null or no language is set.
-     * @throws IndexOutOfBoundsException - if no language could be found at the passed index.
+     * @throws ConnectorConfigurationException if the connector is null or no language is set.
+     * @throws IndexOutOfBoundsException if no language could be found at the passed index.
      */
     @SuppressWarnings("SameParameterValue")
     private String getLanguage(int index)

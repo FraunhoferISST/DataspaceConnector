@@ -58,7 +58,7 @@ public class BrokerController {
     /**
      * Constructor for BrokerController.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public BrokerController(DapsTokenProvider tokenProvider,

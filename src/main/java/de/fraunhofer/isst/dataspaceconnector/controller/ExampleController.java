@@ -62,7 +62,7 @@ public class ExampleController {
     /**
      * Constructor for ExampleController.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public ExampleController(DapsTokenProvider tokenProvider,

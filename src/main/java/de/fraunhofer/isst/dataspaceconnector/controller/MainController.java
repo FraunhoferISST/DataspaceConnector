@@ -48,7 +48,7 @@ public class MainController {
     /**
      * Constructor for MainController.
      *
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public MainController(SerializerProvider serializerProvider,

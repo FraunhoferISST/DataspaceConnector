@@ -76,7 +76,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @param messageService The service for sending messages
      * @param logMessageService The service for logging
      * @param tokenProvider The provider for token
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public ContractMessageHandler(ConfigurationContainer configurationContainer,

@@ -55,7 +55,7 @@ public abstract class MessageService {
     /**
      * Constructor for MessageService.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public MessageService(IDSHttpService idsHttpService, IdsUtils idsUtils,
@@ -83,7 +83,7 @@ public abstract class MessageService {
      * Build an IDS message as request header.
      *
      * @return the message.
-     * @throws MessageException - if the message could not be created.
+     * @throws MessageException if the message could not be created.
      */
     public abstract Message buildRequestHeader() throws MessageException;
 
@@ -91,7 +91,7 @@ public abstract class MessageService {
      * Build an IDS message as response header.
      *
      * @return the message.
-     * @throws MessageException - if the message could not be created.
+     * @throws MessageException if the message could not be created.
      */
     public abstract Message buildResponseHeader() throws MessageException;
 
@@ -114,7 +114,7 @@ public abstract class MessageService {
      *
      * @param payload the message payload.
      * @return the HTTP response.
-     * @throws MessageException - if a header could not be built or the message could not be sent.
+     * @throws MessageException if a header could not be built or the message could not be sent.
      */
     public Map<String, String> sendMessage(String payload) throws MessageException {
         Message message;
@@ -142,7 +142,7 @@ public abstract class MessageService {
      *
      * @param versionString the outbound model version of the requesting connector.
      * @return true, if the outbound model version of the requsting connector is supported; false otherwise
-     * @throws ConnectorConfigurationException - if no connector configuration was found
+     * @throws ConnectorConfigurationException if no connector configuration was found
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {

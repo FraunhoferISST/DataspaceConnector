@@ -16,14 +16,14 @@ public interface ResourceService {
     /**
      * Adds resource.
      *
-     * @throws ResourceException - if the resource could not be added.
+     * @throws ResourceException if the resource could not be added.
      */
     UUID addResource(ResourceMetadata metadata) throws ResourceException;
 
     /**
      * Adds data.
      *
-     * @throws ResourceException - if the data could not be added.
+     * @throws ResourceException if the data could not be added.
      */
     void addData(UUID id, String data) throws ResourceException;
 
@@ -37,21 +37,21 @@ public interface ResourceService {
     /**
      * Finds resource by ID
      *
-     * @throws ResourceException - if the resource could not be found.
+     * @throws ResourceException if the resource could not be found.
      */
     ConnectorResource getResource(UUID id) throws ResourceException;
 
     /**
      * Finds metadata by ID.
      *
-     * @throws ResourceException - if the metadata could not be found.
+     * @throws ResourceException if the metadata could not be found.
      */
     ResourceMetadata getMetadata(UUID id) throws ResourceException;
 
     /**
      * Finds data by ID.
      *
-     * @throws ResourceException - if the data could not be retrieved.
+     * @throws ResourceException if the data could not be retrieved.
      */
     String getData(UUID id) throws ResourceException;
 
@@ -68,7 +68,7 @@ public interface ResourceService {
      * @param resourceId ID of the resource.
      * @param representationId ID of the representation.
      * @return resource data as string.
-     * @throws ResourceException - if the resource data could not be retrieved.
+     * @throws ResourceException if the resource data could not be retrieved.
      */
     String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
 
@@ -78,7 +78,7 @@ public interface ResourceService {
      * @param resourceId ID of the resource.
      * @param representationId ID of the representation.
      * @return a {@link ResourceRepresentation} object.
-     * @throws ResourceException - if the representation could not be retrieved.
+     * @throws ResourceException if the representation could not be retrieved.
      */
     ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
         throws ResourceException;

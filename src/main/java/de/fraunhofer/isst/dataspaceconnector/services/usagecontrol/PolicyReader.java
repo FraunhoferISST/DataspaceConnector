@@ -88,7 +88,7 @@ public class PolicyReader {
      *
      * @param rule the policy constraint object.
      * @return the date or null.
-     * @throws java.text.ParseException - if the date cannot be parsed.
+     * @throws java.text.ParseException if the date cannot be parsed.
      */
     public Date getDate(Rule rule) throws ParseException {
         Constraint constraint = rule.getConstraint().get(0);
@@ -104,7 +104,7 @@ public class PolicyReader {
      *
      * @param rule the policy constraint object.
      * @return the duration or null.
-     * @throws javax.xml.datatype.DatatypeConfigurationException - if the duration cannot be parsed.
+     * @throws javax.xml.datatype.DatatypeConfigurationException if the duration cannot be parsed.
      */
     public Duration getDuration(Rule rule) throws DatatypeConfigurationException {
         Constraint constraint = rule.getConstraint().get(0);

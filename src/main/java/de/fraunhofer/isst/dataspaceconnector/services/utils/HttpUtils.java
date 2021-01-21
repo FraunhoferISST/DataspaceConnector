@@ -30,8 +30,8 @@ public class HttpUtils {
     /**
      * Constructor for HttpUtils.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
-     * @throws GeneralSecurityException - if the framework has an error.
+     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws GeneralSecurityException if the framework has an error.
      */
     @Autowired
     public HttpUtils(ConfigurationContainer configurationContainer)
@@ -48,7 +48,7 @@ public class HttpUtils {
      *
      * @param address the URL.
      * @return the HTTP response if HTTP code is OK (200).
-     * @throws MalformedURLException - if the input address is not a valid URL.
+     * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
      *                               request.
      */
@@ -103,7 +103,7 @@ public class HttpUtils {
      *
      * @param address the URL.
      * @return the HTTP body of the response when HTTP code is OK (200).
-     * @throws MalformedURLException - if the input address is not a valid URL.
+     * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
      *                               request.
      */
@@ -143,7 +143,7 @@ public class HttpUtils {
      * @param username The username.
      * @param password The password.
      * @return The HTTP response when HTTP code is OK (200).
-     * @throws MalformedURLException - if the input address is not a valid URL.
+     * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException      - if an error occurred when connecting or processing the HTTP
      *                               request.
      */
