@@ -122,7 +122,6 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @param requestMessage The received contract request message.
      * @param messagePayload The message's content.
      * @return The response message.
-     * @throws ConnectorConfigurationException - if no connector is configurated.
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
