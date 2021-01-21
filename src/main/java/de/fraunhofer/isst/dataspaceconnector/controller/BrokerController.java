@@ -241,7 +241,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUnvailableMessage to an IDS broker.
+     * Remove a resource from an ids broker
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.
