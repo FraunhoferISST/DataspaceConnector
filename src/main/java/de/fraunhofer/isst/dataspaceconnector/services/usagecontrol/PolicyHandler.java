@@ -1,16 +1,20 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.Constraint;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -26,6 +30,8 @@ public class PolicyHandler {
     private final PolicyVerifier policyVerifier;
     private final SerializerProvider serializerProvider;
 
+    private boolean ignoreUnsupportedPatterns;
+
     /**
      * Constructor for PolicyHandler.
      */
@@ -40,6 +46,7 @@ public class PolicyHandler {
 
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
+        this.ignoreUnsupportedPatterns = false;
     }
 
     /**
@@ -152,9 +159,18 @@ public class PolicyHandler {
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{
-        String policy = dataResource.getResourceMetadata().getPolicy();
+        final var policy = dataResource.getResourceMetadata().getPolicy();
+        Pattern pattern;
+        try {
+            pattern = getPattern(policy);
+        } catch (UnsupportedPatternException exception) {
+            if (!ignoreUnsupportedPatterns)
+                throw new UnsupportedPatternException(exception.getMessage());
+            else
+                pattern = Pattern.PROVIDE_ACCESS;
+        }
 
-        switch (getPattern(policy)) {
+        switch (pattern) {
             case USAGE_DURING_INTERVAL:
             case USAGE_UNTIL_DELETION:
                 return policyVerifier.checkInterval(contract);
@@ -169,6 +185,14 @@ public class PolicyHandler {
             default:
                 return true;
         }
+    }
+
+    public boolean isIgnoreUnsupportedPatterns() {
+        return ignoreUnsupportedPatterns;
+    }
+
+    public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
+        this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
     }
 
     public enum Pattern {

@@ -1,26 +1,34 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestImpl;
+import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.ResponseService.ResponseType;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
-import okhttp3.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 @Service
 public class NegotiationService {
@@ -28,28 +36,19 @@ public class NegotiationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final PolicyHandler policyHandler;
-    private final ContractRequestService contractRequestService;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final ContractResponseService contractResponseService;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private final ContractMessageService messageService;
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
     private boolean status;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private URI recipient;
 
     @Autowired
-    public NegotiationService(ContractRequestService contractRequestService,
-        ContractResponseService contractResponseService,
+    public NegotiationService(ContractMessageService contractMessageService,
         PolicyHandler policyHandler, SerializerProvider serializerProvider,
         ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
-        if (contractRequestService == null)
-            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
-
-        if (contractResponseService == null)
-            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
+        if (contractMessageService == null)
+            throw new IllegalArgumentException("The ContractMessageService cannot be null.");
 
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
@@ -60,8 +59,7 @@ public class NegotiationService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.contractRequestService = contractRequestService;
-        this.contractResponseService = contractResponseService;
+        this.messageService = contractMessageService;
         this.policyHandler = policyHandler;
         this.status = true;
         this.serializerProvider = serializerProvider;
@@ -73,12 +71,9 @@ public class NegotiationService {
      *
      * @return The http response.
      * @throws IllegalArgumentException - if the contract could not be deserialized.
-     * @throws MessageException - if the contract request message could not be sent.
      */
-    public Response sendContractRequest(String contractAsString, URI artifactId, URI recipient)
-        throws IllegalArgumentException, MessageException {
-        this.recipient = recipient;
-
+    public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
+        throws IllegalArgumentException {
         Contract contract;
         try {
             // Validate contract input.
@@ -93,19 +88,8 @@ public class NegotiationService {
         var connector = configurationContainer.getConnector();
 
         // Build contract request. TODO: Change to curator or maintainer?
-        ContractRequest request = fillContract(artifactId, connector.getId(),
-            contractRequestService.buildContractRequest(contract));
-
-        try {
-            // Send ContractRequestMessage.
-            contractRequestService.setParameter(recipient, request.getId());
-            return contractRequestService.sendMessage(request.toRdf());
-        } catch (MessageException exception) {
-            // Failed to send a contract request message.
-            LOGGER.warn("Could not connect to request message service. [exception=({})]",
-                exception.getMessage());
-            throw new MessageNotSentException("Error in message service. " + exception.getMessage());
-        }
+        return fillContract(artifactId, connector.getId(),
+            messageService.buildContractRequest(contract));
     }
 
     /**
@@ -115,10 +99,9 @@ public class NegotiationService {
     * @throws ContractException - if the contract could not be read.
     * @throws MessageException - if the contract request message could not be sent.
     */
-    public URI contractAccepted(Map<ResponseType, String> map, @SuppressWarnings("unused") String header) throws ContractException,
+    public URI contractAccepted(URI recipient, String header, String payload) throws ContractException,
         MessageException {
-        final var payload = map.get(ResponseType.CONTRACT_AGREEMENT);
-        if (payload != null) {
+        if (payload != null && !payload.equals("")) {
             Contract contract;
             try {
                 // Validate received contract.
@@ -129,9 +112,7 @@ public class NegotiationService {
                 throw new UnsupportedPatternException("Malformed contract. " + exception.getMessage());
             }
 
-            /*Response response; TODO: Error "Incoming Messages must be subtype of RequestMessage
-                                  or NotificationMessage!" (Framework Issue)
-                                  TODO: Update resource contract for enforcement. (later)
+            Map<String, String> response;
             try {
                 // Get correlation message.
                 URI correlationMessage;
@@ -144,25 +125,28 @@ public class NegotiationService {
                 }
 
                 // Send ContractAgreementMessage to recipient.
-                contractResponseService.setParameter(recipient, correlationMessage, contract.getId());
-                ContractAgreement agreement = contractResponseService.buildContractAgreement(contract);
-                response = contractResponseService.sendMessage(agreement.toRdf());
+                messageService.setResponseParameters(recipient, correlationMessage, contract.getId());
+                ContractAgreement agreement = messageService.buildContractAgreement(contract);
+                response = messageService.sendMessage(agreement.toRdf());
             } catch (MessageException exception) {
-                // Failed to send a contract agreement message
-                LOGGER.warn("Could not connect to request message service. [exception=({})]",
+                // Failed to send a contract agreement message.
+                LOGGER.warn("Could not send contract agreement message. [exception=({})]",
                     exception.getMessage());
                 throw new MessageNotSentException("Could not send contract agreement message. "
                     + exception.getMessage());
             }
-            if (response != null) {
-                LOGGER.warn("Received unexpected response" + response.body().toString());
-            } else {
-                return null;
-            }*/
 
-            return contract.getId();
+            if (response != null) {
+                return contract.getId();
+            } else {
+                // Failed to read the contract response message.
+                LOGGER.info("Received invalid ids response.");
+                throw new MessageResponseException("Failed to read the ids response message.");
+            }
         } else {
-            return null;
+            // Failed to read the contract response message.
+            LOGGER.info("Received no valid contract.");
+            throw new MessageResponseException("Failed to read the ids response message.");
         }
     }
 
@@ -179,9 +163,8 @@ public class NegotiationService {
      *
      * @return A valid contract request.
      */
-    private ContractRequest fillContract(URI artifactId, URI consumer,
-        ContractRequest contractRequest) {
-        ContractRequestImpl request = (ContractRequestImpl) contractRequest;
+    private ContractRequest fillContract(URI artifactId, URI consumer, ContractRequest contract) {
+        ContractRequestImpl request = (ContractRequestImpl) contract;
 
         final var obligations = request.getObligation();
         final var permissions = request.getPermission();
@@ -251,35 +234,39 @@ public class NegotiationService {
             return false;
 
         for (int i = 0; i < request.size(); i++) {
-            if (request.get(i).getPostDuty() != null && offer.get(i).getPostDuty() != null) {
-                for (int j = 0; i < request.get(i).getPostDuty().size(); i++) {
-                    if (!request.get(i).getPostDuty().get(j).toRdf()
-                        .equals(offer.get(i).getPostDuty().get(j).toRdf()))
+            final var requestPermission = request.get(i);
+            final var offerPermission = offer.get(i);
+
+            if (requestPermission.getPostDuty() != null && offerPermission.getPostDuty() != null
+                && requestPermission.getPostDuty().size() > 0 && offerPermission.getPostDuty().size() > 0) {
+                for (int j = 0; j < requestPermission.getPostDuty().size(); j++) {
+                    if (!requestPermission.getPostDuty().get(j).toRdf()
+                        .equals(offerPermission.getPostDuty().get(j).toRdf()))
                         return false;
                 }
             }
 
-            if (request.get(i).getPreDuty() != null && offer.get(i).getPreDuty() != null) {
-                for (int j = 0; i < request.get(i).getPreDuty().size(); i++) {
-                    if (!request.get(i).getPreDuty().get(j).toRdf()
-                        .equals(offer.get(i).getPreDuty().get(j).toRdf()))
+            if (requestPermission.getPreDuty() != null && offerPermission.getPreDuty() != null
+                && requestPermission.getPreDuty().size() > 0 && offerPermission.getPreDuty().size() > 0) {
+                for (int j = 0; j < requestPermission.getPreDuty().size(); j++) {
+                    if (!requestPermission.getPreDuty().get(j).toRdf()
+                        .equals(offerPermission.getPreDuty().get(j).toRdf()))
                         return false;
                 }
             }
 
-            if (request.get(i).getConstraint() != null && offer.get(i).getConstraint() != null) {
-                for (int j = 0; i < request.get(i).getConstraint().size(); i++) {
-                    if (!request.get(i).getConstraint().get(j).toRdf()
-                        .equals(offer.get(i).getConstraint().get(j).toRdf()))
+            if (requestPermission.getConstraint() != null && offerPermission.getConstraint() != null
+                && requestPermission.getConstraint().size() > 0 && offerPermission.getConstraint().size() > 0) {
+                for (int j = 0; j < requestPermission.getConstraint().size(); j++) {
+                    if (!requestPermission.getConstraint().get(j).toRdf()
+                        .equals(offerPermission.getConstraint().get(j).toRdf()))
                         return false;
                 }
             }
 
-            if (!request.get(i).getAction().get(0).toRdf()
-                .equals(offer.get(i).getAction().get(0).toRdf()))
+            if (!requestPermission.getAction().get(0).toRdf()
+                .equals(offerPermission.getAction().get(0).toRdf()))
                 return false;
-
-            i++;
         }
 
         return true;
@@ -296,19 +283,21 @@ public class NegotiationService {
             return false;
 
         for (int i = 0; i < request.size(); i++) {
-            if (request.get(i).getConstraint() != null && offer.get(i).getConstraint() != null) {
-                for (int j = 0; i < request.get(i).getConstraint().size(); i++) {
-                    if (!request.get(i).getConstraint().get(j).toRdf()
-                        .equals(offer.get(i).getConstraint().get(j).toRdf()))
+            final var requestPermission = request.get(i);
+            final var offerPermission = offer.get(i);
+
+            if (requestPermission.getConstraint() != null && offerPermission.getConstraint() != null
+                && requestPermission.getConstraint().size() > 0 && offerPermission.getConstraint().size() > 0) {
+                for (int j = 0; j < requestPermission.getConstraint().size(); j++) {
+                    if (!requestPermission.getConstraint().get(j).toRdf()
+                        .equals(offerPermission.getConstraint().get(j).toRdf()))
                         return false;
                 }
             }
 
-            if (!request.get(i).getAction().get(0).toRdf()
-                .equals(offer.get(i).getAction().get(0).toRdf()))
+            if (!requestPermission.getAction().get(0).toRdf()
+                .equals(offerPermission.getAction().get(0).toRdf()))
                 return false;
-
-            i++;
         }
 
         return true;

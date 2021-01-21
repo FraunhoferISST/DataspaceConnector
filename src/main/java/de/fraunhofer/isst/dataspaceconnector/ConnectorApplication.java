@@ -5,14 +5,13 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * This is the main application class. The application is started and an openApi bean for the
@@ -20,11 +19,11 @@ import java.util.Properties;
  */
 @SpringBootApplication
 @ComponentScan({
-    "de.fraunhofer.isst.ids.framework.messaging.spring.controller",
-    "de.fraunhofer.isst.ids.framework.messaging.spring",
+    "de.fraunhofer.isst.ids.framework.messaging",
     "de.fraunhofer.isst.dataspaceconnector",
-//        "de.fraunhofer.isst.ids.framework.configurationmanager.controller",
-    "de.fraunhofer.isst.ids.framework.spring.starter"
+    "de.fraunhofer.isst.ids.framework.communication",
+    "de.fraunhofer.isst.ids.framework.configuration",
+    "de.fraunhofer.isst.ids.framework.daps"
 })
 public class ConnectorApplication {
 

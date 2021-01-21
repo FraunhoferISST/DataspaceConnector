@@ -1,38 +1,48 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.*;
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.notification.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.request.ContractRequestService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ArtifactResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.response.ContractResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.core.handler.api.model.MessageResponse;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * This @{@link ContractMessageHandler} handles all incoming messages that have a
@@ -49,9 +59,8 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     private final ConfigurationContainer configurationContainer;
     private final NegotiationService negotiationService;
     private final PolicyHandler policyHandler;
-    private final ContractResponseService responseService;
-    private final ContractRequestService requestService;
-    private final TokenProvider tokenProvider;
+    private final ContractMessageService messageService;
+    private final DapsTokenProvider tokenProvider;
     private final ContractAgreementService contractAgreementService;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
@@ -64,10 +73,10 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      */
     @Autowired
     public ContractMessageHandler(ConfigurationContainer configurationContainer,
-        NegotiationService negotiationService, ArtifactResponseService messageResponseService,
-        PolicyHandler policyHandler, ContractAgreementService contractAgreementService,
-        ContractResponseService responseService, ContractRequestService requestService,
-        LogMessageService logMessageService, TokenProvider tokenProvider)
+        NegotiationService negotiationService, PolicyHandler policyHandler,
+        ContractAgreementService contractAgreementService,
+        ContractMessageService messageService,
+        LogMessageService logMessageService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -75,19 +84,13 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
 
-        if (messageResponseService == null)
-            throw new IllegalArgumentException("The ArtifactResponseService cannot be null.");
-
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
 
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
 
-        if (responseService == null)
-            throw new IllegalArgumentException("The ContractResponseService cannot be null.");
-
-        if (requestService == null)
+        if (messageService == null)
             throw new IllegalArgumentException("The ContractRequestService cannot be null.");
 
         if (logMessageService == null)
@@ -100,8 +103,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         this.negotiationService = negotiationService;
         this.policyHandler = policyHandler;
         this.contractAgreementService = contractAgreementService;
-        this.responseService = responseService;
-        this.requestService = requestService;
+        this.messageService = messageService;
         this.logMessageService = logMessageService;
         this.tokenProvider = tokenProvider;
     }
@@ -130,7 +132,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!responseService.versionSupported(requestMessage.getModelVersion())) {
+        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -183,7 +185,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
             final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
 
             // Get artifact id from contract request.
-            URI artifactId = requestService.getArtifactIdFromContract(contractRequest);
+            URI artifactId = messageService.getArtifactIdFromContract(contractRequest);
             // Load contract offer from metadata.
             ContractOffer contractOffer = getContractOfferByArtifact(artifactId);
 
@@ -194,9 +196,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 // If differences have been detected.
                 return rejectContract();
             }
-        } catch (UUIDFormatException exception) {
+        } catch (UUIDFormatException | RequestFormatException exception) {
             LOGGER.debug(
-                "Resource has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
+                "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getTransferContract(),
                 exception.getMessage());
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
@@ -230,7 +232,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      */
     private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
         UUID uuid = UUIDUtils.uuidFromUri(artifactId);
-        final var resource = requestService.findResourceFromArtifactId(uuid);
+        final var resource = messageService.findResourceFromArtifactId(uuid);
         if (resource == null)
             throw new ResourceNotFoundException("Artifact not known.");
         return resource.getContractOffer().get(0);
@@ -244,14 +246,14 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @return The message response to the requesting connector.
      */
     private MessageResponse acceptContract(ContractRequest contractRequest)
-        throws UUIDFormatException, MessageBuilderException {
+        throws UUIDFormatException, MessageException {
 
-        responseService.setParameter(
+        messageService.setResponseParameters(
             requestMessage.getIssuerConnector(), requestMessage.getId(), null);
         // Turn the accepted contract request into a contract agreement.
-        ContractAgreement contractAgreement = responseService.buildContractAgreement(contractRequest);
+        ContractAgreement contractAgreement = messageService.buildContractAgreement(contractRequest);
         // Build message header.
-        Message message = responseService.buildHeader();
+        Message message = messageService.buildResponseHeader();
 
         // Save contract agreement to database.
         UUID uuid = UUIDUtils.uuidFromUri(contractAgreement.getId());
@@ -275,18 +277,18 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      *
      * @return A contract rejection message.
      */
-    private MessageResponse rejectContract() { // TODO: Change to Error Response. (Framework Issue)
+    private MessageResponse rejectContract() {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
-        return BodyResponse.create(new ContractRejectionMessageBuilder()
-            ._securityToken_(tokenProvider.getTokenJWS())
+        return ErrorResponse.create(new ContractRejectionMessageBuilder()
+            ._securityToken_(tokenProvider.getDAT())
             ._correlationMessage_(requestMessage.getId())
-            ._issued_(de.fraunhofer.isst.ids.framework.messaging.core.handler.api.util.Util.getGregorianNow())
+            ._issued_(getGregorianNow())
             ._issuerConnector_(connector.getId())
             ._modelVersion_(connector.getOutboundModelVersion())
             ._senderAgent_(connector.getId())
-            ._recipientConnector_(de.fraunhofer.iais.eis.util.Util.asList(requestMessage.getIssuerConnector()))
+            ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
             ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
             ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
             .build(), "Contract rejected.");

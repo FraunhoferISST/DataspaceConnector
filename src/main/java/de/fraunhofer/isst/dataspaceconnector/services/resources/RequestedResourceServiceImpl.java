@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -11,16 +12,15 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * This class implements all methods of {@link ResourceService}.
@@ -143,8 +143,8 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * Gets resource data by id.
      */
     @Override
-    public String getData(UUID resourceId) throws
-            ResourceNotFoundException, ResourceException {
+    public String getData(UUID resourceId) throws ResourceNotFoundException,
+        ResourceException, ContractException {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");

@@ -2,12 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import java.net.URI;
+import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
-import java.util.UUID;
 
 @SpringBootTest
 public class UUIDUtilsTests {

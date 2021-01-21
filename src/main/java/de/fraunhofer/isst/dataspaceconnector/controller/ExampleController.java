@@ -1,26 +1,50 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
+import de.fraunhofer.iais.eis.ConnectorDeployMode;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ConnectorStatus;
+import de.fraunhofer.iais.eis.ConstraintBuilder;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.DutyBuilder;
+import de.fraunhofer.iais.eis.KeyType;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.LogLevel;
+import de.fraunhofer.iais.eis.NotMoreThanNOfferBuilder;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.ProhibitionBuilder;
+import de.fraunhofer.iais.eis.ProxyBuilder;
+import de.fraunhofer.iais.eis.PublicKeyBuilder;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.net.URI;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/api/example")
@@ -29,7 +53,7 @@ public class ExampleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleController.class);
 
-    private final TokenProvider tokenProvider;
+    private final DapsTokenProvider tokenProvider;
     private final PolicyHandler policyHandler;
 
     /**
@@ -38,7 +62,7 @@ public class ExampleController {
      * @throws IllegalArgumentException - if any of the parameters is null.
      */
     @Autowired
-    public ExampleController(TokenProvider tokenProvider,
+    public ExampleController(DapsTokenProvider tokenProvider,
         PolicyHandler policyHandler) throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -55,8 +79,8 @@ public class ExampleController {
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get Connector configuration",
-        description = "Get the connector's configuration.")
+    @Operation(summary = "Get Sample Connector configuration",
+        description = "Get a sample connector configuration for the config.json.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
@@ -87,7 +111,7 @@ public class ExampleController {
                 ._version_("v3.0.0")
                 ._publicKey_(new PublicKeyBuilder()
                     ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey().getAlgorithm() ?
-                    ._keyValue_(tokenProvider.providePublicKey().getEncoded())
+                    ._keyValue_(tokenProvider.provideDapsToken().getBytes())
                     .build()
                 )
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()

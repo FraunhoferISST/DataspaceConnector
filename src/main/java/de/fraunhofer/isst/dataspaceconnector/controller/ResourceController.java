@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExists;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -17,14 +17,19 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * This class provides endpoints for the internal resource handling. Resources can be created and
@@ -84,22 +89,20 @@ public class ResourceController {
         try {
             if (uuid != null) {
                 ((OfferedResourceServiceImpl) offeredResourceService).addResourceWithId(resourceMetadata, uuid);
-                return new ResponseEntity<>("Resource registered with uuid: " + uuid,
-                    HttpStatus.CREATED);
+                return new ResponseEntity<>(uuid.toString(), HttpStatus.CREATED);
             } else {
                 final var newUuid = offeredResourceService.addResource(resourceMetadata);
-                return new ResponseEntity<>("Resource registered with uuid: " + newUuid.toString(),
-                    HttpStatus.CREATED);
+                return new ResponseEntity<>(newUuid.toString(), HttpStatus.CREATED);
             }
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to add resource. The resource is not valid. [exception=({})]",
                 exception.getMessage());
             return new ResponseEntity<>("The resource could not be added.",
                 HttpStatus.BAD_REQUEST);
-        } catch (ResourceAlreadyExists exception) {
+        } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource. The resource already exists. [exception=({})]",
                 exception.getMessage());
-            return new ResponseEntity<>("The resource could not be added. It already exits.",
+            return new ResponseEntity<>("The resource could not be added. It already exists.",
                 HttpStatus.CONFLICT);
         } catch (ResourceException exception) {
             LOGGER.warn("Failed to add resource. Something went wrong. [exception=({})]",
@@ -130,7 +133,7 @@ public class ResourceController {
         @RequestBody ResourceMetadata resourceMetadata) {
         try {
             ((OfferedResourceServiceImpl) offeredResourceService).updateResource(resourceId, resourceMetadata);
-            return new ResponseEntity<>("Resource was updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Resource was updated successfully.", HttpStatus.OK);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("Failed to update the resource. The resource is not valid. "
                 + "[exception=({})]", exception.getMessage());
@@ -254,7 +257,7 @@ public class ResourceController {
         try {
             policyHandler.getPattern(policy);
             ((OfferedResourceServiceImpl) offeredResourceService).updateContract(resourceId, policy);
-            return new ResponseEntity<>("Contract was updated successfully", HttpStatus.OK);
+            return new ResponseEntity<>("Contract was updated successfully.", HttpStatus.OK);
         } catch (UnsupportedPatternException | RequestFormatException exception) {
             // The policy is not in the correct format.
             LOGGER.debug("Failed to update the resource contract. The policy is malformed. "
@@ -408,10 +411,8 @@ public class ResourceController {
                     .addRepresentation(resourceId, representation);
             }
 
-            return new ResponseEntity<>(
-                "Representation was saved successfully with uuid " + newUuid,
-                HttpStatus.CREATED);
-        } catch (ResourceAlreadyExists exception) {
+            return new ResponseEntity<>(newUuid.toString(), HttpStatus.CREATED);
+        } catch (ResourceAlreadyExistsException exception) {
             LOGGER.debug("Failed to add resource representation. The representation already exists."
                 + "[exception=({})]", exception.getMessage());
             return new ResponseEntity<>("The representation could not be added. It already exits.",
@@ -554,7 +555,7 @@ public class ResourceController {
         @PathVariable("representation-id") UUID representationId) {
         try {
             if (((OfferedResourceServiceImpl) offeredResourceService).deleteRepresentation(resourceId, representationId)) {
-                return new ResponseEntity<>("Representation was deleted successfully",
+                return new ResponseEntity<>("Representation was deleted successfully.",
                     HttpStatus.OK);
             } else {
                 return new ResponseEntity<>("The representation could not be found.",
