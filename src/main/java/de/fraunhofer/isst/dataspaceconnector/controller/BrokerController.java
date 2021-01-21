@@ -155,7 +155,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a QueryMessage to an IDS broker.
+     * Pass a query message to an ids broker.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
