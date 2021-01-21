@@ -17,6 +17,11 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     private byte[] requestBody = new byte[0];
     private boolean isBufferFilled = false;
 
+    /**
+     * The Constructor
+     *
+     * @param request The request to be wrapped
+     */
     public RequestWrapper(HttpServletRequest request) {
         super(request);
     }
