@@ -123,7 +123,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      *
      * @param requestMessage The message containing the resource request.
      * @return The response message to the passed request.
-     * @throws ConnectorConfigurationException - if the connector is not configurated.
      * @throws RuntimeException                - if the response message could not be constructed.
      */
     public MessageResponse constructResourceDescription(DescriptionRequestMessage requestMessage)
