@@ -46,6 +46,11 @@ public class OfferedResource implements ConnectorResource {
 
     /**
      * Constructor with parameters for OfferedResource.
+     *
+     * @param created The resource creation date
+     * @param modified The date when the resource was last modified
+     * @param resourceMetadata The metadata associated with this resource
+     * @param data The data associated with this resource
      */
     public OfferedResource(UUID uuid, Date created, Date modified,
         ResourceMetadata resourceMetadata, String data) {
