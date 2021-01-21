@@ -47,6 +47,9 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * Constructor for DescriptionMessageHandler.
      *
+     * @param configurationContainer  The container with the configuration
+     * @param messageService The service for sending messages
+     * @param offeredResourceService The service for offered resources
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
