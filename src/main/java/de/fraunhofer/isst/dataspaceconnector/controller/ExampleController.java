@@ -62,6 +62,8 @@ public class ExampleController {
     /**
      * Constructor for ExampleController.
      *
+     * @param tokenProvider The token provider
+     * @param policyHandler The service for handling policies
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
