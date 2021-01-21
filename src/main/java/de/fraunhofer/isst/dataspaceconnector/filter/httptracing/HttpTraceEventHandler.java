@@ -27,6 +27,7 @@ public class HttpTraceEventHandler {
 
     /**
      * Processes raised HttpTraceEvents
+     *
      * @param trace The HttpTrace that needs to be processed
      */
     @Async
@@ -37,6 +38,7 @@ public class HttpTraceEventHandler {
 
     /**
      * Raise an HttpTraceEvent.
+     *
      * @param trace The http trace that others should be notified about.
      */
     public void sendHttpTraceEvent(HttpTrace trace) {
