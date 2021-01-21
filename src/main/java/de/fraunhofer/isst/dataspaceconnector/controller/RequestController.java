@@ -372,6 +372,10 @@ public class RequestController {
 
     /**
      * Checks for rejection or contract rejection message.
+     *
+     * @param responseType The type of the response
+     * @param response The response content
+     * @return The response message
      */
     private ResponseEntity<String> returnRejectionMessage(ResponseType responseType,
         Map<String, String> response) {
