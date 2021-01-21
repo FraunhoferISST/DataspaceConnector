@@ -234,6 +234,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     /**
      * Gets the contract offer by artifact id.
      *
+     * @param artifactId The artifact's id
      * @return The resource's contract offer.
      */
     private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
