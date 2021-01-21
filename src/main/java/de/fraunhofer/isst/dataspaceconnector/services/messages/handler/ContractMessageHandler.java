@@ -277,11 +277,11 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      *
      * @return A contract rejection message.
      */
-    private MessageResponse rejectContract() { // TODO: Change to Error Response. (Framework Issue)
+    private MessageResponse rejectContract() {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
-        return BodyResponse.create(new ContractRejectionMessageBuilder()
+        return ErrorResponse.create(new ContractRejectionMessageBuilder()
             ._securityToken_(tokenProvider.getDAT())
             ._correlationMessage_(requestMessage.getId())
             ._issued_(getGregorianNow())
