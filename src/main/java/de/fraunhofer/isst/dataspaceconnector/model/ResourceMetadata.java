@@ -84,6 +84,15 @@ public class ResourceMetadata implements Serializable {
 
     /**
      * Constructor with parameters for ResourceMetadata.
+     *
+     * @param title The title of the resource
+     * @param description The description of the resource
+     * @param keywords Keywords associated with the resource
+     * @param policy The policy applied to the resource
+     * @param owner The owner of this resource
+     * @param license The licence under which this resource is publised
+     * @param version The version of the resource
+     * @param representations The representations of the resource
      */
     public ResourceMetadata(String title, String description, List<String> keywords, String policy,
         URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations) {
