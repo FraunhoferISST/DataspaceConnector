@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 
+/**
+ * Thrown to indicate that the resource already exists.
+ */
 public class ResourceAlreadyExistsException extends ResourceException {
     // Default serial version uid
     private static final long serialVersionUID = 1L;
