@@ -173,8 +173,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * Constructs a resource catalog description message for the connector.
      *
+     * @param requestMessage The request message
      * @return A response message containing the resource catalog of the connector.
-     * @throws ConnectorConfigurationException - if the connector is not configurated.
      * @throws RuntimeException                - if the response message could not be constructed or
      *                                         the connector could not be serialized.
      */
