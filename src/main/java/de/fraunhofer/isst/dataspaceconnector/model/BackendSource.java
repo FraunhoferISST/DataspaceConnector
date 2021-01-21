@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 /**
- * BackendSource class.
+ * This class is used to describe the resource source in the backend.
  */
 @Schema(
     name = "BackendSource",
