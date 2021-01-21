@@ -34,6 +34,10 @@ public class MultipleEntryPointsSecurityConfig {
         return manager;
     }
 
+    /**
+     * Bean providing an password encoder
+     * @return The password encoder
+     */
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
