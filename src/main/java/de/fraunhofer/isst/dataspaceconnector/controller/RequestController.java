@@ -172,6 +172,9 @@ public class RequestController {
     /**
      * Sends a contract request to a connector by building an ContractRequestMessage.
      *
+     * @param recipient The URI of the requested IDS connector.
+     * @param artifactId The URI of the requested artifact.
+     * @param contractOffer The contract offer for the requested resource.
      * @return OK or error response.
      */
     @Operation(summary = "Contract Request",
