@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * ContractAgreementRepository interface.
+ * Interface to the repository containing the contact agreements.
  */
 @Repository
 public interface ContractAgreementRepository extends JpaRepository<ResourceContract, UUID> {

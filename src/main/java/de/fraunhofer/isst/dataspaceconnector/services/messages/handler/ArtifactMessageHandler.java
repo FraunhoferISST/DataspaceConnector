@@ -58,6 +58,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Constructor for ArtifactMessageHandler.
      *
+     * @param offeredResourceService The service for offered resources
+     * @param policyHandler The service for policies
+     * @param negotiationService The service for negotiations
+     * @param messageService The service for sending messages
+     * @param contractAgreementService The service for agreed contracts
+     * @param configurationContainer The container containing the configuration
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
@@ -97,8 +103,10 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
-     * @throws ConnectorConfigurationException - if no connector is configurated.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @param requestMessage The request message
+     * @param messagePayload The message payload
+     * @return The response message
+     * @throws RuntimeException - if the response body failed to be build.
      */
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
@@ -274,6 +282,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Extract the artifact id.
      *
+     * @param requestMessage The artifact request message
+     * @return The artifact id
      * @throws RequestFormatException - if uuid could not be extracted.
      */
     private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
@@ -290,6 +300,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Check if the transfer contract is not null and valid.
      *
+     * @param contractId The id of the contract
+     * @param artifactId The id of the artifact
      * @return True if everything's fine.
      */
     private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {

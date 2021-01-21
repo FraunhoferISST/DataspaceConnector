@@ -85,7 +85,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorAvailableMessage to an IDS broker.
+     * Notify an IDS broker of the availability of this connector.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -120,7 +120,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorUnavailableMessage to an IDS broker.
+     * Notify an IDS broker that this connector is no longer available.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -155,7 +155,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a QueryMessage to an IDS broker.
+     * Pass a query message to an ids broker.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -194,7 +194,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Update a resource at an ids broker.
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.
@@ -241,7 +241,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUnvailableMessage to an IDS broker.
+     * Remove a resource from an ids broker
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.

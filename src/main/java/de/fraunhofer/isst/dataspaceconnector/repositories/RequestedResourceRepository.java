@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * RequestedResourceRepository interface.
+ * Interface to the repository containing the requested resources.
  */
 @Repository
 public interface RequestedResourceRepository extends JpaRepository<RequestedResource, UUID> {

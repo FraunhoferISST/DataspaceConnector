@@ -46,6 +46,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class provides endpoints exposing example resources and configurations.
+ */
 @RestController
 @RequestMapping("/admin/api/example")
 @Tag(name = "Examples", description = "Endpoints for testing purpose")

@@ -154,6 +154,7 @@ public class MainController {
     /**
      * Turns policy negotiation on or off.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status",
@@ -172,7 +173,7 @@ public class MainController {
     }
 
     /**
-     * Returns policy negotiation status.
+     * Returns the policy negotiation status.
      *
      * @return Http ok or error response.
      */
@@ -192,6 +193,7 @@ public class MainController {
     /**
      * Allows requesting data without policy enforcement.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Allowing Unsupported Patterns", description = "Allow "
@@ -212,7 +214,7 @@ public class MainController {
     }
 
     /**
-     * Returns unsupported pattern status.
+     * Returns the unsupported pattern status.
      *
      * @return Http ok or error response.
      */

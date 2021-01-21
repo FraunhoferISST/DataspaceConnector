@@ -69,6 +69,13 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     /**
      * Constructor for NotificationMessageHandler.
      *
+     * @param configurationContainer The container with the configuration
+     * @param negotiationService The service with the negotation
+     * @param policyHandler The service for policy negotation
+     * @param contractAgreementService The service for the contract agreements
+     * @param messageService The service for sending messages
+     * @param logMessageService The service for logging
+     * @param tokenProvider The provider for token
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
@@ -115,7 +122,6 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @param requestMessage The received contract request message.
      * @param messagePayload The message's content.
      * @return The response message.
-     * @throws ConnectorConfigurationException - if no connector is configurated.
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
@@ -228,6 +234,7 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     /**
      * Gets the contract offer by artifact id.
      *
+     * @param artifactId The artifact's id
      * @return The resource's contract offer.
      */
     private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
