@@ -11,8 +11,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2
- * database.
+ * This class describes an offered resource.
  */
 @Data
 @Entity
