@@ -91,7 +91,7 @@ public class PolicyVerifier {
         try {
             response = logMessageService.sendMessage("");
         } catch (Exception exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            LOGGER.warn("Log message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();
         }
         if (response != null) {
@@ -118,7 +118,7 @@ public class PolicyVerifier {
             notificationMessageService.setRequestParameters(URI.create(recipient));
             response = notificationMessageService.sendMessage("");
         } catch (Exception exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            LOGGER.warn("Notification message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();
         }
 
