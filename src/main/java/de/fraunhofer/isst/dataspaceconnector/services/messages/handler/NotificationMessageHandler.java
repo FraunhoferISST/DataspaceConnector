@@ -68,7 +68,6 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message        The received notification message.
      * @param messagePayload The message notification messages content.
      * @return The response message.
-     * @throws ConnectorConfigurationException - if no connector is configurated.
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override
