@@ -25,7 +25,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     public RequestWrapper(HttpServletRequest request) {
         super(request);
     }
-    
+
     /**
      * Get the request body of the message
      *
@@ -51,6 +51,12 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         return requestBody;
     }
 
+    /**
+     * Get the request body of the message as stream
+     *
+     * @return The request body as stream
+     * @throws IOException if the request body could not be read
+     */
     @Override
     public ServletInputStream getInputStream() throws IOException {
         return new CustomServletInputStream(getRequestBody());
