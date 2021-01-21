@@ -27,6 +27,11 @@ public class HttpTraceFilter extends OncePerRequestFilter {
     private UUID traceId;
     private final HttpTraceEventHandler eventHandler;
 
+    /**
+     * Constructor
+     *
+     * @param eventHandler The handler responsible for HttpTrace events raised by this class
+     */
     public HttpTraceFilter(HttpTraceEventHandler eventHandler) {
         this.eventHandler = eventHandler;
     }
