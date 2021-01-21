@@ -103,8 +103,9 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
-     * @throws ConnectorConfigurationException - if no connector is configurated.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @param requestMessage The request message
+     * @param messagePayload The message payload
+     * @throws RuntimeException - if the response body failed to be build.
      */
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
