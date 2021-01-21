@@ -238,7 +238,7 @@ public class RequestController {
         // Get contract id.
         URI agreementId;
         try {
-            agreementId = negotiationService.contractAccepted(header, payload);
+            agreementId = negotiationService.contractAccepted(recipient, header, payload);
         } catch (ContractException exception) {
             // Failed to read the contract.
             LOGGER.info("Could not read contract. [exception=({})]", exception.getMessage());
