@@ -16,13 +16,4 @@ public class ResourceAlreadyExistsException extends ResourceException {
         super(msg);
     }
 
-    /**
-     * Construct an InvalidResourceException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public ResourceAlreadyExistsException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
 }
