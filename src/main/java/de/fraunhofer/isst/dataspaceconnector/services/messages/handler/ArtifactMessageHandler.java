@@ -58,6 +58,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Constructor for ArtifactMessageHandler.
      *
+     * @param offeredResourceService The service for offered resources
+     * @param policyHandler The service for policies
+     * @param negotiationService The service for negotiations
+     * @param messageService The service for sending messages
+     * @param contractAgreementService The service for agreed contracts
+     * @param configurationContainer The container containing the configuration
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
