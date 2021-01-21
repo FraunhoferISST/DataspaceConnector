@@ -38,6 +38,8 @@ public class ConfigurationController {
     /**
      * Constructor for ConfigurationController.
      *
+     * @param configurationContainer The container with the configuration
+     * @param serializerProvider The provider for serialization
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
