@@ -105,6 +105,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      *
      * @param requestMessage The request message
      * @param messagePayload The message payload
+     * @return The response message
      * @throws RuntimeException - if the response body failed to be build.
      */
     @Override
