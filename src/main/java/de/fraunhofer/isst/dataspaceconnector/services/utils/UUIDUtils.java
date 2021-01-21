@@ -11,22 +11,22 @@ import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This class offers support functions for working with uuids.
+ * This class offers support functions for working with UUIDs.
  */
 public class UUIDUtils {
 
     /**
-     * Finds all uuids in a string.
+     * Finds all UUIDs in a string.
      *
-     * @param input The string which maybe contains uuids.
-     * @return The list of found uuids.
+     * @param input a string which maybe contains UUIDs.
+     * @return the list of found UUIDs.
      */
     public static List<String> findUuids(@NotNull String input) {
         final var pairRegex = Pattern
             .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
         final var matcher = pairRegex.matcher(input);
 
-        // Extract all uuids
+        // Extract all UUIDs
         var output = new ArrayList<String>();
         while (matcher.find()) {
             output.add(matcher.group(0));
@@ -36,12 +36,12 @@ public class UUIDUtils {
     }
 
     /**
-     * Extracts an uuid from an uri. If more then one uuid are found the last uuid is returned. See
+     * Extracts a UUID from a URI. If more than one UUID is found the last UUID is returned. See
      * also {@link #uuidFromUri}.
      *
-     * @param uri The uri from which the uuid should be extracted.
-     * @return the extracted uuid.
-     * @throws UUIDFormatException - if the uri does not contain a parsable uuid.
+     * @param uri The URI from which the UUID should be extracted.
+     * @return the extracted UUID.
+     * @throws UUIDFormatException if the URI does not contain a parsable UUID.
      */
     public static UUID uuidFromUri(@NotNull URI uri) throws UUIDFormatException {
         try {
@@ -53,14 +53,14 @@ public class UUIDUtils {
     }
 
     /**
-     * Extracts an uuid from an uri at a given position.
+     * Extracts a UUID from a URI at a given position.
      *
-     * @param uri   The uri from which the uuid should be extracted.
-     * @param index The index when more then one uuid is found. Set to a negative number when the
-     *              last uuid should be extracted.
+     * @param uri   the URI from which the UUID should be extracted.
+     * @param index the index when more then one UUID is found. Set to a negative number when the
+     *              last UUID should be extracted.
      * @return the extracted uuid.
-     * @throws UUIDFormatException       - if the uri does not contain a parsable uuid.
-     * @throws IndexOutOfBoundsException - if no uuid can be found at the given index.
+     * @throws UUIDFormatException if the URI does not contain a parsable UUID.
+     * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
     public static UUID uuidFromUri(@NotNull URI uri, int index) throws UUIDFormatException,
         IndexOutOfBoundsException {
@@ -82,27 +82,27 @@ public class UUIDUtils {
     }
 
     /**
-     * Generates a unique uuid, if it does not already exist.
+     * Generates a unique UUID, if it does not already exist.
      *
-     * @param doesUuidExistFunc A function checking if a given uuid already exists
-     * @return Generated uuid
-     * @throws UUIDCreationException - if no unique uuid could be generated
+     * @param doesUuidExistFunc a function checking if a given UUID already exists
+     * @return generated UUID
+     * @throws UUIDCreationException if no unique UUID could be generated
      */
     public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc)
-        throws UUIDCreationException {
+            throws UUIDCreationException {
         return createUUID(doesUuidExistFunc, 32);
     }
 
     /**
-     * Generates a unique uuid, if it does not already exist.
+     * Tries to generate a unique UUID, if it does not already exist, in a given number of tries.
      *
-     * @param doesUuidExistFunc A function checking if a given uuid already exists
-     * @param maxNumTries       A maximum number of retries for generating the uuid
-     * @return Generated uuid
-     * @throws UUIDCreationException - if no unique uuid could be generated
+     * @param doesUuidExistFunc a function checking if a given UUID already exists
+     * @param maxNumTries       a maximum number of retries for generating the UUID
+     * @return generated UUID
+     * @throws UUIDCreationException if no unique UUID could be generated
      */
     public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc, long maxNumTries)
-        throws IllegalArgumentException, UUIDCreationException {
+            throws IllegalArgumentException, UUIDCreationException {
         if (maxNumTries == 0) {
             throw new IllegalArgumentException("The maximum number of tries must be at least 1.");
         }

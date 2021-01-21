@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The service for log messages
+ */
 @Service
 public class LogMessageService extends MessageService {
 
@@ -26,6 +29,17 @@ public class LogMessageService extends MessageService {
     private final DapsTokenProvider tokenProvider;
     private final URI recipient;
 
+    /**
+     * Constructor
+     *
+     * @param tokenProvider The service for providing tokens
+     * @param idsHttpService The service for ids messaging
+     * @param configurationContainer The container with the configuration
+     * @param resourceService The service for resources
+     * @param idsUtils The utilities for ids messages
+     * @param serializerProvider The service for serializing
+     * @throws IllegalArgumentException if any of the parameters is null
+     */
     @Autowired
     public LogMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
@@ -44,6 +58,9 @@ public class LogMessageService extends MessageService {
         recipient = URI.create("https://ch-ids.aisec.fraunhofer.de/logs/messages/");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildRequestHeader() throws MessageException {
         // Get a local copy of the current connector.
@@ -59,11 +76,17 @@ public class LogMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildResponseHeader() throws MessageException {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getRecipient() {
         return recipient;

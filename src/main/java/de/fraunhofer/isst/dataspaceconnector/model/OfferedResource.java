@@ -11,8 +11,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2
- * database.
+ * This class describes an offered resource.
  */
 @Data
 @Entity
@@ -47,6 +46,11 @@ public class OfferedResource implements ConnectorResource {
 
     /**
      * Constructor with parameters for OfferedResource.
+     *
+     * @param created The resource creation date
+     * @param modified The date when the resource was last modified
+     * @param resourceMetadata The metadata associated with this resource
+     * @param data The data associated with this resource
      */
     public OfferedResource(UUID uuid, Date created, Date modified,
         ResourceMetadata resourceMetadata, String data) {
@@ -57,53 +61,83 @@ public class OfferedResource implements ConnectorResource {
         this.data = data;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
         this.modified = new Date();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getData() {
         return data;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(String data) {
         this.setModified(new Date());

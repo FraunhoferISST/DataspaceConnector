@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 /**
- * This class builds up http or https endpoint connections.
+ * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
  */
 @Service
 public class HttpUtils {
@@ -30,8 +30,8 @@ public class HttpUtils {
     /**
      * Constructor for HttpUtils.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
-     * @throws GeneralSecurityException - if the framework has an error.
+     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws GeneralSecurityException if the framework has an error.
      */
     @Autowired
     public HttpUtils(ConfigurationContainer configurationContainer)
@@ -44,12 +44,12 @@ public class HttpUtils {
     }
 
     /**
-     * Sends a get request to an external http endpoint.
+     * Sends a GET request to an external HTTP endpoint
      *
-     * @param address The url.
-     * @return The http response when http code is ok (200).
-     * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     * @param address the URL.
+     * @return the HTTP response if HTTP code is OK (200).
+     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpGetRequest(String address) throws MalformedURLException,
@@ -99,12 +99,12 @@ public class HttpUtils {
     }
 
     /**
-     * <p>sendHttpsGetRequest.</p>
+     * Sends a GET request to an external HTTPS endpoint
      *
-     * @param address a {@link java.lang.String} object.
-     * @return The http body of the response when http code is ok (200).
-     * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     * @param address the URL.
+     * @return the HTTP body of the response when HTTP code is OK (200).
+     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequest(String address)
@@ -137,14 +137,14 @@ public class HttpUtils {
     }
 
     /**
-     * Sends a get request with basic authentication to an external https endpoint.
+     * Sends a GET request with basic authentication to an external HTTPS endpoint.
      *
-     * @param address  The url.
+     * @param address the URL.
      * @param username The username.
      * @param password The password.
-     * @return The http response when http code is ok (200).
-     * @throws MalformedURLException - if the input address is not a valid url.
-     * @throws RuntimeException      - if an error occurred when connecting or processing the http
+     * @return The HTTP response when HTTP code is OK (200).
+     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,

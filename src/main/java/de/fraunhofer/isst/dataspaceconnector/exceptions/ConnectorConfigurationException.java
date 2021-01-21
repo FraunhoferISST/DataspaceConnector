@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
+/**
+ * Thrown to indicate that a problem with the connector configuration exists.
+ */
 public class ConnectorConfigurationException extends IllegalArgumentException {
     //Default serial version uid
     private static final long serialVersionUID = 1L;

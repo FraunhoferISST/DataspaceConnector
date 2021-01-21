@@ -46,6 +46,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class provides endpoints exposing example resources and configurations.
+ */
 @RestController
 @RequestMapping("/admin/api/example")
 @Tag(name = "Examples", description = "Endpoints for testing purpose")
@@ -59,7 +62,9 @@ public class ExampleController {
     /**
      * Constructor for ExampleController.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @param tokenProvider The token provider
+     * @param policyHandler The service for handling policies
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public ExampleController(DapsTokenProvider tokenProvider,

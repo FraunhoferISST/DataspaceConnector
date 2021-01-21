@@ -55,7 +55,13 @@ public class RequestController {
     /**
      * Constructor for RequestController
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @param tokenProvider The token provider
+     * @param artifactMessageService The service for artifact messages
+     * @param descriptionMessageService The service for description messages
+     * @param contractMessageService The service for contract messages
+     * @param negotiationService The service for negotiations
+     * @param requestedResourceService The service for the requested resources
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public RequestController(DapsTokenProvider tokenProvider,
@@ -172,6 +178,9 @@ public class RequestController {
     /**
      * Sends a contract request to a connector by building an ContractRequestMessage.
      *
+     * @param recipient The URI of the requested IDS connector.
+     * @param artifactId The URI of the requested artifact.
+     * @param contractOffer The contract offer for the requested resource.
      * @return OK or error response.
      */
     @Operation(summary = "Contract Request",
@@ -266,6 +275,7 @@ public class RequestController {
      *
      * @param recipient         The target connector uri.
      * @param artifactId        The requested artifact uri.
+     * @param contractId        The URI of the contract agreement.
      * @param key               a {@link java.util.UUID} object.
      * @return OK or error response.
      */
@@ -368,6 +378,10 @@ public class RequestController {
 
     /**
      * Checks for rejection or contract rejection message.
+     *
+     * @param responseType The type of the response
+     * @param response The response content
+     * @return The response message
      */
     private ResponseEntity<String> returnRejectionMessage(ResponseType responseType,
         Map<String, String> response) {

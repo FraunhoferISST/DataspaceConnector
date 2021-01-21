@@ -35,6 +35,8 @@ public class PolicyEnforcement {
 
     /**
      * Constructor for PolicyEnforcement.
+     *
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public PolicyEnforcement(PolicyVerifier policyVerifier,
@@ -60,7 +62,8 @@ public class PolicyEnforcement {
     }
 
     /**
-     * Checks all resources every minute. 1000 = 1 sec * 60 * 60 = every hour (3600000)
+     * Periodically (every minute) calls {@link PolicyEnforcement#checkResources()}.
+     * 1000 = 1 sec * 60 * 60 = every hour (3600000)
      */
     @Scheduled(fixedDelay = 60000)
     public void schedule() {
@@ -73,10 +76,10 @@ public class PolicyEnforcement {
     }
 
     /**
-     * Checks all know resources and its policies to delete them if necessary.
+     * Checks all known resources and their policies to delete them if necessary.
      *
-     * @throws java.text.ParseException if any.
-     * @throws java.io.IOException      if any.
+     * @throws java.text.ParseException if a date from a policy cannot be parsed.
+     * @throws java.io.IOException if an error occurs while deserializing a contract.
      */
     public void checkResources() throws ParseException, IOException {
         for (RequestedResource resource : requestedResourceRepository.findAll()) {

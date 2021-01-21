@@ -32,7 +32,8 @@ public class ResourceContract {
     /**
      * Constructor for ResourceContract.
      *
-     * @param contract a {@link String} object.
+     * @param id The id
+     * @param contract The contract's text.
      */
     public ResourceContract(UUID id, String contract) {
         this.id = id;

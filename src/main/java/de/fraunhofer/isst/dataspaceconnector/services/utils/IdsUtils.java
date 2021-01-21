@@ -45,7 +45,7 @@ public class IdsUtils {
     /**
      * Constructor for IdsUtils.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public IdsUtils(ConfigurationContainer configurationContainer,
@@ -61,7 +61,7 @@ public class IdsUtils {
     }
 
     /**
-     * Returns current IDS base connector object.
+     * Returns the current IDS base connector object from the application context.
      *
      * @return The {@link de.fraunhofer.iais.eis.Connector} object from the IDS Framework.
      * @throws ConnectorConfigurationException If the connector was not found.
@@ -70,18 +70,18 @@ public class IdsUtils {
         final var connector = configurationContainer.getConnector();
         if (connector == null) {
             // The connector is needed for every answer and cannot be null
-            throw new ConnectorConfigurationException("No connector configurated.");
+            throw new ConnectorConfigurationException("No connector configured.");
         }
 
         return connector;
     }
 
     /**
-     * Gets the resource metadata as Information Model object.
+     * Maps a resource metadata object to the corresponding Information Model object.
      *
-     * @param resource The connector resource.
-     * @return The Information Model resource.
-     * @throws RuntimeException - if the Information Model object could not be build.
+     * @param resource the connector resource.
+     * @return the Information Model resource.
+     * @throws RuntimeException if the Information Model object could not be build.
      */
     public Resource getAsResource(ConnectorResource resource) throws RuntimeException {
         final var language = getDefaultLanguage();
@@ -175,8 +175,8 @@ public class IdsUtils {
     /**
      * Converts a date to XMLGregorianCalendar format.
      *
-     * @param date The date object.
-     * @return The XMLGregorianCalendar object or null.
+     * @param date the date object.
+     * @return the XMLGregorianCalendar object or null.
      */
     public XMLGregorianCalendar getGregorianOf(Date date) {
         GregorianCalendar c = new GregorianCalendar();
@@ -192,9 +192,9 @@ public class IdsUtils {
     /**
      * Gets the default language, which is the first set language of the connector.
      *
-     * @return The default language of the connector
-     * @throws ConnectorConfigurationException - if the connector is null or no language is
-     *                                         configurated.
+     * @return the default language of the connector.
+     * @throws ConnectorConfigurationException if the connector is null or no language is
+     *                                         configured.
      */
     private String getDefaultLanguage() throws ConnectorConfigurationException {
         try {
@@ -205,12 +205,12 @@ public class IdsUtils {
     }
 
     /***
-     * Gets a language from the connector.
+     * Gets a language set for the connector from the application context.
      *
-     * @param index Index of the language.
-     * @return The language at the passed index.
-     * @throws ConnectorConfigurationException - if the connector is null or no language is set.
-     * @throws IndexOutOfBoundsException - if no language could be found at the passed index.
+     * @param index index of the language.
+     * @return the language at the passed index.
+     * @throws ConnectorConfigurationException if the connector is null or no language is set.
+     * @throws IndexOutOfBoundsException if no language could be found at the passed index.
      */
     @SuppressWarnings("SameParameterValue")
     private String getLanguage(int index)

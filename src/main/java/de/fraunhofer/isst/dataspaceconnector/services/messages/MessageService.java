@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Abstract class for building and sending ids messages.
+ * Abstract class for building and sending IDS messages.
  */
 @Service
 public abstract class MessageService {
@@ -52,6 +52,11 @@ public abstract class MessageService {
     private final SerializerProvider serializerProvider;
     private final IdsUtils idsUtils;
 
+    /**
+     * Constructor for MessageService.
+     *
+     * @throws IllegalArgumentException if any of the parameters is null.
+     */
     @Autowired
     public MessageService(IDSHttpService idsHttpService, IdsUtils idsUtils,
         SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService)
@@ -74,22 +79,42 @@ public abstract class MessageService {
         this.idsUtils = idsUtils;
     }
 
+    /**
+     * Build an IDS message as request header.
+     *
+     * @return the message.
+     * @throws MessageException if the message could not be created.
+     */
     public abstract Message buildRequestHeader() throws MessageException;
 
+    /**
+     * Build an IDS message as response header.
+     *
+     * @return the message.
+     * @throws MessageException if the message could not be created.
+     */
     public abstract Message buildResponseHeader() throws MessageException;
 
+    /**
+     * Returns the recipient.
+     * @return the recipient.
+     */
     public abstract URI getRecipient();
 
+    /**
+     * Returns the serializer provider.
+     * @return the serializer provider.
+     */
     public SerializerProvider getSerializerProvider() {
         return serializerProvider;
     }
 
     /**
-     * Send ids message with header and payload using the IDS Framework.
+     * Sends an IDS message with header and payload using the IDS Framework.
      *
-     * @param payload The message payload.
-     * @return The http response.
-     * @throws MessageException - if a header could not be built or the message could not be sent.
+     * @param payload the message payload.
+     * @return the HTTP response.
+     * @throws MessageException if a header could not be built or the message could not be sent.
      */
     public Map<String, String> sendMessage(String payload) throws MessageException {
         Message message;
@@ -115,8 +140,9 @@ public abstract class MessageService {
     /**
      * Checks if the outbound model version of the requesting connector is listed in the inbound model versions.
      *
-     * @param versionString The outbound model version of the requesting connector.
-     * @return False on no hit, hence incompatibility.
+     * @param versionString the outbound model version of the requesting connector.
+     * @return true, if the outbound model version of the requsting connector is supported; false otherwise
+     * @throws ConnectorConfigurationException if no connector configuration was found
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
@@ -131,7 +157,10 @@ public abstract class MessageService {
     }
 
     /**
-     * Find the requested resource.
+     * Finds resource by a given artifact ID.
+     *
+     * @param artifactId ID of the artifact
+     * @return the resource
      */
     public Resource findResourceFromArtifactId(UUID artifactId) {
         for (var resource : resourceService.getResources()) {
@@ -147,9 +176,10 @@ public abstract class MessageService {
     }
 
     /**
-     * Extracts artifact id from contract request.
+     * Extracts the artifact ID from contract request.
      *
-     * @return The artifact id.
+     * @param request the contract
+     * @return The artifact ID.
      */
     public URI getArtifactIdFromContract(Contract request) {
         final var obligations = request.getObligation();
@@ -168,6 +198,11 @@ public abstract class MessageService {
         return null;
     }
 
+    /**
+     * Finds and returns the response type for a given IDS message header.
+     * @param header the header
+     * @return the response type or null, if no matching type was found
+     */
     public ResponseType getResponseType(String header) {
         try {
             serializerProvider.getSerializer().deserialize(header, AccessTokenResponseMessage.class);
@@ -232,6 +267,9 @@ public abstract class MessageService {
         return null;
     }
 
+    /**
+     * Enum of possible response types of IDS message headers.
+     */
     public enum ResponseType {
         ACCESS_TOKEN_RESPONSE("ACCESS_TOKEN_RESPONSE"),
         APP_REGISTRATION_RESPONSE("APP_REGISTRATION_RESPONSE"),

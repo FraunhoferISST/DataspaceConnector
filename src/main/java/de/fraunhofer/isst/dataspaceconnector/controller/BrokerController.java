@@ -58,7 +58,11 @@ public class BrokerController {
     /**
      * Constructor for BrokerController.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @param tokenProvider The token provider
+     * @param configurationContainer The container with the configuration
+     * @param offeredResourceService The service for the offered resources
+     * @param brokerService The service for the broker
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public BrokerController(DapsTokenProvider tokenProvider,
@@ -85,7 +89,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorAvailableMessage to an IDS broker.
+     * Notify an IDS broker of the availability of this connector.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -120,7 +124,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorUnavailableMessage to an IDS broker.
+     * Notify an IDS broker that this connector is no longer available.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -155,7 +159,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a QueryMessage to an IDS broker.
+     * Pass a query message to an ids broker.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
@@ -194,7 +198,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Update a resource at an ids broker.
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.
@@ -241,7 +245,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUnvailableMessage to an IDS broker.
+     * Remove a resource from an ids broker
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.

@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.contract;
 
+/**
+ * Thrown to indicate that a problem regarding the contract occurred.
+ */
 public class ContractException extends RuntimeException {
     //Default serial version uid
     private static final long serialVersionUID = 1L;

@@ -38,7 +38,10 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Constructor for NotificationMessageHandler.
      *
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @param configurationContainer The container with the configuration
+     * @param notificationMessageService The service responsible for notifications
+     * @param tokenProvider The provider for token
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public NotificationMessageHandler(ConfigurationContainer configurationContainer,
@@ -65,7 +68,6 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message        The received notification message.
      * @param messagePayload The message notification messages content.
      * @return The response message.
-     * @throws ConnectorConfigurationException - if no connector is configurated.
      * @throws RuntimeException                - if the response body failed to be build.
      */
     @Override

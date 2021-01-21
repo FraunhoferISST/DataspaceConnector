@@ -47,7 +47,10 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * Constructor for DescriptionMessageHandler.
      *
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @param configurationContainer  The container with the configuration
+     * @param messageService The service for sending messages
+     * @param offeredResourceService The service for offered resources
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public DescriptionMessageHandler(ConfigurationContainer configurationContainer,
@@ -71,7 +74,10 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
+     * @param requestMessage The request message
+     * @param messagePayload The request message payload
+     * @return The message response
+     * @throws RuntimeException if the response body failed to be build or requestMessage is null.
      */
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
@@ -117,7 +123,6 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      *
      * @param requestMessage The message containing the resource request.
      * @return The response message to the passed request.
-     * @throws ConnectorConfigurationException - if the connector is not configurated.
      * @throws RuntimeException                - if the response message could not be constructed.
      */
     public MessageResponse constructResourceDescription(DescriptionRequestMessage requestMessage)
@@ -168,8 +173,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     /**
      * Constructs a resource catalog description message for the connector.
      *
+     * @param requestMessage The request message
      * @return A response message containing the resource catalog of the connector.
-     * @throws ConnectorConfigurationException - if the connector is not configurated.
      * @throws RuntimeException                - if the response message could not be constructed or
      *                                         the connector could not be serialized.
      */

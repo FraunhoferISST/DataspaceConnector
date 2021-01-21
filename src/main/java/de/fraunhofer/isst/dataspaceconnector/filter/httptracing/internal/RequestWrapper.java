@@ -17,10 +17,21 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     private byte[] requestBody = new byte[0];
     private boolean isBufferFilled = false;
 
+    /**
+     * The Constructor
+     *
+     * @param request The request to be wrapped
+     */
     public RequestWrapper(HttpServletRequest request) {
         super(request);
     }
 
+    /**
+     * Get the request body of the message
+     *
+     * @return The request body
+     * @throws IOException if the request body could not be read
+     */
     public byte[] getRequestBody() throws IOException {
         if (isBufferFilled) {
             return Arrays.copyOf(requestBody, requestBody.length);
@@ -40,6 +51,12 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         return requestBody;
     }
 
+    /**
+     * Get the request body of the message as stream
+     *
+     * @return The request body as stream
+     * @throws IOException if the request body could not be read
+     */
     @Override
     public ServletInputStream getInputStream() throws IOException {
         return new CustomServletInputStream(getRequestBody());

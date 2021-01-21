@@ -49,7 +49,10 @@ public class ResourceController {
     /**
      * Constructor for ResourceController.
      *
-     * @throws IllegalArgumentException - if any of the parameters is null.
+     * @param offeredResourceService The service for the offered resources
+     * @param policyHandler The service for handling policies
+     * @param requestedResourceService The service for the requested resources
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public ResourceController(OfferedResourceServiceImpl offeredResourceService,

@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.message;
 
+/**
+ * Thrown to indicate that a problem with a message response occurred.
+ */
 public class MessageResponseException extends MessageException {
     //Default serial version uid
     private static final long serialVersionUID = 1L;

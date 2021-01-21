@@ -48,7 +48,13 @@ public class MainController {
     /**
      * Constructor for MainController.
      *
-     * @throws IllegalArgumentException - if one of the parameters is null.
+     * @param serializerProvider The provider for serialization
+     * @param offeredResourceService The service for the offered resources
+     * @param requestedResourceService The service for the requested resources
+     * @param idsUtils The utilities for ids messages
+     * @param negotiationService The service for negotiations
+     * @param policyHandler The service for handling policies
+     * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public MainController(SerializerProvider serializerProvider,
@@ -154,6 +160,7 @@ public class MainController {
     /**
      * Turns policy negotiation on or off.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status",
@@ -172,7 +179,7 @@ public class MainController {
     }
 
     /**
-     * Returns policy negotiation status.
+     * Returns the policy negotiation status.
      *
      * @return Http ok or error response.
      */
@@ -192,6 +199,7 @@ public class MainController {
     /**
      * Allows requesting data without policy enforcement.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Allowing Unsupported Patterns", description = "Allow "
@@ -212,7 +220,7 @@ public class MainController {
     }
 
     /**
-     * Returns unsupported pattern status.
+     * Returns the unsupported pattern status.
      *
      * @return Http ok or error response.
      */

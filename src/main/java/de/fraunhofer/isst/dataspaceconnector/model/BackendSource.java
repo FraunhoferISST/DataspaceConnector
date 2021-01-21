@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.net.URI;
 
 /**
- * BackendSource class.
+ * This class is used to describe the resource source in the backend.
  */
 @Schema(
     name = "BackendSource",
@@ -40,6 +40,11 @@ public class BackendSource implements Serializable {
 
     /**
      * Constructor with parameters for BackendSource.
+     *
+     * @param type The backend type
+     * @param url The access url of the backend
+     * @param username The username for authentication
+     * @param password The password for authentication
      */
     public BackendSource(Type type, URI url, String username, String password) {
         this.type = type;
@@ -48,6 +53,9 @@ public class BackendSource implements Serializable {
         this.password = password;
     }
 
+    /**
+     * This enum is used to describe how the backend is accessed.
+     */
     @Schema(
         name = "Type",
         description = "Information of the backend system.",

@@ -20,6 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The service for notification messages
+ */
 @Service
 public class NotificationMessageService extends MessageService {
 
@@ -27,6 +30,17 @@ public class NotificationMessageService extends MessageService {
     private final DapsTokenProvider tokenProvider;
     private URI recipient, correlationMessageId;
 
+    /**
+     * Constructor
+     *
+     * @param tokenProvider The service for providing tokens
+     * @param idsHttpService The service for ids messaging
+     * @param configurationContainer The container with the configuration
+     * @param resourceService The service for resources
+     * @param idsUtils The utilities for ids messages
+     * @param serializerProvider The service for serializing
+     * @throws IllegalArgumentException if any of the parameters is null
+     */
     @Autowired
     public NotificationMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
@@ -43,6 +57,9 @@ public class NotificationMessageService extends MessageService {
         this.tokenProvider = tokenProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildRequestHeader() throws MessageException {
         // Get a local copy of the current connector.
@@ -58,6 +75,9 @@ public class NotificationMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildResponseHeader() throws MessageException {
         // Get a local copy of the current connector.
@@ -74,15 +94,29 @@ public class NotificationMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getRecipient() {
         return recipient;
     }
 
+    /**
+     * Set the request parameters for the message
+     *
+     * @param recipient The recipient of the request
+     */
     public void setRequestParameters(URI recipient) {
         this.recipient = recipient;
     }
 
+    /**
+     * Set the response parameters for the message
+     *
+     * @param recipient The recipient of the response
+     * @param correlationMessageId The id of the correlation message
+     */
     public void setResponseParameters(URI recipient, URI correlationMessageId) {
         this.recipient = recipient;
         this.correlationMessageId = correlationMessageId;
