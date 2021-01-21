@@ -53,6 +53,9 @@ public class BackendSource implements Serializable {
         this.password = password;
     }
 
+    /**
+     * This enum is used to describe how the backend is accessed.
+     */
     @Schema(
         name = "Type",
         description = "Information of the backend system.",
