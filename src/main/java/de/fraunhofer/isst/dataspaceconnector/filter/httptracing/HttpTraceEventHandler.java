@@ -16,6 +16,11 @@ public class HttpTraceEventHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpTraceEventHandler.class);
     private final ApplicationEventPublisher publisher;
 
+    /**
+     * Constructor
+     *
+     * @param publisher The http trace event publisher
+     */
     HttpTraceEventHandler(ApplicationEventPublisher publisher) {
         this.publisher = publisher;
     }
