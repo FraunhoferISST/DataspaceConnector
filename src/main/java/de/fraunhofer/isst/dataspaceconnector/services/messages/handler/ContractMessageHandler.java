@@ -69,6 +69,13 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     /**
      * Constructor for NotificationMessageHandler.
      *
+     * @param configurationContainer The container with the configuration
+     * @param negotiationService The service with the negotation
+     * @param policyHandler The service for policy negotation
+     * @param contractAgreementService The service for the contract agreements
+     * @param messageService The service for sending messages
+     * @param logMessageService The service for logging
+     * @param tokenProvider The provider for token
      * @throws IllegalArgumentException - if one of the parameters is null.
      */
     @Autowired
