@@ -194,7 +194,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Update a resource at an ids broker.
      *
      * @param url        The broker address.
      * @param resourceId The resource uuid.
