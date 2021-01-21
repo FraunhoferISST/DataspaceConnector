@@ -25,7 +25,13 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     public RequestWrapper(HttpServletRequest request) {
         super(request);
     }
-
+    
+    /**
+     * Get the request body of the message
+     *
+     * @return The request body
+     * @throws IOException if the request body could not be read
+     */
     public byte[] getRequestBody() throws IOException {
         if (isBufferFilled) {
             return Arrays.copyOf(requestBody, requestBody.length);
