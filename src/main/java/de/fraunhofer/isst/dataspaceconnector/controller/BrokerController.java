@@ -120,7 +120,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorUnavailableMessage to an IDS broker.
+     * Notify an IDS broker that this connector is no longer available.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
