@@ -42,6 +42,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
     /**
      * Constructor for ResourceDataController.
      *
+     * @param offeredResourceService The service for the offered resources
+     * @param requestedResourceService The service for the requested resources
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
