@@ -61,53 +61,83 @@ public class OfferedResource implements ConnectorResource {
         this.data = data;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
         this.modified = new Date();
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String getData() {
         return data;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setData(String data) {
         this.setModified(new Date());
