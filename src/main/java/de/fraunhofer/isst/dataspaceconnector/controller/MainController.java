@@ -173,7 +173,7 @@ public class MainController {
     }
 
     /**
-     * Returns policy negotiation status.
+     * Returns the policy negotiation status.
      *
      * @return Http ok or error response.
      */
