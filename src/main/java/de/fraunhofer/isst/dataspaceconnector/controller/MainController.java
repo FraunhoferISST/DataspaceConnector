@@ -156,7 +156,8 @@ public class MainController {
      *
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Policy Negotiation Status", description = "Turn the policy negotiation on or off.")
+    @Operation(summary = "Endpoint for Policy Negotiation Status",
+        description = "Turn the policy negotiation on or off.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.PUT)
     @ResponseBody
@@ -175,7 +176,8 @@ public class MainController {
      *
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Policy Negotiation Status Check", description = "Return the policy negotiation status.")
+    @Operation(summary = "Endpoint for Policy Negotiation Status Check",
+        description = "Return the policy negotiation status.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
     @ResponseBody
@@ -192,8 +194,8 @@ public class MainController {
      *
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Allowing Unsupported Patterns",
-        description = "Allow requesting data without policy enforcement.")
+    @Operation(summary = "Endpoint for Allowing Unsupported Patterns", description = "Allow "
+        + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
     @ResponseBody
