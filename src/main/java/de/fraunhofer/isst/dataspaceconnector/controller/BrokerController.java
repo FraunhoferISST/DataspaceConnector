@@ -85,7 +85,7 @@ public class BrokerController {
     }
 
     /**
-     * Sends a ConnectorAvailableMessage to an IDS broker.
+     * Notify an IDS broker of the availability of this connector.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
