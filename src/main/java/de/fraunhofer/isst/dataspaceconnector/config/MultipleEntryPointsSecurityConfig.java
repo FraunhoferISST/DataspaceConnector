@@ -23,7 +23,11 @@ public class MultipleEntryPointsSecurityConfig {
 
     @Value("${spring.security.user.password}")
     private String password;
-
+    
+    /**
+     * Bean setting up an default admin
+     * @return The password encoder
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
