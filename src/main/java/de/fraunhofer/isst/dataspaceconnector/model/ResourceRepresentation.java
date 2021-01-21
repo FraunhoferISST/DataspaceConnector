@@ -13,7 +13,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.UUID;
 
-/** ResourceRepresentation class. */
+/**
+ * The class is used for describing a representation of a resource.
+ */
 @Schema(
     name = "ResourceRepresentation",
     description = "Representation of a resource",
