@@ -68,52 +68,82 @@ public class RequestedResource implements ConnectorResource {
         this.accessed = accessed;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.resourceMetadata = resourceMetadata;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public String getData() {
         incrementDataAccess();
         return data;
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setData(String data) {
         this.data = data;
