@@ -82,15 +82,22 @@ public class PolicyVerifier {
     /**
      * Saves the access date into the database.
      * TODO: Validate response in more detail.
+     * TODO: Add log message.
      *
      * @return Success or not (access or inhibition).
      */
     public boolean logAccess() {
-        Map<String, String> response = logMessageService.sendMessage("");
+        Map<String, String> response;
+        try {
+            response = logMessageService.sendMessage("");
+        } catch (Exception exception) {
+            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            return allowAccess();
+        }
         if (response != null) {
             return allowAccess();
         } else {
-            LOGGER.error("NOT LOGGED");
+            LOGGER.warn("No response received.");
             return allowAccess();
         }
     }
@@ -106,12 +113,19 @@ public class PolicyVerifier {
         Rule rule = contract.getPermission().get(0).getPostDuty().get(0);
         String recipient = policyReader.getEndpoint(rule);
 
-        notificationMessageService.setRequestParameters(URI.create(recipient));
-        Map<String, String> response = notificationMessageService.sendMessage("");
+        Map<String, String> response;
+        try {
+            notificationMessageService.setRequestParameters(URI.create(recipient));
+            response = notificationMessageService.sendMessage("");
+        } catch (Exception exception) {
+            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            return allowAccess();
+        }
+
         if (response != null) {
             return allowAccess();
         } else {
-            LOGGER.warn("NOT NOTIFIED");
+            LOGGER.warn("No response received.");
             return allowAccess();
         }
     }
