@@ -48,6 +48,12 @@ public class MainController {
     /**
      * Constructor for MainController.
      *
+     * @param serializerProvider The provider for serialization
+     * @param offeredResourceService The service for the offered resources
+     * @param requestedResourceService The service for the requested resources
+     * @param idsUtils The utilities for ids messages
+     * @param negotiationService The service for negotiations
+     * @param policyHandler The service for handling policies
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
