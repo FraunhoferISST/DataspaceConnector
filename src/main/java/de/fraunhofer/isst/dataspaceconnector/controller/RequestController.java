@@ -269,6 +269,7 @@ public class RequestController {
      *
      * @param recipient         The target connector uri.
      * @param artifactId        The requested artifact uri.
+     * @param contractId        The URI of the contract agreement.
      * @param key               a {@link java.util.UUID} object.
      * @return OK or error response.
      */
