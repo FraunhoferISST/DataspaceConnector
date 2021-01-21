@@ -214,7 +214,7 @@ public class MainController {
     }
 
     /**
-     * Returns unsupported pattern status.
+     * Returns the unsupported pattern status.
      *
      * @return Http ok or error response.
      */
