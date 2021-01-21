@@ -79,8 +79,8 @@ public class ExampleController {
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get Connector configuration",
-        description = "Get the connector's configuration.")
+    @Operation(summary = "Get Sample Connector configuration",
+        description = "Get a sample connector configuration for the config.json.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ResponseBody
