@@ -149,10 +149,15 @@ public class RequestedResource implements ConnectorResource {
         this.data = data;
     }
 
+    /**
+     * Describes how often the data has been accessed
+     *
+     * @return The number of times the data has been accessed
+     */
     public Integer getAccessed() {
         return accessed;
     }
-
+    
     private void incrementDataAccess() {
         this.accessed++;
     }
