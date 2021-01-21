@@ -154,6 +154,7 @@ public class MainController {
     /**
      * Turns policy negotiation on or off.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Policy Negotiation Status",
