@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The service for description messages
+ */
 @Service
 public class DescriptionMessageService extends MessageService {
 
@@ -50,6 +53,18 @@ public class DescriptionMessageService extends MessageService {
     private final ResourceService resourceService;
     private URI recipient, resourceId, correlationMessageId;
 
+    /**
+     * Constructor
+     *
+     * @param tokenProvider The service for providing tokens
+     * @param idsHttpService The service for ids messaging
+     * @param resourceService The service for resources
+     * @param configurationContainer The container with the configuration
+     * @param idsUtils The utilities for ids messages
+     * @param serializerProvider The service for serializing
+     * @param requestedResourceService The service for requested resources
+     * @throws IllegalArgumentException if any of the parameters is null
+     */
     @Autowired
     public DescriptionMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
@@ -71,6 +86,9 @@ public class DescriptionMessageService extends MessageService {
         this.resourceService = requestedResourceService;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RequestMessage buildRequestHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
@@ -98,6 +116,9 @@ public class DescriptionMessageService extends MessageService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildResponseHeader() throws MessageException {
         // Get a local copy of the current connector.
@@ -114,16 +135,31 @@ public class DescriptionMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getRecipient() {
         return recipient;
     }
 
+    /**
+     * Set the request parameters for the message
+     *
+     * @param recipient The recipient of the request
+     * @param resourceId The id of the resource
+     */
     public void setRequestParameters(URI recipient, URI resourceId) {
         this.recipient = recipient;
         this.resourceId = resourceId;
     }
 
+    /**
+     * Set the response parameters for the artifact message
+     *
+     * @param recipient The recipient of the response
+     * @param correlationMessageId The id of the correlation message
+     */
     public void setResponseParameters(URI recipient, URI correlationMessageId) {
         this.recipient = recipient;
         this.correlationMessageId = correlationMessageId;
@@ -133,6 +169,7 @@ public class DescriptionMessageService extends MessageService {
      * Saves the metadata to the internal database.
      *
      * @param response The data resource as string.
+     * @param resourceId The id of the resource
      * @return The UUID of the created resource.
      * @throws ResourceException if any.
      * @throws InvalidResourceException If the ids object could not be deserialized.
@@ -165,6 +202,8 @@ public class DescriptionMessageService extends MessageService {
     /**
      * Find a resource from a connector's resource catalog.
      *
+     * @param payload The message payload
+     * @param resourceId The id of the resource
      * @return The resource object.
      * @throws InvalidResourceException If the payload could not be deserialized to a base connector.
      */
@@ -190,6 +229,7 @@ public class DescriptionMessageService extends MessageService {
     /**
      * Maps a received Infomodel resource to the internal metadata model.
      *
+     * @param resource The resource
      * @return the metadata object.
      */
     private ResourceMetadata deserializeMetadata(Resource resource) {
