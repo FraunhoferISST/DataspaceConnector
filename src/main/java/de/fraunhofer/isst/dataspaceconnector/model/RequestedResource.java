@@ -52,6 +52,12 @@ public class RequestedResource implements ConnectorResource {
 
     /**
      * Constructor with parameters for RequestedResource.
+     *
+     * @param created The resource creation date
+     * @param modified The date when the resource was last modified
+     * @param resourceMetadata The metadata associated with this resource
+     * @param data The data associated with this resource
+     * @param accessed The number of times the data was accessed
      */
     public RequestedResource(Date created, Date modified, ResourceMetadata resourceMetadata,
         String data, Integer accessed) {
