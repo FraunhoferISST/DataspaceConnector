@@ -300,6 +300,8 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Check if the transfer contract is not null and valid.
      *
+     * @param contractId The id of the contract
+     * @param artifactId The id of the artifact
      * @return True if everything's fine.
      */
     private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {
