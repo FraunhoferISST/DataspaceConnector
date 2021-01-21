@@ -55,6 +55,12 @@ public class RequestController {
     /**
      * Constructor for RequestController
      *
+     * @param tokenProvider The token provider
+     * @param artifactMessageService The service for artifact messages
+     * @param descriptionMessageService The service for description messages
+     * @param contractMessageService The service for contract messages
+     * @param negotiationService The service for negotiations
+     * @param requestedResourceService The service for the requested resources
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
