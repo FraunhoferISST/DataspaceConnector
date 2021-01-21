@@ -53,6 +53,12 @@ public class ResourceRepresentation implements Serializable {
 
     /**
      * Constructor with parameters for ResourceRepresentation.
+     *
+     * @param uuid The id
+     * @param type The resource type
+     * @param byteSize The resource size
+     * @param name The resource name
+     * @param source The backend source information
      */
     public ResourceRepresentation(UUID uuid, String type, Integer byteSize, String name,
         BackendSource source) {
