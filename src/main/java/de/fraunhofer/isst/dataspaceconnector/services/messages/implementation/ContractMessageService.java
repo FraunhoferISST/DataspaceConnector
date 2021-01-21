@@ -26,6 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * The service for contract messages
+ */
 @Service
 public class ContractMessageService extends MessageService {
 
@@ -33,6 +36,17 @@ public class ContractMessageService extends MessageService {
     private final DapsTokenProvider tokenProvider;
     private URI recipient, contractId, correlationMessage;
 
+    /**
+     * Constructor
+     *
+     * @param tokenProvider The service for providing tokens
+     * @param idsHttpService The service for ids messaging
+     * @param resourceService The service for resources
+     * @param configurationContainer The container with the configuration
+     * @param idsUtils The utilities for ids messages
+     * @param serializerProvider The service for serializing
+     * @throws IllegalArgumentException if any of the parameters is null
+     */
     @Autowired
     public ContractMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
         OfferedResourceServiceImpl resourceService, ConfigurationContainer configurationContainer,
@@ -49,6 +63,9 @@ public class ContractMessageService extends MessageService {
         this.tokenProvider = tokenProvider;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildRequestHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
@@ -65,6 +82,9 @@ public class ContractMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Message buildResponseHeader() throws MessageException {
         // Get a local copy of the current connector.
@@ -81,22 +101,44 @@ public class ContractMessageService extends MessageService {
             .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public URI getRecipient() {
         return recipient;
     }
 
+    /**
+     * Set the request parameters for the message
+     *
+     * @param recipient The recipient of the request
+     * @param contractId The id of the contract
+     */
     public void setRequestParameters(URI recipient, URI contractId) {
         this.recipient = recipient;
         this.contractId = contractId;
     }
 
+    /**
+     * Set the response parameters for the artifact message
+     *
+     * @param recipient The recipient of the response
+     * @param correlationMessage The correlation message
+     * @param contractId The id of the contract
+     */
     public void setResponseParameters(URI recipient, URI correlationMessage, URI contractId) {
         this.recipient = recipient;
         this.correlationMessage = correlationMessage;
         this.contractId = contractId;
     }
 
+    /**
+     * Build the contract request
+     *
+     * @param contract The contract
+     * @return The contract request
+     */
     public ContractRequest buildContractRequest(Contract contract) {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
@@ -115,6 +157,9 @@ public class ContractMessageService extends MessageService {
 
     /**
      * Build contract agreement. Keeps parameters and id.
+     *
+     * @param contract The contract
+     * @return The contract agreement
      */
     public ContractAgreement buildContractAgreement(Contract contract) {
         if (contractId == null) {
