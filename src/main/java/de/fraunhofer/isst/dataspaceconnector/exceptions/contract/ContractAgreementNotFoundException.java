@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.contract;
 
+/**
+ * Thrown to indicate that no contract agreement could be found.
+ */
 public class ContractAgreementNotFoundException extends ContractException {
     //Default serial version uid
     private static final long serialVersionUID = 1L;
