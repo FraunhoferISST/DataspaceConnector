@@ -193,6 +193,7 @@ public class MainController {
     /**
      * Allows requesting data without policy enforcement.
      *
+     * @param status The desired state.
      * @return Http ok or error response.
      */
     @Operation(summary = "Endpoint for Allowing Unsupported Patterns", description = "Allow "
