@@ -58,6 +58,10 @@ public class BrokerController {
     /**
      * Constructor for BrokerController.
      *
+     * @param tokenProvider The token provider
+     * @param configurationContainer The container with the configuration
+     * @param offeredResourceService The service for the offered resources
+     * @param brokerService The service for the broker
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
