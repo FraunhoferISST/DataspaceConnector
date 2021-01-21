@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 
+/**
+ * Thrown to indicate that that a problem with the resource composition occurred.
+ */
 public class InvalidResourceException extends ResourceException {
     //Default serial version uid
     private static final long serialVersionUID = 1L;
