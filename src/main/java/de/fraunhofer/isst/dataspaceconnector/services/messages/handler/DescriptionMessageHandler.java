@@ -74,6 +74,9 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
+     * @param requestMessage The request message
+     * @param messagePayload The request message payload
+     * @return The message response
      * @throws RuntimeException - if the response body failed to be build or requestMessage is null.
      */
     @Override
