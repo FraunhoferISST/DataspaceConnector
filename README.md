@@ -18,13 +18,12 @@ usage control for eight IDS usage policy patterns.
 Basic information about the IDS reference architecture model can be found 
 [here](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf).
 
----
-
+```
 This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) 
 business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome 
 to contribute to this project when you find a bug, want to suggest an improvement, or have an idea 
 for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).
----
+```
 
 ## Content
 
@@ -55,18 +54,15 @@ An overview is presented [here](https://github.com/FraunhoferISST/DataspaceConne
 
 ## IDS Components
 
-| Library | Version | License | Owner | Contact |
-| ------- | ------- | ------- | ----- | ------- |
-| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) | 4.0.1 | Apache 2.0 | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
-
 The [ConfigManager](https://github.com/FraunhoferISST/IDS-ConfigurationManager) and its 
 [GUI](https://github.com/fkie/ids-configmanager-ui) aim to facilitate the configuration of the 
 Dataspace Connector and further IDS connector implementations. Both projects are also open source.
 
-| Component | Version | License | Owner | Contact |
-| --------- | ------- | ------- | ----- | ------- |
+| Library/ Component | Version | License | Owner | Contact |
+| ------- | ------- | ------- | ----- | ------- |
+| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) | 4.0.1 | Apache 2.0 | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
 | [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | open core | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | [DAPS](https://daps.aisec.fraunhofer.de/) | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
