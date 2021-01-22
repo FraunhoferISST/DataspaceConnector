@@ -50,8 +50,26 @@ paths:
             type: string
             format: uuid
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -79,19 +97,37 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
-          description: OK
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/broker/register:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/broker/unregister:
     post:
       tags:
         - 'Connector: IDS Broker Communication'
-      summary: Register Connector
-      description: Register or update connector at an IDS broker.
-      operationId: updateAtBroker
+      summary: Unregister Connector
+      description: Unregister connector at an IDS broker.
+      operationId: unregisterAtBroker
       parameters:
         - name: broker
           in: query
@@ -101,30 +137,20 @@ paths:
             type: string
           example: https://broker.ids.isst.fraunhofer.de/infrastructure
       responses:
-        "200":
-          description: OK
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/broker/update:
-    post:
-      tags:
-        - 'Connector: IDS Broker Communication'
-      summary: Register Connector
-      description: Register or update connector at an IDS broker.
-      operationId: updateAtBroker_1
-      parameters:
-        - name: broker
-          in: query
-          description: The url of the broker.
-          required: true
-          schema:
-            type: string
-          example: https://broker.ids.isst.fraunhofer.de/infrastructure
-      responses:
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -158,19 +184,31 @@ paths:
                 };
         required: true
       responses:
-        "200":
-          description: OK
+        "401":
+          description: Unauthorized
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/broker/unregister:
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/broker/register:
     post:
       tags:
         - 'Connector: IDS Broker Communication'
-      summary: Unregister Connector
-      description: Unregister connector at an IDS broker.
-      operationId: unregisterAtBroker
+      summary: Register Connector
+      description: Register or update connector at an IDS broker.
+      operationId: updateAtBroker
       parameters:
         - name: broker
           in: query
@@ -180,8 +218,54 @@ paths:
             type: string
           example: https://broker.ids.isst.fraunhofer.de/infrastructure
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/broker/update:
+    post:
+      tags:
+        - 'Connector: IDS Broker Communication'
+      summary: Register Connector
+      description: Register or update connector at an IDS broker.
+      operationId: updateAtBroker_1
+      parameters:
+        - name: broker
+          in: query
+          description: The url of the broker.
+          required: true
+          schema:
+            type: string
+          example: https://broker.ids.isst.fraunhofer.de/infrastructure
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
           content:
             '*/*':
               schema:
@@ -190,12 +274,12 @@ paths:
     get:
       tags:
         - Examples
-      summary: Get Connector configuration
-      description: Get the connector's configuration.
+      summary: Get Sample Connector configuration
+      description: Get a sample connector configuration for the config.json.
       operationId: getConnectorConfiguration
       responses:
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -225,7 +309,7 @@ paths:
               - USAGE_NOTIFICATION
       responses:
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -245,8 +329,14 @@ paths:
               description: The JSON string representing a policy
         required: true
       responses:
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -260,7 +350,7 @@ paths:
       operationId: getNegotiationStatus
       responses:
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -279,7 +369,7 @@ paths:
             type: boolean
       responses:
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -292,8 +382,14 @@ paths:
       description: Get the connector's reduced self-description.
       operationId: getPublicSelfDescription_1
       responses:
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -306,87 +402,48 @@ paths:
       description: Get the connector's self-description.
       operationId: getSelfService
       responses:
-        "200":
-          description: OK
+        "500":
+          description: Internal server error
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/request/description:
-    post:
-      tags:
-        - 'Connector: IDS Connector Communication'
-      summary: Description Request
-      description: Request metadata from another IDS connector.
-      operationId: requestMetadata
-      parameters:
-        - name: recipient
-          in: query
-          description: The URI of the requested IDS connector.
-          required: true
-          schema:
-            type: string
-            format: uri
-          example: https://localhost:8080/api/ids/data
-        - name: requestedResource
-          in: query
-          description: The URI of the requested resource.
-          required: false
-          schema:
-            type: string
-            format: uri
-          example: https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9
-      responses:
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/request/artifact:
-    post:
+  /admin/api/ignore-unsupported-patterns:
+    get:
       tags:
-        - 'Connector: IDS Connector Communication'
-      summary: Artifact Request
-      description: 'Request data from another IDS connector. INFO: Before an artifact
-        can be requested, the metadata must be queried. The key generated in this
-        process must be passed in the artifact query.'
-      operationId: requestData
-      parameters:
-        - name: recipient
-          in: query
-          description: The URI of the requested IDS connector.
-          required: true
-          schema:
-            type: string
-            format: uri
-          example: https://localhost:8080/api/ids/data
-        - name: requestedArtifact
-          in: query
-          description: The URI of the requested artifact.
-          required: true
-          schema:
-            type: string
-            format: uri
-          example: https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9
-        - name: contractAgreement
-          in: query
-          description: The URI of the contract agreement.
-          required: false
-          schema:
-            type: string
-            format: uri
-          example: https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9
-        - name: key
-          in: query
-          description: A unique validation key.
-          required: true
-          schema:
-            type: string
-            format: uuid
+        - 'Connector: Selfservice'
+      summary: Endpoint for Pattern Checking
+      description: Return if unsupported patterns are ignored when requesting data.
+      operationId: getPatternStatus
       responses:
         "200":
-          description: OK
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - 'Connector: Selfservice'
+      summary: Endpoint for Allowing Unsupported Patterns
+      description: Allow requesting data without policy enforcement if an unsupported
+        pattern is recognized.
+      operationId: getPatternStatus_1
+      parameters:
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Ok
           content:
             '*/*':
               schema:
@@ -422,8 +479,129 @@ paths:
               type: string
               description: The contract offer for the requested resource.
       responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/request/artifact:
+    post:
+      tags:
+        - 'Connector: IDS Connector Communication'
+      summary: Artifact Request
+      description: 'Request data from another IDS connector. INFO: Before an artifact
+        can be requested, the metadata must be queried. The key generated in this
+        process must be passed in the artifact query.'
+      operationId: requestData
+      parameters:
+        - name: recipient
+          in: query
+          description: The URI of the requested IDS connector.
+          required: true
+          schema:
+            type: string
+            format: uri
+          example: https://localhost:8080/api/ids/data
+        - name: requestedArtifact
+          in: query
+          description: The URI of the requested artifact.
+          required: true
+          schema:
+            type: string
+            format: uri
+          example: https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9
+        - name: transferContract
+          in: query
+          description: The URI of the contract agreement.
+          required: false
+          schema:
+            type: string
+            format: uri
+          example: https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9
+        - name: key
+          in: query
+          description: A unique validation key.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "403":
+          description: Forbidden
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/request/description:
+    post:
+      tags:
+        - 'Connector: IDS Connector Communication'
+      summary: Description Request
+      description: Request metadata from another IDS connector.
+      operationId: requestMetadata
+      parameters:
+        - name: recipient
+          in: query
+          description: The URI of the requested IDS connector.
+          required: true
+          schema:
+            type: string
+            format: uri
+          example: https://localhost:8080/api/ids/data
+        - name: requestedResource
+          in: query
+          description: The URI of the requested resource.
+          required: false
+          schema:
+            type: string
+            format: uri
+          example: https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9
+      responses:
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
           content:
             '*/*':
               schema:
@@ -444,8 +622,20 @@ paths:
             type: string
             format: uuid
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -471,8 +661,26 @@ paths:
               $ref: '#/components/schemas/ResourceMetadata'
         required: true
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid resource
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -492,8 +700,14 @@ paths:
             type: string
             format: uuid
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -514,8 +728,20 @@ paths:
             type: string
             format: uuid
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -543,8 +769,20 @@ paths:
             type: string
             format: uuid
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: object
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: object
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -577,8 +815,26 @@ paths:
               $ref: '#/components/schemas/ResourceRepresentation'
         required: true
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid representation
           content:
             '*/*':
               schema:
@@ -605,85 +861,20 @@ paths:
             type: string
             format: uuid
       responses:
-        "200":
-          description: OK
+        "404":
+          description: Not found
           content:
             '*/*':
               schema:
                 type: string
-  /admin/api/resources/{resource-id}/contract:
-    get:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Get Resource Contract
-      description: Get the resource's usage policy.
-      operationId: getContract
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: OK
+        "500":
+          description: Internal server error
           content:
             '*/*':
               schema:
                 type: string
-    put:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Update Resource Contract
-      description: Update the resource's usage policy.
-      operationId: updateContract
-      parameters:
-        - name: resource-id
-          in: path
-          description: The resource uuid.
-          required: true
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-              description: A new resource contract.
-        required: true
-      responses:
         "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-  /admin/api/resources/resource:
-    post:
-      tags:
-        - 'Connector: Resource Handling'
-      summary: Register Resource
-      description: Register a resource by its metadata.
-      operationId: createResource
-      parameters:
-        - name: id
-          in: query
-          required: false
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResourceMetadata'
-        required: true
-      responses:
-        "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -716,8 +907,157 @@ paths:
               $ref: '#/components/schemas/ResourceRepresentation'
         required: true
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "409":
+          description: Representation already exists
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "201":
+          description: Representation created
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid representation
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/resources/{resource-id}/contract:
+    get:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Get Resource Contract
+      description: Get the resource's usage policy.
+      operationId: getContract
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+    put:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Update Resource Contract
+      description: Update the resource's usage policy.
+      operationId: updateContract
+      parameters:
+        - name: resource-id
+          in: path
+          description: The resource uuid.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              description: A new resource contract.
+        required: true
+      responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid resource
+          content:
+            '*/*':
+              schema:
+                type: string
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                type: string
+  /admin/api/resources/resource:
+    post:
+      tags:
+        - 'Connector: Resource Handling'
+      summary: Register Resource
+      description: Register a resource by its metadata.
+      operationId: createResource
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResourceMetadata'
+        required: true
+      responses:
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid resource
+          content:
+            '*/*':
+              schema:
+                type: string
+        "201":
+          description: Resource created
+          content:
+            '*/*':
+              schema:
+                type: string
+        "409":
+          description: Resource already exists
           content:
             '*/*':
               schema:
@@ -746,8 +1086,20 @@ paths:
             type: string
             format: uuid
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -769,8 +1121,20 @@ paths:
             format: uuid
           example: a4212311-86e4-40b3-ace3-ef29cd687cf9
       responses:
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
         "200":
-          description: OK
+          description: Ok
           content:
             '*/*':
               schema:
@@ -798,8 +1162,26 @@ paths:
             type: string
           example: Data String
       responses:
-        "200":
-          description: OK
+        "404":
+          description: Not found
+          content:
+            '*/*':
+              schema:
+                type: string
+        "500":
+          description: Internal server error
+          content:
+            '*/*':
+              schema:
+                type: string
+        "400":
+          description: Invalid resource
+          content:
+            '*/*':
+              schema:
+                type: string
+        "201":
+          description: Resource created
           content:
             '*/*':
               schema:
@@ -845,11 +1227,12 @@ components:
       description: A new resource representation.
       example:
         uuid: 55795317-0aaa-4fe1-b336-b2e26a00597f
-        type: XML
+        type: JSON
         byteSize: 101
         name: Example Representation
         source:
-          type: local
+          type: http-get
+          url: https://samples.openweathermap.org/data/2.5/weather?lat=35&lon=139&appid=439d4b804bc8187953eb36d2a8c26a02
       oneOf:
         - $ref: '#/components/schemas/ResourceRepresentation'
     ResourceMetadata:
