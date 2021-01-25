@@ -9,8 +9,8 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
     @Override
     public Resource create(final ResourceDesc desc) {
         var resource = new Resource();
-        resource.setRepresentations(new HashMap());
-        resource.setContracts(new HashMap());
+        resource.setRepresentations(new HashMap<>());
+        resource.setContracts(new HashMap<>());
         resource.setVersion(-1);
 
         update(resource, desc);
