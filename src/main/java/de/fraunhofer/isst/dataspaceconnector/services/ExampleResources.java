@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
-import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 
 import java.util.Collections;

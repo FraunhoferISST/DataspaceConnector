@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
+package de.fraunhofer.isst.dataspaceconnector.model.v1;
 
 import java.util.Date;
 import java.util.UUID;

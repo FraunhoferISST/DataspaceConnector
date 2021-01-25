@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
+package de.fraunhofer.isst.dataspaceconnector.model.v1;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
