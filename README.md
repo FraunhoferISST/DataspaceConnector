@@ -50,12 +50,12 @@ A project overview and short descriptions of each wiki section are presented
 
 ## Quick Start
 
-At first, download this repository: `git clone https://github.com/FraunhoferISST/DataspaceConnector.git`.
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
-1.  Execute `cd dataspace-connector` and `mvn clean package`.
-2.  Navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
-3.  If everything worked fine, the connector is available at https://localhost:8080/. The API can 
+1.  Clone this repository.
+2.  Execute `cd dataspace-connector` and `mvnw clean package`.
+3.  Navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
+4.  If everything worked fine, the connector is available at https://localhost:8080/. The API can 
 be accessed at https://localhost:8080/admin/api.
 
 For more details, see [here](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development).
