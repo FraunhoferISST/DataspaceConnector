@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.RequestedResource;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

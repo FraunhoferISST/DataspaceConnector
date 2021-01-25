@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;

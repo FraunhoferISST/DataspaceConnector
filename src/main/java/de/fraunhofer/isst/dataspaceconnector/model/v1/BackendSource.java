@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
+package de.fraunhofer.isst.dataspaceconnector.model.v1;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;

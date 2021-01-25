@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ContractAgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
