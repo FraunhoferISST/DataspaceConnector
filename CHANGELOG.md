@@ -33,9 +33,10 @@ All notable changes to this project will be documented in this file.
 - Remove local caching of ids resources.
 - Update to IDS Framework v4.0.1.
 - Restructure `README.md` and wiki.
-- Move code of conduct from `CONTRIBUTING.md` to `CODE_OF_CONDUCT.md`
+- Move code of conduct from `CONTRIBUTING.md` to `CODE_OF_CONDUCT.md`.
 - Add response code annotations to endpoint methods.
 - Change http response formatting.
+- Replace Log4j1 with Log4j2.
 
 ### Fixed
 - Update connector of configuration container before sending a broker message.
