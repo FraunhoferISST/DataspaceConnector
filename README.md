@@ -42,6 +42,7 @@ usage control for eight IDS usage policy patterns.
 - [Quick Start](#quick-start)
 - [IDS Components](#ids-components)
 - [Contributing](#contributing)
+- [Developers](#developers)
 - [License](#license)
 
 A project overview and short descriptions of each wiki section are presented 
