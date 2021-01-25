@@ -23,39 +23,39 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
         var needsVersionUpdate = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(resource.getTitle())) {
+        if (!newTitle.equals(resource.getTitle())) {
             resource.setTitle(newTitle);
             needsVersionUpdate = true;
         }
 
         var newDescription = desc.getDescription() != null
                 ? desc.getDescription() : "";
-        if (newDescription.equals(resource.getDescription())) {
+        if (!newDescription.equals(resource.getDescription())) {
             resource.setDescription(newDescription);
             needsVersionUpdate = true;
         }
 
         var newKeywords = desc.getKeywords() != null ? desc.getKeywords() : "";
-        if (newKeywords.equals(resource.getKeywords())) {
+        if (!newKeywords.equals(resource.getKeywords())) {
             resource.setKeywords(newKeywords);
             needsVersionUpdate = true;
         }
 
         var newPublisher = desc.getPublisher() != null ? desc.getPublisher()
                 : "";
-        if (newPublisher.equals(resource.getPublisher())) {
+        if (!newPublisher.equals(resource.getPublisher())) {
             resource.setPublisher(newPublisher);
             needsVersionUpdate = true;
         }
 
         var newLanguage = desc.getLanguage() != null ? desc.getLanguage() : "";
-        if (newLanguage.equals(resource.getLanguage())) {
+        if (!newLanguage.equals(resource.getLanguage())) {
             resource.setLanguage(newLanguage);
             needsVersionUpdate = true;
         }
 
         var newLicence = desc.getLicence() != null ? desc.getLicence() : "";
-        if (newLicence.equals(resource.getLicence())) {
+        if (!newLicence.equals(resource.getLicence())) {
             resource.setLicence(newLicence);
             needsVersionUpdate = true;
         }

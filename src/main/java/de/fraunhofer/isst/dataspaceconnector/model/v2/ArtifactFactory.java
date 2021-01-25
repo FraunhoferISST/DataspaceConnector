@@ -17,7 +17,7 @@ public class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc> {
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(artifact.getTitle())) {
+        if (!newTitle.equals(artifact.getTitle())) {
             artifact.setTitle(newTitle);
             hasBeenUpdated = true;
         }
