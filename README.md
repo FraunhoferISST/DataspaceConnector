@@ -26,7 +26,6 @@ supports IDS conform message handling with other IDS connectors and IDS brokers 
 usage control for eight IDS usage policy patterns. 
 
 ## Content
-
 - [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
     - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
     - [Development](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
