@@ -3,8 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -17,23 +15,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * This class reads the content of the policy rules and returns needed information to the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class reads the content of the policy rules and returns required information to the {@link
+ * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier}.
  */
 @Component
 public class PolicyReader {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyReader.class);
 
     /**
-     * Gets the access frequency of a policy.
+     * Gets the allowed number of accesses defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The time frequency.
+     * @param rule the policy rule object.
+     * @return the number of allowed accesses.
      */
     public Integer getMaxAccess(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -51,10 +43,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the time interval of a policy.
+     * Gets the time interval defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The time interval.
+     * @param rule the policy rule object.
+     * @return the time interval.
      */
     public TimeInterval getTimeInterval(Rule rule) {
         TimeInterval timeInterval = new TimeInterval();
@@ -70,10 +62,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the log path value of a policy.
+     * Gets the endpoint value to send notifications to defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The found value.
+     * @param rule the policy rule object.
+     * @return the endpoint value.
      */
     public String getEndpoint(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -81,10 +73,10 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the log path value of a policy.
+     * Gets the PIP endpoint path value defined in a policy.
      *
-     * @param rule The policy rule object.
-     * @return The found value.
+     * @param rule the policy rule object.
+     * @return the pip endpoint value.
      */
     public URI getPipEndpoint(Rule rule) {
         Constraint constraint = rule.getConstraint().get(0);
@@ -92,11 +84,11 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the date value of a policy.
+     * Gets the date value defined in a policy.
      *
-     * @param rule The policy constraint object.
-     * @return The date or null.
-     * @throws java.text.ParseException if any.
+     * @param rule the policy constraint object.
+     * @return the date or null.
+     * @throws java.text.ParseException if the date cannot be parsed.
      */
     public Date getDate(Rule rule) throws ParseException {
         Constraint constraint = rule.getConstraint().get(0);
@@ -108,11 +100,11 @@ public class PolicyReader {
     }
 
     /**
-     * Gets the duration value of a policy.
+     * Gets the duration value defined in a policy.
      *
-     * @param rule The policy constraint object.
-     * @return The duration or null.
-     * @throws javax.xml.datatype.DatatypeConfigurationException if any.
+     * @param rule the policy constraint object.
+     * @return the duration or null.
+     * @throws javax.xml.datatype.DatatypeConfigurationException if the duration cannot be parsed.
      */
     public Duration getDuration(Rule rule) throws DatatypeConfigurationException {
         Constraint constraint = rule.getConstraint().get(0);
@@ -125,47 +117,28 @@ public class PolicyReader {
     }
 
     /**
-     * <p>TimeInterval class.</p>
-     *
-     * @author Julia Pampus
-     * @version $Id: $Id
+     * Inner class for a time interval format.
      */
     public static class TimeInterval {
-        private String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+        private final String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
         private Date start;
         private Date end;
 
         /**
-         * <p>Constructor for TimeInterval.</p>
+         * Constructor for TimeInterval.
          */
         public TimeInterval() {
         }
 
-        /**
-         * <p>Constructor for TimeInterval.</p>
-         *
-         * @param start a {@link Date} object.
-         * @param end   a {@link Date} object.
-         */
-        public TimeInterval(Date start, Date end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        /**
-         * <p>Getter for the field <code>start</code>.</p>
-         *
-         * @return a {@link Date} object.
-         */
         public Date getStart() {
             return start;
         }
 
         /**
-         * <p>Setter for the field <code>start</code>.</p>
-         *
-         * @param start a {@link String} object.
+         * Sets the start of a time interval.
+         * @param start string containing a date formatted as specified in {@link TimeInterval#DATE_FORMAT_PATTERN}
          */
         public void setStart(String start) {
             try {
@@ -175,19 +148,13 @@ public class PolicyReader {
             }
         }
 
-        /**
-         * <p>Getter for the field <code>end</code>.</p>
-         *
-         * @return a {@link Date} object.
-         */
         public Date getEnd() {
             return end;
         }
 
         /**
-         * <p>Setter for the field <code>end</code>.</p>
-         *
-         * @param end a {@link String} object.
+         * Sets the end of a time interval.
+         * @param end string containing a date formatted as specified in {@link TimeInterval#DATE_FORMAT_PATTERN}
          */
         public void setEnd(String end) {
             try {

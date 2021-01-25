@@ -1,59 +1,79 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class provides policy pattern recognition and calls the {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} on data request or access.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class provides policy pattern recognition and calls the {@link
+ * de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} on data request or
+ * access.
  */
 @Component
 public class PolicyHandler {
-    /**
-     * Constant <code>LOGGER</code>
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
-    /** Constant <code>contract</code> */
-    public static Contract contract;
 
-    private PolicyVerifier policyVerifier;
-    private SerializerProvider serializerProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyHandler.class);
 
-    @Autowired
+    private static Contract contract;
+    private final PolicyVerifier policyVerifier;
+    private final SerializerProvider serializerProvider;
+
+    private boolean ignoreUnsupportedPatterns;
+
     /**
-     * <p>Constructor for PolicyHandler.</p>
+     * Constructor for PolicyHandler.
      *
-     * @param policyVerifier a {@link de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier} object.
-     * @param serializerProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.SerializerProvider} object.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
-    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider) {
+    @Autowired
+    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
+        throws IllegalArgumentException {
+        if (policyVerifier == null)
+            throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
+
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
+        this.ignoreUnsupportedPatterns = false;
     }
 
     /**
-     * Reads the properties of an odrl policy to automatically recognize the policy pattern.
+     * Deserializes a contract object from a string.
      *
-     * @param policy The parsed policy object.
-     * @return The recognized policy pattern.
-     * @throws java.io.IOException if any.
+     * @param contract the contract as a string.
+     * @return the contract.
+     * @throws RequestFormatException if the string is not a valid contract and could thus not be deserialized.
      */
-    public Pattern getPattern(String policy) throws IOException{
+    public Contract validateContract(String contract) throws RequestFormatException {
         try {
-            contract = serializerProvider.getSerializer().deserialize(policy, Contract.class);
-        } catch (IOException e) {
-            throw new IOException("The policy could not be read. Please check the policy syntax.");
+            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
+        } catch (Exception e) {
+            LOGGER.debug("Policy pattern is not supported.");
+            throw new RequestFormatException("Contract could not be deserialized. ", e);
         }
+    }
+
+    /**
+     * Reads the properties of an ODRL policy to automatically recognize the policy pattern.
+     *
+     * @param policy the policy as a string.
+     * @return the recognized policy pattern.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
+     */
+    public Pattern getPattern(String policy) throws UnsupportedPatternException,
+        RequestFormatException {
+        contract = validateContract(policy);
 
         if (contract.getProhibition() != null && contract.getProhibition().get(0) != null) {
             return Pattern.PROHIBIT_ACCESS;
@@ -78,7 +98,8 @@ public class PolicyHandler {
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
                         return Pattern.DURATION_USAGE;
                     } else {
-                        throw new IOException("The recognized policy pattern is not supported by this connector.");
+                        throw new UnsupportedPatternException(
+                            "The recognized policy pattern is not supported by this connector.");
                     }
                 }
             } else {
@@ -89,25 +110,29 @@ public class PolicyHandler {
                     } else if (action == Action.LOG) {
                         return Pattern.USAGE_LOGGING;
                     } else {
-                        throw new IOException("The recognized policy pattern is not supported by this connector.");
+                        throw new UnsupportedPatternException(
+                            "The recognized policy pattern is not supported by this connector.");
                     }
                 } else {
                     return Pattern.PROVIDE_ACCESS;
                 }
             }
         } else {
-            throw new IOException("The recognized policy pattern is not supported by this connector.");
+            throw new UnsupportedPatternException(
+                "The recognized policy pattern is not supported by this connector.");
         }
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on artifact request as provider).
+     * Implements the policy restrictions depending on the policy pattern type on data provision (as provider).
      *
-     * @param policy  The resource's usage policy.
-     * @return Whether the data can be accessed.
-     * @throws java.io.IOException if any.
+     * @param policy the resource's usage policy.
+     * @return whether the data can be provided.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
-    public boolean onDataProvision(String policy) throws IOException {
+    public boolean onDataProvision(String policy) throws UnsupportedPatternException,
+        RequestFormatException {
         switch (getPattern(policy)) {
             case PROVIDE_ACCESS:
                 return policyVerifier.allowAccess();
@@ -122,16 +147,27 @@ public class PolicyHandler {
     }
 
     /**
-     * Implements the policy restrictions depending on the policy pattern type (on data access as consumer).
+     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
      *
-     * @param dataResource  The accessed resource.
-     * @return Whether the data can be accessed.
-     * @throws java.io.IOException if any.
+     * @param dataResource the accessed resource.
+     * @return whether the data can be accessed.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
-    public boolean onDataAccess(RequestedResource dataResource) throws IOException {
-        String policy = dataResource.getResourceMetadata().getPolicy();
+    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
+        RequestFormatException{
+        final var policy = dataResource.getResourceMetadata().getPolicy();
+        Pattern pattern;
+        try {
+            pattern = getPattern(policy);
+        } catch (UnsupportedPatternException exception) {
+            if (!ignoreUnsupportedPatterns)
+                throw new UnsupportedPatternException(exception.getMessage());
+            else
+                pattern = Pattern.PROVIDE_ACCESS;
+        }
 
-        switch (getPattern(policy)) {
+        switch (pattern) {
             case USAGE_DURING_INTERVAL:
             case USAGE_UNTIL_DELETION:
                 return policyVerifier.checkInterval(contract);
@@ -148,48 +184,54 @@ public class PolicyHandler {
         }
     }
 
+    /**
+     * Returns the current value of {@link PolicyHandler#ignoreUnsupportedPatterns}.
+     * @return true, if unsupported patterns in policies are ignored; false otherwise.
+     */
+    public boolean isIgnoreUnsupportedPatterns() {
+        return ignoreUnsupportedPatterns;
+    }
+
+    /**
+     * Sets whether unsupported patterns in policies should be ignored.
+     * @param ignoreUnsupportedPatterns true, if unsupported patterns in policies should be ignored; false otherwise.
+     */
+    public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
+        this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
+    }
+
     public enum Pattern {
         /**
          * Standard pattern to allow unrestricted access.
          */
         PROVIDE_ACCESS("PROVIDE_ACCESS"),
         /**
-         * Default pattern if no other is detected.
-         * v2.0: NO_POLICY("no-policy")
+         * Default pattern if no other is detected. v2.0: NO_POLICY("no-policy")
          */
         PROHIBIT_ACCESS("PROHIBIT_ACCESS"),
         /**
-         * Type: NotMoreThanN
-         * v2.0: COUNT_ACCESS("count-access")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/NTimesUsageTemplates/N_TIMES_USAGE_OFFER_TEMPLATE.jsonld
+         * Type: NotMoreThanN v2.0: COUNT_ACCESS("count-access") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/NTimesUsageTemplates/N_TIMES_USAGE_OFFER_TEMPLATE.jsonld
          */
         N_TIMES_USAGE("N_TIMES_USAGE"),
         /**
-         * Type: DurationOffer
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/DURATION_USAGE_OFFER_TEMPLATE.jsonld
+         * Type: DurationOffer https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/DURATION_USAGE_OFFER_TEMPLATE.jsonld
          */
         DURATION_USAGE("DURATION_USAGE"),
         /**
-         * Type: IntervalUsage
-         * v2.0: TIME_INTERVAL("time-interval")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_DURING_INTERVAL_OFFER_TEMPLATE.jsonld
+         * Type: IntervalUsage v2.0: TIME_INTERVAL("time-interval") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_DURING_INTERVAL_OFFER_TEMPLATE.jsonld
          */
         USAGE_DURING_INTERVAL("USAGE_DURING_INTERVAL"),
         /**
-         * Type: DeleteAfterInterval
-         * v2.0: DELETE_AFTER("delete-after")
+         * Type: DeleteAfterInterval v2.0: DELETE_AFTER("delete-after")
          * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_UNTIL_DELETION_OFFER_TEMPLATE.jsonld
          */
         USAGE_UNTIL_DELETION("USAGE_UNTIL_DELETION"),
         /**
-         * Type: Logging
-         * v2.0: LOG_ACCESS("log-access")
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageLoggingTemplates/USAGE_LOGGING_OFFER_TEMPLATE.jsonld
+         * Type: Logging v2.0: LOG_ACCESS("log-access") https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageLoggingTemplates/USAGE_LOGGING_OFFER_TEMPLATE.jsonld
          */
         USAGE_LOGGING("USAGE_LOGGING"),
         /**
-         * Type: Notification
-         * https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld
+         * Type: Notification https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld
          */
         USAGE_NOTIFICATION("USAGE_NOTIFICATION");
 

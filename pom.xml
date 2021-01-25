@@ -10,17 +10,17 @@
 	</parent>
 	<groupId>de.fraunhofer.isst</groupId>
 	<artifactId>dataspace-connector</artifactId>
-	<version>${project.version}</version>
+	<version>${revision}</version>
 	<name>dataspace-connector</name>
 	<description>IDS Connector developed by the Fraunhofer ISST</description>
-	<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector</url>
+	<url>https://www.dataspace-connector.io/</url>
 	<organization>
 		<name>Fraunhofer Institute for Software and Systems Engineering</name>
 		<url>https://www.isst.fraunhofer.de/</url>
 	</organization>
 	<issueManagement>
-		<system>Gitlab</system>
-		<url>https://gitlab.cc-asp.fraunhofer.de/fhg-isst-ids/dataspace-connector/-/issues</url>
+		<system>Github</system>
+		<url>https://github.com/FraunhoferISST/DataspaceConnector/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -29,8 +29,7 @@
 			<organization>Fraunhofer Institute for Software and Systems Engineering</organization>
 			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
 			<roles>
-				<role>head</role>
-				<role>architect</role>
+				<role>lead</role>
 				<role>developer</role>
 			</roles>
 		</developer>
@@ -43,23 +42,92 @@
 				<role>developer</role>
 			</roles>
 		</developer>
+		<developer>
+			<name>Brian-Frederik Jahnke</name>
+			<email>brian-frederik.jahnke@isst.fraunhofer.de</email>
+			<organization>Fraunhofer Institute for Software and Systems Engineering</organization>
+			<organizationUrl>https://www.isst.fraunhofer.de/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<licenses>
 		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
+			<name>${licence_name}</name>
+			<url>${licence_url}</url>
+			<distribution>${licence_distribution}</distribution>
 		</license>
 	</licenses>
 	<inceptionYear>2020</inceptionYear>
 
+	<!-- 		Profiles		 -->
+	<profiles>
+		<!--
+			 No tests
+
+			 Skip the execution of tests
+		-->
+		<profile>
+			<id>no-tests</id>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+
+		<!--
+			No documentation
+
+			Skip the updating and generation of documention.
+		-->
+		<profile>
+			<id>no-documentation</id>
+			<properties>
+				<maven.javadoc.skip>true</maven.javadoc.skip>
+			</properties>
+		</profile>
+
+		<!--
+			 Release
+
+			Enforce maximal compiler warning levels, perform all tests.
+			This profile overrides profile "no-tests" and profile "no-documentation".
+		-->
+		<!-- Note: Check if the two profiles could just be deactivated (if active).-->
+		<profile>
+			<id>release</id>
+			<properties>
+				<!-- Force override profile "no-tests" and profile "no-documentation" -->
+				<maven.test.skip>false</maven.test.skip>
+				<maven.javadoc.skip>false</maven.javadoc.skip>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<configuration>
+							<showWarnings>true</showWarnings>
+							<showDeprecation>true</showDeprecation>
+							<failOnWarning>true</failOnWarning>
+							<failOnError>true</failOnError>
+
+							<compilerArgs>
+								<arg>-Xlint:all</arg>
+								<arg>-Xlint:-processing</arg>
+							</compilerArgs>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<properties>
-		<project.version>3.2.1</project.version>
-		<framework.version>3.2.3</framework.version>
+		<revision>4.0.0</revision>
+		<ids-framework.version>4.0.1</ids-framework.version>
 
 		<java.version>11</java.version>
-		<maven.compiler.source>${java.version}</maven.compiler.source>
-		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
@@ -67,25 +135,68 @@
 		<org.json.version>20190722</org.json.version>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
+
+		<email>info@dataspace-connector.de</email>
+
+		<licence_name>Apache License, Version 2.0</licence_name>
+		<licence_url>https://www.apache.org/licenses/LICENSE-2.0.txt</licence_url>
+		<licence_distribution>repo</licence_distribution>
 	</properties>
 
 	<dependencies>
 		<!-- IDS Framework -->
 		<dependency>
 			<groupId>de.fraunhofer.isst.ids.framework</groupId>
-			<artifactId>spring-starter</artifactId>
-			<version>${framework.version}</version>
+			<artifactId>base</artifactId>
+			<version>${ids-framework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fraunhofer.isst.ids.framework</groupId>
+			<artifactId>messaging</artifactId>
+			<version>${ids-framework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- Spring Boot -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-logging</artifactId>
+					</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -98,22 +209,44 @@
 					<groupId>com.vaadin.external.google</groupId>
 					<artifactId>android-json</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>
@@ -124,6 +257,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
@@ -150,12 +288,6 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>${org.json.version}</version>
-		</dependency>
-
-		<!--slf4j-->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
 		</dependency>
 
 		<dependency>
@@ -271,16 +403,40 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<systemPropertyVariables>
+						<propertyName>licence_type</propertyName>
+						<propertyName>licence_url</propertyName>
+						<propertyName>licence_distribution</propertyName>
+						<buildDirectory>${project.build.directory}</buildDirectory>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
 		</plugins>
 
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
-					<include>log4j.xml</include>
+					<include>log4j2.xml</include>
 					<include>application.properties</include>
+				</includes>
+				<excludes>
+					<!-- The key files are binary files, which the filtering destroys. -->
+					<exclude>**/*.p12</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<includes>
+					<include>**/*.p12</include>
 				</includes>
 			</resource>
 		</resources>

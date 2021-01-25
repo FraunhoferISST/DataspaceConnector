@@ -10,48 +10,58 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
- * This is the main application class. The application is started and an openApi bean for the Swagger UI is created.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This is the main application class. The application is started and an openApi bean for the
+ * Swagger UI is created.
  */
 @SpringBootApplication
 @ComponentScan({
-        "de.fraunhofer.isst.ids.framework.messaging.spring.controller",
-        "de.fraunhofer.isst.ids.framework.messaging.spring",
-        "de.fraunhofer.isst.dataspaceconnector",
-//        "de.fraunhofer.isst.ids.framework.configurationmanager.controller",
-        "de.fraunhofer.isst.ids.framework.spring.starter"
+    "de.fraunhofer.isst.ids.framework.messaging",
+    "de.fraunhofer.isst.dataspaceconnector",
+    "de.fraunhofer.isst.ids.framework.communication",
+    "de.fraunhofer.isst.ids.framework.configuration",
+    "de.fraunhofer.isst.ids.framework.daps"
 })
 public class ConnectorApplication {
-    /**
-     * <p>main.</p>
-     *
-     * @param args an array of {@link java.lang.String} objects.
-     */
+
     public static void main(String[] args) {
         SpringApplication.run(ConnectorApplication.class, args);
     }
 
     /**
-     * Creates the OpenAPI main description.
+     * Creates the OpenAPI main description. The description contains general project information
+     * such as e.g. title, version and contact information.
      *
-     * @return The OpenAPI.
+     * @return The OpenAPI description.
+     * @throws IOException Throws an exception if the properties cannot be loaded from file.
      */
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI customOpenAPI() throws IOException {
+        Properties properties = new Properties();
+        try (InputStream inputStream = getClass().getClassLoader()
+            .getResourceAsStream("application.properties")) {
+            // This function may crash (e.g. ill-formatted file). Let it bubble up.
+            properties.load(inputStream);
+        }
+
         return new OpenAPI()
-                .components(new Components())
-                .info(new Info()
-                        .title("Dataspace Connector API")
-                        .description("This is the Dataspace Connector's backend API using springdoc-openapi and OpenAPI 3.")
-                        .version("v3.2.1")
-                        .contact(new Contact()
-                                .name("Julia Pampus")
-                                .email("julia.pampus@isst.fraunhofer.de")
-                        )
-                        .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0.txt"))
-                );
+            .components(new Components())
+            .info(new Info()
+                .title(properties.getProperty("title"))
+                .description(properties.getProperty("project_desc"))
+                .version(properties.getProperty("version"))
+                .contact(new Contact()
+                    .name(properties.getProperty("organization_name"))
+                    .url(properties.getProperty("contact_url"))
+                    .email(properties.getProperty("contact_email"))
+                )
+                .license(new License()
+                    .name(properties.getProperty("licence"))
+                    .url(properties.getProperty("licence_url")))
+            );
     }
 }

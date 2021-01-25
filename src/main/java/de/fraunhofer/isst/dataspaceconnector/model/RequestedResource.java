@@ -9,15 +9,13 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2 database.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class describes a resource requested.
  */
 @Data
 @Entity
 @Table
-public class RequestedResource implements ConnectorResource{
+public class RequestedResource implements ConnectorResource {
+
     @Id
     @GeneratedValue
     @JsonProperty("uuid")
@@ -42,22 +40,23 @@ public class RequestedResource implements ConnectorResource{
     private Integer accessed;
 
     /**
-     * <p>Constructor for RequestedResource.</p>
+     * Constructor for RequestedResource.
      */
     public RequestedResource() {
 
     }
 
     /**
-     * <p>Constructor for RequestedResource.</p>
+     * Constructor with parameters for RequestedResource.
      *
-     * @param created a {@link java.util.Date} object.
-     * @param modified a {@link java.util.Date} object.
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param data a {@link java.lang.String} object.
-     * @param accessed a {@link java.lang.Integer} object.
+     * @param created The resource creation date
+     * @param modified The date when the resource was last modified
+     * @param resourceMetadata The metadata associated with this resource
+     * @param data The data associated with this resource
+     * @param accessed The number of times the data was accessed
      */
-    public RequestedResource(Date created, Date modified, ResourceMetadata resourceMetadata, String data, Integer accessed) {
+    public RequestedResource(Date created, Date modified, ResourceMetadata resourceMetadata,
+        String data, Integer accessed) {
         this.created = created;
         this.modified = modified;
         this.resourceMetadata = resourceMetadata;
@@ -65,81 +64,97 @@ public class RequestedResource implements ConnectorResource{
         this.accessed = accessed;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
         this.resourceMetadata = resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getData() {
+        incrementDataAccess();
         return data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(String data) {
         this.data = data;
     }
 
     /**
-     * <p>Getter for the field <code>accessed</code>.</p>
+     * Describes how often the data has been accessed
      *
-     * @return a {@link java.lang.Integer} object.
+     * @return The number of times the data has been accessed
      */
     public Integer getAccessed() {
         return accessed;
     }
 
-    /**
-     * <p>Setter for the field <code>accessed</code>.</p>
-     *
-     * @param accessed a {@link java.lang.Integer} object.
-     */
-    public void setAccessed(Integer accessed) {
-        this.accessed = accessed;
+    private void incrementDataAccess() {
+        this.accessed++;
     }
 }

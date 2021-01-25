@@ -1,205 +1,298 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.isst.dataspaceconnector.services.resource.OfferedResourceService;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.spring.starter.BrokerService;
-import de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider;
-import de.fraunhofer.isst.ids.framework.util.ClientProvider;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.UUID;
+
+import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.*;
 
 /**
  * This class provides endpoints for the communication with an IDS broker instance.
- *
- * @author Julia Pampus
- * @version $Id: $Id
  */
 @RestController
 @RequestMapping("/admin/api/broker")
-@Tag(name = "Connector: IDS Broker Communication", description = "Endpoints for invoking broker communication")
+@Tag(name = "Connector: IDS Broker Communication",
+    description = "Endpoints for invoking broker communication")
 public class BrokerController {
-    /** Constant <code>LOGGER</code> */
-    public static final Logger LOGGER = LoggerFactory.getLogger(BrokerController.class);
 
-    private TokenProvider tokenProvider;
-    private BrokerService brokerService;
-    private OfferedResourceService offeredResourceService;
+    private final DapsTokenProvider tokenProvider;
+    private final IDSBrokerService brokerService;
+    private final ResourceService resourceService;
+    private final ConfigurationContainer configurationContainer;
 
-    @Autowired
     /**
-     * <p>Constructor for BrokerController.</p>
+     * Constructor for BrokerController.
      *
-     * @param tokenProvider a {@link de.fraunhofer.isst.ids.framework.spring.starter.TokenProvider} object.
-     * @param configProducer a {@link de.fraunhofer.isst.ids.framework.spring.starter.ConfigProducer} object.
-     * @param keyStoreManager a {@link de.fraunhofer.isst.ids.framework.util.KeyStoreManager} object.
+     * @param tokenProvider The token provider
+     * @param configurationContainer The container with the configuration
+     * @param offeredResourceService The service for the offered resources
+     * @param brokerService The service for the broker
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
-    public BrokerController(TokenProvider tokenProvider, ConfigurationContainer configurationContainer, OfferedResourceService offeredResourceService) {
+    @Autowired
+    public BrokerController(DapsTokenProvider tokenProvider,
+        ConfigurationContainer configurationContainer,
+        OfferedResourceServiceImpl offeredResourceService,
+        IDSBrokerService brokerService)
+        throws IllegalArgumentException {
+        if (offeredResourceService == null)
+            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+
+        if (tokenProvider == null)
+            throw new IllegalArgumentException("The TokenProvider cannot be null.");
+
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+
+        if (brokerService == null)
+            throw new IllegalArgumentException("The IDSBrokerService cannot be null.");
+
         this.tokenProvider = tokenProvider;
-        this.offeredResourceService = offeredResourceService;
-        try {
-            this.brokerService = new BrokerService(configurationContainer, new ClientProvider(configurationContainer),
-                    tokenProvider);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            LOGGER.error("(Framework) Broker Service Error: " + e.getMessage());
-        }
+        this.resourceService = offeredResourceService;
+        this.configurationContainer = configurationContainer;
+        this.brokerService = brokerService;
     }
 
     /**
-     * Sends a ConnectorAvailableMessage to an IDS broker.
+     * Notify an IDS broker of the availability of this connector.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Register Connector", description = "Register or update connector at an IDS broker.")
+    @Operation(summary = "Register Connector",
+        description = "Register or update connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> updateAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
-        if (tokenProvider.getTokenJWS() != null) {
+    public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
+        , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+    @RequestParam("broker") String url) {
+        // Make sure the request is authorized.
+        if (tokenProvider.getDAT() != null) {
             try {
-                return new ResponseEntity<>(brokerService.updateAtBroker(url).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                updateConfigModel();
+                // Send the update request to the broker.
+                final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+            } catch (ConfigurationUpdateException e) {
+                return respondUpdateError(url);
+            } catch (NullPointerException | IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
     /**
-     * Sends a ConnectorUnavailableMessage to an IDS broker.
+     * Notify an IDS broker that this connector is no longer available.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
      */
     @Operation(summary = "Unregister Connector", description = "Unregister connector at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> unregisterAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
-        if (tokenProvider.getTokenJWS() != null) {
+    public ResponseEntity<String> unregisterAtBroker(
+        @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url) {
+        // Make sure the request is authorized.
+        if (tokenProvider.getDAT() != null) {
             try {
-                return new ResponseEntity<>(brokerService.unregisterAtBroker(url).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                updateConfigModel();
+                // Send the unregister request to the broker
+                final var brokerResponse = brokerService.unregisterAtBroker(url);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+            } catch (ConfigurationUpdateException e) {
+                return respondUpdateError(url);
+            } catch (NullPointerException | IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
     /**
-     * Sends a QueryMessage to an IDS broker.
+     * Pass a query message to an ids broker.
      *
      * @param url The broker address.
      * @return The broker response message or an error.
      */
     @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/query", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> queryBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url) {
-        if (tokenProvider.getTokenJWS() != null) {
-            String query = "SELECT ?subject ?predicate ?object\n" +
-                    "FROM <urn:x-arq:UnionGraph>\n" +
-                    "WHERE {\n" +
-                    "  ?subject ?predicate ?object\n" +
-                    "}";
-
+    public ResponseEntity<String> queryBroker(
+        @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url,
+        @Schema(description = "Database query (SparQL)", required = true,
+            example = "SELECT ?subject ?predicate ?object\n" +
+                "FROM <urn:x-arq:UnionGraph>\n" +
+                "WHERE {\n" +
+                "  ?subject ?predicate ?object\n" +
+                "};") @RequestBody String query) {
+        // Make sure the request is authorized.
+        if (tokenProvider.getDAT() != null) {
+            // Send the query request to the broker.
             try {
-                return new ResponseEntity<>(brokerService.queryBroker(url, query, null, null, null).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                final var brokerResponse = brokerService.queryBroker(url, query,
+                    null, null, null);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+            } catch (IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Update a resource at an ids broker.
      *
-     * @param url The broker address.
+     * @param url        The broker address.
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
-    @RequestMapping(value = "/resource/{resource-id}/update" , method = RequestMethod.POST)
+    @Operation(summary = "Update Resource at Broker",
+        description = "Update an IDS resource at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @RequestMapping(value = "/update/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> updateResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
-        if (tokenProvider.getTokenJWS() != null) {
-            Resource resource;
+    public ResponseEntity<String> updateResourceAtBroker(
+        @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url,
+        @Parameter(description = "The resource id.", required = true)
+        @PathVariable("resource-id") UUID resourceId) {
+        // Make sure the request is authorized.
+        if (tokenProvider.getDAT() != null) {
             try {
-                resource = offeredResourceService.getOfferedResources().get(resourceId);
-            } catch (Exception e) {
-                LOGGER.error("Resource could not be found: {}", e.getMessage());
-                return new ResponseEntity<>("Resource not found.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            try {
-                return new ResponseEntity<>(brokerService.updateResourceAtBroker(url, resource).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Get the resource
+                final var resource =
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
+                if (resource == null) {
+                    // The resource could not be found, reject and inform the requester.
+                    return respondResourceNotFound(resourceId);
+                } else {
+                    // The resource has been received, update at broker.
+                    final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
+                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+                }
+            } catch (ClassCastException | NullPointerException exception) {
+                return respondResourceCouldNotBeLoaded(resourceId);
+            } catch (IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
     }
 
     /**
-     * Sends a ResourceUpdateMessage to an IDS broker.
+     * Remove a resource from an ids broker
      *
-     * @param url The broker address.
+     * @param url        The broker address.
      * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Broker Query Request", description = "Send a query request to an IDS broker.")
-    @RequestMapping(value = "/update/{resource-id}/remove", method = RequestMethod.POST)
+    @Operation(summary = "Remove Resource from Broker",
+        description = "Remove an IDS resource at an IDS broker.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @RequestMapping(value = "/remove/{resource-id}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<Object> deleteResourceAtBroker(@Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure") @RequestParam("broker") String url,
-            @Parameter(description = "The resource id.", required = true) @PathVariable("resource-id") UUID resourceId) {
-        if (tokenProvider.getTokenJWS() != null) {
-            Resource resource;
+    public ResponseEntity<String> deleteResourceAtBroker(
+        @Parameter(description = "The url of the broker.", required = true,
+            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+        @RequestParam("broker") String url,
+        @Parameter(description = "The resource id.", required = true)
+        @PathVariable("resource-id") UUID resourceId) {
+        // Make sure the request is authorized.
+        if (tokenProvider.getDAT() != null) {
             try {
-                resource = offeredResourceService.getOfferedResources().get(resourceId);
-            } catch (Exception e) {
-                LOGGER.error("Resource could not be found: {}", e.getMessage());
-                return new ResponseEntity<>("Resource not found.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-            try {
-                return new ResponseEntity<>(brokerService.removeResourceFromBroker(url, resource).body().string(), HttpStatus.OK);
-            } catch (IOException e) {
-                LOGGER.error("Broker communication failed: " + e.getMessage());
-                return new ResponseEntity<>("Broker communication failed.", HttpStatus.INTERNAL_SERVER_ERROR);
+                // Get the resource
+                final var resource =
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
+                if (resource == null) {
+                    // The resource could not be found, reject and inform the requester.
+                    return respondResourceNotFound(resourceId);
+                } else {
+                    // The resource has been received, remove from broker.
+                    final var brokerResponse = brokerService.removeResourceFromBroker(url, resource);
+                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+                }
+            } catch (ClassCastException | NullPointerException exception) {
+                return respondResourceCouldNotBeLoaded(resourceId);
+            } catch (IOException exception) {
+                return respondBrokerCommunicationFailed(exception);
             }
         } else {
-            LOGGER.error("No DAT token found");
-            return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
+            // The request was unauthorized.
+            return respondRejectUnauthorized(url);
         }
+    }
+
+    /**
+     * Updates the connector object in the ids framework's config container.
+     *
+     * @throws ConfigurationUpdateException If the configuration could not be update.
+     */
+    private void updateConfigModel() throws ConfigurationUpdateException {
+        BaseConnectorImpl connector = (BaseConnectorImpl) configurationContainer.getConnector();
+        connector.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
+            ._offeredResource_((ArrayList<Resource>) resourceService.getResources())
+            .build()));
+
+        ConfigurationModelImpl configurationModel =
+            (ConfigurationModelImpl) configurationContainer.getConfigModel();
+        configurationModel.setConnectorDescription(connector);
+
+        configurationContainer.updateConfiguration(configurationModel);
     }
 }

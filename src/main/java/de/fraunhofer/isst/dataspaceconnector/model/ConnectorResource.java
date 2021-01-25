@@ -4,79 +4,77 @@ import java.util.Date;
 import java.util.UUID;
 
 /**
- * <p>ConnectorResource interface.</p>
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * ConnectorResource interface.
  */
 public interface ConnectorResource {
+
     /**
-     * <p>getUuid.</p>
+     * Get the resource id
      *
-     * @return a {@link java.util.UUID} object.
+     * @return The id
      */
     UUID getUuid();
 
     /**
-     * <p>setUuid.</p>
+     * Set the resource id
      *
-     * @param uuid a {@link java.util.UUID} object.
+     * @param uuid The new id
      */
     void setUuid(UUID uuid);
 
     /**
-     * <p>getCreated.</p>
+     * Get the creation date
      *
-     * @return a {@link java.util.Date} object.
+     * @return The creation date
      */
     Date getCreated();
 
     /**
-     * <p>setCreated.</p>
+     * Set the creation date
      *
-     * @param created a {@link java.util.Date} object.
+     * @param created The creation date
      */
     void setCreated(Date created);
 
     /**
-     * <p>getModified.</p>
+     * Get the date of the last modification
      *
-     * @return a {@link java.util.Date} object.
+     * @return The modification date
      */
     Date getModified();
 
     /**
-     * <p>setModified.</p>
+     * Set the date of the last modification
      *
-     * @param modified a {@link java.util.Date} object.
+     * @param modified The modification date
      */
     void setModified(Date modified);
 
     /**
-     * <p>getResourceMetadata.</p>
+     * Get the metadata associated with this resource
      *
-     * @return a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @return The metadata
      */
     ResourceMetadata getResourceMetadata();
 
     /**
-     * <p>setResourceMetadata.</p>
+     * Set the metadata associated with this resource
      *
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
+     * @param resourceMetadata The metadata
      */
     void setResourceMetadata(ResourceMetadata resourceMetadata);
 
     /**
-     * <p>getData.</p>
+     * Get the data associated with this resource
      *
-     * @return a {@link java.lang.String} object.
+     * @return The data
      */
     String getData();
 
     /**
-     * <p>setData.</p>
+     * Set the metadata associated with this resource
      *
-     * @param data a {@link java.lang.String} object.
+     * @param data The data
      */
     void setData(String data);
 }

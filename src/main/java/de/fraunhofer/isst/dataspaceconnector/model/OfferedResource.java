@@ -3,21 +3,22 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.UUID;
 
 /**
- * This class provides a custom data resource with an id, data and metadata to be saved in a h2 database.
- *
- * @author Julia Pampus
- * @version $Id: $Id
+ * This class describes an offered resource.
  */
 @Data
 @Entity
 @Table
-public class OfferedResource implements ConnectorResource{
+public class OfferedResource implements ConnectorResource {
+
     @Id
     @JsonProperty("uuid")
     private UUID uuid;
@@ -38,22 +39,22 @@ public class OfferedResource implements ConnectorResource{
     private String data;
 
     /**
-     * <p>Constructor for OfferedResource.</p>
+     * Constructor for OfferedResource.
      */
     public OfferedResource() {
 
     }
 
     /**
-     * <p>Constructor for OfferedResource.</p>
+     * Constructor with parameters for OfferedResource.
      *
-     * @param uuid a {@link java.util.Date} object.
-     * @param created a {@link java.util.Date} object.
-     * @param modified a {@link java.util.Date} object.
-     * @param resourceMetadata a {@link de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata} object.
-     * @param data a {@link java.lang.String} object.
+     * @param created The resource creation date
+     * @param modified The date when the resource was last modified
+     * @param resourceMetadata The metadata associated with this resource
+     * @param data The data associated with this resource
      */
-    public OfferedResource(UUID uuid, Date created, Date modified, ResourceMetadata resourceMetadata, String data) {
+    public OfferedResource(UUID uuid, Date created, Date modified,
+        ResourceMetadata resourceMetadata, String data) {
         this.uuid = uuid;
         this.created = created;
         this.modified = modified;
@@ -61,63 +62,86 @@ public class OfferedResource implements ConnectorResource{
         this.data = data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getCreated() {
         return created;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCreated(Date created) {
         this.created = created;
+        this.modified = new Date();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Date getModified() {
         return modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setModified(Date modified) {
         this.modified = modified;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
+        this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getData() {
         return data;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setData(String data) {
+        this.setModified(new Date());
         this.data = data;
     }
 }

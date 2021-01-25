@@ -10,6 +10,9 @@ services:
       - ./postgres.env
     networks:
       - connector
+    volumes:
+      - connector-data:/var/lib/postgresql/data
+
   connector:
     build:
       context: .
@@ -25,3 +28,6 @@ services:
 
 networks:
   connector:
+
+volumes:
+  connector-data: {}
