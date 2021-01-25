@@ -4,7 +4,6 @@ All notable changes to this project will be documented in this file.
 ## [4.0.0] - 2021-01-25
 
 ### Added
-- Add persistent volume for PostgreSQL in docker-compose.
 - Add public endpoint for self-description without resource catalog and public key.
 - Add example endpoints.
 - Add exceptions and detailed exception handling.
