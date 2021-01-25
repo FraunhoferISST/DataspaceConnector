@@ -21,14 +21,14 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(catalog.getTitle())) {
+        if (!newTitle.equals(catalog.getTitle())) {
             catalog.setTitle(newTitle);
             hasBeenUpdated = true;
         }
 
         var newCatalog = desc.getDescription() != null
                 ? desc.getDescription() : "";
-        if (newCatalog.equals(catalog.getDescription())) {
+        if (!newCatalog.equals(catalog.getDescription())) {
             catalog.setDescription(newCatalog);
             hasBeenUpdated = true;
         }

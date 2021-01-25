@@ -19,19 +19,19 @@ public class RepresentationFactory implements BaseFactory<Representation,
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(representation.getTitle())) {
+        if (!newTitle.equals(representation.getTitle())) {
             representation.setTitle(newTitle);
             hasBeenUpdated = true;
         }
 
         var newLanguage = desc.getLanguage() != null ? desc.getLanguage() : "";
-        if (newLanguage.equals(representation.getLanguage())) {
+        if (!newLanguage.equals(representation.getLanguage())) {
             representation.setLanguage(newLanguage);
             hasBeenUpdated = true;
         }
 
         var newMediaType = desc.getType() != null ? desc.getType() : "";
-        if (newMediaType.equals(representation.getMediaType())) {
+        if (!newMediaType.equals(representation.getMediaType())) {
             representation.setMediaType(newMediaType);
             hasBeenUpdated = true;
         }

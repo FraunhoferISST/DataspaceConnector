@@ -21,7 +21,7 @@ public class ContractFactory implements BaseFactory<Contract, ContractDesc> {
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(contract.getTitle())) {
+        if (!newTitle.equals(contract.getTitle())) {
             contract.setTitle(newTitle);
             hasBeenUpdated = true;
         }

@@ -17,13 +17,13 @@ public class RuleFactory implements BaseFactory<Rule, RuleDesc> {
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (newTitle.equals(rule.getTitle())) {
+        if (!newTitle.equals(rule.getTitle())) {
             rule.setTitle(newTitle);
             hasBeenUpdated = true;
         }
 
         var newRule = desc.getRule() != null ? desc.getRule() : "";
-        if (newRule.equals(rule.getValue())) {
+        if (!newRule.equals(rule.getValue())) {
             rule.setValue(newRule);
             hasBeenUpdated = true;
         }
