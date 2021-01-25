@@ -26,21 +26,41 @@ supports IDS conform message handling with other IDS connectors and IDS brokers 
 usage control for eight IDS usage policy patterns. 
 
 ## Content
+- [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
+    - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
+    - [Development](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
+    - [Examples](https://github.com/FraunhoferISST/DataspaceConnector/wiki/examples)
+    - [Frequently Asked Questions](https://github.com/FraunhoferISST/DataspaceConnector/wiki/faq)   
+    - [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
+    - [IDS Communication Guide](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-communication-guide)
+    - [IDS Connector Architecture](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-connector-architecture)
+    - [Logging](https://github.com/FraunhoferISST/DataspaceConnector/wiki/logging)
+    - [Roadmap](https://github.com/FraunhoferISST/DataspaceConnector/wiki/roadmap)
+    - [Software Documentation](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-documentation)
+    - [Software Tests](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-tests)
+    - [Usage Control](https://github.com/FraunhoferISST/DataspaceConnector/wiki/usage-control)
+- [Quick Start](#quick-start)
+- [IDS Components](#ids-components)
+- [Contributing](#contributing)
+- [Developers](#developers)
+- [License](#license)
 
-- [Home](https://github.com/FraunhoferISST/DataspaceConnector/wiki)  
-    - [IDS-ready](https://github.com/FraunhoferISST/DataspaceConnector/wiki#ids-ready)
-    - [Supported Features](https://github.com/FraunhoferISST/DataspaceConnector/wiki#supported-features)  
-- [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
-    - [Java Setup](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started#java-setup)  
-    - [Docker Setup](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started#docker-setup)  
-- [Development](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
-    - [Configurations](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development#configurations)  
-    - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development#deployment)  
-    - [Example Setup](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development#example-setup)  
+A project overview and short descriptions of each wiki section are presented 
+[here](https://github.com/FraunhoferISST/DataspaceConnector/wiki).
 
-Further information about e.g. usage policies, software documentation, and the project's **roadmap** 
-can be found in the wiki as well. 
-An overview is presented [here](https://github.com/FraunhoferISST/DataspaceConnector/wiki).
+## Quick Start
+
+If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
+
+1.  Clone this repository.
+2.  Execute `cd dataspace-connector` and `mvnw clean package`.
+3.  Navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
+4.  If everything worked fine, the connector is available at https://localhost:8080/. The API can 
+be accessed at https://localhost:8080/admin/api.
+
+For more details, see [here](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development).
+If you do not want to deploy the application yourself, have a look at 
+[how to use the test setups](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started).
 
 ## IDS Components
 
@@ -58,10 +78,23 @@ Dataspace Connector and further IDS connector implementations. Both projects are
 
 ## Contributing
 
+You are very welcome to contribute to this project when you find a bug, want to suggest an 
+improvement, or have an idea for a useful feature. Please find a set of guidelines at the 
+[CONTRIBUTING.md](CONTRIBUTING.md) and the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## Developers
+
 This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) 
-business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome 
-to contribute to this project when you find a bug, want to suggest an improvement, or have an idea 
-for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md).
+business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). 
+
+The core development is driven by
+* [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Julia Pampus](https://github.com/juliapampus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Brian-Frederik Jahnke](https://github.com/brianjahnke), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Ronja Quensel](https://github.com/ronjaquensel), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+
+with significant contributions, comments, and support by (in alphabetical order):
+* ...
 
 ## License
 Copyright © 2020 Fraunhofer ISST. This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) for details.

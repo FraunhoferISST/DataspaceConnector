@@ -1,37 +1,45 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.0.0-SNAPSHOT]
+## [4.0.0] - 2021-01-25
 
 ### Added
-- Persistent volume for PostgreSQL in docker-compose
 - Add public endpoint for self-description without resource catalog and public key.
-- Add example controller class for example endpoints.
-- Add exception classes.
-- Create UUIDUtils for uuid handling.
-- Add Controller endpoints for contract negotiation.
-- Contract method in request controller.
+- Add example endpoints.
+- Add exceptions and detailed exception handling.
+- Create `UUIDUtils` for uuid handling.
+- Create `ControllerUtils` for http responses.
+- Add endpoints for contract negotiation.
 - Add http tracing and improved logging.
-- Add class for example resources.
-- Add custom profiles.
+- Add custom profiles for Maven.
 - Add negotiation service.
+- Add Spring actuators.
+- Add contract agreement repository.
 
 ### Changed
-- Remove attribute `system` from `BackendSource` and add attribute `name` to `ResourceRepresentation`.
-- Move attribute `sourceType` from `ResourceRepresentation` as `type` to `BackendSource`.
-- Remove requested resource list from description response.
-- Rename broker communication endpoints.
-- Improve exception handling.
-- Migrate `ResourceRepresentation` to map.
 - Change object handling and model classes.
-- Improve message handler and sending request messages: `de.fraunhofer.isst.dataspaceconnector.services.messages`.
+    - Move attribute `system` from `BackendSource` as `name` to `ResourceRepresentation`.
+    - Move attribute `sourceType` from `ResourceRepresentation` as `type` to `BackendSource`.
+    - Migrate `ResourceRepresentation` to map.
+- Remove requested resource list from description response.
+- Rename broker communication and self-description endpoints.
+- Improve exception handling.
+- Improve message handler and sending request messages in `de.fraunhofer.isst.dataspaceconnector.services.messages`.
 - Change package structure.
 - Add abstract class to resource service implementations.
-- Adapt policy handler.
-- Improve `pom.xml` and dependencies.
+- Edit policy handler.
+- Improve `pom.xml`.
+- Remove local caching of ids resources.
+- Update to IDS Framework v4.0.1.
+- Restructure `README.md` and wiki.
+- Move code of conduct from `CONTRIBUTING.md` to `CODE_OF_CONDUCT.md`.
+- Add response code annotations to endpoint methods.
+- Change http response formatting.
+- Replace Log4j1 with Log4j2.
 
 ### Fixed
 - Update connector of configuration container before sending a broker message.
+- Enforce access counter usage by moving it to an isolated method.
 
 ## [3.2.1] - 2020-11-05
 

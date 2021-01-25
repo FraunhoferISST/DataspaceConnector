@@ -9,7 +9,7 @@ info:
   license:
     name: Apache License, Version 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 4.0.0-SNAPSHOT
+  version: 4.0.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
