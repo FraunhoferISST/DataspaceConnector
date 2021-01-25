@@ -77,11 +77,23 @@ Dataspace Connector and further IDS connector implementations. Both projects are
 
 ## Contributing
 
+You are very welcome to contribute to this project when you find a bug, want to suggest an 
+improvement, or have an idea for a useful feature. Please find a set of guidelines at the 
+[CONTRIBUTING.md](CONTRIBUTING.md) and the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+## Developers
+
 This is an ongoing project of the [Data Economy](https://www.isst.fraunhofer.de/en/business-units/data-economy.html) 
-business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). You are very welcome 
-to contribute to this project when you find a bug, want to suggest an improvement, or have an idea 
-for a useful feature. Please find a set of guidelines at the [CONTRIBUTING.md](CONTRIBUTING.md) and 
-the [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+business unit of the [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html). 
+
+The core development is driven by
+* [Heinrich Pettenpohl](https://github.com/HeinrichPet), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Julia Pampus](https://github.com/juliapampus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Brian-Frederik Jahnke](https://github.com/brianjahnke), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Ronja Quensel](https://github.com/ronjaquensel), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+
+with significant contributions, comments, and support by (in alphabetical order):
+* ...
 
 ## License
 Copyright © 2020 Fraunhofer ISST. This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) for details.
