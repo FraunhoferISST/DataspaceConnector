@@ -11,7 +11,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.v1.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.repositories.OfferedResourceRepository;
+import de.fraunhofer.isst.dataspaceconnector.repositories.v1.OfferedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;

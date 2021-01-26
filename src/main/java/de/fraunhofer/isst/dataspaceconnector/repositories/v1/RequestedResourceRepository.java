@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.repositories;
+package de.fraunhofer.isst.dataspaceconnector.repositories.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v1.RequestedResource;
 import org.springframework.data.jpa.repository.JpaRepository;
