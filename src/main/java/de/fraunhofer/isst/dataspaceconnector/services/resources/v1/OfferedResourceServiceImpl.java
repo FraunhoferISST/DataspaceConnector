@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v1;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.TypedLiteral;

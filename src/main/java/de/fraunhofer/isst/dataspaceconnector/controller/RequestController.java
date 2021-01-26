@@ -11,8 +11,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationServic
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
