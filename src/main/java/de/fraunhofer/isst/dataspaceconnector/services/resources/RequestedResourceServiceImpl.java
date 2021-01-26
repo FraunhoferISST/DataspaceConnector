@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.v1.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
+import de.fraunhofer.isst.dataspaceconnector.repositories.v1.RequestedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import org.slf4j.Logger;
