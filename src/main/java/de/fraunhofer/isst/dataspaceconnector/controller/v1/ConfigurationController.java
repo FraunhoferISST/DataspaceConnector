@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.controller;
+package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;

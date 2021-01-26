@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.controller;
+package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
