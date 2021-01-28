@@ -18,6 +18,7 @@ public final class EndpointService {
     /**
      * Creates a new endpoint pointing to an internal resource
      * This function does not validate the resource existent.
+     *
      * @param endpointId The id for the new endpoint.
      * @param resourceId The id of the resource.
      * @return The new persistent endpoint.
@@ -41,6 +42,7 @@ public final class EndpointService {
      * If the endpoint is redirecting the endpoint will then point to the passed
      * resource.
      * This function does not validate the resource existent.
+     *
      * @param endpointId The id of the endpoint to be updated.
      * @param resourceId The id of the resource the endpoint should point to.
      * @throws IllegalArgumentException if the resourceId is null.
@@ -90,6 +92,7 @@ public final class EndpointService {
      * If the endpoint points to a resource the endpoint will redirect to a
      * different endpoint.
      * If the endpoint already redirects the target endpoint will be changed.
+     *
      * @param endpointId The id of the endpoint that should be updated.
      * @param newLocation The id of the redirection target endpoint.
      * @throws IllegalArgumentException if newLocation is null.
@@ -127,6 +130,7 @@ public final class EndpointService {
 
     /**
      * Try to delete an endpoint.
+     *
      * @param endpointId The id of the endpoint to be deleted.
      */
     public void delete(final EndpointId endpointId) {
@@ -135,6 +139,7 @@ public final class EndpointService {
 
     /**
      * Receive an endpoint.
+     *
      * @param endpointId The id of the endpoint to be received.
      * @return The endpoint.
      */
@@ -151,6 +156,7 @@ public final class EndpointService {
 
     /**
      * Check if a endpoint with the given id exists.
+     *
      * @param endpointId The id of the endpoint.
      * @return True if the resource already exists.
      */
@@ -160,6 +166,7 @@ public final class EndpointService {
 
     /**
      * Check if the endpoint is redirecting.
+     *
      * @param endpointId The id of the endpoint.
      * @return True if the endpoint is redirecting.
      */
@@ -170,6 +177,7 @@ public final class EndpointService {
 
     /**
      * Check if the endpoint is redirecting.
+     *
      * @param endpoint The endpoint.
      * @return True if the endpoint if redirecting.
      */
@@ -179,6 +187,7 @@ public final class EndpointService {
 
     /**
      * Persist an endpoint.
+     *
      * @param endpoint The endpoint to be persisted.
      * @return The endpoint after persisting.
      */
