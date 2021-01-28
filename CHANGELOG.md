@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.1] - 2021-01-28
+
+### Changed
+- Update from IDS Framework v4.0.1 to v4.0.2.
+
 ## [4.0.0] - 2021-01-25
 
 ### Added
