@@ -143,7 +143,7 @@ public final class EndpointService {
 
         if (endpoint.isEmpty()) {
             // Handle with global exception handler
-            throw new ResourceNotFoundException(endpoint.toString());
+            throw new ResourceNotFoundException(endpointId.toString());
         }
 
         return endpoint.get();
