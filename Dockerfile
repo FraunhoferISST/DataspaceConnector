@@ -1,5 +1,5 @@
+# Build the jar
 FROM maven:latest AS maven
-LABEL maintainer="Julia Pampus <julia.pampus@isst.fraunhofer.de>"
 
 COPY pom.xml /tmp/
 
@@ -10,7 +10,8 @@ COPY src /tmp/src/
 
 RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
 
-FROM adoptopenjdk/openjdk11:jre-11.0.8_10-alpine
+# Copy the jar and build image
+FROM adoptopenjdk/openjdk11:alpine-jre
 RUN mkdir /app
 
 COPY --from=maven /tmp/target/*.jar /app/app.jar
