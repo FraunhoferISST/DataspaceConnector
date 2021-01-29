@@ -7,6 +7,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.EndpointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public final class EndpointService {
@@ -152,6 +154,28 @@ public final class EndpointService {
         }
 
         return endpoint.get();
+    }
+
+    /**
+     * Get all entities pointing to this internal id.
+     *
+     * @param entityId The internal id.
+     * @return The endpoints pointing directly to this id.
+     */
+    public Set<EndpointId> getByEntity(final UUID entityId) {
+        // TODO Improve query
+        final var allEndpoints = endpointRepository.findAll();
+        final var foundEndpoints = new HashSet<EndpointId>();
+
+        for (final var endpoint : allEndpoints) {
+            if (!isRedirect(endpoint)) {
+                if (endpoint.getInternalId().equals(entityId)) {
+                    foundEndpoints.add(endpoint.getId());
+                }
+            }
+        }
+
+        return foundEndpoints;
     }
 
     /**
