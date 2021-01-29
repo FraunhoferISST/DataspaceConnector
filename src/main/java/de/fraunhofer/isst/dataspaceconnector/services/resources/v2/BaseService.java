@@ -1,34 +1,106 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.repositories.v2.BaseResourceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.UUID;
 
-public interface BaseService<T extends BaseResource,
+public class BaseService<T extends BaseResource,
         D extends BaseDescription<T>> {
-    T create(D desc);
 
-    EndpointId create(String basePath, D desc);
+    /** Persists all entities of type T. **/
+    @Autowired
+    private BaseResourceRepository<T> repository;
 
-    T update(UUID id, D desc);
+    /** Contains creation and update logic for entities of type T. **/
+    @Autowired
+    private BaseFactory<T, D> factory;
 
-    EndpointId update(EndpointId endpointId, D desc);
+    /**
+     * Creates a new persistent entity.
+     *
+     * @param desc The description of the new entity.
+     * @return The new entity.
+     */
+    T create(final D desc) {
+        return persist(factory.create(desc));
+    }
 
-    T get(UUID id);
+    /**
+     * Updates an existing entity.
+     *
+     * @param id   The id of the entity.
+     * @param desc The new description of the entity.
+     * @return The updated entity.
+     */
+    T update(final UUID id, final D desc) {
+        var entity = get(id);
 
-    T get(EndpointId endpointId);
+        if (factory.update(entity, desc)) {
+            entity = persist(entity);
+        }
 
-    Endpoint getEndpoint(EndpointId endpointId);
+        return entity;
+    }
 
-    List<EndpointId> getAll();
+    /**
+     * Get the entity for a given id.
+     *
+     * @param id The id of the entity.
+     * @return The entity.
+     */
+    T get(final UUID id) {
+        final var entity = repository.findById(id);
 
-    boolean doesExist(UUID id);
+        if (entity.isEmpty()) {
+            // Handle with global exception handler
+            throw new ResourceNotFoundException(id.toString());
+        }
 
-    boolean doesExist(EndpointId endpointId);
+        return entity.get();
+    }
 
-    void delete(EndpointId endpointId);
+    /**
+     * Get a list of all entities with of the same type.
+     *
+     * @return The id list of all entities.
+     */
+    public List<UUID> getAll() {
+        return repository.getAllIds();
+    }
+
+    /**
+     * Checks if a entity exists for a given id.
+     *
+     * @param id The id of entity.
+     * @return True if the entity exists.
+     */
+    public boolean doesExist(final UUID id) {
+        return repository.findById(id).isPresent();
+    }
+
+    /**
+     * Delete an entity with the given id.
+     *
+     * @param id The id of the entity.
+     */
+    public void delete(final UUID id) {
+        final var entity = get(id);
+        repository.deleteById(id);
+    }
+
+    /**
+     * Persists an entity.
+     *
+     * @param entity The entity.
+     * @return The persisted entity.
+     */
+    T persist(final T entity) {
+        return repository.saveAndFlush(entity);
+    }
 }
