@@ -147,13 +147,16 @@ public class CommonService<T extends BaseResource,
 
     private UUID generateEndpointResourceId(final EndpointId id) {
         // TODO: FIX ME
-        if (id != null) {
+        // TODO what happends when basePath is not set
+        if (id.getResourceId() != null) {
             if (doesExist(id)) {
                 throw new ResourceAlreadyExistsException(id.toString());
             }
 
+            // Preferred endpoint available
             return id.getResourceId();
         } else {
+            // No endpoint hint
             return UUIDUtils.createUUID(x ->
                     doesExist(new EndpointId(id.getBasePath(), x)));
         }
