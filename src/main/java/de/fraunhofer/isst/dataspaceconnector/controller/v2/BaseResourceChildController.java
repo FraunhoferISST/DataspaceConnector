@@ -56,7 +56,13 @@ public class BaseResourceChildController
     }
 
     private EndpointId getCurrentEndpoint(final UUID id) {
-        return new EndpointId(ServletUriComponentsBuilder.fromCurrentRequest()
-                .build().toString(), id);
+        var basePath = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toString();
+
+        final var index = basePath.lastIndexOf(id.toString());
+        // -1 so that the / gets also removed
+        basePath = basePath.substring(0, index - 1);
+
+        return new EndpointId(basePath, id);
     }
 }
