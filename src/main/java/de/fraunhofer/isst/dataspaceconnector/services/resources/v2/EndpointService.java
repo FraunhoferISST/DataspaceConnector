@@ -212,7 +212,7 @@ public final class EndpointService {
      * @return True if the endpoint if redirecting.
      */
     public static boolean isRedirect(final Endpoint endpoint) {
-        return endpoint.getId() == null && endpoint.getNewLocation() != null;
+        return endpoint.getInternalId() == null && endpoint.getNewLocation() != null;
     }
 
     /**
