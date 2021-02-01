@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
@@ -10,8 +12,10 @@ import java.util.UUID;
 @Data
 @Embeddable
 public class EndpointId implements Serializable {
+    @JsonIgnore
     private String basePath;
 
+    @JsonIgnore
     private UUID resourceId;
 
     public EndpointId() {
@@ -22,6 +26,7 @@ public class EndpointId implements Serializable {
         this.resourceId = resourceId;
     }
 
+    @JsonProperty("ref")
     public URI toUri() {
         return URI.create(basePath + "/" + resourceId.toString());
     }

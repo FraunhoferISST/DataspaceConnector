@@ -14,6 +14,12 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseViewer;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ContractView;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,8 +34,8 @@ import java.util.UUID;
  * @param <T> The resource type.
  * @param <D> The description for the passed resource type.
  */
-public class CommonService<T extends BaseResource,
-        D extends BaseDescription<T>> implements FrontFacingService<T, D> {
+public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
+        V extends BaseView<T>> implements FrontFacingService<T, D, V> {
 
     /**
      * The service for resources.
@@ -42,6 +48,9 @@ public class CommonService<T extends BaseResource,
      **/
     @Autowired
     private EndpointService endpointService;
+
+    @Autowired
+    private BaseViewer<T, V> viewConverter;
 
     /**
      * Create a resource at a passed resource path.
@@ -68,7 +77,7 @@ public class CommonService<T extends BaseResource,
      */
     @Override
     public EndpointId update(final EndpointId endpointId, final D desc) {
-        var resource = get(endpointId);
+        var resource = getResource(endpointId);
 
         // Update the underlying resource
         resourceService.update(resource.getId(), desc);
@@ -97,7 +106,12 @@ public class CommonService<T extends BaseResource,
      * @return The resource.
      */
     @Override
-    public T get(final EndpointId endpointId) {
+    public V get(final EndpointId endpointId) {
+        final var resource = getResource(endpointId);
+        return viewConverter.create(resource);
+    }
+
+    private T getResource(final EndpointId endpointId) {
         var endpoint = getEndpoint(endpointId);
 
         if (endpoint.getInternalId() == null) {
@@ -121,7 +135,8 @@ public class CommonService<T extends BaseResource,
      */
     @Override
     public Set<EndpointId> getAll() {
-        // TODO: Find by the current endpoint call scope. It contains the basepath making the resource service obsolete
+        // TODO: Find by the current endpoint call scope. It contains the
+        //  basepath making the resource service obsolete
 
         final var allResources = resourceService.getAll();
         final var allEndpoints = new HashSet<EndpointId>();
@@ -146,14 +161,15 @@ public class CommonService<T extends BaseResource,
 
     @Override
     public void delete(final EndpointId endpointId) {
-        var resource = get(endpointId);
+        final var endpoint = getEndpoint(endpointId);
+
+        // Remove the endpoint first to prevent further access
         endpointService.delete(endpointId);
 
-        // TODO: Define what should happens here. Will the resource move to
-        //  one of the referencing endpoints or will all endpoints pointing
-        //  here be deleted?
+        if (!EndpointService.isRedirect(endpoint)) {
+            resourceService.delete(endpoint.getInternalId());
+        }
     }
-
 
     private UUID generateEndpointResourceId(final EndpointId id) {
         // TODO: FIX ME
@@ -174,17 +190,18 @@ public class CommonService<T extends BaseResource,
 }
 
 @Service
-class BFFCatalogService extends CommonService<Catalog, CatalogDesc> {
+class BFFCatalogService extends CommonService<Catalog, CatalogDesc, CatalogView> {
 }
 
 @Service
-class BFFResourceService extends CommonService<Resource, ResourceDesc> {
+class BFFResourceService extends CommonService<Resource, ResourceDesc, ResourceView> {
 }
 
 @Service
-class BFFRepresentationService extends CommonService<Representation, RepresentationDesc> {
+class BFFRepresentationService extends CommonService<Representation,
+        RepresentationDesc, RepresentationView> {
 }
 
 @Service
-class BFFContractService extends CommonService<Contract, ContractDesc> {
+class BFFContractService extends CommonService<Contract, ContractDesc, ContractView> {
 }

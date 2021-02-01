@@ -133,12 +133,15 @@ public final class EndpointService {
     }
 
     /**
-     * Try to delete an endpoint.
+     * Try to delete an endpoint. This will delete all endpoints redirecting
+     * to this endpoint.
      *
      * @param endpointId The id of the endpoint to be deleted.
      */
     public void delete(final EndpointId endpointId) {
         endpointRepository.deleteById(endpointId);
+
+        // TODO cleanup the redirects
     }
 
     /**

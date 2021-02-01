@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.CommonService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.CommonUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceContractLinker;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/resources")
-class ResourceController extends BaseResourceController<Resource, ResourceDesc,
-        CommonService<Resource, ResourceDesc>> {
+class ResourceController extends BaseResourceController<Resource, ResourceDesc, ResourceView,
+        CommonService<Resource, ResourceDesc, ResourceView>> {
 }
 
 @RestController

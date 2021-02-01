@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class BaseResourceController<T extends BaseResource,
-        D extends BaseDescription<T>, S extends FrontFacingService<T, D>> {
+        D extends BaseDescription<T>, V extends BaseView<T>, S extends FrontFacingService<T, D, V>> {
     @Autowired
     private S service;
 
@@ -46,7 +47,7 @@ public class BaseResourceController<T extends BaseResource,
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<T> get(@Valid @PathVariable final UUID id) {
+    public ResponseEntity<V> get(@Valid @PathVariable final UUID id) {
         final var resource = service.get(getCurrentEndpoint(id));
         return ResponseEntity.ok(resource);
     }
