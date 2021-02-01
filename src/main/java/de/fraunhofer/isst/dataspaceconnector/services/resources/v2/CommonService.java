@@ -75,7 +75,7 @@ public class CommonService<T extends BaseResource,
 
         // Move the resource and create new endpoint if necessary
         if (desc.getStaticId() != null
-                && endpointId.getResourceId() != desc.getStaticId()) {
+                && !endpointId.getResourceId().equals(desc.getStaticId())) {
             // The resource needs to be moved.
             var newEndpoint = endpointService.create(
                     new EndpointId(endpointId.getBasePath(),
