@@ -18,6 +18,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -120,7 +121,16 @@ public class CommonService<T extends BaseResource,
      */
     @Override
     public Set<EndpointId> getAll() {
-        return endpointService.getAll();
+        // TODO: Find by the current endpoint call scope. It contains the basepath making the resource service obsolete
+
+        final var allResources = resourceService.getAll();
+        final var allEndpoints = new HashSet<EndpointId>();
+
+        for (final var resource : allResources) {
+            allEndpoints.addAll(endpointService.getByEntity(resource));
+        }
+
+        return allEndpoints;
     }
 
     /**
