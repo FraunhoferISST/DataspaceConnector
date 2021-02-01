@@ -1,11 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
+import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +22,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
@@ -48,17 +52,25 @@ public class HttpUtils {
      * Sends a GET request to an external HTTP endpoint
      *
      * @param address the URL.
+     * @param queryInput Header and params for data request from backend.
      * @return the HTTP response if HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
-    public String sendHttpGetRequest(String address) throws MalformedURLException,
+    public String sendHttpGetRequest(String address, QueryInput queryInput) throws MalformedURLException,
         RuntimeException {
         try {
+            if(queryInput != null) {
+                address = addQueryParamsToURL(address, queryInput.getParams());
+            }
+            
             final var url = new URL(address);
 
             var con = (HttpURLConnection) url.openConnection();
+            if(queryInput != null) {
+                addHeadersToURL(con, queryInput.getHeaders());
+            }
             con.setRequestMethod("GET");
 
             final var responseCodeOk = 200;
@@ -103,15 +115,20 @@ public class HttpUtils {
      * Sends a GET request to an external HTTPS endpoint
      *
      * @param address the URL.
+     * @param queryInput Header and params for data request from backend.
      * @return the HTTP body of the response when HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
-    public String sendHttpsGetRequest(String address)
+    public String sendHttpsGetRequest(String address, QueryInput queryInput)
         throws MalformedURLException, RuntimeException {
         try {
-            final var request = new Request.Builder().url(address).get().build();
+            if(queryInput != null) {
+                address = addQueryParamsToURL(address, queryInput.getParams());
+            }
+            Headers headerBuild = Headers.of(queryInput.getHeaders());
+            final var request = new Request.Builder().url(address).get().headers(headerBuild).build();
 
             var client = clientProvider.getClient();
             Response response = client.newCall(request).execute();
@@ -143,20 +160,25 @@ public class HttpUtils {
      * @param address the URL.
      * @param username The username.
      * @param password The password.
+     * @param queryInput Header and params for data request from backend.
      * @return The HTTP response when HTTP code is OK (200).
      * @throws MalformedURLException if the input address is not a valid URL.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,
-        String password) throws MalformedURLException, RuntimeException {
+        String password, QueryInput queryInput) throws MalformedURLException, RuntimeException {
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
         try {
+            if(queryInput != null) {
+                address = addQueryParamsToURL(address, queryInput.getParams());
+            }
+            Headers headerBuild = Headers.of(queryInput.getHeaders());
             final var request = new Request.Builder().url(address)
-                .header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
+                .header(HttpHeaders.AUTHORIZATION, authHeader).headers(headerBuild).get().build();
 
             final var client = clientProvider.getClient();
             final var response = client.newCall(request).execute();
@@ -177,6 +199,42 @@ public class HttpUtils {
         } catch (Exception exception) {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
+        }
+    }
+    
+    /**
+     * Enrich the URL address with given query parameters. If the query parameters are empty, the address remains unchanged.
+     *
+     * @param address URL address to be enriched.
+     * @param queryParams Query parameters that have to be added on the address.
+     * @return Address string.
+     */
+    private String addQueryParamsToURL(String address, Map<String, String> queryParams) {
+        if(queryParams != null) {
+            if(!queryParams.isEmpty()) {
+                address = address.concat("?");
+                for (Map.Entry<String, String> param : queryParams.entrySet()) {
+                    address = address.concat(param.getKey() + "=" + param.getValue() + "&");
+                }
+                return StringUtils.removeEnd(address,"&");
+            }
+        }
+        return address;
+    }
+    
+    /**
+     * Enrich the HttpURLConnection with given headers. If the headers are empty, the HttpURLConnection remains unchanged.
+     *
+     * @param con HttpURLConnection to be enriched.
+     * @param headers Headers that have to be added within the address.
+     */
+    private void addHeadersToURL(HttpURLConnection con, Map<String, String> headers) {
+        if(headers != null) {
+            if(!headers.isEmpty()) {
+                for (Map.Entry<String, String> header : headers.entrySet()) {
+                    con.setRequestProperty(header.getKey(), header.getValue());
+                }
+            }
         }
     }
 }

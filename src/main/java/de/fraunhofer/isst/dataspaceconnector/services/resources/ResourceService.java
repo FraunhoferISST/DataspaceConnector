@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceExcepti
 import de.fraunhofer.isst.dataspaceconnector.model.ConnectorResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 
 import java.util.List;
 import java.util.UUID;
@@ -68,10 +69,11 @@ public interface ResourceService {
      *
      * @param resourceId ID of the resource.
      * @param representationId ID of the representation.
+     * @param queryInput Header and params for data request from backend.
      * @return resource data as string.
      * @throws ResourceException if the resource data could not be retrieved.
      */
-    String getDataByRepresentation(UUID resourceId, UUID representationId) throws ResourceException;
+    String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws ResourceException;
 
     /**
      * Finds representation by ID.

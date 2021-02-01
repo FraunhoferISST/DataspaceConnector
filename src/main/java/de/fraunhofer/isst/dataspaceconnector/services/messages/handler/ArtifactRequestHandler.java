@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Contract;
@@ -20,6 +21,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreemen
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -28,12 +30,15 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -54,6 +59,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final NegotiationService negotiationService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
+    private final ObjectMapper objectMapper;
 
     /**
      * Constructor for ArtifactMessageHandler.
@@ -97,6 +103,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
         this.configurationContainer = configurationContainer;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -165,10 +172,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                 try {
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
-                        String data;
+                        String data = null;
                         try {
                             // Get the data from source.
-                            data = resourceService.getDataByRepresentation(resourceId, artifactId);
+                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8), QueryInput.class);
+                            data = resourceService.getDataByRepresentation(resourceId, artifactId, queryInputData);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -194,8 +202,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
+                        } catch (IOException e) {
+                            // TODO: Adjust
+                            e.printStackTrace();
                         }
-
+    
                         // Build artifact response.
                         messageService.setResponseParameters(
                             requestMessage.getIssuerConnector(),
