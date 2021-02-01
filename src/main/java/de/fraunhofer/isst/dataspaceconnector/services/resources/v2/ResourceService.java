@@ -5,5 +5,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ResourceService extends CommonService<Resource, ResourceDesc> {
+public class ResourceService extends BaseService<Resource, ResourceDesc> {
 }

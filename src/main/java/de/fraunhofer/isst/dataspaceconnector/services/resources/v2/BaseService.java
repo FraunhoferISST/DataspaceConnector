@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The base service implements base logic for persistent entities.
+ *
+ * @param <T> The entity type.
+ * @param <D> The description for the passed entity type.
+ */
 public class BaseService<T extends BaseResource,
         D extends BaseDescription<T>> {
 
@@ -27,7 +33,7 @@ public class BaseService<T extends BaseResource,
      * @param desc The description of the new entity.
      * @return The new entity.
      */
-    T create(final D desc) {
+    public T create(final D desc) {
         return persist(factory.create(desc));
     }
 
@@ -38,7 +44,7 @@ public class BaseService<T extends BaseResource,
      * @param desc The new description of the entity.
      * @return The updated entity.
      */
-    T update(final UUID id, final D desc) {
+    public T update(final UUID id, final D desc) {
         var entity = get(id);
 
         if (factory.update(entity, desc)) {
@@ -54,7 +60,7 @@ public class BaseService<T extends BaseResource,
      * @param id The id of the entity.
      * @return The entity.
      */
-    T get(final UUID id) {
+    public T get(final UUID id) {
         final var entity = repository.findById(id);
 
         if (entity.isEmpty()) {

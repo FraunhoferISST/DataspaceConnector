@@ -5,5 +5,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.RuleDesc;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RuleService extends CommonService<Rule, RuleDesc> {
+public class RuleService extends BaseService<Rule, RuleDesc> {
 }

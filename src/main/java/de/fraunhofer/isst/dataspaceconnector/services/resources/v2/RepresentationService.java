@@ -5,6 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RepresentationService extends CommonService<Representation,
+public class RepresentationService extends BaseService<Representation,
         RepresentationDesc> {
 }

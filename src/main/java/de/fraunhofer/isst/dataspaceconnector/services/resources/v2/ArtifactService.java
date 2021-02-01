@@ -14,7 +14,9 @@ import java.net.MalformedURLException;
 import java.util.UUID;
 
 @Service
-public class ArtifactService extends CommonService<Artifact, ArtifactDesc> {
+public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
+    // TODO Clean up the code / Refactor
+
     @Autowired
     private DataRepository dataRepository;
 

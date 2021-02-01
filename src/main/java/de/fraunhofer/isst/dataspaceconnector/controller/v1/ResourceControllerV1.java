@@ -34,9 +34,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/admin/api/resources")
 @Tag(name = "Connector: Resource Handling", description = "Endpoints  for resource handling")
-public class ResourceController {
+public class ResourceControllerV1 {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceControllerV1.class);
 
     private final ResourceService offeredResourceService, requestedResourceService;
     private final PolicyHandler policyHandler;
@@ -50,8 +50,8 @@ public class ResourceController {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public ResourceController(OfferedResourceServiceImpl offeredResourceService,
-        PolicyHandler policyHandler, RequestedResourceServiceImpl requestedResourceService)
+    public ResourceControllerV1(OfferedResourceServiceImpl offeredResourceService,
+                                PolicyHandler policyHandler, RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");

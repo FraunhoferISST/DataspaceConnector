@@ -5,5 +5,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.CatalogDesc;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CatalogService extends CommonService<Catalog, CatalogDesc> {
+public class CatalogService extends BaseService<Catalog, CatalogDesc> {
 }

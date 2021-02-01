@@ -6,11 +6,13 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.EndpointRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+@Service
 public final class EndpointService {
 
     /** Persists all endpoints. **/
@@ -154,6 +156,10 @@ public final class EndpointService {
         }
 
         return endpoint.get();
+    }
+
+    public Set<EndpointId> getAll() {
+        return endpointRepository.getAllIds();
     }
 
     /**

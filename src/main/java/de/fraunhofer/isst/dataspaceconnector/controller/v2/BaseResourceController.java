@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,10 +19,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class BaseResourceController<T extends BaseResource,
-        D extends BaseDescription<T>, S extends BaseService<T, D>> {
+        D extends BaseDescription<T>, S extends FrontFacingService<T, D>> {
     @Autowired
     private S service;
 
@@ -38,7 +39,7 @@ public class BaseResourceController<T extends BaseResource,
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<EndpointId>> get() {
+    public ResponseEntity<Set<EndpointId>> get() {
         // TODO change format to "ref": "link"
         final var resources = service.getAll();
         return ResponseEntity.ok(resources);

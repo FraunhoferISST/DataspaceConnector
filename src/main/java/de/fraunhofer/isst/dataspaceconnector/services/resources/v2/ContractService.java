@@ -5,5 +5,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractDesc;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ContractService extends CommonService<Contract, ContractDesc> {
+public class ContractService extends BaseService<Contract, ContractDesc> {
 }
