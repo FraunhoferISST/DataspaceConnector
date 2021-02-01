@@ -172,7 +172,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                 try {
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
-                        String data = null;
+                        String data;
                         try {
                             // Get the data from source.
                             QueryInput queryInputData = objectMapper.readValue(
@@ -214,7 +214,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                             "Message payload could not be read.", connector.getId(),
                                             connector.getOutboundModelVersion());
                         }
-    
+
                         // Build artifact response.
                         messageService.setResponseParameters(
                             requestMessage.getIssuerConnector(),

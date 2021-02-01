@@ -3,12 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
-import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +18,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Map;
 
 /**
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
@@ -65,7 +61,7 @@ public class HttpUtils {
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
-            
+
             final var url = new URL(address);
 
             var con = (HttpURLConnection) url.openConnection();
@@ -214,7 +210,7 @@ public class HttpUtils {
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
     }
-    
+
     /**
      * Enrich the URL address with given query parameters. If the query parameters are empty, the address remains unchanged.
      *
@@ -236,7 +232,7 @@ public class HttpUtils {
         }
         return address;
     }
-    
+
     /**
      * Enrich the HttpURLConnection with given headers. If the headers are empty, the HttpURLConnection remains unchanged.
      *

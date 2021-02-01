@@ -304,13 +304,13 @@ public class RequestController {
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestData(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
+            @Parameter(description = "The URI of the requested IDS connector.", required = true,
             example = "https://localhost:8080/api/ids/data")
         @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested artifact.", required = true,
+            @Parameter(description = "The URI of the requested artifact.", required = true,
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The URI of the contract agreement.",
+            @Parameter(description = "The URI of the contract agreement.",
             example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
