@@ -172,7 +172,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
         try {
             try {
                 return new ResponseEntity<>(
-                    offeredResourceService.getDataByRepresentation(resourceId, representationId),
+                    offeredResourceService.getDataByRepresentation(resourceId, representationId, queryInput),
                     HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.debug(

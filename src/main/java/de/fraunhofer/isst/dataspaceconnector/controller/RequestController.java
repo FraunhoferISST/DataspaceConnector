@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -15,6 +17,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.De
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,6 +52,7 @@ public class RequestController {
     private final ContractMessageService contractMessageService;
     private final NegotiationService negotiationService;
     private final ResourceService resourceService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Constructor for RequestController
@@ -93,6 +97,7 @@ public class RequestController {
         this.contractMessageService = contractMessageService;
         this.negotiationService = negotiationService;
         this.resourceService = requestedResourceService;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -309,7 +314,8 @@ public class RequestController {
             example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key) {
+        @RequestParam("key") UUID key,
+        @RequestBody QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -327,7 +333,7 @@ public class RequestController {
         try {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
-            response = artifactMessageService.sendRequestMessage("");
+            response = artifactMessageService.sendRequestMessage(objectMapper.writeValueAsString(queryInput));
         } catch (MessageBuilderException exception) {
             // Failed to build the artifact request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
@@ -343,6 +349,9 @@ public class RequestController {
             LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to send the ids message.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            // TODO: Adjust
+            e.printStackTrace();
         }
 
         String header, payload;
