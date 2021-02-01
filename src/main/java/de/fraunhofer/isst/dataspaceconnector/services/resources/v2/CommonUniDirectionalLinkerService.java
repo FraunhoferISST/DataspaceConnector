@@ -39,7 +39,7 @@ public class CommonUniDirectionalLinkerService<
 
         // Get the list of children related to the entity
         final var childrenEntityIds =
-                linkerService.get(endpointId.getResourceId());
+                linkerService.get(endpoint.getInternalId());
 
         // Find all endpoints pointing to any of the children
         final var allChildrenEndpoints = new HashSet<EndpointId>();
@@ -71,7 +71,7 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.add(ownerEndpointId.getResourceId(), internalChildIds);
+        linkerService.add(ownerEndpoint.getInternalId(), internalChildIds);
     }
 
 
@@ -96,7 +96,7 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.remove(ownerEndpointId.getResourceId(), internalChildIds);
+        linkerService.remove(ownerEndpoint.getInternalId(), internalChildIds);
     }
 
     /**
@@ -119,7 +119,7 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.replace(ownerEndpointId.getResourceId(),
+        linkerService.replace(ownerEndpoint.getInternalId(),
                 internalChildIds);
     }
 
