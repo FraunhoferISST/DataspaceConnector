@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -13,6 +15,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,6 +50,7 @@ public class RequestController {
     private final ContractMessageService contractMessageService;
     private final NegotiationService negotiationService;
     private final ResourceService resourceService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Constructor for RequestController
@@ -91,6 +95,7 @@ public class RequestController {
         this.contractMessageService = contractMessageService;
         this.negotiationService = negotiationService;
         this.resourceService = requestedResourceService;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -287,17 +292,18 @@ public class RequestController {
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestData(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
+            @Parameter(description = "The URI of the requested IDS connector.", required = true,
             example = "https://localhost:8080/api/ids/data")
         @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested artifact.", required = true,
+            @Parameter(description = "The URI of the requested artifact.", required = true,
             example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The URI of the contract agreement.",
+            @Parameter(description = "The URI of the contract agreement.",
             example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @RequestParam(value = "transferContract", required = false) URI contractId,
-        @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key) {
+            @Parameter(description = "A unique validation key.", required = true)
+        @RequestParam("key") UUID key,
+            @RequestBody QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -311,11 +317,11 @@ public class RequestController {
                 HttpStatus.FORBIDDEN);
         }
 
-        Map<String, String> response;
+        Map<String, String> response = null;
         try {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
-            response = artifactMessageService.sendMessage("");
+            response = artifactMessageService.sendMessage(objectMapper.writeValueAsString(queryInput));
         } catch (MessageBuilderException exception) {
             // Failed to send the artifact request message.
             LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
@@ -326,8 +332,11 @@ public class RequestController {
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            // TODO: Adjust
+            e.printStackTrace();
         }
-
+    
         String header, payload;
         try {
             header = response.get("header");
