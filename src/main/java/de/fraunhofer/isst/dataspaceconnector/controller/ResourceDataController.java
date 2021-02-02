@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
@@ -168,7 +169,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
             example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @PathVariable("resource-id") UUID resourceId,
         @Parameter(description = "The representation uuid.", required = true)
-        @PathVariable("representation-id") UUID representationId) {
+        @PathVariable("representation-id") UUID representationId,
+        @RequestBody(required = false) QueryInput queryInput) {
         try {
             try {
                 return new ResponseEntity<>(
