@@ -26,7 +26,7 @@ public class EndpointId implements Serializable {
         this.resourceId = resourceId;
     }
 
-    @JsonProperty("ref")
+    @JsonProperty("href")
     public URI toUri() {
         return URI.create(basePath + "/" + resourceId.toString());
     }

@@ -44,12 +44,12 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
     }
 
     public Object getData(final UUID artifactId) {
-//        var artifact = get(artifactId);
-//        var data = artifact.getData();
-//        if(data instanceof LocalData)
-//            return getData((LocalData) data);
-//        if(data instanceof RemoteData)
-//            return getData((RemoteData) data);
+        var artifact = get(artifactId);
+        var data = artifact.getData();
+        if(data instanceof LocalData)
+            return getData((LocalData) data);
+        if(data instanceof RemoteData)
+            return getData((RemoteData) data);
 
         throw new NotImplementedException("Unknown data type.");
     }

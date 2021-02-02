@@ -1,7 +1,9 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Catalog;
@@ -14,12 +16,16 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseViewer;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.CatalogView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ContractView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,7 +117,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         return viewConverter.create(resource);
     }
 
-    private T getResource(final EndpointId endpointId) {
+    protected T getResource(final EndpointId endpointId) {
         var endpoint = getEndpoint(endpointId);
 
         if (endpoint.getInternalId() == null) {
@@ -187,21 +193,4 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
                     doesExist(new EndpointId(id.getBasePath(), x)));
         }
     }
-}
-
-@Service
-class BFFCatalogService extends CommonService<Catalog, CatalogDesc, CatalogView> {
-}
-
-@Service
-class BFFResourceService extends CommonService<Resource, ResourceDesc, ResourceView> {
-}
-
-@Service
-class BFFRepresentationService extends CommonService<Representation,
-        RepresentationDesc, RepresentationView> {
-}
-
-@Service
-class BFFContractService extends CommonService<Contract, ContractDesc, ContractView> {
 }

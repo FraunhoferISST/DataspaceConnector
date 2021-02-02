@@ -1,10 +1,14 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseUniDirectionalLinkerService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.CatalogResourceLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceRepresentationLinker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
