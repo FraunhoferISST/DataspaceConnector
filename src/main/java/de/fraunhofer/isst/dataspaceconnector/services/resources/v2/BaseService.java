@@ -18,11 +18,15 @@ import java.util.UUID;
  */
 public class BaseService<T extends BaseResource, D extends BaseDescription<T>> {
 
-    /** Persists all entities of type T. **/
+    /**
+     * Persists all entities of type T.
+     **/
     @Autowired
     private BaseResourceRepository<T> repository;
 
-    /** Contains creation and update logic for entities of type T. **/
+    /**
+     * Contains creation and update logic for entities of type T.
+     **/
     @Autowired
     private BaseFactory<T, D> factory;
 
@@ -45,8 +49,8 @@ public class BaseService<T extends BaseResource, D extends BaseDescription<T>> {
     /**
      * Updates an existing entity.
      *
-     * @param entityId   The id of the entity.
-     * @param desc The new description of the entity.
+     * @param entityId The id of the entity.
+     * @param desc     The new description of the entity.
      * @return The updated entity.
      */
     public T update(final UUID entityId, final D desc) {
