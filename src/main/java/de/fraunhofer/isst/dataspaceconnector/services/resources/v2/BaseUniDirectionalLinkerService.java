@@ -34,7 +34,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @return The ids of the children.
      */
     public Set<UUID> get(final UUID ownerId) {
-        var owner = oneService.get(ownerId);
+        final var owner = oneService.get(ownerId);
         return getInternal(owner).keySet();
     }
 
@@ -46,7 +46,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
-        var owner = oneService.get(ownerId);
+        final var owner = oneService.get(ownerId);
 
         addInternal(owner, entities);
 
@@ -62,7 +62,7 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
-        var owner = oneService.get(ownerId);
+        final var owner = oneService.get(ownerId);
 
         removeInternal(owner, entities);
 
@@ -76,7 +76,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The new children for the entity.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
-        var owner = oneService.get(ownerId);
+        final var owner = oneService.get(ownerId);
 
         replaceInternal(owner, entities);
 
@@ -98,7 +98,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children added to the entity.
      */
     protected void addInternal(final K owner, final Set<UUID> entities) {
-        for (var entityId : entities) {
+        for (final var entityId : entities) {
             Assert.isTrue(manyService.doesExist(entityId),
                     "The resource must exist.");
             final var entity = manyService.get(entityId);
@@ -113,7 +113,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be removed.
      */
     protected void removeInternal(final K owner, final Set<UUID> entities) {
-        for (var entityId : entities) {
+        for (final var entityId : entities) {
             Assert.isTrue(manyService.doesExist(entityId),
                     "The resource must exist.");
             getInternal(owner).remove(entityId);
