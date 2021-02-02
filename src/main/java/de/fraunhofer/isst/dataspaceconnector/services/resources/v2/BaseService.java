@@ -16,8 +16,7 @@ import java.util.UUID;
  * @param <T> The entity type.
  * @param <D> The description for the passed entity type.
  */
-public class BaseService<T extends BaseResource,
-        D extends BaseDescription<T>> {
+public class BaseService<T extends BaseResource, D extends BaseDescription<T>> {
 
     /** Persists all entities of type T. **/
     @Autowired
@@ -26,6 +25,12 @@ public class BaseService<T extends BaseResource,
     /** Contains creation and update logic for entities of type T. **/
     @Autowired
     private BaseFactory<T, D> factory;
+
+    /**
+     * Default constructor.
+     */
+    protected BaseService() {
+    }
 
     /**
      * Creates a new persistent entity.
@@ -40,12 +45,12 @@ public class BaseService<T extends BaseResource,
     /**
      * Updates an existing entity.
      *
-     * @param id   The id of the entity.
+     * @param entityId   The id of the entity.
      * @param desc The new description of the entity.
      * @return The updated entity.
      */
-    public T update(final UUID id, final D desc) {
-        var entity = get(id);
+    public T update(final UUID entityId, final D desc) {
+        var entity = get(entityId);
 
         if (factory.update(entity, desc)) {
             entity = persist(entity);
@@ -57,15 +62,15 @@ public class BaseService<T extends BaseResource,
     /**
      * Get the entity for a given id.
      *
-     * @param id The id of the entity.
+     * @param entityId The id of the entity.
      * @return The entity.
      */
-    public T get(final UUID id) {
-        final var entity = repository.findById(id);
+    public T get(final UUID entityId) {
+        final var entity = repository.findById(entityId);
 
         if (entity.isEmpty()) {
             // Handle with global exception handler
-            throw new ResourceNotFoundException(id.toString());
+            throw new ResourceNotFoundException(entityId.toString());
         }
 
         return entity.get();
@@ -83,21 +88,20 @@ public class BaseService<T extends BaseResource,
     /**
      * Checks if a entity exists for a given id.
      *
-     * @param id The id of entity.
+     * @param entityId The id of entity.
      * @return True if the entity exists.
      */
-    public boolean doesExist(final UUID id) {
-        return repository.findById(id).isPresent();
+    public boolean doesExist(final UUID entityId) {
+        return repository.findById(entityId).isPresent();
     }
 
     /**
      * Delete an entity with the given id.
      *
-     * @param id The id of the entity.
+     * @param entityId The id of the entity.
      */
-    public void delete(final UUID id) {
-        final var entity = get(id);
-        repository.deleteById(id);
+    public void delete(final UUID entityId) {
+        repository.deleteById(entityId);
     }
 
     /**
