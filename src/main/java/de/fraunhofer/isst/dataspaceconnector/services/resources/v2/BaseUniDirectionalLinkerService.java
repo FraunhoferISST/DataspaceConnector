@@ -9,6 +9,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Create a parent-children relationship between two types of resources.
+ *
+ * @param <K>     The type of the parent resource.
+ * @param <KDesc> The description type of the parent resource.
+ * @param <W>     The type of the child resource.
+ * @param <WDesc> The description type of the child resource.
+ * @param <T>     The service type for the parent resource.
+ * @param <X>     The service type for the child resource.
+ */
 public abstract class BaseUniDirectionalLinkerService<
         K extends BaseResource, KDesc extends BaseDescription<K>,
         W extends BaseResource, WDesc extends BaseDescription<W>,
@@ -48,7 +58,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * The children must exist.
      *
      * @param ownerId  The id of the entity that the children should be added
-     *                to.
+     *                 to.
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
