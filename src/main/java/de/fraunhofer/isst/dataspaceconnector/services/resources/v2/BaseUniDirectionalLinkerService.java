@@ -22,10 +22,11 @@ public abstract class BaseUniDirectionalLinkerService<
     @Autowired
     private X manyService;
 
-//    private BaseUniDirectionalLinkerService(final T oneService, final X manyService) {
-//        this.oneService =oneService;
-//        this.manyService = manyService;
-//    }
+    /**
+     * Default constructor.
+     */
+    protected BaseUniDirectionalLinkerService() {
+    }
 
     /**
      * Get all children of an entity.
