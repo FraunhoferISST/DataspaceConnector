@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.CatalogResourceLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ContractRuleLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceContractLinker;
@@ -182,4 +183,8 @@ final class BFFResourceContractLinker extends CommonUniDirectionalLinkerService<
 
 @Service
 final class BFFRepresentationArtifactLinker extends CommonUniDirectionalLinkerService<RepresentationArtifactLinker> {
+}
+
+@Service
+final class BFFContractRuleLinker extends CommonUniDirectionalLinkerService<ContractRuleLinker> {
 }

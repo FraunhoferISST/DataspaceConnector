@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class CatalogResourceLinker
-        extends BaseUniDirectionalLinkerService<Catalog, CatalogDesc, Resource,
-        ResourceDesc, CatalogService, ResourceService> {
+public class CatalogResourceLinker extends BaseUniDirectionalLinkerService<
+        Catalog, CatalogDesc, Resource, ResourceDesc, CatalogService,
+        ResourceService> {
     @Override
     protected Map<UUID, Resource> getInternal(final Catalog owner) {
         return owner.getResources();

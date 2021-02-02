@@ -10,9 +10,10 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class ContractRuleLinker extends BaseUniDirectionalLinkerService<Contract, ContractDesc, Rule, RuleDesc, ContractService, RuleService> {
+public class ContractRuleLinker extends BaseUniDirectionalLinkerService<
+        Contract, ContractDesc, Rule, RuleDesc, ContractService, RuleService> {
     @Override
-    protected Map<UUID, Rule> getInternal(Contract owner) {
+    protected Map<UUID, Rule> getInternal(final Contract owner) {
         return owner.getRules();
     }
 }
