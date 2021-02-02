@@ -160,7 +160,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
             example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @PathVariable("resource-id") UUID resourceId,
         @Parameter(description = "The representation uuid.", required = true)
-        @PathVariable("representation-id") UUID representationId) {
+        @PathVariable("representation-id") UUID representationId,
+        @RequestBody(required = false) QueryInput queryInput) {
         try {
             return new ResponseEntity<>(
                     offeredResourceService.getDataByRepresentation(resourceId, representationId, null),
