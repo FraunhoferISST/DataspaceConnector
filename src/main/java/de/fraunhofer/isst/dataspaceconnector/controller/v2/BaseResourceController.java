@@ -77,7 +77,11 @@ public class BaseResourceController<T extends BaseResource,
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 
-    private EndpointId getCurrentEndpoint(final UUID id) {
+    protected S getService() {
+        return service;
+    }
+
+    public static EndpointId getCurrentEndpoint(final UUID id) {
         var basePath = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toString();
 
@@ -86,9 +90,5 @@ public class BaseResourceController<T extends BaseResource,
         basePath = basePath.substring(0, index - 1);
 
         return new EndpointId(basePath, id);
-    }
-
-    protected S getService() {
-        return service;
     }
 }

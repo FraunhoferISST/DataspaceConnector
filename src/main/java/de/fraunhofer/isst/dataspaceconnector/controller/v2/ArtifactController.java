@@ -26,15 +26,4 @@ public final class ArtifactController extends BaseResourceController<Artifact,
         final var artifactService = ((ArtifactBFFService) this.getService());
         return ResponseEntity.ok(artifactService.getData(currentEndpointId));
     }
-
-    private EndpointId getCurrentEndpoint(final UUID id) {
-        var basePath = ServletUriComponentsBuilder.fromCurrentRequest()
-                .build().toString();
-
-        final var index = basePath.lastIndexOf(id.toString());
-        // -1 so that the / gets also removed
-        basePath = basePath.substring(0, index - 1);
-
-        return new EndpointId(basePath, id);
-    }
 }
