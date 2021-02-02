@@ -139,7 +139,7 @@ public class IdsUtils {
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
-        
+
         // Build the connector endpoint
         ConnectorEndpoint ce;
         if (resource.getResourceMetadata().getEndpointDocumentation() != null) {
@@ -151,7 +151,6 @@ public class IdsUtils {
         } else {
             ce = configurationContainer.getConnector().getHasDefaultEndpoint();
         }
-
 
         // Build the ids resource.
         try {
