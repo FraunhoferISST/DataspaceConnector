@@ -14,11 +14,15 @@ public abstract class BaseUniDirectionalLinkerService<
         W extends BaseResource, WDesc extends BaseDescription<W>,
         T extends BaseService<K, KDesc>, X extends BaseService<W, WDesc>> {
 
-    /** The service for the entity whose relations are modified. **/
+    /**
+     * The service for the entity whose relations are modified.
+     **/
     @Autowired
     private T oneService;
 
-    /** The service for the children. **/
+    /**
+     * The service for the children.
+     **/
     @Autowired
     private X manyService;
 
@@ -43,7 +47,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * Add a list of children to an entity.
      * The children must exist.
      *
-     * @param ownerId The id of the entity that the children should be added to.
+     * @param ownerId  The id of the entity that the children should be added
+     *                to.
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
@@ -57,8 +62,8 @@ public abstract class BaseUniDirectionalLinkerService<
     /**
      * Remove a list of children from an entity.
      *
-     * @param ownerId The id of the entity that the children should be removed
-     *               from.
+     * @param ownerId  The id of the entity that the children should be removed
+     *                 from.
      * @param entities The children to be removed.
      */
     public void remove(final UUID ownerId,
@@ -73,7 +78,7 @@ public abstract class BaseUniDirectionalLinkerService<
     /**
      * Replace the children of an entity.
      *
-     * @param ownerId The id of the entity whose children should be replaced.
+     * @param ownerId  The id of the entity whose children should be replaced.
      * @param entities The new children for the entity.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
@@ -95,7 +100,7 @@ public abstract class BaseUniDirectionalLinkerService<
     /**
      * Adds children to an entity.
      *
-     * @param owner The entity that the children should be assigned to.
+     * @param owner    The entity that the children should be assigned to.
      * @param entities The children added to the entity.
      */
     protected void addInternal(final K owner, final Set<UUID> entities) {
@@ -110,7 +115,7 @@ public abstract class BaseUniDirectionalLinkerService<
     /**
      * Remove children from an entity.
      *
-     * @param owner The entity that the children should be removed from.
+     * @param owner    The entity that the children should be removed from.
      * @param entities The children to be removed.
      */
     protected void removeInternal(final K owner, final Set<UUID> entities) {
@@ -124,7 +129,7 @@ public abstract class BaseUniDirectionalLinkerService<
     /**
      * Replace the children of an entity.
      *
-     * @param owner The entity whose children should be replaced.
+     * @param owner    The entity whose children should be replaced.
      * @param entities The new children.
      */
     protected void replaceInternal(final K owner, final Set<UUID> entities) {
