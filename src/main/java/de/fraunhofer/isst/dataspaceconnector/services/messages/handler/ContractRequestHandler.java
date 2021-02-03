@@ -76,7 +76,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                   ContractAgreementService contractAgreementService,
                                   ContractMessageService messageService,
                                   LogMessageService logMessageService, DapsTokenProvider tokenProvider)
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
@@ -118,7 +118,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      */
     @Override
     public MessageResponse handleMessage(ContractRequestMessageImpl requestMessage,
-        MessagePayload messagePayload) throws RuntimeException {
+                                         MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
@@ -133,29 +133,32 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
             LOGGER.warn("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
-                RejectionReason.VERSION_NOT_SUPPORTED,
-                "Information model version not supported.",
-                connector.getId(), connector.getOutboundModelVersion());
+                    RejectionReason.VERSION_NOT_SUPPORTED,
+                    "Information model version not supported.",
+                    connector.getId(), connector.getOutboundModelVersion());
         }
 
         // Read message payload as string.
         String payload;
         try {
             payload = IOUtils
-                .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
+                    .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
             // If request is empty, return rejection message.
             if (payload.equals("")) {
-                LOGGER.error("Contract is missing.");
+                LOGGER.debug("Contract is missing [id=({}), payload=({})]",
+                        requestMessage.getId(), payload);
                 return ErrorResponse
-                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                        "Missing contract request.",
-                        connector.getId(), connector.getOutboundModelVersion());
+                        .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                "Missing contract request.",
+                                connector.getId(), connector.getOutboundModelVersion());
             }
         } catch (IOException e) {
+            LOGGER.debug("Cannot read payload. [id=({}), payload=({})]",
+                    requestMessage.getId(), messagePayload);
             return ErrorResponse
-                .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                    "Malformed payload.",
-                    connector.getId(), connector.getOutboundModelVersion());
+                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                            "Malformed payload.",
+                            connector.getId(), connector.getOutboundModelVersion());
         }
 
         try {
@@ -196,30 +199,34 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             }
         } catch (UUIDFormatException | RequestFormatException exception) {
             LOGGER.debug(
-                "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
-                requestMessage.getId(), requestMessage.getTransferContract(),
-                exception.getMessage());
+                    "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
+                    requestMessage.getId(), requestMessage.getTransferContract(),
+                    exception.getMessage());
             return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                "No valid resource id found.",
-                connector.getId(),
-                connector.getOutboundModelVersion());
+                    "No valid resource id found.",
+                    connector.getId(),
+                    connector.getOutboundModelVersion());
         } catch (ResourceNotFoundException exception) {
             // The resource could be not be found.
             LOGGER.debug("The artifact could not be found. [id=({}), exception=({})]",
-                requestMessage.getId(), exception.getMessage());
+                    requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                "Artifact not found.", connector.getId(),
-                connector.getOutboundModelVersion());
+                    "Artifact not found.", connector.getId(),
+                    connector.getOutboundModelVersion());
         } catch (MessageBuilderException exception) {
+            LOGGER.debug("Response could not be constructed. [id=({}), exception=({})]",
+                    requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Response could not be constructed.",
-                connector.getId(), connector.getOutboundModelVersion());
+                    RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                    "Response could not be constructed.",
+                    connector.getId(), connector.getOutboundModelVersion());
         } catch (RuntimeException exception) {
+            LOGGER.debug("Could not process contract request. [id=({}), exception=({})]",
+                    requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
-                "Malformed contract request.",
-                connector.getId(), connector.getOutboundModelVersion());
+                    RejectionReason.BAD_PARAMETERS,
+                    "Malformed contract request.",
+                    connector.getId(), connector.getOutboundModelVersion());
         }
     }
 
@@ -245,10 +252,10 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * @return The message response to the requesting connector.
      */
     private MessageResponse acceptContract(ContractRequest contractRequest)
-        throws UUIDFormatException, MessageException {
+            throws UUIDFormatException, MessageException {
 
         messageService.setResponseParameters(
-            requestMessage.getIssuerConnector(), requestMessage.getId(), null);
+                requestMessage.getIssuerConnector(), requestMessage.getId(), null);
         // Turn the accepted contract request into a contract agreement.
         ContractAgreement contractAgreement = messageService.buildContractAgreement(contractRequest);
         // Build message header.
@@ -281,15 +288,15 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         var connector = configurationContainer.getConnector();
 
         return ErrorResponse.create(new ContractRejectionMessageBuilder()
-            ._securityToken_(tokenProvider.getDAT())
-            ._correlationMessage_(requestMessage.getId())
-            ._issued_(getGregorianNow())
-            ._issuerConnector_(connector.getId())
-            ._modelVersion_(connector.getOutboundModelVersion())
-            ._senderAgent_(connector.getId())
-            ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
-            ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
-            ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
-            .build(), "Contract rejected.");
+                ._securityToken_(tokenProvider.getDAT())
+                ._correlationMessage_(requestMessage.getId())
+                ._issued_(getGregorianNow())
+                ._issuerConnector_(connector.getId())
+                ._modelVersion_(connector.getOutboundModelVersion())
+                ._senderAgent_(connector.getId())
+                ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
+                ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
+                ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
+                .build(), "Contract rejected.");
     }
 }
