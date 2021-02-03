@@ -75,7 +75,6 @@ public class BaseResourceController<T extends BaseResource,
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ResponseEntity<Set<EndpointId>> get() {
-        // TODO change format to "ref": "link"
         final var resources = service.getAll();
         return ResponseEntity.ok(resources);
     }
@@ -87,7 +86,8 @@ public class BaseResourceController<T extends BaseResource,
      * @return The resource.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+    public ResponseEntity<V> get(
+            @Valid @PathVariable(name = "id") final UUID resourceId) {
         final var currentEndpoint =
                 EndpointUtils.getCurrentEndpoint(resourceId);
         final var resource = service.get(currentEndpoint);
@@ -104,8 +104,9 @@ public class BaseResourceController<T extends BaseResource,
      * and been moved to a new endpoint.
      */
     @PutMapping
-    public ResponseEntity<Void> update(@Valid @PathVariable final UUID resourceId,
-                                       @RequestBody final D desc) {
+    public ResponseEntity<Void> update(
+            @Valid @PathVariable(name = "id") final UUID resourceId,
+            @RequestBody final D desc) {
         final var currentEndpoint =
                 EndpointUtils.getCurrentEndpoint(resourceId);
         final var newEndpoint = service.update(currentEndpoint, desc);
@@ -132,9 +133,10 @@ public class BaseResourceController<T extends BaseResource,
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping
-    public ResponseEntity<Void> delete(@Valid @PathVariable final UUID resourceId) {
+    public ResponseEntity<Void> delete(
+            @Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(EndpointUtils.getCurrentEndpoint(resourceId));
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
