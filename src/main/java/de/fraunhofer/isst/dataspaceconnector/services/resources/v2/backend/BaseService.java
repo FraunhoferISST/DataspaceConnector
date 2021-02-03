@@ -115,7 +115,7 @@ public class BaseService<T extends BaseResource, D extends BaseDescription<T>> {
      * @param entity The entity.
      * @return The persisted entity.
      */
-    T persist(final T entity) {
+    protected T persist(final T entity) {
         return repository.saveAndFlush(entity);
     }
 }
