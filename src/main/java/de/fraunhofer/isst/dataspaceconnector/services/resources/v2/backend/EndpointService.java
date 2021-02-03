@@ -33,7 +33,7 @@ public final class EndpointService {
 
     /**
      * Creates a new endpoint pointing to an internal resource
-     * This function does not validate the resource existent.
+     * This function does not validate the resource existence.
      *
      * @param endpointId The id for the new endpoint.
      * @param resourceId The id of the resource.
