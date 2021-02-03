@@ -83,7 +83,7 @@ class ContractFactoryTest {
         var lastModificationDateBefore = contract.getLastModificationDate();
 
         var rulesBefore = ((HashMap<UUID, Rule>) contract.getRules()).clone();
-        var desc = getUpdatedDesc();
+        var desc = getUpdatedValidDesc();
 
         /* ACT */
         factory.update(contract, desc);
@@ -136,7 +136,7 @@ class ContractFactoryTest {
         var contract = factory.create(getValidDesc());
 
         /* ACT && ASSERT */
-        assertTrue(factory.update(contract, getUpdatedDesc()));
+        assertTrue(factory.update(contract, getUpdatedValidDesc()));
     }
 
     @Test
@@ -200,7 +200,7 @@ class ContractFactoryTest {
         return desc;
     }
 
-    ContractDesc getUpdatedDesc() {
+    ContractDesc getUpdatedValidDesc() {
         var desc = new ContractDesc();
         desc.setTitle("The new default.");
 
