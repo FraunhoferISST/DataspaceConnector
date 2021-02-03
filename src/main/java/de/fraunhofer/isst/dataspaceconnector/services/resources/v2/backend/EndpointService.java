@@ -12,12 +12,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Offers base logic for endpoints such lookup for internal ids.
+ */
 @Service
 public final class EndpointService {
 
-    /** Persists all endpoints. **/
+    /**
+     * Persists all endpoints.
+     **/
     @Autowired
     private EndpointRepository endpointRepository;
+
+    /**
+     * Default constructor.
+     */
+    protected EndpointService() {
+        // This constructor is intentionally empty. Nothing to do here.
+    }
 
     /**
      * Creates a new endpoint pointing to an internal resource
@@ -49,40 +61,14 @@ public final class EndpointService {
      *
      * @param endpointId The id of the endpoint to be updated.
      * @param resourceId The id of the resource the endpoint should point to.
-     * @throws IllegalArgumentException if the resourceId is null.
      */
-    public void update(final EndpointId endpointId, final UUID resourceId)
-            throws IllegalArgumentException {
-        if (resourceId == null) {
-            throw new IllegalArgumentException("ResourceId may not be null");
-        }
-
+    public void update(final EndpointId endpointId, final UUID resourceId) {
         if (doesExist(endpointId)) {
             final var endpoint = get(endpointId);
 
-            if (isRedirect(endpoint)) {
-                // Only point to new resource
-                final var oldLocation = endpoint.getNewLocation();
-                final var oldInternal = endpoint.getInternalId();
-
-                endpoint.setNewLocation(null);
-                endpoint.setInternalId(resourceId);
-
-                if (!(endpoint.getNewLocation().equals(oldLocation)
-                        && endpoint.getInternalId().equals(oldInternal))) {
-                    // Only persist if something changed
-                    persist(endpoint);
-                }
-            } else {
-                // The endpoint points to a resource, change it
-                final var oldInternal = endpoint.getInternalId();
-
-                endpoint.setInternalId(resourceId);
-
-                if (!endpoint.getInternalId().equals(oldInternal)) {
-                    // Only persist if something changed
-                    persist(endpoint);
-                }
+            if (directToResource(endpoint, resourceId)) {
+                // Only persist if something changed
+                persist(endpoint);
             }
         } else {
             // Cannot update endpoint that does not exist
@@ -97,29 +83,16 @@ public final class EndpointService {
      * different endpoint.
      * If the endpoint already redirects the target endpoint will be changed.
      *
-     * @param endpointId The id of the endpoint that should be updated.
+     * @param endpointId  The id of the endpoint that should be updated.
      * @param newLocation The id of the redirection target endpoint.
-     * @throws IllegalArgumentException if newLocation is null.
      */
     public void update(final EndpointId endpointId,
-                       final EndpointId newLocation)
-            throws IllegalArgumentException {
-        if (newLocation == null) {
-            throw new IllegalArgumentException("newLocation may not be null");
-        }
-
+                       final EndpointId newLocation) {
         if (doesExist(endpointId)) {
             // Change where the redirect points to
             final var endpoint = get(endpointId);
 
-            final var oldLocation = endpoint.getNewLocation();
-            final var oldInternal = endpoint.getInternalId();
-
-            endpoint.setInternalId(null);
-            endpoint.setNewLocation(get(newLocation));
-
-            if (!(endpoint.getNewLocation().equals(oldLocation)
-                    && endpoint.getInternalId().equals(oldInternal))) {
+            if (redirectToEndpoint(endpoint, get(newLocation))) {
                 // Only persist if something changed
                 persist(endpoint);
             }
@@ -161,6 +134,11 @@ public final class EndpointService {
         return endpoint.get();
     }
 
+    /**
+     * Get all endpoints.
+     *
+     * @return All endpoints.
+     */
     public Set<EndpointId> getAll() {
         return endpointRepository.getAllIds();
     }
@@ -177,10 +155,9 @@ public final class EndpointService {
         final var foundEndpoints = new HashSet<EndpointId>();
 
         for (final var endpoint : allEndpoints) {
-            if (!isRedirect(endpoint)) {
-                if (endpoint.getInternalId().equals(entityId)) {
-                    foundEndpoints.add(endpoint.getId());
-                }
+            if (!isRedirect(endpoint)
+                    && getInternalId(endpoint).equals(entityId)) {
+                foundEndpoints.add(endpoint.getId());
             }
         }
 
@@ -200,22 +177,12 @@ public final class EndpointService {
     /**
      * Check if the endpoint is redirecting.
      *
-     * @param endpointId The id of the endpoint.
-     * @return True if the endpoint is redirecting.
-     */
-    public boolean isRedirect(final EndpointId endpointId) {
-        final var endpoint = get(endpointId);
-        return isRedirect(endpoint);
-    }
-
-    /**
-     * Check if the endpoint is redirecting.
-     *
      * @param endpoint The endpoint.
      * @return True if the endpoint if redirecting.
      */
     public static boolean isRedirect(final Endpoint endpoint) {
-        return endpoint.getInternalId() == null && endpoint.getNewLocation() != null;
+        return endpoint.getInternalId() == null
+                && endpoint.getNewLocation() != null;
     }
 
     /**
@@ -226,5 +193,63 @@ public final class EndpointService {
      */
     private Endpoint persist(final Endpoint endpoint) {
         return endpointRepository.saveAndFlush(endpoint);
+    }
+
+    /**
+     * Make an endpoint redirect to another endpoint.
+     *
+     * @param endpoint The endpoint to be changed.
+     * @param target   The target endpoint.
+     * @return True if the endpoint has been modified.
+     */
+    private static boolean redirectToEndpoint(final Endpoint endpoint,
+                                              final Endpoint target) {
+        final var updateInternalId = getInternalId(endpoint) != null;
+        final var updateLocation = !endpoint.getNewLocation().equals(endpoint);
+
+        if (updateInternalId) {
+            endpoint.setInternalId(null);
+        }
+
+        if (updateLocation) {
+            endpoint.setNewLocation(target);
+        }
+
+        return updateInternalId || updateLocation;
+    }
+
+    /**
+     * Make an endpoint direct to a resource.
+     *
+     * @param endpoint   The endpoint to be changed.
+     * @param resourceId The internal resource id.
+     * @return True if the endpoint has been modified.
+     */
+    private static boolean directToResource(final Endpoint endpoint,
+                                            final UUID resourceId) {
+        final var internalId = getInternalId(endpoint);
+        final var updateInternalId = internalId != null
+                && !internalId.equals(resourceId);
+        final var updateLocation = endpoint.getNewLocation() != null;
+
+        if (updateInternalId) {
+            endpoint.setInternalId(resourceId);
+        }
+
+        if (updateLocation) {
+            endpoint.setNewLocation(null);
+        }
+
+        return updateInternalId || updateLocation;
+    }
+
+    /**
+     * Receive the internal id of an endpoint.
+     *
+     * @param endpoint The endpoint.
+     * @return The internal id.
+     */
+    private static UUID getInternalId(final Endpoint endpoint) {
+        return endpoint.getInternalId();
     }
 }
