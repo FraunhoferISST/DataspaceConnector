@@ -4,14 +4,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedEx
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseUniDirectionalLinkerService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.CatalogResourceLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ContractRuleLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.RepresentationArtifactLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceContractLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceRepresentationLinker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,18 +13,29 @@ import java.util.UUID;
 
 /**
  * Handles exposing relationship functions between resources to controllers.
- *
+ * @param <S> The service for the internal resource logic handling.
  */
 public class CommonUniDirectionalLinkerService<
         S extends BaseUniDirectionalLinkerService<?, ?, ?, ?, ?, ?>> {
 
-    /** The service for linking children to an entity. **/
+    /**
+     * The service for linking children to an entity.
+     **/
     @Autowired
     private S linkerService;
 
-    /** The service for endpoints. **/
+    /**
+     * The service for endpoints.
+     **/
     @Autowired
     private EndpointService endpointService;
+
+    /**
+     * Default constructor.
+     */
+    protected CommonUniDirectionalLinkerService() {
+        // This constructor is intentionally empty. Nothing to do here.
+    }
 
     /**
      * Get all endpoints pointing to child resources of the resource assigned
@@ -44,7 +49,7 @@ public class CommonUniDirectionalLinkerService<
 
         // Get the list of children related to the entity
         final var childrenEntityIds =
-                linkerService.get(endpoint.getInternalId());
+                linkerService.get(getInternalId(endpoint));
 
         // Find all endpoints pointing to any of the children
         final var allChildrenEndpoints = new HashSet<EndpointId>();
@@ -58,15 +63,14 @@ public class CommonUniDirectionalLinkerService<
     /**
      * Add resources as children to another resource.
      *
-     * @param ownerEndpointId The id of resource that the resources should be
-     *                        assigned to.
+     * @param ownerEndpointId     The id of resource that the resources
+     *                            should be
+     *                            assigned to.
      * @param childrenEndpointIds The id of the resources that should be
      *                            assigned as children.
      */
     public void add(final EndpointId ownerEndpointId,
                     final Set<EndpointId> childrenEndpointIds) {
-        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
-
         // Get the internal ids of children
         final var internalChildIds = findInternalIds(childrenEndpointIds);
         if (internalChildIds.size() == 0) {
@@ -76,22 +80,22 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.add(ownerEndpoint.getInternalId(), internalChildIds);
+        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
+        linkerService.add(getInternalId(ownerEndpoint), internalChildIds);
     }
 
 
     /**
      * Remove resources as children from another resource.
      *
-     * @param ownerEndpointId The id of resource that the resources should be
-     *                        removed from.
+     * @param ownerEndpointId     The id of resource that the resources
+     *                            should be
+     *                            removed from.
      * @param childrenEndpointIds The id of the resources that should be
      *                            removed as children.
      */
     public void remove(final EndpointId ownerEndpointId,
                        final Set<EndpointId> childrenEndpointIds) {
-        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
-
         // Get the internal ids of children
         final var internalChildIds = findInternalIds(childrenEndpointIds);
         if (internalChildIds.size() == 0) {
@@ -101,20 +105,20 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.remove(ownerEndpoint.getInternalId(), internalChildIds);
+        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
+        linkerService.remove(getInternalId(ownerEndpoint), internalChildIds);
     }
 
     /**
      * Replace resources as children from another resource.
      *
-     * @param ownerEndpointId The id of resource that the resources should be
-     *                        replaces at.
+     * @param ownerEndpointId     The id of resource that the resources
+     *                            should be
+     *                            replaces at.
      * @param childrenEndpointIds The id of the new resources.
      */
     public void replace(final EndpointId ownerEndpointId,
                         final Set<EndpointId> childrenEndpointIds) {
-        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
-
         // Get the internal ids of children
         final var internalChildIds = findInternalIds(childrenEndpointIds);
         if (internalChildIds.size() == 0) {
@@ -124,8 +128,8 @@ public class CommonUniDirectionalLinkerService<
         }
 
         // Update resources
-        linkerService.replace(ownerEndpoint.getInternalId(),
-                internalChildIds);
+        final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
+        linkerService.replace(getInternalId(ownerEndpoint), internalChildIds);
     }
 
     /**
@@ -144,12 +148,16 @@ public class CommonUniDirectionalLinkerService<
                 // Only add endpoints pointing to resources
                 final var childEndpoint = endpointService.get(id);
                 if (!EndpointService.isRedirect(childEndpoint)) {
-                    internalIds.add(childEndpoint.getInternalId());
+                    internalIds.add(getInternalId(childEndpoint));
                 }
             }
         }
 
         return internalIds;
+    }
+
+    private UUID getInternalId(final Endpoint endpoint) {
+        return endpoint.getInternalId();
     }
 
     /**
@@ -167,4 +175,5 @@ public class CommonUniDirectionalLinkerService<
 
         return endpoint;
     }
+
 }
