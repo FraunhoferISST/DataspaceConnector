@@ -168,23 +168,3 @@ public class CommonUniDirectionalLinkerService<
         return endpoint;
     }
 }
-
-@Service
-final class BFFCatalogResourceLinker extends CommonUniDirectionalLinkerService<CatalogResourceLinker> {
-}
-
-@Service
-final class BFFResourceRepresentationLinker extends CommonUniDirectionalLinkerService<ResourceRepresentationLinker> {
-}
-
-@Service
-final class BFFResourceContractLinker extends CommonUniDirectionalLinkerService<ResourceContractLinker> {
-}
-
-@Service
-final class BFFRepresentationArtifactLinker extends CommonUniDirectionalLinkerService<RepresentationArtifactLinker> {
-}
-
-@Service
-final class BFFContractRuleLinker extends CommonUniDirectionalLinkerService<ContractRuleLinker> {
-}
