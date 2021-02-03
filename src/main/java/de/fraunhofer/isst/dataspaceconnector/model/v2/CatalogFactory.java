@@ -5,8 +5,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 
+/**
+ * Creates and updates a catalog.
+ */
 @Component
 public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
+
+    /**
+     * Create a new catalog.
+     * @param desc The description of the new catalog.
+     * @return The new catalog.
+     */
     @Override
     public Catalog create(final CatalogDesc desc) {
         final var catalog = new Catalog();
@@ -17,6 +26,13 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
         return catalog;
     }
 
+    /**
+     * Update a catalog.
+     *
+     * @param catalog The catalog to be updated.
+     * @param desc The new catalog description.
+     * @return True if the catalog has been modified.
+     */
     @Override
     public boolean update(final Catalog catalog, final CatalogDesc desc) {
         final var hasUpdatedTitle = this.updateTitle(catalog, desc.getTitle());
