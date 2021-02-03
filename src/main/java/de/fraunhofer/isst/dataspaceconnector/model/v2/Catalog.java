@@ -12,15 +12,33 @@ import javax.persistence.Table;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * A catalog groups resources.
+ */
 @Data
 @Entity
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Catalog extends BaseResource {
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * The title of the catalog.
+     **/
     private String title;
+
+    /**
+     * The description of the catalog.
+     **/
     private String description;
 
+    /**
+     * The resources grouped by the catalog.
+     **/
     @MapKey(name = "id")
     @OneToMany
     private Map<UUID, Resource> resources;
