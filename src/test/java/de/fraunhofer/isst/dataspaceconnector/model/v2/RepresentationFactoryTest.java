@@ -17,19 +17,28 @@ class RepresentationFactoryTest {
     private RepresentationFactory factory;
 
     @Test
-    void when_passed_desc_is_null_on_creation_should_throw_exception() {
+    void create_nullDesc_throwNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.create(null);
         });
 
+        /* ASSERT */
         assertNotNull(exception);
     }
 
     @Test
-    void when_all_desc_members_are_set_representation_should_be_created() {
+    void create_allDescMembersNotNull_returnRepresentaton() {
+        /* ARRANGE */
         final var desc = getValidDesc();
+
+        /* ACT */
         final var representation = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(representation);
         assertEquals(desc.getTitle(), representation.getTitle());
         assertEquals(desc.getLanguage(), representation.getLanguage());
@@ -41,10 +50,14 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_representation_should_be_created() {
+    void create_allDescMembersNull_returnDefaultRepresentation() {
+        /* ARRANGE */
         final var desc = getDescWithNullMembers();
+
+        /* ACT */
         final var representation = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(representation);
         assertNotNull(representation.getTitle());
         assertNotNull(representation.getLanguage());
@@ -56,7 +69,8 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_set_the_representation_should_be_updated() {
+    void update_allDescMembersNotNull_returnUpdatedRepresentation() {
+        /* ARRANGE */
         var representation = factory.create(getValidDesc());
 
         assertNotNull(representation);
@@ -66,9 +80,12 @@ class RepresentationFactoryTest {
         var lastModificationDateBefore =
                 representation.getLastModificationDate();
 
-        var desc = getUpdatedDesc();
+        var desc = getUpdatedValidDesc();
+
+        /* ACT */
         factory.update(representation, desc);
 
+        /* ASSERT */
         assertNotNull(representation);
         assertEquals(desc.getTitle(), representation.getTitle());
         assertEquals(desc.getLanguage(), representation.getLanguage());
@@ -81,7 +98,8 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_representation_should_be_updated() {
+    void update_allDescMembersNull_returnDefaultRepresentation() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
 
@@ -93,8 +111,11 @@ class RepresentationFactoryTest {
                 representation.getLastModificationDate();
 
         var desc = getDescWithNullMembers();
+
+        /* ACT */
         factory.update(representation, desc);
 
+        /* ASSERT */
         assertNotNull(representation);
         assertNotNull(representation.getTitle());
         assertNotNull(representation.getLanguage());
@@ -107,42 +128,66 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void when_the_representation_is_null_the_desc_is_set_on_update_should_throw_exception() {
+    void update_changeValidDesc_true() {
+        /* ARRANGE */
+        var representation = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
+        assertTrue(factory.update(representation, getUpdatedValidDesc()));
+    }
+
+    @Test
+    void update_sameValidDesc_false() {
+        /* ARRANGE */
+        var representation = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
+        assertFalse(factory.update(representation, getValidDesc()));
+    }
+
+    @Test
+    void update_nullRepresentationValidDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var desc = getValidDesc();
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, desc);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_representation_is_null_the_desc_is_null_on_update_should_throw_exception() {
+    void update_nullRepresentationNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_representation_is_set_the_desc_is_null_on_update_should_throw_exception() {
+    void update_validContractNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
 
         assertNotNull(representation);
 
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(representation, null);
         });
-    }
 
-    @Test
-    void when_representation_update_does_result_in_change_return_true() {
-        var representation = factory.create(getValidDesc());
-        assertTrue(factory.update(representation, getUpdatedDesc()));
-    }
-
-    @Test
-    void when_representation_update_does_result_in_no_change_return_false() {
-        var representation = factory.create(getValidDesc());
-        assertFalse(factory.update(representation, getValidDesc()));
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     RepresentationDesc getValidDesc() {
@@ -154,7 +199,7 @@ class RepresentationFactoryTest {
         return desc;
     }
 
-    RepresentationDesc getUpdatedDesc() {
+    RepresentationDesc getUpdatedValidDesc() {
         var desc = new RepresentationDesc();
         desc.setTitle("The new default.");
         desc.setLanguage("German");
