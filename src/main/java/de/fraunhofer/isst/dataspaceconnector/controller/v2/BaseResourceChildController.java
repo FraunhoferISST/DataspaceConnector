@@ -50,7 +50,7 @@ public class BaseResourceChildController
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Set<EndpointId>> getResource(
-            @Valid @PathVariable(name="id") final UUID ownerId) {
+            @Valid @PathVariable(name = "id") final UUID ownerId) {
         final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
         return ResponseEntity.ok(linker.get(currentEndpoint));
     }
@@ -64,7 +64,7 @@ public class BaseResourceChildController
      */
     @PostMapping
     public ResponseEntity<Set<EndpointId>> addResources(
-            @Valid @PathVariable(name="id") final UUID ownerId,
+            @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
         linker.add(currentEndpoint, new HashSet<>(resources));
@@ -84,7 +84,7 @@ public class BaseResourceChildController
      */
     @PutMapping
     public ResponseEntity<Void> replaceResources(
-            @Valid @PathVariable(name="id") final UUID ownerId,
+            @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
         linker.replace(currentEndpoint, new HashSet<>(resources));
@@ -100,7 +100,7 @@ public class BaseResourceChildController
      */
     @DeleteMapping
     public ResponseEntity<Void> removeResources(
-            @Valid @PathVariable(name="id") final UUID ownerId,
+            @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
         linker.remove(currentEndpoint, new HashSet<>(resources));
