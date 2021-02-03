@@ -21,6 +21,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Catalog extends BaseResource {
+
     /**
      * Serial version uid.
      **/
