@@ -2,17 +2,15 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend.ArtifactBFFService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend.CommonService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.UUID;

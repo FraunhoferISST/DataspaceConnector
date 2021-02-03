@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
@@ -50,6 +50,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
      * Default constructor.
      **/
     protected CommonService() {
+        // This constructor is intentionally empty. Nothing to do here.
     }
 
     /**
@@ -82,6 +83,8 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         // Update the underlying resource
         resourceService.update(resource.getId(), desc);
 
+        var outputId = endpointId;
+
         // Move the resource and create new endpoint if necessary
         if (desc.getStaticId() != null
                 && !endpointId.getResourceId().equals(desc.getStaticId())) {
@@ -93,10 +96,10 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
             // Mark the old resource as moved
             endpointService.update(endpointId, newEndpoint.getId());
 
-            return newEndpoint.getId();
+            outputId = newEndpoint.getId();
         }
 
-        return endpointId;
+        return outputId;
     }
 
     /**
@@ -128,6 +131,13 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         }
     }
 
+
+    /**
+     * Get the endpoint for a given id.
+     *
+     * @param endpointId The id of the endpoint.
+     * @return The endpoint.
+     */
     @Override
     public Endpoint getEndpoint(final EndpointId endpointId) {
         // TODO Is this function really needed? Should it be provided?
@@ -165,6 +175,11 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         return endpointService.doesExist(endpointId);
     }
 
+    /**
+     * Delete a resource.
+     *
+     * @param endpointId The endpoint id of the resource.
+     */
     @Override
     public void delete(final EndpointId endpointId) {
         final var endpoint = getEndpoint(endpointId);
@@ -177,20 +192,23 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         }
     }
 
-    private UUID generateEndpointResourceId(final EndpointId id) {
+    private UUID generateEndpointResourceId(final EndpointId endpointId) {
         // TODO: FIX ME
         // TODO what happends when basePath is not set
-        if (id.getResourceId() != null) {
-            if (doesExist(id)) {
-                throw new ResourceAlreadyExistsException(id.toString());
+        UUID generatedId;
+        if (endpointId.getResourceId() == null) {
+            // No endpoint hint
+            generatedId = UUIDUtils.createUUID(x ->
+                    doesExist(new EndpointId(endpointId.getBasePath(), x)));
+        } else {
+            if (doesExist(endpointId)) {
+                throw new ResourceAlreadyExistsException(endpointId.toString());
             }
 
             // Preferred endpoint available
-            return id.getResourceId();
-        } else {
-            // No endpoint hint
-            return UUIDUtils.createUUID(x ->
-                    doesExist(new EndpointId(id.getBasePath(), x)));
+            generatedId = endpointId.getResourceId();
         }
+
+        return generatedId;
     }
 }

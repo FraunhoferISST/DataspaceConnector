@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
