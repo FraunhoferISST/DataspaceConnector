@@ -20,19 +20,28 @@ class ContractFactoryTest {
     private ContractFactory factory;
 
     @Test
-    void when_passed_desc_is_null_on_creation_should_throw_exception() {
+    void create_nullDesc_throwNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.create(null);
         });
 
+        /* ASSERT */
         assertNotNull(exception);
     }
 
     @Test
-    void when_all_desc_members_are_set_contract_should_be_created() {
+    void create_allDescMembersNotNull_returnContract() {
+        /* ARRANGE */
         final var desc = getValidDesc();
+
+        /* ACT */
         final var contract = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(contract);
         assertEquals(desc.getTitle(), contract.getTitle());
         assertNotNull(contract.getRules());
@@ -44,10 +53,14 @@ class ContractFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_contract_should_be_created() {
+    void create_allDescMembersNull_returnDefaultContract() {
+        /* ARRANGE */
         final var desc = getDescWithNullMembers();
+
+        /* ACT */
         final var contract = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(contract);
         assertNotNull(contract.getTitle());
         assertNotNull(contract.getRules());
@@ -59,7 +72,8 @@ class ContractFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_set_the_contract_should_be_updated() {
+    void update_allDescMembersNotNull_returnUpdatedContract() {
+        /* ARRANGE */
         var contract = factory.create(getValidDesc());
 
         assertNotNull(contract);
@@ -70,8 +84,11 @@ class ContractFactoryTest {
 
         var rulesBefore = ((HashMap<UUID, Rule>) contract.getRules()).clone();
         var desc = getUpdatedDesc();
+
+        /* ACT */
         factory.update(contract, desc);
 
+        /* ASSERT */
         assertNotNull(contract);
         assertEquals(desc.getTitle(), contract.getTitle());
         assertNotNull(contract.getRules());
@@ -84,7 +101,8 @@ class ContractFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_contract_should_be_updated() {
+    void update_allDescMembersNull_returnDefaultContract() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var contract = factory.create(initialDesc);
 
@@ -96,8 +114,11 @@ class ContractFactoryTest {
 
         var rulesBefore = ((HashMap<UUID, Rule>) contract.getRules()).clone();
         var desc = getDescWithNullMembers();
+
+        /* ACT */
         factory.update(contract, desc);
 
+        /* ASSERT */
         assertNotNull(contract);
         assertNotNull(contract.getTitle());
         assertNotNull(contract.getRules());
@@ -110,42 +131,66 @@ class ContractFactoryTest {
     }
 
     @Test
-    void when_the_contract_is_null_the_desc_is_set_on_update_should_throw_exception() {
+    void update_changeValidDesc_true() {
+        /* ARRANGE */
+        var contract = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
+        assertTrue(factory.update(contract, getUpdatedDesc()));
+    }
+
+    @Test
+    void update_sameValidDesc_false() {
+        /* ARRANGE */
+        var contract = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
+        assertFalse(factory.update(contract, getValidDesc()));
+    }
+
+    @Test
+    void update_nullContractValidDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var desc = getValidDesc();
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, desc);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_contract_is_null_the_desc_is_null_on_update_should_throw_exception() {
+    void update_nullContractNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_contract_is_set_the_desc_is_null_on_update_should_throw_exception() {
+    void update_validContractNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
 
         assertNotNull(catalog);
 
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(catalog, null);
         });
-    }
-
-    @Test
-    void when_contract_update_does_result_in_change_return_true() {
-        var contract = factory.create(getValidDesc());
-        assertTrue(factory.update(contract, getUpdatedDesc()));
-    }
-
-    @Test
-    void when_contract_update_does_result_in_no_change_return_false() {
-        var contract = factory.create(getValidDesc());
-        assertFalse(factory.update(contract, getValidDesc()));
+        
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     ContractDesc getValidDesc() {
