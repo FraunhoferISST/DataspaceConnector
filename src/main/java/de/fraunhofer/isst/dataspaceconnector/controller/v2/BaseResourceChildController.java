@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend.CommonUniDirectionalLinkerService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.util.HashSet;
@@ -51,7 +51,8 @@ public class BaseResourceChildController
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<Set<EndpointId>> getResource(
             @Valid @PathVariable final UUID ownerId) {
-        return ResponseEntity.ok(linker.get(getCurrentEndpoint(ownerId)));
+        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
+        return ResponseEntity.ok(linker.get(currentEndpoint));
     }
 
     /**
@@ -65,7 +66,8 @@ public class BaseResourceChildController
     public ResponseEntity<Set<EndpointId>> addResources(
             @Valid @PathVariable final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        linker.add(getCurrentEndpoint(ownerId), new HashSet<>(resources));
+        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
+        linker.add(currentEndpoint, new HashSet<>(resources));
         // Send back the list of children after modification.
         // See https://tools.ietf.org/html/rfc7231#section-4.3.3 and
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
@@ -84,7 +86,8 @@ public class BaseResourceChildController
     public ResponseEntity<Void> replaceResources(
             @Valid @PathVariable final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        linker.replace(getCurrentEndpoint(ownerId), new HashSet<>(resources));
+        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
+        linker.replace(currentEndpoint, new HashSet<>(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -99,24 +102,8 @@ public class BaseResourceChildController
     public ResponseEntity<Void> removeResources(
             @Valid @PathVariable final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        linker.remove(getCurrentEndpoint(ownerId), new HashSet<>(resources));
+        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
+        linker.remove(currentEndpoint, new HashSet<>(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    /**
-     * Determines the current endpoint id from the request context.
-     *
-     * @param resourceId The resource id passed along the request.
-     * @return The Endpoint id.
-     */
-    private EndpointId getCurrentEndpoint(final UUID resourceId) {
-        var basePath = ServletUriComponentsBuilder.fromCurrentRequest()
-                .build().toString();
-
-        final var index = basePath.lastIndexOf(resourceId.toString());
-        // -1 so that the / gets also removed
-        basePath = basePath.substring(0, index - 1);
-
-        return new EndpointId(basePath, resourceId);
     }
 }
