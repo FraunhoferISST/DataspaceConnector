@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Map;
@@ -127,8 +128,14 @@ public class HttpUtils {
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
-            Headers headerBuild = Headers.of(queryInput.getHeaders());
-            final var request = new Request.Builder().url(address).get().headers(headerBuild).build();
+
+            final Request request;
+            if (queryInput != null && queryInput.getHeaders() != null) {
+                Headers headerBuild = Headers.of(queryInput.getHeaders());
+                request = new Request.Builder().url(address).get().headers(headerBuild).build();
+            } else {
+                request = new Request.Builder().url(address).get().build();
+            }
 
             var client = clientProvider.getClient();
             Response response = client.newCall(request).execute();
@@ -176,9 +183,15 @@ public class HttpUtils {
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
-            Headers headerBuild = Headers.of(queryInput.getHeaders());
-            final var request = new Request.Builder().url(address)
-                .header(HttpHeaders.AUTHORIZATION, authHeader).headers(headerBuild).get().build();
+
+            final Request request;
+            if (queryInput != null && queryInput.getHeaders() != null) {
+                queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
+                Headers headerBuild = Headers.of(queryInput.getHeaders());
+                request = new Request.Builder().url(address).get().headers(headerBuild).build();
+            } else {
+                request = new Request.Builder().url(address).header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
+            }
 
             final var client = clientProvider.getClient();
             final var response = client.newCall(request).execute();
@@ -214,8 +227,10 @@ public class HttpUtils {
             if(!queryParams.isEmpty()) {
                 address = address.concat("?");
                 for (Map.Entry<String, String> param : queryParams.entrySet()) {
-                    address = address.concat(param.getKey() + "=" + param.getValue() + "&");
+                    address = address.concat(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8)
+                                    + "=" + URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8) + "&");
                 }
+
                 return StringUtils.removeEnd(address,"&");
             }
         }
