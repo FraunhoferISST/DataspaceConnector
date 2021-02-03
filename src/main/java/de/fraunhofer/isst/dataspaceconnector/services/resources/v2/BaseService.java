@@ -34,6 +34,7 @@ public class BaseService<T extends BaseResource, D extends BaseDescription<T>> {
      * Default constructor.
      */
     protected BaseService() {
+        // This constructor is intentionally empty. Nothing to do here.
     }
 
     /**
