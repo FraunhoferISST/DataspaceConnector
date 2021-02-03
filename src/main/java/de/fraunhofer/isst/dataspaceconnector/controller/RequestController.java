@@ -315,7 +315,8 @@ public class RequestController {
         @RequestParam(value = "transferContract", required = false) URI contractId,
         @Parameter(description = "A unique validation key.", required = true)
         @RequestParam("key") UUID key,
-            @RequestBody(required = false) QueryInput queryInput) {
+            @Parameter(description = "The query parameters and headers to use when fetching the data from the backend system.")
+        @RequestBody(required = false) QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
