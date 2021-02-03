@@ -6,6 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofrontend.CommonService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public final class ArtifactController extends BaseResourceController<Artifact,
         ArtifactDesc, ArtifactView, CommonService<Artifact, ArtifactDesc, ArtifactView>> {
     @RequestMapping(value = "{id}/data", method = RequestMethod.GET)
     public ResponseEntity<Object> getData(@Valid @PathVariable final UUID id) {
-        final var currentEndpointId = getCurrentEndpoint(id);
+        final var currentEndpointId = EndpointUtils.getCurrentEndpoint(id);
         final var artifactService = ((ArtifactBFFService) this.getService());
         return ResponseEntity.ok(artifactService.getData(currentEndpointId));
     }

@@ -2,33 +2,17 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendTofro
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Catalog;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.CatalogDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Contract;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Representation;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Resource;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseViewer;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.CatalogView;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ContractView;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,6 +23,7 @@ import java.util.UUID;
  *
  * @param <T> The resource type.
  * @param <D> The description for the passed resource type.
+ * @param <V> The view type of the passed resource type.
  */
 public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         V extends BaseView<T>> implements FrontFacingService<T, D, V> {
@@ -55,8 +40,17 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
     @Autowired
     private EndpointService endpointService;
 
+    /**
+     * The resource to view converter.
+     */
     @Autowired
     private BaseViewer<T, V> viewConverter;
+
+    /**
+     * Default constructor.
+     **/
+    protected CommonService() {
+    }
 
     /**
      * Create a resource at a passed resource path.
@@ -83,7 +77,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
      */
     @Override
     public EndpointId update(final EndpointId endpointId, final D desc) {
-        var resource = getResource(endpointId);
+        final var resource = getResource(endpointId);
 
         // Update the underlying resource
         resourceService.update(resource.getId(), desc);
@@ -92,7 +86,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         if (desc.getStaticId() != null
                 && !endpointId.getResourceId().equals(desc.getStaticId())) {
             // The resource needs to be moved.
-            var newEndpoint = endpointService.create(
+            final var newEndpoint = endpointService.create(
                     new EndpointId(endpointId.getBasePath(),
                             desc.getStaticId()), resource.getId());
 
@@ -117,8 +111,14 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         return viewConverter.create(resource);
     }
 
+    /**
+     * Get the resource to an endpoint.
+     *
+     * @param endpointId The id of the endpoint.
+     * @return The resource.
+     */
     protected T getResource(final EndpointId endpointId) {
-        var endpoint = getEndpoint(endpointId);
+        final var endpoint = getEndpoint(endpointId);
 
         if (endpoint.getInternalId() == null) {
             // Handle with global exception handler

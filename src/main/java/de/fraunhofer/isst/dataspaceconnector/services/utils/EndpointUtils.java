@@ -1,8 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
+import com.microsoft.schemas.office.x2006.encryption.CTKeyEncryptor;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
 
+import java.net.URI;
 import java.util.UUID;
 
 public final class EndpointUtils {
@@ -23,6 +26,22 @@ public final class EndpointUtils {
         basePath = basePath.substring(0, index);
 
         return new EndpointId(basePath, resourceId);
+    }
+
+    public static EndpointId getEndpointIdFromPath(final URI uri) {
+        final var fullPath = uri.toString();
+        final var allUuids = UUIDUtils.findUuids(fullPath);
+
+        final var resourceId = UUID.fromString(allUuids.get(0));
+        final var index = fullPath.lastIndexOf(resourceId.toString()) - 1;
+        // -1 so that the / gets also removed
+        final var basePath = fullPath.substring(0, index);
+
+        return new EndpointId(basePath, resourceId);
+    }
+
+    public static URI getCurrentBasePath() {
+        return getCurrentRequestUriBuilder().build().toUri();
     }
 
     private static ServletUriComponentsBuilder getCurrentRequestUriBuilder() {

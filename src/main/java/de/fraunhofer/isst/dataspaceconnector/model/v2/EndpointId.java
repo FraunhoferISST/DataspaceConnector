@@ -2,6 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
@@ -29,5 +31,13 @@ public class EndpointId implements Serializable {
     @JsonProperty("href")
     public URI toUri() {
         return URI.create(basePath + "/" + resourceId.toString());
+    }
+
+    @JsonProperty("href")
+    public void setUri(final URI uri) {
+        final var extractedId = EndpointUtils.getEndpointIdFromPath(uri);
+
+        this.basePath = extractedId.getBasePath();
+        this.resourceId = extractedId.getResourceId();
     }
 }
