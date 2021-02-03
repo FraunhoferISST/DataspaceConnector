@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
@@ -12,17 +11,14 @@ import java.util.UUID;
 /**
  * Create a parent-children relationship between two types of resources.
  *
- * @param <K>     The type of the parent resource.
- * @param <KDesc> The description type of the parent resource.
- * @param <W>     The type of the child resource.
- * @param <WDesc> The description type of the child resource.
- * @param <T>     The service type for the parent resource.
- * @param <X>     The service type for the child resource.
+ * @param <K> The type of the parent resource.
+ * @param <W> The type of the child resource.
+ * @param <T> The service type for the parent resource.
+ * @param <X> The service type for the child resource.
  */
 public abstract class BaseUniDirectionalLinkerService<
-        K extends BaseResource, KDesc extends BaseDescription<K>,
-        W extends BaseResource, WDesc extends BaseDescription<W>,
-        T extends BaseService<K, KDesc>, X extends BaseService<W, WDesc>> {
+        K extends BaseResource, W extends BaseResource,
+        T extends BaseService<K, ?>, X extends BaseService<W, ?>> {
 
     /**
      * The service for the entity whose relations are modified.
@@ -40,6 +36,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * Default constructor.
      */
     protected BaseUniDirectionalLinkerService() {
+        // This constructor is intentionally empty. Nothing to do here.
     }
 
     /**

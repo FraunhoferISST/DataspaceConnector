@@ -16,7 +16,7 @@ import java.util.UUID;
  * @param <S> The service for the internal resource logic handling.
  */
 public class CommonUniDirectionalLinkerService<
-        S extends BaseUniDirectionalLinkerService<?, ?, ?, ?, ?, ?>> {
+        S extends BaseUniDirectionalLinkerService<?, ?, ?, ?>> {
 
     /**
      * The service for linking children to an entity.
