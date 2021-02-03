@@ -85,7 +85,7 @@ public class BaseResourceChildController
             @Valid @PathVariable final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         linker.replace(getCurrentEndpoint(ownerId), new HashSet<>(resources));
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
@@ -100,7 +100,7 @@ public class BaseResourceChildController
             @Valid @PathVariable final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         linker.remove(getCurrentEndpoint(ownerId), new HashSet<>(resources));
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /**
