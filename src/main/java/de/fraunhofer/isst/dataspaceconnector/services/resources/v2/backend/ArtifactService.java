@@ -13,18 +13,40 @@ import org.springframework.stereotype.Service;
 import java.net.MalformedURLException;
 import java.util.UUID;
 
+/**
+ * Handles the basic logic for artifacts.
+ */
 @Service
 public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
     // TODO Clean up the code / Refactor
 
+    /**
+     * Repository for storing data.
+     **/
     @Autowired
     private DataRepository dataRepository;
 
+    /**
+     * Service for http communication.
+     **/
     @Autowired
     private HttpUtils httpUtils;
 
+    /**
+     * Default constructor.
+     */
+    protected ArtifactService() {
+        super();
+    }
+
+    /**
+     * Persist the artifact and its data.
+     *
+     * @param artifact The artifact to persists.
+     * @return The persisted artifact.
+     */
     @Override
-    Artifact persist(final Artifact artifact) {
+    protected Artifact persist(final Artifact artifact) {
         if (artifact.getData() != null) {
             if (artifact.getData().getId() == null) {
                 // The data element is new, insert
@@ -32,7 +54,7 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
             } else {
                 // The data element exists already, check if an update is
                 // required
-                var storedCopy =
+                final var storedCopy =
                         dataRepository.getOne(artifact.getData().getId());
                 if (!storedCopy.equals(artifact.getData())) {
                     dataRepository.saveAndFlush(artifact.getData());
@@ -43,9 +65,15 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
         return super.persist(artifact);
     }
 
+    /**
+     * Get the artifacts data.
+     *
+     * @param artifactId The id of the artifact.
+     * @return The artifacts data.
+     */
     public Object getData(final UUID artifactId) {
-        var artifact = get(artifactId);
-        var data = artifact.getData();
+        final var artifact = get(artifactId);
+        final var data = artifact.getData();
 
         if (data instanceof LocalData) {
             return getData((LocalData) data);
@@ -58,12 +86,24 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
         throw new NotImplementedException("Unknown data type.");
     }
 
+    /**
+     * Get local data.
+     *
+     * @param data The data container.
+     * @return The stored data.
+     */
     private Object getData(final LocalData data) {
         return data.getValue();
     }
 
+    /**
+     * Get remote data.
+     *
+     * @param data The data container.
+     * @return The stored data.
+     */
     private Object getData(final RemoteData data) {
-        //TODO Passthrough Uri not string
+        //TODO: Passthrough Uri not string
         try {
             if (data.getUsername() != null || data.getPassword() != null) {
                 return httpUtils.sendHttpsGetRequestWithBasicAuth(
@@ -75,8 +115,9 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
                         .toString());
             }
         } catch (MalformedURLException exception) {
-            // LOG
-            throw new RuntimeException("Could not connect to data source.");
+            // TODO: LOG
+            throw new RuntimeException("Could not connect to data source.",
+                    exception);
         }
     }
 }
