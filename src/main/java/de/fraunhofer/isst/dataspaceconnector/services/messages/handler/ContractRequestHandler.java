@@ -37,16 +37,16 @@ import java.util.UUID;
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
- * This @{@link ContractMessageHandler} handles all incoming messages that have a
+ * This @{@link ContractRequestHandler} handles all incoming messages that have a
  * {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} as part one in the multipart message.
  * This header must have the correct '@type' reference as defined in the
  * {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ContractRequestMessageImpl.class)
-public class ContractMessageHandler implements MessageHandler<ContractRequestMessageImpl> {
+public class ContractRequestHandler implements MessageHandler<ContractRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractMessageHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestHandler.class);
 
     private final ConfigurationContainer configurationContainer;
     private final NegotiationService negotiationService;
@@ -71,11 +71,11 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
-    public ContractMessageHandler(ConfigurationContainer configurationContainer,
-        NegotiationService negotiationService, PolicyHandler policyHandler,
-        ContractAgreementService contractAgreementService,
-        ContractMessageService messageService,
-        LogMessageService logMessageService, DapsTokenProvider tokenProvider)
+    public ContractRequestHandler(ConfigurationContainer configurationContainer,
+                                  NegotiationService negotiationService, PolicyHandler policyHandler,
+                                  ContractAgreementService contractAgreementService,
+                                  ContractMessageService messageService,
+                                  LogMessageService logMessageService, DapsTokenProvider tokenProvider)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
