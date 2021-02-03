@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
@@ -306,27 +307,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
-    public String getData(UUID resourceId) throws ResourceNotFoundException,
-            ResourceException {
-        final var representations = getAllRepresentations(resourceId);
-        for (var representationId : representations.keySet()) {
-            try {
-                // TODO: has to be checked later if null is ok here.
-                return getDataByRepresentation(resourceId, representationId, null);
-            } catch (ResourceException exception) {
-                // The resource is incomplete or wrong.
-                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
-            } catch (RuntimeException exception) {
-                // The resource could not be received.
-                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
-            }
-        }
-
-        // This code should never be reached since the representation should have at least one
-        // representation.
-        invalidResourceGuard(getResource(resourceId));
-        // Add a runtime exception in case the resource valid logic changed.
-        throw new RuntimeException("This code should not have been reached.");
+    public String getData(UUID resourceId) throws OperationNotSupportedException {
+        throw new OperationNotSupportedException("Operation not supported.");
     }
 
     /**

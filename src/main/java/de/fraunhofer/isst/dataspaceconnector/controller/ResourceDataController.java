@@ -102,7 +102,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @param id The resource id.
      * @return Raw data or an error response.
      */
-    @Operation(summary = "Request Data String", description = "Get the resource's data as a string.")
+    @Operation(summary = "Request Data String of a Requested Resource",
+            description = "Get a requested resource's data as a string.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -114,38 +115,28 @@ public class ResourceDataController { // Header: Content-Type: application/json
         required = true, example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
     @PathVariable("resource-id") UUID id) {
         try {
-            try {
-                return new ResponseEntity<>(offeredResourceService.getData(id), HttpStatus.OK);
-            } catch (ResourceNotFoundException offeredResourceServiceException) {
-                LOGGER.debug(
-                    "Could not find resource in OfferedResourceService. [id=({}), exception=({})]",
-                    id, offeredResourceServiceException.getMessage());
-
-                try {
-                    return new ResponseEntity<>(requestedResourceService.getData(id),
-                        HttpStatus.OK);
-                } catch (ResourceNotFoundException requestedResourceServiceException) {
-                    LOGGER.debug(
-                        "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
-                        id, requestedResourceServiceException.getMessage());
-                    LOGGER.debug("Could not find resource. [id=({})]", id);
-                    return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
-                }
-            }
+            return new ResponseEntity<>(requestedResourceService.getData(id),
+                    HttpStatus.OK);
+        } catch (ResourceNotFoundException requestedResourceServiceException) {
+            LOGGER.debug(
+                    "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
+                    id, requestedResourceServiceException.getMessage());
+            LOGGER.debug("Could not find resource. [id=({})]", id);
+            return new ResponseEntity<>("Resource not found", HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
-                id, exception.getMessage());
+                    id, exception.getMessage());
             return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
         } catch (ContractException exception) {
             LOGGER.debug("The policy cannot be enforced. [id=({}), exception=({})]",
-                id, exception.getMessage());
+                    id, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", id,
-                exception.getMessage());
+                    exception.getMessage());
             return new ResponseEntity<>("Something went wrong.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -156,8 +147,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @param representationId The representation id.
      * @return Raw data or an error response.
      */
-    @Operation(summary = "Request Data String by Representation",
-        description = "Get the resource's data as a string by representation.")
+    @Operation(summary = "Request Data String of an Offered Resource by Representation",
+        description = "Get an offered resource's data as a string by representation.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -169,43 +160,30 @@ public class ResourceDataController { // Header: Content-Type: application/json
             example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @PathVariable("resource-id") UUID resourceId,
         @Parameter(description = "The representation uuid.", required = true)
-        @PathVariable("representation-id") UUID representationId,
-        @RequestBody(required = false) QueryInput queryInput) {
+        @PathVariable("representation-id") UUID representationId) {
         try {
-            try {
-                return new ResponseEntity<>(
-                    offeredResourceService.getDataByRepresentation(resourceId, representationId, queryInput),
+            return new ResponseEntity<>(
+                    offeredResourceService.getDataByRepresentation(resourceId, representationId, null),
                     HttpStatus.OK);
-            } catch (ResourceNotFoundException offeredResourceServiceException) {
-                LOGGER.debug(
+        } catch (ResourceNotFoundException offeredResourceServiceException) {
+            LOGGER.debug(
                     "Could not find resource in OfferedResourceService. [id=({}), exception=({})]",
                     resourceId, offeredResourceServiceException.getMessage());
-
-                try {
-                    return new ResponseEntity<>(requestedResourceService.getData(resourceId),
-                        HttpStatus.OK);
-                } catch (ResourceNotFoundException requestedResourceServiceException) {
-                    LOGGER.debug(
-                        "Could not find resource in RequestedResourceService. [id=({}), exception=({})]",
-                        resourceId, offeredResourceServiceException.getMessage());
-                    LOGGER.debug("Could not find resource. [id=({})]", resourceId);
-                    return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
-                }
-            }
+            return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
         } catch (InvalidResourceException exception) {
             LOGGER.debug("The resource could be found but was invalid. [id=({}), exception=({})]",
-                resourceId, exception.getMessage());
+                    resourceId, exception.getMessage());
             return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
         } catch (ContractException exception) {
             LOGGER.debug("The policy cannot be enforced. [id=({}), exception=({})]",
-                resourceId, exception.getMessage());
+                    resourceId, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
-                exception.getMessage());
+                    exception.getMessage());
             return new ResponseEntity<>("Something went wrong.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
