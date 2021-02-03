@@ -143,7 +143,7 @@ public class NegotiationService {
             } catch (MessageResponseException exception) {
                 // Failed to read the contract agreement message.
                 LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
-                throw new MessageNotSentException("Failed to read the ids response message. " +
+                throw new MessageResponseException("Failed to read the ids response message. " +
                         "[exception=({})]", exception);
             } catch (MessageNotSentException exception) {
                 // Failed to send the contract agreement message.

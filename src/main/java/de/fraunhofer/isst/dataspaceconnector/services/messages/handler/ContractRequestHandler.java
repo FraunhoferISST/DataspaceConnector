@@ -105,7 +105,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * @param requestMessage The received contract request message.
      * @param messagePayload The message's content.
      * @return The response message.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @throws RuntimeException if the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(ContractRequestMessageImpl requestMessage,
@@ -156,6 +156,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             // Check the contract content.
             return checkContractRequest(payload);
         } catch (RuntimeException exception) {
+            LOGGER.warn("Failed to check the contract request. [exception=({})]",
+                    exception.getMessage());
             // Something went wrong (e.g invalid config), try to fix it at a higher level.
             throw new RuntimeException("Failed to construct a resource description.", exception);
         }
