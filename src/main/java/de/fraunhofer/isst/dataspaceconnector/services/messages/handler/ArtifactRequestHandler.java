@@ -122,7 +122,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
         // Check if version is supported.
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
                 "Information model version not supported.",

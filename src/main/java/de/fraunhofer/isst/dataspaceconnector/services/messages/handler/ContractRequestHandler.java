@@ -131,7 +131,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
         // Check if version is supported.
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.VERSION_NOT_SUPPORTED,
                     "Information model version not supported.",
@@ -214,14 +214,14 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                     "Artifact not found.", connector.getId(),
                     connector.getOutboundModelVersion());
         } catch (MessageBuilderException exception) {
-            LOGGER.debug("Response could not be constructed. [id=({}), exception=({})]",
+            LOGGER.warn("Response could not be constructed. [id=({}), exception=({})]",
                     requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.INTERNAL_RECIPIENT_ERROR,
                     "Response could not be constructed.",
                     connector.getId(), connector.getOutboundModelVersion());
         } catch (RuntimeException exception) {
-            LOGGER.debug("Could not process contract request. [id=({}), exception=({})]",
+            LOGGER.warn("Could not process contract request. [id=({}), exception=({})]",
                     requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.BAD_PARAMETERS,
