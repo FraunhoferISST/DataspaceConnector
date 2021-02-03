@@ -8,11 +8,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -53,7 +51,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final PolicyHandler policyHandler;
     private final ContractMessageService messageService;
     private final DapsTokenProvider tokenProvider;
-    private final ContractAgreementService contractAgreementService;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
     private RequestMessage requestMessage;
@@ -64,7 +61,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * @param configurationContainer The container with the configuration
      * @param negotiationService The service with the negotation
      * @param policyHandler The service for policy negotation
-     * @param contractAgreementService The service for the contract agreements
      * @param messageService The service for sending messages
      * @param logMessageService The service for logging
      * @param tokenProvider The provider for token
@@ -73,7 +69,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     @Autowired
     public ContractRequestHandler(ConfigurationContainer configurationContainer,
                                   NegotiationService negotiationService, PolicyHandler policyHandler,
-                                  ContractAgreementService contractAgreementService,
                                   ContractMessageService messageService,
                                   LogMessageService logMessageService, DapsTokenProvider tokenProvider)
             throws IllegalArgumentException {
@@ -85,9 +80,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-
-        if (contractAgreementService == null)
-            throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
 
         if (messageService == null)
             throw new IllegalArgumentException("The ContractRequestService cannot be null.");
@@ -101,7 +93,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         this.configurationContainer = configurationContainer;
         this.negotiationService = negotiationService;
         this.policyHandler = policyHandler;
-        this.contractAgreementService = contractAgreementService;
         this.messageService = messageService;
         this.logMessageService = logMessageService;
         this.tokenProvider = tokenProvider;
@@ -257,25 +248,10 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         messageService.setResponseParameters(
                 requestMessage.getIssuerConnector(), requestMessage.getId(), null);
         // Turn the accepted contract request into a contract agreement.
-        ContractAgreement contractAgreement = messageService.buildContractAgreement(contractRequest);
-        // Build message header.
-        Message message = messageService.buildResponseHeader();
-
-        // Save contract agreement to database.
-        UUID uuid = UUIDUtils.uuidFromUri(contractAgreement.getId());
-        contractAgreementService.addContract(new ResourceContract(uuid, contractAgreement.toRdf()));
-        // Send ContractAgreement to the ClearingHouse. TODO: Activate Clearing House communication as soon as it accepts IM 4.
-//        try {
-//            Response response = logMessageService.sendMessage(contractAgreement.toRdf());
-//            if (response == null)
-//                throw new MessageException("Response body is empty.");
-//        } catch (MessageException exception) {
-//            // Log if the message could not be sent to the clearing house.
-//            LOGGER.warn("Could not connect to clearing house. " + exception.getMessage());
-//        }
+        final var contractAgreement = messageService.buildContractAgreement(contractRequest);
 
         // Send response to the data consumer.
-        return BodyResponse.create(message, contractAgreement.toRdf());
+        return BodyResponse.create(messageService.buildResponseHeader(), contractAgreement.toRdf());
     }
 
     /**
