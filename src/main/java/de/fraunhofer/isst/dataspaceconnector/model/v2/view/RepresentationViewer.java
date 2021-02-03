@@ -1,9 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2.view;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Representation;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

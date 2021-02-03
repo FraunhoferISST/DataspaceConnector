@@ -8,9 +8,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseViewer;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.BaseService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.EndpointService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 

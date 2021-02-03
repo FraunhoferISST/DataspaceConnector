@@ -4,7 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.BaseView;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.FrontFacingService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.FrontFacingService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;

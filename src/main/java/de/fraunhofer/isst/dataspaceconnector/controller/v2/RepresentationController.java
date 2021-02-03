@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonUniDirectionalLinkerService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -5,8 +5,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonUniDirectionalLinkerService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceContractLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
