@@ -329,6 +329,15 @@ public class RequestController {
                 HttpStatus.FORBIDDEN);
         }
 
+        try {
+            validateQueryInput(queryInput);
+        } catch (IllegalArgumentException exception) {
+            // There is an empty key or value string in the params or headers map
+            LOGGER.info("Invalid input for headers or params. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Invalid input for headers or params.",
+                    HttpStatus.BAD_REQUEST);
+        }
+
         Map<String, String> response = null;
         try {
             // Send ArtifactRequestMessage.
@@ -350,9 +359,11 @@ public class RequestController {
             return new ResponseEntity<>("Failed to send the ids message.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
                 HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (JsonProcessingException e) {
-            // TODO: Adjust
-            e.printStackTrace();
+        } catch (JsonProcessingException exception) {
+            // Could not parse query input (params and headers).
+            LOGGER.info("Could not parse query input from request body. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Could not parse query input from request body.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         String header, payload;
@@ -430,6 +441,33 @@ public class RequestController {
             return resourceService.getResource(resourceId) != null;
         } catch (ResourceException exception) {
             return false;
+        }
+    }
+
+    /**
+     * Checks a given query input. If any of the keys or values in the headers or params maps are empty, an exception
+     * is thrown.
+     *
+     * @param queryInput the query input to validate.
+     * @throws IllegalArgumentException - if any of the keys or values are empty.
+     */
+    private void validateQueryInput(QueryInput queryInput) {
+        if (queryInput != null && queryInput.getHeaders() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getHeaders().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().isEmpty()
+                        || entry.getValue() == null || entry.getValue().isEmpty()) {
+                    throw new IllegalArgumentException("Header key or value should not be null or empty " +
+                            "(key:" + entry.getKey() + ", value: " + entry.getValue() + ").");
+                }
+            }
+        }
+        if (queryInput != null && queryInput.getParams() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getParams().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().isEmpty()
+                        || entry.getValue() == null || entry.getValue().isEmpty()) {
+                    throw new IllegalArgumentException("Param key or value should not be null or empty.");
+                }
+            }
         }
     }
 }
