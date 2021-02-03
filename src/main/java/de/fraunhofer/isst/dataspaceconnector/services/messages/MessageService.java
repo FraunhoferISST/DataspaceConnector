@@ -118,9 +118,9 @@ public abstract class MessageService {
         } catch (ClaimsException exception) {
             LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
             throw new MessageResponseException("Unexpected message answer.", exception);
-        } catch (MessageNotSentException | FileUploadException | IOException exception) {
+        } catch (FileUploadException | IOException exception) {
             LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be sent.", exception);
+            throw new MessageNotSentException("Message could not be sent.", exception);
         }
     }
 

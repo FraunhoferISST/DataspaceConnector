@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
@@ -125,15 +126,20 @@ public class RequestController {
             descriptionMessageService.setRequestParameters(recipient, resourceId);
             response = descriptionMessageService.sendMessage("");
         } catch (MessageBuilderException exception) {
-            // Failed to send the description request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to send description request message.",
+            // Failed to build the description request message.
+            LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to build the ids message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the description response message.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageNotSentException exception) {
+            // Failed to send the description request message.
+            LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to send the ids message.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;
@@ -212,15 +218,20 @@ public class RequestController {
             return new ResponseEntity<>("Failed to build contract request.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageBuilderException exception) {
-            // Failed to send the contract request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to send contract request message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            // Failed to build the contract request message.
+            LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to build the ids message.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the contract response message.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageNotSentException exception) {
+            // Failed to send the contract request message.
+            LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to send the ids message.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;
@@ -317,15 +328,20 @@ public class RequestController {
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
             response = artifactMessageService.sendMessage("");
         } catch (MessageBuilderException exception) {
-            // Failed to send the artifact request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to send artifact request message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            // Failed to build the artifact request message.
+            LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to build the ids message.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the artifact response message.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (MessageNotSentException exception) {
+            // Failed to send the artifact request message.
+            LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Failed to send the ids message.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;

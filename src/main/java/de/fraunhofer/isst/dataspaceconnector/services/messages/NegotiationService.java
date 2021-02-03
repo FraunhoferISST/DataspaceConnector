@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
@@ -14,6 +15,8 @@ import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -133,12 +136,21 @@ public class NegotiationService {
                 messageService.setResponseParameters(recipient, correlationMessage, contract.getId());
                 ContractAgreement agreement = messageService.buildContractAgreement(contract);
                 response = messageService.sendMessage(agreement.toRdf());
-            } catch (MessageException exception) {
-                // Failed to send a contract agreement message.
-                LOGGER.warn("Could not send contract agreement message. [exception=({})]",
-                    exception.getMessage());
-                throw new MessageNotSentException("Could not send contract agreement message. "
-                    + exception.getMessage());
+            } catch (MessageBuilderException exception) {
+                // Failed to build the contract agreement message.
+                LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to build the ids message. " +
+                        "[exception=({})]", exception);
+            } catch (MessageResponseException exception) {
+                // Failed to read the contract agreement message.
+                LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to read the ids response message. " +
+                        "[exception=({})]", exception);
+            } catch (MessageNotSentException exception) {
+                // Failed to send the contract agreement message.
+                LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to send the ids message. " +
+                        "[exception=({})]", exception);
             }
 
             if (response != null) {
