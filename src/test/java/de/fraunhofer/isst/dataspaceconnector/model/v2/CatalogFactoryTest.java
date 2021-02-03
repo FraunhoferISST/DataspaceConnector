@@ -149,7 +149,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_SameValidDesc_true() {
+    void update_sameValidDesc_false() {
         /* ARRANGE */
         var catalog = factory.create(getValidDesc());
 
@@ -186,7 +186,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_ValidCatalogNullDesc_throwsNullPointerException() {
+    void update_validCatalogNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
