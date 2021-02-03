@@ -76,15 +76,16 @@ public class NegotiationService {
      * @param artifactId ID of the artifact.
      * @return The http response.
      * @throws IllegalArgumentException if the contract could not be deserialized.
+     * @throws MessageException if the message could not be built.
      */
     public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
-        throws IllegalArgumentException {
+        throws IllegalArgumentException, MessageException {
         Contract contract;
         try {
             // Validate contract input.
             contract = policyHandler.validateContract(contractAsString);
         } catch (RequestFormatException exception) {
-            LOGGER.warn("Could not deserialize contract. [exception=({})]",
+            LOGGER.debug("Could not deserialize contract. [exception=({})]",
                 exception.getMessage());
             throw new RequestFormatException("Malformed contract. " + exception.getMessage());
         }

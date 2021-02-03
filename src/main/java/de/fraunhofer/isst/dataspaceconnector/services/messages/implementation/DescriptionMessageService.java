@@ -112,7 +112,7 @@ public class DescriptionMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildResponseHeader() throws MessageException {
+    public Message buildResponseHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 

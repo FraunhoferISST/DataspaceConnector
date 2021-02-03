@@ -70,17 +70,17 @@ public abstract class MessageService {
      * Build an IDS message as request header.
      *
      * @return the message.
-     * @throws MessageException if the message could not be created.
+     * @throws MessageBuilderException if the message could not be created.
      */
-    public abstract Message buildRequestHeader() throws MessageException;
+    public abstract Message buildRequestHeader() throws MessageBuilderException;
 
     /**
      * Build an IDS message as response header.
      *
      * @return the message.
-     * @throws MessageException if the message could not be created.
+     * @throws MessageBuilderException if the message could not be created.
      */
-    public abstract Message buildResponseHeader() throws MessageException;
+    public abstract Message buildResponseHeader() throws MessageBuilderException;
 
     /**
      * Returns the recipient.
