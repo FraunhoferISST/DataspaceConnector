@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Save the `ContractAgreement` to the database and the Clearing House when the second 
 `AgreementMessage` has been processed.
 - Refine exception handling in the message building and sending process.
+- Update from IDS Framework v4.0.2 to v4.0.3.
 
 ### Fixed
 - Send `ContractAgreementMessage` as request message.

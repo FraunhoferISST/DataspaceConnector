@@ -124,7 +124,7 @@
 
 	<properties>
 		<revision>4.0.2</revision>
-		<ids-framework.version>4.0.2</ids-framework.version>
+		<ids-framework.version>4.0.3</ids-framework.version>
 
 		<java.version>11</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
