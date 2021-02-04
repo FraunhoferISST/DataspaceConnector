@@ -358,7 +358,6 @@ public class RequestController {
             LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to send the ids message.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
-                HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (JsonProcessingException exception) {
             // Could not parse query input (params and headers).
             LOGGER.info("Could not parse query input from request body. [exception=({})]", exception.getMessage());
