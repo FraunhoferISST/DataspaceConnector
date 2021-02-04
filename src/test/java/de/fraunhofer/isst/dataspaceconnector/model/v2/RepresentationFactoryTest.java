@@ -31,7 +31,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void create_allDescMembersNotNull_returnRepresentaton() {
+    void create_allDescMembersNotNull_returnRepresentation() {
         /* ARRANGE */
         final var desc = getValidDesc();
 
