@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.2] - 2021-02-04
+
+### Added
+- Add support for query params and additional headers when requesting artifacts
+- Add input validation for query params and headers
+
+### Changed
+- Configure Spring to fail on unknown properties in request bodies
+
 ## [4.0.1] - 2021-01-28
 
 ### Changed
