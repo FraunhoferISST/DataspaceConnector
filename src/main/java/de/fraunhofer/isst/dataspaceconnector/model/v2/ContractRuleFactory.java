@@ -3,28 +3,28 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RuleFactory implements BaseFactory<Rule, RuleDesc> {
+public class ContractRuleFactory implements BaseFactory<ContractRule, ContractRuleDesc> {
     @Override
-    public Rule create(final RuleDesc desc) {
-        var rule = new Rule();
+    public ContractRule create(final ContractRuleDesc desc) {
+        var rule = new ContractRule();
         update(rule, desc);
 
         return rule;
     }
 
     @Override
-    public boolean update(final Rule rule, final RuleDesc desc) {
+    public boolean update(final ContractRule contractRule, final ContractRuleDesc desc) {
         var hasBeenUpdated = false;
 
         var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (!newTitle.equals(rule.getTitle())) {
-            rule.setTitle(newTitle);
+        if (!newTitle.equals(contractRule.getTitle())) {
+            contractRule.setTitle(newTitle);
             hasBeenUpdated = true;
         }
 
         var newRule = desc.getRule() != null ? desc.getRule() : "";
-        if (!newRule.equals(rule.getValue())) {
-            rule.setValue(newRule);
+        if (!newRule.equals(contractRule.getValue())) {
+            contractRule.setValue(newRule);
             hasBeenUpdated = true;
         }
 

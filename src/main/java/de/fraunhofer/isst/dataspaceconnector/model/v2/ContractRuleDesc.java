@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RuleDesc extends BaseDescription<Rule> {
+public class ContractRuleDesc extends BaseDescription<ContractRule> {
     private String title;
     private String rule;
 }

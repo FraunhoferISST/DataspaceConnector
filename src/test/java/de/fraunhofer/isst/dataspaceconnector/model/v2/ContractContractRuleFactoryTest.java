@@ -12,9 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class RuleFactoryTest {
+class ContractContractRuleFactoryTest {
     @Autowired
-    private RuleFactory factory;
+    private ContractRuleFactory factory;
 
     @Test
     void when_passed_desc_is_null_on_creation_should_throw_exception() {
@@ -139,24 +139,24 @@ class RuleFactoryTest {
         });
     }
 
-    RuleDesc getValidDesc() {
-        var desc = new RuleDesc();
+    ContractRuleDesc getValidDesc() {
+        var desc = new ContractRuleDesc();
         desc.setTitle("Default");
         desc.setRule("");
 
         return desc;
     }
 
-    RuleDesc getUpdatedDesc() {
-        var desc = new RuleDesc();
+    ContractRuleDesc getUpdatedDesc() {
+        var desc = new ContractRuleDesc();
         desc.setTitle("The new default.");
         desc.setRule("none");
 
         return desc;
     }
 
-    RuleDesc getDescWithNullMembers() {
-        var desc = new RuleDesc();
+    ContractRuleDesc getDescWithNullMembers() {
+        var desc = new ContractRuleDesc();
         desc.setTitle(null);
         desc.setRule(null);
 

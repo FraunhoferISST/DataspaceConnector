@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Rule extends BaseResource {
+public class ContractRule extends BaseResource {
     private String title;
     private String value;
 }

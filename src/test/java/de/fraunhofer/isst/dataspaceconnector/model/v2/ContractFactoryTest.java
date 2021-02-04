@@ -82,7 +82,7 @@ class ContractFactoryTest {
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getLastModificationDate();
 
-        var rulesBefore = ((HashMap<UUID, Rule>) contract.getRules()).clone();
+        var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getUpdatedValidDesc();
 
         /* ACT */
@@ -112,7 +112,7 @@ class ContractFactoryTest {
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getLastModificationDate();
 
-        var rulesBefore = ((HashMap<UUID, Rule>) contract.getRules()).clone();
+        var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getDescWithNullMembers();
 
         /* ACT */

@@ -37,5 +37,5 @@ public class Contract extends BaseResource {
      **/
     @MapKey(name = "id")
     @OneToMany
-    private Map<UUID, Rule> rules;
+    private Map<UUID, ContractRule> rules;
 }
