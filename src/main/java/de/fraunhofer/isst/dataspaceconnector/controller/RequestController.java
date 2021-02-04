@@ -124,7 +124,7 @@ public class RequestController {
         try {
             // Send DescriptionRequestMessage.
             descriptionMessageService.setRequestParameters(recipient, resourceId);
-            response = descriptionMessageService.sendMessage("");
+            response = descriptionMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to build the description request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
@@ -212,7 +212,7 @@ public class RequestController {
             final var request = negotiationService.buildContractRequest(contractOffer, artifactId);
             // Send ContractRequestMessage.
             contractMessageService.setRequestParameters(recipient, request.getId());
-            response = contractMessageService.sendMessage(request.toRdf());
+            response = contractMessageService.sendRequestMessage(request.toRdf());
         } catch (IllegalArgumentException exception) {
             LOGGER.warn("Failed to build contract request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to build contract request.",
@@ -326,7 +326,7 @@ public class RequestController {
         try {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
-            response = artifactMessageService.sendMessage("");
+            response = artifactMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to build the artifact request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());

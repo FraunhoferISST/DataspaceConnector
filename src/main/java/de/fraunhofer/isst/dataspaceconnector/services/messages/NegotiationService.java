@@ -134,7 +134,7 @@ public class NegotiationService {
                 // Send ContractAgreementMessage to recipient.
                 messageService.setResponseParameters(recipient, correlationMessage, contract.getId());
                 ContractAgreement agreement = messageService.buildContractAgreement(contract);
-                response = messageService.sendMessage(agreement.toRdf());
+                response = messageService.sendResponseMessage(agreement.toRdf());
             } catch (MessageBuilderException exception) {
                 // Failed to build the contract agreement message.
                 LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());

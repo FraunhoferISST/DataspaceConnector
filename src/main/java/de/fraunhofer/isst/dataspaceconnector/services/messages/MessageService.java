@@ -97,16 +97,44 @@ public abstract class MessageService {
     }
 
     /**
-     * Sends an IDS message with header and payload using the IDS Framework.
+     * Sends an IDS request message with header and payload using the IDS Framework.
      *
      * @param payload the message payload.
      * @return the HTTP response.
      * @throws MessageException if a header could not be built or the message could not be sent.
      */
-    public Map<String, String> sendMessage(String payload) throws MessageException {
+    public Map<String, String> sendRequestMessage(String payload) throws MessageException {
         Message message;
         try {
             message = buildRequestHeader();
+        } catch (MessageBuilderException exception) {
+            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
+            throw new MessageBuilderException("Message could not be built.", exception);
+        }
+
+        try {
+            MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
+            return idsHttpService.sendAndCheckDat(body, getRecipient());
+        } catch (ClaimsException exception) {
+            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
+            throw new MessageResponseException("Unexpected message answer.", exception);
+        } catch (FileUploadException | IOException exception) {
+            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            throw new MessageNotSentException("Message could not be sent.", exception);
+        }
+    }
+
+    /**
+     * Sends an IDS response message with header and payload using the IDS Framework.
+     *
+     * @param payload the message payload.
+     * @return the HTTP response.
+     * @throws MessageException if a header could not be built or the message could not be sent.
+     */
+    public Map<String, String> sendResponseMessage(String payload) throws MessageException {
+        Message message;
+        try {
+            message = buildResponseHeader();
         } catch (MessageBuilderException exception) {
             LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
             throw new MessageBuilderException("Message could not be built.", exception);

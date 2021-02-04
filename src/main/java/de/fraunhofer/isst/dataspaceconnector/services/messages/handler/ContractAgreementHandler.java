@@ -183,7 +183,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         // Send ContractAgreement to the ClearingHouse.
         // TODO: Activate Clearing House communication as soon as it accepts IM 4.
         try {
-            logMessageService.sendMessage(contractAgreement.toRdf());
+            logMessageService.sendRequestMessage(contractAgreement.toRdf());
         } catch (MessageBuilderException exception) {
             // Failed to build the log message.
             LOGGER.warn("Failed to build log message. [exception=({})]", exception.getMessage());
