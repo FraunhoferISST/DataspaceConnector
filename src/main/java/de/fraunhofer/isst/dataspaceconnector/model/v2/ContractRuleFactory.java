@@ -1,33 +1,62 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
 import org.springframework.stereotype.Component;
 
+/**
+ * Creates and updates a ContractRule.
+ */
 @Component
-public class ContractRuleFactory implements BaseFactory<ContractRule, ContractRuleDesc> {
+public class ContractRuleFactory implements BaseFactory<ContractRule,
+        ContractRuleDesc> {
+
+    /**
+     * Create a new ContractRule.
+     *
+     * @param desc The description of the new ContractRule.
+     * @return The new ContractRule.
+     */
     @Override
     public ContractRule create(final ContractRuleDesc desc) {
-        var rule = new ContractRule();
+        final var rule = new ContractRule();
         update(rule, desc);
 
         return rule;
     }
 
+    /**
+     * Update a ContractRule.
+     *
+     * @param contractRule The ContractRule to be updated.
+     * @param desc         The new ContractRule description.
+     * @return True if the ContractRule has been modified.
+     */
     @Override
-    public boolean update(final ContractRule contractRule, final ContractRuleDesc desc) {
-        var hasBeenUpdated = false;
+    public boolean update(final ContractRule contractRule,
+                          final ContractRuleDesc desc) {
+        final var hasUpdatedTitle = this.updateTitle(contractRule,
+                desc.getTitle());
+        final var hasUpdatedRule = this.updateRule(contractRule,
+                desc.getRule());
 
-        var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (!newTitle.equals(contractRule.getTitle())) {
-            contractRule.setTitle(newTitle);
-            hasBeenUpdated = true;
-        }
+        return hasUpdatedTitle || hasUpdatedRule;
+    }
 
-        var newRule = desc.getRule() != null ? desc.getRule() : "";
-        if (!newRule.equals(contractRule.getValue())) {
-            contractRule.setValue(newRule);
-            hasBeenUpdated = true;
-        }
+    private boolean updateTitle(final ContractRule contractRule,
+                                final String title) {
+        final var newTitle =
+                MetaDataUtils.updateString(contractRule.getTitle(), title, "");
+        newTitle.ifPresent(contractRule::setTitle);
 
-        return hasBeenUpdated;
+        return newTitle.isPresent();
+    }
+
+    private boolean updateRule(final ContractRule contractRule,
+                               final String rule) {
+        final var newRule =
+                MetaDataUtils.updateString(contractRule.getValue(), rule, "");
+        newRule.ifPresent(contractRule::setValue);
+
+        return newRule.isPresent();
     }
 }
