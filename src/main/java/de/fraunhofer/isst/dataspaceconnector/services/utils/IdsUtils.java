@@ -152,6 +152,7 @@ public class IdsUtils {
             ce = configurationContainer.getConnector().getHasDefaultEndpoint();
         }
 
+
         // Build the ids resource.
         try {
             return new ResourceBuilder(
