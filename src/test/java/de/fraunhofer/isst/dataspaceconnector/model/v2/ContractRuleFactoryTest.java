@@ -12,24 +12,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class ContractContractRuleFactoryTest {
+class ContractRuleFactoryTest {
     @Autowired
     private ContractRuleFactory factory;
 
     @Test
-    void when_passed_desc_is_null_on_creation_should_throw_exception() {
+    void create_nullDesc_throwNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.create(null);
         });
 
+        /* ASSERT */
         assertNotNull(exception);
     }
 
     @Test
-    void when_all_desc_members_are_set_rule_should_be_created() {
+    void create_allDescMembersNotNull_returnContractRule() {
+        /* ARRANGE */
         final var desc = getValidDesc();
+
+        /* ACT */
         final var rule = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(rule);
         assertEquals(desc.getTitle(), rule.getTitle());
         assertEquals(desc.getRule(), rule.getValue());
@@ -40,10 +49,14 @@ class ContractContractRuleFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_rule_should_be_created() {
+    void create_allDescMembersNull_returnDefaultContractRule() {
+        /* ARRANGE */
         final var desc = getDescWithNullMembers();
+
+        /* ACT */
         final var rule = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(rule);
         assertNotNull(rule.getTitle());
         assertNotNull(rule.getValue());
@@ -54,7 +67,8 @@ class ContractContractRuleFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_set_the_rule_should_be_updated() {
+    void update_allDescMembersNotNull_returnUpdatedContractRule() {
+        /* ARRANGE */
         var rule = factory.create(getValidDesc());
 
         assertNotNull(rule);
@@ -64,8 +78,11 @@ class ContractContractRuleFactoryTest {
         var lastModificationDateBefore = rule.getLastModificationDate();
 
         var desc = getUpdatedDesc();
+
+        /* ACT */
         factory.update(rule, desc);
 
+        /* ASSERT */
         assertNotNull(rule);
         assertEquals(desc.getTitle(), rule.getTitle());
         assertEquals(desc.getRule(), rule.getValue());
@@ -77,7 +94,8 @@ class ContractContractRuleFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_rule_should_be_updated() {
+    void update_allDescMembersNull_returnDefaultContractRule() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var rule = factory.create(initialDesc);
 
@@ -88,8 +106,11 @@ class ContractContractRuleFactoryTest {
         var lastModificationDateBefore = rule.getLastModificationDate();
 
         var desc = getDescWithNullMembers();
+
+        /* ACT */
         factory.update(rule, desc);
 
+        /* ASSERT */
         assertNotNull(rule);
         assertNotNull(rule.getTitle());
         assertNotNull(rule.getValue());
@@ -101,42 +122,66 @@ class ContractContractRuleFactoryTest {
     }
 
     @Test
-    void when_rule_update_does_result_in_change_return_true() {
+    void update_changeValidDesc_true() {
+        /* ARRANGE */
         var rule = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
         assertTrue(factory.update(rule, getUpdatedDesc()));
     }
 
     @Test
-    void when_rule_update_does_result_in_no_change_return_false() {
+    void update_sameValidDesc_false() {
+        /* ARRANGE */
         var rule = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
         assertFalse(factory.update(rule, getValidDesc()));
     }
 
     @Test
-    void when_the_rule_is_null_the_desc_is_set_on_update_should_throw_exception() {
+    void update_nullResourceValidDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var desc = getValidDesc();
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, desc);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_rule_is_null_the_desc_is_null_on_update_should_throw_exception() {
+    void update_nullResourceNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_rule_is_set_the_desc_is_null_on_update_should_throw_exception() {
+    void update_validResourceNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var rule = factory.create(initialDesc);
 
         assertNotNull(rule);
 
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(rule, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     ContractRuleDesc getValidDesc() {
