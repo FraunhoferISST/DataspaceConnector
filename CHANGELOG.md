@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.0.2] - 2021-02-04
+
+### Added
+- Add message handler for `ContractAgreementMessage`.
+
+### Changed
+- Answer with a `MessageProcessedNotificationMessage` to the consumer's `ContractAgreementMessage`.
+- Save the `ContractAgreement` to the database and the Clearing House when the second 
+`AgreementMessage` has been processed.
+- Refine exception handling in the message building and sending process.
+
+### Fixed
+- Send `ContractAgreementMessage` as request message.
+
 ## [4.0.1] - 2021-01-28
 
 ### Changed
