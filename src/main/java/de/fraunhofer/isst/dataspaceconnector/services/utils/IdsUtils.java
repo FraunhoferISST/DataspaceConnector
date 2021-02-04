@@ -139,6 +139,19 @@ public class IdsUtils {
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
+        
+        // Build the connector endpoint
+        ConnectorEndpoint ce;
+        if (resource.getResourceMetadata().getEndpointDocumentation() != null) {
+            ce = new ConnectorEndpointBuilder(
+                    configurationContainer.getConnector().getHasDefaultEndpoint().getId())
+                    ._accessURL_(configurationContainer.getConnector().getHasDefaultEndpoint().getAccessURL())
+                    ._endpointDocumentation_(Util.asList(resource.getResourceMetadata().getEndpointDocumentation()))
+                    .build();
+        } else {
+            ce = configurationContainer.getConnector().getHasDefaultEndpoint();
+        }
+
 
         // Build the ids resource.
         try {
@@ -152,8 +165,7 @@ public class IdsUtils {
                 ._modified_(getGregorianOf(resource.getModified()))
                 ._publisher_(metadata.getOwner())
                 ._representation_(representations)
-                ._resourceEndpoint_(
-                    Util.asList(configurationContainer.getConnector().getHasDefaultEndpoint()))
+                ._resourceEndpoint_(Util.asList(ce))
                 ._standardLicense_(metadata.getLicense())
                 ._title_(Util.asList(new TypedLiteral(metadata.getTitle(), language)))
                 ._version_(metadata.getVersion())
