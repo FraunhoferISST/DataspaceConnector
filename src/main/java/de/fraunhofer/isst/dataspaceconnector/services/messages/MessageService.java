@@ -70,17 +70,17 @@ public abstract class MessageService {
      * Build an IDS message as request header.
      *
      * @return the message.
-     * @throws MessageException if the message could not be created.
+     * @throws MessageBuilderException if the message could not be created.
      */
-    public abstract Message buildRequestHeader() throws MessageException;
+    public abstract Message buildRequestHeader() throws MessageBuilderException;
 
     /**
      * Build an IDS message as response header.
      *
      * @return the message.
-     * @throws MessageException if the message could not be created.
+     * @throws MessageBuilderException if the message could not be created.
      */
-    public abstract Message buildResponseHeader() throws MessageException;
+    public abstract Message buildResponseHeader() throws MessageBuilderException;
 
     /**
      * Returns the recipient.
@@ -97,13 +97,13 @@ public abstract class MessageService {
     }
 
     /**
-     * Sends an IDS message with header and payload using the IDS Framework.
+     * Sends an IDS request message with header and payload using the IDS Framework.
      *
      * @param payload the message payload.
      * @return the HTTP response.
      * @throws MessageException if a header could not be built or the message could not be sent.
      */
-    public Map<String, String> sendMessage(String payload) throws MessageException {
+    public Map<String, String> sendRequestMessage(String payload) throws MessageException {
         Message message;
         try {
             message = buildRequestHeader();
@@ -118,9 +118,37 @@ public abstract class MessageService {
         } catch (ClaimsException exception) {
             LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
             throw new MessageResponseException("Unexpected message answer.", exception);
-        } catch (MessageNotSentException | FileUploadException | IOException exception) {
+        } catch (FileUploadException | IOException exception) {
             LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be sent.", exception);
+            throw new MessageNotSentException("Message could not be sent.", exception);
+        }
+    }
+
+    /**
+     * Sends an IDS response message with header and payload using the IDS Framework.
+     *
+     * @param payload the message payload.
+     * @return the HTTP response.
+     * @throws MessageException if a header could not be built or the message could not be sent.
+     */
+    public Map<String, String> sendResponseMessage(String payload) throws MessageException {
+        Message message;
+        try {
+            message = buildResponseHeader();
+        } catch (MessageBuilderException exception) {
+            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
+            throw new MessageBuilderException("Message could not be built.", exception);
+        }
+
+        try {
+            MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
+            return idsHttpService.sendAndCheckDat(body, getRecipient());
+        } catch (ClaimsException exception) {
+            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
+            throw new MessageResponseException("Unexpected message answer.", exception);
+        } catch (FileUploadException | IOException exception) {
+            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
+            throw new MessageNotSentException("Message could not be sent.", exception);
         }
     }
 

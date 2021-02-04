@@ -37,16 +37,16 @@ import java.net.URI;
 import java.util.UUID;
 
 /**
- * This @{@link ArtifactMessageHandler} handles all
+ * This @{@link ArtifactRequestHandler} handles all
  * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part
  * one in the multipart message. This header must have the correct '@type' reference as defined in
  * the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
-public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessageImpl> {
+public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
     private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
@@ -67,11 +67,11 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
-    public ArtifactMessageHandler(OfferedResourceServiceImpl offeredResourceService,
-        PolicyHandler policyHandler, NegotiationService negotiationService,
-        ArtifactMessageService messageService,
-        ContractAgreementService contractAgreementService,
-        ConfigurationContainer configurationContainer)
+    public ArtifactRequestHandler(OfferedResourceServiceImpl offeredResourceService,
+                                  PolicyHandler policyHandler, NegotiationService negotiationService,
+                                  ArtifactMessageService messageService,
+                                  ContractAgreementService contractAgreementService,
+                                  ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -122,7 +122,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
         // Check if version is supported.
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
                 "Information model version not supported.",
