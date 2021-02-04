@@ -11,16 +11,29 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/**
+ * An artifact stores and encapsulates data.
+ */
 @lombok.Data
 @Entity
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Artifact extends BaseResource {
-    private String title;
-    //Long byteSize;
-    //Long checksum;
 
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * The title of the catalog.
+     **/
+    private String title;
+
+    /**
+     * The data stored in the artifact.
+     **/
     @OneToOne(cascade = CascadeType.REMOVE)
     @JsonInclude
     @ToString.Exclude

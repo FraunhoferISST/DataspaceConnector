@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.net.URI;
+import java.net.URL;
 
 @lombok.Data
 @Entity
@@ -14,7 +15,7 @@ import java.net.URI;
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class RemoteData extends Data {
-    private URI accessUrl;
+    private URL accessUrl;
     private String username;
     private String password;
 }

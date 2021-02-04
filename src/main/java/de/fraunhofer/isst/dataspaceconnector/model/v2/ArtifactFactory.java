@@ -2,8 +2,10 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import org.springframework.stereotype.Component;
 
+import java.net.URL;
+
 /**
- * This class creates and updates Artifact.
+ * Creates and updates an artifact.
  */
 @Component
 public final class ArtifactFactory implements BaseFactory<Artifact,
@@ -16,6 +18,12 @@ public final class ArtifactFactory implements BaseFactory<Artifact,
         // This constructor is intentionally empty. Nothing to do here.
     }
 
+    /**
+     * Create a new artifact.
+     *
+     * @param desc The description of the new artifact.
+     * @return The new artifact.
+     */
     @Override
     public Artifact create(final ArtifactDesc desc) {
         final var artifact = new Artifact();
@@ -24,6 +32,13 @@ public final class ArtifactFactory implements BaseFactory<Artifact,
         return artifact;
     }
 
+    /**
+     * Update an artifact.
+     *
+     * @param artifact The artifact to be updated.
+     * @param desc     The new artifact description.
+     * @return True if the artifact has been modified.
+     */
     @Override
     public boolean update(final Artifact artifact, final ArtifactDesc desc) {
         final var updatedTitle = updateTitle(artifact, desc.getTitle());
@@ -33,7 +48,7 @@ public final class ArtifactFactory implements BaseFactory<Artifact,
     }
 
     private boolean updateTitle(final Artifact artifact, final String title) {
-        final var newTitle = title != null ? title : "";
+        final var newTitle = title == null ? "" : title;
         final var updateTitle = !newTitle.equals(artifact.getTitle());
         if (updateTitle) {
             artifact.setTitle(newTitle);
@@ -42,26 +57,60 @@ public final class ArtifactFactory implements BaseFactory<Artifact,
         return updateTitle;
     }
 
-    private static boolean updateData(final Artifact artifact,
-                                      final ArtifactDesc desc) {
-        final var isRemoteData = desc.getAccessUrl() != null
-                && desc.getAccessUrl().toString().length() > 0;
-
-        // TODO : Check if the data is really updated.
-        if (isRemoteData) {
-            final var data = new RemoteData();
-            data.setAccessUrl(desc.getAccessUrl());
-            data.setUsername(desc.getUsername());
-            data.setPassword(desc.getPassword());
-
-            artifact.setData(data);
-            return true;
+    private boolean updateData(final Artifact artifact,
+                               final ArtifactDesc desc) {
+        if (isRemoteData(desc)) {
+            return updateRemoteData(artifact, desc.getAccessUrl(),
+                    desc.getUsername(), desc.getUsername());
         } else {
-            final var data = new LocalData();
-            data.setValue(desc.getValue());
+            return updateLocalData(artifact, desc.getValue());
+        }
+    }
 
-            artifact.setData(data);
+    private static boolean isRemoteData(final ArtifactDesc desc) {
+        return desc.getAccessUrl() != null
+                && desc.getAccessUrl().toString().length() > 0;
+    }
+
+    private boolean updateLocalData(final Artifact artifact,
+                                    final String value) {
+        final var newData = new LocalData();
+        newData.setValue(value);
+
+        final var oldData = artifact.getData();
+        if (oldData instanceof LocalData) {
+            if (!oldData.equals(newData)) {
+                artifact.setData(newData);
+                return true;
+            }
+        } else {
+            artifact.setData(newData);
             return true;
         }
+
+        return false;
+    }
+
+    private boolean updateRemoteData(final Artifact artifact,
+                                     final URL accessUrl,
+                                     final String username,
+                                     final String password) {
+        final var newData = new RemoteData();
+        newData.setAccessUrl(accessUrl);
+        newData.setUsername(username);
+        newData.setPassword(password);
+
+        final var oldData = artifact.getData();
+        if (oldData instanceof RemoteData) {
+            if (!oldData.equals(newData)) {
+                artifact.setData(newData);
+                return true;
+            }
+        } else {
+            artifact.setData(newData);
+            return true;
+        }
+
+        return false;
     }
 }
