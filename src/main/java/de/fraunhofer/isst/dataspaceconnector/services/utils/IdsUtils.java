@@ -140,6 +140,22 @@ public class IdsUtils {
             }
         }
 
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
+        // Build the connector endpoint
+        ConnectorEndpoint ce;
+        if (resource.getResourceMetadata().getEndpointDocumentation() != null) {
+            ce = new ConnectorEndpointBuilder(connector.getHasDefaultEndpoint().getId())
+                    ._accessURL_(connector.getHasDefaultEndpoint().getAccessURL())
+                    ._endpointDocumentation_(Util.asList(
+                            resource.getResourceMetadata().getEndpointDocumentation()))
+                    .build();
+        } else {
+            ce = connector.getHasDefaultEndpoint();
+        }
+
+
         // Build the ids resource.
         try {
             return new ResourceBuilder(
@@ -152,8 +168,7 @@ public class IdsUtils {
                 ._modified_(getGregorianOf(resource.getModified()))
                 ._publisher_(metadata.getOwner())
                 ._representation_(representations)
-                ._resourceEndpoint_(
-                    Util.asList(configurationContainer.getConnector().getHasDefaultEndpoint()))
+                ._resourceEndpoint_(Util.asList(ce))
                 ._standardLicense_(metadata.getLicense())
                 ._title_(Util.asList(new TypedLiteral(metadata.getTitle(), language)))
                 ._version_(metadata.getVersion())
