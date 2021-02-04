@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
+import com.microsoft.schemas.office.x2006.encryption.CTKeyEncryptor;
+
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -21,12 +24,21 @@ public final class MetaDataUtils {
         return Optional.empty();
     }
 
+    public static Optional<URI> updateUri(final URI oldUri, final URI newUri,
+                                                         final URI defaultUri) {
+        final var newValue = newUri == null ? defaultUri : newUri;
+        if (oldUri == null || !oldUri.equals(newValue)) {
+            return Optional.of(newValue);
+        }
+
+        return Optional.empty();
+    }
+
     public static Optional<List<String>> updateStringList(
             final List<String> oldList,
             final List<String> newList,
             final List<String> defaultList) {
-        final var newValues = newList == null ? defaultList : newList;
-        cleanStringList(newValues);
+        final var newValues = cleanStringList(newList == null ? defaultList : newList);
 
         if (oldList == null || !oldList.equals(newValues)) {
             return Optional.of(newValues);
@@ -35,16 +47,17 @@ public final class MetaDataUtils {
         return Optional.empty();
     }
 
-    public static void cleanStringList(final List<String> list) {
-        removeNullFromList(list);
-        removeEmptyStringFromList(list);
+    public static List<String> cleanStringList(final List<String> list) {
+        var result = removeNullFromList(list);
+        result = removeEmptyStringFromList(result);
+        return result;
     }
 
-    public static <T> void removeNullFromList(final List<T> list) {
-        list.removeIf(Objects::isNull);
+    public static <T> List<T> removeNullFromList(final List<T> list) {
+        return list.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public static void removeEmptyStringFromList(final List<String> list) {
-        list.removeIf(String::isEmpty);
+    public static List<String> removeEmptyStringFromList(final List<String> list) {
+        return list.stream().filter(x -> !x.isEmpty()).collect(Collectors.toList());
     }
 }

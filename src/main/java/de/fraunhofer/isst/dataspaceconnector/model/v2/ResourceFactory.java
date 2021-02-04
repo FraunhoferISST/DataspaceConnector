@@ -101,9 +101,9 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
     private boolean updatePublisher(final Resource resource,
                                     final URI publisher) {
         final var newPublisher =
-                MetaDataUtils.updateString(resource.getPublisher().toString(),
-                        publisher.toString(), "");
-        newPublisher.ifPresent(s -> resource.setPublisher(URI.create(s)));
+                MetaDataUtils.updateUri(resource.getPublisher(),
+                        publisher, URI.create(""));
+        newPublisher.ifPresent(resource::setPublisher);
 
         return newPublisher.isPresent();
     }
@@ -121,9 +121,9 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
     private boolean updateLicence(final Resource resource,
                                   final URI licence) {
         final var newLicence =
-                MetaDataUtils.updateString(resource.getLicence().toString(),
-                        licence.toString(), "");
-        newLicence.ifPresent(s -> resource.setPublisher(URI.create(s)));
+                MetaDataUtils.updateUri(resource.getLicence(),
+                        licence, URI.create(""));
+        newLicence.ifPresent(resource::setLicence);
 
         return newLicence.isPresent();
     }
