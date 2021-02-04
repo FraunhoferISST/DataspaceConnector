@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
         final var resource = new Resource();
         resource.setRepresentations(new HashMap<>());
         resource.setContracts(new HashMap<>());
+        resource.setKeywords(new ArrayList<>());
         // Set to -1 the following update will increment it to 0
         resource.setVersion(-1);
 
