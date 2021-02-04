@@ -25,16 +25,16 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 /**
- * This @{@link DescriptionMessageHandler} handles all
+ * This @{@link DescriptionRequestHandler} handles all
  * incoming messages that have a {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
  * in the {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
-public class DescriptionMessageHandler implements MessageHandler<DescriptionRequestMessageImpl> {
+public class DescriptionRequestHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestHandler.class);
 
     private final DescriptionMessageService messageService;
     private final ResourceService resourceService;
@@ -49,8 +49,8 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
-    public DescriptionMessageHandler(ConfigurationContainer configurationContainer,
-        DescriptionMessageService messageService, OfferedResourceServiceImpl offeredResourceService)
+    public DescriptionRequestHandler(ConfigurationContainer configurationContainer,
+                                     DescriptionMessageService messageService, OfferedResourceServiceImpl offeredResourceService)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -88,7 +88,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
         // Check if version is supported.
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
                 "Information model version not supported.",

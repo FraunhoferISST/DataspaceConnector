@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
@@ -60,7 +60,7 @@ public class NotificationMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildRequestHeader() throws MessageException {
+    public Message buildRequestHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
@@ -78,7 +78,7 @@ public class NotificationMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildResponseHeader() throws MessageException {
+    public Message buildResponseHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
