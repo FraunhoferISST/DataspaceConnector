@@ -41,9 +41,13 @@ class ResourceFactoryTest {
 
     @Test
     void create_allDescMembersNotNull_returnResource() {
+        /* ARRANGE */
         final var desc = getValidDesc();
+
+        /* ACT */
         final var resource = factory.create(desc);
 
+        /* ASSERT */
         assertNotNull(resource);
         assertEquals(desc.getTitle(), resource.getTitle());
         assertEquals(desc.getDescription(), resource.getDescription());
