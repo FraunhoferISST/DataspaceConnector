@@ -4,7 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,16 +26,21 @@ class ResourceFactoryTest {
     private ResourceFactory factory;
 
     @Test
-    void when_passed_desc_is_null_on_creation_should_throw_exception() {
+    void create_nullDesc_throwNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.create(null);
         });
 
+        /* ASSERT */
         assertNotNull(exception);
     }
 
     @Test
-    void when_all_desc_members_are_set_resource_should_be_created() {
+    void create_allDescMembersNotNull_returnResource() {
         final var desc = getValidDesc();
         final var resource = factory.create(desc);
 
@@ -53,10 +63,26 @@ class ResourceFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_resource_should_be_created() {
-        final var desc = getDescWithNullMembers();
+    void create_KeywordsContainsNullOrEmpty_returnFilteredKeywordsResource() {
+        /* ARRANGE */
+        final var desc = getValidDescKeywordsContainsNullOrEmpty();
+
+        /* ACT */
         final var resource = factory.create(desc);
 
+        /* ASSERT */
+        assertEquals(getValidDesc().getKeywords(), resource.getKeywords());
+    }
+
+    @Test
+    void create_allDescMembersNull_returnDefaultResource() {
+        /* ARRANGE */
+        final var desc = getDescWithNullMembers();
+
+        /* ACT */
+        final var resource = factory.create(desc);
+
+        /* ASSERT */
         assertNotNull(resource);
         assertNotNull(resource.getTitle());
         assertNotNull(resource.getDescription());
@@ -76,7 +102,8 @@ class ResourceFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_set_the_resource_should_be_updated() {
+    void update_allDescMembersNotNull_returnUpdatedResource() {
+        /* ARRANGE */
         var resource = factory.create(getValidDesc());
 
         assertNotNull(resource);
@@ -91,8 +118,11 @@ class ResourceFactoryTest {
         var contractsBefore =
                 ((HashMap<UUID, Contract>) resource.getContracts()).clone();
         var desc = getUpdatedDesc();
+
+        /* ACT */
         factory.update(resource, desc);
 
+        /* ASSERT */
         assertNotNull(resource);
         assertEquals(desc.getTitle(), resource.getTitle());
         assertEquals(desc.getDescription(), resource.getDescription());
@@ -113,7 +143,21 @@ class ResourceFactoryTest {
     }
 
     @Test
-    void when_all_desc_members_are_null_the_resource_should_be_updated() {
+    void update_KeywordsContainsNullOrEmpty_returnFilteredKeywordsResource() {
+        /* ARRANGE */
+        var resource = factory.create(getUpdatedDesc());
+        final var desc = getValidDescKeywordsContainsNullOrEmpty();
+
+        /* ACT */
+        factory.update(resource, desc);
+
+        /* ASSERT */
+        assertEquals(getValidDesc().getKeywords(), resource.getKeywords());
+    }
+
+    @Test
+    void update_allDescMembersNull_returnDefaultResource() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var resource = factory.create(initialDesc);
 
@@ -130,8 +174,11 @@ class ResourceFactoryTest {
                 ((HashMap<UUID, Contract>) resource.getContracts()).clone();
 
         var desc = getDescWithNullMembers();
+
+        /* ACT */
         factory.update(resource, desc);
 
+        /* ASSERT */
         assertNotNull(resource);
         assertNotNull(resource.getTitle());
         assertNotNull(resource.getDescription());
@@ -154,42 +201,66 @@ class ResourceFactoryTest {
     }
 
     @Test
-    void when_resource_update_does_result_in_change_return_true() {
+    void update_changeValidDesc_true() {
+        /* ARRANGE */
         var resource = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
         assertTrue(factory.update(resource, getUpdatedDesc()));
     }
 
     @Test
-    void when_resource_update_does_result_in_no_change_return_false() {
+    void update_sameValidDesc_false() {
+        /* ARRANGE */
         var resource = factory.create(getValidDesc());
+
+        /* ACT && ASSERT */
         assertFalse(factory.update(resource, getValidDesc()));
     }
 
     @Test
-    void when_the_resource_is_null_the_desc_is_set_on_update_should_throw_exception() {
+    void update_nullResourceValidDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var desc = getValidDesc();
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, desc);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_resource_is_null_the_desc_is_null_on_update_should_throw_exception() {
+    void update_nullResourceNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange.
+
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(null, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     @Test
-    void when_the_resource_is_set_the_desc_is_null_on_update_should_throw_exception() {
+    void update_validResourceNullDesc_throwsNullPointerException() {
+        /* ARRANGE */
         var initialDesc = getValidDesc();
         var resource = factory.create(initialDesc);
 
         assertNotNull(resource);
 
+        /* ACT */
         final var exception = assertThrows(NullPointerException.class, () -> {
             factory.update(resource, null);
         });
+
+        /* ASSERT */
+        assertNotNull(exception);
     }
 
     ResourceDesc getValidDesc() {
@@ -197,10 +268,27 @@ class ResourceFactoryTest {
         desc.setTitle("Default");
         desc.setDescription("This is the default catalog containing all "
                 + "available resources.");
-        desc.setKeywords("Generic");
-        desc.setPublisher("Someone");
+        desc.setKeywords(new ArrayList<>(Arrays.asList("Hello", "World")));
+        desc.setPublisher(URI.create("Someone"));
         desc.setLanguage("English");
-        desc.setLicence("MIT");
+        desc.setLicence(URI.create("MIT"));
+
+        return desc;
+    }
+
+    ResourceDesc getValidDescKeywordsContainsNullOrEmpty() {
+        var desc = getValidDesc();
+
+        final var rnd = new Random();
+        // Add N times null
+        final var numNull = rnd.nextInt(32);
+        for(int i = 0; i < numNull; i++)
+            desc.getKeywords().add(rnd.nextInt(desc.getKeywords().size() - 1), null);
+
+        // Add M times empty
+        final var numEmpty = rnd.nextInt(32);
+        for(int i = 0; i < numEmpty; i++)
+            desc.getKeywords().add(rnd.nextInt(desc.getKeywords().size() - 1), "");
 
         return desc;
     }
@@ -209,10 +297,10 @@ class ResourceFactoryTest {
         var desc = new ResourceDesc();
         desc.setTitle("The new default");
         desc.setDescription("The new description");
-        desc.setKeywords("NewGeneric");
-        desc.setPublisher("Someone else");
+        desc.setKeywords(new ArrayList<>(Collections.singletonList("Greetings")));
+        desc.setPublisher(URI.create("SomeoneElse"));
         desc.setLanguage("German");
-        desc.setLicence("Apache");
+        desc.setLicence(URI.create("Apache"));
 
         return desc;
     }
