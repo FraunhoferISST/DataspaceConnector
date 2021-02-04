@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.0] - 2021-02-04
+
+### Added
+- Add attribute for endpoint documentation reference to `ResourceMetadata`.
+
 ## [4.0.2] - 2021-02-04
 
 ### Added
