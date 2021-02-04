@@ -140,16 +140,19 @@ public class IdsUtils {
             }
         }
 
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         // Build the connector endpoint
         ConnectorEndpoint ce;
         if (resource.getResourceMetadata().getEndpointDocumentation() != null) {
-            ce = new ConnectorEndpointBuilder(
-                    configurationContainer.getConnector().getHasDefaultEndpoint().getId())
-                    ._accessURL_(configurationContainer.getConnector().getHasDefaultEndpoint().getAccessURL())
-                    ._endpointDocumentation_(Util.asList(resource.getResourceMetadata().getEndpointDocumentation()))
+            ce = new ConnectorEndpointBuilder(connector.getHasDefaultEndpoint().getId())
+                    ._accessURL_(connector.getHasDefaultEndpoint().getAccessURL())
+                    ._endpointDocumentation_(Util.asList(
+                            resource.getResourceMetadata().getEndpointDocumentation()))
                     .build();
         } else {
-            ce = configurationContainer.getConnector().getHasDefaultEndpoint();
+            ce = connector.getHasDefaultEndpoint();
         }
 
 
