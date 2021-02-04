@@ -175,7 +175,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         String data = null;
                         try {
                             // Get the data from source.
-                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8), QueryInput.class);
+                            QueryInput queryInputData = objectMapper.readValue(
+                                    IOUtils.toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8),
+                                    QueryInput.class);
                             data = resourceService.getDataByRepresentation(resourceId, artifactId, queryInputData);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
@@ -202,9 +204,15 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
-                        } catch (IOException e) {
-                            // TODO: Adjust
-                            e.printStackTrace();
+                        } catch (IOException exception) {
+                            LOGGER.debug("Message payload could not be read. "
+                                            + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
+                                    requestMessage.getId(), resourceId, artifactId,
+                                    exception.getMessage());
+                            return ErrorResponse
+                                    .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                                            "Message payload could not be read.", connector.getId(),
+                                            connector.getOutboundModelVersion());
                         }
     
                         // Build artifact response.
