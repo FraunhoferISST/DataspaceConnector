@@ -39,7 +39,7 @@ public class RepresentationFactory implements BaseFactory<Representation,
         final var hasUpdatedLanguage = this.updateLanguage(representation,
                 desc.getLanguage());
         final var hasUpdatedMediaType = this.updateMediaType(representation,
-                representation.getMediaType());
+                desc.getType());
 
         return hasUpdatedTitle || hasUpdatedLanguage || hasUpdatedMediaType;
     }
