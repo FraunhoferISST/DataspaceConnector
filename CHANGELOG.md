@@ -5,12 +5,15 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Add message handler for `ContractAgreementMessage`.
+- Add support for query params and additional headers when requesting artifacts
+- Add input validation for query params and headers
 
 ### Changed
 - Answer with a `MessageProcessedNotificationMessage` to the consumer's `ContractAgreementMessage`.
 - Save the `ContractAgreement` to the database and the Clearing House when the second 
 `AgreementMessage` has been processed.
 - Refine exception handling in the message building and sending process.
+- Configure Spring to fail on unknown properties in request bodies
 
 ### Fixed
 - Send `ContractAgreementMessage` as request message.
