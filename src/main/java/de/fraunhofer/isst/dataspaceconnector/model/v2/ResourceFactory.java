@@ -1,18 +1,31 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
+/**
+ * Creates and updates a resource.
+ */
 @Component
 public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
+
+    /**
+     * Create a new resource.
+     *
+     * @param desc The description of the new resource.
+     * @return The new resource.
+     */
     @Override
     public Resource create(final ResourceDesc desc) {
-        var resource = new Resource();
+        final var resource = new Resource();
         resource.setRepresentations(new HashMap<>());
         resource.setContracts(new HashMap<>());
+        // Set to -1 the following update will increment it to 0
         resource.setVersion(-1);
 
         update(resource, desc);
@@ -20,52 +33,96 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
         return resource;
     }
 
+    /**
+     * Update a resource.
+     *
+     * @param resource The resource to be updated.
+     * @param desc     The new resource description.
+     * @return True if the resource has been modified.
+     */
     @Override
     public boolean update(final Resource resource, final ResourceDesc desc) {
-        var needsVersionUpdate = false;
+        final var hasUpdatedTitle = this.updateTitle(resource,
+                desc.getTitle());
+        final var hasUpdatedDesc = this.updateDescription(resource,
+                desc.getDescription());
+        final var hasUpdatedKeywords = this.updateKeywords(resource,
+                desc.getKeywords());
+        final var hasUpdatedPublisher = this.updatePublisher(resource,
+                desc.getPublisher());
+        final var hasUpdatedLanguage = this.updateLanguage(resource,
+                desc.getLanguage());
+        final var hasUpdatedLicence = this.updateLicence(resource,
+                desc.getLicence());
 
-        var newTitle = desc.getTitle() != null ? desc.getTitle() : "";
-        if (!newTitle.equals(resource.getTitle())) {
-            resource.setTitle(newTitle);
-            needsVersionUpdate = true;
-        }
+        final var hasUpdated = hasUpdatedTitle || hasUpdatedDesc
+                || hasUpdatedKeywords || hasUpdatedPublisher
+                || hasUpdatedLanguage || hasUpdatedLicence;
 
-        var newDescription = desc.getDescription() != null
-                ? desc.getDescription() : "";
-        if (!newDescription.equals(resource.getDescription())) {
-            resource.setDescription(newDescription);
-            needsVersionUpdate = true;
-        }
-
-        var newKeywords = desc.getKeywords() != null ? desc.getKeywords() : new ArrayList<String>();
-        if (!newKeywords.equals(resource.getKeywords())) {
-            resource.setKeywords(newKeywords);
-            needsVersionUpdate = true;
-        }
-
-        var newPublisher = desc.getPublisher() != null ? desc.getPublisher()
-                : URI.create("");
-        if (!newPublisher.equals(resource.getPublisher())) {
-            resource.setPublisher(newPublisher);
-            needsVersionUpdate = true;
-        }
-
-        var newLanguage = desc.getLanguage() != null ? desc.getLanguage() : "";
-        if (!newLanguage.equals(resource.getLanguage())) {
-            resource.setLanguage(newLanguage);
-            needsVersionUpdate = true;
-        }
-
-        var newLicence = desc.getLicence() != null ? desc.getLicence() : URI.create("");
-        if (!newLicence.equals(resource.getLicence())) {
-            resource.setLicence(newLicence);
-            needsVersionUpdate = true;
-        }
-
-        if (needsVersionUpdate) {
+        if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
         }
 
-        return needsVersionUpdate;
+        return hasUpdated;
+    }
+
+    private boolean updateTitle(final Resource resource,
+                                final String title) {
+        final var newTitle =
+                MetaDataUtils.updateString(resource.getTitle(),
+                        title, "");
+        newTitle.ifPresent(resource::setTitle);
+
+        return newTitle.isPresent();
+    }
+
+    private boolean updateDescription(final Resource resource,
+                                      final String description) {
+        final var newDesc =
+                MetaDataUtils.updateString(resource.getDescription(),
+                        description, "");
+        newDesc.ifPresent(resource::setDescription);
+
+        return newDesc.isPresent();
+    }
+
+    private boolean updateKeywords(final Resource resource,
+                                   final List<String> keywords) {
+        final var newKeys =
+                MetaDataUtils.updateStringList(resource.getKeywords(),
+                        keywords, Collections.singletonList(""));
+        newKeys.ifPresent(resource::setKeywords);
+
+        return newKeys.isPresent();
+    }
+
+    private boolean updatePublisher(final Resource resource,
+                                    final URI publisher) {
+        final var newPublisher =
+                MetaDataUtils.updateString(resource.getPublisher().toString(),
+                        publisher.toString(), "");
+        newPublisher.ifPresent(s -> resource.setPublisher(URI.create(s)));
+
+        return newPublisher.isPresent();
+    }
+
+    private boolean updateLanguage(final Resource resource,
+                                   final String language) {
+        final var newLanguage =
+                MetaDataUtils.updateString(resource.getLanguage(), language,
+                        "");
+        newLanguage.ifPresent(resource::setLanguage);
+
+        return newLanguage.isPresent();
+    }
+
+    private boolean updateLicence(final Resource resource,
+                                  final URI licence) {
+        final var newLicence =
+                MetaDataUtils.updateString(resource.getLicence().toString(),
+                        licence.toString(), "");
+        newLicence.ifPresent(s -> resource.setPublisher(URI.create(s)));
+
+        return newLicence.isPresent();
     }
 }
