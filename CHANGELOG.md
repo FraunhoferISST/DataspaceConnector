@@ -7,6 +7,11 @@ All notable changes to this project will be documented in this file.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
 - Store `ownerURI` and `originalUUID` in `RequestedResource`.
 - Store `contract` URI in `ResourceRepresentation`.
+- Add support for query params and additional headers when requesting artifacts.
+- Add input validation for query params and headers.
+
+### Changed
+- Configure Spring to fail on unknown properties in request bodies.
 
 ## [4.0.2] - 2021-02-04
 
