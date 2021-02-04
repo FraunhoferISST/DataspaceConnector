@@ -2,7 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.net.URI;
 
 @Component
 public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
@@ -35,14 +37,14 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
             needsVersionUpdate = true;
         }
 
-        var newKeywords = desc.getKeywords() != null ? desc.getKeywords() : "";
+        var newKeywords = desc.getKeywords() != null ? desc.getKeywords() : new ArrayList<String>();
         if (!newKeywords.equals(resource.getKeywords())) {
             resource.setKeywords(newKeywords);
             needsVersionUpdate = true;
         }
 
         var newPublisher = desc.getPublisher() != null ? desc.getPublisher()
-                : "";
+                : URI.create("");
         if (!newPublisher.equals(resource.getPublisher())) {
             resource.setPublisher(newPublisher);
             needsVersionUpdate = true;
@@ -54,7 +56,7 @@ public class ResourceFactory implements BaseFactory<Resource, ResourceDesc> {
             needsVersionUpdate = true;
         }
 
-        var newLicence = desc.getLicence() != null ? desc.getLicence() : "";
+        var newLicence = desc.getLicence() != null ? desc.getLicence() : URI.create("");
         if (!newLicence.equals(resource.getLicence())) {
             resource.setLicence(newLicence);
             needsVersionUpdate = true;

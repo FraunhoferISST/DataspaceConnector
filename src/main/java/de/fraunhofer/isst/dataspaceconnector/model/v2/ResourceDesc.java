@@ -3,13 +3,16 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.net.URI;
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ResourceDesc extends BaseDescription<Resource> {
     private String title;
     private String description;
-    private String keywords;
-    private String publisher;
+    private List<String> keywords;
+    private URI publisher;
     private String language;
-    private String licence;
+    private URI licence;
 }
