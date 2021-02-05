@@ -205,7 +205,8 @@ public final class EndpointService {
     private static boolean redirectToEndpoint(final Endpoint endpoint,
                                               final Endpoint target) {
         final var updateInternalId = getInternalId(endpoint) != null;
-        final var updateLocation = !endpoint.getNewLocation().equals(endpoint);
+        final var updateLocation = endpoint.getNewLocation() == null ||
+                !endpoint.getNewLocation().equals(endpoint);
 
         if (updateInternalId) {
             endpoint.setInternalId(null);
