@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * This class provides endpoints for basic connector services.
  */
 @RestController
-@Tag(name = "Connector: Selfservice", description = "Endpoints for connector information")
+@Tag(name = "Connector", description = "Endpoints for connector information and configuration")
 public class MainController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
@@ -90,7 +90,7 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @Operation(summary = "Public Endpoint for Connector Self-description",
+    @Operation(summary = "Public IDS self-description",
         description = "Get the connector's reduced self-description.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -125,12 +125,12 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @Operation(summary = "Connector Self-description",
-        description = "Get the connector's self-description.")
+    @Operation(summary = "Private IDS self-description",
+        description = "Get the connector's self-description with all catalogs.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = {"/admin/api/connector"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/api/self-description"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
         try {
@@ -160,10 +160,10 @@ public class MainController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Policy Negotiation Status",
+    @Operation(summary = "Set policy negotiation status",
         description = "Turn the policy negotiation on or off.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
-    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.PUT)
+    @RequestMapping(value = {"/api/configuration/contract-negotiation"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
         negotiationService.setStatus(status);
@@ -180,10 +180,10 @@ public class MainController {
      *
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Policy Negotiation Status Check",
+    @Operation(summary = "Policy negotiation status check",
         description = "Return the policy negotiation status.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
-    @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/api/configuration/contract-negotiation"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getNegotiationStatus() {
         if (negotiationService.isStatus()) {
@@ -199,10 +199,10 @@ public class MainController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Allowing Unsupported Patterns", description = "Allow "
+    @Operation(summary = "Allow unsupported patterns", description = "Allow "
         + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
-    @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
+    @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus(@RequestParam("status") boolean status) {
         policyHandler.setIgnoreUnsupportedPatterns(status);
@@ -221,10 +221,10 @@ public class MainController {
      *
      * @return Http ok or error response.
      */
-    @Operation(summary = "Endpoint for Pattern Checking",
+    @Operation(summary = "Return pattern validation status",
         description = "Return if unsupported patterns are ignored when requesting data.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
-    @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus() {
         if (policyHandler.isIgnoreUnsupportedPatterns()) {

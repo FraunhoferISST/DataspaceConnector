@@ -23,8 +23,8 @@ import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUti
  * This class provides endpoints for connector configurations via a connected config manager.
  */
 @RestController
-@RequestMapping("/admin/api")
-@Tag(name = "Connector Configuration", description = "Endpoints for connector configuration")
+@RequestMapping("/api")
+@Tag(name = "Connector")
 public class ConfigurationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);

@@ -34,9 +34,9 @@ import java.util.UUID;
  * This class provides endpoints for the communication with an IDS connector instance.
  */
 @RestController
-@RequestMapping("/admin/api/request")
-@Tag(name = "Connector: IDS Connector Communication",
-    description = "Endpoints for invoking external connector requests")
+@RequestMapping("/api/ids")
+@Tag(name = "IDS Messages",
+    description = "Endpoints for invoke sending IDS messages")
 public class RequestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
@@ -100,7 +100,7 @@ public class RequestController {
      * @param resourceId        The requested resource uri.
      * @return OK or error response.
      */
-    @Operation(summary = "Description Request",
+    @Operation(summary = "Description request",
         description = "Request metadata from another IDS connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -179,7 +179,7 @@ public class RequestController {
      * @param contractOffer The contract offer for the requested resource.
      * @return OK or error response.
      */
-    @Operation(summary = "Contract Request",
+    @Operation(summary = "Contract request",
         description = "Send a contract request to another IDS connector.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -275,7 +275,7 @@ public class RequestController {
      * @param key               a {@link java.util.UUID} object.
      * @return OK or error response.
      */
-    @Operation(summary = "Artifact Request",
+    @Operation(summary = "Artifact request",
         description = "Request data from another IDS connector. " +
             "INFO: Before an artifact can be requested, the metadata must be queried. The key" +
             " generated in this process must be passed in the artifact query.")

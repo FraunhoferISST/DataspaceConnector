@@ -26,8 +26,8 @@ import java.util.ArrayList;
  * This class provides endpoints exposing example resources and configurations.
  */
 @RestController
-@RequestMapping("/admin/api/example")
-@Tag(name = "Examples", description = "Endpoints for testing purpose")
+@RequestMapping("/api/examples")
+@Tag(name = "Connector", description = "Endpoints for testing purpose")
 public class ExampleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleController.class);
@@ -60,7 +60,7 @@ public class ExampleController {
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get Sample Connector configuration",
+    @Operation(summary = "Get sample connector configuration",
         description = "Get a sample connector configuration for the config.json.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
@@ -115,7 +115,7 @@ public class ExampleController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/policy-validation", method = RequestMethod.POST)
+    @RequestMapping(value = "/policy/validation", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
         @Parameter(description = "The JSON string representing a policy", required = true)
@@ -140,7 +140,7 @@ public class ExampleController {
     @Operation(summary = "Get example policy",
         description = "Get an example policy for a given policy pattern.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
-    @RequestMapping(value = "/usage-policy", method = RequestMethod.POST)
+    @RequestMapping(value = "/policy", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
         @Parameter(description = "The policy pattern.", required = true)
