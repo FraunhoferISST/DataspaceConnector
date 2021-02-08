@@ -27,8 +27,8 @@ import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUti
  * This class provides endpoints for the internal resource handling.
  */
 @RestController
-@RequestMapping("/admin/api/resources")
-@Tag(name = "Backend: Resource Data Handling", description = "Endpoints  for resource data handling")
+@RequestMapping("/api/v1/resources")
+@Tag(name = "Resource Handling")
 public class ResourceDataController { // Header: Content-Type: application/json
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataController.class);
@@ -62,8 +62,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @param data The data string.
      * @return Ok or error response.
      */
-    @Operation(summary = "Publish Resource Data String",
-        description = "Publish resource data as string.")
+    @Operation(summary = "Add local data string",
+        description = "Add local data string to resource.", deprecated = true)
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Resource created"),
         @ApiResponse(responseCode = "400", description = "Invalid resource"),
@@ -101,7 +101,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @param id The resource id.
      * @return Raw data or an error response.
      */
-    @Operation(summary = "Request Data String", description = "Get the resource's data as a string.")
+    @Operation(summary = "Request data string",
+            description = "Get the resource's data as a string.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -155,8 +156,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
      * @param representationId The representation id.
      * @return Raw data or an error response.
      */
-    @Operation(summary = "Request Data String by Representation",
-        description = "Get the resource's data as a string by representation.")
+    @Operation(summary = "Request data string by representation",
+        description = "Get the resource's data as a string by representation.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),

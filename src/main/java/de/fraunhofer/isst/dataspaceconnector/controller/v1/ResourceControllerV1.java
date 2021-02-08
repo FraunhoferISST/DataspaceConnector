@@ -32,8 +32,8 @@ import java.util.UUID;
  * {@link ResourceRepresentation}.
  */
 @RestController
-@RequestMapping("/admin/api/resources")
-@Tag(name = "Connector: Resource Handling", description = "Endpoints  for resource handling")
+@RequestMapping("/api/v1/resources")
+@Tag(name = "Resource Handling", description = "Endpoints for resource handling")
 public class ResourceControllerV1 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceControllerV1.class);
@@ -74,7 +74,8 @@ public class ResourceControllerV1 {
      * @param uuid             The resource uuid.
      * @return The added uuid.
      */
-    @Operation(summary = "Register Resource", description = "Register a resource by its metadata.")
+    @Operation(summary = "Create resource",
+            description = "Register a resource by its metadata.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Resource created"),
             @ApiResponse(responseCode = "400", description = "Invalid resource"),
@@ -117,7 +118,8 @@ public class ResourceControllerV1 {
      * @param resourceMetadata The updated metadata.
      * @return OK or error response.
      */
-    @Operation(summary = "Update Resource", description = "Update the resource's metadata by its uuid.")
+    @Operation(summary = "Update resource",
+            description = "Update the resource's metadata by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Invalid resource"),
@@ -155,7 +157,8 @@ public class ResourceControllerV1 {
      * @param resourceId The resource id.
      * @return Metadata or an error response.
      */
-    @Operation(summary = "Get Resource", description = "Get the resource's metadata by its uuid.")
+    @Operation(summary = "Get resource",
+            description = "Get the resource's metadata by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -207,7 +210,8 @@ public class ResourceControllerV1 {
      * @param resourceId The resource id.
      * @return OK or error response.
      */
-    @Operation(summary = "Delete Resource", description = "Delete a resource by its uuid.")
+    @Operation(summary = "Delete resource",
+            description = "Delete a resource by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found")})
@@ -239,7 +243,8 @@ public class ResourceControllerV1 {
      * @param policy     The resource's usage policy as string.
      * @return OK or an error response.
      */
-    @Operation(summary = "Update Resource Contract", description = "Update the resource's usage policy.")
+    @Operation(summary = "Update resource contract",
+            description = "Update the resource's usage policy.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Invalid resource"),
@@ -287,7 +292,8 @@ public class ResourceControllerV1 {
      * @param resourceId The resource id.
      * @return Contract or an error response.
      */
-    @Operation(summary = "Get Resource Contract", description = "Get the resource's usage policy.")
+    @Operation(summary = "Get resource contract",
+            description = "Get the resource's usage policy.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -344,7 +350,8 @@ public class ResourceControllerV1 {
      * @param resourceId a {@link java.util.UUID} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
-    @Operation(summary = "Get Data Access", description = "Get the number of the resource's data access.")
+    @Operation(summary = "Get data access",
+            description = "Get the number of the resource's data access.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -384,7 +391,8 @@ public class ResourceControllerV1 {
      * @param representation A new representation.
      * @return OK or an error response.
      */
-    @Operation(summary = "Add Representation", description = "Add a representation to a resource.")
+    @Operation(summary = "Add representation",
+            description = "Add a representation to a resource.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Representation created"),
             @ApiResponse(responseCode = "400", description = "Invalid representation"),
@@ -447,7 +455,7 @@ public class ResourceControllerV1 {
      * @return OK or an error response.
      */
     @Operation(summary = "Update representation",
-        description = "Update a resource's representation by its uuid.")
+        description = "Update a resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Invalid representation"),
@@ -493,7 +501,8 @@ public class ResourceControllerV1 {
      * @param representationId The representation id.
      * @return OK or an error response.
      */
-    @Operation(summary = "Get Resource Representation", description = "Get the resource's representation by its uuid.")
+    @Operation(summary = "Get representation",
+            description = "Get the resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -538,8 +547,8 @@ public class ResourceControllerV1 {
      * @param representationId The representation id.
      * @return OK or an error response.
      */
-    @Operation(summary = "Remove Resource Representation",
-        description = "Remove a resource's representation by its uuid.")
+    @Operation(summary = "Remove resource representation",
+        description = "Remove a resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
