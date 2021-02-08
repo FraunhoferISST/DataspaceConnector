@@ -58,8 +58,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @param message        The received notification message.
-     * @param messagePayload The message notification messages content.
+     * @param message        The received ResourceUpdateMessage message.
+     * @param messagePayload The ResourceUpdateMessage messages content.
      * @return The response message.
      * @throws RuntimeException                - if the response body failed to be build.
      */
