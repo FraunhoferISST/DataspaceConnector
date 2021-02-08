@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/representations")
+@RequestMapping("/api/v2/representations")
 public class RepresentationController
         extends BaseResourceController<Representation, RepresentationDesc, RepresentationView,
         CommonService<Representation, RepresentationDesc, RepresentationView>> {
 }
 
 @RestController
-@RequestMapping("/representations/{id}/artifacts")
+@RequestMapping("/api/v2/representations/{id}/artifacts")
 class RepresentationArtifactController extends BaseResourceChildController
         <CommonUniDirectionalLinkerService<RepresentationArtifactLinker>> {
 }

@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/resources")
+@RequestMapping("/api/v2/resources")
 class ResourceController extends BaseResourceController<Resource, ResourceDesc, ResourceView,
         CommonService<Resource, ResourceDesc, ResourceView>> {
 }
 
 @RestController
-@RequestMapping("/resources/{id}/representations")
+@RequestMapping("/api/v2/resources/{id}/representations")
 class ResourceRepresentations extends BaseResourceChildController<CommonUniDirectionalLinkerService<ResourceRepresentationLinker>> {
 }
 
 @RestController
-@RequestMapping("/resources/{id}/contracts")
+@RequestMapping("/api/v2/resources/{id}/contracts")
 class ResourceContracts
         extends BaseResourceChildController<CommonUniDirectionalLinkerService<ResourceContractLinker>> {
 }

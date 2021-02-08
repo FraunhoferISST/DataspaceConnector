@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/contracts")
+@RequestMapping("/api/v2/contracts")
 class ContractController extends BaseResourceController<Contract, ContractDesc, ContractView,
         CommonService<Contract, ContractDesc, ContractView>> {
 }
 
 @RestController
-@RequestMapping("/contracts/{id}/rules")
+@RequestMapping("/api/v2/contracts/{id}/rules")
 class ContractRules extends BaseResourceChildController<CommonUniDirectionalLinkerService<ContractRuleLinker>> {
 }
