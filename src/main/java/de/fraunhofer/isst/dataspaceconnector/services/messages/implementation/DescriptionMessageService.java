@@ -165,7 +165,7 @@ public class DescriptionMessageService extends MessageService {
      * @throws ResourceException if any.
      * @throws InvalidResourceException If the ids object could not be deserialized.
      */
-    public UUID saveMetadata(String response, URI resourceId) throws ResourceException,
+    public UUID saveMetadata(String response, URI resourceId, URI ownerURI) throws ResourceException,
         InvalidResourceException {
         Resource resource;
         try {
@@ -183,7 +183,8 @@ public class DescriptionMessageService extends MessageService {
         }
 
         try {
-            return resourceService.addResource(metadata);
+            return ((RequestedResourceServiceImpl) resourceService)
+                    .addResourceWithInfo(ownerURI, UUIDUtils.uuidFromUri(resourceId), metadata);
         } catch (Exception exception) {
             LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
             throw new ResourceException("Metadata could not be saved to database.");

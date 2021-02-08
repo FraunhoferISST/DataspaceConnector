@@ -2,10 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.*;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
@@ -17,10 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.net.URI;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -68,11 +63,53 @@ public class RequestedResourceServiceImpl implements ResourceService {
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) throws InvalidResourceException {
         final var resource = new RequestedResource(new Date(), new Date(), resourceMetadata, "", 0);
-
         storeResource(resource);
 
         LOGGER.debug("Added a new resource. [resource=({})]", resource);
         return resource.getUuid();
+    }
+
+
+    /**
+     * Saves the resource with its metadata and a given ID.
+     *
+     * @param resourceMetadata the resource's metadata.
+     * @param uuid the ID
+     * @throws InvalidResourceException if the resource is not valid.
+     * @throws ResourceAlreadyExistsException    - if the resource does already exists.
+     */
+
+    public UUID addResourceWithInfo(URI ownerURI, UUID uuid, ResourceMetadata resourceMetadata)
+            throws  InvalidResourceException {
+
+        final var resource = new RequestedResource(new Date(), new Date(), resourceMetadata, "", 0);
+        resource.setOriginalUUID(uuid);
+        resource.setOwnerURI(ownerURI);
+        storeResource(resource);
+
+        LOGGER.debug("Added a new resource. [resource=({})]", resource);
+        return resource.getUuid();
+    }
+
+    /**
+     * Updates resource metadata by ID.
+     *
+     * @param resourceId ID of the resource
+     * @param resourceMetadata the updated metadata
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
+     */
+    public void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws
+            InvalidResourceException, ResourceNotFoundException {
+        final var resource = getResource(resourceId);
+        if (resource == null) {
+            throw new ResourceNotFoundException("The resource does not exist.");
+        }
+
+        resource.setResourceMetadata(resourceMetadata);
+        storeResource(resource);
+        LOGGER.debug("Updated resource. [resourceId=({}), metadata=({})]", resourceId,
+                resourceMetadata);
     }
 
     /**
@@ -139,6 +176,29 @@ public class RequestedResourceServiceImpl implements ResourceService {
         }
     }
 
+    /**
+     * Gets a resource by Original UUID.
+     *
+     * @param originalUUID ID of the resource
+     * @return the linked list of resources, or null if not found
+     */
+    public LinkedList<RequestedResource> getResourcesByOriginalUUID(UUID originalUUID) {
+        LinkedList<RequestedResource> resources = new LinkedList<RequestedResource>();
+        for (RequestedResource resource : getAllResources()) {
+            if (resource.getOriginalUUID() == originalUUID) {
+                resources.add(resource);
+            }
+        }
+        // If no resource found, return null
+        if (resources.isEmpty()) {
+            return null;
+        }
+        else {
+            return resources;
+        }
+    }
+
+
     public List<RequestedResource> getAllResources() {
         return requestedResourceRepository.findAll();
     }
@@ -159,6 +219,19 @@ public class RequestedResourceServiceImpl implements ResourceService {
         }
 
         return resource.getResourceMetadata();
+    }
+
+    /**
+     * Returns all representations of a given resource as a map, where representations are mapped to their IDs.
+     *
+     * @param resourceId ID of the resource
+     * @return the map
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
+     */
+    public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws
+            ResourceNotFoundException, InvalidResourceException {
+        return getMetadata(resourceId).getRepresentations();
     }
 
     /**
@@ -212,17 +285,18 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
     /**
-     * Gets a resource representation by ID.
+     * Finds a representation by ID.
      *
-     * @param resourceId ID of the resource
+     * @param resourceId ID of the resource.
      * @param representationId ID of the representation
      * @return the representation
-     * @throws OperationNotSupportedException always
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
      */
     @Override
-    public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId)
-        throws OperationNotSupportedException {
-        throw new OperationNotSupportedException("Operation not supported.");
+    public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws
+            ResourceNotFoundException, InvalidResourceException {
+        return getAllRepresentations(resourceId).get(representationId);
     }
 
     /**
