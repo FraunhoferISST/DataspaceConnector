@@ -32,9 +32,9 @@ import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUti
  * This class provides endpoints for the communication with an IDS broker instance.
  */
 @RestController
-@RequestMapping("/admin/api/broker")
-@Tag(name = "Connector: IDS Broker Communication",
-    description = "Endpoints for invoking broker communication")
+@RequestMapping("/api/ids/broker")
+@Tag(name = "IDS Messages",
+    description = "Endpoints for invoke sending IDS messages")
 public class BrokerController {
 
     private final DapsTokenProvider tokenProvider;
@@ -76,33 +76,33 @@ public class BrokerController {
     }
 
     /**
-     * Notify an IDS broker of the availability of this connector.
+     * Notify an IDS broker of the availability of this connector or one of its resources.
      *
      * @param url The broker address.
+     * @param resourceId The resource uuid.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Register Connector",
-        description = "Register or update connector at an IDS broker.")
+    @Operation(summary = "Register or update connector/resource",
+        description = "Register or update the connector or a resource at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = {"/register", "/update"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> updateAtBroker(@Parameter(description = "The url of the broker."
-        , required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-    @RequestParam("broker") String url) {
+    public ResponseEntity<String> updateAtBroker(
+            @Parameter(description = "The url of the broker.",
+            required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
+            @RequestParam("broker") String url,
+            @Parameter(description = "The resource id.")
+            @RequestParam(value = "resourceId", required = false) UUID resourceId) {
         // Make sure the request is authorized.
         if (tokenProvider.getDAT() != null) {
-            try {
-                updateConfigModel();
-                // Send the update request to the broker.
-                final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
-                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-            } catch (ConfigurationUpdateException e) {
-                return respondUpdateError(url);
-            } catch (NullPointerException | IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
+            if (resourceId == null) {
+                return updateConnectorAtBroker(url);
+            } else {
+                return updateResourceAtBroker(url, resourceId);
             }
         } else {
             // The request was unauthorized.
@@ -116,28 +116,27 @@ public class BrokerController {
      * @param url The broker address.
      * @return The broker response message or an error.
      */
-    @Operation(summary = "Unregister Connector", description = "Unregister connector at an IDS broker.")
+    @Operation(summary = "Unregister connector/resource", description = "Unregister connector or " +
+            "resource from an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/unregister", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> unregisterAtBroker(
         @Parameter(description = "The url of the broker.",
             required = true, example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-        @RequestParam("broker") String url) {
+        @RequestParam("broker") String url,
+        @Parameter(description = "The resource id.")
+        @RequestParam(value = "resourceId", required = false) UUID resourceId) {
         // Make sure the request is authorized.
         if (tokenProvider.getDAT() != null) {
-            try {
-                updateConfigModel();
-                // Send the unregister request to the broker
-                final var brokerResponse = brokerService.unregisterAtBroker(url);
-                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-            } catch (ConfigurationUpdateException e) {
-                return respondUpdateError(url);
-            } catch (NullPointerException | IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
+            if (resourceId == null) {
+                return unregisterConnectorAtBroker(url);
+            } else {
+                return unregisterResourceAtBroker(url, resourceId);
             }
         } else {
             // The request was unauthorized.
@@ -185,100 +184,6 @@ public class BrokerController {
     }
 
     /**
-     * Update a resource at an ids broker.
-     *
-     * @param url        The broker address.
-     * @param resourceId The resource uuid.
-     * @return The broker response message or an error.
-     */
-    @Operation(summary = "Update Resource at Broker",
-        description = "Update an IDS resource at an IDS broker.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/update/{resource-id}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> updateResourceAtBroker(
-        @Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-        @RequestParam("broker") String url,
-        @Parameter(description = "The resource id.", required = true)
-        @PathVariable("resource-id") UUID resourceId) {
-        // Make sure the request is authorized.
-        if (tokenProvider.getDAT() != null) {
-            try {
-                // Get the resource
-                final var resource =
-                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
-                if (resource == null) {
-                    // The resource could not be found, reject and inform the requester.
-                    return respondResourceNotFound(resourceId);
-                } else {
-                    // The resource has been received, update at broker.
-                    final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
-                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-                }
-            } catch (ClassCastException | NullPointerException exception) {
-                return respondResourceCouldNotBeLoaded(resourceId);
-            } catch (IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
-            }
-        } else {
-            // The request was unauthorized.
-            return respondRejectUnauthorized(url);
-        }
-    }
-
-    /**
-     * Remove a resource from an ids broker
-     *
-     * @param url        The broker address.
-     * @param resourceId The resource uuid.
-     * @return The broker response message or an error.
-     */
-    @Operation(summary = "Remove Resource from Broker",
-        description = "Remove an IDS resource at an IDS broker.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/remove/{resource-id}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<String> deleteResourceAtBroker(
-        @Parameter(description = "The url of the broker.", required = true,
-            example = "https://broker.ids.isst.fraunhofer.de/infrastructure")
-        @RequestParam("broker") String url,
-        @Parameter(description = "The resource id.", required = true)
-        @PathVariable("resource-id") UUID resourceId) {
-        // Make sure the request is authorized.
-        if (tokenProvider.getDAT() != null) {
-            try {
-                // Get the resource
-                final var resource =
-                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
-                if (resource == null) {
-                    // The resource could not be found, reject and inform the requester.
-                    return respondResourceNotFound(resourceId);
-                } else {
-                    // The resource has been received, remove from broker.
-                    final var brokerResponse = brokerService.removeResourceFromBroker(url, resource);
-                    return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-                }
-            } catch (ClassCastException | NullPointerException exception) {
-                return respondResourceCouldNotBeLoaded(resourceId);
-            } catch (IOException exception) {
-                return respondBrokerCommunicationFailed(exception);
-            }
-        } else {
-            // The request was unauthorized.
-            return respondRejectUnauthorized(url);
-        }
-    }
-
-    /**
      * Updates the connector object in the ids framework's config container.
      *
      * @throws ConfigurationUpdateException If the configuration could not be update.
@@ -294,5 +199,97 @@ public class BrokerController {
         configurationModel.setConnectorDescription(connector);
 
         configurationContainer.updateConfiguration(configurationModel);
+    }
+
+    /**
+     * Updates or registers the connector at an IDS broker.
+     *
+     * @param url The recipient's address.
+     * @return The http response.
+     */
+    private ResponseEntity<String> updateConnectorAtBroker(String url) {
+        try {
+            updateConfigModel();
+            // Send the update request to the broker.
+            final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
+            return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+        } catch (ConfigurationUpdateException e) {
+            return respondUpdateError(url);
+        } catch (NullPointerException | IOException exception) {
+            return respondBrokerCommunicationFailed(exception);
+        }
+    }
+
+    /**
+     * Updates or registers a resource at an IDS broker.
+     *
+     * @param url The recipient's address.
+     * @param resourceId The resource id.
+     * @return The http response.
+     */
+    private ResponseEntity<String> updateResourceAtBroker(String url, UUID resourceId) {
+        try {
+            // Get the resource
+            final var resource =
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
+            if (resource == null) {
+                // The resource could not be found, reject and inform the requester.
+                return respondResourceNotFound(resourceId);
+            } else {
+                // The resource has been received, update at broker.
+                final var brokerResponse = brokerService.updateResourceAtBroker(url, resource);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+            }
+        } catch (ClassCastException | NullPointerException exception) {
+            return respondResourceCouldNotBeLoaded(resourceId);
+        } catch (IOException exception) {
+            return respondBrokerCommunicationFailed(exception);
+        }
+    }
+
+    /**
+     * Removes the connector from an IDS broker.
+     *
+     * @param url The recipient's address.
+     * @return The http response.
+     */
+    private ResponseEntity<String> unregisterConnectorAtBroker(String url) {
+        try {
+            updateConfigModel();
+            // Send the unregister request to the broker
+            final var brokerResponse = brokerService.unregisterAtBroker(url);
+            return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+        } catch (ConfigurationUpdateException e) {
+            return respondUpdateError(url);
+        } catch (NullPointerException | IOException exception) {
+            return respondBrokerCommunicationFailed(exception);
+        }
+    }
+
+    /**
+     * Removes a resource from an IDS broker.
+     *
+     * @param url The recipient's address.
+     * @param resourceId The resource id.
+     * @return The http response.
+     */
+    private ResponseEntity<String> unregisterResourceAtBroker(String url, UUID resourceId) {
+        try {
+            // Get the resource
+            final var resource =
+                    ((OfferedResourceServiceImpl) resourceService).getOfferedResources().get(resourceId);
+            if (resource == null) {
+                // The resource could not be found, reject and inform the requester.
+                return respondResourceNotFound(resourceId);
+            } else {
+                // The resource has been received, remove from broker.
+                final var brokerResponse = brokerService.removeResourceFromBroker(url, resource);
+                return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
+            }
+        } catch (ClassCastException | NullPointerException exception) {
+            return respondResourceCouldNotBeLoaded(resourceId);
+        } catch (IOException exception) {
+            return respondBrokerCommunicationFailed(exception);
+        }
     }
 }
