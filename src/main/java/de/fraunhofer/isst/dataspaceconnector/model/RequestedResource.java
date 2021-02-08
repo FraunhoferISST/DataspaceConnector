@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,6 +21,12 @@ public class RequestedResource implements ConnectorResource {
     @GeneratedValue
     @JsonProperty("uuid")
     private UUID uuid;
+
+    @JsonProperty("ownerURI")
+    private URI ownerURI;
+
+    @JsonProperty("originalUUID")
+    private UUID originalUUID;
 
     @JsonProperty("created")
     private Date created;
@@ -65,6 +72,34 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
+     * Get owner URI
+     */
+    public URI getOwnerURI() {
+        return ownerURI;
+    }
+
+    /**
+     * Set owner URI
+     */
+    public void setOwnerURI(URI ownerURI) {
+        this.ownerURI = ownerURI;
+    }
+
+    /**
+     * Get original UUID
+     */
+    public UUID getOriginalUUID() {
+        return originalUUID;
+    }
+
+    /**
+     * Set original UUID
+     */
+    public void setOriginalUUID(UUID originalUUID) {
+        this.originalUUID = originalUUID;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -79,6 +114,7 @@ public class RequestedResource implements ConnectorResource {
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
+
 
     /**
      * {@inheritDoc}
