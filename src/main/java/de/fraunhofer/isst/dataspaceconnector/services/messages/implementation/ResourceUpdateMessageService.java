@@ -20,7 +20,7 @@ import java.net.URI;
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
- * The service for notification messages
+ * The service for ResourceUpdateMessages messages
  */
 @Service
 public class ResourceUpdateMessageService extends MessageService {
