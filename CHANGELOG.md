@@ -1,17 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.2.0-SNAPSHOT]
-
-### Added
-- Store `ownerURI` and `originalUUID` in `RequestedResource`.
-- Store `contract` URI in `ResourceRepresentation`.
-
-
-## [4.1.0] - 2021-02-04
+## [4.1.0-SNAPSHOT]
 
 ### Added
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
+- Store `ownerURI` and `originalUUID` in `RequestedResource`.
+- Store `contract` URI in `ResourceRepresentation`.
 
 ## [4.0.2] - 2021-02-04
 
