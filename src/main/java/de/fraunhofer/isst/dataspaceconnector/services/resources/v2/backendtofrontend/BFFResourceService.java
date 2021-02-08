@@ -6,6 +6,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
 import org.springframework.stereotype.Service;
 
 @Service
-class BFFResourceService extends CommonService<Resource, ResourceDesc,
+public class BFFResourceService extends CommonService<Resource, ResourceDesc,
         ResourceView> {
 }

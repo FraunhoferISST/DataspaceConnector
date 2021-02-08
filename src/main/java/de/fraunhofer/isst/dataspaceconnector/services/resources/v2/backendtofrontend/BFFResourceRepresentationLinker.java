@@ -4,5 +4,5 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Resou
 import org.springframework.stereotype.Service;
 
 @Service
-final class BFFResourceRepresentationLinker extends CommonUniDirectionalLinkerService<ResourceRepresentationLinker> {
+public final class BFFResourceRepresentationLinker extends CommonUniDirectionalLinkerService<ResourceRepresentationLinker> {
 }

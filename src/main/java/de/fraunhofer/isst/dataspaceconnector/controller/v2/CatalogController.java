@@ -11,11 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v2/catalogs")
-class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView,
+public class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView,
         CommonService<Catalog, CatalogDesc, CatalogView>> {
-}
-
-@RestController
-@RequestMapping("/api/v2/catalogs/{id}/resources")
-class CatalogResources extends BaseResourceChildController<CommonUniDirectionalLinkerService<CatalogResourceLinker>> {
 }

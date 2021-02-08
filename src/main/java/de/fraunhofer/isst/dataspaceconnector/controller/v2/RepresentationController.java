@@ -15,9 +15,3 @@ public class RepresentationController
         extends BaseResourceController<Representation, RepresentationDesc, RepresentationView,
         CommonService<Representation, RepresentationDesc, RepresentationView>> {
 }
-
-@RestController
-@RequestMapping("/api/v2/representations/{id}/artifacts")
-class RepresentationArtifactController extends BaseResourceChildController
-        <CommonUniDirectionalLinkerService<RepresentationArtifactLinker>> {
-}

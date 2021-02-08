@@ -6,6 +6,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
 import org.springframework.stereotype.Service;
 
 @Service
-class BFFRepresentationService extends CommonService<Representation,
+public class BFFRepresentationService extends CommonService<Representation,
         RepresentationDesc, RepresentationView> {
 }
