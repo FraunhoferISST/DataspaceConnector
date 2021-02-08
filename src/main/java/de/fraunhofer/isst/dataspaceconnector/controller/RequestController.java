@@ -14,6 +14,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -162,7 +163,7 @@ public class RequestController {
             // Save metadata to database.
             try {
                 final var validationKey = descriptionMessageService
-                    .saveMetadata(payload, resourceId);
+                    .saveMetadata(payload, resourceId, recipient);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
@@ -361,6 +362,8 @@ public class RequestController {
             return returnRejectionMessage(messageType, response);
 
         try {
+            // Set contractID
+            resourceService.getRepresentation(key, UUIDUtils.uuidFromUri(artifactId)).setContract(contractId);
             // Save data to database.
             artifactMessageService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
