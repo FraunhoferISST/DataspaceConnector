@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.2.0] - 2021-02-08
+
+### Added
+- Store `ownerURI` and `originalUUID` in `RequestedResource`
+- Store `contract` URI in `ResourceRepresentation` 
+
+
 ## [4.1.0] - 2021-02-04
 
 ### Added
