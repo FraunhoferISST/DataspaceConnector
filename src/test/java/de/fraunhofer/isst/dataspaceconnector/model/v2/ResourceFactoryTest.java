@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,10 +21,15 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
+@RunWith(JUnit4.class)
 class ResourceFactoryTest {
-    @Autowired
+
     private ResourceFactory factory;
+
+    @BeforeEach
+    public void init() {
+        this.factory = new ResourceFactory();
+    }
 
     @Test
     void create_nullDesc_throwNullPointerException() {
