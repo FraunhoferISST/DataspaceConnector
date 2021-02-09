@@ -6,4 +6,5 @@ import lombok.Data;
 @Data
 public class ArtifactView implements BaseView<Artifact>{
     private String title;
+    private Long numAccessed;
 }

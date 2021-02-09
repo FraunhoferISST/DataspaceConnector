@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.DataRepository;
@@ -47,22 +48,23 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
      */
     @Override
     protected Artifact persist(final Artifact artifact) {
-        if (artifact.getData() != null) {
-            if (artifact.getData().getId() == null) {
+        final var tmp = (ArtifactImpl)artifact;
+        if (tmp.getData() != null) {
+            if (tmp.getData().getId() == null) {
                 // The data element is new, insert
-                dataRepository.saveAndFlush(artifact.getData());
+                dataRepository.saveAndFlush(tmp.getData());
             } else {
                 // The data element exists already, check if an update is
                 // required
                 final var storedCopy =
-                        dataRepository.getOne(artifact.getData().getId());
-                if (!storedCopy.equals(artifact.getData())) {
-                    dataRepository.saveAndFlush(artifact.getData());
+                        dataRepository.getOne(tmp.getData().getId());
+                if (!storedCopy.equals(tmp.getData())) {
+                    dataRepository.saveAndFlush(tmp.getData());
                 }
             }
         }
 
-        return super.persist(artifact);
+        return super.persist(tmp);
     }
 
     /**
@@ -73,17 +75,21 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
      */
     public Object getData(final UUID artifactId) {
         final var artifact = get(artifactId);
-        final var data = artifact.getData();
+        final var data = ((ArtifactImpl)artifact).getData();
 
+        Object rawData;
         if (data instanceof LocalData) {
-            return getData((LocalData) data);
+            rawData = getData((LocalData) data);
+        } else if (data instanceof RemoteData) {
+            rawData = getData((RemoteData) data);
+        } else {
+            throw new NotImplementedException("Unknown data type.");
         }
 
-        if (data instanceof RemoteData) {
-            return getData((RemoteData) data);
-        }
+        artifact.incrementAccessCounter();
+        persist(artifact);
 
-        throw new NotImplementedException("Unknown data type.");
+        return rawData;
     }
 
     /**
@@ -92,9 +98,7 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) {
-        return data.getValue();
-    }
+    private Object getData(final LocalData data) { return data.getValue(); }
 
     /**
      * Get remote data.

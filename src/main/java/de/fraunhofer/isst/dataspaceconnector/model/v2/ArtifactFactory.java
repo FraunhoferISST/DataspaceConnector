@@ -10,10 +10,11 @@ import java.net.URL;
  */
 @Component
 public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc> {
+
     /**
      * Default constructor.
      */
-    private ArtifactFactory() {
+    ArtifactFactory() {
         // This constructor is intentionally empty. Nothing to do here.
     }
 
@@ -25,7 +26,9 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
      */
     @Override
     public Artifact create(final ArtifactDesc desc) {
-        final var artifact = new Artifact();
+        final var artifact = new ArtifactImpl();
+        artifact.setNumAccessed(0L);
+
         update(artifact, desc);
 
         return artifact;
@@ -56,9 +59,9 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {
         if (isRemoteData(desc)) {
             return updateRemoteData(
-                    artifact, desc.getAccessUrl(), desc.getUsername(), desc.getUsername());
+                    (ArtifactImpl) artifact, desc.getAccessUrl(), desc.getUsername(), desc.getUsername());
         } else {
-            return updateLocalData(artifact, desc.getValue());
+            return updateLocalData((ArtifactImpl)artifact, desc.getValue());
         }
     }
 
@@ -66,7 +69,7 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
         return desc.getAccessUrl() != null && desc.getAccessUrl().toString().length() > 0;
     }
 
-    private boolean updateLocalData(final Artifact artifact, final String value) {
+    private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
         final var newData = new LocalData();
         newData.setValue(value == null ? "" : value);
 
@@ -84,7 +87,7 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
         return false;
     }
 
-    private boolean updateRemoteData(final Artifact artifact, final URL accessUrl,
+    private boolean updateRemoteData(final ArtifactImpl artifact, final URL accessUrl,
             final String username, final String password) {
         final var newData = new RemoteData();
         newData.setAccessUrl(accessUrl);

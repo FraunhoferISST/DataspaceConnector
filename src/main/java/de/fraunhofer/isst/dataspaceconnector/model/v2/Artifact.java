@@ -1,25 +1,21 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-import lombok.ToString;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.Inheritance;
 
 /**
  * An artifact stores and encapsulates data.
  */
 @lombok.Data
+@Inheritance
 @Entity
-@Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Artifact extends BaseResource {
+public abstract class Artifact extends BaseResource {
 
     /**
      * Serial version uid.
@@ -31,11 +27,9 @@ public class Artifact extends BaseResource {
      **/
     private String title;
 
-    /**
-     * The data stored in the artifact.
-     **/
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JsonInclude
-    @ToString.Exclude
-    private Data data;
+    private Long numAccessed;
+
+    public void incrementAccessCounter() {
+        numAccessed += 1;
+    }
 }

@@ -9,6 +9,7 @@ public class ArtifactViewer implements BaseViewer<Artifact, ArtifactView> {
     public ArtifactView create(final Artifact artifact) {
         final var view = new ArtifactView();
         view.setTitle(artifact.getTitle());
+        view.setNumAccessed(artifact.getNumAccessed());
 
         return view;
     }
