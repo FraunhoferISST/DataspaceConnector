@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.services.ResourceUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResourceUpdateMessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -31,6 +32,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
     private final ResourceUpdateMessageService messageService;
     private final ConfigurationContainer configurationContainer;
+    private final ResourceUpdateService resourceUpdateService;
 
     /**
      * Constructor for ResourceUpdateMessageHandler.
@@ -41,7 +43,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      */
     @Autowired
     public ResourceUpdateMessageHandler(ConfigurationContainer configurationContainer,
-                                        ResourceUpdateMessageService resourceUpdateMessageService)
+                                        ResourceUpdateMessageService resourceUpdateMessageService,
+                                        ResourceUpdateService resourceUpdateService)
             throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -51,6 +54,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
         this.configurationContainer = configurationContainer;
         this.messageService = resourceUpdateMessageService;
+        this.resourceUpdateService = resourceUpdateService;
 
     }
 
@@ -83,10 +87,15 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                     connector.getId(), connector.getOutboundModelVersion());
         }
 
+        boolean successfulUpdate = resourceUpdateService.updateOrSchedule(message.getAffectedResource());
+
         try {
             // Build response header.
             messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            return BodyResponse.create(messageService.buildResponseHeader(), "Message received.");
+            if(successfulUpdate)
+                return BodyResponse.create(messageService.buildResponseHeader(), "Message received and resource updated.");
+            else
+                return BodyResponse.create(messageService.buildResponseHeader(), "Message received and resource update scheduled.");
         } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(
