@@ -56,14 +56,14 @@ public class BaseResourceController<T extends BaseResource,
      * @return Response with code 201 (Created).
      */
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final D desc) {
+    public ResponseEntity<V> create(@RequestBody final D desc) {
         final var endpointId = service.create(
                 EndpointUtils.getCurrentBasePath().toString(), desc);
 
         final var headers = new HttpHeaders();
         headers.setLocation(endpointId.toUri());
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(service.get(endpointId), headers, HttpStatus.CREATED);
     }
 
     /**
@@ -103,7 +103,7 @@ public class BaseResourceController<T extends BaseResource,
      * updated or response with code (201) if the resource has been updated
      * and been moved to a new endpoint.
      */
-    @PutMapping
+    @PutMapping(value="{id}")
     public ResponseEntity<Void> update(
             @Valid @PathVariable(name = "id") final UUID resourceId,
             @RequestBody final D desc) {
@@ -132,7 +132,7 @@ public class BaseResourceController<T extends BaseResource,
      * @param resourceId The id of the resource to be deleted.
      * @return Response with code 204 (No_Content).
      */
-    @DeleteMapping
+    @DeleteMapping(value="{id}")
     public ResponseEntity<Void> delete(
             @Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(EndpointUtils.getCurrentEndpoint(resourceId));
