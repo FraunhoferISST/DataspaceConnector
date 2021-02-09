@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.1.1-SNAPSHOT]
+
+### Added
+- Update local copy of resource upon receiving ResourceUpdateMessage. If immediate update fails, schedule in a queue. 
+
 ## [4.1.0-SNAPSHOT]
 
 ### Added

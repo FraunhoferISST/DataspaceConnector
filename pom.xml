@@ -123,7 +123,7 @@
 	</profiles>
 
 	<properties>
-		<revision>4.1.0-SNAPSHOT</revision>
+		<revision>4.1.1-SNAPSHOT</revision>
 		<ids-framework.version>4.0.3</ids-framework.version>
 
 		<java.version>11</java.version>
