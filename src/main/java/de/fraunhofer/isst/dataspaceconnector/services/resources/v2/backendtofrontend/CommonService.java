@@ -210,4 +210,12 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
 
         return generatedId;
     }
+
+    protected BaseService<T, D>  getService() {
+        return resourceService;
+    }
+
+    protected EndpointService getEndpointService() {
+        return endpointService;
+    }
 }

@@ -6,5 +6,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RuleView;
 import org.springframework.stereotype.Service;
 
 @Service
-class RuleBFFService extends CommonService<ContractRule, ContractRuleDesc, RuleView> {
+public class RuleBFFService extends CommonService<ContractRule, ContractRuleDesc, RuleView> {
 }

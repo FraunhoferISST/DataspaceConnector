@@ -4,5 +4,5 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Contr
 import org.springframework.stereotype.Service;
 
 @Service
-final class BFFContractRuleLinker extends CommonUniDirectionalLinkerService<ContractRuleLinker> {
+public final class BFFContractRuleLinker extends CommonUniDirectionalLinkerService<ContractRuleLinker> {
 }

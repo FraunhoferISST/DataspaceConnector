@@ -4,5 +4,5 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Repre
 import org.springframework.stereotype.Service;
 
 @Service
-final class BFFRepresentationArtifactLinker extends CommonUniDirectionalLinkerService<RepresentationArtifactLinker> {
+public final class BFFRepresentationArtifactLinker extends CommonUniDirectionalLinkerService<RepresentationArtifactLinker> {
 }
