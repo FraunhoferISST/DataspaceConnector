@@ -43,6 +43,8 @@ class RepresentationFactoryTest {
         assertEquals(desc.getTitle(), representation.getTitle());
         assertEquals(desc.getLanguage(), representation.getLanguage());
         assertEquals(desc.getType(), representation.getMediaType());
+        assertNotNull(representation.getArtifacts());
+        assertEquals(representation.getArtifacts().size(), 0);
 
         assertNull(representation.getId());
         assertNull(representation.getCreationDate());
@@ -62,6 +64,8 @@ class RepresentationFactoryTest {
         assertNotNull(representation.getTitle());
         assertNotNull(representation.getLanguage());
         assertNotNull(representation.getMediaType());
+        assertNotNull(representation.getArtifacts());
+        assertEquals(representation.getArtifacts().size(), 0);
 
         assertNull(representation.getId());
         assertNull(representation.getCreationDate());
@@ -120,6 +124,7 @@ class RepresentationFactoryTest {
         assertNotNull(representation.getTitle());
         assertNotNull(representation.getLanguage());
         assertNotNull(representation.getMediaType());
+        assertNotNull(representation.getArtifacts());
 
         assertEquals(idBefore, representation.getId());
         assertEquals(creationDateBefore, representation.getCreationDate());
