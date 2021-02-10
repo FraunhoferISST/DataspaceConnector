@@ -199,8 +199,8 @@ public class PolicyVerifier {
         URI pip = policyReader.getPipEndpoint(contract.getPermission().get(0));
 
         try {
-            String accessed = httpUtils
-                .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
+            String accessed = httpUtils.sendHttpsGetRequestWithBasicAuth(
+                    pip + uuid.toString() + "/access", "admin",
                     "password", null);
             if (Integer.parseInt(accessed) >= max) {
                 return inhibitAccess();
