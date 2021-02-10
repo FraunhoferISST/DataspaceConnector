@@ -305,18 +305,19 @@ public class RequestController {
     @ResponseBody
     public ResponseEntity<String> requestData(
             @Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data")
-        @RequestParam("recipient") URI recipient,
+                    example = "https://localhost:8080/api/ids/data")
+            @RequestParam("recipient") URI recipient,
             @Parameter(description = "The URI of the requested artifact.", required = true,
-            example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact") URI artifactId,
+                    example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "requestedArtifact") URI artifactId,
             @Parameter(description = "The URI of the contract agreement.",
-            example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "transferContract", required = false) URI contractId,
-        @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key,
-            @Parameter(description = "The query parameters and headers to use when fetching the data from the backend system.")
-        @RequestBody(required = false) QueryInput queryInput) {
+                    example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "transferContract", required = false) URI contractId,
+            @Parameter(description = "A unique validation key.", required = true)
+            @RequestParam("key") UUID key,
+            @Parameter(description = "The query parameters and headers to use when fetching the " +
+                    "data from the backend system.")
+            @RequestBody(required = false) QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -334,8 +335,8 @@ public class RequestController {
             validateQueryInput(queryInput);
         } catch (IllegalArgumentException exception) {
             // There is an empty key or value string in the params or headers map
-            LOGGER.info("Invalid input for headers or params. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Invalid input for headers or params: " + exception.getMessage(),
+            LOGGER.debug("Invalid input for headers or params. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Invalid input for headers or params. ",
                     HttpStatus.BAD_REQUEST);
         }
 
@@ -447,11 +448,11 @@ public class RequestController {
     }
 
     /**
-     * Checks a given query input. If any of the keys or values in the headers or params maps are null, blank or empty,
-     * an  exception is thrown.
+     * Checks a given query input. If any of the keys or values in the headers or params maps are
+     * null, blank, or empty, an  exception is thrown.
      *
      * @param queryInput the query input to validate.
-     * @throws IllegalArgumentException - if any of the keys or values are null, blank or empty.
+     * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
      */
     private void validateQueryInput(QueryInput queryInput) {
         if (queryInput != null && queryInput.getHeaders() != null) {
