@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,11 +276,12 @@ public class RequestedResourceServiceImpl implements ResourceService {
      *
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
+     * @param queryInput Header and params for data request from backend.
      * @return resource data as string
      * @throws OperationNotSupportedException always
      */
     @Override
-    public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
+    public String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws
         OperationNotSupportedException {
         throw new OperationNotSupportedException("Operation not supported.");
     }

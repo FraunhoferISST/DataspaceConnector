@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
@@ -15,6 +17,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.De
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,6 +52,7 @@ public class RequestController {
     private final ContractMessageService contractMessageService;
     private final NegotiationService negotiationService;
     private final ResourceService resourceService;
+    private final ObjectMapper objectMapper;
 
     /**
      * Constructor for RequestController
@@ -93,6 +97,7 @@ public class RequestController {
         this.contractMessageService = contractMessageService;
         this.negotiationService = negotiationService;
         this.resourceService = requestedResourceService;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -299,17 +304,20 @@ public class RequestController {
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> requestData(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data")
-        @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested artifact.", required = true,
-            example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The URI of the contract agreement.",
-            example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "transferContract", required = false) URI contractId,
-        @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key) {
+            @Parameter(description = "The URI of the requested IDS connector.", required = true,
+                    example = "https://localhost:8080/api/ids/data")
+            @RequestParam("recipient") URI recipient,
+            @Parameter(description = "The URI of the requested artifact.", required = true,
+                    example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "requestedArtifact") URI artifactId,
+            @Parameter(description = "The URI of the contract agreement.",
+                    example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "transferContract", required = false) URI contractId,
+            @Parameter(description = "A unique validation key.", required = true)
+            @RequestParam("key") UUID key,
+            @Parameter(description = "The query parameters and headers to use when fetching the " +
+                    "data from the backend system.")
+            @RequestBody(required = false) QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -323,11 +331,20 @@ public class RequestController {
                 HttpStatus.FORBIDDEN);
         }
 
+        try {
+            validateQueryInput(queryInput);
+        } catch (IllegalArgumentException exception) {
+            // There is an empty key or value string in the params or headers map
+            LOGGER.debug("Invalid input for headers or params. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Invalid input for headers or params. ",
+                    HttpStatus.BAD_REQUEST);
+        }
+
         Map<String, String> response;
         try {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
-            response = artifactMessageService.sendRequestMessage("");
+            response = artifactMessageService.sendRequestMessage(objectMapper.writeValueAsString(queryInput));
         } catch (MessageBuilderException exception) {
             // Failed to build the artifact request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
@@ -343,6 +360,11 @@ public class RequestController {
             LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to send the ids message.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException exception) {
+            // Could not parse query input (params and headers).
+            LOGGER.info("Could not parse query input from request body. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Could not parse query input from request body.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         String header, payload;
@@ -422,6 +444,33 @@ public class RequestController {
             return resourceService.getResource(resourceId) != null;
         } catch (ResourceException exception) {
             return false;
+        }
+    }
+
+    /**
+     * Checks a given query input. If any of the keys or values in the headers or params maps are
+     * null, blank, or empty, an  exception is thrown.
+     *
+     * @param queryInput the query input to validate.
+     * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
+     */
+    private void validateQueryInput(QueryInput queryInput) {
+        if (queryInput != null && queryInput.getHeaders() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getHeaders().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
+                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Header key or value should not be null, blank or empty " +
+                            "(key:" + entry.getKey() + ", value: " + entry.getValue() + ").");
+                }
+            }
+        }
+        if (queryInput != null && queryInput.getParams() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getParams().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
+                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Param key or value should not be null, blank or empty.");
+                }
+            }
         }
     }
 }
