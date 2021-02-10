@@ -1,47 +1,41 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-class CatalogFactoryTest {
+public class CatalogFactoryTest {
 
     private CatalogFactory factory;
 
-    @BeforeEach
+    @Before
     public void init() {
         this.factory = new CatalogFactory();
     }
 
-    @Test
-    void create_nullDesc_throwNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void create_nullDesc_throwNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.create(null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.create(null);
     }
 
     @Test
-    void create_allDescMembersNotNull_returnCatalog() {
+    public void create_allDescMembersNotNull_returnCatalog() {
         /* ARRANGE */
         final var desc = getValidDesc();
 
@@ -61,7 +55,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void create_allDescMembersNull_returnDefaultCatalog() {
+    public void create_allDescMembersNull_returnDefaultCatalog() {
         /* ARRANGE */
         final var desc = getDescWithNullMembers();
 
@@ -81,7 +75,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_allDescMembersNotNull_returnUpdatedCatalog() {
+    public void update_allDescMembersNotNull_returnUpdatedCatalog() {
         /* ARRANGE */
         var catalog = factory.create(getValidDesc());
 
@@ -112,7 +106,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_allDescMembersNull_returnDefaultCatalog() {
+    public void update_allDescMembersNull_returnDefaultCatalog() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
@@ -146,7 +140,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_changeValidDesc_true() {
+    public void update_changeValidDesc_true() {
         /* ARRANGE */
         var catalog = factory.create(getValidDesc());
 
@@ -155,7 +149,7 @@ class CatalogFactoryTest {
     }
 
     @Test
-    void update_sameValidDesc_false() {
+    public void update_sameValidDesc_false() {
         /* ARRANGE */
         var catalog = factory.create(getValidDesc());
 
@@ -163,49 +157,34 @@ class CatalogFactoryTest {
         assertFalse(factory.update(catalog, getValidDesc()));
     }
 
-    @Test
-    void update_nullCatalogValidDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullCatalogValidDesc_throwsNullPointerException() {
         /* ARRANGE */
         var desc = getValidDesc();
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, desc);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, desc);
     }
 
-    @Test
-    void update_nullCatalogNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullCatalogNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, null);
     }
 
-    @Test
-    void update_validCatalogNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_validCatalogNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
 
         assertNotNull(catalog);
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(catalog, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(catalog, null);
     }
 
     CatalogDesc getValidDesc() {

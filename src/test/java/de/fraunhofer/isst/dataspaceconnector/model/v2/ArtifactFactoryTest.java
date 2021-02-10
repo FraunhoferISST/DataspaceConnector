@@ -1,47 +1,43 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+
 
 @RunWith(JUnit4.class)
-class ArtifactFactoryTest {
+public class ArtifactFactoryTest {
 
     private ArtifactFactory factory;
 
-    @BeforeEach
-    private void init() {
+    @Before
+    public void init() {
         this.factory = new ArtifactFactory();
     }
 
-    @Test
-    void create_nullDesc_throwNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void create_nullDesc_throwNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.create(null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT*/
+        factory.create(null);
     }
 
     @Test
-    void create_allDescMembersNull_returnDefaultLocalArtifact() {
+    public void create_allDescMembersNull_returnDefaultLocalArtifact() {
         /* ARRANGE */
         final var desc = getDescWithNullMembers();
 
@@ -63,7 +59,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescRemoteData_returnRemoteDataArtifact() {
+    public void create_validDescRemoteData_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescRemoteDataV1();
 
@@ -86,7 +82,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescLocalData_returnLocalDataArtifact() {
+    public void create_validDescLocalData_returnLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescLocalDataV1();
 
@@ -107,7 +103,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescAllMembersSet_returnRemoteDataArtifact() {
+    public void create_validDescAllMembersSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescRemoteDataV1();
 
@@ -130,7 +126,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescAllExceptUrlSet_returnLocalDataArtifact() {
+    public void create_validDescAllExceptUrlSet_returnLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescAllSetV1();
         desc.setAccessUrl(null);
@@ -145,7 +141,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescAllExceptUrlAndUsernameSet_returnLocalDataArtifact() {
+    public void create_validDescAllExceptUrlAndUsernameSet_returnLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescAllSetV1();
         desc.setAccessUrl(null);
@@ -161,7 +157,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescAllExceptUrlAndPasswordSet_returnLocalDataArtifact() {
+    public void create_validDescAllExceptUrlAndPasswordSet_returnLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescAllSetV1();
         desc.setAccessUrl(null);
@@ -177,7 +173,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void create_validDescAllExceptUsernameAndPasswordSet_returnRemoteDataArtifact() {
+    public void create_validDescAllExceptUsernameAndPasswordSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescAllSetV1();
         desc.setUsername(null);
@@ -193,7 +189,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataAllDescMembersNull_returnDefaultLocalDataArtifact() {
+    public void update_localDataAllDescMembersNull_returnDefaultLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescLocalDataV1();
         final var artifact = factory.create(desc);
@@ -217,7 +213,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataAllDescMembersNull_returnDefaultLocalDataArtifact() {
+    public void update_remoteDataAllDescMembersNull_returnDefaultLocalDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescRemoteDataV1();
         final var artifact = factory.create(desc);
@@ -242,7 +238,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataValidLocalDataDesc_returnLocalDataArtifact() {
+    public void update_localDataValidLocalDataDesc_returnLocalDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -268,7 +264,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataValidRemoteDataDesc_returnRemoteDataArtifact() {
+    public void update_localDataValidRemoteDataDesc_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -298,7 +294,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataAllDataMembersSet_returnRemoteDataArtifact() {
+    public void update_localDataAllDataMembersSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -328,7 +324,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataValidLocalDataDesc_returnLocalDataArtifact() {
+    public void update_remoteDataValidLocalDataDesc_returnLocalDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
         assertNotNull(artifact);
@@ -354,7 +350,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataValidRemoteDataDesc_returnRemoteDataArtifact() {
+    public void update_remoteDataValidRemoteDataDesc_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
         assertNotNull(artifact);
@@ -384,7 +380,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataAllDataMembersSet_returnRemoteDataArtifact() {
+    public void update_remoteDataAllDataMembersSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
         assertNotNull(artifact);
@@ -414,7 +410,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataChangeValidLocalDesc_true() {
+    public void update_localDataChangeValidLocalDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -426,7 +422,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataChangeValidRemoteDesc_true() {
+    public void update_localDataChangeValidRemoteDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -438,7 +434,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_localDataSameValidLocalDesc_false() {
+    public void update_localDataSameValidLocalDesc_false() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
         assertNotNull(artifact);
@@ -450,7 +446,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataSameValidRemoteDesc_false() {
+    public void update_remoteDataSameValidRemoteDesc_false() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
         assertNotNull(artifact);
@@ -462,7 +458,7 @@ class ArtifactFactoryTest {
     }
 
     @Test
-    void update_remoteDataSameValidLocalDesc_true() {
+    public void update_remoteDataSameValidLocalDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
         assertNotNull(artifact);
@@ -473,48 +469,33 @@ class ArtifactFactoryTest {
         assertTrue(factory.update(artifact, desc));
     }
 
-    @Test
-    void update_nullArtifactValidDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullArtifactValidDesc_throwsNullPointerException() {
         /* ARRANGE */
         var desc = getValidDescAllSetV1();
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, desc);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, desc);
     }
 
-    @Test
-    void update_nullArtifactNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullArtifactNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, null);
     }
 
-    @Test
-    void update_validArtifactNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_validArtifactNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var artifact = factory.create(getValidDescAllSetV1());
 
         assertNotNull(artifact);
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, null);
     }
 
     ArtifactDesc getDescWithNullMembers() {

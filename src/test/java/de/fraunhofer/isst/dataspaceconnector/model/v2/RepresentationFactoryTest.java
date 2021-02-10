@@ -1,43 +1,37 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-class RepresentationFactoryTest {
+public class RepresentationFactoryTest {
 
     private RepresentationFactory factory;
 
-    @BeforeEach
+    @Before
     public void init() {
         this.factory = new RepresentationFactory();
     }
 
-    @Test
-    void create_nullDesc_throwNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void create_nullDesc_throwNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.create(null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.create(null);
     }
 
     @Test
-    void create_allDescMembersNotNull_returnRepresentation() {
+    public void create_allDescMembersNotNull_returnRepresentation() {
         /* ARRANGE */
         final var desc = getValidDesc();
 
@@ -58,7 +52,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void create_allDescMembersNull_returnDefaultRepresentation() {
+    public void create_allDescMembersNull_returnDefaultRepresentation() {
         /* ARRANGE */
         final var desc = getDescWithNullMembers();
 
@@ -79,7 +73,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void update_allDescMembersNotNull_returnUpdatedRepresentation() {
+    public void update_allDescMembersNotNull_returnUpdatedRepresentation() {
         /* ARRANGE */
         var representation = factory.create(getValidDesc());
 
@@ -108,7 +102,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void update_allDescMembersNull_returnDefaultRepresentation() {
+    public void update_allDescMembersNull_returnDefaultRepresentation() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
@@ -139,7 +133,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void update_changeValidDesc_true() {
+    public void update_changeValidDesc_true() {
         /* ARRANGE */
         var representation = factory.create(getValidDesc());
 
@@ -148,7 +142,7 @@ class RepresentationFactoryTest {
     }
 
     @Test
-    void update_sameValidDesc_false() {
+    public void update_sameValidDesc_false() {
         /* ARRANGE */
         var representation = factory.create(getValidDesc());
 
@@ -156,49 +150,34 @@ class RepresentationFactoryTest {
         assertFalse(factory.update(representation, getValidDesc()));
     }
 
-    @Test
-    void update_nullRepresentationValidDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullRepresentationValidDesc_throwsNullPointerException() {
         /* ARRANGE */
         var desc = getValidDesc();
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, desc);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, desc);
     }
 
-    @Test
-    void update_nullRepresentationNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_nullRepresentationNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(null, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(null, null);
     }
 
-    @Test
-    void update_validContractNullDesc_throwsNullPointerException() {
+    @Test(expected = NullPointerException.class)
+    public void update_validContractNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
 
         assertNotNull(representation);
 
-        /* ACT */
-        final var exception = assertThrows(NullPointerException.class, () -> {
-            factory.update(representation, null);
-        });
-
-        /* ASSERT */
-        assertNotNull(exception);
+        /* ACT && ASSERT */
+        factory.update(representation, null);
     }
 
     RepresentationDesc getValidDesc() {
