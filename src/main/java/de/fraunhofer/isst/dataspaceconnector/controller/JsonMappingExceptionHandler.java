@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class JsonMappingExceptionHandler {
 
     @ExceptionHandler(JsonMappingException.class)
-    public ResponseEntity<String> handleJsonMappingException(final JsonMappingException exception) {
-        return new ResponseEntity<>("An error occurred while mapping the input: " + exception.getMessage(),
-                HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> handleJsonMappingException() {
+        return new ResponseEntity<>("Invalid input.", HttpStatus.BAD_REQUEST);
     }
-
 }
