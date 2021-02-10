@@ -73,7 +73,8 @@ public interface ResourceService {
      * @return resource data as string.
      * @throws ResourceException if the resource data could not be retrieved.
      */
-    String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws ResourceException;
+    String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput)
+            throws ResourceException;
 
     /**
      * Finds representation by ID.
