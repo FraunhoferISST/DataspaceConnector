@@ -74,7 +74,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      */
     @Autowired
     public ArtifactRequestHandler(OfferedResourceServiceImpl offeredResourceService,
-                                  PolicyHandler policyHandler, NegotiationService negotiationService,
+                                  PolicyHandler policyHandler,
+                                  NegotiationService negotiationService,
                                   ArtifactMessageService messageService,
                                   ContractAgreementService contractAgreementService,
                                   ConfigurationContainer configurationContainer)
@@ -174,11 +175,13 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
                         String data;
                         try {
+                            // Read query parameters from message payload.
+                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(
+                                    messagePayload.getUnderlyingInputStream(),
+                                    StandardCharsets.UTF_8), QueryInput.class);
                             // Get the data from source.
-                            QueryInput queryInputData = objectMapper.readValue(
-                                    IOUtils.toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8),
-                                    QueryInput.class);
-                            data = resourceService.getDataByRepresentation(resourceId, artifactId, queryInputData);
+                            data = resourceService
+                                    .getDataByRepresentation(resourceId, artifactId, queryInputData);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -205,13 +208,13 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
                         } catch (IOException exception) {
-                            LOGGER.debug("Message payload could not be read. "
-                                            + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
+                            LOGGER.debug("Message payload could not be read. [id=({}), " +
+                                            "resourceId=({}), artifactId=({}), exception=({})]",
                                     requestMessage.getId(), resourceId, artifactId,
                                     exception.getMessage());
                             return ErrorResponse
-                                    .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                                            "Message payload could not be read.", connector.getId(),
+                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                            "Malformed payload.", connector.getId(),
                                             connector.getOutboundModelVersion());
                         }
 
