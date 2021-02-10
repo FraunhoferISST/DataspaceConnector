@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -152,13 +153,19 @@ public class OfferedResourceServiceImpl implements ResourceService {
     }
 
     private void computeMissingRepresentationIds(final ResourceMetadata metaData) {
+        final var updated = new HashMap<UUID, ResourceRepresentation>();
+
         for (final var representation : metaData.getRepresentations().values()) {
             if (representation.getUuid() == null) {
-                metaData.getRepresentations().remove(null, representation);
                 representation.setUuid(generateRepresentationId());
-                metaData.getRepresentations().put(representation.getUuid(), representation);
+                updated.put(representation.getUuid(), representation);
+            }else{
+                updated.put(representation.getUuid(), representation);
             }
         }
+
+        metaData.getRepresentations().clear();
+        metaData.getRepresentations().putAll(updated);
     }
 
     private UUID generateRepresentationId() {
