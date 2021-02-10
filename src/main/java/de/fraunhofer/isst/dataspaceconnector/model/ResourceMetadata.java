@@ -155,7 +155,7 @@ public class ResourceMetadata implements Serializable {
 
                 var output = new HashMap<UUID, ResourceRepresentation>();
                 for (var representation : representations) {
-                    output.put(representation.getUuid(), representation);
+                    output.put(representation.getUuid() == null ? UUID.randomUUID() : representation.getUuid(), representation);
                 }
 
                 return output;

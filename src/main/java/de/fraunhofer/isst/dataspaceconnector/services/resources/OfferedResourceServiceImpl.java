@@ -1,6 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
@@ -24,7 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -133,12 +142,47 @@ public class OfferedResourceServiceImpl implements ResourceService {
             throw new ResourceAlreadyExistsException("The resource does already exist.");
         }
 
+        if(resourceMetadata.getRepresentations() != null) {
+            computeMissingRepresentationIds(resourceMetadata);
+        }
+
         resourceMetadata.setPolicy(contractOffer.toRdf());
         final var resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata,
             "");
 
         storeResource(resource);
         LOGGER.debug("Added a new resource. [uuid=({}), metadata=({})]", uuid, resourceMetadata);
+    }
+
+    private void computeMissingRepresentationIds(final ResourceMetadata metaData) {
+        final var updated = new HashMap<UUID, ResourceRepresentation>();
+
+        for (final var representation : metaData.getRepresentations().values()) {
+            if (representation.getUuid() == null) {
+                representation.setUuid(generateRepresentationId());
+                updated.put(representation.getUuid(), representation);
+            }else{
+                updated.put(representation.getUuid(), representation);
+            }
+        }
+
+        metaData.getRepresentations().clear();
+        metaData.getRepresentations().putAll(updated);
+    }
+
+    private UUID generateRepresentationId() {
+        return UUIDUtils.createUUID((UUID x) -> {
+            try {
+                for(final var resource : getAllResources()) {
+                    if(getAllRepresentations(resource.getUuid()).keySet().stream().anyMatch(y -> y.equals(x)))
+                        return true;
+                }
+
+                return false;
+            } catch (InvalidResourceException e) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -175,6 +219,10 @@ public class OfferedResourceServiceImpl implements ResourceService {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
+        }
+
+        if(resourceMetadata.getRepresentations() != null) {
+            computeMissingRepresentationIds(resourceMetadata);
         }
 
         resource.setResourceMetadata(resourceMetadata);
