@@ -1,18 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractRuleDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ArtifactTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ContractTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.RepresentationTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ResourceTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.RuleTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ArtifactTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 
 import java.util.ArrayList;
 import java.util.UUID;

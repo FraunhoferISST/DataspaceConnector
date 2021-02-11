@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.implementations.ContractRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.implementations.RuleRepository;
 import org.junit.Assert;

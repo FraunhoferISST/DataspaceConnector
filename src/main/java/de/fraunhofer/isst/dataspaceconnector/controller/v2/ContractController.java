@@ -1,11 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Contract;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ContractView;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractRuleLinker;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ContractView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonUniDirectionalLinkerService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

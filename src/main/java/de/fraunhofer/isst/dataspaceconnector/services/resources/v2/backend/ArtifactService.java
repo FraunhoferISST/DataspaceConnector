@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactImpl;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.LocalData;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.RemoteData;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
+import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import org.apache.commons.lang3.NotImplementedException;

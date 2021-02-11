@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
 import org.springframework.beans.factory.annotation.Autowired;

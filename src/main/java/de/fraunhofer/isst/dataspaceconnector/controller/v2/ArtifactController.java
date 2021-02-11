@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;

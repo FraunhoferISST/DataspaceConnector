@@ -13,7 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;

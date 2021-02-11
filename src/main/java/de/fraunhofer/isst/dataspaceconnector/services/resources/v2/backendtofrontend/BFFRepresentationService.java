@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Representation;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.RepresentationDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationView;
 import org.springframework.stereotype.Service;
 
 @Service

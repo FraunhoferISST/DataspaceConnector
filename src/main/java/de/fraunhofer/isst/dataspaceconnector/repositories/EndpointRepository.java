@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

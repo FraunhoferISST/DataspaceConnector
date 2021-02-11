@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
+import de.fraunhofer.isst.dataspaceconnector.model.BaseResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 

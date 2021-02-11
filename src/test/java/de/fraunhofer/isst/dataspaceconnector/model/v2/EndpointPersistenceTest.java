@@ -1,6 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
+import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.EndpointRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.implementations.ResourceRepository;
 import org.junit.Assert;

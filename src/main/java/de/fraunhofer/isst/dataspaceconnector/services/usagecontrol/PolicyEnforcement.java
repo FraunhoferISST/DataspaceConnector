@@ -4,7 +4,6 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v1.RequestedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;

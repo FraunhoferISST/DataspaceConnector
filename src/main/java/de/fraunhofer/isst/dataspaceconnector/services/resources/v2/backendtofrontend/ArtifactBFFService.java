@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ArtifactView;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
 import org.springframework.stereotype.Service;
 

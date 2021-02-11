@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

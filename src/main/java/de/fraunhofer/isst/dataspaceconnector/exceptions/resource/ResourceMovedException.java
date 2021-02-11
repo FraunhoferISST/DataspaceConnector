@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 
 public class ResourceMovedException extends RuntimeException {
     EndpointId newEndpoint;

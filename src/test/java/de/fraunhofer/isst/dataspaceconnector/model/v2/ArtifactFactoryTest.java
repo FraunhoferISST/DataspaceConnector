@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
+import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

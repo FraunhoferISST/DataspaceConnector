@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractFactory;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

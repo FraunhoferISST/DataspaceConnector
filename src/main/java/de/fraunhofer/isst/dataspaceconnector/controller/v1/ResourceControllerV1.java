@@ -1,12 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RepresentationView;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.ResourceView;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.view.RuleView;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationView;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ResourceView;
+import de.fraunhofer.isst.dataspaceconnector.model.view.RuleView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;

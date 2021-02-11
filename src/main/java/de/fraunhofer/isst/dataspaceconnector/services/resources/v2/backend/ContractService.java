@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Contract;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.ContractDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
 import org.springframework.stereotype.Service;
 
 @Service

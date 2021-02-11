@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
+import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
+import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

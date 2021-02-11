@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ArtifactTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ContractTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.RepresentationTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.ResourceTemplate;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.templates.RuleTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ArtifactTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

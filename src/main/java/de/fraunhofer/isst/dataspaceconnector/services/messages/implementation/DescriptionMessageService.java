@@ -6,9 +6,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;

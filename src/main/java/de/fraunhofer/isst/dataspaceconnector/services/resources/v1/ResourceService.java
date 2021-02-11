@@ -2,9 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v1;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ConnectorResource;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 
 import java.util.List;
 import java.util.UUID;

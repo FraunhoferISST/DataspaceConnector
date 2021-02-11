@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v2.Catalog;
+import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import org.springframework.stereotype.Repository;
 
 @Repository

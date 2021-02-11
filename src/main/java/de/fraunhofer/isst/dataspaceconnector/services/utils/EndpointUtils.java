@@ -1,9 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
-import com.microsoft.schemas.office.x2006.encryption.CTKeyEncryptor;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
 
 import java.net.URI;
 import java.util.UUID;

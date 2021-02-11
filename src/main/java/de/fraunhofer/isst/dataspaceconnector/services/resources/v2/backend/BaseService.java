@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.v2.BaseResource;
+import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
+import de.fraunhofer.isst.dataspaceconnector.model.BaseFactory;
+import de.fraunhofer.isst.dataspaceconnector.model.BaseResource;
 import de.fraunhofer.isst.dataspaceconnector.repositories.v2.BaseResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 

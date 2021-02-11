@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v1;
 
-import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 
 import java.util.UUID;
 
