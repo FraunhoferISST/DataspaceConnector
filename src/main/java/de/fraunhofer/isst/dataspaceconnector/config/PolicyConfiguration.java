@@ -38,7 +38,7 @@ public class PolicyConfiguration {
         this.usageControlFramework = usageControlFramework;
     }
 
-    private enum UsageControlFramework {
+    public enum UsageControlFramework {
         INTERNAL("INTERNAL"),
         MYDATA("MYDATA"),
         MYDATA_INTERCEPTOR("MYDATA_INTERCEPTOR");
