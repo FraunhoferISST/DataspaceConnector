@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.repositories.v2;
+package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.v2.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.v2.EndpointId;
