@@ -6,6 +6,7 @@ import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
@@ -15,7 +16,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResource
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
@@ -56,29 +56,29 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
     private final ArtifactMessageService messageService;
-    private final NegotiationService negotiationService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
     private final ObjectMapper objectMapper;
+    private final PolicyConfiguration policyConfiguration;
 
     /**
      * Constructor for ArtifactMessageHandler.
      *
      * @param offeredResourceService The service for offered resources
      * @param policyHandler The service for policies
-     * @param negotiationService The service for negotiations
      * @param messageService The service for sending messages
      * @param contractAgreementService The service for agreed contracts
      * @param configurationContainer The container containing the configuration
+     * @param policyConfiguration The configuration service containing policy configurations
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
     public ArtifactRequestHandler(OfferedResourceServiceImpl offeredResourceService,
                                   PolicyHandler policyHandler,
-                                  NegotiationService negotiationService,
                                   ArtifactMessageService messageService,
                                   ContractAgreementService contractAgreementService,
-                                  ConfigurationContainer configurationContainer)
+                                  ConfigurationContainer configurationContainer,
+                                  PolicyConfiguration policyConfiguration)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -92,19 +92,19 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         if (messageService == null)
             throw new IllegalArgumentException("The ArtifactMessageService cannot be null.");
 
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
-
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
+
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
 
         this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
         this.messageService = messageService;
-        this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
         this.configurationContainer = configurationContainer;
         this.objectMapper = new ObjectMapper();
+        this.policyConfiguration = policyConfiguration;
     }
 
     /**
@@ -327,7 +327,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * @return True if everything's fine.
      */
     private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {
-        if (negotiationService.isStatus()) {
+        final var policyNegotiation = policyConfiguration.isPolicyNegotiation();
+
+        if (policyNegotiation) {
             if (contractId == null) {
                 return false;
             } else {

@@ -154,7 +154,7 @@ public class RequestController {
             payload = response.get("payload");
         } catch (Exception exception) {
             // Failed to read the message parts.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -172,7 +172,7 @@ public class RequestController {
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
-                LOGGER.info("Could not save metadata to database. [exception=({})]",
+                LOGGER.warn("Could not save metadata to database. [exception=({})]",
                     exception.getMessage());
                 return new ResponseEntity<>(exception.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
@@ -246,7 +246,7 @@ public class RequestController {
             payload = response.get("payload");
         } catch (Exception exception) {
             // Failed to read the message parts.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -263,19 +263,19 @@ public class RequestController {
             agreementId = negotiationService.contractAccepted(recipient, header, payload);
         } catch (ContractException exception) {
             // Failed to read the contract.
-            LOGGER.info("Could not read contract. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Could not read contract. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the received contract.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageException exception) {
             // Failed to send contract agreement confirmation.
-            LOGGER.info("Failed to send contract agreement. [exception=({})]", exception.getMessage());
+            LOGGER.warn("Failed to send contract agreement. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Negotiation sequence was not fully completed.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (agreementId == null) {
             // Failed to read the contract agreement.
-            LOGGER.info("Received invalid contract agreement.");
+            LOGGER.debug("Received invalid contract agreement.");
             return new ResponseEntity<>("Received invalid contract agreement.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -353,7 +353,7 @@ public class RequestController {
         } catch (MessageResponseException exception) {
             // Failed to read the artifact response message.
             LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
+            return new ResponseEntity<>("Received invalid ids response message.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageNotSentException exception) {
             // Failed to send the artifact request message.
@@ -362,7 +362,7 @@ public class RequestController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (JsonProcessingException exception) {
             // Could not parse query input (params and headers).
-            LOGGER.info("Could not parse query input from request body. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Could not parse query input from request body. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Could not parse query input from request body.",
                     HttpStatus.BAD_REQUEST);
         }
@@ -373,7 +373,7 @@ public class RequestController {
             payload = response.get("payload");
         } catch (Exception exception) {
             // Failed to read the message parts.
-            LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
+            LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to read the ids response message.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
