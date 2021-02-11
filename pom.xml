@@ -264,25 +264,6 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-api</artifactId>
-			<version>${junit-jupiter.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>${junit-jupiter.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-params</artifactId>
-			<version>${junit-jupiter.version}</version>
-		</dependency>
-
 		<!--JSON-->
 		<dependency>
 			<groupId>org.json</groupId>
@@ -415,6 +396,37 @@
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.6.2</version>
+				<configuration>
+					<targetClasses>
+						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+					</targetClasses>
+					<targetTests>
+						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+					</targetTests>
+					<excludedTestClasses>
+						<param>de.fraunhofer.isst.dataspaceconnector.model.v2.*Persistence*</param>
+					</excludedTestClasses>
+					<mutators>
+						<mutator>ALL</mutator>
+					</mutators>
+					<verbose>false</verbose>
+					<threads>2</threads>
+					<timestampedReports>false</timestampedReports>
+				</configuration>
+				<executions>
+					<execution>
+						<id>verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 
