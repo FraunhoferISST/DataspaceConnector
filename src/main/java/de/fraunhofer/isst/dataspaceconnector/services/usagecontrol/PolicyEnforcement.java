@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
@@ -33,6 +34,7 @@ public class PolicyEnforcement {
     private final ResourceService resourceService;
     private final RequestedResourceRepository requestedResourceRepository;
     private final SerializerProvider serializerProvider;
+    private final PolicyConfiguration policyConfiguration;
 
     /**
      * Constructor for PolicyEnforcement.
@@ -41,9 +43,10 @@ public class PolicyEnforcement {
      */
     @Autowired
     public PolicyEnforcement(PolicyVerifier policyVerifier,
-        RequestedResourceServiceImpl requestedResourceService,
-        RequestedResourceRepository requestedResourceRepository,
-        SerializerProvider serializerProvider) throws IllegalArgumentException {
+                             RequestedResourceServiceImpl requestedResourceService,
+                             RequestedResourceRepository requestedResourceRepository,
+                             PolicyConfiguration policyConfiguration,
+                             SerializerProvider serializerProvider) throws IllegalArgumentException {
         if (policyVerifier == null)
             throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
 
@@ -53,12 +56,16 @@ public class PolicyEnforcement {
         if (requestedResourceRepository == null)
             throw new IllegalArgumentException("The RequestedResourceRepository cannot be null.");
 
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
+
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
         this.policyVerifier = policyVerifier;
         this.resourceService = requestedResourceService;
         this.requestedResourceRepository = requestedResourceRepository;
+        this.policyConfiguration = policyConfiguration;
         this.serializerProvider = serializerProvider;
     }
 
@@ -68,11 +75,13 @@ public class PolicyEnforcement {
      */
     @Scheduled(fixedDelay = 60000)
     public void schedule() {
-        LOGGER.info("Check data...");
-        try {
-            checkResources();
-        } catch (ParseException | IOException e) {
-            LOGGER.error(e.toString());
+        if (policyConfiguration.getUsageControlFramework() ==
+                PolicyConfiguration.UsageControlFramework.INTERNAL) {
+            try {
+                checkResources();
+            } catch (ParseException | IOException exception) {
+                LOGGER.warn("Failed to check policy. [exception=({})]", exception.getMessage());
+            }
         }
     }
 
@@ -83,6 +92,8 @@ public class PolicyEnforcement {
      * @throws java.io.IOException if an error occurs while deserializing a contract.
      */
     public void checkResources() throws ParseException, IOException {
+        LOGGER.info("Check data...");
+
         for (RequestedResource resource : requestedResourceRepository.findAll()) {
             String policy = resource.getResourceMetadata().getPolicy();
             try {
