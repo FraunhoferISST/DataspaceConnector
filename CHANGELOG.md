@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [4.1.0-SNAPSHOT]
 
 ### Added
+- Handle ResourceUpdateMessage: Update the local copy of resource upon receiving a ResourceUpdateMessage. If immediate update of resource fails, schedule in a queue.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
 - Store `ownerURI` and `originalUUID` in `RequestedResource`.
 - Store `contract` URI in `ResourceRepresentation`.

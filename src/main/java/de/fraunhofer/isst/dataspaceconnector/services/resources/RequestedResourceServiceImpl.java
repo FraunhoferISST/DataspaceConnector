@@ -186,7 +186,7 @@ public class RequestedResourceServiceImpl implements ResourceService {
     public LinkedList<RequestedResource> getResourcesByOriginalUUID(UUID originalUUID) {
         LinkedList<RequestedResource> resources = new LinkedList<RequestedResource>();
         for (RequestedResource resource : getAllResources()) {
-            if (resource.getOriginalUUID() == originalUUID) {
+            if (resource.getOriginalUUID().equals(originalUUID)) {
                 resources.add(resource);
             }
         }
