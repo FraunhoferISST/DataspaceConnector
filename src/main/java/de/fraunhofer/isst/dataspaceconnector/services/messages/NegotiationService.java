@@ -35,8 +35,6 @@ public class NegotiationService {
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
-    private boolean status;
-
     /**
      * Constructor for NegotiationService.
      *
@@ -61,7 +59,6 @@ public class NegotiationService {
 
         this.messageService = contractMessageService;
         this.policyHandler = policyHandler;
-        this.status = true;
         this.serializerProvider = serializerProvider;
         this.configurationContainer = configurationContainer;
     }
@@ -164,22 +161,6 @@ public class NegotiationService {
             LOGGER.info("Received no valid contract.");
             throw new MessageResponseException("Failed to read the ids response message.");
         }
-    }
-
-    /**
-     * Returns the status.
-     * @return the status.
-     */
-    public boolean isStatus() {
-        return status;
-    }
-
-    /**
-     * Sets the status.
-     * @param status the status.
-     */
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     /**
