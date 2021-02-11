@@ -117,7 +117,7 @@ public abstract class MessageService {
             return idsHttpService.sendAndCheckDat(body, getRecipient());
         } catch (ClaimsException exception) {
             LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
-            throw new MessageResponseException("Unexpected message answer.", exception);
+            throw new MessageResponseException("Invalid DAT in incoming message.", exception);
         } catch (FileUploadException | IOException exception) {
             LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
             throw new MessageNotSentException("Message could not be sent.", exception);
