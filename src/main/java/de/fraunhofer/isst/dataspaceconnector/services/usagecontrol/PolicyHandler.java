@@ -138,14 +138,21 @@ public class PolicyHandler {
      */
     public boolean onDataProvision(String policy) throws UnsupportedPatternException,
         RequestFormatException {
-        switch (getPattern(policy)) {
-            case PROVIDE_ACCESS:
-                return policyVerifier.allowAccess();
-            case PROHIBIT_ACCESS:
-                return policyVerifier.inhibitAccess();
-            case USAGE_DURING_INTERVAL:
-            case USAGE_UNTIL_DELETION:
-                return policyVerifier.checkInterval(contract);
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                switch (getPattern(policy)) {
+                    case PROVIDE_ACCESS:
+                        return policyVerifier.allowAccess();
+                    case PROHIBIT_ACCESS:
+                        return policyVerifier.inhibitAccess();
+                    case USAGE_DURING_INTERVAL:
+                    case USAGE_UNTIL_DELETION:
+                        return policyVerifier.checkInterval(contract);
+                    default:
+                        return true;
+                }
+            case MYDATA: //TODO
+            case MYDATA_INTERCEPTOR: // TODO
             default:
                 return true;
         }
@@ -161,6 +168,15 @@ public class PolicyHandler {
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                break;
+            case MYDATA: // TODO
+            case MYDATA_INTERCEPTOR: // TODO
+            default:
+                return true;
+        }
+
         final var policy = dataResource.getResourceMetadata().getPolicy();
         final var ignoreUnsupportedPatterns = policyConfiguration.isUnsupportedPatterns();
 
