@@ -2,6 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
@@ -10,7 +12,8 @@ import javax.persistence.Inheritance;
 /**
  * An artifact stores and encapsulates data.
  */
-@lombok.Data
+@Getter
+@RequiredArgsConstructor
 @Inheritance
 @Entity
 @EqualsAndHashCode(callSuper = false)

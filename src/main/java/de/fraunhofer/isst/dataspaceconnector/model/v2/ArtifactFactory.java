@@ -14,7 +14,7 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
     /**
      * Default constructor.
      */
-    ArtifactFactory() {
+    public ArtifactFactory() {
         // This constructor is intentionally empty. Nothing to do here.
     }
 
