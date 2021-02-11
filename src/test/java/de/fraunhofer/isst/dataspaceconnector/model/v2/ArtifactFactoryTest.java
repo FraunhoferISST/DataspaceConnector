@@ -59,6 +59,18 @@ public class ArtifactFactoryTest {
     }
 
     @Test
+    public void create_validDesc_returnNumAccessed0() {
+        /* ARRANGE */
+        final var desc = getValidDescAllSetV1();
+
+        /* ACT */
+        final var artifact = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals((long)artifact.getNumAccessed(), 0);
+    }
+
+    @Test
     public void create_validDescRemoteData_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var desc = getValidDescRemoteDataV1();
