@@ -151,7 +151,7 @@ public class PolicyHandler {
                     default:
                         return true;
                 }
-            case MYDATA: //TODO
+            case MYDATA: // TODO
             case MYDATA_INTERCEPTOR: // TODO
             default:
                 return true;
