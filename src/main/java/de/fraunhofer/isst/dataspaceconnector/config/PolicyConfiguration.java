@@ -12,7 +12,7 @@ public class PolicyConfiguration {
     private boolean unsupportedPatterns;
 
     @Value("${policy.framework}")
-    private PolicyFramework policyFramework;
+    private UsageControlFramework usageControlFramework;
 
     public boolean isPolicyNegotiation() {
         return policyNegotiation;
@@ -30,21 +30,22 @@ public class PolicyConfiguration {
         this.unsupportedPatterns = unsupportedPatterns;
     }
 
-    public PolicyFramework getPolicyFramework() {
-        return policyFramework;
+    public UsageControlFramework getUsageControlFramework() {
+        return usageControlFramework;
     }
 
-    public void setPolicyFramework(PolicyFramework policyFramework) {
-        this.policyFramework = policyFramework;
+    public void setUsageControlFramework(UsageControlFramework usageControlFramework) {
+        this.usageControlFramework = usageControlFramework;
     }
 
-    private enum PolicyFramework {
-        INTERNAL("internal"),
-        MY_DATA("mydata");
+    public enum UsageControlFramework {
+        INTERNAL("INTERNAL"),
+        MYDATA("MYDATA"),
+        MYDATA_INTERCEPTOR("MYDATA_INTERCEPTOR");
 
         private final String pattern;
 
-        PolicyFramework(String string) {
+        UsageControlFramework(String string) {
             pattern = string;
         }
 
