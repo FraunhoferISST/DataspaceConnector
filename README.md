@@ -53,7 +53,7 @@ A project overview and short descriptions of each wiki section are presented
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
 1.  Clone this repository.
-2.  Execute `cd dataspace-connector` and `mvnw clean package`.
+2.  Execute `cd DataspaceConnector` and `./mvnw clean package`.
 3.  Navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
 4.  If everything worked fine, the connector is available at https://localhost:8080/. The API can 
 be accessed at https://localhost:8080/admin/api.
