@@ -9,10 +9,11 @@ All notable changes to this project will be documented in this file.
 - Store `contract` URI in `ResourceRepresentation`.
 - Add support for query params and additional headers when requesting artifacts.
 - Add input validation for query params and headers.
+- Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
 
 ### Changed
 - Configure Spring to fail on unknown properties in request bodies.
-- Moved settings for policy negotation and allowing unsupported patterns to `application.properties`.
+- Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
 
 ## [4.0.2] - 2021-02-04
 
