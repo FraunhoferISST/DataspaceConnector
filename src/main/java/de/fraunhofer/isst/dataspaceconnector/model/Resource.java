@@ -7,10 +7,9 @@ import lombok.Setter;
 import org.springframework.data.annotation.Version;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.MapKey;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +19,7 @@ import java.util.UUID;
  * A resource describes offered or requested data.
  */
 @Data
-@Entity
-@Table
+@MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Resource extends BaseResource {

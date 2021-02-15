@@ -42,5 +42,5 @@ public class Catalog extends BaseResource {
      **/
     @MapKey(name = "id")
     @OneToMany
-    private Map<UUID, Resource> resources;
+    private Map<UUID, OfferedResource> resources;
 }

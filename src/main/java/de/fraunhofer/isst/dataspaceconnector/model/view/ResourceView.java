@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class ResourceView implements BaseView<Resource> {
+public class ResourceView<T extends Resource> implements BaseView<T> {
     private String title;
     private String description;
     private List<String> keywords;
