@@ -62,6 +62,9 @@ public class ResourceMetadata implements Serializable {
 
     @JsonProperty("version")
     private String version;
+    
+    @JsonProperty("endpointDocumentation")
+    private URI endpointDocumentation;
 
     @NotNull
     @ElementCollection
@@ -91,7 +94,8 @@ public class ResourceMetadata implements Serializable {
      * @param representations The representations of the resource
      */
     public ResourceMetadata(String title, String description, List<String> keywords, String policy,
-                            URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations) {
+        URI owner, URI license, String version, Map<UUID, ResourceRepresentation> representations,
+        URI endpointDocumentation) {
         this.title = title;
         this.description = description;
         this.keywords = keywords;
@@ -100,6 +104,7 @@ public class ResourceMetadata implements Serializable {
         this.license = license;
         this.version = version;
         this.representations = representations;
+        this.endpointDocumentation = endpointDocumentation;
     }
 
     @Override
@@ -150,7 +155,7 @@ public class ResourceMetadata implements Serializable {
 
                 var output = new HashMap<UUID, ResourceRepresentation>();
                 for (var representation : representations) {
-                    output.put(representation.getUuid(), representation);
+                    output.put(representation.getUuid() == null ? UUID.randomUUID() : representation.getUuid(), representation);
                 }
 
                 return output;

@@ -53,7 +53,7 @@ A project overview and short descriptions of each wiki section are presented
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these steps:
 
 1.  Clone this repository.
-2.  Execute `cd dataspace-connector` and `mvnw clean package`.
+2.  Execute `cd DataspaceConnector` and `./mvnw clean package`.
 3.  Navigate to `/target` and run `java -jar dataspace-connector-{VERSION}.jar`.
 4.  If everything worked fine, the connector is available at https://localhost:8080/. The API can 
 be accessed at https://localhost:8080/admin/api.
@@ -94,7 +94,9 @@ The core development is driven by
 * [Ronja Quensel](https://github.com/ronjaquensel), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 with significant contributions, comments, and support by (in alphabetical order):
-* ...
+* [Haydar Qarawlus](https://github.com/hqarawlus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Johannes Pieperbeck](https://github.com/jpieperbeck), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [Steffen Biehs](https://github.com/steffen-biehs), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 ## License
 Copyright © 2020 Fraunhofer ISST. This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) for details.

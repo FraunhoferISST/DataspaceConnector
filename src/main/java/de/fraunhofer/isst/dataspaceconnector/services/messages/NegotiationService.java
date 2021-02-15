@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
@@ -34,8 +35,6 @@ public class NegotiationService {
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
-    private boolean status;
-
     /**
      * Constructor for NegotiationService.
      *
@@ -60,7 +59,6 @@ public class NegotiationService {
 
         this.messageService = contractMessageService;
         this.policyHandler = policyHandler;
-        this.status = true;
         this.serializerProvider = serializerProvider;
         this.configurationContainer = configurationContainer;
     }
@@ -73,15 +71,16 @@ public class NegotiationService {
      * @param artifactId ID of the artifact.
      * @return The http response.
      * @throws IllegalArgumentException if the contract could not be deserialized.
+     * @throws MessageException if the message could not be built.
      */
     public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
-        throws IllegalArgumentException {
+        throws IllegalArgumentException, MessageException {
         Contract contract;
         try {
             // Validate contract input.
             contract = policyHandler.validateContract(contractAsString);
         } catch (RequestFormatException exception) {
-            LOGGER.warn("Could not deserialize contract. [exception=({})]",
+            LOGGER.debug("Could not deserialize contract. [exception=({})]",
                 exception.getMessage());
             throw new RequestFormatException("Malformed contract. " + exception.getMessage());
         }
@@ -132,13 +131,22 @@ public class NegotiationService {
                 // Send ContractAgreementMessage to recipient.
                 messageService.setResponseParameters(recipient, correlationMessage, contract.getId());
                 ContractAgreement agreement = messageService.buildContractAgreement(contract);
-                response = messageService.sendMessage(agreement.toRdf());
-            } catch (MessageException exception) {
-                // Failed to send a contract agreement message.
-                LOGGER.warn("Could not send contract agreement message. [exception=({})]",
-                    exception.getMessage());
-                throw new MessageNotSentException("Could not send contract agreement message. "
-                    + exception.getMessage());
+                response = messageService.sendResponseMessage(agreement.toRdf());
+            } catch (MessageBuilderException exception) {
+                // Failed to build the contract agreement message.
+                LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to build the ids message. " +
+                        "[exception=({})]", exception);
+            } catch (MessageResponseException exception) {
+                // Failed to read the contract agreement message.
+                LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
+                throw new MessageResponseException("Failed to read the ids response message. " +
+                        "[exception=({})]", exception);
+            } catch (MessageNotSentException exception) {
+                // Failed to send the contract agreement message.
+                LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to send the ids message. " +
+                        "[exception=({})]", exception);
             }
 
             if (response != null) {
@@ -153,22 +161,6 @@ public class NegotiationService {
             LOGGER.info("Received no valid contract.");
             throw new MessageResponseException("Failed to read the ids response message.");
         }
-    }
-
-    /**
-     * Returns the status.
-     * @return the status.
-     */
-    public boolean isStatus() {
-        return status;
-    }
-
-    /**
-     * Sets the status.
-     * @param status the status.
-     */
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     /**

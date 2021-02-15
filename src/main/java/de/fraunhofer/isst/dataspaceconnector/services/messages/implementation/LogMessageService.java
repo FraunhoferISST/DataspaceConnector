@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 import de.fraunhofer.iais.eis.LogMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -57,7 +57,7 @@ public class LogMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildRequestHeader() throws MessageException {
+    public Message buildRequestHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
@@ -75,7 +75,7 @@ public class LogMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildResponseHeader() throws MessageException {
+    public Message buildResponseHeader() throws MessageBuilderException {
         return null;
     }
 

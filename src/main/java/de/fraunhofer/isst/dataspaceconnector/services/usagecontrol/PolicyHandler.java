@@ -1,14 +1,24 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.Constraint;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 /**
@@ -24,8 +34,7 @@ public class PolicyHandler {
     private static Contract contract;
     private final PolicyVerifier policyVerifier;
     private final SerializerProvider serializerProvider;
-
-    private boolean ignoreUnsupportedPatterns;
+    private final PolicyConfiguration policyConfiguration;
 
     /**
      * Constructor for PolicyHandler.
@@ -33,7 +42,9 @@ public class PolicyHandler {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
+    public PolicyHandler(PolicyVerifier policyVerifier,
+                         SerializerProvider serializerProvider,
+                         PolicyConfiguration policyConfiguration)
         throws IllegalArgumentException {
         if (policyVerifier == null)
             throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
@@ -41,9 +52,12 @@ public class PolicyHandler {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
+
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
-        this.ignoreUnsupportedPatterns = false;
+        this.policyConfiguration = policyConfiguration;
     }
 
     /**
@@ -132,71 +146,78 @@ public class PolicyHandler {
      */
     public boolean onDataProvision(String policy) throws UnsupportedPatternException,
         RequestFormatException {
-        switch (getPattern(policy)) {
-            case PROVIDE_ACCESS:
-                return policyVerifier.allowAccess();
-            case PROHIBIT_ACCESS:
-                return policyVerifier.inhibitAccess();
-            case USAGE_DURING_INTERVAL:
-            case USAGE_UNTIL_DELETION:
-                return policyVerifier.checkInterval(contract);
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                switch (getPattern(policy)) {
+                    case PROVIDE_ACCESS:
+                        return policyVerifier.allowAccess();
+                    case PROHIBIT_ACCESS:
+                        return policyVerifier.inhibitAccess();
+                    case USAGE_DURING_INTERVAL:
+                    case USAGE_UNTIL_DELETION:
+                        return policyVerifier.checkInterval(contract);
+                    default:
+                        return true;
+                }
+            case MYDATA: // TODO
+            case MYDATA_INTERCEPTOR: // TODO
             default:
                 return true;
         }
     }
 
-//    /**
-//     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
-//     *
-//     * @param dataResource the accessed resource.
-//     * @return whether the data can be accessed.
-//     * @throws UnsupportedPatternException if no pattern could be recognized.
-//     * @throws RequestFormatException if the string could not be deserialized.
-//     */
-//    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
-//        RequestFormatException{
-//        final var policy = dataResource.getResourceMetadata().getPolicy();
-//        Pattern pattern;
-//        try {
-//            pattern = getPattern(policy);
-//        } catch (UnsupportedPatternException exception) {
-//            if (!ignoreUnsupportedPatterns)
-//                throw new UnsupportedPatternException(exception.getMessage());
-//            else
-//                pattern = Pattern.PROVIDE_ACCESS;
-//        }
-//
-//        switch (pattern) {
-//            case USAGE_DURING_INTERVAL:
-//            case USAGE_UNTIL_DELETION:
-//                return policyVerifier.checkInterval(contract);
-//            case DURATION_USAGE:
-//                return policyVerifier.checkDuration(dataResource.getCreated(), contract);
-//            case USAGE_LOGGING:
-//                return policyVerifier.logAccess();
-//            case N_TIMES_USAGE:
-//                return policyVerifier.checkFrequency(contract, dataResource.getUuid());
-//            case USAGE_NOTIFICATION:
-//                return policyVerifier.sendNotification(contract);
-//            default:
-//                return true;
-//        }
-//    }
-
     /**
-     * Returns the current value of {@link PolicyHandler#ignoreUnsupportedPatterns}.
-     * @return true, if unsupported patterns in policies are ignored; false otherwise.
+     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
+     *
+     * @param dataResource the accessed resource.
+     * @return whether the data can be accessed.
+     * @throws UnsupportedPatternException if no pattern could be recognized.
+     * @throws RequestFormatException if the string could not be deserialized.
      */
-    public boolean isIgnoreUnsupportedPatterns() {
-        return ignoreUnsupportedPatterns;
-    }
+    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
+        RequestFormatException{
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                break;
+            case MYDATA: // TODO
+            case MYDATA_INTERCEPTOR: // TODO
+            default:
+                return true;
+        }
 
-    /**
-     * Sets whether unsupported patterns in policies should be ignored.
-     * @param ignoreUnsupportedPatterns true, if unsupported patterns in policies should be ignored; false otherwise.
-     */
-    public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
-        this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
+        final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)dataResource.getContracts().values().toArray()[0];
+        final var rules = (ContractRule)dscContract.getRules().values().toArray()[0];
+        final var policy =rules.getValue();
+
+        final var ignoreUnsupportedPatterns = policyConfiguration.isUnsupportedPatterns();
+
+        Pattern pattern;
+        try {
+            pattern = getPattern(policy);
+        } catch (UnsupportedPatternException exception) {
+            if (!ignoreUnsupportedPatterns)
+                throw new UnsupportedPatternException(exception.getMessage());
+            else
+                pattern = Pattern.PROVIDE_ACCESS;
+        }
+
+        switch (pattern) {
+            case USAGE_DURING_INTERVAL:
+            case USAGE_UNTIL_DELETION:
+                return policyVerifier.checkInterval(contract);
+            case DURATION_USAGE:
+                // TODO Check timezones
+                return policyVerifier.checkDuration(java.util.Date.from(dataResource.getCreationDate().atZone(ZoneId.systemDefault()).toInstant()),
+                        contract);
+            case USAGE_LOGGING:
+                return policyVerifier.logAccess();
+            case N_TIMES_USAGE:
+                return policyVerifier.checkFrequency(contract, dataResource.getId());
+            case USAGE_NOTIFICATION:
+                return policyVerifier.sendNotification(contract);
+            default:
+                return true;
+        }
     }
 
     public enum Pattern {

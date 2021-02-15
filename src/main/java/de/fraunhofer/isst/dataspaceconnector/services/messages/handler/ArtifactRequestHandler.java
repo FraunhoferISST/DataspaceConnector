@@ -1,10 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
@@ -27,6 +29,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -35,31 +38,35 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
- * This @{@link ArtifactMessageHandler} handles all
+ * This @{@link ArtifactRequestHandler} handles all
  * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part
  * one in the multipart message. This header must have the correct '@type' reference as defined in
  * the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
-public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMessageImpl> {
+public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
     private final PolicyHandler policyHandler;
     private final ArtifactMessageService messageService;
-    private final NegotiationService negotiationService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
+    private final ObjectMapper objectMapper;
+    private final PolicyConfiguration policyConfiguration;
 
     @Autowired
     private ResourceDependencyResolver resourceDependencyResolver;
@@ -80,18 +87,18 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * Constructor for ArtifactMessageHandler.
      *
      * @param policyHandler The service for policies
-     * @param negotiationService The service for negotiations
      * @param messageService The service for sending messages
      * @param contractAgreementService The service for agreed contracts
      * @param configurationContainer The container containing the configuration
+     * @param policyConfiguration The configuration service containing policy configurations
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
-    public ArtifactMessageHandler(
-        PolicyHandler policyHandler, NegotiationService negotiationService,
-        ArtifactMessageService messageService,
-        ContractAgreementService contractAgreementService,
-        ConfigurationContainer configurationContainer)
+    public ArtifactRequestHandler(PolicyHandler policyHandler,
+                                  ArtifactMessageService messageService,
+                                  ContractAgreementService contractAgreementService,
+                                  ConfigurationContainer configurationContainer,
+                                  PolicyConfiguration policyConfiguration)
         throws IllegalArgumentException {
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
@@ -102,17 +109,15 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         if (messageService == null)
             throw new IllegalArgumentException("The ArtifactMessageService cannot be null.");
 
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
-
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
 
         this.policyHandler = policyHandler;
         this.messageService = messageService;
-        this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
         this.configurationContainer = configurationContainer;
+        this.objectMapper = new ObjectMapper();
+        this.policyConfiguration = policyConfiguration;
     }
 
     /**
@@ -137,7 +142,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
         // Check if version is supported.
         if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.warn("Information Model version of requesting connector is not supported.");
+            LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
                 "Information model version not supported.",
@@ -185,8 +190,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                     if (policyHandler.onDataProvision(policy)) {
                         Object data;
                         try {
+                            // Read query parameters from message payload.
+                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(
+                                    messagePayload.getUnderlyingInputStream(),
+                                    StandardCharsets.UTF_8), QueryInput.class);
                             // Get the data from source.
-                            data = artifactBFFService.getData(artifactId);
+                            data = artifactBFFService.getData(artifactId, queryInputData);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -212,6 +221,15 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
+                        } catch (IOException exception) {
+                            LOGGER.debug("Message payload could not be read. [id=({}), " +
+                                            "resourceId=({}), artifactId=({}), exception=({})]",
+                                    requestMessage.getId(), resourceId, artifactId,
+                                    exception.getMessage());
+                            return ErrorResponse
+                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                            "Malformed payload.", connector.getId(),
+                                            connector.getOutboundModelVersion());
                         }
 
                         // Build artifact response.
@@ -325,7 +343,9 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @return True if everything's fine.
      */
     private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {
-        if (negotiationService.isStatus()) {
+        final var policyNegotiation = policyConfiguration.isPolicyNegotiation();
+
+        if (policyNegotiation) {
             if (contractId == null) {
                 return false;
             } else {

@@ -91,7 +91,7 @@ public class PolicyVerifier {
     public boolean logAccess() {
         Map<String, String> response;
         try {
-            response = logMessageService.sendMessage("");
+            response = logMessageService.sendRequestMessage("");
         } catch (Exception exception) {
             LOGGER.warn("Log message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();
@@ -118,7 +118,7 @@ public class PolicyVerifier {
         Map<String, String> response;
         try {
             notificationMessageService.setRequestParameters(URI.create(recipient));
-            response = notificationMessageService.sendMessage("");
+            response = notificationMessageService.sendRequestMessage("");
         } catch (Exception exception) {
             LOGGER.warn("Notification message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();
@@ -199,9 +199,9 @@ public class PolicyVerifier {
         URI pip = policyReader.getPipEndpoint(contract.getPermission().get(0));
 
         try {
-            String accessed = httpUtils
-                .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
-                    "password");
+            String accessed = httpUtils.sendHttpsGetRequestWithBasicAuth(
+                    pip + uuid.toString() + "/access", "admin",
+                    "password", null);
             if (Integer.parseInt(accessed) >= max) {
                 return inhibitAccess();
             } else {

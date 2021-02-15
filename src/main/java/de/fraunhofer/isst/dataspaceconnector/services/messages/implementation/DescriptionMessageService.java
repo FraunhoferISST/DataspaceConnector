@@ -6,7 +6,6 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -91,7 +90,7 @@ public class DescriptionMessageService extends MessageService {
      * {@inheritDoc}
      */
     @Override
-    public Message buildResponseHeader() throws MessageException {
+    public Message buildResponseHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
