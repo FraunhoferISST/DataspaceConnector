@@ -4,7 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.BaseFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.BaseResource;
-import de.fraunhofer.isst.dataspaceconnector.repositories.v2.BaseResourceRepository;
+import de.fraunhofer.isst.dataspaceconnector.repositories.BaseResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;

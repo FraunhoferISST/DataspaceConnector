@@ -14,4 +14,10 @@ public final class ArtifactBFFService extends CommonService<Artifact, ArtifactDe
         final var service = (ArtifactService)getService();
         return service.getData(getEndpointService().get(endpointId).getInternalId());
     }
+
+    public void saveData(final EndpointId endpointId, String data) {
+        final var service = (ArtifactService)getService();
+        // TODO save the data
+        throw new RuntimeException();
+    }
 }

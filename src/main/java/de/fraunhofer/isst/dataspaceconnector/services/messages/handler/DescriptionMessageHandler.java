@@ -1,15 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -21,8 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
 
 /**
  * This @{@link DescriptionMessageHandler} handles all
@@ -37,20 +37,21 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionMessageHandler.class);
 
     private final DescriptionMessageService messageService;
-    private final ResourceService resourceService;
     private final ConfigurationContainer configurationContainer;
+
+    @Autowired
+    private IdsResourceService resourceService;
 
     /**
      * Constructor for DescriptionMessageHandler.
      *
      * @param configurationContainer  The container with the configuration
      * @param messageService The service for sending messages
-     * @param offeredResourceService The service for offered resources
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public DescriptionMessageHandler(ConfigurationContainer configurationContainer,
-        DescriptionMessageService messageService, OfferedResourceServiceImpl offeredResourceService)
+        DescriptionMessageService messageService)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -58,11 +59,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
         if (messageService == null)
             throw new IllegalArgumentException("The DescriptionMessageService cannot be null.");
 
-        if (offeredResourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
-
         this.messageService = messageService;
-        this.resourceService = offeredResourceService;
         this.configurationContainer = configurationContainer;
     }
 
@@ -128,16 +125,14 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
 
         try {
             // Find the requested resource.
-            final var resourceId = UUIDUtils.uuidFromUri(requestMessage.getRequestedElement());
-            final var resource = ((OfferedResourceServiceImpl) resourceService)
-                .getOfferedResources().get(resourceId);
+            final var resourceId = requestMessage.getRequestedElement();
+            final var resource = resourceService.getResource(resourceId);
 
             if (resource != null) {
                 // If the resource has been found, send the description.
                 messageService.setResponseParameters(requestMessage.getIssuerConnector(),
                     requestMessage.getId());
-                return BodyResponse.create(messageService.buildResponseHeader(),
-                    resource.toRdf());
+                return BodyResponse.create(messageService.buildResponseHeader(), resource.toRdf());
             } else {
                 // If the resource has not been found, inform and reject.
                 LOGGER.debug("Resource could not be found. [id=({}), resourceId=({})]",
@@ -182,7 +177,7 @@ public class DescriptionMessageHandler implements MessageHandler<DescriptionRequ
             // Create a connector with a list of offered resources.
             var connectorImpl = (BaseConnectorImpl) connector;
             connectorImpl.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                ._offeredResource_(new ArrayList<>(resourceService.getResources()))
+                ._offeredResource_(resourceService.getAllOfferedResources())
                 .build()));
 
             // Answer with the resource description.

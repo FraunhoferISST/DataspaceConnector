@@ -1,18 +1,36 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
+import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService.ResponseType;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.ResourceApiBridge;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,9 +42,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,10 +61,8 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/ids")
-@Tag(name = "IDS Messages",
-    description = "Endpoints for invoke sending IDS messages")
+@Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 public class RequestController {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
 
     private final DapsTokenProvider tokenProvider;
@@ -46,7 +70,6 @@ public class RequestController {
     private final DescriptionMessageService descriptionMessageService;
     private final ContractMessageService contractMessageService;
     private final NegotiationService negotiationService;
-    private final ResourceService resourceService;
 
     /**
      * Constructor for RequestController
@@ -56,17 +79,14 @@ public class RequestController {
      * @param descriptionMessageService The service for description messages
      * @param contractMessageService The service for contract messages
      * @param negotiationService The service for negotiations
-     * @param requestedResourceService The service for the requested resources
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public RequestController(DapsTokenProvider tokenProvider,
-        ArtifactMessageService artifactMessageService,
-        DescriptionMessageService descriptionMessageService,
-        ContractMessageService contractMessageService,
-        NegotiationService negotiationService,
-        RequestedResourceServiceImpl requestedResourceService)
-        throws IllegalArgumentException {
+            ArtifactMessageService artifactMessageService,
+            DescriptionMessageService descriptionMessageService,
+            ContractMessageService contractMessageService, NegotiationService negotiationService)
+            throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
@@ -82,15 +102,11 @@ public class RequestController {
         if (negotiationService == null)
             throw new IllegalArgumentException("The NegotiationService cannot be null.");
 
-        if (requestedResourceService == null)
-            throw new IllegalArgumentException("The RequestedResourceServiceImpl cannot be null.");
-
         this.tokenProvider = tokenProvider;
         this.artifactMessageService = artifactMessageService;
         this.descriptionMessageService = descriptionMessageService;
         this.contractMessageService = contractMessageService;
         this.negotiationService = negotiationService;
-        this.resourceService = requestedResourceService;
     }
 
     /**
@@ -101,20 +117,23 @@ public class RequestController {
      * @return OK or error response.
      */
     @Operation(summary = "Description request",
-        description = "Request metadata from another IDS connector.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            description = "Request metadata from another IDS connector.")
+    @ApiResponses(value =
+            {
+                @ApiResponse(responseCode = "200", description = "Ok")
+                , @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                        @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> requestMetadata(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data")
-        @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested resource.",
-            example = "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedResource", required = false) URI resourceId) {
+    public ResponseEntity<String>
+    requestMetadata(@Parameter(description = "The URI of the requested IDS connector.",
+                            required = true, example = "https://localhost:8080/api/ids/data")
+                    @RequestParam("recipient") URI recipient,
+            @Parameter(description = "The URI of the requested resource.",
+                    example =
+                            "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "requestedResource", required = false) URI resourceId) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, resourceId);
         }
@@ -126,14 +145,15 @@ public class RequestController {
             response = descriptionMessageService.sendMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to send the description request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
+            LOGGER.info(
+                    "Failed to send or build a request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Failed to send description request message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the description response message.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;
@@ -143,27 +163,26 @@ public class RequestController {
         } catch (Exception exception) {
             // Failed to read the message parts.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Get response message type.
         final var messageType = descriptionMessageService.getResponseType(header);
-        if (messageType != ResponseType.DESCRIPTION_RESPONSE)
+        if (messageType != MessageService.ResponseType.DESCRIPTION_RESPONSE)
             return returnRejectionMessage(messageType, response);
 
         if (resourceId != null) {
             // Save metadata to database.
             try {
-                final var validationKey = descriptionMessageService
-                    .saveMetadata(payload, resourceId);
-                return new ResponseEntity<>("Validation: " + validationKey +
-                    "\nResponse: " + payload, HttpStatus.OK);
+                final var validationKey = saveMetadata(payload, resourceId);
+                return new ResponseEntity<>(
+                        "Validation: " + validationKey + "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
                 LOGGER.info("Could not save metadata to database. [exception=({})]",
-                    exception.getMessage());
-                return new ResponseEntity<>(exception.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+                        exception.getMessage());
+                return new ResponseEntity<>(
+                        exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } else {
             // Return self-description.
@@ -180,22 +199,25 @@ public class RequestController {
      * @return OK or error response.
      */
     @Operation(summary = "Contract request",
-        description = "Send a contract request to another IDS connector.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            description = "Send a contract request to another IDS connector.")
+    @ApiResponses(value =
+            {
+                @ApiResponse(responseCode = "200", description = "Ok")
+                , @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                        @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
     @RequestMapping(value = "/contract", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> requestContract(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data")
-        @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested artifact.", required = true,
-            example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The contract offer for the requested resource.")
-        @RequestBody(required = false) String contractOffer) {
+    public ResponseEntity<String>
+    requestContract(@Parameter(description = "The URI of the requested IDS connector.",
+                            required = true, example = "https://localhost:8080/api/ids/data")
+                    @RequestParam("recipient") URI recipient,
+            @Parameter(description = "The URI of the requested artifact.", required = true,
+                    example =
+                            "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "requestedArtifact") URI artifactId,
+            @Parameter(description = "The contract offer for the requested resource.") @RequestBody(
+                    required = false) String contractOffer) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, null);
         }
@@ -208,19 +230,21 @@ public class RequestController {
             contractMessageService.setRequestParameters(recipient, request.getId());
             response = contractMessageService.sendMessage(request.toRdf());
         } catch (IllegalArgumentException exception) {
-            LOGGER.warn("Failed to build contract request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to build contract request.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            LOGGER.warn(
+                    "Failed to build contract request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>(
+                    "Failed to build contract request.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageBuilderException exception) {
             // Failed to send the contract request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to send contract request message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            LOGGER.info(
+                    "Failed to send or build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>(
+                    "Failed to send contract request message.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the contract response message.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;
@@ -230,14 +254,14 @@ public class RequestController {
         } catch (Exception exception) {
             // Failed to read the message parts.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Get response message type.
         final var messageType = contractMessageService.getResponseType(header);
         // TODO Add further responses (on contract offer or contract response).
-        if (messageType != ResponseType.CONTRACT_AGREEMENT)
+        if (messageType != MessageService.ResponseType.CONTRACT_AGREEMENT)
             return returnRejectionMessage(messageType, response);
 
         // Get contract id.
@@ -247,20 +271,21 @@ public class RequestController {
         } catch (ContractException exception) {
             // Failed to read the contract.
             LOGGER.info("Could not read contract. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the received contract.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the received contract.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageException exception) {
             // Failed to send contract agreement confirmation.
-            LOGGER.info("Failed to send contract agreement. [exception=({})]", exception.getMessage());
+            LOGGER.info(
+                    "Failed to send contract agreement. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>("Negotiation sequence was not fully completed.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (agreementId == null) {
             // Failed to read the contract agreement.
             LOGGER.info("Received invalid contract agreement.");
-            return new ResponseEntity<>("Received invalid contract agreement.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Received invalid contract agreement.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<>(String.valueOf(agreementId), HttpStatus.OK);
@@ -276,39 +301,43 @@ public class RequestController {
      * @return OK or error response.
      */
     @Operation(summary = "Artifact request",
-        description = "Request data from another IDS connector. " +
-            "INFO: Before an artifact can be requested, the metadata must be queried. The key" +
-            " generated in this process must be passed in the artifact query.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            description = "Request data from another IDS connector. "
+                    + "INFO: Before an artifact can be requested, the metadata must be queried. The key"
+                    + " generated in this process must be passed in the artifact query.")
+    @ApiResponses(value =
+            {
+                @ApiResponse(responseCode = "200", description = "Ok")
+                , @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                        @ApiResponse(responseCode = "403", description = "Forbidden"),
+                        @ApiResponse(responseCode = "500", description = "Internal server error")
+            })
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String> requestData(
-        @Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data")
-        @RequestParam("recipient") URI recipient,
-        @Parameter(description = "The URI of the requested artifact.", required = true,
-            example = "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "requestedArtifact") URI artifactId,
-        @Parameter(description = "The URI of the contract agreement.",
-            example = "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
-        @RequestParam(value = "transferContract", required = false) URI contractId,
-        @Parameter(description = "A unique validation key.", required = true)
-        @RequestParam("key") UUID key) {
+    public ResponseEntity<String>
+    requestData(@Parameter(description = "The URI of the requested IDS connector.", required = true,
+                        example = "https://localhost:8080/api/ids/data") @RequestParam("recipient")
+                URI recipient,
+            @Parameter(description = "The URI of the requested artifact.", required = true,
+                    example =
+                            "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "requestedArtifact") URI artifactId,
+            @Parameter(description = "The URI of the contract agreement.",
+                    example =
+                            "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4-40b3-ace3-ef29cd687cf9")
+            @RequestParam(value = "transferContract", required = false) URI contractId,
+            @Parameter(description = "A unique validation key.", required = true) @RequestParam(
+                    "key") UUID key) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
 
         if (!resourceExists(key)) {
             // The resource does not exist.
-            LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: " +
-                    "%s\nrequestedArtifact:%s\nkey:%s", recipient.toString(),
-                artifactId.toString(), key.toString()));
-            return new ResponseEntity<>("Your key is not valid. Please request metadata first.",
-                HttpStatus.FORBIDDEN);
+            LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: "
+                            + "%s\nrequestedArtifact:%s\nkey:%s",
+                    recipient.toString(), artifactId.toString(), key.toString()));
+            return new ResponseEntity<>(
+                    "Your key is not valid. Please request metadata first.", HttpStatus.FORBIDDEN);
         }
 
         Map<String, String> response;
@@ -318,14 +347,15 @@ public class RequestController {
             response = artifactMessageService.sendMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to send the artifact request message.
-            LOGGER.info("Failed to send or build a request. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to send artifact request message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            LOGGER.info(
+                    "Failed to send or build a request. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>(
+                    "Failed to send artifact request message.", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (MessageResponseException exception) {
             // Failed to read the artifact response message.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         String header, payload;
@@ -335,25 +365,27 @@ public class RequestController {
         } catch (Exception exception) {
             // Failed to read the message parts.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to read the ids response message.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         // Get response message type.
         final var messageType = artifactMessageService.getResponseType(header);
-        if (messageType != ResponseType.ARTIFACT_RESPONSE)
+        if (messageType != MessageService.ResponseType.ARTIFACT_RESPONSE)
             return returnRejectionMessage(messageType, response);
 
         try {
             // Save data to database.
-            artifactMessageService.saveData(payload, key);
-            return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
-                "%s", key, payload), HttpStatus.OK);
+            saveData(payload, key);
+            return new ResponseEntity<>(String.format("Saved at: %s\nResponse: "
+                                                        + "%s",
+                                                key, payload),
+                    HttpStatus.OK);
         } catch (ResourceException exception) {
-            LOGGER.warn("Could not save data to database. [exception=({})]",
-                exception.getMessage());
-            return new ResponseEntity<>("Failed to save to database.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            LOGGER.warn(
+                    "Could not save data to database. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>(
+                    "Failed to save to database.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -366,8 +398,8 @@ public class RequestController {
      */
     private ResponseEntity<String> respondRejectUnauthorized(URI recipient, URI requestedArtifact) {
         LOGGER.debug(
-            "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
-            recipient.toString(), requestedArtifact.toString());
+                "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
+                recipient.toString(), requestedArtifact.toString());
 
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
@@ -379,18 +411,43 @@ public class RequestController {
      * @param response The response content
      * @return The response message
      */
-    private ResponseEntity<String> returnRejectionMessage(ResponseType responseType,
-        Map<String, String> response) {
-        if (responseType == ResponseType.REJECTION) {
-            return new ResponseEntity<>(ResponseType.REJECTION + ": "
-                + response.get("payload"), HttpStatus.OK);
-        } else if (responseType == ResponseType.CONTRACT_REJECTION) {
-            return new ResponseEntity<>(ResponseType.CONTRACT_REJECTION + ": "
-                + response.get("payload"), HttpStatus.OK);
+    private ResponseEntity<String> returnRejectionMessage(
+            MessageService.ResponseType responseType, Map<String, String> response) {
+        if (responseType == MessageService.ResponseType.REJECTION) {
+            return new ResponseEntity<>(
+                    MessageService.ResponseType.REJECTION + ": " + response.get("payload"),
+                    HttpStatus.OK);
+        } else if (responseType == MessageService.ResponseType.CONTRACT_REJECTION) {
+            return new ResponseEntity<>(
+                    MessageService.ResponseType.CONTRACT_REJECTION + ": " + response.get("payload"),
+                    HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Unexpected response: \n" + response, HttpStatus.OK);
         }
     }
+
+    /******************************************
+     * TODO: Some mess below
+     *****************************************/
+
+    @Autowired
+    private BFFResourceService<RequestedResource, ?, ?> requestedResourceService;
+
+    @Autowired
+    private BFFResourceRepresentationLinker<RequestedResource>
+            requestedResourceRepresentationLinker;
+
+    @Autowired
+    private BFFRepresentationArtifactLinker representationArtifactLinker;
+
+    @Autowired
+    private ArtifactBFFService artifactBFFService;
+
+    @Autowired
+    private SerializerProvider serializerProvider;
+
+    @Autowired
+    private TemplateBuilder42<RequestedResource, RequestedResourceDesc> templateBuilder;
 
     /**
      * Checks if a resource exists.
@@ -399,10 +456,144 @@ public class RequestController {
      * @return true if the resource exists.
      */
     private boolean resourceExists(UUID resourceId) {
+        return requestedResourceService.doesExist(
+                new EndpointId(Basepaths.Resources.toString(), resourceId));
+    }
+
+    /**
+     * Saves the data string to the internal database.
+     *
+     * @param response   The data resource as string.
+     * @param resourceId The resource uuid.
+     * @throws ResourceException if any.
+     */
+    private void saveData(String response, UUID resourceId) throws ResourceException {
+        final var representations = requestedResourceRepresentationLinker.get(
+                new EndpointId(Basepaths.Resources.toString(), resourceId));
+        final var artifacts = representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
+        artifactBFFService.saveData((EndpointId) artifacts.toArray()[0], response);
+    }
+
+    /**
+     * Saves the metadata to the internal database.
+     *
+     * @param response The data resource as string.
+     * @param resourceId The id of the resource
+     * @return The UUID of the created resource.
+     * @throws ResourceException if any.
+     * @throws InvalidResourceException If the ids object could not be deserialized.
+     */
+    public EndpointId saveMetadata(String response, URI resourceId)
+            throws ResourceException, InvalidResourceException {
+        Resource resource;
         try {
-            return resourceService.getResource(resourceId) != null;
-        } catch (ResourceException exception) {
-            return false;
+            resource = serializerProvider.getSerializer().deserialize(response, ResourceImpl.class);
+        } catch (Exception e) {
+            resource = findResource(response, resourceId);
         }
+
+        ResourceMetadata metadata;
+        try {
+            metadata = deserializeMetadata(resource);
+        } catch (Exception exception) {
+            LOGGER.info("Failed to deserialize metadata. [exception=({})]", exception.getMessage());
+            throw new InvalidResourceException("Metadata could not be deserialized.");
+        }
+
+        try {
+            return templateBuilder.build(ResourceApiBridge.toResourceTemplate(null, metadata));
+        } catch (Exception exception) {
+            LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
+            throw new ResourceException("Metadata could not be saved to database.");
+        }
+    }
+
+    /**
+     * Find a resource from a connector's resource catalog.
+     *
+     * @param payload The message payload
+     * @param resourceId The id of the resource
+     * @return The resource object.
+     * @throws InvalidResourceException If the payload could not be deserialized to a base
+     *         connector.
+     */
+    private Resource findResource(String payload, URI resourceId) throws InvalidResourceException {
+        Resource resource = null;
+        try {
+            Connector connector =
+                    serializerProvider.getSerializer().deserialize(payload, BaseConnector.class);
+            if (connector.getResourceCatalog() != null
+                    && !connector.getResourceCatalog().isEmpty()) {
+                for (Resource r : connector.getResourceCatalog().get(0).getOfferedResource()) {
+                    if (r.getId().equals(resourceId)) {
+                        resource = r;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception exception) {
+            LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
+            throw new InvalidResourceException("Response could not be deserialized: " + payload);
+        }
+        return resource;
+    }
+
+    /**
+     * Maps a received Infomodel resource to the internal metadata model.
+     *
+     * @param resource The resource
+     * @return the metadata object.
+     */
+    private ResourceMetadata deserializeMetadata(Resource resource) {
+        var metadata = new ResourceMetadata();
+
+        if (resource.getKeyword() != null) {
+            List<String> keywords = new ArrayList<>();
+            for (var t : resource.getKeyword()) {
+                keywords.add(t.getValue());
+            }
+            metadata.setKeywords(keywords);
+        }
+
+        if (resource.getRepresentation() != null) {
+            var representations = new HashMap<UUID, ResourceRepresentation>();
+            for (final var r : resource.getRepresentation()) {
+                int byteSize = 0;
+                String name = null;
+                String type = null;
+                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
+                    final var artifact = (Artifact) r.getInstance().get(0);
+                    if (artifact.getByteSize() != null)
+                        byteSize = artifact.getByteSize().intValue();
+                    if (artifact.getFileName() != null) name = artifact.getFileName();
+                    if (r.getMediaType() != null) type = r.getMediaType().getFilenameExtension();
+                }
+
+                ResourceRepresentation representation = new ResourceRepresentation(
+                        UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
+                        new BackendSource(BackendSource.Type.LOCAL, null, null, null));
+
+                representations.put(representation.getUuid(), representation);
+            }
+            metadata.setRepresentations(representations);
+        }
+
+        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
+            metadata.setTitle(resource.getTitle().get(0).getValue());
+
+        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
+            metadata.setDescription(resource.getDescription().get(0).getValue());
+
+        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
+            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
+
+        if (resource.getPublisher() != null) metadata.setOwner(resource.getPublisher());
+
+        if (resource.getStandardLicense() != null)
+            metadata.setLicense(resource.getStandardLicense());
+
+        if (resource.getVersion() != null) metadata.setVersion(resource.getVersion());
+
+        return metadata;
     }
 }

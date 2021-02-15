@@ -10,6 +10,9 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 
 import java.util.ArrayList;
 import java.util.UUID;

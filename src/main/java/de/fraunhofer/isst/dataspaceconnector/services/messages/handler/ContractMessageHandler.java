@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.services.ResourceDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
@@ -57,6 +58,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final LogMessageService logMessageService;
     private RequestMessage requestMessage;
+
+    @Autowired
+    private ResourceDependencyResolver resourceDependencyResolver;
 
     /**
      * Constructor for NotificationMessageHandler.
@@ -183,9 +187,9 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
             final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
 
             // Get artifact id from contract request.
-            URI artifactId = messageService.getArtifactIdFromContract(contractRequest);
+            URI artifactId = resourceDependencyResolver.getArtifactIdFromContract(contractRequest);
             // Load contract offer from metadata.
-            ContractOffer contractOffer = getContractOfferByArtifact(artifactId);
+            ContractOffer contractOffer = resourceDependencyResolver.getContractOfferByArtifact(UUIDUtils.uuidFromUri(artifactId));
 
             // Check if the contract request has the same content as the stored contract offer.
             if (negotiationService.compareContracts(contractRequest, contractOffer)) {
@@ -221,20 +225,6 @@ public class ContractMessageHandler implements MessageHandler<ContractRequestMes
                 "Malformed contract request.",
                 connector.getId(), connector.getOutboundModelVersion());
         }
-    }
-
-    /**
-     * Gets the contract offer by artifact id.
-     *
-     * @param artifactId The artifact's id
-     * @return The resource's contract offer.
-     */
-    private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
-        UUID uuid = UUIDUtils.uuidFromUri(artifactId);
-        final var resource = messageService.findResourceFromArtifactId(uuid);
-        if (resource == null)
-            throw new ResourceNotFoundException("Artifact not known.");
-        return resource.getContractOffer().get(0);
     }
 
     /**

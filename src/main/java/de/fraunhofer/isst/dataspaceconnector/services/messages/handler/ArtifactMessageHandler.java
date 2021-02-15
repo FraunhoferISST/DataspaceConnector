@@ -13,12 +13,19 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
+import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
+import de.fraunhofer.isst.dataspaceconnector.services.ResourceDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFContractService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -48,17 +55,30 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactMessageHandler.class);
 
-    private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
     private final ArtifactMessageService messageService;
     private final NegotiationService negotiationService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
 
+    @Autowired
+    private ResourceDependencyResolver resourceDependencyResolver;
+
+    @Autowired
+    private ArtifactBFFService artifactBFFService;
+
+    @Autowired
+    private BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
+
+    @Autowired
+    private BFFContractService contractService;
+
+    @Autowired
+    private RuleBFFService ruleService;
+
     /**
      * Constructor for ArtifactMessageHandler.
      *
-     * @param offeredResourceService The service for offered resources
      * @param policyHandler The service for policies
      * @param negotiationService The service for negotiations
      * @param messageService The service for sending messages
@@ -67,15 +87,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
-    public ArtifactMessageHandler(OfferedResourceServiceImpl offeredResourceService,
+    public ArtifactMessageHandler(
         PolicyHandler policyHandler, NegotiationService negotiationService,
         ArtifactMessageService messageService,
         ContractAgreementService contractAgreementService,
         ConfigurationContainer configurationContainer)
         throws IllegalArgumentException {
-        if (offeredResourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
 
@@ -91,7 +108,6 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
 
-        this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
         this.messageService = messageService;
         this.negotiationService = negotiationService;
@@ -110,8 +126,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      */
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
-    public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
-        MessagePayload messagePayload) throws RuntimeException {
+    public MessageResponse handleMessage(final ArtifactRequestMessageImpl requestMessage, final MessagePayload messagePayload) throws RuntimeException {
         if (requestMessage == null) {
             LOGGER.warn("Cannot respond when there is no request.");
             throw new IllegalArgumentException("The requestMessage cannot be null.");
@@ -132,9 +147,9 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
         try {
             // Find artifact and matching resource.
             final var artifactId = extractArtifactIdFromRequest(requestMessage);
-            final var requestedResource = messageService.findResourceFromArtifactId(artifactId);
+            final var resourceId = resourceDependencyResolver.findResourceFromArtifactId(artifactId);
 
-            if (requestedResource == null) {
+            if (resourceId == null) {
                 // The resource was not found, reject and inform the requester.
                 LOGGER.debug("Resource could not be found. [id=({}), artifactId=({})]",
                     requestMessage.getId(), artifactId);
@@ -159,16 +174,19 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
 
             try {
                 // Find the requested resource and its metadata.
-                final var resourceId = UUIDUtils.uuidFromUri(requestedResource.getId());
-                final var resourceMetadata = resourceService.getMetadata(resourceId);
+                final var resourceMetadata = resourceService.get(resourceId);
+                final var contracts = resourceMetadata.getContracts();
+                final var rules = contractService.get((EndpointId)contracts.toArray()[0]).getRules();
+                // TODO Should this happen in the backend?
+                final var policy = ruleService.get((EndpointId)rules.toArray()[0]).getValue();
 
                 try {
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
-                    if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
-                        String data;
+                    if (policyHandler.onDataProvision(policy)) {
+                        Object data;
                         try {
                             // Get the data from source.
-                            data = resourceService.getDataByRepresentation(resourceId, artifactId);
+                            data = artifactBFFService.getData(artifactId);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -208,7 +226,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                         LOGGER.debug("Request policy restriction detected for request."
                                 + "[id=({}), pattern=({})]",
                             requestMessage.getId(),
-                            policyHandler.getPattern(resourceMetadata.getPolicy()));
+                            policyHandler.getPattern(policy));
                         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                             "Policy restriction detected: You are not authorized to receive this data.",
                             connector.getId(),
@@ -286,10 +304,12 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
      * @return The artifact id
      * @throws RequestFormatException if uuid could not be extracted.
      */
-    private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
+    private EndpointId extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
         throws RequestFormatException {
         try {
-            return UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
+            // TODO This extraction should be unnecessary. The artifact uri should enough for mapping to endpoint id
+            final var artifactId = UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
+            return new EndpointId(Basepaths.Artifacts.toString(), artifactId);
         } catch (UUIDFormatException exception) {
             throw new RequestFormatException(
                 "The uuid could not extracted from request" + requestMessage.getId(),
@@ -328,7 +348,7 @@ public class ArtifactMessageHandler implements MessageHandler<ArtifactRequestMes
                     throw new ContractException("Could not deserialize contract.");
                 }
 
-                URI extractedId = messageService.getArtifactIdFromContract(agreement);
+                URI extractedId = resourceDependencyResolver.getArtifactIdFromContract(agreement);
                 return extractedId.equals(artifactId);
             }
         } else {

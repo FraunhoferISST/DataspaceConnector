@@ -3,8 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceRepresentationLinker;
@@ -35,7 +34,7 @@ import java.util.UUID;
 public class ResourceDataController {
 
     @Autowired
-    private BFFResourceRepresentationLinker resourceRepresentationLinker;
+    private BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
 
     @Autowired
     private BFFRepresentationArtifactLinker representationArtifactLinker;
@@ -46,20 +45,10 @@ public class ResourceDataController {
     /**
      * Constructor for ResourceDataController.
      *
-     * @param offeredResourceService   The service for the offered resources
-     * @param requestedResourceService The service for the requested resources
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public ResourceDataController(OfferedResourceServiceImpl offeredResourceService,
-                                  RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
-        if (offeredResourceService == null) {
-            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-        }
-
-        if (requestedResourceService == null) {
-            throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
-        }
+    public ResourceDataController() throws IllegalArgumentException {
     }
 
     /**

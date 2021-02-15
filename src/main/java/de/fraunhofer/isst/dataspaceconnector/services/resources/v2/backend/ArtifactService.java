@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
-import de.fraunhofer.isst.dataspaceconnector.repositories.v2.DataRepository;
+import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;

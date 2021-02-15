@@ -6,7 +6,6 @@ import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -35,16 +34,15 @@ public class NotificationMessageService extends MessageService {
      * @param tokenProvider The service for providing tokens
      * @param idsHttpService The service for ids messaging
      * @param configurationContainer The container with the configuration
-     * @param resourceService The service for resources
      * @param idsUtils The utilities for ids messages
      * @param serializerProvider The service for serializing
      * @throws IllegalArgumentException if any of the parameters is null
      */
     @Autowired
     public NotificationMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-        ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer,
         IdsUtils idsUtils, SerializerProvider serializerProvider) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
+        super(idsHttpService, serializerProvider);
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");

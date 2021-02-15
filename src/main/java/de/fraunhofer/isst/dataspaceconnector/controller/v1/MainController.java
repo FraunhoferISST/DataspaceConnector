@@ -2,14 +2,10 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -22,10 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * This class provides endpoints for basic connector services.
@@ -37,7 +36,7 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final SerializerProvider serializerProvider;
-    private final ResourceService offeredResourceService, requestedResourceService;
+    //private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
     private final NegotiationService negotiationService;
     private final PolicyHandler policyHandler;
@@ -46,8 +45,6 @@ public class MainController {
      * Constructor for MainController.
      *
      * @param serializerProvider The provider for serialization
-     * @param offeredResourceService The service for the offered resources
-     * @param requestedResourceService The service for the requested resources
      * @param idsUtils The utilities for ids messages
      * @param negotiationService The service for negotiations
      * @param policyHandler The service for handling policies
@@ -55,18 +52,10 @@ public class MainController {
      */
     @Autowired
     public MainController(SerializerProvider serializerProvider,
-        OfferedResourceServiceImpl offeredResourceService,
-        RequestedResourceServiceImpl requestedResourceService,
         IdsUtils idsUtils, NegotiationService negotiationService,
         PolicyHandler policyHandler) throws IllegalArgumentException {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-
-        if (offeredResourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
-
-        if (requestedResourceService == null)
-            throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
 
         if (idsUtils == null)
             throw new IllegalArgumentException("The IdsUtils cannot be null.");
@@ -78,8 +67,6 @@ public class MainController {
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
 
         this.serializerProvider = serializerProvider;
-        this.offeredResourceService = offeredResourceService;
-        this.requestedResourceService = requestedResourceService;
         this.idsUtils = idsUtils;
         this.negotiationService = negotiationService;
         this.policyHandler = policyHandler;
@@ -237,9 +224,10 @@ public class MainController {
     }
 
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
-        return new ResourceCatalogBuilder()
-            ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
-            ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))
-            .build();
+//        return new ResourceCatalogBuilder()
+//            ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
+//            ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))
+//            .build();
+        throw new RuntimeException();
     }
 }

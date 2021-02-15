@@ -1,6 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.Resource;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ArtifactTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
@@ -11,18 +17,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 
-@Service
-public class TemplateBuilder42 {
+public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
 
     /***********************************************************************************************
     * Resources
      **********************************************************************************************/
 
     @Autowired
-    private BFFResourceService resourceService;
+    private BFFResourceService<T, D, ?> resourceService;
 
     @Autowired
-    private BFFResourceRepresentationLinker resourceRepresentationLinker;
+    private BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
 
     @Autowired
     private BFFResourceContractLinker resourceContractLinker;
@@ -40,13 +45,13 @@ public class TemplateBuilder42 {
 
         final EndpointId resourceEndpointId;
         if(template.getDesc().getStaticId() == null) {
-            resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), template.getDesc());
+            resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), (D)template.getDesc());
         } else{
             final var endpointId = new EndpointId(Basepaths.Resources.toString(), template.getDesc().getStaticId());
             if(resourceService.doesExist(endpointId)){
-                resourceEndpointId = resourceService.update(endpointId, template.getDesc());
+                resourceEndpointId = resourceService.update(endpointId, (D)template.getDesc());
             }else{
-                resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), template.getDesc());
+                resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), (D)template.getDesc());
             }
         }
 
@@ -135,3 +140,9 @@ public class TemplateBuilder42 {
         return ruleService.create(Basepaths.Rules.toString(), template.getDesc());
     }
 }
+
+@Service
+final class TemplateBuilderOfferedResource extends TemplateBuilder42<OfferedResource, OfferedResourceDesc> {}
+
+@Service
+final class TemplateBuilderRequestedResource extends TemplateBuilder42<RequestedResource, RequestedResourceDesc> {}

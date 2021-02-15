@@ -6,12 +6,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -20,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.UUID;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
@@ -32,7 +26,6 @@ public class ArtifactMessageService extends MessageService {
 
     private final ConfigurationContainer configurationContainer;
     private final DapsTokenProvider tokenProvider;
-    private final ResourceService resourceService;
     private URI recipient, artifactId, contractId, correlationMessageId;
 
     /**
@@ -41,19 +34,16 @@ public class ArtifactMessageService extends MessageService {
      * @param configurationContainer The container with the configuration
      * @param tokenProvider The service for providing tokens
      * @param idsHttpService The service for ids messaging
-     * @param resourceService The service for resources
-     * @param idsUtils The utilities for ids messages
-     * @param requestedResourceService The service for requested resources
      * @param serializerProvider The service for serializing
      * @throws IllegalArgumentException if any of the parameters is null
      */
     @Autowired
-    public ArtifactMessageService(ConfigurationContainer configurationContainer,
-        DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-        OfferedResourceServiceImpl resourceService, IdsUtils idsUtils,
-        RequestedResourceServiceImpl requestedResourceService,
-        SerializerProvider serializerProvider) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
+    public ArtifactMessageService(
+            final ConfigurationContainer configurationContainer,
+            final DapsTokenProvider tokenProvider,
+            final IDSHttpService idsHttpService,
+            final SerializerProvider serializerProvider) throws IllegalArgumentException {
+        super(idsHttpService, serializerProvider);
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -61,12 +51,8 @@ public class ArtifactMessageService extends MessageService {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
 
-        if (requestedResourceService == null)
-            throw new IllegalArgumentException("The ResourceService cannot be null.");
-
         this.configurationContainer = configurationContainer;
         this.tokenProvider = tokenProvider;
-        this.resourceService = requestedResourceService;
     }
 
     /**
@@ -141,20 +127,5 @@ public class ArtifactMessageService extends MessageService {
         this.recipient = recipient;
         this.contractId = contractId;
         this.correlationMessageId = correlationMessageId;
-    }
-
-    /**
-     * Saves the data string to the internal database.
-     *
-     * @param response   The data resource as string.
-     * @param resourceId The resource uuid.
-     * @throws ResourceException if any.
-     */
-    public void saveData(String response, UUID resourceId) throws ResourceException {
-        try {
-            resourceService.addData(resourceId, response);
-        } catch (Exception e) {
-            throw new ResourceException("Data could not be saved. " + e.getMessage());
-        }
     }
 }

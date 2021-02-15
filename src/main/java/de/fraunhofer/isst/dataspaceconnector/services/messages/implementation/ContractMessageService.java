@@ -1,12 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -33,17 +38,14 @@ public class ContractMessageService extends MessageService {
      *
      * @param tokenProvider The service for providing tokens
      * @param idsHttpService The service for ids messaging
-     * @param resourceService The service for resources
      * @param configurationContainer The container with the configuration
-     * @param idsUtils The utilities for ids messages
      * @param serializerProvider The service for serializing
      * @throws IllegalArgumentException if any of the parameters is null
      */
     @Autowired
-    public ContractMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-        OfferedResourceServiceImpl resourceService, ConfigurationContainer configurationContainer,
-        IdsUtils idsUtils, SerializerProvider serializerProvider) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
+    public ContractMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService, ConfigurationContainer configurationContainer,
+        SerializerProvider serializerProvider) throws IllegalArgumentException {
+        super(idsHttpService, serializerProvider);
 
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");

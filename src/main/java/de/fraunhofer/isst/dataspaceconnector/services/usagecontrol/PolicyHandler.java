@@ -145,43 +145,43 @@ public class PolicyHandler {
         }
     }
 
-    /**
-     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
-     *
-     * @param dataResource the accessed resource.
-     * @return whether the data can be accessed.
-     * @throws UnsupportedPatternException if no pattern could be recognized.
-     * @throws RequestFormatException if the string could not be deserialized.
-     */
-    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
-        RequestFormatException{
-        final var policy = dataResource.getResourceMetadata().getPolicy();
-        Pattern pattern;
-        try {
-            pattern = getPattern(policy);
-        } catch (UnsupportedPatternException exception) {
-            if (!ignoreUnsupportedPatterns)
-                throw new UnsupportedPatternException(exception.getMessage());
-            else
-                pattern = Pattern.PROVIDE_ACCESS;
-        }
-
-        switch (pattern) {
-            case USAGE_DURING_INTERVAL:
-            case USAGE_UNTIL_DELETION:
-                return policyVerifier.checkInterval(contract);
-            case DURATION_USAGE:
-                return policyVerifier.checkDuration(dataResource.getCreated(), contract);
-            case USAGE_LOGGING:
-                return policyVerifier.logAccess();
-            case N_TIMES_USAGE:
-                return policyVerifier.checkFrequency(contract, dataResource.getUuid());
-            case USAGE_NOTIFICATION:
-                return policyVerifier.sendNotification(contract);
-            default:
-                return true;
-        }
-    }
+//    /**
+//     * Implements the policy restrictions depending on the policy pattern type on data access (as consumer).
+//     *
+//     * @param dataResource the accessed resource.
+//     * @return whether the data can be accessed.
+//     * @throws UnsupportedPatternException if no pattern could be recognized.
+//     * @throws RequestFormatException if the string could not be deserialized.
+//     */
+//    public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
+//        RequestFormatException{
+//        final var policy = dataResource.getResourceMetadata().getPolicy();
+//        Pattern pattern;
+//        try {
+//            pattern = getPattern(policy);
+//        } catch (UnsupportedPatternException exception) {
+//            if (!ignoreUnsupportedPatterns)
+//                throw new UnsupportedPatternException(exception.getMessage());
+//            else
+//                pattern = Pattern.PROVIDE_ACCESS;
+//        }
+//
+//        switch (pattern) {
+//            case USAGE_DURING_INTERVAL:
+//            case USAGE_UNTIL_DELETION:
+//                return policyVerifier.checkInterval(contract);
+//            case DURATION_USAGE:
+//                return policyVerifier.checkDuration(dataResource.getCreated(), contract);
+//            case USAGE_LOGGING:
+//                return policyVerifier.logAccess();
+//            case N_TIMES_USAGE:
+//                return policyVerifier.checkFrequency(contract, dataResource.getUuid());
+//            case USAGE_NOTIFICATION:
+//                return policyVerifier.sendNotification(contract);
+//            default:
+//                return true;
+//        }
+//    }
 
     /**
      * Returns the current value of {@link PolicyHandler#ignoreUnsupportedPatterns}.
