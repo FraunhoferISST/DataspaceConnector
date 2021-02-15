@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -23,11 +24,21 @@ import java.time.LocalDateTime;
 public class BaseResourcePersistenceTest {
 
     @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
     private RuleRepository ruleRepository;
 
     @Before
     public void init() {
         ruleRepository.findAll().forEach(r -> ruleRepository.delete(r));
+    }
+
+    @Transactional
+    @Test(expected = IllegalArgumentException.class)
+    public void createBaseResource_noSubclass_throwIllegalArgumentException() {
+        /*ACT*/
+        entityManager.persist(new BaseResource());
     }
 
     @Test
