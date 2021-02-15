@@ -112,11 +112,11 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
             if (data.getUsername() != null || data.getPassword() != null) {
                 return httpUtils.sendHttpsGetRequestWithBasicAuth(
                         data.getAccessUrl().toString(), data.getUsername(),
-                        data.getPassword());
+                        data.getPassword(), null);
             } else {
                 return httpUtils.sendHttpsGetRequest(data
                         .getAccessUrl()
-                        .toString());
+                        .toString(), null);
             }
         } catch (MalformedURLException exception) {
             // TODO: LOG

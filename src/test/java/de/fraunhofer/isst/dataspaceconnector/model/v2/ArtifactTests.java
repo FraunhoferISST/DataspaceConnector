@@ -21,16 +21,16 @@ public class ArtifactTests {
         Assert.assertEquals((long) artifact.getNumAccessed(), before + 1);
     }
 
-    @Test
-    public void setTest() {
-        ArtifactDesc desc = new ArtifactDesc();
-        desc.setTitle("Test");
-        ArtifactFactory factory = new ArtifactFactory();
-        var artifact = factory.create(desc);
-
-        artifact.setTitle("Different");
-        Assert.assertEquals(artifact.getTitle(), "Different");
-    }
+//    @Test
+//    public void setTest() {
+//        ArtifactDesc desc = new ArtifactDesc();
+//        desc.setTitle("Test");
+//        ArtifactFactory factory = new ArtifactFactory();
+//        var artifact = factory.create(desc);
+//
+//        artifact.setTitle("Different");
+//        Assert.assertEquals(artifact.getTitle(), "Different");
+//    }
 
     @Test
     public void toStringTest() {

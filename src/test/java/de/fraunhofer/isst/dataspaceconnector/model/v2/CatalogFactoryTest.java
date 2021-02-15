@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.Resource;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,7 +89,7 @@ public class CatalogFactoryTest {
         var lastModificationDateBefore = catalog.getLastModificationDate();
 
         var resourcesBefore =
-                ((HashMap<UUID, Resource>) catalog.getResources()).clone();
+                ((HashMap<UUID, OfferedResource>) catalog.getResources()).clone();
         var desc = getUpdatedValidDesc();
 
         /* ACT */
@@ -121,7 +121,7 @@ public class CatalogFactoryTest {
         var lastModificationDateBefore = catalog.getLastModificationDate();
 
         var resourcesBefore =
-                ((HashMap<UUID, Resource>) catalog.getResources()).clone();
+                ((HashMap<UUID, OfferedResource>) catalog.getResources()).clone();
         var desc = getDescWithNullMembers();
 
         /* ACT */

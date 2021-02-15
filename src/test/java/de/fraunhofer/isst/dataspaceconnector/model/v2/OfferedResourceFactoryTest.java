@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,13 +25,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
-public class ResourceFactoryTest {
+public class OfferedResourceFactoryTest {
 
-    private ResourceFactory factory;
+    private OfferedResourceFactory factory;
 
     @Before
     public void init() {
-        this.factory = new ResourceFactory();
+        this.factory = new OfferedResourceFactory();
     }
 
     @Test(expected = NullPointerException.class)
@@ -256,8 +256,8 @@ public class ResourceFactoryTest {
         factory.update(resource, null);
     }
 
-    ResourceDesc getValidDesc() {
-        var desc = new ResourceDesc();
+    OfferedResourceDesc getValidDesc() {
+        var desc = new OfferedResourceDesc();
         desc.setTitle("Default");
         desc.setDescription("This is the default catalog containing all "
                 + "available resources.");
@@ -269,7 +269,7 @@ public class ResourceFactoryTest {
         return desc;
     }
 
-    ResourceDesc getValidDescKeywordsContainsNullOrEmpty() {
+    OfferedResourceDesc getValidDescKeywordsContainsNullOrEmpty() {
         var desc = getValidDesc();
 
         final var rnd = new Random();
@@ -286,8 +286,8 @@ public class ResourceFactoryTest {
         return desc;
     }
 
-    ResourceDesc getUpdatedDesc() {
-        var desc = new ResourceDesc();
+    OfferedResourceDesc getUpdatedDesc() {
+        var desc = new OfferedResourceDesc();
         desc.setTitle("The new default");
         desc.setDescription("The new description");
         desc.setKeywords(new ArrayList<>(Collections.singletonList("Greetings")));
@@ -298,8 +298,8 @@ public class ResourceFactoryTest {
         return desc;
     }
 
-    ResourceDesc getDescWithNullMembers() {
-        var desc = new ResourceDesc();
+    OfferedResourceDesc getDescWithNullMembers() {
+        var desc = new OfferedResourceDesc();
         desc.setTitle(null);
         desc.setDescription(null);
         desc.setKeywords(null);
