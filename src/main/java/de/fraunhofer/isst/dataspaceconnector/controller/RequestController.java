@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
@@ -163,7 +164,7 @@ public class RequestController {
             // Save metadata to database.
             try {
                 final var validationKey = descriptionMessageService
-                    .saveMetadata(payload, resourceId, recipient);
+                        .saveMetadata(payload, resourceId, recipient);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
@@ -363,7 +364,7 @@ public class RequestController {
 
         try {
             // Set contractID
-            resourceService.getRepresentation(key, UUIDUtils.uuidFromUri(artifactId)).setContract(contractId);
+            ((RequestedResource)resourceService.getResource(key)).setContractAgreement(contractId);
             // Save data to database.
             artifactMessageService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
