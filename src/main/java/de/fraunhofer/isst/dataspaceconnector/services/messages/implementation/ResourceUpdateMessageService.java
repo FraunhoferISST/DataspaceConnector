@@ -258,14 +258,20 @@ public class ResourceUpdateMessageService extends MessageService {
         return metadata;
     }
 
+    /**
+     * Update an artifact of a resource from a remote provider.
+     * @param resource the requested resource to which the artifact belongs
+     * @param recipient the address of the recipient (remote connector)
+     * @param uuid the UUID of the artifact to be updated
+     * */
     private void updateArtifact(RequestedResource resource, URI recipient, UUID uuid) throws Exception {
-        URI representationID = URI.create("https://w3id.org/idsa/autogen/artifact/" + uuid);
+        URI artifactID = URI.create("https://w3id.org/idsa/autogen/artifact/" + uuid);
         URI contractId = resource.getContractAgreement();
 
         Map<String, String> response;
         try {
             // Send ArtifactRequestMessage.
-            artifactMessageService.setRequestParameters(recipient, representationID, contractId);
+            artifactMessageService.setRequestParameters(recipient, artifactID, contractId);
             response = artifactMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to build the artifact request message.

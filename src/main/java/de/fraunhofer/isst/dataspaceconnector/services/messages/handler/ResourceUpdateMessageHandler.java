@@ -66,8 +66,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
     }
 
     /**
-     * This message implements the logic that is needed to handle the message. As it just returns
-     * the input as string the messagePayload-InputStream is converted to a String.
+     * This method handles the resource update upon receiving a ResourceUpdateMessage
      *
      * @param message        The received ResourceUpdateMessage message.
      * @param messagePayload The ResourceUpdateMessage messages content.
@@ -94,7 +93,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                     connector.getId(), connector.getOutboundModelVersion());
         }
 
-        // Extract resource
+        // Extract and deserialize resource
         Resource resource;
         try {
             String payload = IOUtils
