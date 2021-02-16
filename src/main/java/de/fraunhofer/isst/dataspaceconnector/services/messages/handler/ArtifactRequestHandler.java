@@ -1,10 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
@@ -14,12 +16,12 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResource
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -28,12 +30,15 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 /**
@@ -51,27 +56,29 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final ResourceService resourceService;
     private final PolicyHandler policyHandler;
     private final ArtifactMessageService messageService;
-    private final NegotiationService negotiationService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
+    private final ObjectMapper objectMapper;
+    private final PolicyConfiguration policyConfiguration;
 
     /**
      * Constructor for ArtifactMessageHandler.
      *
      * @param offeredResourceService The service for offered resources
      * @param policyHandler The service for policies
-     * @param negotiationService The service for negotiations
      * @param messageService The service for sending messages
      * @param contractAgreementService The service for agreed contracts
      * @param configurationContainer The container containing the configuration
+     * @param policyConfiguration The configuration service containing policy configurations
      * @throws IllegalArgumentException if one of the passed parameters is null
      */
     @Autowired
     public ArtifactRequestHandler(OfferedResourceServiceImpl offeredResourceService,
-                                  PolicyHandler policyHandler, NegotiationService negotiationService,
+                                  PolicyHandler policyHandler,
                                   ArtifactMessageService messageService,
                                   ContractAgreementService contractAgreementService,
-                                  ConfigurationContainer configurationContainer)
+                                  ConfigurationContainer configurationContainer,
+                                  PolicyConfiguration policyConfiguration)
         throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
@@ -85,18 +92,19 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         if (messageService == null)
             throw new IllegalArgumentException("The ArtifactMessageService cannot be null.");
 
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
-
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
+
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
 
         this.resourceService = offeredResourceService;
         this.policyHandler = policyHandler;
         this.messageService = messageService;
-        this.negotiationService = negotiationService;
         this.contractAgreementService = contractAgreementService;
         this.configurationContainer = configurationContainer;
+        this.objectMapper = new ObjectMapper();
+        this.policyConfiguration = policyConfiguration;
     }
 
     /**
@@ -167,8 +175,13 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
                         String data;
                         try {
+                            // Read query parameters from message payload.
+                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(
+                                    messagePayload.getUnderlyingInputStream(),
+                                    StandardCharsets.UTF_8), QueryInput.class);
                             // Get the data from source.
-                            data = resourceService.getDataByRepresentation(resourceId, artifactId);
+                            data = resourceService
+                                    .getDataByRepresentation(resourceId, artifactId, queryInputData);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -194,6 +207,15 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
+                        } catch (IOException exception) {
+                            LOGGER.debug("Message payload could not be read. [id=({}), " +
+                                            "resourceId=({}), artifactId=({}), exception=({})]",
+                                    requestMessage.getId(), resourceId, artifactId,
+                                    exception.getMessage());
+                            return ErrorResponse
+                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                            "Malformed payload.", connector.getId(),
+                                            connector.getOutboundModelVersion());
                         }
 
                         // Build artifact response.
@@ -305,7 +327,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * @return True if everything's fine.
      */
     private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {
-        if (negotiationService.isStatus()) {
+        final var policyNegotiation = policyConfiguration.isPolicyNegotiation();
+
+        if (policyNegotiation) {
             if (contractId == null) {
                 return false;
             } else {

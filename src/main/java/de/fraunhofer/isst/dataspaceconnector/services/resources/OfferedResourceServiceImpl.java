@@ -1,10 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
@@ -14,6 +19,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.repositories.OfferedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -22,7 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -131,12 +142,47 @@ public class OfferedResourceServiceImpl implements ResourceService {
             throw new ResourceAlreadyExistsException("The resource does already exist.");
         }
 
+        if(resourceMetadata.getRepresentations() != null) {
+            computeMissingRepresentationIds(resourceMetadata);
+        }
+
         resourceMetadata.setPolicy(contractOffer.toRdf());
         final var resource = new OfferedResource(uuid, new Date(), new Date(), resourceMetadata,
             "");
 
         storeResource(resource);
         LOGGER.debug("Added a new resource. [uuid=({}), metadata=({})]", uuid, resourceMetadata);
+    }
+
+    private void computeMissingRepresentationIds(final ResourceMetadata metaData) {
+        final var updated = new HashMap<UUID, ResourceRepresentation>();
+
+        for (final var representation : metaData.getRepresentations().values()) {
+            if (representation.getUuid() == null) {
+                representation.setUuid(generateRepresentationId());
+                updated.put(representation.getUuid(), representation);
+            }else{
+                updated.put(representation.getUuid(), representation);
+            }
+        }
+
+        metaData.getRepresentations().clear();
+        metaData.getRepresentations().putAll(updated);
+    }
+
+    private UUID generateRepresentationId() {
+        return UUIDUtils.createUUID((UUID x) -> {
+            try {
+                for(final var resource : getAllResources()) {
+                    if(getAllRepresentations(resource.getUuid()).keySet().stream().anyMatch(y -> y.equals(x)))
+                        return true;
+                }
+
+                return false;
+            } catch (InvalidResourceException e) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -173,6 +219,10 @@ public class OfferedResourceServiceImpl implements ResourceService {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
+        }
+
+        if(resourceMetadata.getRepresentations() != null) {
+            computeMissingRepresentationIds(resourceMetadata);
         }
 
         resource.setResourceMetadata(resourceMetadata);
@@ -310,7 +360,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
         final var representations = getAllRepresentations(resourceId);
         for (var representationId : representations.keySet()) {
             try {
-                return getDataByRepresentation(resourceId, representationId);
+                return getDataByRepresentation(resourceId, representationId, null);
             } catch (ResourceException exception) {
                 // The resource is incomplete or wrong.
                 LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
@@ -331,13 +381,14 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * Retrieves resource data from the local database or an external data source by ID.
      *
      * @param resourceId ID of the resource
-     * @param representationId ID of the represenation
+     * @param representationId ID of the representation
+     * @param queryInput Header and params for data request from backend.
      * @return resource data as string
      * @throws ResourceNotFoundException if the resource could not be found
      * @throws ResourceException if the resource data could not be retrieved
      */
     @Override
-    public String getDataByRepresentation(UUID resourceId, UUID representationId) throws
+    public String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws
             ResourceNotFoundException, ResourceException {
         final var resource = getResource(resourceId);
         if (resource == null) {
@@ -349,7 +400,7 @@ public class OfferedResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException("The resource representation does not exist.");
         }
 
-        return getDataString(resource, representation);
+        return getDataString(resource, representation, queryInput);
     }
 
     /**
@@ -515,11 +566,12 @@ public class OfferedResourceServiceImpl implements ResourceService {
      *
      * @param resource       the connector resource object.
      * @param representation the representation.
+     * @param queryInput Header and params for data request from backend.
      * @return resource data as string
      * @throws ResourceException if the resource source is not defined or source url is
      *                           ill-formatted.
      */
-    private String getDataString(OfferedResource resource, ResourceRepresentation representation)
+    private String getDataString(OfferedResource resource, ResourceRepresentation representation, QueryInput queryInput)
         throws ResourceException {
         if (representation.getSource() != null) {
             try {
@@ -531,13 +583,13 @@ public class OfferedResourceServiceImpl implements ResourceService {
                     case LOCAL:
                         return resource.getData();
                     case HTTP_GET:
-                        return httpUtils.sendHttpGetRequest(address.toString());
+                        return httpUtils.sendHttpGetRequest(address.toString(), queryInput);
                     case HTTPS_GET:
-                        return httpUtils.sendHttpsGetRequest(address.toString());
+                        return httpUtils.sendHttpsGetRequest(address.toString(), queryInput);
                     case HTTPS_GET_BASICAUTH:
                         return httpUtils
                             .sendHttpsGetRequestWithBasicAuth(address.toString(), username,
-                                password);
+                                password, queryInput);
                     default:
                         // This exception is only thrown when BackendSource.Type is expanded but this
                         // switch is not
