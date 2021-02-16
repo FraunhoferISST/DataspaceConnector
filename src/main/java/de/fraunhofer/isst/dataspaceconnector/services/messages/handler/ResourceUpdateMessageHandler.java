@@ -37,7 +37,6 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
     private final ResourceUpdateMessageService messageService;
     private final ConfigurationContainer configurationContainer;
-    private final ResourceUpdateMessageService resourceUpdateMessageService;
     private final SerializerProvider serializerProvider;
 
     /**
@@ -58,9 +57,11 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         if (resourceUpdateMessageService == null)
             throw new IllegalArgumentException("The ResourceUpdateMessageService cannot be null.");
 
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.configurationContainer = configurationContainer;
         this.messageService = resourceUpdateMessageService;
-        this.resourceUpdateMessageService = resourceUpdateMessageService;
         this.serializerProvider = serializerProvider;
 
     }
@@ -119,7 +120,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
         boolean successfulUpdate = false;
         try {
-            successfulUpdate = resourceUpdateMessageService.updateResource(resource);
+            successfulUpdate = messageService.updateResource(resource);
         } catch (Exception e) {
             LOGGER.warn("Unable to update resource. [exception=({})]", e.getMessage());
         }
