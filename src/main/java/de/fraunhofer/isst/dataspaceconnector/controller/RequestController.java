@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
@@ -16,7 +17,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -168,7 +168,7 @@ public class RequestController {
             // Save metadata to database.
             try {
                 final var validationKey = descriptionMessageService
-                    .saveMetadata(payload, resourceId, recipient);
+                        .saveMetadata(payload, resourceId, recipient);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
@@ -384,8 +384,18 @@ public class RequestController {
             return returnRejectionMessage(messageType, response);
 
         try {
-            // Set contractID
-            resourceService.getRepresentation(key, UUIDUtils.uuidFromUri(artifactId)).setContract(contractId);
+            // Save contract agreement id and requested artifact.
+            final var resource = (RequestedResource) resourceService.getResource(key);
+            resource.setContractAgreement(contractId);
+            resource.setRequestedArtifact(artifactId);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Could not update resource. [exception=({})]",
+                    exception.getMessage());
+            return new ResponseEntity<>("Could not update metadata.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
             // Save data to database.
             artifactMessageService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
@@ -393,7 +403,7 @@ public class RequestController {
         } catch (ResourceException exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                 exception.getMessage());
-            return new ResponseEntity<>("Failed to save to database.",
+            return new ResponseEntity<>("Failed to save data to database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

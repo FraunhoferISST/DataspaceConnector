@@ -1,22 +1,28 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.services.ResourceUpdateService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResourceUpdateMessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This @{@link ResourceUpdateMessageHandler} handles
@@ -32,7 +38,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
     private final ResourceUpdateMessageService messageService;
     private final ConfigurationContainer configurationContainer;
-    private final ResourceUpdateService resourceUpdateService;
+    private final SerializerProvider serializerProvider;
 
     /**
      * Constructor for ResourceUpdateMessageHandler.
@@ -44,7 +50,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
     @Autowired
     public ResourceUpdateMessageHandler(ConfigurationContainer configurationContainer,
                                         ResourceUpdateMessageService resourceUpdateMessageService,
-                                        ResourceUpdateService resourceUpdateService)
+                                        SerializerProvider serializerProvider)
             throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -52,20 +58,22 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         if (resourceUpdateMessageService == null)
             throw new IllegalArgumentException("The ResourceUpdateMessageService cannot be null.");
 
+        if (serializerProvider == null)
+            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+
         this.configurationContainer = configurationContainer;
         this.messageService = resourceUpdateMessageService;
-        this.resourceUpdateService = resourceUpdateService;
+        this.serializerProvider = serializerProvider;
 
     }
 
     /**
-     * This message implements the logic that is needed to handle the message. As it just returns
-     * the input as string the messagePayload-InputStream is converted to a String.
+     * This method handles the resource update upon receiving a ResourceUpdateMessage
      *
      * @param message        The received ResourceUpdateMessage message.
      * @param messagePayload The ResourceUpdateMessage messages content.
      * @return The response message.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @throws RuntimeException if the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(ResourceUpdateMessageImpl message,
@@ -87,17 +95,50 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                     connector.getId(), connector.getOutboundModelVersion());
         }
 
-        boolean successfulUpdate = resourceUpdateService.updateOrSchedule(message.getAffectedResource());
+        // Extract and deserialize resource
+        Resource resource;
+        try {
+            String payload = IOUtils
+                    .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
+            // If request is empty, return rejection message.
+            if (payload.equals("")) {
+                LOGGER.debug("Payload is missing [id=({}), payload=({})]", message.getId(), payload);
+                return ErrorResponse
+                        .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                "Missing resource.",
+                                connector.getId(), connector.getOutboundModelVersion());
+            }
+            resource = serializerProvider.getSerializer().deserialize(payload, Resource.class);
+        } catch (IOException exception) {
+            LOGGER.debug("Cannot read payload. [id=({}), payload=({})]",
+                    message.getId(), messagePayload);
+            return ErrorResponse
+                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                            "Malformed payload.",
+                            connector.getId(), connector.getOutboundModelVersion());
+        }
+
+        boolean successfulUpdate = false;
+        try {
+            successfulUpdate = messageService.updateResource(resource);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Unable to update data or metadata. [exception=({})]", exception.getMessage());
+        } catch (MessageException exception) {
+            LOGGER.warn("Unable to receive new data. [exception=({})]", exception.getMessage());
+        }
 
         try {
             // Build response header.
             messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            if(successfulUpdate)
-                return BodyResponse.create(messageService.buildResponseHeader(), "Message received and resource updated.");
+            if (successfulUpdate)
+                return BodyResponse.create(messageService.buildResponseHeader(),
+                        "Message received and resource updated.");
             else
-                return BodyResponse.create(messageService.buildResponseHeader(), "Message received and resource update scheduled.");
+                return BodyResponse.create(messageService.buildResponseHeader(),
+                        "Message received but resource not updated.");
         } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
+            LOGGER.warn("Unable to build response message. [exception=({})]", exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.INTERNAL_RECIPIENT_ERROR,
                     "Response could not be constructed.",
