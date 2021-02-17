@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -174,14 +173,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
                     if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
                         String data;
+
                         try {
-                            // Read query parameters from message payload.
-                            QueryInput queryInputData = objectMapper.readValue(IOUtils.toString(
-                                    messagePayload.getUnderlyingInputStream(),
-                                    StandardCharsets.UTF_8), QueryInput.class);
+                            final var query = getQueryInput(messagePayload);
                             // Get the data from source.
                             data = resourceService
-                                    .getDataByRepresentation(resourceId, artifactId, queryInputData);
+                                    .getDataByRepresentation(resourceId, artifactId, query);
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
@@ -207,15 +204,6 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
-                        } catch (IOException exception) {
-                            LOGGER.debug("Message payload could not be read. [id=({}), " +
-                                            "resourceId=({}), artifactId=({}), exception=({})]",
-                                    requestMessage.getId(), resourceId, artifactId,
-                                    exception.getMessage());
-                            return ErrorResponse
-                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                                            "Malformed payload.", connector.getId(),
-                                            connector.getOutboundModelVersion());
                         }
 
                         // Build artifact response.
@@ -292,12 +280,28 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                 connector.getId(), connector.getOutboundModelVersion());
         } catch (ContractException exception) {
             LOGGER.warn("Could not deserialize contract. "
-                    + "[id=({}), contractId=({}),exception=({})]",
+                    + "[id=({}), contractId=({}), exception=({})]",
                 requestMessage.getId(), requestMessage.getTransferContract(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Something went wrong.",
                 connector.getId(), connector.getOutboundModelVersion());
+        }
+    }
+
+    /**
+     * Read query parameters from message payload.
+     *
+     * @return the query input.
+     */
+    private QueryInput getQueryInput(MessagePayload messagePayload) {
+        try {
+            return objectMapper.readValue(IOUtils.toString(
+                    messagePayload.getUnderlyingInputStream(),
+                    StandardCharsets.UTF_8), QueryInput.class);
+        } catch (Exception exception) {
+            LOGGER.debug("Could not map payload to query input. [exception=({})]", exception.getMessage());
+            return null;
         }
     }
 
