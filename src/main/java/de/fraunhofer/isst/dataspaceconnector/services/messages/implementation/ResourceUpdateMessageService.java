@@ -45,7 +45,6 @@ public class ResourceUpdateMessageService extends MessageService {
     private RequestedResourceServiceImpl requestedResourceService;
     private final ArtifactMessageService artifactMessageService;
 
-
     /**
      * Constructor
      *
@@ -131,10 +130,8 @@ public class ResourceUpdateMessageService extends MessageService {
      * @param resourceID The resource ID in the request
      */
     public void setRequestParameters(URI recipient, URI resourceID) {
-
         this.recipient = recipient;
         this.resourceID = resourceID;
-
     }
 
     /**
@@ -156,8 +153,6 @@ public class ResourceUpdateMessageService extends MessageService {
      * @throws InvalidResourceException If the ids object could not be deserialized.
      */
     public boolean updateResource(Resource remoteResource) throws Exception {
-
-
         ResourceMetadata metadata;
         try {
             metadata = deserializeMetadata(remoteResource);
@@ -190,72 +185,6 @@ public class ResourceUpdateMessageService extends MessageService {
         } catch (Exception e) {
             throw new Exception("Unable to update resource");
         }
-    }
-
-
-
-    /**
-     * Maps a received Infomodel resource to the internal metadata model.
-     *
-     * @param resource The resource
-     * @return the metadata object.
-     */
-    private ResourceMetadata deserializeMetadata(Resource resource) {
-        var metadata = new ResourceMetadata();
-
-        if (resource.getKeyword() != null) {
-            List<String> keywords = new ArrayList<>();
-            for (var t : resource.getKeyword()) {
-                keywords.add(t.getValue());
-            }
-            metadata.setKeywords(keywords);
-        }
-
-        if (resource.getRepresentation() != null) {
-            var representations = new HashMap<UUID, ResourceRepresentation>();
-            for (Representation r : resource.getRepresentation()) {
-                int byteSize = 0;
-                String name = null;
-                String type = null;
-                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
-                    Artifact artifact = (Artifact) r.getInstance().get(0);
-                    if (artifact.getByteSize() != null)
-                        byteSize = artifact.getByteSize().intValue();
-                    if (artifact.getFileName() != null)
-                        name = artifact.getFileName();
-                    if (r.getMediaType() != null)
-                        type = r.getMediaType().getFilenameExtension();
-                }
-
-                ResourceRepresentation representation = new ResourceRepresentation(
-                        UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
-                        new BackendSource(BackendSource.Type.LOCAL, null, null, null)
-                );
-
-                representations.put(representation.getUuid(), representation);
-            }
-            metadata.setRepresentations(representations);
-        }
-
-        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
-            metadata.setTitle(resource.getTitle().get(0).getValue());
-
-        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
-            metadata.setDescription(resource.getDescription().get(0).getValue());
-
-        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
-            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
-
-        if (resource.getPublisher() != null)
-            metadata.setOwner(resource.getPublisher());
-
-        if (resource.getStandardLicense() != null)
-            metadata.setLicense(resource.getStandardLicense());
-
-        if (resource.getVersion() != null)
-            metadata.setVersion(resource.getVersion());
-
-        return metadata;
     }
 
     /**
