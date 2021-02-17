@@ -28,9 +28,11 @@ public class RequestedResource implements ConnectorResource {
     @JsonProperty("originalUUID")
     private UUID originalUUID;
 
-
     @JsonProperty("contractAgreement")
     private URI contractAgreement;
+
+    @JsonProperty("requestedArtifact")
+    private URI requestedArtifact;
 
     @JsonProperty("created")
     private Date created;
@@ -131,6 +133,20 @@ public class RequestedResource implements ConnectorResource {
      */
     public void setContractAgreement(URI contractAgreement) {
         this.contractAgreement = contractAgreement;
+    }
+
+    /**
+     * Return URI of requested artifact.
+     */
+    public URI getRequestedArtifact() {
+        return requestedArtifact;
+    }
+
+    /**
+     * Set URI of requested artifact.
+     */
+    public void setRequestedArtifact(URI requestedArtifact) {
+        this.requestedArtifact = requestedArtifact;
     }
 
     /**
