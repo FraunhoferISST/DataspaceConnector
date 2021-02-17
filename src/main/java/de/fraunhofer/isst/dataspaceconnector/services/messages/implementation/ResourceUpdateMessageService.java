@@ -9,10 +9,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseE
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.handler.ResourceUpdateMessageHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
@@ -24,7 +22,6 @@ import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
-import okhttp3.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,7 +164,6 @@ public class ResourceUpdateMessageService extends MessageService {
         LinkedList<RequestedResource> affectedResources = ((RequestedResourceServiceImpl) requestedResourceService)
                 .getResourcesByOriginalUUID(UUIDUtils.uuidFromUri(remoteResource.getId()));
 
-
         try {
             for (RequestedResource resource : affectedResources) {
                 // Update metadata.
@@ -194,6 +190,7 @@ public class ResourceUpdateMessageService extends MessageService {
 
     /**
      * Update an artifact of a resource from a remote provider.
+     * TODO Add previously used query parameters (save in RequestController)
      *
      * @param resource the requested resource to which the data belongs.
      * @throws MessageException if the artifact request has not been successful.
