@@ -385,8 +385,18 @@ public class RequestController {
             return returnRejectionMessage(messageType, response);
 
         try {
-            // Set contractID
-            ((RequestedResource)resourceService.getResource(key)).setContractAgreement(contractId);
+            // Save contract agreement id and requested artifact.
+            final var resource = (RequestedResource) resourceService.getResource(key);
+            resource.setContractAgreement(contractId);
+            resource.setRequestedArtifact(artifactId);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Could not update resource. [exception=({})]",
+                    exception.getMessage());
+            return new ResponseEntity<>("Could not update metadata.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
             // Save data to database.
             artifactMessageService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
@@ -394,7 +404,7 @@ public class RequestController {
         } catch (ResourceException exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                 exception.getMessage());
-            return new ResponseEntity<>("Failed to save to database.",
+            return new ResponseEntity<>("Failed to save data to database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
