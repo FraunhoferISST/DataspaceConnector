@@ -3,10 +3,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -15,6 +17,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.handler.ResourceUpdateMessageHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
@@ -41,9 +44,9 @@ public class ResourceUpdateMessageService extends MessageService {
 
     private final ConfigurationContainer configurationContainer;
     private final DapsTokenProvider tokenProvider;
-    private URI recipient, resourceID, correlationMessageId;
-    private RequestedResourceServiceImpl requestedResourceService;
+    private final ResourceService requestedResourceService;
     private final ArtifactMessageService artifactMessageService;
+    private URI recipient, resourceID, correlationMessageId;
 
     /**
      * Constructor
@@ -149,10 +152,10 @@ public class ResourceUpdateMessageService extends MessageService {
      * Update a resource in the internal database.
      *
      * @param remoteResource Resource instance of provider resource
-     * @throws ResourceException if any.
-     * @throws InvalidResourceException If the ids object could not be deserialized.
+     * @throws ResourceException if metadata or data could not be updated.
+     * @throws MessageException if the artifact request has not been successful.
      */
-    public boolean updateResource(Resource remoteResource) throws Exception {
+    public boolean updateResource(Resource remoteResource) throws ResourceException, MessageException {
         ResourceMetadata metadata;
         try {
             metadata = deserializeMetadata(remoteResource);
@@ -160,60 +163,64 @@ public class ResourceUpdateMessageService extends MessageService {
             LOGGER.info("Failed to deserialize metadata. [exception=({})]", exception.getMessage());
             throw new InvalidResourceException("Metadata could not be deserialized.");
         }
+
         LinkedList<RequestedResource> affectedResources = ((RequestedResourceServiceImpl) requestedResourceService)
                 .getResourcesByOriginalUUID(UUIDUtils.uuidFromUri(remoteResource.getId()));
+
+
         try {
             for (RequestedResource resource : affectedResources) {
-                // Get owner URI
-                URI ownerURI = resource.getOwnerURI();
-                // Update metadata
+                // Update metadata.
                 resource.setResourceMetadata(metadata);
-
-                // For each resource, get all representations
-                Map<UUID, ResourceRepresentation> resourceRepresentations =
-                        ((RequestedResourceServiceImpl) requestedResourceService).getAllRepresentations(resource.getUuid());
-                // Iterate over all representations and create, send ArtifactRequestMessages messages
-                for (Map.Entry<UUID, ResourceRepresentation> entry : resourceRepresentations.entrySet()) {
-                    // Get
-                    updateArtifact(resource, ownerURI, entry.getKey());
-                }
+                // Update data.
+                updateArtifact(resource);
             }
             return true;
-        } catch (NullPointerException e){
-            LOGGER.warn("Resource in ResourceUpdateMessage not found.");
-            throw new Exception("Resource in ResourceUpdateMessage not stored locally");
-        } catch (Exception e) {
-            throw new Exception("Unable to update resource");
+        } catch (MessageException exception) {
+            LOGGER.warn("Failed to send or process new artifact request. [exception=({})]",
+                    exception.getMessage());
+            throw new MessageException("Data could not be updated.");
+        } catch (ResourceException exception) {
+            LOGGER.warn("Failed to update the data. [exception=({})]", exception.getMessage());
+            throw new ResourceException("Data could not be updated.");
+        } catch (NullPointerException exception){
+            LOGGER.warn("Resource in ResourceUpdateMessage not found. [exception=({})]", exception.getMessage());
+            throw new ResourceNotFoundException("Resource in ResourceUpdateMessage not stored locally.");
+        } catch (Exception exception) {
+            LOGGER.warn("Unable to update resource. [exception=({})]", exception.getMessage());
+            throw new ResourceException("Unable to update resource.");
         }
     }
 
     /**
      * Update an artifact of a resource from a remote provider.
-     * @param resource the requested resource to which the artifact belongs
-     * @param recipient the address of the recipient (remote connector)
-     * @param uuid the UUID of the artifact to be updated
-     * */
-    private void updateArtifact(RequestedResource resource, URI recipient, UUID uuid) throws Exception {
-        URI artifactID = URI.create("https://w3id.org/idsa/autogen/artifact/" + uuid);
-        URI contractId = resource.getContractAgreement();
+     *
+     * @param resource the requested resource to which the data belongs.
+     * @throws MessageException if the artifact request has not been successful.
+     * @throws ResourceException if the data could not be updated.
+     */
+    private void updateArtifact(RequestedResource resource) throws MessageException, ResourceException {
+        URI recipient = resource.getOwnerURI();
+        URI artifactId = resource.getRequestedArtifact();
+        URI contractAgreementId = resource.getContractAgreement();
 
         Map<String, String> response;
         try {
             // Send ArtifactRequestMessage.
-            artifactMessageService.setRequestParameters(recipient, artifactID, contractId);
+            artifactMessageService.setRequestParameters(recipient, artifactId, contractAgreementId);
             response = artifactMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to build the artifact request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
-            throw new Exception("Failed to build a request.");
+            throw new MessageException("Failed to build a request.");
         } catch (MessageResponseException exception) {
             // Failed to read the artifact response message.
             LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
-            throw new Exception("Received invalid ids response.");
+            throw new MessageException("Received invalid ids response.");
         } catch (MessageNotSentException exception) {
             // Failed to send the artifact request message.
             LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
-            throw new Exception("Failed to send a request.");
+            throw new MessageException("Failed to send a request.");
         }
 
         String header, payload;
@@ -223,19 +230,20 @@ public class ResourceUpdateMessageService extends MessageService {
         } catch (Exception exception) {
             // Failed to read the message parts.
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
-            throw new Exception("Received invalid ids response in payload.");
+            throw new MessageException("Received invalid ids response in payload.");
         }
 
         // Get response message type.
         final var messageType = artifactMessageService.getResponseType(header);
         if (messageType != MessageService.ResponseType.ARTIFACT_RESPONSE)
-            throw new Exception("Received incorrect response type.");
+            throw new MessageException("Received incorrect response type.");
+
         try {
             artifactMessageService.saveData(payload, resource.getUuid());
         } catch (ResourceException exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                     exception.getMessage());
-            throw new Exception("Could not save data to database.");
+            throw new ResourceException("Could not save data to database.");
         }
     }
 }

@@ -17,7 +17,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;

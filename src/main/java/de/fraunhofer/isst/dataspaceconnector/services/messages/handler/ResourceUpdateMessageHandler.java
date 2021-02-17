@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResourceUpdateMessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -120,18 +121,16 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         boolean successfulUpdate = false;
         try {
             successfulUpdate = messageService.updateResource(resource);
-        } catch (Exception exception) {
-            LOGGER.warn("Unable to update resource. [exception=({})]", exception.getMessage());
-            return ErrorResponse
-                    .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                            "Failed to process update message.",
-                            connector.getId(), connector.getOutboundModelVersion());
+        } catch (ResourceException exception) {
+            LOGGER.warn("Unable to update data or metadata. [exception=({})]", exception.getMessage());
+        } catch (MessageException exception) {
+            LOGGER.warn("Unable to receive new data. [exception=({})]", exception.getMessage());
         }
 
         try {
             // Build response header.
             messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            if(successfulUpdate)
+            if (successfulUpdate)
                 return BodyResponse.create(messageService.buildResponseHeader(),
                         "Message received and resource updated.");
             else
