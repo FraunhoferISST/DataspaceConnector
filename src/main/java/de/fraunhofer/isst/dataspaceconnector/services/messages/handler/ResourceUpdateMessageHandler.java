@@ -72,7 +72,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      * @param message        The received ResourceUpdateMessage message.
      * @param messagePayload The ResourceUpdateMessage messages content.
      * @return The response message.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @throws RuntimeException if the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(ResourceUpdateMessageImpl message,
@@ -101,15 +101,14 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                     .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
             // If request is empty, return rejection message.
             if (payload.equals("")) {
-                LOGGER.debug("Contract agreement is missing [id=({}), payload=({})]",
-                        message.getId(), payload);
+                LOGGER.debug("Payload is missing [id=({}), payload=({})]", message.getId(), payload);
                 return ErrorResponse
                         .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                                "Missing contract agreement.",
+                                "Missing resource.",
                                 connector.getId(), connector.getOutboundModelVersion());
             }
             resource = serializerProvider.getSerializer().deserialize(payload, Resource.class);
-        } catch (IOException e) {
+        } catch (IOException exception) {
             LOGGER.debug("Cannot read payload. [id=({}), payload=({})]",
                     message.getId(), messagePayload);
             return ErrorResponse
@@ -121,9 +120,14 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         boolean successfulUpdate = false;
         try {
             successfulUpdate = messageService.updateResource(resource);
-        } catch (Exception e) {
-            LOGGER.warn("Unable to update resource. [exception=({})]", e.getMessage());
+        } catch (Exception exception) {
+            LOGGER.warn("Unable to update resource. [exception=({})]", exception.getMessage());
+            return ErrorResponse
+                    .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                            "Failed to process update message.",
+                            connector.getId(), connector.getOutboundModelVersion());
         }
+
         try {
             // Build response header.
             messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
@@ -133,6 +137,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                 return BodyResponse.create(messageService.buildResponseHeader(), "Message received but resource not updated.");
         } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
+            LOGGER.warn("Unable to build response message. [exception=({})]", exception.getMessage());
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.INTERNAL_RECIPIENT_ERROR,
                     "Response could not be constructed.",
