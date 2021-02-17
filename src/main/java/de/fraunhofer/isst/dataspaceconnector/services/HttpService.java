@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.utils;
+package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -29,18 +29,18 @@ import java.util.Map;
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
  */
 @Service
-public class HttpUtils {
+public class HttpService {
 
     private final ClientProvider clientProvider;
 
     /**
-     * Constructor for HttpUtils.
+     * Constructor for HttpService.
      *
      * @throws IllegalArgumentException if any of the parameters is null.
      * @throws GeneralSecurityException if the framework has an error.
      */
     @Autowired
-    public HttpUtils(ConfigurationContainer configurationContainer)
+    public HttpService(ConfigurationContainer configurationContainer)
         throws IllegalArgumentException, GeneralSecurityException {
         if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null");

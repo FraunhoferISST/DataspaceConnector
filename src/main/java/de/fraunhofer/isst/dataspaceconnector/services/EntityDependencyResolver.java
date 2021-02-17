@@ -14,11 +14,11 @@ import java.net.URI;
 import java.util.UUID;
 
 @Service
-public class ResourceDependencyResolver {
+public class EntityDependencyResolver {
 
     @Autowired
     private BFFResourceService<OfferedResource, ?, ?> resourceService;
-    
+
     /**
      * Finds resource by a given artifact ID.
      *

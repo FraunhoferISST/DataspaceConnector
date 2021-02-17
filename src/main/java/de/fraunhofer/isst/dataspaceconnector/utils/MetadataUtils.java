@@ -1,6 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.utils;
-
-import com.microsoft.schemas.office.x2006.encryption.CTKeyEncryptor;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.net.URI;
 import java.util.List;
@@ -8,9 +6,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class MetaDataUtils {
-    private MetaDataUtils() {
-        
+public final class MetadataUtils {
+    private MetadataUtils() {
+
     }
 
     public static Optional<String> updateString(final String oldTitle,

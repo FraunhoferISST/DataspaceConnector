@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.UUID;
  * Handles the basic logic for artifacts.
  */
 @Service
-public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
+public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
     // TODO Clean up the code / Refactor
 
     /**
@@ -31,7 +31,7 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
      * Service for http communication.
      **/
     @Autowired
-    private HttpUtils httpUtils;
+    private HttpService httpService;
 
     /**
      * Default constructor.
@@ -110,11 +110,11 @@ public class ArtifactService extends BaseService<Artifact, ArtifactDesc> {
         //TODO: Passthrough Uri not string
         try {
             if (data.getUsername() != null || data.getPassword() != null) {
-                return httpUtils.sendHttpsGetRequestWithBasicAuth(
+                return httpService.sendHttpsGetRequestWithBasicAuth(
                         data.getAccessUrl().toString(), data.getUsername(),
                         data.getPassword(), null);
             } else {
-                return httpUtils.sendHttpsGetRequest(data
+                return httpService.sendHttpsGetRequest(data
                         .getAccessUrl()
                         .toString(), null);
             }

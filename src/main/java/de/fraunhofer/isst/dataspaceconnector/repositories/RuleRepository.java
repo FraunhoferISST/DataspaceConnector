@@ -4,5 +4,5 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RuleRepository extends BaseResourceRepository<ContractRule> {
+public interface RuleRepository extends BaseEntityRepository<ContractRule> {
 }

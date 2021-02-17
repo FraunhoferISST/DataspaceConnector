@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
 import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;

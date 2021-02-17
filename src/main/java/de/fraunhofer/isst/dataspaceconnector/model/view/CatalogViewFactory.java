@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 
 @Component
-public class CatalogViewer implements BaseViewer<Catalog, CatalogView> {
+public class CatalogViewFactory implements BaseViewFactory<Catalog, CatalogView> {
     @Autowired
     private EndpointService endpointService;
 

@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Catalog extends BaseResource {
+public class Catalog extends BaseEntity {
 
     /**
      * Serial version uid.

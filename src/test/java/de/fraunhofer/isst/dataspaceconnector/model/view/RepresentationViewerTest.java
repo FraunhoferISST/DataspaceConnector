@@ -9,11 +9,11 @@ import org.junit.Test;
 
 public class RepresentationViewerTest {
 
-    private RepresentationViewer factory;
+    private RepresentationViewFactory factory;
 
     @Before
     public void init() {
-        factory = new RepresentationViewer();
+        factory = new RepresentationViewFactory();
     }
 
     @Test(expected = NullPointerException.class)

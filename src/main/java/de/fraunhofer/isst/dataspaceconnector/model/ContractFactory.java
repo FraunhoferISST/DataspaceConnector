@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -40,7 +40,7 @@ public class ContractFactory implements BaseFactory<Contract, ContractDesc> {
     }
 
     private boolean updateTitle(final Contract contract, final String title) {
-        final var newTitle = MetaDataUtils.updateString(contract.getTitle(),
+        final var newTitle = MetadataUtils.updateString(contract.getTitle(),
                 title, "");
         newTitle.ifPresent(contract::setTitle);
 

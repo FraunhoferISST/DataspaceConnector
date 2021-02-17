@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;

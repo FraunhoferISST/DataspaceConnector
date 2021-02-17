@@ -9,11 +9,11 @@ import org.junit.Test;
 
 public class ContractViewerTest {
 
-    private ContractViewer factory;
+    private ContractViewFactory factory;
 
     @Before
     public void init() {
-        factory = new ContractViewer();
+        factory = new ContractViewFactory();
     }
 
     @Test(expected = NullPointerException.class)

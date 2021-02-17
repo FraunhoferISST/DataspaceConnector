@@ -12,11 +12,11 @@ import java.util.Arrays;
 
 public class ResourceViewerTest {
 
-//    private ResourceViewer factory;
+//    private ResourceViewFactory factory;
 //
 //    @Before
 //    public void init() {
-//        factory = new ResourceViewer();
+//        factory = new ResourceViewFactory();
 //    }
 //
 //    @Test(expected = NullPointerException.class)

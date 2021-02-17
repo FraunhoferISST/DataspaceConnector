@@ -3,14 +3,14 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofro
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
 import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseResource;
+import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.view.BaseView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.BaseViewer;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseService;
+import de.fraunhofer.isst.dataspaceconnector.model.view.BaseViewFactory;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -24,14 +24,14 @@ import java.util.UUID;
  * @param <D> The description for the passed resource type.
  * @param <V> The view type of the passed resource type.
  */
-public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
+public class CommonService<T extends BaseEntity, D extends BaseDescription<T>,
         V extends BaseView<T>> implements FrontFacingService<T, D, V> {
 
     /**
      * The service for resources.
      **/
     @Autowired
-    private BaseService<T, D> resourceService;
+    private BaseEntityService<T, D> resourceService;
 
     /**
      * The service for endpoints.
@@ -43,7 +43,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
      * The resource to view converter.
      */
     @Autowired
-    private BaseViewer<T, V> viewConverter;
+    private BaseViewFactory<T, V> viewConverter;
 
     /**
      * Default constructor.
@@ -211,7 +211,7 @@ public class CommonService<T extends BaseResource, D extends BaseDescription<T>,
         return generatedId;
     }
 
-    protected BaseService<T, D>  getService() {
+    protected BaseEntityService<T, D> getService() {
         return resourceService;
     }
 

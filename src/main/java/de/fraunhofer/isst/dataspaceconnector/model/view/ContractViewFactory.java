@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 
 @Component
-public class ContractViewer implements BaseViewer<Contract, ContractView> {
+public class ContractViewFactory implements BaseViewFactory<Contract, ContractView> {
     @Autowired
     private EndpointService endpointService;
 

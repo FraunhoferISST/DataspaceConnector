@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -45,7 +45,7 @@ public class ContractRuleFactory implements BaseFactory<ContractRule,
     private boolean updateTitle(final ContractRule contractRule,
                                 final String title) {
         final var newTitle =
-                MetaDataUtils.updateString(contractRule.getTitle(), title, "");
+                MetadataUtils.updateString(contractRule.getTitle(), title, "");
         newTitle.ifPresent(contractRule::setTitle);
 
         return newTitle.isPresent();
@@ -54,7 +54,7 @@ public class ContractRuleFactory implements BaseFactory<ContractRule,
     private boolean updateRule(final ContractRule contractRule,
                                final String rule) {
         final var newRule =
-                MetaDataUtils.updateString(contractRule.getValue(), rule, "");
+                MetadataUtils.updateString(contractRule.getValue(), rule, "");
         newRule.ifPresent(contractRule::setValue);
 
         return newRule.isPresent();

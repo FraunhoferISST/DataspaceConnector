@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.utils;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
@@ -18,8 +18,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public final class ResourceApiBridge {
-    private ResourceApiBridge() {
+public final class EntityApiBridge {
+    private EntityApiBridge(){
         // Nothing
     }
 

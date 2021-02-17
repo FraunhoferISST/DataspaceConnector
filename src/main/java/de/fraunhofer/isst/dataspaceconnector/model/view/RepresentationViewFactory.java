@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 
 @Component
-public class RepresentationViewer implements BaseViewer<Representation, RepresentationView> {
+public class RepresentationViewFactory implements BaseViewFactory<Representation, RepresentationView> {
     @Autowired
     private EndpointService endpointService;
 

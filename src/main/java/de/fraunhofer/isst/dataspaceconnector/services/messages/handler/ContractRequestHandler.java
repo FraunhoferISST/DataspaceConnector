@@ -8,12 +8,12 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.services.ResourceDependencyResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
@@ -57,7 +56,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private RequestMessage requestMessage;
 
     @Autowired
-    private ResourceDependencyResolver resourceDependencyResolver;
+    private EntityDependencyResolver entityDependencyResolver;
 
     /**
      * Constructor for NotificationMessageHandler.
@@ -183,9 +182,9 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
 
             // Get artifact id from contract request.
-            URI artifactId = resourceDependencyResolver.getArtifactIdFromContract(contractRequest);
+            URI artifactId = entityDependencyResolver.getArtifactIdFromContract(contractRequest);
             // Load contract offer from metadata.
-            ContractOffer contractOffer = resourceDependencyResolver.getContractOfferByArtifact(UUIDUtils.uuidFromUri(artifactId));
+            ContractOffer contractOffer = entityDependencyResolver.getContractOfferByArtifact(UUIDUtils.uuidFromUri(artifactId));
 
             // Check if the contract request has the same content as the stored contract offer.
             if (negotiationService.compareContracts(contractRequest, contractOffer)) {

@@ -2,8 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import lombok.Data;
 
 import javax.persistence.Embeddable;

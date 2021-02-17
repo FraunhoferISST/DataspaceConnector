@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -50,7 +50,7 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
     }
 
     private boolean updateTitle(final Artifact artifact, final String title) {
-        final var newTitle = MetaDataUtils.updateString(artifact.getTitle(), title, "");
+        final var newTitle = MetadataUtils.updateString(artifact.getTitle(), title, "");
         newTitle.ifPresent(artifact::setTitle);
 
         return newTitle.isPresent();

@@ -20,7 +20,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.ResourceApiBridge;
+import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -107,7 +107,7 @@ public class ResourceControllerV1 {
     public ResponseEntity<ResourceView<OfferedResource>>
     createResource(@RequestBody ResourceMetadata resourceMetadata,
             @RequestParam(value = "id", required = false) UUID uuid) {
-        final var template = ResourceApiBridge.toOfferedResourceTemplate(uuid, resourceMetadata);
+        final var template = EntityApiBridge.toOfferedResourceTemplate(uuid, resourceMetadata);
         final var endpointId = templateBuilder.build(template);
 
         final var headers = new HttpHeaders();
@@ -142,7 +142,7 @@ public class ResourceControllerV1 {
         // preventing the builder to create a new resource.
         resourceService.get(new EndpointId(Basepaths.Resources.toString(), resourceId));
 
-        final var template = ResourceApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
+        final var template = EntityApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
         templateBuilder.build(template);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -235,7 +235,7 @@ public class ResourceControllerV1 {
             throw new ResourceNotFoundException("");
         }
 
-        final var template = ResourceApiBridge.toRuleTemplate(policy);
+        final var template = EntityApiBridge.toRuleTemplate(policy);
         template.getDesc().setStaticId(((EndpointId) rules.toArray()[0]).getResourceId());
 
         final var endpointId = templateBuilder.build(template);
@@ -344,7 +344,7 @@ public class ResourceControllerV1 {
                     required = true) @RequestBody ResourceRepresentation representation,
             @RequestParam(value = "id", required = false) UUID uuid) {
         representation.setUuid(uuid);
-        final var template = ResourceApiBridge.toRepresentationTemplate(representation);
+        final var template = EntityApiBridge.toRepresentationTemplate(representation);
         final var endpointId = templateBuilder.build(template);
 
         resourceRepresentationLinker.add(
@@ -403,7 +403,7 @@ public class ResourceControllerV1 {
             throw new ResourceNotFoundException("");
         }
 
-        final var template = ResourceApiBridge.toRepresentationTemplate(representation);
+        final var template = EntityApiBridge.toRepresentationTemplate(representation);
         templateBuilder.build(template);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
