@@ -18,7 +18,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -93,34 +93,6 @@ public abstract class MessageService {
      */
     public SerializerProvider getSerializerProvider() {
         return serializerProvider;
-    }
-
-    /**
-     * Sends an IDS request message with header and payload using the IDS Framework.
-     *
-     * @param payload the message payload.
-     * @return the HTTP response.
-     * @throws MessageException if a header could not be built or the message could not be sent.
-     */
-    public Map<String, String> sendMessage(final String payload) throws MessageException {
-        Message message;
-        try {
-            message = buildRequestHeader();
-        } catch (MessageBuilderException exception) {
-            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be built.", exception);
-        }
-
-        try {
-            MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
-            return idsHttpService.sendAndCheckDat(body, getRecipient());
-        } catch (ClaimsException exception) {
-            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
-            throw new MessageResponseException("Invalid DAT in incoming message.", exception);
-        } catch (FileUploadException | IOException exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageNotSentException("Message could not be sent.", exception);
-        }
     }
 
     /**

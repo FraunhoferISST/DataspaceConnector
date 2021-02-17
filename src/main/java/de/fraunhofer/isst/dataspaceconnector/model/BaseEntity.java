@@ -16,7 +16,7 @@ import java.util.UUID;
 @Data
 @MappedSuperclass
 @Setter(AccessLevel.NONE)
-public class BaseResource implements Serializable {
+public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue
     private UUID id;

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-import static de.fraunhofer.isst.dataspaceconnector.services.utils.ControllerUtils.respondConfigurationNotFound;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondConfigurationNotFound;
 
 /**
  * This class provides endpoints for connector configurations via a connected config manager.

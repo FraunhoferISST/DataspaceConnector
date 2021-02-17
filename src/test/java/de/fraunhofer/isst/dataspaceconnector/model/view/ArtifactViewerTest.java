@@ -15,11 +15,11 @@ public class ArtifactViewerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactViewerTest.class);
 
-    private ArtifactViewer factory;
+    private ArtifactViewFactory factory;
 
     @Before
     public void init() {
-        factory = new ArtifactViewer();
+        factory = new ArtifactViewFactory();
     }
 
     @Test(expected = NullPointerException.class)

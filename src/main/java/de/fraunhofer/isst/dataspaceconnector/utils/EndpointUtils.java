@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.utils;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

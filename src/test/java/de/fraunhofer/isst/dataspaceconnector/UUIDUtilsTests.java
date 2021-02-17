@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

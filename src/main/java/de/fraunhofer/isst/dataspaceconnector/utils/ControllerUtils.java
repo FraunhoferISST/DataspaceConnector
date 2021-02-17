@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.utils;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

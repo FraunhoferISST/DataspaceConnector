@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
 import org.springframework.stereotype.Service;
 
-public class ResourceService<T extends Resource, D extends ResourceDesc<T>> extends BaseService<T, D> {
+public class ResourceService<T extends Resource, D extends ResourceDesc<T>> extends BaseEntityService<T, D> {
 }
 
 @Service

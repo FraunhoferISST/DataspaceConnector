@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class RepresentationFactory implements BaseFactory<Representation,
     private boolean updateTitle(final Representation representation,
                                 final String title) {
         final var newTitle =
-                MetaDataUtils.updateString(representation.getTitle(),
+                MetadataUtils.updateString(representation.getTitle(),
                 title, "");
         newTitle.ifPresent(representation::setTitle);
 
@@ -61,7 +61,7 @@ public class RepresentationFactory implements BaseFactory<Representation,
     private boolean updateLanguage(final Representation representation,
                                    final String language) {
         final var newLanguage =
-                MetaDataUtils.updateString(representation.getLanguage(),
+                MetadataUtils.updateString(representation.getLanguage(),
                 language, "");
         newLanguage.ifPresent(representation::setLanguage);
 
@@ -71,7 +71,7 @@ public class RepresentationFactory implements BaseFactory<Representation,
     private boolean updateMediaType(final Representation representation,
                                     final String mediaType) {
         final var newMediaType =
-                MetaDataUtils.updateString(representation.getMediaType(),
+                MetadataUtils.updateString(representation.getMediaType(),
                 mediaType, "");
         newMediaType.ifPresent(representation::setMediaType);
 

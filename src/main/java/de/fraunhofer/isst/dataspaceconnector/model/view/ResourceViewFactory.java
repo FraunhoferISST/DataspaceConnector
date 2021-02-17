@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 
 @Component
-public class ResourceViewer<T extends Resource> implements BaseViewer<T, ResourceView<T>> {
+public class ResourceViewFactory<T extends Resource> implements BaseViewFactory<T, ResourceView<T>> {
     @Autowired
     private EndpointService endpointService;
 

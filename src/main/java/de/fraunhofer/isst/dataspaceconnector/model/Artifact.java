@@ -18,7 +18,7 @@ import javax.persistence.Inheritance;
 @Entity
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public abstract class Artifact extends BaseResource {
+public abstract class Artifact extends BaseEntity {
 
     /**
      * Serial version uid.

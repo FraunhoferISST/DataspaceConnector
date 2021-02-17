@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -74,21 +74,21 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     }
 
     protected static boolean updateTitle(final Resource resource, final String title) {
-        final var newTitle = MetaDataUtils.updateString(resource.getTitle(), title, "");
+        final var newTitle = MetadataUtils.updateString(resource.getTitle(), title, "");
         newTitle.ifPresent(resource::setTitle);
 
         return newTitle.isPresent();
     }
 
     protected static boolean updateDescription(final Resource resource, final String description) {
-        final var newDesc = MetaDataUtils.updateString(resource.getDescription(), description, "");
+        final var newDesc = MetadataUtils.updateString(resource.getDescription(), description, "");
         newDesc.ifPresent(resource::setDescription);
 
         return newDesc.isPresent();
     }
 
     protected static boolean updateKeywords(final Resource resource, final List<String> keywords) {
-        final var newKeys = MetaDataUtils.updateStringList(
+        final var newKeys = MetadataUtils.updateStringList(
                 resource.getKeywords(), keywords, Collections.singletonList(""));
         newKeys.ifPresent(resource::setKeywords);
 
@@ -97,14 +97,14 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     protected static boolean updatePublisher(final Resource resource, final URI publisher) {
         final var newPublisher =
-                MetaDataUtils.updateUri(resource.getPublisher(), publisher, URI.create(""));
+                MetadataUtils.updateUri(resource.getPublisher(), publisher, URI.create(""));
         newPublisher.ifPresent(resource::setPublisher);
 
         return newPublisher.isPresent();
     }
 
     protected static boolean updateLanguage(final Resource resource, final String language) {
-        final var newLanguage = MetaDataUtils.updateString(resource.getLanguage(), language, "");
+        final var newLanguage = MetadataUtils.updateString(resource.getLanguage(), language, "");
         newLanguage.ifPresent(resource::setLanguage);
 
         return newLanguage.isPresent();
@@ -112,7 +112,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
     protected static boolean updateLicence(final Resource resource, final URI licence) {
         final var newLicence =
-                MetaDataUtils.updateUri(resource.getLicence(), licence, URI.create(""));
+                MetadataUtils.updateUri(resource.getLicence(), licence, URI.create(""));
         newLicence.ifPresent(resource::setLicence);
 
         return newLicence.isPresent();

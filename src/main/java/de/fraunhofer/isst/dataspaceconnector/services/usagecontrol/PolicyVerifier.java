@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class PolicyVerifier {
     private final PolicyReader policyReader;
     private final NotificationMessageService notificationMessageService;
     private final LogMessageService logMessageService;
-    private final HttpUtils httpUtils;
+    private final HttpService httpService;
 
     /**
      * Constructor for PolicyVerifier.
@@ -41,7 +41,7 @@ public class PolicyVerifier {
      */
     @Autowired
     public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
-        NotificationMessageService notificationMessageService, HttpUtils httpUtils)
+                          NotificationMessageService notificationMessageService, HttpService httpService)
         throws IllegalArgumentException {
         if (policyReader == null)
             throw new IllegalArgumentException("The PolicyReader cannot be null.");
@@ -52,13 +52,13 @@ public class PolicyVerifier {
         if (notificationMessageService == null)
             throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
 
-        if (httpUtils == null)
-            throw new IllegalArgumentException("The HttpUtils cannot be null.");
+        if (httpService == null)
+            throw new IllegalArgumentException("The HttpService cannot be null.");
 
         this.policyReader = policyReader;
         this.logMessageService = logMessageService;
         this.notificationMessageService = notificationMessageService;
-        this.httpUtils = httpUtils;
+        this.httpService = httpService;
     }
 
     /**
@@ -199,7 +199,7 @@ public class PolicyVerifier {
         URI pip = policyReader.getPipEndpoint(contract.getPermission().get(0));
 
         try {
-            String accessed = httpUtils.sendHttpsGetRequestWithBasicAuth(
+            String accessed = httpService.sendHttpsGetRequestWithBasicAuth(
                     pip + uuid.toString() + "/access", "admin",
                     "password", null);
             if (Integer.parseInt(accessed) >= max) {

@@ -1,7 +1,7 @@
 //package de.fraunhofer.isst.dataspaceconnector.model.v2;
 //
 //import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
-//import de.fraunhofer.isst.dataspaceconnector.model.BaseResource;
+//import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
 //import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 //import de.fraunhofer.isst.dataspaceconnector.repositories.RuleRepository;
 //import org.junit.Assert;
@@ -40,7 +40,7 @@
 //    @Test(expected = IllegalArgumentException.class)
 //    public void createBaseResource_noSubclass_throwIllegalArgumentException() {
 //        /*ACT*/
-//        entityManager.persist(new BaseResource());
+//        entityManager.persist(new BaseEntity());
 //    }
 //
 //    @Test
@@ -114,7 +114,7 @@
 //        LocalDateTime creationDate = contractRule.getCreationDate();
 //
 //        /*ACT*/
-//        Field creationDateField = BaseResource.class.getDeclaredField("creationDate");
+//        Field creationDateField = BaseEntity.class.getDeclaredField("creationDate");
 //        creationDateField.setAccessible(true);
 //        creationDateField.set(contractRule, LocalDateTime.now());
 //

@@ -22,7 +22,7 @@ import java.util.UUID;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Resource extends BaseResource {
+public class Resource extends BaseEntity {
 
     /**
      * Serial version uid.

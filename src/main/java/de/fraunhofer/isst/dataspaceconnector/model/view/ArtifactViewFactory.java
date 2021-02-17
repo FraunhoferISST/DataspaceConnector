@@ -4,7 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArtifactViewer implements BaseViewer<Artifact, ArtifactView> {
+public class ArtifactViewFactory implements BaseViewFactory<Artifact, ArtifactView> {
     @Override
     public ArtifactView create(final Artifact artifact) {
         final var view = new ArtifactView();

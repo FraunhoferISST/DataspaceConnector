@@ -13,7 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Lo
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;

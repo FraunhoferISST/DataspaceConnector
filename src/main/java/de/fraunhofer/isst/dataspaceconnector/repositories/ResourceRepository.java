@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.stereotype.Repository;
 
 @NoRepositoryBean
-public interface ResourceRepository<T extends Resource> extends BaseResourceRepository<T> {
+public interface ResourceRepository<T extends Resource> extends BaseEntityRepository<T> {
 }
 
 @Repository

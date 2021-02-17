@@ -4,7 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RuleViewer implements BaseViewer<ContractRule, RuleView> {
+public class RuleViewFactory implements BaseViewFactory<ContractRule, RuleView> {
     @Override
     public RuleView create(final ContractRule contractRule) {
         final var view = new RuleView();

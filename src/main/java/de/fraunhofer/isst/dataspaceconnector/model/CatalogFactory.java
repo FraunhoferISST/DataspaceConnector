@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.services.utils.MetaDataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
     }
 
     private boolean updateTitle(final Catalog catalog, final String title) {
-        final var newTitle = MetaDataUtils.updateString(catalog.getTitle(),
+        final var newTitle = MetadataUtils.updateString(catalog.getTitle(),
                 title, "");
         newTitle.ifPresent(catalog::setTitle);
 
@@ -53,7 +53,7 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
     private boolean updateDescription(final Catalog catalog,
                                      final String description) {
         final var newDescription =
-                MetaDataUtils.updateString(catalog.getDescription(),
+                MetadataUtils.updateString(catalog.getDescription(),
                 description, "");
         newDescription.ifPresent(catalog::setDescription);
 

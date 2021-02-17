@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

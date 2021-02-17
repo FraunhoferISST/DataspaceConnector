@@ -9,11 +9,11 @@ import org.junit.Test;
 
 public class CatalogViewerTest {
 
-    private CatalogViewer factory;
+    private CatalogViewFactory factory;
 
     @Before
     public void init() {
-        factory = new CatalogViewer();
+        factory = new CatalogViewFactory();
     }
 
     @Test(expected = NullPointerException.class)

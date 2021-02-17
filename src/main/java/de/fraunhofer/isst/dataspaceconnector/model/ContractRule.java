@@ -16,7 +16,7 @@ import javax.persistence.Table;
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class ContractRule extends BaseResource {
+public class ContractRule extends BaseEntity {
 
     /**
      * Serial version uid.

@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

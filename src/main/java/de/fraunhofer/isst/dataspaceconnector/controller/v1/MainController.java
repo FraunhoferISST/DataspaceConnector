@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

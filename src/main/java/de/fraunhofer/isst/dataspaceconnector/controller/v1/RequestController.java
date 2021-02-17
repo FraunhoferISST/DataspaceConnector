@@ -28,8 +28,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.ResourceApiBridge;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -142,7 +142,7 @@ public class RequestController {
         try {
             // Send DescriptionRequestMessage.
             descriptionMessageService.setRequestParameters(recipient, resourceId);
-            response = descriptionMessageService.sendMessage("");
+            response = descriptionMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to send the description request message.
             LOGGER.info(
@@ -228,7 +228,7 @@ public class RequestController {
             final var request = negotiationService.buildContractRequest(contractOffer, artifactId);
             // Send ContractRequestMessage.
             contractMessageService.setRequestParameters(recipient, request.getId());
-            response = contractMessageService.sendMessage(request.toRdf());
+            response = contractMessageService.sendRequestMessage(request.toRdf());
         } catch (IllegalArgumentException exception) {
             LOGGER.warn(
                     "Failed to build contract request. [exception=({})]", exception.getMessage());
@@ -344,7 +344,7 @@ public class RequestController {
         try {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractId);
-            response = artifactMessageService.sendMessage("");
+            response = artifactMessageService.sendRequestMessage("");
         } catch (MessageBuilderException exception) {
             // Failed to send the artifact request message.
             LOGGER.info(
@@ -501,7 +501,7 @@ public class RequestController {
         }
 
         try {
-            return templateBuilder.build(ResourceApiBridge.toResourceTemplate(null, metadata));
+            return templateBuilder.build(EntityApiBridge.toResourceTemplate(null, metadata));
         } catch (Exception exception) {
             LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
             throw new ResourceException("Metadata could not be saved to database.");

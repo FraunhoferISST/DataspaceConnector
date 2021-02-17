@@ -20,7 +20,7 @@ import java.util.UUID;
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Contract extends BaseResource {
+public class Contract extends BaseEntity {
 
     /**
      * Serial version uid.

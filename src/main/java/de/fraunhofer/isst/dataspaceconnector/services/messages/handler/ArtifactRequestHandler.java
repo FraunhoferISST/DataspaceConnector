@@ -19,8 +19,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
-import de.fraunhofer.isst.dataspaceconnector.services.ResourceDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
@@ -30,7 +29,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -69,7 +68,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final PolicyConfiguration policyConfiguration;
 
     @Autowired
-    private ResourceDependencyResolver resourceDependencyResolver;
+    private EntityDependencyResolver entityDependencyResolver;
 
     @Autowired
     private ArtifactBFFService artifactBFFService;
@@ -152,7 +151,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         try {
             // Find artifact and matching resource.
             final var artifactId = extractArtifactIdFromRequest(requestMessage);
-            final var resourceId = resourceDependencyResolver.findResourceFromArtifactId(artifactId);
+            final var resourceId = entityDependencyResolver.findResourceFromArtifactId(artifactId);
 
             if (resourceId == null) {
                 // The resource was not found, reject and inform the requester.
@@ -368,7 +367,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                     throw new ContractException("Could not deserialize contract.");
                 }
 
-                URI extractedId = resourceDependencyResolver.getArtifactIdFromContract(agreement);
+                URI extractedId = entityDependencyResolver.getArtifactIdFromContract(agreement);
                 return extractedId.equals(artifactId);
             }
         } else {
