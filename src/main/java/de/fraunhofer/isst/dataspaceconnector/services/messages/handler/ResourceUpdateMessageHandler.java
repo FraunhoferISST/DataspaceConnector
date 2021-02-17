@@ -132,9 +132,11 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
             // Build response header.
             messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
             if(successfulUpdate)
-                return BodyResponse.create(messageService.buildResponseHeader(), "Message received and resource updated.");
+                return BodyResponse.create(messageService.buildResponseHeader(),
+                        "Message received and resource updated.");
             else
-                return BodyResponse.create(messageService.buildResponseHeader(), "Message received but resource not updated.");
+                return BodyResponse.create(messageService.buildResponseHeader(),
+                        "Message received but resource not updated.");
         } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
             LOGGER.warn("Unable to build response message. [exception=({})]", exception.getMessage());
