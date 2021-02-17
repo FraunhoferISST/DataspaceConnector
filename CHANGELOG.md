@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Handle ResourceUpdateMessage: Update the local copy of resource upon receiving a ResourceUpdateMessage.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
-- Store `ownerURI`, `contractID`, and `originalUUID` in `RequestedResource`.
+- Store `ownerURI`, `contractID`, `artifactID`, and `originalUUID` in `RequestedResource`.
 - Add support for query params and additional headers when requesting artifacts.
 - Add input validation for query params and headers.
 - Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
@@ -14,7 +14,6 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Configure Spring to fail on unknown properties in request bodies.
 - Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
-
 
 ## [4.0.2] - 2021-02-04
 
