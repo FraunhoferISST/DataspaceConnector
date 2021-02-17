@@ -10,7 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -22,8 +22,8 @@ public class BaseResource implements Serializable {
     private UUID id;
 
     @CreationTimestamp
-    private LocalDateTime creationDate;
+    private Date creationDate;
 
     @UpdateTimestamp
-    private LocalDateTime lastModificationDate;
+    private Date lastModificationDate;
 }

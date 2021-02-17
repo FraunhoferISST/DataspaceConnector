@@ -107,7 +107,7 @@ public class ResourceControllerV1 {
     public ResponseEntity<ResourceView<OfferedResource>>
     createResource(@RequestBody ResourceMetadata resourceMetadata,
             @RequestParam(value = "id", required = false) UUID uuid) {
-        final var template = ResourceApiBridge.toResourceTemplate(uuid, resourceMetadata);
+        final var template = ResourceApiBridge.toOfferedResourceTemplate(uuid, resourceMetadata);
         final var endpointId = templateBuilder.build(template);
 
         final var headers = new HttpHeaders();
@@ -142,7 +142,7 @@ public class ResourceControllerV1 {
         // preventing the builder to create a new resource.
         resourceService.get(new EndpointId(Basepaths.Resources.toString(), resourceId));
 
-        final var template = ResourceApiBridge.toResourceTemplate(resourceId, resourceMetadata);
+        final var template = ResourceApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
         templateBuilder.build(template);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

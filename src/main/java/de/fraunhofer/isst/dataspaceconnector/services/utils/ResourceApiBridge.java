@@ -3,8 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ArtifactTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
@@ -18,13 +19,34 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public final class ResourceApiBridge {
-    private ResourceApiBridge(){
+    private ResourceApiBridge() {
         // Nothing
     }
 
-    public static ResourceTemplate toResourceTemplate(final UUID uuid, final ResourceMetadata resourceMetadata) {
-        final var template = new ResourceTemplate();
-        template.setDesc(toResourceDesc(uuid, resourceMetadata));
+    public static ResourceTemplate<OfferedResourceDesc> toOfferedResourceTemplate(final UUID uuid, final ResourceMetadata resourceMetadata) {
+        // TODO: template typedef cleanup
+        final var template = new ResourceTemplate<OfferedResourceDesc>();
+        template.setDesc(toOfferedResourceDesc(uuid, resourceMetadata));
+        template.setRepresentations(new ArrayList<>());
+        template.setContracts(new ArrayList<>());
+
+        if(resourceMetadata.getRepresentations() != null) {
+            for (final var representation : resourceMetadata.getRepresentations().values()) {
+                template.getRepresentations().add(toRepresentationTemplate(representation));
+            }
+        }
+
+        if(resourceMetadata.getPolicy() != null) {
+            template.getContracts().add(toContractTemplate(resourceMetadata.getPolicy()));
+        }
+
+        return template;
+    }
+
+    public static ResourceTemplate<RequestedResourceDesc> toRequestedResourceTemplate(final UUID uuid, final ResourceMetadata resourceMetadata) {
+        // TODO: template typedef cleanup
+        final var template = new ResourceTemplate<RequestedResourceDesc>();
+        template.setDesc(toRequestedResourceDesc(uuid, resourceMetadata));
         template.setRepresentations(new ArrayList<>());
         template.setContracts(new ArrayList<>());
 
@@ -79,8 +101,21 @@ public final class ResourceApiBridge {
         return template;
     }
 
-    public static ResourceDesc toResourceDesc(final UUID uuid, final ResourceMetadata resourceMetadata) {
-        final var desc = new ResourceDesc();
+    public static OfferedResourceDesc toOfferedResourceDesc(final UUID uuid, final ResourceMetadata resourceMetadata) {
+        final var desc =  new OfferedResourceDesc();
+        desc.setTitle(resourceMetadata.getTitle());
+        desc.setDescription(resourceMetadata.getDescription());
+        desc.setKeywords(resourceMetadata.getKeywords());
+        desc.setLanguage(null);
+        desc.setLicence(resourceMetadata.getLicense());
+        desc.setStaticId(uuid);
+        desc.setPublisher(resourceMetadata.getOwner());
+
+        return desc;
+    }
+
+    public static RequestedResourceDesc toRequestedResourceDesc(final UUID uuid, final ResourceMetadata resourceMetadata) {
+        final var desc =  new RequestedResourceDesc();
         desc.setTitle(resourceMetadata.getTitle());
         desc.setDescription(resourceMetadata.getDescription());
         desc.setKeywords(resourceMetadata.getKeywords());

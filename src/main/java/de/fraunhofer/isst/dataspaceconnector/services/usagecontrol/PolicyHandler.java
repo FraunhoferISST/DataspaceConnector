@@ -17,8 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 
 /**
@@ -207,7 +205,7 @@ public class PolicyHandler {
                 return policyVerifier.checkInterval(contract);
             case DURATION_USAGE:
                 // TODO Check timezones
-                return policyVerifier.checkDuration(java.util.Date.from(dataResource.getCreationDate().atZone(ZoneId.systemDefault()).toInstant()),
+                return policyVerifier.checkDuration(dataResource.getCreationDate(),
                         contract);
             case USAGE_LOGGING:
                 return policyVerifier.logAccess();

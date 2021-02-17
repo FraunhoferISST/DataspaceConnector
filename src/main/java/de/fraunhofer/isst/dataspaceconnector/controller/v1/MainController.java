@@ -1,11 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * This class provides endpoints for basic connector services.
@@ -35,9 +39,11 @@ public class MainController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     private final SerializerProvider serializerProvider;
-    //private final ResourceService offeredResourceService, requestedResourceService;
     private final IdsUtils idsUtils;
     private final PolicyConfiguration policyConfiguration;
+
+    @Autowired
+    private IdsResourceService idsResourceService;
 
     /**
      * Constructor for MainController.
@@ -215,10 +221,9 @@ public class MainController {
     }
 
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
-//        return new ResourceCatalogBuilder()
-//            ._offeredResource_(new ArrayList<>(offeredResourceService.getResources()))
-//            ._requestedResource_(new ArrayList<>(requestedResourceService.getResources()))
-//            .build();
-        throw new RuntimeException();
+        return new ResourceCatalogBuilder()
+            ._offeredResource_((ArrayList<? extends Resource>) idsResourceService.getAllOfferedResources())
+            ._requestedResource_((ArrayList<? extends Resource>) idsResourceService.getAllRequestedResources())
+            .build();
     }
 }

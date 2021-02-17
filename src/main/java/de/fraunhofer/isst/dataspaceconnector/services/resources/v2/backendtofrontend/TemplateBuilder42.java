@@ -27,12 +27,12 @@ public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
     private BFFResourceService<T, D, ?> resourceService;
 
     @Autowired
-    private BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
+    private BFFResourceRepresentationLinker<T> resourceRepresentationLinker;
 
     @Autowired
     private BFFResourceContractLinker resourceContractLinker;
 
-    public EndpointId build(final ResourceTemplate template) {
+    public EndpointId build(final ResourceTemplate<D> template) {
         final var representationEndpointIds = new HashSet<EndpointId>();
         for (final var representation : template.getRepresentations()) {
             representationEndpointIds.add(this.build(representation));
@@ -44,14 +44,15 @@ public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
         }
 
         final EndpointId resourceEndpointId;
+        final var desc = template.getDesc();
         if(template.getDesc().getStaticId() == null) {
-            resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), (D)template.getDesc());
+            resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), desc);
         } else{
-            final var endpointId = new EndpointId(Basepaths.Resources.toString(), template.getDesc().getStaticId());
+            final var endpointId = new EndpointId(Basepaths.Resources.toString(), desc.getStaticId());
             if(resourceService.doesExist(endpointId)){
-                resourceEndpointId = resourceService.update(endpointId, (D)template.getDesc());
+                resourceEndpointId = resourceService.update(endpointId, desc);
             }else{
-                resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), (D)template.getDesc());
+                resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), desc);
             }
         }
 

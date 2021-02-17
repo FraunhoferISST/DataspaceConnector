@@ -4,6 +4,7 @@ import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
@@ -23,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all
@@ -177,7 +180,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             // Create a connector with a list of offered resources.
             var connectorImpl = (BaseConnectorImpl) connector;
             connectorImpl.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                ._offeredResource_(resourceService.getAllOfferedResources())
+                ._offeredResource_((ArrayList<? extends Resource>) resourceService.getAllOfferedResources())
                 .build()));
 
             // Answer with the resource description.

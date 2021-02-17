@@ -501,7 +501,7 @@ public class RequestController {
         }
 
         try {
-            return templateBuilder.build(ResourceApiBridge.toResourceTemplate(null, metadata));
+            return templateBuilder.build(ResourceApiBridge.toRequestedResourceTemplate(null, metadata));
         } catch (Exception exception) {
             LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
             throw new ResourceException("Metadata could not be saved to database.");
