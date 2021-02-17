@@ -184,21 +184,19 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @return the linked list of resources, or null if not found
      */
     public LinkedList<RequestedResource> getResourcesByOriginalUUID(UUID originalUUID) {
-        LinkedList<RequestedResource> resources = new LinkedList<RequestedResource>();
+        LinkedList<RequestedResource> resources = new LinkedList<>();
         for (RequestedResource resource : getAllResources()) {
-            if (resource.getOriginalUUID() == originalUUID) {
+            if (resource.getOriginalUUID().equals(originalUUID)) {
                 resources.add(resource);
             }
         }
         // If no resource found, return null
         if (resources.isEmpty()) {
             return null;
-        }
-        else {
+        } else {
             return resources;
         }
     }
-
 
     public List<RequestedResource> getAllResources() {
         return requestedResourceRepository.findAll();
