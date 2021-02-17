@@ -178,6 +178,7 @@ public class RequestedResource implements ConnectorResource {
      */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
+        this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 
