@@ -17,6 +17,12 @@ import java.util.UUID;
 @MappedSuperclass
 @Setter(AccessLevel.NONE)
 public class BaseEntity implements Serializable {
+    
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue
     private UUID id;

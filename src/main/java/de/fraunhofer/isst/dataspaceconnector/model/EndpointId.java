@@ -13,6 +13,12 @@ import java.util.UUID;
 @Data
 @Embeddable
 public class EndpointId implements Serializable {
+    
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
     @JsonIgnore
     private String basePath;
 

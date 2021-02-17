@@ -17,6 +17,12 @@ import javax.persistence.Table;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 public class ArtifactImpl extends Artifact {
+
+    /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
     /**
      * The data stored in the artifact.
      **/

@@ -8,6 +8,11 @@ import javax.persistence.Table;
 public final class RequestedResource extends Resource {
 
     /**
+     * Serial version uid.
+     **/
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Default constructor.
      */
     protected RequestedResource() {
