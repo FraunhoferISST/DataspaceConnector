@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Add support for query params and additional headers when requesting artifacts.
 - Add input validation for query params and headers.
 - Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
+- Add example files for deployment in Kubernetes 
 
 ### Changed
 - Configure Spring to fail on unknown properties in request bodies.
