@@ -3,55 +3,102 @@ package de.fraunhofer.isst.dataspaceconnector.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * This class handles policy settings: negotiation, pattern support, and usage control framework.
+ */
 @Configuration
 public class PolicyConfiguration {
+
+    /**
+     * The policy negotiation status from application.properties.
+     */
     @Value("${policy.negotiation}")
     private boolean policyNegotiation;
 
+    /**
+     * Setting for allowing unsupported patterns from application.properties.
+     */
     @Value("${policy.allow-unsupported-patterns}")
-    private boolean unsupportedPatterns;
+    private boolean allowUnsupported;
 
+    /**
+     * Usage control framework from application.properties.
+     */
     @Value("${policy.framework}")
-    private UsageControlFramework usageControlFramework;
+    private static UsageControlFramework ucFramework;
 
+    /**
+     * Return policy negotiation status.
+     *
+     * @return True if on, false if off.
+     */
     public boolean isPolicyNegotiation() {
         return policyNegotiation;
     }
 
-    public void setPolicyNegotiation(boolean policyNegotiation) {
+    /**
+     * Set negotiation status.
+     *
+     * @param policyNegotiation The policy negotiation status.
+     */
+    @SuppressWarnings("checkstyle:HiddenField")
+    public void setPolicyNegotiation(final boolean policyNegotiation) {
         this.policyNegotiation = policyNegotiation;
     }
 
-    public boolean isUnsupportedPatterns() {
-        return unsupportedPatterns;
+    /**
+     * Return if unsupported pattern are supported.
+     *
+     * @return True if yes, false if no.
+     */
+    public boolean isAllowUnsupported() {
+        return allowUnsupported;
     }
 
-    public void setUnsupportedPatterns(boolean unsupportedPatterns) {
-        this.unsupportedPatterns = unsupportedPatterns;
+    /**
+     * Allow or prohibit unsupported patterns.
+     *
+     * @param allowUnsupported The unsupported pattern boolean.
+     */
+    @SuppressWarnings("checkstyle:HiddenField")
+    public void setAllowUnsupported(final boolean allowUnsupported) {
+        this.allowUnsupported = allowUnsupported;
     }
 
-    public UsageControlFramework getUsageControlFramework() {
-        return usageControlFramework;
+    /**
+     * Return usage control framework.
+     *
+     * @return The usage control framework enum.
+     */
+    public UsageControlFramework getUcFramework() {
+        return ucFramework;
     }
 
-    public void setUsageControlFramework(UsageControlFramework usageControlFramework) {
-        this.usageControlFramework = usageControlFramework;
-    }
-
+    /**
+     * This class provides a usage control framework enum.
+     */
     public enum UsageControlFramework {
+        /**
+         * Usage control (enforcement) inside the connector.
+         */
         INTERNAL("INTERNAL"),
-        MYDATA("MYDATA"),
-        MYDATA_INTERCEPTOR("MYDATA_INTERCEPTOR");
+        /**
+         * Usage control framework MyData.
+         */
+        MY_DATA("MY_DATA");
 
-        private final String pattern;
+        /**
+         * The usage control framework.
+         */
+        private final String framework;
 
-        UsageControlFramework(String string) {
-            pattern = string;
+        UsageControlFramework(final String string) {
+            framework = string;
         }
 
         @Override
         public String toString() {
-            return pattern;
+            return framework;
         }
     }
 }

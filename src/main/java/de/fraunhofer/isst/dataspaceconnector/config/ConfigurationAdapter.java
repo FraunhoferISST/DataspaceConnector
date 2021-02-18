@@ -35,7 +35,7 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     /**
      * Bean with an entry point for the admin realm.
      *
-     * @return The authentication entry point for the admin realm
+     * @return The authentication entry point for the admin realm.
      */
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {

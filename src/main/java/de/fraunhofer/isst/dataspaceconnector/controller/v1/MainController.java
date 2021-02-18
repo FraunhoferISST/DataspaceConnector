@@ -183,9 +183,9 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus(@RequestParam("status") boolean status) {
-        policyConfiguration.setUnsupportedPatterns(status);
+        policyConfiguration.setAllowUnsupported(status);
 
-        if (policyConfiguration.isUnsupportedPatterns()) {
+        if (policyConfiguration.isAllowUnsupported()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {
@@ -205,7 +205,7 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus() {
-        if (policyConfiguration.isUnsupportedPatterns()) {
+        if (policyConfiguration.isAllowUnsupported()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {

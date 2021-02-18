@@ -65,7 +65,7 @@ public class PolicyEnforcement {
      */
     @Scheduled(fixedDelay = 60000)
     public void schedule() {
-        if (policyConfiguration.getUsageControlFramework() ==
+        if (policyConfiguration.getUcFramework() ==
                 PolicyConfiguration.UsageControlFramework.INTERNAL) {
             try {
                 checkResources();
