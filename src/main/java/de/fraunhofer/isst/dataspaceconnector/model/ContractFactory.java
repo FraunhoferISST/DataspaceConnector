@@ -12,6 +12,13 @@ import java.util.HashMap;
 public class ContractFactory implements BaseFactory<Contract, ContractDesc> {
 
     /**
+     * Default constructor.
+     */
+    public ContractFactory() {
+        // This constructor is intentionally empty. Nothing to do here.
+    }
+
+    /**
      * Create a new contract.
      *
      * @param desc The description of the new contract.
