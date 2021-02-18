@@ -11,13 +11,15 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/**
+ * Contains the data kept in an artifact.
+ */
 @lombok.Data
 @Entity
 @Table
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 public class ArtifactImpl extends Artifact {
-
     /**
      * Serial version uid.
      **/
