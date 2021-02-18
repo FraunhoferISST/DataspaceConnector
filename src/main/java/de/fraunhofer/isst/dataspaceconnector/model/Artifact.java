@@ -30,8 +30,14 @@ public abstract class Artifact extends BaseEntity {
      **/
     private String title;
 
+    /**
+     * The counter of how often the underlying data has been accessed.
+     */
     private Long numAccessed;
 
+    /**
+     * Increment the data access counter.
+     */
     public void incrementAccessCounter() {
         numAccessed += 1;
     }
