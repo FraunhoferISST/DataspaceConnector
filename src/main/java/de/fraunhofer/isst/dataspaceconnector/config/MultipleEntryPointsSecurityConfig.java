@@ -22,13 +22,13 @@ public class MultipleEntryPointsSecurityConfig {
      * Username defined in application.properties.
      */
     @Value("${spring.security.user.name}")
-    private static String username;
+    private String username;
 
     /**
      * Password defined in application.properties.
      */
     @Value("${spring.security.user.password}")
-    private static String password;
+    private String password;
 
     /**
      * Bean setting up an default admin.
