@@ -58,25 +58,5 @@
   },
   "ids:keyStore" : {
     "@id" : "file:///conf/keystore-localhost.p12"
-  },
-  "ids:connectorProxy" : [ {
-    "@type" : "ids:Proxy",
-    "@id" : "https://w3id.org/idsa/autogen/proxy/548dc73a-ccfb-4039-9569-4b8e219b90bc",
-    "ids:proxyAuthentication" : {
-      "@type" : "ids:BasicAuthentication",
-      "@id" : "https://w3id.org/idsa/autogen/basicAuthentication/47e3cd59-d351-4f5b-99fc-561c94bad5e1"
-    },
-    "ids:proxyURI" : {
-      "@id" : "http://proxy.dortmund.isst.fraunhofer.de:3128"
-    },
-    "ids:noProxy" : [ {
-      "@id" : "https://localhost:8080/"
-    }, {
-      "@id" : "http://localhost:8080/"
-    }, {
-      "@id" : "https://localhost:8081/"
-    }, {
-      "@id" : "http://localhost:8081/"
-    } ]
-  } ]
+  }
 }
