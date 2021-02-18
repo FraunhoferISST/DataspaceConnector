@@ -21,7 +21,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Catalog extends BaseEntity {
-
     /**
      * Serial version uid.
      **/
@@ -38,12 +37,15 @@ public class Catalog extends BaseEntity {
     private String description;
 
     /**
-     * The resources grouped by the catalog.
+     * The offered resources grouped by the catalog.
      **/
     @MapKey(name = "id")
     @OneToMany
     private Map<UUID, OfferedResource> offeredResources;
 
+    /**
+     * The requested resources grouped by the catalog.
+     **/
     @MapKey(name = "id")
     @OneToMany
     private Map<UUID, RequestedResource> requestedResources;
