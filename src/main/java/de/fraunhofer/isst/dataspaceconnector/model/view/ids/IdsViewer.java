@@ -97,7 +97,7 @@ public final class IdsViewer {
                                      new TypedLiteral(resource.getDescription(), language)))
                              ._keyword_((ArrayList<? extends TypedLiteral>) keywords.get())
                              ._language_(Util.asList(Language.EN)) // TODO parse language
-                             ._modified_(getGregorianOf(resource.getLastModificationDate()))
+                             ._modified_(getGregorianOf(resource.getModificationDate()))
                              ._publisher_(resource.getPublisher())
                              ._representation_(
                                      (ArrayList<? extends Representation>) representations.get())
