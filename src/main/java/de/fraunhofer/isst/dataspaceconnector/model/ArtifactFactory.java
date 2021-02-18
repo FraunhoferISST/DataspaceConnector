@@ -10,7 +10,6 @@ import java.net.URL;
  */
 @Component
 public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc> {
-
     /**
      * Default constructor.
      */
@@ -57,12 +56,15 @@ public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc
     }
 
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {
+        boolean hasChanged;
         if (isRemoteData(desc)) {
-            return updateRemoteData(
-                    (ArtifactImpl) artifact, desc.getAccessUrl(), desc.getUsername(), desc.getUsername());
+            hasChanged = updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
+                    desc.getUsername(), desc.getUsername());
         } else {
-            return updateLocalData((ArtifactImpl)artifact, desc.getValue());
+            hasChanged = updateLocalData((ArtifactImpl) artifact, desc.getValue());
         }
+
+        return hasChanged;
     }
 
     private static boolean isRemoteData(final ArtifactDesc desc) {
