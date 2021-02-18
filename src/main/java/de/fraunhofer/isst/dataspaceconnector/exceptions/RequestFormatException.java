@@ -4,7 +4,9 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
  * Thrown to indicate that the request format did not match expectations.
  */
 public class RequestFormatException extends IllegalArgumentException {
-    //Default serial version uid
+    /**
+     * Default serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -12,7 +14,7 @@ public class RequestFormatException extends IllegalArgumentException {
      *
      * @param msg The detail message.
      */
-    public RequestFormatException(String msg) {
+    public RequestFormatException(final String msg) {
         super(msg);
     }
 
@@ -22,7 +24,7 @@ public class RequestFormatException extends IllegalArgumentException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public RequestFormatException(String msg, Throwable cause) {
+    public RequestFormatException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 }

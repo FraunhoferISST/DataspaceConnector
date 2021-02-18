@@ -4,7 +4,9 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
  * Thrown to indicate that that a problem with the resource composition occurred.
  */
 public class InvalidResourceException extends ResourceException {
-    //Default serial version uid
+    /**
+     * Default serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -12,7 +14,7 @@ public class InvalidResourceException extends ResourceException {
      *
      * @param msg The detail message.
      */
-    public InvalidResourceException(String msg) {
+    public InvalidResourceException(final String msg) {
         super(msg);
     }
 }

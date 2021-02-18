@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -15,7 +14,7 @@ public class CatalogDesc extends BaseDescription<Catalog> {
     private String description;
 
     @JsonIgnore
-    private Map<String, String> properties = new HashMap<>();
+    private Map<String, String> properties;
 
     @JsonAnySetter
     public void add(final String key, final String value) {

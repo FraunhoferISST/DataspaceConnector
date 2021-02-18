@@ -144,7 +144,7 @@ public class PolicyHandler {
      */
     public boolean onDataProvision(String policy) throws UnsupportedPatternException,
         RequestFormatException {
-        switch (policyConfiguration.getUsageControlFramework()) {
+        switch (policyConfiguration.getUcFramework()) {
             case INTERNAL:
                 switch (getPattern(policy)) {
                     case PROVIDE_ACCESS:
@@ -157,8 +157,7 @@ public class PolicyHandler {
                     default:
                         return true;
                 }
-            case MYDATA: // TODO
-            case MYDATA_INTERCEPTOR: // TODO
+            case MY_DATA: // TODO
             default:
                 return true;
         }
@@ -174,11 +173,10 @@ public class PolicyHandler {
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{
-        switch (policyConfiguration.getUsageControlFramework()) {
+        switch (policyConfiguration.getUcFramework()) {
             case INTERNAL:
                 break;
-            case MYDATA: // TODO
-            case MYDATA_INTERCEPTOR: // TODO
+            case MY_DATA: // TODO
             default:
                 return true;
         }
@@ -187,7 +185,7 @@ public class PolicyHandler {
         final var rules = (ContractRule)dscContract.getRules().values().toArray()[0];
         final var policy =rules.getValue();
 
-        final var ignoreUnsupportedPatterns = policyConfiguration.isUnsupportedPatterns();
+        final var ignoreUnsupportedPatterns = policyConfiguration.isAllowUnsupported();
 
         Pattern pattern;
         try {
