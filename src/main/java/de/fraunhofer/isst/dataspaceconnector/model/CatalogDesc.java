@@ -1,23 +1,21 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.Map;
-
+/**
+ * Describes a catalog's properties.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class CatalogDesc extends BaseDescription<Catalog> {
+    /**
+     * The title of the catalog.
+     */
     private String title;
+
+    /**
+     * The description of the catalog.
+     */
     private String description;
-
-    @JsonIgnore
-    private Map<String, String> properties;
-
-    @JsonAnySetter
-    public void add(final String key, final String value) {
-        properties.put(key, value);
-    }
 }
