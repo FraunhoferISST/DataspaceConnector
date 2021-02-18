@@ -4,7 +4,9 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions.message;
  * Thrown to indicate that a problem regarding a message occurred.
  */
 public class MessageException extends RuntimeException {
-    //Default serial version uid
+    /**
+     * Default serial version uid.
+     */
     private static final long serialVersionUID = 1L;
 
     /**
@@ -12,7 +14,7 @@ public class MessageException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public MessageException(String msg) {
+    public MessageException(final String msg) {
         super(msg);
     }
 
@@ -22,7 +24,7 @@ public class MessageException extends RuntimeException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public MessageException(String msg, Throwable cause) {
+    public MessageException(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 }
