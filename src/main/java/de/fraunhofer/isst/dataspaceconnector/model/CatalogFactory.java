@@ -10,6 +10,12 @@ import java.util.HashMap;
  */
 @Component
 public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
+    /**
+     * Default constructor.
+     */
+    public CatalogFactory() {
+        // This constructor is intentionally empty. Nothing to do here.
+    }
 
     /**
      * Create a new catalog.
@@ -37,25 +43,21 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
     @Override
     public boolean update(final Catalog catalog, final CatalogDesc desc) {
         final var hasUpdatedTitle = this.updateTitle(catalog, desc.getTitle());
-        final var hasUpdatedDescription = this.updateDescription(catalog,
-                desc.getDescription());
+        final var hasUpdatedDesc = this.updateDescription(catalog, desc.getDescription());
 
-        return hasUpdatedTitle || hasUpdatedDescription;
+        return hasUpdatedTitle || hasUpdatedDesc;
     }
 
     private boolean updateTitle(final Catalog catalog, final String title) {
-        final var newTitle = MetadataUtils.updateString(catalog.getTitle(),
-                title, "");
+        final var newTitle = MetadataUtils.updateString(catalog.getTitle(), title, "");
         newTitle.ifPresent(catalog::setTitle);
 
         return newTitle.isPresent();
     }
 
-    private boolean updateDescription(final Catalog catalog,
-                                     final String description) {
+    private boolean updateDescription(final Catalog catalog, final String description) {
         final var newDescription =
-                MetadataUtils.updateString(catalog.getDescription(),
-                description, "");
+                MetadataUtils.updateString(catalog.getDescription(), description, "");
         newDescription.ifPresent(catalog::setDescription);
 
         return newDescription.isPresent();
