@@ -5,6 +5,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
@@ -17,6 +19,8 @@ import java.util.UUID;
  */
 public class CommonUniDirectionalLinkerService<
         S extends BaseUniDirectionalLinkerService<?, ?, ?, ?>> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonUniDirectionalLinkerService.class);
 
     /**
      * The service for linking children to an entity.
@@ -119,17 +123,20 @@ public class CommonUniDirectionalLinkerService<
      */
     public void replace(final EndpointId ownerEndpointId,
                         final Set<EndpointId> childrenEndpointIds) {
+        LOGGER.trace("Called function: replace (Endpoints)");
+
         // Get the internal ids of children
         final var internalChildIds = findInternalIds(childrenEndpointIds);
         if (internalChildIds.size() == 0) {
-            // TODO add logger for information on empty update
-            // Do not proceed when no children are left
+            LOGGER.debug("replace: No internal ids could be found. Do not continue.");
             return;
         }
 
         // Update resources
         final var ownerEndpoint = getResourceEndpoint(ownerEndpointId);
         linkerService.replace(getInternalId(ownerEndpoint), internalChildIds);
+
+        LOGGER.trace("Exit function: replace (Endpoints)");
     }
 
     /**

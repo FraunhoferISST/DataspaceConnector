@@ -42,5 +42,9 @@ public class Catalog extends BaseEntity {
      **/
     @MapKey(name = "id")
     @OneToMany
-    private Map<UUID, OfferedResource> resources;
+    private Map<UUID, OfferedResource> offeredResources;
+
+    @MapKey(name = "id")
+    @OneToMany
+    private Map<UUID, RequestedResource> requestedResources;
 }

@@ -56,8 +56,12 @@ public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
             }
         }
 
-        resourceRepresentationLinker.replace(resourceEndpointId, representationEndpointIds);
-        resourceContractLinker.replace(resourceEndpointId, contractEndpointIds);
+        try {
+            resourceRepresentationLinker.replace(resourceEndpointId, representationEndpointIds);
+            resourceContractLinker.replace(resourceEndpointId, contractEndpointIds);
+        }catch(Exception exception) {
+            System.out.println("FAILED");
+        }
 
         return resourceEndpointId;
     }

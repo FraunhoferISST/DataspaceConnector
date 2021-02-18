@@ -43,19 +43,42 @@ import java.util.stream.Collectors;
 public final class IdsViewer {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdsViewer.class);
 
-    @Autowired
-    private EndpointService endpointService;
+    /**
+     * Service for resolving endpoints.
+     */
+    private final EndpointService endpointService;
 
     // NOTE: Not happy with the serialization happening here
-    @Autowired
-    private SerializerProvider serializerProvider;
+    /**
+     * Provides serialization of contracts.
+     */
+    private final SerializerProvider serializerProvider;
 
+    /**
+     * Contains the current configuration of the connnector.
+     */
+    private final ConfigurationContainer configContainer;
+
+    /**
+     * Constructor.
+     *
+     * @param endpointService The service for resolving endpoints.
+     * @param serializerProvider The provider for serializer.
+     * @param configContainer The container providing the configurations.
+     */
     @Autowired
-    private ConfigurationContainer configurationContainer;
+    public IdsViewer(final EndpointService endpointService,
+            final SerializerProvider serializerProvider,
+            final ConfigurationContainer configContainer) {
+        this.endpointService = endpointService;
+        this.serializerProvider = serializerProvider;
+        this.configContainer = configContainer;
+    }
 
     public Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
         final var endpoints = endpointService.getByEntity(resource.getId());
-        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/resource/" + ((EndpointId) endpoints.toArray()[0]).getResourceId());
+        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/resource/"
+                + ((EndpointId) endpoints.toArray()[0]).getResourceId());
 
         final var contracts = CompletableFuture.supplyAsync(
                 () -> batchCreateContract(resource.getContracts().values()));
@@ -65,48 +88,57 @@ public final class IdsViewer {
 
         final var language = resource.getLanguage();
 
+        Resource output;
         try {
-            return new ResourceBuilder(endpointUri)
-                    ._contractOffer_((ArrayList<? extends ContractOffer>) contracts.get())
-                    ._created_(getGregorianOf(resource.getCreationDate()))
-                    ._description_(
-                            Util.asList(new TypedLiteral(resource.getDescription(), language)))
-                    ._keyword_((ArrayList<? extends TypedLiteral>) keywords.get())
-                    ._language_(Util.asList(Language.EN)) // TODO parse language
-                    ._modified_(getGregorianOf(resource.getLastModificationDate()))
-                    ._publisher_(resource.getPublisher())
-                    ._representation_((ArrayList<? extends Representation>) representations.get())
-                    // ._resourceEndpoint_(Util.asList(ce)) // TODO add resource endpoints
-                    ._standardLicense_(resource.getLicence())
-                    ._title_(Util.asList(new TypedLiteral(resource.getTitle(), language)))
-                    ._version_(String.valueOf(resource.getVersion()))
-                    .build();
+            output = new ResourceBuilder(endpointUri)
+                             ._contractOffer_((ArrayList<? extends ContractOffer>) contracts.get())
+                             ._created_(getGregorianOf(resource.getCreationDate()))
+                             ._description_(Util.asList(
+                                     new TypedLiteral(resource.getDescription(), language)))
+                             ._keyword_((ArrayList<? extends TypedLiteral>) keywords.get())
+                             ._language_(Util.asList(Language.EN)) // TODO parse language
+                             ._modified_(getGregorianOf(resource.getLastModificationDate()))
+                             ._publisher_(resource.getPublisher())
+                             ._representation_(
+                                     (ArrayList<? extends Representation>) representations.get())
+                             // ._resourceEndpoint_(Util.asList(ce)) // TODO add resource endpoints
+                             ._standardLicense_(resource.getLicence())
+                             ._title_(Util.asList(new TypedLiteral(resource.getTitle(), language)))
+                             ._version_(String.valueOf(resource.getVersion()))
+                             .build();
         } catch (InterruptedException | ExecutionException exception) {
             LOGGER.warn("Failed to build resource. [exception=({})]", exception.getMessage());
-            return null;
+            output = null;
         }
+
+        return output;
     }
 
     public Representation create(
             final de.fraunhofer.isst.dataspaceconnector.model.Representation representation) {
         final var endpoints = endpointService.getByEntity(representation.getId());
-        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/representation/" + ((EndpointId) endpoints.toArray()[0]).getResourceId());
+        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/representation/"
+                + ((EndpointId) endpoints.toArray()[0]).getResourceId());
 
         final var artifacts = CompletableFuture.supplyAsync(
                 () -> batchCreateArtifact(representation.getArtifacts().values()));
 
+        Representation output;
         try {
-            return new RepresentationBuilder(endpointUri)
-                    ._language_(Language.EN) // TODO parse the language
-                    ._mediaType_(new IANAMediaTypeBuilder()
-                                         ._filenameExtension_(representation.getMediaType())
-                                         .build())
-                    ._instance_((ArrayList<? extends Artifact>) artifacts.get())
-                    .build();
+            output =
+                    new RepresentationBuilder(endpointUri)
+                            ._language_(Language.EN) // TODO parse the language
+                            ._mediaType_(new IANAMediaTypeBuilder()
+                                                 ._filenameExtension_(representation.getMediaType())
+                                                 .build())
+                            ._instance_((ArrayList<? extends Artifact>) artifacts.get())
+                            .build();
         } catch (InterruptedException | ExecutionException exception) {
             LOGGER.warn("Failed to build representation. [exception=({})]", exception.getMessage());
-            return null;
+            output = null;
         }
+
+        return output;
     }
 
     // NOTE: naming differently since eis.Representation and eis.Artifact produce same signature
@@ -121,17 +153,21 @@ public final class IdsViewer {
 
     public Artifact create(final de.fraunhofer.isst.dataspaceconnector.model.Artifact artifact) {
         final var endpoints = endpointService.getByEntity(artifact.getId());
-        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/artifact/" + ((EndpointId) endpoints.toArray()[0]).getResourceId());
+        final var endpointUri = URI.create("https://w3id.org/idsa/autogen/artifact/"
+                + ((EndpointId) endpoints.toArray()[0]).getResourceId());
 
+        Artifact output;
         try {
-            return new ArtifactBuilder(endpointUri)
-                    ._byteSize_(BigInteger.ONE) // TODO get the real file size
-                    ._fileName_(artifact.getTitle())
-                    .build();
+            output = new ArtifactBuilder(endpointUri)
+                             ._byteSize_(BigInteger.ONE) // TODO get the real file size
+                             ._fileName_(artifact.getTitle())
+                             .build();
         } catch (Exception exception) {
             LOGGER.warn("Failed to build artifact. [exception=({})]", exception.getMessage());
-            return null;
+            output = null;
         }
+
+        return output;
     }
 
     public List<Artifact> batchCreateArtifact(
@@ -158,7 +194,7 @@ public final class IdsViewer {
                     ._contractStart_(contractOffer.getContractStart())
                     ._contractDate_(contractOffer.getContractDate())
                     ._consumer_(contractOffer.getConsumer())
-                    ._provider_(configurationContainer.getConnector().getId())
+                    ._provider_(configContainer.getConnector().getId())
                     ._contractEnd_(contractOffer.getContractEnd())
                     ._contractAnnex_(contractOffer.getContractAnnex())
                     ._contractDocument_(contractOffer.getContractDocument())
@@ -177,8 +213,8 @@ public final class IdsViewer {
 
     private static List<TypedLiteral> getKeywords(
             final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
-        var keywords = new ArrayList<TypedLiteral>();
-        for (var keyword : resource.getKeywords()) {
+        final var keywords = new ArrayList<TypedLiteral>();
+        for (final var keyword : resource.getKeywords()) {
             keywords.add(new TypedLiteral(keyword, resource.getLanguage()));
         }
 

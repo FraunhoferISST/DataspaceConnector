@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v2/catalogs")
-public class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView,
+public class CatalogController extends BaseResourceController<
+        Catalog, CatalogDesc, CatalogView,
         CommonService<Catalog, CatalogDesc, CatalogView>> {
 }

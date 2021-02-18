@@ -22,7 +22,7 @@ public final class ArtifactBFFService extends CommonService<Artifact, ArtifactDe
     }
 
     public void saveData(final EndpointId endpointId, String data) {
-        final var service = (ArtifactService)getService();
+        // final var service = (ArtifactService)getService();
         // TODO save the data
         throw new RuntimeException();
     }

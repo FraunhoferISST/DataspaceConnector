@@ -19,7 +19,8 @@ public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
     @Override
     public Catalog create(final CatalogDesc desc) {
         final var catalog = new Catalog();
-        catalog.setResources(new HashMap<>());
+        catalog.setOfferedResources(new HashMap<>());
+        catalog.setRequestedResources(new HashMap<>());
 
         update(catalog, desc);
 

@@ -23,7 +23,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Resource extends BaseEntity {
-
     /**
      * Serial version uid.
      **/

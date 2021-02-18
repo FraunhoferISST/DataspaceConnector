@@ -19,7 +19,7 @@ public class CatalogViewFactory implements BaseViewFactory<Catalog, CatalogView>
         view.setTitle(catalog.getTitle());
         view.setDescription(catalog.getDescription());
 
-        final var allResourceIds = catalog.getResources().keySet();
+        final var allResourceIds = catalog.getOfferedResources().keySet(); // TODO Add requested resources
         final var allResourceEndpoints = new HashSet<EndpointId>();
 
         for(final var resourceId : allResourceIds) {

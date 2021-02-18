@@ -14,7 +14,7 @@ public class ResourceViewFactory<T extends Resource> implements BaseViewFactory<
     private EndpointService endpointService;
 
     @Override
-    public ResourceView create(final Resource resource) {
+    public ResourceView<T> create(final Resource resource) {
         final var view = new ResourceView();
         view.setTitle(resource.getTitle());
         view.setDescription(resource.getDescription());
@@ -45,3 +45,9 @@ public class ResourceViewFactory<T extends Resource> implements BaseViewFactory<
         return view;
     }
 }
+
+//@Component
+//class OfferedResourceViewFactory extends ResourceViewFactory<OfferedResource>{}
+//
+//@Component
+//class RequestedResourceViewFactory extends ResourceViewFactory<RequestedResource>{}

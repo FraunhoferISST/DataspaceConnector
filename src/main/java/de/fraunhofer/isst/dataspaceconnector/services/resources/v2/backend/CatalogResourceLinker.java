@@ -11,18 +11,24 @@ import java.util.UUID;
 
 public abstract class CatalogResourceLinker<T extends Resource> extends BaseUniDirectionalLinkerService<
         Catalog, T, CatalogService, ResourceService<T, ?>> {
-
-    @Override
-    protected Map<UUID, T> getInternal(final Catalog owner) {
-        // TODO Make it safe
-        return (Map<UUID, T>) owner.getResources();
-    }
 }
 
 @Service
 final class CatalogOfferedResourceLinker extends CatalogResourceLinker<OfferedResource> {
+
+    @Override
+    protected Map<UUID, OfferedResource> getInternal(final Catalog owner) {
+        // TODO Make it safe
+        return owner.getOfferedResources();
+    }
 }
 
 @Service
 final class CatalogRequestedResourceLinker extends CatalogResourceLinker<RequestedResource> {
+
+    @Override
+    protected Map<UUID, RequestedResource> getInternal(final Catalog owner) {
+        // TODO Make it safe
+        return owner.getRequestedResources();
+    }
 }
