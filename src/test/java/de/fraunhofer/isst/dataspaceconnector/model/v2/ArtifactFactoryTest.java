@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +16,6 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -85,13 +85,13 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         assertNotNull(artifact);
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -108,7 +108,7 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         assertNotNull(artifact);
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
@@ -129,13 +129,13 @@ public class ArtifactFactoryTest {
 
         /* ASSERT */
         assertNotNull(artifact);
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -217,12 +217,12 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertNotEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertNotEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
         assertNotNull(((LocalData) ((ArtifactImpl)artifact).getData()).getValue());
-        assertNotEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
+        Assert.assertNotEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -242,12 +242,12 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertNotEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertNotEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
         assertNotNull(((LocalData) ((ArtifactImpl)artifact).getData()).getValue());
-        assertNotEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
+        Assert.assertNotEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -268,12 +268,12 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
         assertNotNull(((LocalData) ((ArtifactImpl)artifact).getData()).getValue());
-        assertEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
+        Assert.assertEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -294,16 +294,16 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -324,16 +324,16 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -354,12 +354,12 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
         assertNotNull(((LocalData) ((ArtifactImpl)artifact).getData()).getValue());
-        assertEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
+        Assert.assertEquals(((LocalData) ((ArtifactImpl)artifact).getData()).getValue(), desc.getValue());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -380,16 +380,16 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
@@ -410,16 +410,16 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertNotNull(artifact);
         assertNotNull(artifact.getTitle());
-        assertEquals(artifact.getTitle(), desc.getTitle());
+        Assert.assertEquals(artifact.getTitle(), desc.getTitle());
 
         assertNotNull(((ArtifactImpl)artifact).getData());
         assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getAccessUrl(), desc.getAccessUrl());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getUsername(), desc.getUsername());
         assertNotNull(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword());
-        assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
+        Assert.assertEquals(((RemoteData) ((ArtifactImpl)artifact).getData()).getPassword(), desc.getPassword());
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());

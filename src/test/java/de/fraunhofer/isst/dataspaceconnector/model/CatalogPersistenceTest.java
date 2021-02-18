@@ -1,4 +1,4 @@
-//package de.fraunhofer.isst.dataspaceconnector.model.v2;
+//package de.fraunhofer.isst.dataspaceconnector.model;
 //
 //import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
 //import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
