@@ -63,6 +63,7 @@ public class HttpUtils {
         RuntimeException {
         try {
             if(queryInput != null) {
+                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
@@ -126,6 +127,7 @@ public class HttpUtils {
         throws MalformedURLException, RuntimeException {
         try {
             if(queryInput != null) {
+                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
@@ -181,6 +183,7 @@ public class HttpUtils {
 
         try {
             if(queryInput != null) {
+                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
@@ -213,6 +216,39 @@ public class HttpUtils {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
+    }
+
+    /**
+     * Replaces all parts of a given URL that are marked as path variables, if any, using the values
+     * supplied in the path variables map.
+     *
+     * @param address the URL possibly containing path variables
+     * @param pathVariables map containing the values for the path variables by name
+     * @return the URL with path variables substituted
+     */
+    private String replacePathVariablesInUrl(String address, Map<String, String> pathVariables) {
+        if (pathVariables != null) {
+            long pathVariableCount = address.chars().filter(ch -> ch == '{').count();
+            if (pathVariableCount != pathVariables.size()) {
+                throw new IllegalArgumentException("The number of supplied path variables does not " +
+                        "match the number of path variables in the URL.");
+            }
+
+            for(int i = 1; i <= pathVariableCount; i++) {
+                String pathVariableName = address.substring(
+                        StringUtils.ordinalIndexOf(address, "{", i) + 1,
+                        StringUtils.ordinalIndexOf(address, "}", i));
+
+                String pathVariableValue = pathVariables.get(pathVariableName);
+
+                //should always be first index of braces because all prior should have been replaced
+                address = address.substring(0, address.indexOf("{"))
+                        + pathVariableValue
+                        + address.substring(address.indexOf("}") + 1);
+            }
+        }
+
+        return address;
     }
 
     /**
