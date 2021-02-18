@@ -49,14 +49,14 @@ public class BaseResourcePersistenceTest {
         ContractRule contractRule = getContractRule();
 
         Assert.assertNull(contractRule.getCreationDate());
-        Assert.assertNull(contractRule.getLastModificationDate());
+        Assert.assertNull(contractRule.getModificationDate());
 
         /*ACT*/
         contractRule = ruleRepository.save(contractRule);
 
         /*ASSERT*/
         Assert.assertNotNull(contractRule.getCreationDate());
-        Assert.assertNotNull(contractRule.getLastModificationDate());
+        Assert.assertNotNull(contractRule.getModificationDate());
     }
 
     @Transactional
@@ -68,7 +68,7 @@ public class BaseResourcePersistenceTest {
         ContractRule contractRule = ruleRepository.save(getContractRule());
 
         final var creationDate = contractRule.getCreationDate();
-        final var modificationDate = contractRule.getLastModificationDate();
+        final var modificationDate = contractRule.getModificationDate();
 
         //read and check the dates 3 times
         for (int i = 0; i < 3; i++) {
@@ -77,7 +77,7 @@ public class BaseResourcePersistenceTest {
 
             /*ASSERT*/
             Assert.assertEquals(creationDate, persisted.getCreationDate());
-            Assert.assertEquals(modificationDate, persisted.getLastModificationDate());
+            Assert.assertEquals(modificationDate, persisted.getModificationDate());
         }
     }
 
@@ -89,7 +89,7 @@ public class BaseResourcePersistenceTest {
         ContractRule original = ruleRepository.save(getContractRule());
 
         final var creationDate = original.getCreationDate();
-        final var modificationDate = original.getLastModificationDate();
+        final var modificationDate = original.getModificationDate();
 
         /*ACT*/
         original.setTitle("new rule title");
@@ -97,7 +97,7 @@ public class BaseResourcePersistenceTest {
 
         /*ASSERT*/
         Assert.assertEquals(creationDate, updated.getCreationDate());
-        Assert.assertNotEquals(modificationDate, updated.getLastModificationDate());
+        Assert.assertNotEquals(modificationDate, updated.getModificationDate());
     }
 
     @Transactional

@@ -60,7 +60,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -116,7 +116,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -226,7 +226,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -251,7 +251,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -277,7 +277,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -307,7 +307,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -337,7 +337,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -363,7 +363,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -393,7 +393,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test
@@ -423,7 +423,7 @@ public class ArtifactFactoryTest {
 
         assertNull(artifact.getId());
         assertNull(artifact.getCreationDate());
-        assertNull(artifact.getLastModificationDate());
+        assertNull(artifact.getModificationDate());
     }
 
     @Test

@@ -47,7 +47,7 @@ public class ContractRuleFactoryTest {
 
         assertNull(rule.getId());
         assertNull(rule.getCreationDate());
-        assertNull(rule.getLastModificationDate());
+        assertNull(rule.getModificationDate());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ContractRuleFactoryTest {
 
         assertNull(rule.getId());
         assertNull(rule.getCreationDate());
-        assertNull(rule.getLastModificationDate());
+        assertNull(rule.getModificationDate());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class ContractRuleFactoryTest {
 
         var idBefore = rule.getId();
         var creationDateBefore = rule.getCreationDate();
-        var lastModificationDateBefore = rule.getLastModificationDate();
+        var lastModificationDateBefore = rule.getModificationDate();
 
         var desc = getUpdatedDesc();
 
@@ -92,7 +92,7 @@ public class ContractRuleFactoryTest {
         assertEquals(idBefore, rule.getId());
         assertEquals(creationDateBefore, rule.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                rule.getLastModificationDate());
+                rule.getModificationDate());
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ContractRuleFactoryTest {
 
         var idBefore = rule.getId();
         var creationDateBefore = rule.getCreationDate();
-        var lastModificationDateBefore = rule.getLastModificationDate();
+        var lastModificationDateBefore = rule.getModificationDate();
 
         var desc = getDescWithNullMembers();
 
@@ -120,7 +120,7 @@ public class ContractRuleFactoryTest {
         assertEquals(idBefore, rule.getId());
         assertEquals(creationDateBefore, rule.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                rule.getLastModificationDate());
+                rule.getModificationDate());
     }
 
     @Test

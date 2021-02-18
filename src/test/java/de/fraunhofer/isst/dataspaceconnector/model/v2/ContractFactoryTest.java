@@ -52,7 +52,7 @@ public class ContractFactoryTest {
 
         assertNull(contract.getId());
         assertNull(contract.getCreationDate());
-        assertNull(contract.getLastModificationDate());
+        assertNull(contract.getModificationDate());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ContractFactoryTest {
 
         assertNull(contract.getId());
         assertNull(contract.getCreationDate());
-        assertNull(contract.getLastModificationDate());
+        assertNull(contract.getModificationDate());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class ContractFactoryTest {
 
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
-        var lastModificationDateBefore = contract.getLastModificationDate();
+        var lastModificationDateBefore = contract.getModificationDate();
 
         var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getUpdatedValidDesc();
@@ -100,7 +100,7 @@ public class ContractFactoryTest {
         assertEquals(idBefore, contract.getId());
         assertEquals(creationDateBefore, contract.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                contract.getLastModificationDate());
+                contract.getModificationDate());
     }
 
     @Test
@@ -113,7 +113,7 @@ public class ContractFactoryTest {
 
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
-        var lastModificationDateBefore = contract.getLastModificationDate();
+        var lastModificationDateBefore = contract.getModificationDate();
 
         var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getDescWithNullMembers();
@@ -130,7 +130,7 @@ public class ContractFactoryTest {
         assertEquals(idBefore, contract.getId());
         assertEquals(creationDateBefore, contract.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                contract.getLastModificationDate());
+                contract.getModificationDate());
     }
 
     @Test

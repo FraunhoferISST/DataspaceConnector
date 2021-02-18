@@ -67,7 +67,7 @@ public class OfferedResourceFactoryTest {
 
         assertNull(resource.getId());
         assertNull(resource.getCreationDate());
-        assertNull(resource.getLastModificationDate());
+        assertNull(resource.getModificationDate());
     }
 
     @Test
@@ -106,7 +106,7 @@ public class OfferedResourceFactoryTest {
 
         assertNull(resource.getId());
         assertNull(resource.getCreationDate());
-        assertNull(resource.getLastModificationDate());
+        assertNull(resource.getModificationDate());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class OfferedResourceFactoryTest {
 
         var idBefore = resource.getId();
         var creationDateBefore = resource.getCreationDate();
-        var lastModificationDateBefore = resource.getLastModificationDate();
+        var lastModificationDateBefore = resource.getModificationDate();
 
         var versionBefore = resource.getVersion();
         var representationsBefore =
@@ -147,7 +147,7 @@ public class OfferedResourceFactoryTest {
         assertEquals(idBefore, resource.getId());
         assertEquals(creationDateBefore, resource.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                resource.getLastModificationDate());
+                resource.getModificationDate());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class OfferedResourceFactoryTest {
 
         var idBefore = resource.getId();
         var creationDateBefore = resource.getCreationDate();
-        var lastModificationDateBefore = resource.getLastModificationDate();
+        var lastModificationDateBefore = resource.getModificationDate();
 
         var versionBefore = resource.getVersion();
         var representationsBefore =
@@ -205,7 +205,7 @@ public class OfferedResourceFactoryTest {
         assertEquals(idBefore, resource.getId());
         assertEquals(creationDateBefore, resource.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                resource.getLastModificationDate());
+                resource.getModificationDate());
     }
 
     @Test

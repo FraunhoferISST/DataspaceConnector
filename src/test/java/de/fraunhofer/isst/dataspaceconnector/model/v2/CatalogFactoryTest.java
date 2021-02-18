@@ -57,7 +57,7 @@ public class CatalogFactoryTest {
 
         assertNull(catalog.getId());
         assertNull(catalog.getCreationDate());
-        assertNull(catalog.getLastModificationDate());
+        assertNull(catalog.getModificationDate());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CatalogFactoryTest {
 
         assertNull(catalog.getId());
         assertNull(catalog.getCreationDate());
-        assertNull(catalog.getLastModificationDate());
+        assertNull(catalog.getModificationDate());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class CatalogFactoryTest {
 
         var idBefore = catalog.getId();
         var creationDateBefore = catalog.getCreationDate();
-        var lastModificationDateBefore = catalog.getLastModificationDate();
+        var lastModificationDateBefore = catalog.getModificationDate();
 
         var offeredResourcesBefore = ((HashMap<UUID, OfferedResource>) catalog.getOfferedResources()).clone();
         var requestedResourcesBefore = ((HashMap<UUID, RequestedResource>) catalog.getRequestedResources()).clone();
@@ -112,7 +112,7 @@ public class CatalogFactoryTest {
         assertEquals(idBefore, catalog.getId());
         assertEquals(creationDateBefore, catalog.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                catalog.getLastModificationDate());
+                catalog.getModificationDate());
     }
 
     @Test
@@ -125,7 +125,7 @@ public class CatalogFactoryTest {
 
         var idBefore = catalog.getId();
         var creationDateBefore = catalog.getCreationDate();
-        var lastModificationDateBefore = catalog.getLastModificationDate();
+        var lastModificationDateBefore = catalog.getModificationDate();
 
         var offeredResourcesBefore = ((HashMap<UUID, OfferedResource>) catalog.getOfferedResources()).clone();
         var requestedResourcesBefore = ((HashMap<UUID, RequestedResource>) catalog.getRequestedResources()).clone();
@@ -148,7 +148,7 @@ public class CatalogFactoryTest {
         assertEquals(idBefore, catalog.getId());
         assertEquals(creationDateBefore, catalog.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                catalog.getLastModificationDate());
+                catalog.getModificationDate());
     }
 
     @Test

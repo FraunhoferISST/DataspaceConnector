@@ -50,7 +50,7 @@ public class RepresentationFactoryTest {
 
         assertNull(representation.getId());
         assertNull(representation.getCreationDate());
-        assertNull(representation.getLastModificationDate());
+        assertNull(representation.getModificationDate());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class RepresentationFactoryTest {
 
         assertNull(representation.getId());
         assertNull(representation.getCreationDate());
-        assertNull(representation.getLastModificationDate());
+        assertNull(representation.getModificationDate());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class RepresentationFactoryTest {
         var idBefore = representation.getId();
         var creationDateBefore = representation.getCreationDate();
         var lastModificationDateBefore =
-                representation.getLastModificationDate();
+                representation.getModificationDate();
 
         var desc = getUpdatedValidDesc();
 
@@ -100,7 +100,7 @@ public class RepresentationFactoryTest {
         assertEquals(idBefore, representation.getId());
         assertEquals(creationDateBefore, representation.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                representation.getLastModificationDate());
+                representation.getModificationDate());
     }
 
     @Test
@@ -114,7 +114,7 @@ public class RepresentationFactoryTest {
         var idBefore = representation.getId();
         var creationDateBefore = representation.getCreationDate();
         var lastModificationDateBefore =
-                representation.getLastModificationDate();
+                representation.getModificationDate();
 
         var desc = getDescWithNullMembers();
 
@@ -131,7 +131,7 @@ public class RepresentationFactoryTest {
         assertEquals(idBefore, representation.getId());
         assertEquals(creationDateBefore, representation.getCreationDate());
         assertEquals(lastModificationDateBefore,
-                representation.getLastModificationDate());
+                representation.getModificationDate());
     }
 
     @Test
