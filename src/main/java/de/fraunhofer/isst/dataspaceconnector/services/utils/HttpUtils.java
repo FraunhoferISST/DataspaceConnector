@@ -1,10 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import de.fraunhofer.isst.ids.framework.communication.http.HttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.util.ClientProvider;
-import okhttp3.Headers;
-import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.NotImplementedException;
@@ -15,15 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
@@ -33,6 +28,8 @@ public class HttpUtils {
 
     private final ClientProvider clientProvider;
 
+    private HttpService httpService;
+
     /**
      * Constructor for HttpUtils.
      *
@@ -40,13 +37,14 @@ public class HttpUtils {
      * @throws GeneralSecurityException if the framework has an error.
      */
     @Autowired
-    public HttpUtils(ConfigurationContainer configurationContainer)
+    public HttpUtils(ConfigurationContainer configurationContainer, HttpService httpService)
         throws IllegalArgumentException, GeneralSecurityException {
         if (configurationContainer == null) {
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
         }
 
         this.clientProvider = new ClientProvider(configurationContainer);
+        this.httpService = httpService;
     }
 
     /**
@@ -59,38 +57,33 @@ public class HttpUtils {
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
-    public String sendHttpGetRequest(String address, QueryInput queryInput) throws MalformedURLException,
-        RuntimeException {
+    public String sendHttpGetRequest(String address, QueryInput queryInput) throws
+            RuntimeException, MalformedURLException {
+
         try {
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
             final var url = new URL(address);
+            final var uri = url.toURI();
 
-            var con = (HttpURLConnection) url.openConnection();
+            Response response;
+
             if(queryInput != null) {
-                addHeadersToURL(con, queryInput.getHeaders());
+                response = httpService.getWithHeaders(uri,queryInput.getHeaders());
+            }else {
+                response = httpService.get(uri);
             }
-            con.setRequestMethod("GET");
 
             final var responseCodeOk = 200;
             final var responseCodeUnauthorized = 401;
             final var responseMalformed = -1;
 
-            final var responseCode = con.getResponseCode();
+            final var responseCode = response.code();
 
-            if (responseCode == responseCodeOk) {
-                // Request was ok, read the response
-                try (var in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
-                    var content = new StringBuilder();
-                    var inputLine = "";
-                    while ((inputLine = in.readLine()) != null) {
-                        content.append(inputLine);
-                    }
-
-                    return content.toString();
-                }
+            if(responseCode == responseCodeOk){
+                return Objects.requireNonNull(response.body()).string();
             } else if (responseCode == responseCodeUnauthorized) {
                 // The request is not authorized
                 throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
@@ -100,7 +93,7 @@ public class HttpUtils {
             } else {
                 // This function should never be thrown
                 throw new NotImplementedException("Unsupported return value " +
-                    "from getResponseCode.");
+                        "from getResponseCode.");
             }
 
         } catch (MalformedURLException exception) {
@@ -109,7 +102,8 @@ public class HttpUtils {
         } catch (Exception exception) {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
-        }
+        }// TODO: Handle the URISyntaxException
+
     }
 
     /**
@@ -123,42 +117,10 @@ public class HttpUtils {
      *                               request.
      */
     public String sendHttpsGetRequest(String address, QueryInput queryInput)
-        throws MalformedURLException, RuntimeException {
-        try {
-            if(queryInput != null) {
-                address = addQueryParamsToURL(address, queryInput.getParams());
-            }
+            throws MalformedURLException, RuntimeException {
 
-            final Request request;
-            if (queryInput != null && queryInput.getHeaders() != null) {
-                Headers headerBuild = Headers.of(queryInput.getHeaders());
-                request = new Request.Builder().url(address).get().headers(headerBuild).build();
-            } else {
-                request = new Request.Builder().url(address).get().build();
-            }
+        return sendHttpGetRequest(address, queryInput);
 
-            var client = clientProvider.getClient();
-            Response response = client.newCall(request).execute();
-
-            if (response.code() < 200 || response.code() >= 300) {
-                response.close();
-                // Not the expected response code
-                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
-            } else {
-                // Read the response
-                final var rawResponseString =
-                    new String(response.body().byteStream().readAllBytes());
-                response.close();
-
-                return rawResponseString;
-            }
-        } catch (MalformedURLException exception) {
-            // The parameter address is not an url.
-            throw exception;
-        } catch (Exception exception) {
-            // Catch all the HTTP, IOExceptions
-            throw new RuntimeException("Failed to send the http get request.", exception);
-        }
     }
 
     /**
@@ -175,36 +137,37 @@ public class HttpUtils {
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,
         String password, QueryInput queryInput) throws MalformedURLException, RuntimeException {
+
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
-        try {
+
+        try{
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
-            final Request request;
+            final var url = new URL(address);
+            final var uri = url.toURI();
+
+            Response response;
+
             if (queryInput != null && queryInput.getHeaders() != null) {
                 queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
-                Headers headerBuild = Headers.of(queryInput.getHeaders());
-                request = new Request.Builder().url(address).get().headers(headerBuild).build();
+                response = httpService.getWithHeaders(uri,queryInput.getHeaders());
             } else {
-                request = new Request.Builder().url(address).header(HttpHeaders.AUTHORIZATION, authHeader).get().build();
+                QueryInput queryInput_temp = new QueryInput();
+                queryInput_temp.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
+                response = httpService.getWithHeaders(uri,queryInput_temp.getHeaders());
             }
-
-            final var client = clientProvider.getClient();
-            final var response = client.newCall(request).execute();
 
             if (response.code() < 200 || response.code() >= 300) {
                 response.close();
                 // Not the expected response code
                 throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
             } else {
-                String rawResponseString = new String(response.body().byteStream().readAllBytes());
-                response.close();
-
-                return rawResponseString;
+                return Objects.requireNonNull(response.body()).string();
             }
         } catch (MalformedURLException exception) {
             // The parameter address is not an url.
@@ -212,7 +175,8 @@ public class HttpUtils {
         } catch (Exception exception) {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
-        }
+        }// TODO: Handle the URISyntaxException
+
     }
 
     /**
