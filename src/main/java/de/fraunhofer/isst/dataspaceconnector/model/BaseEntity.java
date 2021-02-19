@@ -5,7 +5,10 @@ import lombok.Data;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -35,12 +38,16 @@ public class BaseEntity implements Serializable {
     /**
      * The date when this entity was persisted the first time.
      */
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
     @CreationTimestamp
     private Date creationDate;
 
     /**
      * The date of the last persistent modification.
      */
+    @Column(name = "modified_date", nullable = false)
+    @LastModifiedDate
     @UpdateTimestamp
     private Date modificationDate;
 }
