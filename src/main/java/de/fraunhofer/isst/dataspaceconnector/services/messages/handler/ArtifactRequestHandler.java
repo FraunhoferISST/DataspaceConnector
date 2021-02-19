@@ -17,10 +17,11 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFContractService;
@@ -28,7 +29,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -61,7 +61,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
     private final PolicyHandler policyHandler;
-    private final ArtifactMessageService messageService;
+    private final ResponseMessageService messageService;
     private final ContractAgreementService contractAgreementService;
     private final ConfigurationContainer configurationContainer;
     private final ObjectMapper objectMapper;
@@ -94,7 +94,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      */
     @Autowired
     public ArtifactRequestHandler(PolicyHandler policyHandler,
-                                  ArtifactMessageService messageService,
+                                  ResponseMessageService messageService,
                                   ContractAgreementService contractAgreementService,
                                   ConfigurationContainer configurationContainer,
                                   PolicyConfiguration policyConfiguration)
@@ -106,7 +106,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (messageService == null)
-            throw new IllegalArgumentException("The ArtifactMessageService cannot be null.");
+            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
 
         if (contractAgreementService == null)
             throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
@@ -140,7 +140,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
+        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -232,12 +232,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         }
 
                         // Build artifact response.
-                        messageService.setResponseParameters(
-                            requestMessage.getIssuerConnector(),
-                            requestMessage.getTransferContract(),
-                            requestMessage.getId());
-
-                        return BodyResponse.create(messageService.buildResponseHeader(), data);
+                        final var header = messageService.buildArtifactResponseMessage(
+                                requestMessage.getIssuerConnector(),
+                                requestMessage.getTransferContract(),
+                                requestMessage.getId()
+                        );
+                        return BodyResponse.create(header, data);
                     } else {
                         // The conditions for reading this resource have not been met.
                         LOGGER.debug("Request policy restriction detected for request."

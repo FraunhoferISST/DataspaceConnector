@@ -75,7 +75,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.versionSupported(message.getModelVersion())) {
+        if (!messageService.isVersionSupported(message.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -85,8 +85,8 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
         try {
             // Build response header.
-            messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            return BodyResponse.create(messageService.buildResponseHeader(), "Message received.");
+            final var header = messageService.buildMessageProcessedNotification(message.getIssuerConnector(), message.getId());
+            return BodyResponse.create(header, "Message received.");
         } catch (ConstraintViolationException | MessageException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(
