@@ -234,18 +234,19 @@ public class HttpUtils {
                         "match the number of path variables in the URL.");
             }
 
+            // http://localhost:8080/{path}/{id}
             for(int i = 1; i <= pathVariableCount; i++) {
-                String pathVariableName = address.substring(
-                        StringUtils.ordinalIndexOf(address, "{", i) + 1,
-                        StringUtils.ordinalIndexOf(address, "}", i));
+                String pathVariableName = address.substring(address.indexOf("{") + 1,
+                        address.indexOf("}"));
 
-                String pathVariableValue = pathVariables.get(pathVariableName);
+                String pathVariableValue = pathVariables.get(pathVariableName); // resource
 
                 //should always be first index of braces because all prior should have been replaced
-                address = address.substring(0, address.indexOf("{"))
-                        + pathVariableValue
-                        + address.substring(address.indexOf("}") + 1);
+                address = address.substring(0, address.indexOf("{")) // http://localhost:8080/
+                        + pathVariableValue // resource
+                        + address.substring(address.indexOf("}") + 1); // /{id}
             }
+
         }
 
         return address;
