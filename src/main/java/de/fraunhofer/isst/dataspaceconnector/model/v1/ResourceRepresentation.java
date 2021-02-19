@@ -42,10 +42,6 @@ public class ResourceRepresentation implements Serializable {
     @JsonProperty("name")
     private String name;
 
-
-    @JsonProperty("contract")
-    private URI contract;
-
     @JsonProperty("source")
     @Column(columnDefinition = "BLOB")
     private BackendSource source;
@@ -72,13 +68,6 @@ public class ResourceRepresentation implements Serializable {
         this.byteSize = byteSize;
         this.name = name;
         this.source = source;
-    }
-
-    /**
-     * Set the contract URI of a representation
-     */
-    public void setContract(URI contract) {
-        this.contract = contract;
     }
 
     @Override

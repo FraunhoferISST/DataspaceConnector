@@ -12,6 +12,18 @@ public final class RequestedResource extends Resource {
      **/
     private static final long serialVersionUID = 1L;
 
+    @JsonProperty("ownerURI")
+    private URI ownerURI;
+
+    @JsonProperty("originalUUID")
+    private UUID originalUUID;
+
+    @JsonProperty("contractAgreement")
+    private URI contractAgreement;
+
+    @JsonProperty("requestedArtifact")
+    private URI requestedArtifact;
+
     /**
      * Default constructor.
      */
