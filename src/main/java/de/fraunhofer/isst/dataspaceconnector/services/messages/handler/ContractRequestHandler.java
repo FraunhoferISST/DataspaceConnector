@@ -13,6 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationServic
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.utils.ContractUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
@@ -238,7 +239,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
         final var header = messageService.buildContractAgreementMessage(requestMessage.getIssuerConnector(), requestMessage.getId());
         // Turn the accepted contract request into a contract agreement.
-        final var contractAgreement = messageService.buildContractAgreement(contractRequest);
+        final var contractAgreement = ContractUtils.buildContractAgreement(contractRequest);
 
         // Send response to the data consumer.
         return BodyResponse.create(header, contractAgreement.toRdf());

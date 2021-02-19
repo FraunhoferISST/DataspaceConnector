@@ -1,14 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
@@ -97,28 +93,6 @@ public class RequestMessageService extends MessageService {
                 ._securityToken_(tokenProvider.getDAT())
                 ._recipientConnector_(Util.asList(recipient))
                 ._transferContract_(contractId)
-                .build();
-    }
-
-    /**
-     * Build the contract request.
-     *
-     * @param contract The contract.
-     * @return The contract request.
-     */
-    public ContractRequest buildContractRequest(final Contract contract) throws ContractBuilderException {
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
-
-        return new ContractRequestBuilder()
-                ._consumer_(connector.getMaintainer())
-                ._provider_(contract.getProvider())
-                ._contractDate_(getGregorianNow())
-                ._contractStart_(getGregorianNow())
-                ._obligation_(contract.getObligation())
-                ._permission_(contract.getPermission())
-                ._prohibition_(contract.getProhibition())
-                ._provider_(contract.getProvider())
                 .build();
     }
 
