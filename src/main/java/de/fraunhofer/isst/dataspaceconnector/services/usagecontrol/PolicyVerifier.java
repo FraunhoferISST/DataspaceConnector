@@ -2,12 +2,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -29,9 +29,14 @@ public class PolicyVerifier {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyVerifier.class);
 
+    /**
+     * The clearing house access url.
+     */
+    @Value("${clearing.house.url}")
+    private String clearingHouse;
+
     private final PolicyReader policyReader;
     private final NotificationMessageService notificationMessageService;
-    private final LogMessageService logMessageService;
     private final HttpService httpService;
 
     /**
@@ -40,14 +45,11 @@ public class PolicyVerifier {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public PolicyVerifier(PolicyReader policyReader, LogMessageService logMessageService,
+    public PolicyVerifier(PolicyReader policyReader,
                           NotificationMessageService notificationMessageService, HttpService httpService)
         throws IllegalArgumentException {
         if (policyReader == null)
             throw new IllegalArgumentException("The PolicyReader cannot be null.");
-
-        if (logMessageService == null)
-            throw new IllegalArgumentException("The LogMessageService cannot be null.");
 
         if (notificationMessageService == null)
             throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
@@ -56,7 +58,6 @@ public class PolicyVerifier {
             throw new IllegalArgumentException("The HttpService cannot be null.");
 
         this.policyReader = policyReader;
-        this.logMessageService = logMessageService;
         this.notificationMessageService = notificationMessageService;
         this.httpService = httpService;
     }
@@ -91,7 +92,7 @@ public class PolicyVerifier {
     public boolean logAccess() {
         Map<String, String> response;
         try {
-            response = logMessageService.sendRequestMessage("");
+            response = notificationMessageService.sendLogMessage(URI.create(clearingHouse), "");
         } catch (Exception exception) {
             LOGGER.warn("Log message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();
@@ -117,8 +118,7 @@ public class PolicyVerifier {
 
         Map<String, String> response;
         try {
-            notificationMessageService.setRequestParameters(URI.create(recipient));
-            response = notificationMessageService.sendRequestMessage("");
+            response = notificationMessageService.sendNotificationMessage(URI.create(recipient), "");
         } catch (Exception exception) {
             LOGGER.warn("Notification message could not be sent. [exception=({})]", exception.getMessage());
             return allowAccess();

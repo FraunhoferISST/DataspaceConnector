@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class PolicyConfiguration {
+    /**
+     * The clearing house access url.
+     */
+    @Value("${clearing.house.url}")
+    private String clearingHouse;
 
     /**
      * The policy negotiation status from application.properties.

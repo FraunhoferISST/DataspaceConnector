@@ -9,7 +9,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
@@ -25,9 +24,11 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -43,12 +44,16 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractAgreementHandler.class);
 
+    /**
+     * The clearing house access url.
+     */
+    @Value("${clearing.house.url}")
+    private String clearingHouse;
+
     private final ConfigurationContainer configurationContainer;
     private final PolicyHandler policyHandler;
     private final NotificationMessageService messageService;
     private final ContractAgreementService contractAgreementService;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final LogMessageService logMessageService;
 
     /**
      * Constructor for NotificationMessageHandler.
@@ -57,15 +62,13 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
      * @param policyHandler The service for policy negotiation
      * @param contractAgreementService The service for the contract agreements
      * @param messageService The service for sending messages
-     * @param logMessageService The service for logging
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public ContractAgreementHandler(ConfigurationContainer configurationContainer,
                                     PolicyHandler policyHandler,
                                     ContractAgreementService contractAgreementService,
-                                    NotificationMessageService messageService,
-                                    LogMessageService logMessageService)
+                                    NotificationMessageService messageService)
             throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -79,14 +82,10 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         if (messageService == null)
             throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
 
-        if (logMessageService == null)
-            throw new IllegalArgumentException("The LogMessageService cannot be null.");
-
         this.configurationContainer = configurationContainer;
         this.policyHandler = policyHandler;
         this.contractAgreementService = contractAgreementService;
         this.messageService = messageService;
-        this.logMessageService = logMessageService;
     }
 
     /**
@@ -110,7 +109,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.versionSupported(message.getModelVersion())) {
+        if (!messageService.isVersionSupported(message.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.VERSION_NOT_SUPPORTED,
@@ -145,9 +144,8 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
             saveContract(payload);
 
             // Build response header.
-            messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            return BodyResponse.create(messageService.buildResponseHeader(),
-                    "Message processed. The contract is legal.");
+            final var header = messageService.buildMessageProcessedNotification(message.getIssuerConnector(), message.getId());
+            return BodyResponse.create(header, "Message processed. The contract is legal.");
         } catch (ContractException exception) {
             LOGGER.warn("Failed to store the contract agreement. [exception=({})]",
                     exception.getMessage());
@@ -183,7 +181,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         // Send ContractAgreement to the ClearingHouse.
         // TODO: Activate Clearing House communication as soon as it accepts IM 4.
         try {
-            logMessageService.sendRequestMessage(contractAgreement.toRdf());
+            messageService.sendLogMessage(URI.create(clearingHouse), contractAgreement.toRdf());
         } catch (MessageBuilderException exception) {
             // Failed to build the log message.
             LOGGER.warn("Failed to build log message. [exception=({})]", exception.getMessage());

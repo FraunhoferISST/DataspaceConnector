@@ -10,8 +10,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -49,10 +49,10 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final ConfigurationContainer configurationContainer;
     private final NegotiationService negotiationService;
     private final PolicyHandler policyHandler;
-    private final ContractMessageService messageService;
+    private final ResponseMessageService messageService;
     private final DapsTokenProvider tokenProvider;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final LogMessageService logMessageService;
+    private final NotificationMessageService logMessageService;
     private RequestMessage requestMessage;
 
     @Autowired
@@ -72,8 +72,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     @Autowired
     public ContractRequestHandler(ConfigurationContainer configurationContainer,
                                   NegotiationService negotiationService, PolicyHandler policyHandler,
-                                  ContractMessageService messageService,
-                                  LogMessageService logMessageService, DapsTokenProvider tokenProvider)
+                                  ResponseMessageService messageService,
+                                  NotificationMessageService logMessageService, DapsTokenProvider tokenProvider)
             throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
@@ -88,7 +88,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             throw new IllegalArgumentException("The ContractRequestService cannot be null.");
 
         if (logMessageService == null)
-            throw new IllegalArgumentException("The LogMessageService cannot be null.");
+            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -124,7 +124,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
+        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.VERSION_NOT_SUPPORTED,
@@ -236,13 +236,12 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private MessageResponse acceptContract(ContractRequest contractRequest)
             throws UUIDFormatException, MessageException {
 
-        messageService.setResponseParameters(
-                requestMessage.getIssuerConnector(), requestMessage.getId(), null);
+        final var header = messageService.buildContractAgreementMessage(requestMessage.getIssuerConnector(), requestMessage.getId());
         // Turn the accepted contract request into a contract agreement.
         final var contractAgreement = messageService.buildContractAgreement(contractRequest);
 
         // Send response to the data consumer.
-        return BodyResponse.create(messageService.buildResponseHeader(), contractAgreement.toRdf());
+        return BodyResponse.create(header, contractAgreement.toRdf());
     }
 
     /**

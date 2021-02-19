@@ -12,7 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -39,7 +39,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestHandler.class);
 
-    private final DescriptionMessageService messageService;
+    private final ResponseMessageService messageService;
     private final ConfigurationContainer configurationContainer;
 
     @Autowired
@@ -54,13 +54,13 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
      */
     @Autowired
     public DescriptionRequestHandler(ConfigurationContainer configurationContainer,
-                                     DescriptionMessageService messageService)
+                                     ResponseMessageService messageService)
         throws IllegalArgumentException {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         if (messageService == null)
-            throw new IllegalArgumentException("The DescriptionMessageService cannot be null.");
+            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
 
         this.messageService = messageService;
         this.configurationContainer = configurationContainer;
@@ -87,7 +87,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
+        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,
@@ -133,9 +133,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
             if (resource != null) {
                 // If the resource has been found, send the description.
-                messageService.setResponseParameters(requestMessage.getIssuerConnector(),
-                    requestMessage.getId());
-                return BodyResponse.create(messageService.buildResponseHeader(), resource.toRdf());
+                final var header = messageService.buildDescriptionResponseMessage(requestMessage.getIssuerConnector(), requestMessage.getId());
+                return BodyResponse.create(header, resource.toRdf());
             } else {
                 // If the resource has not been found, inform and reject.
                 LOGGER.debug("Resource could not be found. [id=({}), resourceId=({})]",
@@ -184,10 +183,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 .build()));
 
             // Answer with the resource description.
-            messageService.setResponseParameters(requestMessage.getIssuerConnector(),
-                requestMessage.getId());
-            return BodyResponse.create(messageService.buildResponseHeader(),
-                connectorImpl.toRdf());
+            final var header = messageService.buildDescriptionResponseMessage(requestMessage.getIssuerConnector(), requestMessage.getId());
+            return BodyResponse.create(header, connectorImpl.toRdf());
         } catch (ConstraintViolationException | MessageBuilderException exception) {
             // The response could not be constructed.
             return ErrorResponse.withDefaultHeader(

@@ -1,6 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestImpl;
+import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
@@ -8,7 +17,8 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -31,7 +41,8 @@ public class NegotiationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final PolicyHandler policyHandler;
-    private final ContractMessageService messageService;
+    private final ResponseMessageService responseMessageService;
+    private final RequestMessageService requestMessageService;
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
 
@@ -41,12 +52,12 @@ public class NegotiationService {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public NegotiationService(ContractMessageService contractMessageService,
+    public NegotiationService(ResponseMessageService contractMessageService,
         PolicyHandler policyHandler, SerializerProvider serializerProvider,
-        ConfigurationContainer configurationContainer)
+        ConfigurationContainer configurationContainer, RequestMessageService requestMessageService)
         throws IllegalArgumentException {
         if (contractMessageService == null)
-            throw new IllegalArgumentException("The ContractMessageService cannot be null.");
+            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
 
         if (policyHandler == null)
             throw new IllegalArgumentException("The PolicyHandler cannot be null.");
@@ -57,10 +68,11 @@ public class NegotiationService {
         if (configurationContainer == null)
             throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
-        this.messageService = contractMessageService;
+        this.responseMessageService = contractMessageService;
         this.policyHandler = policyHandler;
         this.serializerProvider = serializerProvider;
         this.configurationContainer = configurationContainer;
+        this.requestMessageService = requestMessageService;
     }
 
     /**
@@ -90,7 +102,7 @@ public class NegotiationService {
 
         // Build contract request. TODO: Change to curator or maintainer?
         return fillContract(artifactId, connector.getId(),
-            messageService.buildContractRequest(contract));
+            requestMessageService.buildContractRequest(contract));
     }
 
     /**
@@ -129,9 +141,8 @@ public class NegotiationService {
                 }
 
                 // Send ContractAgreementMessage to recipient.
-                messageService.setResponseParameters(recipient, correlationMessage, contract.getId());
-                ContractAgreement agreement = messageService.buildContractAgreement(contract);
-                response = messageService.sendResponseMessage(agreement.toRdf());
+                ContractAgreement agreement = responseMessageService.buildContractAgreement(contract, contract.getId());
+                response = responseMessageService.sendContractAgreement(recipient, correlationMessage, agreement.toRdf());
             } catch (MessageBuilderException exception) {
                 // Failed to build the contract agreement message.
                 LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
