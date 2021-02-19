@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
@@ -162,18 +163,21 @@ public class ResourceDataController { // Header: Content-Type: application/json
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/{resource-id}/{representation-id}/data", method = RequestMethod.GET)
+    @RequestMapping(value = "/{resource-id}/{representation-id}/data", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<String> getDataByRepresentation(
             @Parameter(description = "The resource uuid.", required = true,
                     example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
             @PathVariable("resource-id") UUID resourceId,
             @Parameter(description = "The representation uuid.", required = true)
-            @PathVariable("representation-id") UUID representationId) {
+            @PathVariable("representation-id") UUID representationId,
+            @Parameter(description = "The query parameters and headers to use when fetching the " +
+                    "data from the backend system.")
+            @RequestBody(required = false) QueryInput queryInput) {
         try {
             try {
                 return new ResponseEntity<>(
-                        offeredResourceService.getDataByRepresentation(resourceId, representationId, null),
+                        offeredResourceService.getDataByRepresentation(resourceId, representationId, queryInput),
                         HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.debug(
@@ -200,6 +204,12 @@ public class ResourceDataController { // Header: Content-Type: application/json
                     resourceId, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException exception) {
+            //TODO
+            LOGGER.debug("Failed to fetch resource data. [id=({}), exception=({})]",
+                    resourceId, exception.getMessage());
+            return new ResponseEntity<>("Incorrect number of path variables supplied.",
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
                     exception.getMessage());
