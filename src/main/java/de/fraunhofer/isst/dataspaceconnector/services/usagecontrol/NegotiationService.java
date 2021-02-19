@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.messages;
+package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -18,7 +18,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.utils.ContractUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;

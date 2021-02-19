@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;

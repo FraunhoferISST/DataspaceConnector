@@ -23,7 +23,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
