@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dataspace-connector
+  name: dataspace-connector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataspace-connector
+  template:
+    metadata:
+      labels:
+        app: dataspace-connector
+    spec:
+      containers:
+        - image: localhost:5000/dataspace-connector:latest
+          imagePullPolicy: IfNotPresent
+          name: dataspace-connector
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://postgres:5432/test"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "admin"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+            - name: SPRING_DATASOURCE_PLATFORM
+              value: "postgres"
+            - name: SPRING_DATASOURCE_DRIVER-CLASS-NAME
+              value: "org.postgresql.Driver"
+            - name: SPRING_JPA_DATABASE-PLATFORM
+              value: "org.hibernate.dialect.PostgreSQLDialect"
+            - name: CONFIGURATION_PATH
+              value: "file:///connector-certs/config.json"  
+          volumeMounts:
+            - name: certs-volume
+              mountPath: /connector-certs
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 0.1
+            limits:
+              memory: 2Gi
+              cpu: 1
+      volumes:
+        - name: certs-volume
+          secret:
+            secretName: dataspace-connector-certs

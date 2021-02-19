@@ -34,6 +34,7 @@ usage control for eight IDS usage policy patterns.
     - [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
     - [IDS Communication Guide](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-communication-guide)
     - [IDS Connector Architecture](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-connector-architecture)
+    - [Kubernetes](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Kubernetes)
     - [Logging](https://github.com/FraunhoferISST/DataspaceConnector/wiki/logging)
     - [Roadmap](https://github.com/FraunhoferISST/DataspaceConnector/wiki/roadmap)
     - [Software Documentation](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-documentation)
