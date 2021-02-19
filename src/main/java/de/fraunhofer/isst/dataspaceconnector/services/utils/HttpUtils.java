@@ -246,7 +246,6 @@ public class HttpUtils {
                         + pathVariableValue // resource
                         + address.substring(address.indexOf("}") + 1); // /{id}
             }
-
         }
 
         return address;
