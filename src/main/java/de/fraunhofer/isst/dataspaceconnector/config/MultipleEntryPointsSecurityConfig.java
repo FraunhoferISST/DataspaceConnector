@@ -3,7 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,7 +14,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
  * de.fraunhofer.isst.dataspaceconnector.config.ConfigurationAdapter}.
  */
 @Configuration
-@EnableWebSecurity
+// @EnableWebSecurity
 public class MultipleEntryPointsSecurityConfig {
     /**
      * Username defined in application.properties.
