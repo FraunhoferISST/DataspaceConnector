@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Creates and updates a representation.
  */
 @Component
-public class RepresentationFactory implements BaseFactory<Representation,
+public class RepresentationFactory implements AbstractFactory<Representation,
         RepresentationDesc> {
 
     /**

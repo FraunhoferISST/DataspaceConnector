@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Creates and updates a contract.
  */
 @Component
-public class ContractFactory implements BaseFactory<Contract, ContractDesc> {
+public class ContractFactory implements AbstractFactory<Contract, ContractDesc> {
 
     /**
      * Default constructor.

@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 
-public interface BaseView<T extends BaseEntity> {
+public interface BaseView<T extends AbstractEntity> {
 }

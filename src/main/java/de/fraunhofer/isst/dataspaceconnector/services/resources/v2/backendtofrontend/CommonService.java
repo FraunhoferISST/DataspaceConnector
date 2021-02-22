@@ -2,8 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofro
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceMovedException;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.view.BaseView;
@@ -24,7 +24,7 @@ import java.util.UUID;
  * @param <D> The description for the passed resource type.
  * @param <V> The view type of the passed resource type.
  */
-public class CommonService<T extends BaseEntity, D extends BaseDescription<T>,
+public class CommonService<T extends AbstractEntity, D extends AbstractDescription<T>,
         V extends BaseView<T>> implements FrontFacingService<T, D, V> {
 
     /**

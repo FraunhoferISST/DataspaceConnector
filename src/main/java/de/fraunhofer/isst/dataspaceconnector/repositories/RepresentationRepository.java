@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@Repository
-public interface RepresentationRepository extends BaseEntityRepository<Representation> {
+@RepositoryRestResource(collectionResourceRel = "representations", path="representations")
+public interface RepresentationRepository extends AbstractEntityRepository<Representation> {
 }

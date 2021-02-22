@@ -4,16 +4,16 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @NoRepositoryBean
-public interface ResourceRepository<T extends Resource> extends BaseEntityRepository<T> {
+public interface ResourceRepository<T extends Resource> extends AbstractEntityRepository<T> {
 }
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "offeredresources", path="offeredresources")
 interface OfferedResourcesRepository extends ResourceRepository<OfferedResource> {
 }
 
-@Repository
+@RepositoryRestResource(collectionResourceRel = "requestedresources", path="requestedresources")
 interface RequestedResourcesRepository extends ResourceRepository<RequestedResource> {
 }

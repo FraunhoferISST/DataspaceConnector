@@ -38,7 +38,7 @@ public class BaseResourcePersistenceTest {
     @Test(expected = IllegalArgumentException.class)
     public void createBaseResource_noSubclass_throwIllegalArgumentException() {
         /*ACT*/
-        entityManager.persist(new BaseEntity());
+        entityManager.persist(new AbstractEntity());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class BaseResourcePersistenceTest {
         final var creationDate = contractRule.getCreationDate();
 
         /*ACT*/
-        Field creationDateField = BaseEntity.class.getDeclaredField("creationDate");
+        Field creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(contractRule, new Date());
 

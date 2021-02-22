@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@Repository
-public interface ArtifactRepository extends BaseEntityRepository<Artifact> {
+@RepositoryRestResource(collectionResourceRel = "artifacts", path="artifacts")
+public interface ArtifactRepository extends AbstractEntityRepository<Artifact> {
 }

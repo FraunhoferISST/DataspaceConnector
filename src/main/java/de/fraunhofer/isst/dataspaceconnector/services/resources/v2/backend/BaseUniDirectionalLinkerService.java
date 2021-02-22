@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
@@ -17,7 +17,7 @@ import java.util.UUID;
  * @param <X> The service type for the child resource.
  */
 public abstract class BaseUniDirectionalLinkerService<
-        K extends BaseEntity, W extends BaseEntity,
+        K extends AbstractEntity, W extends AbstractEntity,
         T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>> {
 
     /**

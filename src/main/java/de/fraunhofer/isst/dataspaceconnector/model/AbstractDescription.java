@@ -9,7 +9,7 @@ import java.util.UUID;
  * @param <T> The type of the class described by the description.
  */
 @Data
-public class BaseDescription<T> {
+public class AbstractDescription<T> {
     /**
      * The static id assigned to public endpoints.
      */

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ResourceDesc<T extends Resource> extends BaseDescription<T> {
+public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {
     private String title;
     private String description;
     private List<String> keywords;

@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.view.BaseView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.FrontFacingService;
@@ -32,8 +32,8 @@ import java.util.UUID;
  *            REST calls.
  * @param <S> The underlying service for handling the resource logic.
  */
-public class BaseResourceController<T extends BaseEntity,
-        D extends BaseDescription<T>, V extends BaseView<T>,
+public class BaseResourceController<T extends AbstractEntity,
+        D extends AbstractDescription<T>, V extends BaseView<T>,
         S extends FrontFacingService<T, D, V>> {
 
     /**
