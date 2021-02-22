@@ -20,10 +20,11 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +41,7 @@ import java.util.UUID;
  */
 @Component
 @SupportedMessageType(ContractAgreementMessageImpl.class)
+@RequiredArgsConstructor
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractAgreementHandler.class);
@@ -50,43 +52,10 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     @Value("${clearing.house.url}")
     private String clearingHouse;
 
-    private final ConfigurationContainer configurationContainer;
-    private final PolicyHandler policyHandler;
-    private final NotificationMessageService messageService;
-    private final ContractAgreementService contractAgreementService;
-
-    /**
-     * Constructor for NotificationMessageHandler.
-     *
-     * @param configurationContainer The container with the configuration
-     * @param policyHandler The service for policy negotiation
-     * @param contractAgreementService The service for the contract agreements
-     * @param messageService The service for sending messages
-     * @throws IllegalArgumentException if one of the parameters is null.
-     */
-    @Autowired
-    public ContractAgreementHandler(ConfigurationContainer configurationContainer,
-                                    PolicyHandler policyHandler,
-                                    ContractAgreementService contractAgreementService,
-                                    NotificationMessageService messageService)
-            throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-
-        if (contractAgreementService == null)
-            throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
-
-        if (messageService == null)
-            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
-
-        this.configurationContainer = configurationContainer;
-        this.policyHandler = policyHandler;
-        this.contractAgreementService = contractAgreementService;
-        this.messageService = messageService;
-    }
+    private final @NonNull ConfigurationContainer configurationContainer;
+    private final @NonNull PolicyHandler policyHandler;
+    private final @NonNull NotificationMessageService messageService;
+    private final @NonNull ContractAgreementService contractAgreementService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
