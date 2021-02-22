@@ -8,12 +8,17 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -25,32 +30,23 @@ import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respon
 @RestController
 @RequestMapping("/api")
 @Tag(name = "Connector")
+@RequiredArgsConstructor
 public class ConfigurationController {
 
+    /**
+     * Class level logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 
-    private final ConfigurationContainer configurationContainer;
-    private final SerializerProvider serializerProvider;
+    /**
+     * The current connector configuration.
+     */
+    private final @NonNull ConfigurationContainer configurationContainer;
 
     /**
-     * Constructor for ConfigurationController.
-     *
-     * @param configurationContainer The container with the configuration
-     * @param serializerProvider The provider for serialization
-     * @throws IllegalArgumentException if one of the parameters is null.
+     * The provider for ids serialization.
      */
-    @Autowired
-    public ConfigurationController(ConfigurationContainer configurationContainer,
-        SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-
-        this.configurationContainer = configurationContainer;
-        this.serializerProvider = serializerProvider;
-    }
+    private final @NonNull SerializerProvider serializerProvider;
 
     @Hidden
     @RequestMapping(value = "/configuration", method = RequestMethod.POST)

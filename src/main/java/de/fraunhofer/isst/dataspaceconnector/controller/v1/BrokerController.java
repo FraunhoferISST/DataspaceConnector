@@ -1,5 +1,24 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondBrokerCommunicationFailed;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceNotFound;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondUpdateError;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.Resource;
@@ -15,25 +34,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
-
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondBrokerCommunicationFailed;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceNotFound;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondUpdateError;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This class provides endpoints for the communication with an IDS broker instance.
@@ -41,41 +43,23 @@ import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respon
 @RestController
 @RequestMapping("/api/ids/broker")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@RequiredArgsConstructor
 public class BrokerController {
 
-    private final IDSBrokerService brokerService;
-    private final ConfigurationContainer configurationContainer;
-    private final IdsResourceService idsResourceService;
+    /**
+     * The service for communication with the ids broker.
+     */
+    private final @NonNull IDSBrokerService brokerService;
 
     /**
-     * Constructor for BrokerController.
-     *
-     * @param configContainer The container with the configuration
-     * @param idsRescService
-     * @param brokerService   The service for the broker
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * The current connector configuration.
      */
-    @Autowired
-    public BrokerController(final ConfigurationContainer configContainer,
-                            final IdsResourceService idsRescService,
-                            final IDSBrokerService brokerService)
-            throws IllegalArgumentException {
-        if (configContainer == null) {
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-        }
+    private final @NonNull ConfigurationContainer configurationContainer;
 
-        if (brokerService == null) {
-            throw new IllegalArgumentException("The IDSBrokerService cannot be null.");
-        }
-
-        if (idsRescService == null) {
-            throw new IllegalArgumentException("The IdsResourceService cannot be null.");
-        }
-
-        this.configurationContainer = configContainer;
-        this.brokerService = brokerService;
-        this.idsResourceService = idsRescService;
-    }
+    /**
+     * The service for getting resources in ids format.
+     */
+    private final @NonNull IdsResourceService idsResourceService;
 
     /**
      * Notify an IDS broker of the availability of this connector or one of its resources.
