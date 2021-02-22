@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@Repository
-public interface ContractRepository extends BaseEntityRepository<Contract> {
+@RepositoryRestResource(collectionResourceRel = "contracts", path="contracts")
+public interface ContractRepository extends AbstractEntityRepository<Contract> {
 }

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.Entity;
 import javax.persistence.MapKey;
@@ -20,7 +21,7 @@ import java.util.UUID;
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Contract extends BaseEntity {
+public class Contract extends AbstractEntity {
 
     /**
      * Serial version uid.
@@ -37,5 +38,6 @@ public class Contract extends BaseEntity {
      **/
     @MapKey(name = "id")
     @OneToMany
+    @RestResource
     private Map<UUID, ContractRule> rules;
 }

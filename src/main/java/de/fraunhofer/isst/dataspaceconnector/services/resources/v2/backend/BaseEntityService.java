@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseDescription;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseEntity;
-import de.fraunhofer.isst.dataspaceconnector.model.BaseFactory;
-import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
+import de.fraunhofer.isst.dataspaceconnector.repositories.AbstractEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -16,19 +16,19 @@ import java.util.UUID;
  * @param <T> The entity type.
  * @param <D> The description for the passed entity type.
  */
-public class BaseEntityService<T extends BaseEntity, D extends BaseDescription<T>> {
+public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescription<T>> {
 
     /**
      * Persists all entities of type T.
      **/
     @Autowired
-    private BaseEntityRepository<T> repository;
+    private AbstractEntityRepository<T> repository;
 
     /**
      * Contains creation and update logic for entities of type T.
      **/
     @Autowired
-    private BaseFactory<T, D> factory;
+    private AbstractFactory<T, D> factory;
 
     /**
      * Default constructor.

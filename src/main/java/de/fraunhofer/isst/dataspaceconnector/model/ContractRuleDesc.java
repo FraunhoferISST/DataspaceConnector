@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ContractRuleDesc extends BaseDescription<ContractRule> {
+public class ContractRuleDesc extends AbstractDescription<ContractRule> {
     /**
      * The title of the rule.
      */

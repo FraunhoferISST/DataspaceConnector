@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc<T>>
-        implements BaseFactory<T, D> {
+        implements AbstractFactory<T, D> {
 
     /**
      * Default constructor.

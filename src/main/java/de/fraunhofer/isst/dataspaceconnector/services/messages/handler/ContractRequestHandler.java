@@ -1,6 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractRejectionMessageBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
@@ -9,9 +16,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.utils.ContractUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
@@ -23,10 +30,11 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -43,64 +51,21 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  */
 @Component
 @SupportedMessageType(ContractRequestMessageImpl.class)
+@RequiredArgsConstructor
 public class ContractRequestHandler implements MessageHandler<ContractRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestHandler.class);
 
-    private final ConfigurationContainer configurationContainer;
-    private final NegotiationService negotiationService;
-    private final PolicyHandler policyHandler;
-    private final ResponseMessageService messageService;
-    private final DapsTokenProvider tokenProvider;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final NotificationMessageService logMessageService;
+    private final @NonNull ConfigurationContainer configurationContainer;
+    private final @NonNull NegotiationService negotiationService;
+    private final @NonNull PolicyHandler policyHandler;
+    private final @NonNull ResponseMessageService messageService;
+    private final @NonNull DapsTokenProvider tokenProvider;
+    private final @NonNull NotificationMessageService logMessageService;
+
+    private final @NonNull EntityDependencyResolver entityDependencyResolver;
+
     private RequestMessage requestMessage;
-
-    @Autowired
-    private EntityDependencyResolver entityDependencyResolver;
-
-    /**
-     * Constructor for NotificationMessageHandler.
-     *
-     * @param configurationContainer The container with the configuration
-     * @param negotiationService The service with the negotation
-     * @param policyHandler The service for policy negotation
-     * @param messageService The service for sending messages
-     * @param logMessageService The service for logging
-     * @param tokenProvider The provider for token
-     * @throws IllegalArgumentException if one of the parameters is null.
-     */
-    @Autowired
-    public ContractRequestHandler(ConfigurationContainer configurationContainer,
-                                  NegotiationService negotiationService, PolicyHandler policyHandler,
-                                  ResponseMessageService messageService,
-                                  NotificationMessageService logMessageService, DapsTokenProvider tokenProvider)
-            throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
-
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-
-        if (messageService == null)
-            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
-
-        if (logMessageService == null)
-            throw new IllegalArgumentException("The NotificationMessageService cannot be null.");
-
-        if (tokenProvider == null)
-            throw new IllegalArgumentException("The TokenProvider cannot be null.");
-
-        this.configurationContainer = configurationContainer;
-        this.negotiationService = negotiationService;
-        this.policyHandler = policyHandler;
-        this.messageService = messageService;
-        this.logMessageService = logMessageService;
-        this.tokenProvider = tokenProvider;
-    }
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns

@@ -9,7 +9,7 @@ import java.util.HashMap;
  * Creates and updates a catalog.
  */
 @Component
-public class CatalogFactory implements BaseFactory<Catalog, CatalogDesc> {
+public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     /**
      * Default constructor.
      */

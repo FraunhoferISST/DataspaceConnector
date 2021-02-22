@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
  * Creates and updates a ContractRule.
  */
 @Component
-public class ContractRuleFactory implements BaseFactory<ContractRule, ContractRuleDesc> {
+public class ContractRuleFactory implements AbstractFactory<ContractRule, ContractRuleDesc> {
     /**
      * Default constructor.
      */

@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class RepresentationDesc extends BaseDescription<Representation> {
+public class RepresentationDesc extends AbstractDescription<Representation> {
     private String title;
     private String type;
     private String language;

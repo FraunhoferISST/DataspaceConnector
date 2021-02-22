@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@Repository
-public interface CatalogRepository extends BaseEntityRepository<Catalog> {
+@RepositoryRestResource(collectionResourceRel = "catalogs", path="catalogs")
+public interface CatalogRepository extends AbstractEntityRepository<Catalog> {
 }

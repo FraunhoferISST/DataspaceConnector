@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.springframework.data.annotation.Version;
+import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.MapKey;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class Resource extends BaseEntity {
+public class Resource extends AbstractEntity {
     /**
      * Serial version uid.
      **/
@@ -70,6 +71,7 @@ public class Resource extends BaseEntity {
      */
     @MapKey(name = "id")
     @OneToMany
+    @RestResource
     private Map<UUID, Representation> representations;
 
     /**
@@ -77,5 +79,6 @@ public class Resource extends BaseEntity {
      */
     @MapKey(name = "id")
     @OneToMany
+    @RestResource
     private Map<UUID, Contract> contracts;
 }

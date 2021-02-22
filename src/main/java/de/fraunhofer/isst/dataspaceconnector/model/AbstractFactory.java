@@ -6,7 +6,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
  * @param <T> The type of the entity.
  * @param <D> The type of the description.
  */
-public interface BaseFactory<T extends BaseEntity, D extends BaseDescription<T>> {
+public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDescription<T>> {
     /**
      * Create a new entity.
      * @param desc The description of the entity.

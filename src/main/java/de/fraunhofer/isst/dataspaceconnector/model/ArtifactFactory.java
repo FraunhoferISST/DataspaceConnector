@@ -9,7 +9,7 @@ import java.net.URL;
  * Creates and updates an artifact.
  */
 @Component
-public final class ArtifactFactory implements BaseFactory<Artifact, ArtifactDesc> {
+public final class ArtifactFactory implements AbstractFactory<Artifact, ArtifactDesc> {
     /**
      * Default constructor.
      */

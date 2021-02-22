@@ -22,7 +22,7 @@ import java.util.UUID;
 @Data
 @MappedSuperclass
 @Setter(AccessLevel.NONE)
-public class BaseEntity implements Serializable {
+public class AbstractEntity implements Serializable {
     /**
      * Serial version uid.
      **/

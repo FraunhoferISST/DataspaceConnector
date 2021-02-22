@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CatalogDesc extends BaseDescription<Catalog> {
+public class CatalogDesc extends AbstractDescription<Catalog> {
     /**
      * The title of the catalog.
      */

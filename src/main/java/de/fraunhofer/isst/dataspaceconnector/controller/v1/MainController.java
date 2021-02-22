@@ -15,9 +15,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,40 +35,33 @@ import java.util.ArrayList;
  */
 @RestController
 @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
+@RequiredArgsConstructor
 public class MainController {
 
+    /**
+     * Class level logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    private final SerializerProvider serializerProvider;
-    private final IdsUtils idsUtils;
-    private final PolicyConfiguration policyConfiguration;
-
-    @Autowired
-    private IdsResourceService idsResourceService;
+    /**
+     * The provider for ids serialization.
+     */
+    private final @NonNull SerializerProvider serializerProvider;
 
     /**
-     * Constructor for MainController.
-     *
-     * @param serializerProvider The provider for serialization
-     * @param idsUtils The utilities for ids messages
-     * @throws IllegalArgumentException if one of the parameters is null.
+     * Provides ids utility functions.
      */
-    @Autowired
-    public MainController(SerializerProvider serializerProvider, IdsUtils idsUtils,
-                          PolicyConfiguration policyConfiguration) throws IllegalArgumentException {
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+    private final @NonNull IdsUtils idsUtils;
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+    /**
+     * The current policy configuration.
+     */
+    private final @NonNull PolicyConfiguration policyConfiguration;
 
-        if (policyConfiguration == null)
-            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
-
-        this.serializerProvider = serializerProvider;
-        this.policyConfiguration = policyConfiguration;
-        this.idsUtils = idsUtils;
-    }
+    /**
+     * The service for getting resources in ids format.
+     */
+    private final @NonNull IdsResourceService idsResourceService;
 
     /**
      * Gets connector self-description without catalog.
@@ -79,7 +73,7 @@ public class MainController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = {"/", ""}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/public", "public"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPublicSelfDescription() {
         try {

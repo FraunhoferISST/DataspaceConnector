@@ -11,7 +11,7 @@ import java.net.URL;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ArtifactDesc extends BaseDescription<Artifact> {
+public class ArtifactDesc extends AbstractDescription<Artifact> {
 
     /**
      * The title of the artifact.

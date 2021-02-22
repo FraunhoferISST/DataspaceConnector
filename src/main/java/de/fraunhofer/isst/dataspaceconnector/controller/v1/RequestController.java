@@ -40,6 +40,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
+@RequiredArgsConstructor
 public class RequestController {
     /**
      * The logging service.
@@ -74,20 +78,17 @@ public class RequestController {
     /**
      * The token provider.
      */
-    @Autowired
-    private DapsTokenProvider tokenProvider;
+    private final @NonNull DapsTokenProvider tokenProvider;
 
     /**
      * The service for request messages.
      */
-    @Autowired
-    private RequestMessageService requestMessageService;
+    private final @NonNull RequestMessageService requestMessageService;
 
     /**
      * The service for negotiations.
      */
-    @Autowired
-    private NegotiationService negotiationService;
+    private final @NonNull NegotiationService negotiationService;
 
     /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.

@@ -37,10 +37,11 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -55,68 +56,23 @@ import java.util.UUID;
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
+@RequiredArgsConstructor
 public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
-    private final PolicyHandler policyHandler;
-    private final ResponseMessageService messageService;
-    private final ContractAgreementService contractAgreementService;
-    private final ConfigurationContainer configurationContainer;
-    private final ObjectMapper objectMapper;
-    private final PolicyConfiguration policyConfiguration;
+    private final @NonNull PolicyHandler policyHandler;
+    private final @NonNull ResponseMessageService messageService;
+    private final @NonNull ContractAgreementService contractAgreementService;
+    private final @NonNull ConfigurationContainer configurationContainer;
+    private final @NonNull ObjectMapper objectMapper;
+    private final @NonNull PolicyConfiguration policyConfiguration;
 
-    @Autowired
-    private EntityDependencyResolver entityDependencyResolver;
-
-    @Autowired
-    private ArtifactBFFService artifactBFFService;
-
-    @Autowired
-    private BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
-
-    @Autowired
-    private BFFContractService contractService;
-
-    @Autowired
-    private RuleBFFService ruleService;
-
-    /**
-     * Constructor for ArtifactMessageHandler.
-     *
-     * @param policyHandler The service for policies
-     * @param messageService The service for sending messages
-     * @param contractAgreementService The service for agreed contracts
-     * @param configurationContainer The container containing the configuration
-     * @param policyConfiguration The configuration service containing policy configurations
-     * @throws IllegalArgumentException if one of the passed parameters is null
-     */
-    @Autowired
-    public ArtifactRequestHandler(PolicyHandler policyHandler,
-                                  ResponseMessageService messageService,
-                                  ContractAgreementService contractAgreementService,
-                                  ConfigurationContainer configurationContainer,
-                                  PolicyConfiguration policyConfiguration)
-        throws IllegalArgumentException {
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        if (messageService == null)
-            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
-
-        if (contractAgreementService == null)
-            throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
-
-        this.policyHandler = policyHandler;
-        this.messageService = messageService;
-        this.contractAgreementService = contractAgreementService;
-        this.configurationContainer = configurationContainer;
-        this.objectMapper = new ObjectMapper();
-        this.policyConfiguration = policyConfiguration;
-    }
+    private final @NonNull EntityDependencyResolver entityDependencyResolver;
+    private final @NonNull ArtifactBFFService artifactBFFService;
+    private final @NonNull BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
+    private final @NonNull BFFContractService contractService;
+    private final @NonNull RuleBFFService ruleService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the

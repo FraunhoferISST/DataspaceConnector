@@ -20,9 +20,10 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -35,36 +36,15 @@ import java.util.ArrayList;
  */
 @Component
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
+@RequiredArgsConstructor
 public class DescriptionRequestHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestHandler.class);
 
-    private final ResponseMessageService messageService;
-    private final ConfigurationContainer configurationContainer;
+    private final @NonNull ResponseMessageService messageService;
+    private final @NonNull ConfigurationContainer configurationContainer;
 
-    @Autowired
-    private IdsResourceService resourceService;
-
-    /**
-     * Constructor for DescriptionMessageHandler.
-     *
-     * @param configurationContainer  The container with the configuration
-     * @param messageService The service for sending messages
-     * @throws IllegalArgumentException if one of the parameters is null.
-     */
-    @Autowired
-    public DescriptionRequestHandler(ConfigurationContainer configurationContainer,
-                                     ResponseMessageService messageService)
-        throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        if (messageService == null)
-            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
-
-        this.messageService = messageService;
-        this.configurationContainer = configurationContainer;
-    }
+    private final @NonNull IdsResourceService resourceService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
