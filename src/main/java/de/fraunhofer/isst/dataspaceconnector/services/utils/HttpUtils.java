@@ -240,6 +240,10 @@ public class HttpUtils {
                         address.indexOf("}"));
 
                 String pathVariableValue = pathVariables.get(pathVariableName); // resource
+                if (pathVariableValue == null) {
+                    throw new IllegalArgumentException("No value found for path variable with" +
+                            " name '" + pathVariableName + "'.");
+                }
 
                 //should always be first index of braces because all prior should have been replaced
                 address = address.substring(0, address.indexOf("{")) // http://localhost:8080/
