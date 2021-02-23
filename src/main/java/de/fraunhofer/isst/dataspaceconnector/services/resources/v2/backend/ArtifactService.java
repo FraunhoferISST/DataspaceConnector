@@ -48,7 +48,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      */
     @Override
     protected Artifact persist(final Artifact artifact) {
-        final var tmp = (ArtifactImpl)artifact;
+        final var tmp = (ArtifactImpl) artifact;
         if (tmp.getData() != null) {
             if (tmp.getData().getId() == null) {
                 // The data element is new, insert
@@ -56,8 +56,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
             } else {
                 // The data element exists already, check if an update is
                 // required
-                final var storedCopy =
-                        dataRepository.getOne(tmp.getData().getId());
+                final var storedCopy = dataRepository.getOne(tmp.getData().getId());
                 if (!storedCopy.equals(tmp.getData())) {
                     dataRepository.saveAndFlush(tmp.getData());
                 }
@@ -75,7 +74,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      */
     public Object getData(final UUID artifactId) {
         final var artifact = get(artifactId);
-        final var data = ((ArtifactImpl)artifact).getData();
+        final var data = ((ArtifactImpl) artifact).getData();
 
         Object rawData;
         if (data instanceof LocalData) {
@@ -98,7 +97,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) { return data.getValue(); }
+    private Object getData(final LocalData data) {
+        return data.getValue();
+    }
 
     /**
      * Get remote data.
@@ -107,21 +108,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @return The stored data.
      */
     private Object getData(final RemoteData data) {
-        //TODO: Passthrough Uri not string
+        // TODO: Passthrough Uri not string
         try {
             if (data.getUsername() != null || data.getPassword() != null) {
-                return httpService.sendHttpsGetRequestWithBasicAuth(
-                        data.getAccessUrl().toString(), data.getUsername(),
-                        data.getPassword(), null);
+                return httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
+                        data.getUsername(), data.getPassword(), null);
             } else {
-                return httpService.sendHttpsGetRequest(data
-                        .getAccessUrl()
-                        .toString(), null);
+                return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), null);
             }
         } catch (MalformedURLException exception) {
             // TODO: LOG
-            throw new RuntimeException("Could not connect to data source.",
-                    exception);
+            throw new RuntimeException("Could not connect to data source.", exception);
         }
     }
 }
