@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
+import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
@@ -7,19 +9,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 
 /**
  * Use this class to log all incoming and outgoing http traffic.
@@ -54,6 +52,7 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
 
     /**
      * Generate some random uuid.
+     *
      * @return The new uuid.
      */
     private static UUID generateUUID() {
@@ -62,7 +61,8 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request,
-            final HttpServletResponse response, final FilterChain filterChain)
+                                    final HttpServletResponse response,
+                                    final FilterChain filterChain)
             throws ServletException, IOException {
         final var requestWrapper = new RequestWrapper(request);
         final var responseWrapper = new ContentCachingResponseWrapper(response);
@@ -120,6 +120,7 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
             trace.setBody(new String(request.getRequestBody(), StandardCharsets.UTF_8));
         } catch (IOException exception) {
             LOGGER.warn("Failed to encode requestbody. [exception=({})]", exception.getMessage());
+        } catch (NullPointerException ignored) {
         }
 
         eventHandler.sendHttpTraceEvent(trace);
@@ -132,7 +133,7 @@ public final class HttpTraceFilter extends OncePerRequestFilter {
         trace.setStatus(responseWrapper.getStatus());
         trace.setBody(getResponseAsPayload(responseWrapper));
 
-        var builder = new StringBuilder();
+        final var builder = new StringBuilder();
         builder.append("{");
         final var headerNames = responseWrapper.getHeaderNames();
         for (final var key : headerNames) {
