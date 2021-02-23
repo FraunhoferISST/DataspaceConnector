@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactResponseMessage;
 import de.fraunhofer.iais.eis.BaseConnector;
@@ -18,12 +20,12 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseE
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
@@ -31,6 +33,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofron
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -42,7 +45,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -309,7 +311,10 @@ public class RequestController {
                                         "-40b3-ace3-ef29cd687cf9")
                 @RequestParam(value = "transferContract", required = false) URI contractId,
                 @Parameter(description = "A unique validation key.", required = true) @RequestParam(
-                        "key") UUID key) {
+                        "key") UUID key,
+                @Parameter(description = "The query parameters and headers to use when fetching the " +
+                        "data from the backend system.")
+                @RequestBody(required = false) QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -323,10 +328,19 @@ public class RequestController {
                     "Your key is not valid. Please request metadata first.", HttpStatus.FORBIDDEN);
         }
 
+        try {
+            validateQueryInput(queryInput);
+        } catch (IllegalArgumentException exception) {
+            // There is an empty key or value string in the params or headers map
+            LOGGER.debug("Invalid input for headers or params. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Invalid input for headers or params. ",
+                    HttpStatus.BAD_REQUEST);
+        }
+
         Map<String, String> response;
         try {
             // Send ArtifactRequestMessage.
-            response = requestMessageService.sendArtifactRequest(recipient, artifactId, contractId, "");
+            response = requestMessageService.sendArtifactRequest(recipient, artifactId, contractId, new ObjectMapper().writeValueAsString(queryInput));
         } catch (MessageBuilderException exception) {
             // Failed to send the artifact request message.
             LOGGER.info(
@@ -338,6 +352,11 @@ public class RequestController {
             LOGGER.info("Received invalid ids response. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>(
                     "Failed to read the ids response message.", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException exception) {
+            // Could not parse query input (params and headers).
+            LOGGER.debug("Could not parse query input from request body. [exception=({})]", exception.getMessage());
+            return new ResponseEntity<>("Could not parse query input from request body.",
+                    HttpStatus.BAD_REQUEST);
         }
 
         String header, payload;
@@ -405,6 +424,33 @@ public class RequestController {
         } else {
             return new ResponseEntity<>("Received unexpected response: \n" + response,
                     HttpStatus.OK);
+        }
+    }
+
+    /**
+     * Checks a given query input. If any of the keys or values in the headers or params maps are
+     * null, blank, or empty, an  exception is thrown.
+     *
+     * @param queryInput the query input to validate.
+     * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
+     */
+    private void validateQueryInput(QueryInput queryInput) {
+        if (queryInput != null && queryInput.getHeaders() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getHeaders().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
+                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Header key or value should not be null, blank or empty " +
+                            "(key:" + entry.getKey() + ", value: " + entry.getValue() + ").");
+                }
+            }
+        }
+        if (queryInput != null && queryInput.getParams() != null) {
+            for (Map.Entry<String, String> entry: queryInput.getParams().entrySet()) {
+                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
+                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+                    throw new IllegalArgumentException("Param key or value should not be null, blank or empty.");
+                }
+            }
         }
     }
 

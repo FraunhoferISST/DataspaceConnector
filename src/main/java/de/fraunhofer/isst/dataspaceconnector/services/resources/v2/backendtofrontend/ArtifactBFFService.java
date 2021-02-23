@@ -13,12 +13,12 @@ public final class ArtifactBFFService extends CommonService<Artifact, ArtifactDe
         ArtifactView> {
     public Object getData(final EndpointId endpointId) {
         final var service = (ArtifactService)getService();
-        return service.getData(getEndpointService().get(endpointId).getInternalId());
+        return service.getData(getEndpointService().get(endpointId).getInternalId(), null);
     }
 
     public Object getData(final EndpointId endpointId, final QueryInput queryInput) {
         final var service = (ArtifactService)getService();
-        return service.getData(getEndpointService().get(endpointId).getInternalId());
+        return service.getData(getEndpointService().get(endpointId).getInternalId(), queryInput);
     }
 
     public void saveData(final EndpointId endpointId, String data) {
