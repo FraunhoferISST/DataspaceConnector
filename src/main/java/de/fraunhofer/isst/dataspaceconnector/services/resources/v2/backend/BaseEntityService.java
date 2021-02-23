@@ -4,7 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
-import de.fraunhofer.isst.dataspaceconnector.repositories.AbstractEntityRepository;
+import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * Persists all entities of type T.
      **/
     @Autowired
-    private AbstractEntityRepository<T> repository;
+    private BaseEntityRepository<T> repository;
 
     /**
      * Contains creation and update logic for entities of type T.

@@ -7,7 +7,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @NoRepositoryBean
-public interface ResourceRepository<T extends Resource> extends AbstractEntityRepository<T> {
+public interface ResourceRepository<T extends Resource> extends BaseEntityRepository<T> {
 }
 
 @RepositoryRestResource(collectionResourceRel = "offeredresources", path="offeredresources")
