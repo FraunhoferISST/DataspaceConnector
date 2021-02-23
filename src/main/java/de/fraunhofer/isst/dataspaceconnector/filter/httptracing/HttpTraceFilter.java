@@ -1,57 +1,68 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
-import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+
 /**
  * Use this class to log all incoming and outgoing http traffic.
  */
 @Component
 @Order(1)
-public class HttpTraceFilter extends OncePerRequestFilter {
+public final class HttpTraceFilter extends OncePerRequestFilter {
+    /**
+     * The class level logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpTraceFilter.class);
+
     /**
      * The trace id.
      */
-    private UUID traceId;
+    private transient UUID traceId;
 
     /**
      * The event handler.
      */
-    private final HttpTraceEventHandler eventHandler;
+    private final transient HttpTraceEventHandler eventHandler;
 
     /**
      * The constructor.
      *
-     * @param eventHandler The handler responsible for HttpTrace events raised by this class.
+     * @param traceEventHandler The handler responsible for HttpTrace events.
      */
-    @SuppressWarnings("checkstyle:HiddenField")
-    public HttpTraceFilter(final HttpTraceEventHandler eventHandler) {
+    public HttpTraceFilter(final HttpTraceEventHandler traceEventHandler) {
         super();
-        this.eventHandler = eventHandler;
+        this.eventHandler = traceEventHandler;
     }
 
+    /**
+     * Generate some random uuid.
+     * @return The new uuid.
+     */
     private static UUID generateUUID() {
         return UUIDUtils.createUUID(uuid -> false);
     }
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request,
-                                    final HttpServletResponse response,
-                                    final FilterChain filterChain)
+            final HttpServletResponse response, final FilterChain filterChain)
             throws ServletException, IOException {
         final var requestWrapper = new RequestWrapper(request);
         final var responseWrapper = new ContentCachingResponseWrapper(response);
@@ -69,42 +80,46 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
     private void beforeRequest(final RequestWrapper request) {
         final var trace = new HttpTrace();
-        trace.id = traceId;
-        trace.timestamp = LocalDateTime.now();
-        trace.url = request.getRequestURI();
-        trace.method = request.getMethod();
-        trace.client = request.getRemoteAddr();
+        trace.setId(traceId);
+        trace.setTimestamp(LocalDateTime.now());
+        trace.setUrl(request.getRequestURI());
+        trace.setMethod(request.getMethod());
+        trace.setClient(request.getRemoteAddr());
 
-        trace.headers = "{";
+        var builder = new StringBuilder();
+        builder.append("{");
         final var headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             final var key = headerNames.nextElement();
             final var value = request.getHeader(key);
-            trace.headers += key + ": " + value;
+            builder.append(key).append(": ").append(value);
 
             if (headerNames.hasMoreElements()) {
-                trace.headers += ", ";
+                builder.append(", ");
             }
         }
-        trace.headers += "}";
+        builder.append("}");
+        trace.setHeaders(builder.toString());
 
-        trace.parameterMap = "{";
+        builder = new StringBuilder();
+        builder.append("{");
         final var parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             final var key = parameterNames.nextElement();
             final var value = request.getHeader(key);
-            trace.parameterMap += key + ": " + value;
+            builder.append(key).append(": ").append(value);
 
             if (parameterNames.hasMoreElements()) {
-                trace.parameterMap += ", ";
+                builder.append(", ");
             }
         }
-        trace.parameterMap += "}";
+        builder.append("}");
+        trace.setParameterMap(builder.toString());
 
         try {
-            trace.body = new String(request.getRequestBody(), StandardCharsets.UTF_8);
+            trace.setBody(new String(request.getRequestBody(), StandardCharsets.UTF_8));
         } catch (IOException exception) {
-            exception.printStackTrace();
+            LOGGER.warn("Failed to encode requestbody. [exception=({})]", exception.getMessage());
         }
 
         eventHandler.sendHttpTraceEvent(trace);
@@ -112,22 +127,24 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
     private void afterRequest(final ContentCachingResponseWrapper responseWrapper) {
         final var trace = new HttpTrace();
-        trace.id = traceId;
-        trace.timestamp = LocalDateTime.now();
-        trace.status = responseWrapper.getStatus();
-        trace.body = getResponseAsPayload(responseWrapper);
+        trace.setId(traceId);
+        trace.setTimestamp(LocalDateTime.now());
+        trace.setStatus(responseWrapper.getStatus());
+        trace.setBody(getResponseAsPayload(responseWrapper));
 
-        trace.headers = "{";
+        var builder = new StringBuilder();
+        builder.append("{");
         final var headerNames = responseWrapper.getHeaderNames();
         for (final var key : headerNames) {
             final var value = responseWrapper.getHeader(key);
-            trace.headers += key + ": " + value;
+            builder.append(key).append(": ").append(value);
 
             if (key != headerNames.toArray()[headerNames.toArray().length - 1]) {
-                trace.headers += ", ";
+                builder.append(", ");
             }
         }
-        trace.headers += "}";
+        builder.append("}");
+        trace.setHeaders(builder.toString());
 
         eventHandler.sendHttpTraceEvent(trace);
     }
@@ -137,11 +154,10 @@ public class HttpTraceFilter extends OncePerRequestFilter {
         try {
             if (wrappedResponse.getContentSize() > 0) {
                 response = new String(wrappedResponse.getContentAsByteArray(), 0,
-                        wrappedResponse.getContentSize(),
-                        wrappedResponse.getCharacterEncoding());
+                        wrappedResponse.getContentSize(), wrappedResponse.getCharacterEncoding());
             }
-        } catch (UnsupportedEncodingException e) {
-            response = "ERROR";
+        } catch (UnsupportedEncodingException exception) {
+            LOGGER.warn("Failed to encode http message. [exception=({})]", exception.getMessage());
         }
 
         return response;
