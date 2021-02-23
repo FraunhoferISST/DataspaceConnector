@@ -12,6 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResource
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
@@ -561,6 +562,24 @@ public class OfferedResourceServiceImpl implements ResourceService {
 
         if (resource.getResourceMetadata().getRepresentations() == null) {
             return Optional.of("The resource representation cannot be null.");
+        }
+
+        for (ResourceRepresentation representation :
+                resource.getResourceMetadata().getRepresentations().values()) {
+            BackendSource source = representation.getSource();
+            if (source.getType().equals(BackendSource.Type.HTTP_GET)
+                    || source.getType().equals(BackendSource.Type.HTTPS_GET)
+                    || source.getType().equals(BackendSource.Type.HTTPS_GET_BASICAUTH)) {
+                long openingBracesCount = source.getUrl().toString().chars()
+                        .filter(ch -> ch == '{').count();
+                long closingBracesCount = source.getUrl().toString().chars()
+                        .filter(ch -> ch == '}').count();
+
+                if (openingBracesCount != closingBracesCount) {
+                    return Optional.of("URL of backend source must contain same number of"
+                            + " '{' and '}'");
+                }
+            }
         }
 
         return Optional.empty();
