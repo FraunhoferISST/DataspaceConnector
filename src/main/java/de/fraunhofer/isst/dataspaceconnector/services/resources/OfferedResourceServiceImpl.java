@@ -9,17 +9,16 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.OperationNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceAlreadyExistsException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.repositories.OfferedResourceRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.HttpUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
-import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
@@ -378,11 +377,42 @@ public class OfferedResourceServiceImpl implements ResourceService {
     }
 
     /**
+     * Retrieves resource data from the local database by ID or from an external data source using
+     * the given QueryInput.
+     *
+     * @param resourceId ID of the resource
+     * @param queryInput Headers, path variables and params for data request from backend.
+     * @return resource data as string
+     * @throws InvalidResourceException if the resource is invalid.
+     * @throws ResourceNotFoundException if the resource could not be found
+     */
+    public String getData(UUID resourceId, QueryInput queryInput) {
+        final var representations = getAllRepresentations(resourceId);
+        for (var representationId : representations.keySet()) {
+            try {
+                return getDataByRepresentation(resourceId, representationId, queryInput);
+            } catch (ResourceException exception) {
+                // The resource is incomplete or wrong.
+                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+            } catch (RuntimeException exception) {
+                // The resource could not be received.
+                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+            }
+        }
+
+        // This code should never be reached since the representation should have at least one
+        // representation.
+        invalidResourceGuard(getResource(resourceId));
+        // Add a runtime exception in case the resource valid logic changed.
+        throw new RuntimeException("This code should not have been reached.");
+    }
+
+    /**
      * Retrieves resource data from the local database or an external data source by ID.
      *
      * @param resourceId ID of the resource
      * @param representationId ID of the representation
-     * @param queryInput Header and params for data request from backend.
+     * @param queryInput Headers, path variables and params for data request from backend.
      * @return resource data as string
      * @throws ResourceNotFoundException if the resource could not be found
      * @throws ResourceException if the resource data could not be retrieved

@@ -7,7 +7,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidateUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
@@ -35,7 +40,9 @@ public class ResourceDataController { // Header: Content-Type: application/json
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataController.class);
 
-    private final ResourceService offeredResourceService, requestedResourceService;
+    private final OfferedResourceServiceImpl offeredResourceService;
+    private final RequestedResourceServiceImpl requestedResourceService;
+
     private final ValidateUtils validateUtils;
 
     /**
@@ -113,15 +120,20 @@ public class ResourceDataController { // Header: Content-Type: application/json
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/{resource-id}/data", method = RequestMethod.GET)
+    @RequestMapping(value = "/{resource-id}/data", method = RequestMethod.POST)
     // params = {"type=string"} NOT SUPPORTED with OpenAPI
     @ResponseBody
     public ResponseEntity<String> getDataById(@Parameter(description = "The resource uuid.",
             required = true, example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-                                              @PathVariable("resource-id") UUID id) {
+            @PathVariable("resource-id") UUID id,
+            @Parameter(description = "The query parameters and headers to use when fetching the " +
+                      "data from the backend system.")
+              @RequestBody(required = false) QueryInput queryInput) {
         try {
+            validateUtils.validateQueryInput(queryInput);
             try {
-                return new ResponseEntity<>(offeredResourceService.getData(id), HttpStatus.OK);
+                return new ResponseEntity<>(offeredResourceService.getData(id, queryInput),
+                        HttpStatus.OK);
             } catch (ResourceNotFoundException offeredResourceServiceException) {
                 LOGGER.debug(
                         "Could not find resource in OfferedResourceService. [id=({}), exception=({})]",
@@ -147,6 +159,11 @@ public class ResourceDataController { // Header: Content-Type: application/json
                     id, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IllegalArgumentException exception) {
+            LOGGER.debug("Failed to fetch resource data. [id=({}), exception=({})]",
+                    id, exception.getMessage());
+            return new ResponseEntity<>("Invalid query input.",
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", id,
                     exception.getMessage());
@@ -179,8 +196,8 @@ public class ResourceDataController { // Header: Content-Type: application/json
             @Parameter(description = "The query parameters and headers to use when fetching the " +
                     "data from the backend system.")
             @RequestBody(required = false) QueryInput queryInput) {
-        validateUtils.validateQueryInput(queryInput);
         try {
+            validateUtils.validateQueryInput(queryInput);
             try {
                 return new ResponseEntity<>(
                         offeredResourceService.getDataByRepresentation(resourceId, representationId, queryInput),
@@ -211,10 +228,9 @@ public class ResourceDataController { // Header: Content-Type: application/json
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (IllegalArgumentException exception) {
-            //TODO
             LOGGER.debug("Failed to fetch resource data. [id=({}), exception=({})]",
                     resourceId, exception.getMessage());
-            return new ResponseEntity<>("Incorrect number of path variables supplied.",
+            return new ResponseEntity<>("Invalid query input.",
                     HttpStatus.BAD_REQUEST);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
