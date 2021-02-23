@@ -61,12 +61,12 @@ public class HttpUtils {
      */
     public String sendHttpGetRequest(String address, QueryInput queryInput) throws MalformedURLException,
         RuntimeException {
-        try {
-            if(queryInput != null) {
-                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
-                address = addQueryParamsToURL(address, queryInput.getParams());
-            }
+        if(queryInput != null) {
+            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
+            address = addQueryParamsToURL(address, queryInput.getParams());
+        }
 
+        try {
             final var url = new URL(address);
 
             var con = (HttpURLConnection) url.openConnection();
@@ -125,12 +125,12 @@ public class HttpUtils {
      */
     public String sendHttpsGetRequest(String address, QueryInput queryInput)
         throws MalformedURLException, RuntimeException {
-        try {
-            if(queryInput != null) {
-                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
-                address = addQueryParamsToURL(address, queryInput.getParams());
-            }
+        if(queryInput != null) {
+            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
+            address = addQueryParamsToURL(address, queryInput.getParams());
+        }
 
+        try {
             final Request request;
             if (queryInput != null && queryInput.getHeaders() != null) {
                 Headers headerBuild = Headers.of(queryInput.getHeaders());
@@ -181,12 +181,12 @@ public class HttpUtils {
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
-        try {
-            if(queryInput != null) {
-                address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
-                address = addQueryParamsToURL(address, queryInput.getParams());
-            }
+        if(queryInput != null) {
+            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
+            address = addQueryParamsToURL(address, queryInput.getParams());
+        }
 
+        try {
             final Request request;
             if (queryInput != null && queryInput.getHeaders() != null) {
                 queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);

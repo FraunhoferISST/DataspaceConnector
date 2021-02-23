@@ -395,6 +395,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
             } catch (ResourceException exception) {
                 // The resource is incomplete or wrong.
                 LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+            } catch (IllegalArgumentException exception) {
+                // Query input was invalid
+                throw exception;
             } catch (RuntimeException exception) {
                 // The resource could not be received.
                 LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
@@ -649,6 +652,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 LOGGER.debug("Failed to resolve the target address. The resource representation is not an url. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
                 throw new ResourceException("The resource source representation is not an url.",
                     exception);
+            } catch (IllegalArgumentException exception) {
+                // Query input was invalid
+                throw exception;
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
                 LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
