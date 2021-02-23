@@ -64,6 +64,10 @@ public class HttpUtils {
         if(queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
             address = addQueryParamsToURL(address, queryInput.getParams());
+        } else {
+            if (address.contains("{")) {
+                throw new IllegalArgumentException("Missing path variables.");
+            }
         }
 
         try {
@@ -128,6 +132,10 @@ public class HttpUtils {
         if(queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
             address = addQueryParamsToURL(address, queryInput.getParams());
+        } else {
+            if (address.contains("{")) {
+                throw new IllegalArgumentException("Missing path variables.");
+            }
         }
 
         try {
@@ -184,6 +192,10 @@ public class HttpUtils {
         if(queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
             address = addQueryParamsToURL(address, queryInput.getParams());
+        } else {
+            if (address.contains("{")) {
+                throw new IllegalArgumentException("Missing path variables.");
+            }
         }
 
         try {
