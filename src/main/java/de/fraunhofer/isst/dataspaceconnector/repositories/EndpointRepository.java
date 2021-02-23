@@ -8,8 +8,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Set;
 
+/**
+ * The repository containing all objects of type {@link Endpoint}.
+ */
 @Repository
 public interface EndpointRepository extends JpaRepository<Endpoint, EndpointId> {
+
+    /**
+     * Get all ids.
+     * @return The ids of all entities.
+     */
     @Query("select t.id from #{#entityName} t")
     Set<EndpointId> getAllIds();
 }
