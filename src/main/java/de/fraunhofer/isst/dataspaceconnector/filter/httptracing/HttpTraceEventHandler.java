@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,10 +33,8 @@ public class HttpTraceEventHandler {
      */
     @Async
     @EventListener
-    @SneakyThrows
     public void handleHttpTraceEvent(final HttpTrace trace) {
-        final var mapper = new ObjectMapper();
-        LOGGER.info("{}", mapper.writeValueAsString(trace));
+        LOGGER.info("{}", trace);
     }
 
     /**

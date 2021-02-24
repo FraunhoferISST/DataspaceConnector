@@ -3,9 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -16,7 +15,6 @@ import java.util.UUID;
 @Setter
 @Getter
 @JsonInclude(Include.NON_NULL)
-@NoArgsConstructor
 public class HttpTrace {
 
     private UUID id;
