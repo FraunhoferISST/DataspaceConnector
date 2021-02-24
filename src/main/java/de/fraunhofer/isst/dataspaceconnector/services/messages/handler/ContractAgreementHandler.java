@@ -10,7 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
