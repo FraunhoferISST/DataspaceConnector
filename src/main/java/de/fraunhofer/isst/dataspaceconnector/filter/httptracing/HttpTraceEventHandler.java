@@ -7,33 +7,32 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
 /**
  * Handles the processing of HttpTraces.
  */
 @Component
-@RequiredArgsConstructor
 public class HttpTraceEventHandler {
-    /**
-     * The class level logger.
-     */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpTraceEventHandler.class);
+    private final ApplicationEventPublisher publisher;
 
     /**
-     * The channel for publishing HttpTrace events.
-     */
-    private final transient @NonNull ApplicationEventPublisher eventPublisher;
-
-    /**
-     * Processes raised HttpTraceEvents.
+     * Constructor
      *
-     * @param trace The HttpTrace that needs to be processed.
+     * @param publisher The http trace event publisher
+     */
+    HttpTraceEventHandler(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
+
+    /**
+     * Processes raised HttpTraceEvents
+     *
+     * @param trace The HttpTrace that needs to be processed
      */
     @Async
     @EventListener
-    public void handleHttpTraceEvent(final HttpTrace trace) {
+    public void handleHttpTraceEvent(HttpTrace trace) {
         LOGGER.info("{}", trace);
     }
 
@@ -42,7 +41,7 @@ public class HttpTraceEventHandler {
      *
      * @param trace The http trace that others should be notified about.
      */
-    public void sendHttpTraceEvent(final HttpTrace trace) {
-        eventPublisher.publishEvent(trace);
+    public void sendHttpTraceEvent(HttpTrace trace) {
+        publisher.publishEvent(trace);
     }
 }
