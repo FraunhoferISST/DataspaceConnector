@@ -483,9 +483,8 @@ public class RequestController {
      * @param resourceId The resource uuid.
      * @return true if the resource exists.
      */
-    private boolean resourceExists(UUID resourceId) {
-        return requestedResourceService.doesExist(
-                new EndpointId(Basepaths.Resources.toString(), resourceId));
+    private boolean resourceExists(final UUID resourceId) {
+        return requestedResourceService.doesExist(new EndpointId(Basepaths.Resources, resourceId));
     }
 
     /**
@@ -497,7 +496,7 @@ public class RequestController {
      */
     private void saveData(String response, UUID resourceId) throws ResourceException {
         final var representations = requestedResourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources.toString(), resourceId));
+                new EndpointId(Basepaths.Resources, resourceId));
         final var artifacts =
                 representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
         artifactBFFService.saveData((EndpointId) artifacts.toArray()[0], response);
