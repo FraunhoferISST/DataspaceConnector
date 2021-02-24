@@ -26,7 +26,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,42 +50,18 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/resources")
 @Tag(name = "Resource Handling", description = "Endpoints for resource handling")
+@RequiredArgsConstructor
 public class ResourceControllerV1 {
-    @Autowired
-    private BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
 
-    @Autowired
-    private BFFRepresentationService representationService;
-
-    @Autowired
-    private BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
-
-    @Autowired
-    private BFFResourceContractLinker resourceContractLinker;
-
-    @Autowired
-    private BFFContractRuleLinker contractRuleLinker;
-
-    @Autowired
-    private RuleBFFService ruleService;
-
-    @Autowired
-    private BFFRepresentationArtifactLinker representationArtifactLinker;
-
-    @Autowired
-    private ArtifactBFFService artifactService;
-
-    @Autowired
-    private TemplateBuilder42<OfferedResource, OfferedResourceDesc> templateBuilder;
-
-    /**
-     * Constructor for ResourceController.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
-     */
-    @Autowired
-    public ResourceControllerV1(){
-    }
+    private final @NonNull BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
+    private final @NonNull BFFRepresentationService representationService;
+    private final @NonNull BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
+    private final @NonNull BFFResourceContractLinker resourceContractLinker;
+    private final @NonNull BFFContractRuleLinker contractRuleLinker;
+    private final @NonNull RuleBFFService ruleService;
+    private final @NonNull BFFRepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull ArtifactBFFService artifactService;
+    private final @NonNull TemplateBuilder42<OfferedResource, OfferedResourceDesc> templateBuilder;
 
     /**
      * Registers a resource with its metadata and, if wanted, with an already existing id.
@@ -97,16 +74,16 @@ public class ResourceControllerV1 {
             deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "201", description = "Resource created")
-                , @ApiResponse(responseCode = "400", description = "Invalid resource"),
-                        @ApiResponse(responseCode = "409", description = "Resource already exists"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "201", description = "Resource created"),
+                @ApiResponse(responseCode = "400", description = "Invalid resource"),
+                @ApiResponse(responseCode = "409", description = "Resource already exists"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ResourceView<OfferedResource>>
-    createResource(@RequestBody ResourceMetadata resourceMetadata,
-            @RequestParam(value = "id", required = false) UUID uuid) {
+    public ResponseEntity<ResourceView<OfferedResource>> createResource(
+            @RequestBody final ResourceMetadata resourceMetadata,
+            @RequestParam(value = "id", required = false) final UUID uuid) {
         final var template = EntityApiBridge.toOfferedResourceTemplate(uuid, resourceMetadata);
         final var endpointId = templateBuilder.build(template);
 
@@ -127,22 +104,23 @@ public class ResourceControllerV1 {
             description = "Update the resource's metadata by its uuid.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "400", description = "Invalid resource"),
-                        @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "400", description = "Invalid resource"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<String>
-    updateResource(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-                           "resource-id") UUID resourceId,
-            @RequestBody ResourceMetadata resourceMetadata) {
+    public ResponseEntity<String> updateResource(
+                    @Parameter(description = "The resource uuid.", required = true)
+                   @PathVariable("resource-id") final UUID resourceId,
+                   @RequestBody final ResourceMetadata resourceMetadata) {
         // Try to access the resource. This will throw 404, when the resource does not exists,
         // preventing the builder to create a new resource.
-        resourceService.get(new EndpointId(Basepaths.Resources.toString(), resourceId));
+        resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
 
-        final var template = EntityApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
+        final var template =
+                EntityApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
         templateBuilder.build(template);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -157,17 +135,17 @@ public class ResourceControllerV1 {
             deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object>
-    getResource(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-            "resource-id") UUID resourceId) {
+    public ResponseEntity<Object> getResource(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId) {
         final var resource =
-                resourceService.get(new EndpointId(Basepaths.Resources.toString(), resourceId));
+                resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
         return ResponseEntity.ok(resource);
     }
 
@@ -181,15 +159,15 @@ public class ResourceControllerV1 {
             deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found")
             })
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<Void>
-    deleteResource(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-            "resource-id") UUID resourceId) {
-        resourceService.delete(new EndpointId(Basepaths.Resources.toString(), resourceId));
+    public ResponseEntity<Void> deleteResource(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId) {
+        resourceService.delete(new EndpointId(Basepaths.Resources, resourceId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -204,20 +182,20 @@ public class ResourceControllerV1 {
             description = "Update the resource's usage policy.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "400", description = "Invalid resource"),
-                        @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "400", description = "Invalid resource"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<RuleView>
-    updateContract(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-                           "resource-id") UUID resourceId,
-            @Parameter(description = "A new resource contract.",
-                    required = true) @RequestBody String policy) {
+    public ResponseEntity<RuleView> updateContract(
+                   @Parameter(description = "The resource uuid.", required = true)
+                   @PathVariable("resource-id") final UUID resourceId,
+                   @Parameter(description = "A new resource contract.", required = true)
+                   @RequestBody final String policy) {
         final var representations = resourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources.toString(), resourceId));
+                new EndpointId(Basepaths.Resources, resourceId));
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
@@ -253,17 +231,17 @@ public class ResourceControllerV1 {
             deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<String>
-    getContract(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-            "resource-id") UUID resourceId) {
+    public ResponseEntity<String> getContract(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId) {
         final var contracts = resourceContractLinker.get(
-                new EndpointId(Basepaths.Resources.toString(), resourceId));
+                new EndpointId(Basepaths.Resources, resourceId));
 
         if (contracts.isEmpty()) {
             throw new ResourceNotFoundException("");
@@ -289,17 +267,17 @@ public class ResourceControllerV1 {
             description = "Get the number of the resource's data access.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/access", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object>
-    getAccess(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-            "resource-id") UUID resourceId) {
+    public ResponseEntity<Object> getAccess(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId) {
         final var representations = resourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources.toString(), resourceId));
+                new EndpointId(Basepaths.Resources, resourceId));
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
@@ -328,27 +306,26 @@ public class ResourceControllerV1 {
             deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "201", description = "Representation created")
-                , @ApiResponse(responseCode = "400", description = "Invalid representation"),
-                        @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "409",
-                                description = "Representation already exists"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "201", description = "Representation created"),
+                @ApiResponse(responseCode = "400", description = "Invalid representation"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "409", description = "Representation already exists"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<RepresentationView>
-    addRepresentation(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-                              "resource-id") UUID resourceId,
-            @Parameter(description = "A new resource representation.",
-                    required = true) @RequestBody ResourceRepresentation representation,
-            @RequestParam(value = "id", required = false) UUID uuid) {
+    public ResponseEntity<RepresentationView> addRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId,
+            @Parameter(description = "A new resource representation.", required = true)
+            @RequestBody final ResourceRepresentation representation,
+            @RequestParam(value = "id", required = false) final UUID uuid) {
         representation.setUuid(uuid);
         final var template = EntityApiBridge.toRepresentationTemplate(representation);
         final var endpointId = templateBuilder.build(template);
 
         resourceRepresentationLinker.add(
-                new EndpointId(Basepaths.Representations.toString(), resourceId),
+                new EndpointId(Basepaths.Representations, resourceId),
                 Collections.singleton(endpointId));
 
         final var headers = new HttpHeaders();
@@ -370,36 +347,35 @@ public class ResourceControllerV1 {
             description = "Update a resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "400", description = "Invalid representation"),
-                        @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "400", description = "Invalid representation"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<String>
-    updateRepresentation(@Parameter(description = "The resource uuid.",
-                                 required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable(
-                    "representation-id") UUID representationId,
-            @Parameter(description = "A new resource representation.",
-                    required = true) @RequestBody ResourceRepresentation representation) {
+    public ResponseEntity<String> updateRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") final UUID representationId,
+            @Parameter(description = "A new resource representation.", required = true)
+            @RequestBody final ResourceRepresentation representation) {
         // Try to access the resource. This will throw 404, when the resource does not exists,
         // preventing the builder to create a new resource.
-        resourceService.get(new EndpointId(Basepaths.Resources.toString(), resourceId));
+        resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
 
         // Try to access the representation. This will throw 404, when the representation does
         // not exists,
         // preventing the builder to create a new representation.
         representationService.get(
-                new EndpointId(Basepaths.Representations.toString(), representationId));
+                new EndpointId(Basepaths.Representations, representationId));
 
         // Try to access the relation. This will throw 404, when the relation does not exists,
         // preventing the builder to create a new resource and representation.
         if (!resourceRepresentationLinker
-                        .get(new EndpointId(Basepaths.Resources.toString(), resourceId))
-                        .contains(new EndpointId(
-                                Basepaths.Representations.toString(), representationId))) {
+                        .get(new EndpointId(Basepaths.Resources, resourceId))
+                        .contains(new EndpointId(Basepaths.Representations, representationId))) {
             throw new ResourceNotFoundException("");
         }
 
@@ -419,19 +395,19 @@ public class ResourceControllerV1 {
             description = "Get the resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object>
-    getRepresentation(@Parameter(description = "The resource uuid.", required = true) @PathVariable(
-                              "resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable(
-                    "representation-id") UUID representationId) {
+    public ResponseEntity<Object> getRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") final UUID representationId) {
         final var representation = representationService.get(
-                new EndpointId(Basepaths.Representations.toString(), representationId));
+                new EndpointId(Basepaths.Representations, representationId));
         return ResponseEntity.ok(representation);
     }
 
@@ -446,19 +422,18 @@ public class ResourceControllerV1 {
             description = "Remove a resource's representation by its uuid.", deprecated = true)
     @ApiResponses(value =
             {
-                @ApiResponse(responseCode = "200", description = "Ok")
-                , @ApiResponse(responseCode = "404", description = "Not found"),
-                        @ApiResponse(responseCode = "500", description = "Internal server error")
+                @ApiResponse(responseCode = "200", description = "Ok"),
+                @ApiResponse(responseCode = "404", description = "Not found"),
+                @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<String>
-    deleteRepresentation(@Parameter(description = "The resource uuid.",
-                                 required = true) @PathVariable("resource-id") UUID resourceId,
-            @Parameter(description = "The representation uuid.", required = true) @PathVariable(
-                    "representation-id") UUID representationId) {
-        representationService.delete(
-                new EndpointId(Basepaths.Representations.toString(), representationId));
+    public ResponseEntity<String> deleteRepresentation(
+            @Parameter(description = "The resource uuid.", required = true)
+            @PathVariable("resource-id") final UUID resourceId,
+            @Parameter(description = "The representation uuid.", required = true)
+            @PathVariable("representation-id") final UUID representationId) {
+        representationService.delete(new EndpointId(Basepaths.Representations, representationId));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
