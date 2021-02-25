@@ -1,8 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
@@ -12,142 +14,176 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractRuleLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.UUID;
 
+@RequiredArgsConstructor
 public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
+    private static Logger LOGGER = LoggerFactory.getLogger(TemplateBuilder42.class);
 
     /***********************************************************************************************
-    * Resources
+     * Resources
      **********************************************************************************************/
 
-    @Autowired
-    private BFFResourceService<T, D, ?> resourceService;
+    private final @NonNull ResourceService<T, D> resourceService;
 
-    @Autowired
-    private BFFResourceRepresentationLinker<T> resourceRepresentationLinker;
+    private final @NonNull ResourceRepresentationLinker<T> resourceRepresentationLinker;
 
-    @Autowired
-    private BFFResourceContractLinker resourceContractLinker;
+    private final @NonNull ResourceContractLinker<T> resourceContractLinker;
 
-    public EndpointId build(final ResourceTemplate<D> template) {
-        final var representationEndpointIds = new HashSet<EndpointId>();
+    public T build(final ResourceTemplate<D> template) {
+        final var representationIds = new HashSet<UUID>();
         for (final var representation : template.getRepresentations()) {
-            representationEndpointIds.add(this.build(representation));
+            representationIds.add(this.build(representation).getId());
         }
 
-        final var contractEndpointIds = new HashSet<EndpointId>();
-        for(final var contract : template.getContracts()) {
-            contractEndpointIds.add(this.build(contract));
+        final var contractIds = new HashSet<UUID>();
+        for (final var contract : template.getContracts()) {
+            contractIds.add(this.build(contract));
         }
 
-        final EndpointId resourceEndpointId;
+        final T resource;
         final var desc = template.getDesc();
-        if(template.getDesc().getStaticId() == null) {
-            resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), desc);
-        } else{
-            final var endpointId = new EndpointId(Basepaths.Resources.toString(), desc.getStaticId());
-            if(resourceService.doesExist(endpointId)){
-                resourceEndpointId = resourceService.update(endpointId, desc);
-            }else{
-                resourceEndpointId = resourceService.create(Basepaths.Resources.toString(), desc);
+        if (template.getDesc().getStaticId() == null) {
+            resource = resourceService.create(desc);
+        } else {
+            if (resourceService.doesExist(desc.getStaticId())) {
+                resource = resourceService.update(desc.getStaticId(), desc);
+            } else {
+                resource = resourceService.create(desc);
             }
         }
 
         try {
-            resourceRepresentationLinker.replace(resourceEndpointId, representationEndpointIds);
-            resourceContractLinker.replace(resourceEndpointId, contractEndpointIds);
-        }catch(Exception exception) {
-            System.out.println("FAILED");
+            resourceRepresentationLinker.replace(resource.getId(), representationIds);
+            resourceContractLinker.replace(resource.getId(), contractIds);
+        } catch (Exception exception) {
+            LOGGER.debug("Failed to build resource. [exception=({})]", exception.getMessage());
         }
 
-        return resourceEndpointId;
+        return resource;
     }
 
     /***********************************************************************************************
      * Representations
      **********************************************************************************************/
 
-    @Autowired
-    private BFFRepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
-    @Autowired
-    private BFFRepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
 
-    public EndpointId build(final RepresentationTemplate template) {
-        final var artifactEndpointIds = new HashSet<EndpointId>();
-        for(final var artifact : template.getArtifacts()) {
-            artifactEndpointIds.add(this.build(artifact));
+    public Representation build(final RepresentationTemplate template) {
+        final var artifactIds = new HashSet<UUID>();
+        for (final var artifact : template.getArtifacts()) {
+            artifactIds.add(this.build(artifact).getId());
         }
 
-        final EndpointId representationEndpointId;
-        if(template.getDesc().getStaticId() == null) {
-            representationEndpointId = representationService.create(Basepaths.Representations.toString(), template.getDesc());
-        } else{
-            final var endpointId = new EndpointId(Basepaths.Representations.toString(), template.getDesc().getStaticId());
-            if(representationService.doesExist(endpointId)){
-                representationEndpointId = representationService.update(endpointId, template.getDesc());
-            }else{
-                representationEndpointId = representationService.create(Basepaths.Representations.toString(), template.getDesc());
+        final Representation representation;
+        if (template.getDesc().getStaticId() == null) {
+            representation = representationService.create(template.getDesc());
+        } else {
+            if (representationService.doesExist(template.getDesc().getStaticId())) {
+                representation = representationService
+                        .update(template.getDesc().getStaticId(), template.getDesc());
+            } else {
+                representation = representationService.create(template.getDesc());
             }
         }
 
-        representationArtifactLinker.replace(representationEndpointId, artifactEndpointIds);
+        representationArtifactLinker.replace(representation.getId(), artifactIds);
 
-        return representationEndpointId;
+        return representation;
     }
-
 
     /***********************************************************************************************
      * Contracts
      **********************************************************************************************/
 
-    @Autowired
-    private BFFContractService contractService;
+    private final @NonNull ContractService contractService;
 
-    @Autowired
-    private BFFContractRuleLinker contractRuleLinker;
+    private final @NonNull ContractRuleLinker contractRuleLinker;
 
-    public EndpointId build(final ContractTemplate template) {
-        final var ruleEndpointIds = new HashSet<EndpointId>();
-        for(final var rule : template.getRules()) {
-            ruleEndpointIds.add(this.build(rule));
+    public UUID build(final ContractTemplate template) {
+        final var ruleIds = new HashSet<UUID>();
+        for (final var rule : template.getRules()) {
+            ruleIds.add(this.build(rule).getId());
         }
 
-        final var endpointId = contractService.create(Basepaths.Contracts.toString(), template.getDesc());
+        final var contractId = contractService.create(template.getDesc()).getId();
+        contractRuleLinker.add(contractId, ruleIds);
 
-        contractRuleLinker.add(endpointId, ruleEndpointIds);
-
-        return endpointId;
+        return contractId;
     }
 
     /***********************************************************************************************
      * Artifacts
      **********************************************************************************************/
 
-    @Autowired
-    private ArtifactBFFService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
-    public EndpointId build(final ArtifactTemplate template) {
-        return artifactService.create(Basepaths.Artifacts.toString(), template.getDesc());
+    public Artifact build(final ArtifactTemplate template) {
+        return artifactService.create(template.getDesc());
     }
 
     /***********************************************************************************************
      * Rules
      **********************************************************************************************/
 
-    @Autowired
-    private RuleBFFService ruleService;
+    private final @NonNull RuleService ruleService;
 
-    public EndpointId build(final RuleTemplate template) {
-        return ruleService.create(Basepaths.Rules.toString(), template.getDesc());
+    public ContractRule build(final RuleTemplate template) {
+        return ruleService.create(template.getDesc());
     }
 }
 
 @Service
-final class TemplateBuilderOfferedResource extends TemplateBuilder42<OfferedResource, OfferedResourceDesc> {}
+final class TemplateBuilderOfferedResource
+        extends TemplateBuilder42<OfferedResource, OfferedResourceDesc> {
+    @Autowired
+    public TemplateBuilderOfferedResource(
+            final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
+            final ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker,
+            final ResourceContractLinker<OfferedResource> resourceContractLinker,
+            final RepresentationService representationService,
+            final RepresentationArtifactLinker representationArtifactLinker,
+            final ContractService contractService, final ContractRuleLinker contractRuleLinker,
+            final ArtifactService artifactService, final RuleService ruleService) {
+        super(resourceService, resourceRepresentationLinker, resourceContractLinker,
+                representationService, representationArtifactLinker, contractService,
+                contractRuleLinker, artifactService, ruleService);
+    }
+}
 
 @Service
-final class TemplateBuilderRequestedResource extends TemplateBuilder42<RequestedResource, RequestedResourceDesc> {}
+final class TemplateBuilderRequestedResource
+        extends TemplateBuilder42<RequestedResource, RequestedResourceDesc> {
+    @Autowired
+    public TemplateBuilderRequestedResource(
+            final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
+            final ResourceRepresentationLinker<RequestedResource> resourceRepresentationLinker,
+            final ResourceContractLinker<RequestedResource> resourceContractLinker,
+            final RepresentationService representationService,
+            final RepresentationArtifactLinker representationArtifactLinker,
+            final ContractService contractService, final ContractRuleLinker contractRuleLinker,
+            final ArtifactService artifactService, final RuleService ruleService) {
+        super(resourceService, resourceRepresentationLinker, resourceContractLinker,
+                representationService, representationArtifactLinker, contractService,
+                contractRuleLinker, artifactService, ruleService);
+    }
+}

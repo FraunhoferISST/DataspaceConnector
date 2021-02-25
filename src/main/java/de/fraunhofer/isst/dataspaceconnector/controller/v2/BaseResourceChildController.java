@@ -1,8 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.CommonUniDirectionalLinkerService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseUniDirectionalLinkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -26,7 +24,7 @@ import java.util.UUID;
  * @param <T> The service type for handling the relations logic.
  */
 public class BaseResourceChildController
-        <T extends CommonUniDirectionalLinkerService<?>> {
+        <T extends BaseUniDirectionalLinkerService<?, ?, ?, ?>> {
 
     /**
      * The linker between two resources.
@@ -49,10 +47,9 @@ public class BaseResourceChildController
      * @return The children of the resource.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Set<EndpointId>> getResource(
+    public ResponseEntity<Set<UUID>> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId) {
-        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
-        return ResponseEntity.ok(linker.get(currentEndpoint));
+        return ResponseEntity.ok(linker.get(ownerId));
     }
 
     /**
@@ -63,11 +60,12 @@ public class BaseResourceChildController
      * @return Response with code 200 (Ok) and the new children's list.
      */
     @PostMapping
-    public ResponseEntity<Set<EndpointId>> addResources(
+    public ResponseEntity<Set<UUID>> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
-        linker.add(currentEndpoint, new HashSet<>(resources));
+        // TODO
+        // linker.add(ownerId, new HashSet<>(resources));
+        linker.add(ownerId, null);
         // Send back the list of children after modification.
         // See https://tools.ietf.org/html/rfc7231#section-4.3.3 and
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
@@ -86,8 +84,8 @@ public class BaseResourceChildController
     public ResponseEntity<Void> replaceResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
-        linker.replace(currentEndpoint, new HashSet<>(resources));
+        // TODO
+        // linker.replace(ownerId, new HashSet<>(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -102,8 +100,8 @@ public class BaseResourceChildController
     public ResponseEntity<Void> removeResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        final var currentEndpoint = EndpointUtils.getCurrentEndpoint(ownerId);
-        linker.remove(currentEndpoint, new HashSet<>(resources));
+        // TODO
+        // linker.remove(ownerId, new HashSet<>(resources));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -19,7 +19,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
@@ -27,11 +26,10 @@ import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceRepresentationLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
@@ -109,12 +107,12 @@ public class RequestController {
     public ResponseEntity<String>
     requestMetadata(@Parameter(description = "The URI of the requested IDS connector.",
             required = true, example = "https://localhost:8080/api/ids/data")
-                    @RequestParam("recipient") URI recipient,
+                    @RequestParam("recipient") final URI recipient,
                     @Parameter(description = "The URI of the requested resource.",
                             example =
                                     "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3" +
                                             "-ace3-ef29cd687cf9")
-                    @RequestParam(value = "requestedResource", required = false) URI resourceId) {
+                    @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, resourceId);
         }
@@ -192,14 +190,14 @@ public class RequestController {
     public ResponseEntity<String>
     requestContract(@Parameter(description = "The URI of the requested IDS connector.",
             required = true, example = "https://localhost:8080/api/ids/data")
-                    @RequestParam("recipient") URI recipient,
+                    @RequestParam("recipient") final URI recipient,
                     @Parameter(description = "The URI of the requested artifact.", required = true,
                             example =
                                     "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3" +
                                             "-ace3-ef29cd687cf9")
-                    @RequestParam(value = "requestedArtifact") URI artifactId,
+                    @RequestParam(value = "requestedArtifact") final URI artifactId,
                     @Parameter(description = "The contract offer for the requested resource.") @RequestBody(
-                            required = false) String contractOffer) {
+                            required = false) final String contractOffer) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, null);
         }
@@ -314,7 +312,7 @@ public class RequestController {
                         "key") UUID key,
                 @Parameter(description = "The query parameters and headers to use when fetching the " +
                         "data from the backend system.")
-                @RequestBody(required = false) QueryInput queryInput) {
+                @RequestBody(required = false) final QueryInput queryInput) {
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, artifactId);
         }
@@ -398,7 +396,7 @@ public class RequestController {
      * @param requestedArtifact The id of the requested artifact.
      * @return An http response.
      */
-    private ResponseEntity<String> respondRejectUnauthorized(URI recipient, URI requestedArtifact) {
+    private ResponseEntity<String> respondRejectUnauthorized(final URI recipient, final URI requestedArtifact) {
         LOGGER.debug(
                 "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
                 recipient.toString(), requestedArtifact.toString());
@@ -434,7 +432,7 @@ public class RequestController {
      * @param queryInput the query input to validate.
      * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
      */
-    private void validateQueryInput(QueryInput queryInput) {
+    private void validateQueryInput(final QueryInput queryInput) {
         if (queryInput != null && queryInput.getHeaders() != null) {
             for (Map.Entry<String, String> entry: queryInput.getHeaders().entrySet()) {
                 if (entry.getKey() == null || entry.getKey().trim().isEmpty()
@@ -459,17 +457,16 @@ public class RequestController {
      *****************************************/
 
     @Autowired
-    private BFFResourceService<RequestedResource, ?, ?> requestedResourceService;
+    private ResourceService<RequestedResource, ?> requestedResourceService;
 
     @Autowired
-    private BFFResourceRepresentationLinker<RequestedResource>
-            requestedResourceRepresentationLinker;
+    private ResourceRepresentationLinker<RequestedResource> requestedResourceRepresentationLinker;
 
     @Autowired
-    private BFFRepresentationArtifactLinker representationArtifactLinker;
+    private RepresentationArtifactLinker representationArtifactLinker;
 
     @Autowired
-    private ArtifactBFFService artifactBFFService;
+    private ArtifactService artifactService;
 
     @Autowired
     private SerializerProvider serializerProvider;
@@ -484,7 +481,7 @@ public class RequestController {
      * @return true if the resource exists.
      */
     private boolean resourceExists(final UUID resourceId) {
-        return requestedResourceService.doesExist(new EndpointId(Basepaths.Resources, resourceId));
+        return requestedResourceService.doesExist(resourceId);
     }
 
     /**
@@ -494,12 +491,12 @@ public class RequestController {
      * @param resourceId The resource uuid.
      * @throws ResourceException if any.
      */
-    private void saveData(String response, UUID resourceId) throws ResourceException {
-        final var representations = requestedResourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources, resourceId));
+    private void saveData(final String response, final UUID resourceId) throws ResourceException {
+        final var representations = requestedResourceRepresentationLinker.get(resourceId);
         final var artifacts =
-                representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
-        artifactBFFService.saveData((EndpointId) artifacts.toArray()[0], response);
+                representationArtifactLinker.get((UUID) representations.toArray()[0]);
+        // TODO: Implement
+        // artifactService.saveData((UUID) artifacts.toArray()[0], response);
     }
 
     /**
@@ -511,7 +508,7 @@ public class RequestController {
      * @throws ResourceException        if any.
      * @throws InvalidResourceException If the ids object could not be deserialized.
      */
-    public EndpointId saveMetadata(String response, URI resourceId)
+    public RequestedResource saveMetadata(final String response, final URI resourceId)
             throws ResourceException, InvalidResourceException {
         Resource resource;
         try {
@@ -546,7 +543,7 @@ public class RequestController {
      * @throws InvalidResourceException If the payload could not be deserialized to a base
      *                                  connector.
      */
-    private Resource findResource(String payload, URI resourceId) throws InvalidResourceException {
+    private Resource findResource(final String payload, final URI resourceId) throws InvalidResourceException {
         Resource resource = null;
         try {
             Connector connector =
@@ -573,7 +570,7 @@ public class RequestController {
      * @param resource The resource
      * @return the metadata object.
      */
-    private ResourceMetadata deserializeMetadata(Resource resource) {
+    private ResourceMetadata deserializeMetadata(final Resource resource) {
         var metadata = new ResourceMetadata();
 
         if (resource.getKeyword() != null) {

@@ -1,25 +1,23 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ResourceView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RuleView;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFContractRuleLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceContractLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceRepresentationLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractRuleLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -53,21 +51,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ResourceControllerV1 {
 
-    private final @NonNull BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
-    private final @NonNull BFFRepresentationService representationService;
-    private final @NonNull BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
-    private final @NonNull BFFResourceContractLinker resourceContractLinker;
-    private final @NonNull BFFContractRuleLinker contractRuleLinker;
-    private final @NonNull RuleBFFService ruleService;
-    private final @NonNull BFFRepresentationArtifactLinker representationArtifactLinker;
-    private final @NonNull ArtifactBFFService artifactService;
+    private final @NonNull ResourceService<OfferedResource, ?> resourceService;
+    private final @NonNull RepresentationService representationService;
+    private final @NonNull ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
+    private final @NonNull ResourceContractLinker<OfferedResource> resourceContractLinker;
+    private final @NonNull ContractRuleLinker contractRuleLinker;
+    private final @NonNull RuleService ruleService;
+    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull ArtifactService artifactService;
     private final @NonNull TemplateBuilder42<OfferedResource, OfferedResourceDesc> templateBuilder;
 
     /**
      * Registers a resource with its metadata and, if wanted, with an already existing id.
      *
      * @param resourceMetadata The resource metadata.
-     * @param uuid             The resource uuid.
+     * @param resourceId       The resource uuid.
      * @return The added uuid.
      */
     @Operation(summary = "Create resource", description = "Register a resource by its metadata.",
@@ -81,16 +79,17 @@ public class ResourceControllerV1 {
             })
     @RequestMapping(value = "/resource", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<ResourceView<OfferedResource>> createResource(
-            @RequestBody final ResourceMetadata resourceMetadata,
-            @RequestParam(value = "id", required = false) final UUID uuid) {
-        final var template = EntityApiBridge.toOfferedResourceTemplate(uuid, resourceMetadata);
-        final var endpointId = templateBuilder.build(template);
+    public ResponseEntity<OfferedResource>
+    createResource(@RequestBody final ResourceMetadata resourceMetadata,
+            @RequestParam(value = "id", required = false) final UUID resourceId) {
+        final var template =
+                EntityApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
+        final var resource = templateBuilder.build(template);
 
         final var headers = new HttpHeaders();
-        headers.setLocation(endpointId.toUri());
+        headers.setLocation(EndpointUtils.getCurrentBasePath());
 
-        return new ResponseEntity<>(resourceService.get(endpointId), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(resource, headers, HttpStatus.CREATED);
     }
 
     /**
@@ -112,12 +111,12 @@ public class ResourceControllerV1 {
     @RequestMapping(value = "/{resource-id}", method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> updateResource(
-                    @Parameter(description = "The resource uuid.", required = true)
+                   @Parameter(description = "The resource uuid.", required = true)
                    @PathVariable("resource-id") final UUID resourceId,
                    @RequestBody final ResourceMetadata resourceMetadata) {
         // Try to access the resource. This will throw 404, when the resource does not exists,
         // preventing the builder to create a new resource.
-        resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
+        resourceService.get(resourceId);
 
         final var template =
                 EntityApiBridge.toOfferedResourceTemplate(resourceId, resourceMetadata);
@@ -144,8 +143,7 @@ public class ResourceControllerV1 {
     public ResponseEntity<Object> getResource(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        final var resource =
-                resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
+        final var resource = resourceService.get(resourceId);
         return ResponseEntity.ok(resource);
     }
 
@@ -167,7 +165,7 @@ public class ResourceControllerV1 {
     public ResponseEntity<Void> deleteResource(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        resourceService.delete(new EndpointId(Basepaths.Resources, resourceId));
+        resourceService.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -189,25 +187,24 @@ public class ResourceControllerV1 {
             })
     @RequestMapping(value = "/{resource-id}/contract", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<RuleView> updateContract(
+    public ResponseEntity<ContractRule> updateContract(
                    @Parameter(description = "The resource uuid.", required = true)
                    @PathVariable("resource-id") final UUID resourceId,
                    @Parameter(description = "A new resource contract.", required = true)
                    @RequestBody final String policy) {
-        final var representations = resourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources, resourceId));
+        final var representations = resourceRepresentationLinker.get(resourceId);
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        final var contracts = resourceContractLinker.get((EndpointId) representations.toArray()[0]);
+        final var contracts = resourceContractLinker.get((UUID) representations.toArray()[0]);
 
         if (contracts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        final var rules = contractRuleLinker.get((EndpointId) contracts.toArray()[0]);
+        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
 
         if (rules.isEmpty()) {
             throw new ResourceNotFoundException("");
@@ -216,9 +213,9 @@ public class ResourceControllerV1 {
         final var template = EntityApiBridge.toRuleTemplate(policy);
         template.getDesc().setStaticId(((EndpointId) rules.toArray()[0]).getResourceId());
 
-        final var endpointId = templateBuilder.build(template);
+        final var rule = templateBuilder.build(template);
 
-        return new ResponseEntity<>(ruleService.get(endpointId), HttpStatus.OK);
+        return new ResponseEntity<>(rule, HttpStatus.OK);
     }
 
     /**
@@ -240,21 +237,20 @@ public class ResourceControllerV1 {
     public ResponseEntity<String> getContract(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        final var contracts = resourceContractLinker.get(
-                new EndpointId(Basepaths.Resources, resourceId));
+        final var contracts = resourceContractLinker.get(resourceId);
 
         if (contracts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        final var rules = contractRuleLinker.get((EndpointId) contracts.toArray()[0]);
+        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
 
         if (rules.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
         return new ResponseEntity<>(
-                ruleService.get((EndpointId) rules.toArray()[0]).getValue(), HttpStatus.OK);
+                ruleService.get((UUID) rules.toArray()[0]).getValue(), HttpStatus.OK);
     }
 
     /**
@@ -276,22 +272,21 @@ public class ResourceControllerV1 {
     public ResponseEntity<Object> getAccess(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        final var representations = resourceRepresentationLinker.get(
-                new EndpointId(Basepaths.Resources, resourceId));
+        final var representations = resourceRepresentationLinker.get(resourceId);
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
         final var artifacts =
-                representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
+                representationArtifactLinker.get((UUID) representations.toArray()[0]);
 
         if (artifacts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
         return new ResponseEntity<>(
-                artifactService.get((EndpointId) artifacts.toArray()[0]).getNumAccessed(),
+                artifactService.get((UUID) artifacts.toArray()[0]).getNumAccessed(),
                 HttpStatus.OK);
     }
 
@@ -300,6 +295,7 @@ public class ResourceControllerV1 {
      *
      * @param resourceId     The resource id.
      * @param representation A new representation.
+     * @param representationId The representation id.
      * @return OK or an error response.
      */
     @Operation(summary = "Add representation", description = "Add a representation to a resource.",
@@ -314,25 +310,22 @@ public class ResourceControllerV1 {
             })
     @RequestMapping(value = "/{resource-id}/representation", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<RepresentationView> addRepresentation(
+    public ResponseEntity<Representation> addRepresentation(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId,
             @Parameter(description = "A new resource representation.", required = true)
             @RequestBody final ResourceRepresentation representation,
-            @RequestParam(value = "id", required = false) final UUID uuid) {
-        representation.setUuid(uuid);
+            @RequestParam(value = "id", required = false) final UUID representationId) {
+        representation.setUuid(representationId);
         final var template = EntityApiBridge.toRepresentationTemplate(representation);
-        final var endpointId = templateBuilder.build(template);
+        final var rep = templateBuilder.build(template);
 
-        resourceRepresentationLinker.add(
-                new EndpointId(Basepaths.Representations, resourceId),
-                Collections.singleton(endpointId));
+        resourceRepresentationLinker.add(resourceId, Collections.singleton(rep.getId()));
 
         final var headers = new HttpHeaders();
-        headers.setLocation(endpointId.toUri());
+        headers.setLocation(EndpointUtils.getCurrentBasePath());
 
-        return new ResponseEntity<>(
-                representationService.get(endpointId), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(rep, headers, HttpStatus.CREATED);
     }
 
     /**
@@ -363,19 +356,16 @@ public class ResourceControllerV1 {
             @RequestBody final ResourceRepresentation representation) {
         // Try to access the resource. This will throw 404, when the resource does not exists,
         // preventing the builder to create a new resource.
-        resourceService.get(new EndpointId(Basepaths.Resources, resourceId));
+        resourceService.get(resourceId);
 
         // Try to access the representation. This will throw 404, when the representation does
         // not exists,
         // preventing the builder to create a new representation.
-        representationService.get(
-                new EndpointId(Basepaths.Representations, representationId));
+        representationService.get(representationId);
 
         // Try to access the relation. This will throw 404, when the relation does not exists,
         // preventing the builder to create a new resource and representation.
-        if (!resourceRepresentationLinker
-                        .get(new EndpointId(Basepaths.Resources, resourceId))
-                        .contains(new EndpointId(Basepaths.Representations, representationId))) {
+        if (!resourceRepresentationLinker.get(resourceId).contains(representationId)) {
             throw new ResourceNotFoundException("");
         }
 
@@ -401,13 +391,12 @@ public class ResourceControllerV1 {
             })
     @RequestMapping(value = "/{resource-id}/{representation-id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getRepresentation(
+    public ResponseEntity<Representation> getRepresentation(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId,
             @Parameter(description = "The representation uuid.", required = true)
             @PathVariable("representation-id") final UUID representationId) {
-        final var representation = representationService.get(
-                new EndpointId(Basepaths.Representations, representationId));
+        final var representation = representationService.get(representationId);
         return ResponseEntity.ok(representation);
     }
 
@@ -433,7 +422,7 @@ public class ResourceControllerV1 {
             @PathVariable("resource-id") final UUID resourceId,
             @Parameter(description = "The representation uuid.", required = true)
             @PathVariable("representation-id") final UUID representationId) {
-        representationService.delete(new EndpointId(Basepaths.Representations, representationId));
+        representationService.delete(representationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

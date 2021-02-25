@@ -15,19 +15,16 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFContractService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.RuleBFFService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -70,10 +67,10 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final @NonNull PolicyConfiguration policyConfiguration;
 
     private final @NonNull EntityDependencyResolver entityDependencyResolver;
-    private final @NonNull ArtifactBFFService artifactBFFService;
-    private final @NonNull BFFResourceService<OfferedResource, ?, OfferedResourceView> resourceService;
-    private final @NonNull BFFContractService contractService;
-    private final @NonNull RuleBFFService ruleService;
+    private final @NonNull ArtifactService artifactBFFService;
+    private final @NonNull ResourceService<OfferedResource, ?> resourceService;
+    private final @NonNull ContractService contractService;
+    private final @NonNull RuleService ruleService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the
@@ -107,9 +104,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         try {
             // Find artifact and matching resource.
             final var artifactId = extractArtifactIdFromRequest(requestMessage);
-            final var resourceId = entityDependencyResolver.findResourceFromArtifactId(artifactId);
+            final var resource = entityDependencyResolver.findResourceFromArtifactId(artifactId);
 
-            if (resourceId == null) {
+            if (resource.isPresent()) {
                 // The resource was not found, reject and inform the requester.
                 LOGGER.debug("Resource could not be found. [id=({}), artifactId=({})]",
                     requestMessage.getId(), artifactId);
@@ -134,11 +131,10 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
             try {
                 // Find the requested resource and its metadata.
-                final var resourceMetadata = resourceService.get(resourceId);
-                final var contracts = resourceMetadata.getContracts();
-                final var rules = contractService.get((EndpointId)contracts.toArray()[0]).getRules();
+                final var contracts = resource.get().getContracts().values();
+                final var rules = contractService.get((UUID) contracts.toArray()[0]).getRules().values();
                 // TODO Should this happen in the backend?
-                final var policy = ruleService.get((EndpointId)rules.toArray()[0]).getValue();
+                final var policy = ruleService.get((UUID)rules.toArray()[0]).getValue();
 
                 try {
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
@@ -154,7 +150,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         } catch (ResourceNotFoundException exception) {
                             LOGGER.debug("Resource could not be found. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
+                                requestMessage.getId(), resource.get().getId(), artifactId,
                                 exception.getMessage());
                             return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
                                 "Resource not found.", connector.getId(),
@@ -162,7 +158,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         } catch (InvalidResourceException exception) {
                             LOGGER.debug("Resource is not in a valid format. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
+                                requestMessage.getId(), resource.get().getId(), artifactId,
                                 exception.getMessage());
                             return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                 "Something went wrong.", connector.getId(),
@@ -170,7 +166,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         } catch (ResourceException exception) {
                             LOGGER.warn("Resource could not be received. "
                                     + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
+                                requestMessage.getId(), resource.get().getId(), artifactId,
                                 exception.getMessage());
                             return ErrorResponse
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
@@ -179,7 +175,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                         } catch (IOException exception) {
                             LOGGER.debug("Message payload could not be read. [id=({}), " +
                                             "resourceId=({}), artifactId=({}), exception=({})]",
-                                    requestMessage.getId(), resourceId, artifactId,
+                                    requestMessage.getId(), resource.get().getId(), artifactId,
                                     exception.getMessage());
                             return ErrorResponse
                                     .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
@@ -212,7 +208,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                 } catch (IllegalArgumentException exception) {
                     LOGGER.warn("Could not deserialize contract. "
                             + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                        requestMessage.getId(), resourceId, artifactId, exception.getMessage());
+                        requestMessage.getId(), resource.get().getId(), artifactId, exception.getMessage());
                     return ErrorResponse.withDefaultHeader(
                         RejectionReason.INTERNAL_RECIPIENT_ERROR,
                         "Policy check failed.",
@@ -277,12 +273,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * @return The artifact id
      * @throws RequestFormatException if uuid could not be extracted.
      */
-    private EndpointId extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
+    private UUID extractArtifactIdFromRequest(final ArtifactRequestMessage requestMessage)
         throws RequestFormatException {
         try {
             // TODO This extraction should be unnecessary. The artifact uri should enough for mapping to endpoint id
-            final var artifactId = UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
-            return new EndpointId(Basepaths.Artifacts.toString(), artifactId);
+            return UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
         } catch (UUIDFormatException exception) {
             throw new RequestFormatException(
                 "The uuid could not extracted from request" + requestMessage.getId(),
