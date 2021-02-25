@@ -11,10 +11,10 @@ import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import okhttp3.MultipartBody;
@@ -39,7 +39,7 @@ public abstract class MessageService {
     private final IDSHttpService idsHttpService;
     private final ResourceService resourceService;
     private final SerializerProvider serializerProvider;
-    private final IdsUtils idsUtils;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for MessageService.
@@ -47,9 +47,9 @@ public abstract class MessageService {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public MessageService(IDSHttpService idsHttpService, IdsUtils idsUtils,
-        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService)
-        throws IllegalArgumentException {
+    public MessageService(IDSHttpService idsHttpService,
+        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         if (idsHttpService == null)
             throw new IllegalArgumentException("The IDSHttpService cannot be null.");
 
@@ -59,13 +59,13 @@ public abstract class MessageService {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         this.idsHttpService = idsHttpService;
         this.resourceService = resourceService;
         this.serializerProvider = serializerProvider;
-        this.idsUtils = idsUtils;
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -163,7 +163,8 @@ public abstract class MessageService {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
-        final var connector = idsUtils.getConnector();
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         for (var version : connector.getInboundModelVersion()) {
             if (version.equals(versionString)) {
