@@ -14,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Map;
@@ -53,20 +55,19 @@ public class HttpUtils {
      * @param address the URL.
      * @param queryInput Header and params for data request from backend.
      * @return the HTTP response if HTTP code is OK (200).
-     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws URISyntaxException if the input address is not a valid URI.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpGetRequest(String address, QueryInput queryInput) throws
-            RuntimeException, MalformedURLException {
+            RuntimeException, URISyntaxException {
 
         try {
             if(queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
-            final var url = new URL(address);
-            final var uri = url.toURI();
+            final var uri = new URI(address);
 
             Response response;
 
@@ -96,13 +97,13 @@ public class HttpUtils {
                         "from getResponseCode.");
             }
 
-        } catch (MalformedURLException exception) {
+        } catch (URISyntaxException exception) {
             // The parameter address is not an url.
             throw exception;
         } catch (Exception exception) {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
-        }// TODO: Handle the URISyntaxException
+        }
 
     }
 
@@ -112,12 +113,12 @@ public class HttpUtils {
      * @param address the URL.
      * @param queryInput Header and params for data request from backend.
      * @return the HTTP body of the response when HTTP code is OK (200).
-     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws URISyntaxException if the input address is not a valid URI.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequest(String address, QueryInput queryInput)
-            throws MalformedURLException, RuntimeException {
+            throws URISyntaxException, RuntimeException {
 
         return sendHttpGetRequest(address, queryInput);
 
@@ -131,12 +132,12 @@ public class HttpUtils {
      * @param password The password.
      * @param queryInput Header and params for data request from backend.
      * @return The HTTP response when HTTP code is OK (200).
-     * @throws MalformedURLException if the input address is not a valid URL.
+     * @throws URISyntaxException if the input address is not a valid URI.
      * @throws RuntimeException if an error occurred when connecting or processing the HTTP
      *                               request.
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,
-        String password, QueryInput queryInput) throws MalformedURLException, RuntimeException {
+        String password, QueryInput queryInput) throws URISyntaxException, RuntimeException {
 
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
@@ -148,8 +149,7 @@ public class HttpUtils {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
-            final var url = new URL(address);
-            final var uri = url.toURI();
+            final var uri = new URI(address);
 
             Response response;
 
@@ -169,13 +169,13 @@ public class HttpUtils {
             } else {
                 return Objects.requireNonNull(response.body()).string();
             }
-        } catch (MalformedURLException exception) {
+        } catch (URISyntaxException exception) {
             // The parameter address is not an url.
             throw exception;
         } catch (Exception exception) {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
-        }// TODO: Handle the URISyntaxException
+        }
 
     }
 
@@ -199,21 +199,5 @@ public class HttpUtils {
             }
         }
         return address;
-    }
-
-    /**
-     * Enrich the HttpURLConnection with given headers. If the headers are empty, the HttpURLConnection remains unchanged.
-     *
-     * @param con HttpURLConnection to be enriched.
-     * @param headers Headers that have to be added within the address.
-     */
-    private void addHeadersToURL(HttpURLConnection con, Map<String, String> headers) {
-        if(headers != null) {
-            if(!headers.isEmpty()) {
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    con.setRequestProperty(header.getKey(), header.getValue());
-                }
-            }
-        }
     }
 }
