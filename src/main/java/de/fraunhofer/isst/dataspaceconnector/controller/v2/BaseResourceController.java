@@ -3,8 +3,14 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.EntityLinks;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Offers REST-Api endpoints for resource handling.
@@ -30,13 +33,24 @@ import java.util.stream.Collectors;
  *            REST calls.
  * @param <S> The underlying service for handling the resource logic.
  */
-public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, S
-                                            extends BaseEntityService<T, D>> {
+public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>,
+        V extends RepresentationModel<V>, S extends BaseEntityService<T, D>> {
     /**
      * The service for the resource logic.
      **/
     @Autowired
     private S service;
+
+    @Autowired
+    private RepresentationModelAssembler<T, V> assembler;
+
+    private Class<T> tClass;
+
+    @Autowired
+    private EntityLinks entityLinks;
+
+    @Autowired
+    private PagedResourcesAssembler<T> pagedResourcesAssembler;
 
     /**
      * Default constructor.
@@ -52,11 +66,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 201 (Created).
      */
     @PostMapping
-    public ResponseEntity<T> create(@RequestBody final D desc) {
-        final var entity = service.create(desc);
+    public HttpEntity<V> create(@RequestBody final D desc) {
+        final var entity = assembler.toModel(service.create(desc));
 
         final var headers = new HttpHeaders();
-        headers.setLocation(URI.create(EndpointUtils.getCurrentBasePath() + "/" + entity.getId()));
+        headers.setLocation(entity.getLink("self").get().toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
@@ -69,13 +83,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * resource type.
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<List<URI>> get() {
-        final var basePath = EndpointUtils.getCurrentBasePath();
-        final var resourceUris = this.service.getAll()
-                                         .parallelStream()
-                                         .map(x -> URI.create(basePath + "/" + x))
-                                         .collect(Collectors.toList());
-        return ResponseEntity.ok(resourceUris);
+    public HttpEntity<CollectionModel<V>> get(final Pageable pageable) {
+        final var entities = service.getAllRaw(pageable);
+        final var model = pagedResourcesAssembler.toModel(entities, assembler);
+
+        return ResponseEntity.ok(model);
     }
 
     /**
@@ -85,8 +97,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return The resource.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public ResponseEntity<T> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
-        final var resource = service.get(resourceId);
+    public HttpEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+        final var resource = assembler.toModel(service.get(resourceId));
         return ResponseEntity.ok(resource);
     }
 
@@ -111,8 +123,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
         } else {
             // The resource has been moved
             final var headers = new HttpHeaders();
-            headers.setLocation(
-                    URI.create(EndpointUtils.getCurrentBasePath() + "/" + resource.getId()));
+            headers.setLocation(assembler.toModel(resource).getLink("self").get().toUri());
 
             response = new ResponseEntity<>(headers, HttpStatus.CREATED);
         }

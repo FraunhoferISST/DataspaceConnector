@@ -1,15 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import lombok.Data;
-
-import java.util.Set;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
-public class CatalogView implements BaseView<Catalog> {
+public class CatalogView extends RepresentationModel<CatalogView> {
     private String title;
     private String description;
-
-    private Set<EndpointId> resources;
 }

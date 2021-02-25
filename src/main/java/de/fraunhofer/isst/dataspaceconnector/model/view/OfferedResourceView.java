@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import org.springframework.hateoas.RepresentationModel;
 
-public class OfferedResourceView extends ResourceView<OfferedResource> {
+public class OfferedResourceView extends RepresentationModel<OfferedResourceView> {
 }

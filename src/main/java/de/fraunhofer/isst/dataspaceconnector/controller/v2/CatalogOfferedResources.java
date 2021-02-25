@@ -7,5 +7,5 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v2/catalogs/{id}/resources")
-public class CatalogResources extends BaseResourceChildController<CatalogResourceLinker<OfferedResource>> {
+public class CatalogOfferedResources extends BaseResourceChildController<CatalogResourceLinker<OfferedResource>> {
 }

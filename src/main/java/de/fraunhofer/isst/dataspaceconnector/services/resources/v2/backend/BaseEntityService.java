@@ -6,6 +6,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.UUID;
@@ -88,6 +90,10 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      */
     public List<UUID> getAll() {
         return repository.getAllIds();
+    }
+
+    public Page<T> getAllRaw(final Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     /**

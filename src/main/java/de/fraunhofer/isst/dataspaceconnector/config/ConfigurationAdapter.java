@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,6 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
  * This class configures admin rights for all backend endpoints behind "/api" using the role
  * defined in {@link MultipleEntryPointsSecurityConfig}.
  */
+@EnableHypermediaSupport(type = {EnableHypermediaSupport.HypermediaType.HAL})
 @Configuration
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
