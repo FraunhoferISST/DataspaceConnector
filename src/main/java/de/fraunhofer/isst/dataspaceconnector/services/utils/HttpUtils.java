@@ -2,8 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.ids.framework.communication.http.HttpService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.util.ClientProvider;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.NotImplementedException;
@@ -18,7 +16,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,24 +25,20 @@ import java.util.Objects;
 @Service
 public class HttpUtils {
 
-    private final ClientProvider clientProvider;
-
-    private HttpService httpService;
+    private final HttpService httpService;
 
     /**
      * Constructor for HttpUtils.
      *
      * @throws IllegalArgumentException if any of the parameters is null.
-     * @throws GeneralSecurityException if the framework has an error.
      */
     @Autowired
-    public HttpUtils(ConfigurationContainer configurationContainer, HttpService httpService)
-        throws IllegalArgumentException, GeneralSecurityException {
-        if (configurationContainer == null) {
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null");
+    public HttpUtils(final HttpService httpService)
+        throws IllegalArgumentException {
+        if (httpService == null) {
+            throw new IllegalArgumentException("The HttpService cannot be null");
         }
 
-        this.clientProvider = new ClientProvider(configurationContainer);
         this.httpService = httpService;
     }
 
