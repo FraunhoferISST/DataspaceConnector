@@ -7,11 +7,14 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -24,6 +27,8 @@ import java.util.Objects;
  */
 @Service
 public class HttpUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
 
     private final HttpService httpService;
 
@@ -76,21 +81,22 @@ public class HttpUtils {
             if(responseCode == responseCodeOk){
                 return Objects.requireNonNull(response.body()).string();
             } else if (responseCode == responseCodeUnauthorized) {
-                // The request is not authorized
+                // The request is not authorized.
+                LOGGER.debug("Could not retrieve data. Unauthorized access. [url=({})]", address);
                 throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
             } else if (responseCode == responseMalformed) {
-                // The response code could not be read
+                // The response code could not be read.
+                LOGGER.debug("Could not retrieve data. Expectation failed. [url=({})]", address);
                 throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
             } else {
-                // This function should never be thrown
+                // This function should never be thrown.
+                LOGGER.warn("Could not retrieve data. Something else went wrong. [url=({})]", address);
                 throw new NotImplementedException("Unsupported return value " +
                         "from getResponseCode.");
             }
-        } catch (URISyntaxException exception) {
-            // The parameter address is not an url.
-            throw exception;
-        } catch (Exception exception) {
-            // Catch all the HTTP, IOExceptions
+        } catch (IOException exception) {
+            // Catch all the HTTP, IOExceptions.
+            LOGGER.warn("Failed to send the http get request. [url=({})]", address);
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
     }
@@ -148,16 +154,15 @@ public class HttpUtils {
 
             if (response.code() < 200 || response.code() >= 300) {
                 response.close();
-                // Not the expected response code
+                // Not the expected response code.
+                LOGGER.debug("Could not retrieve data. Expectation failed. [url=({})]", address);
                 throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
             } else {
                 return Objects.requireNonNull(response.body()).string();
             }
-        } catch (URISyntaxException exception) {
-            // The parameter address is not an url.
-            throw exception;
-        } catch (Exception exception) {
-            // Catch all the HTTP, IOExceptions
+        } catch (IOException exception) {
+            // Catch all the HTTP, IOExceptions.
+            LOGGER.warn("Failed to send the http get request. [url=({})]", address);
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
     }
