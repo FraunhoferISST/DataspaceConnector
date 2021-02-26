@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.Duration;
-import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -207,7 +207,7 @@ public class PolicyVerifier {
             } else {
                 return allowAccess();
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (URISyntaxException | RuntimeException e) {
             return inhibitAccess();
         }
     }

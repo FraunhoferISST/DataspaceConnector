@@ -141,6 +141,11 @@ public class ResourceDataController { // Header: Content-Type: application/json
                     id, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Failed to retrieve data. [id=({}), exception=({})]", id,
+                    exception.getMessage());
+            return new ResponseEntity<>("Failed to load data.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", id,
                     exception.getMessage());
@@ -199,6 +204,11 @@ public class ResourceDataController { // Header: Content-Type: application/json
             LOGGER.debug("The policy cannot be enforced. [id=({}), exception=({})]",
                     resourceId, exception.getMessage());
             return new ResponseEntity<>("The deposited policy cannot be enforced.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Failed to retrieve data. [id=({}), exception=({})]", resourceId,
+                    exception.getMessage());
+            return new ResponseEntity<>("Failed to load data.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception exception) {
             LOGGER.warn("Failed to load resource. [id=({}), exception=({})]", resourceId,
