@@ -16,7 +16,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.handler.ResourceU
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -52,21 +51,19 @@ public class ResourceUpdateMessageService extends MessageService {
      * @param idsHttpService The service for ids messaging
      * @param configurationContainer The container with the configuration
      * @param resourceService The service for resources
-     * @param idsUtils The utilities for ids messages
      * @param serializerProvider The service for serializing
      * @param requestedResourceService The requested resource service for managing requested resources
      * @throws IllegalArgumentException if any of the parameters is null
      */
     @Autowired
-    public ResourceUpdateMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-                                        ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
-                                        IdsUtils idsUtils, SerializerProvider serializerProvider,
+    public ResourceUpdateMessageService(DapsTokenProvider tokenProvider,
+                                        IDSHttpService idsHttpService,
+                                        ConfigurationContainer configurationContainer,
+                                        OfferedResourceServiceImpl resourceService,
+                                        SerializerProvider serializerProvider,
                                         RequestedResourceServiceImpl requestedResourceService,
                                         ArtifactMessageService artifactMessageService) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        super(idsHttpService, serializerProvider, resourceService, configurationContainer);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");

@@ -17,6 +17,10 @@ All notable changes to this project will be documented in this file.
 - Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
 - Refactor HttpUtils to use the IDS Framework's HttpService.
 
+### Fixed
+- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and 
+  configurations to avoid state errors (relevant for the broker communication).
+
 ## [4.0.2] - 2021-02-04
 
 ### Added
