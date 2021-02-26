@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -83,8 +83,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * resource type.
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public HttpEntity<CollectionModel<V>> get(final Pageable pageable) {
-        final var entities = service.getAllRaw(pageable);
+    public HttpEntity<PagedModel<V>> get(final Pageable pageable) {
+        final var entities = service.getAll(pageable);
         final var model = pagedResourcesAssembler.toModel(entities, assembler);
 
         return ResponseEntity.ok(model);

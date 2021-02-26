@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.view.ids.IdsViewer;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -49,11 +50,17 @@ public class IdsResourceService {
 
     // TODO Check if the id is the internal or the external one
     public List<Resource> getAllOfferedResources() {
-        return offeredResourceService.getAll().parallelStream().map(x -> viewer.create(offeredResourceService.get(x))).collect(Collectors.toList());
+        return offeredResourceService.getAll(Pageable.unpaged())
+                .stream()
+                .map(viewer::create)
+                .collect(Collectors.toList());
     }
 
     public List<Resource> getAllRequestedResources() {
-        return requestedResourceService.getAll().parallelStream().map(x -> viewer.create(requestedResourceService.get(x))).collect(Collectors.toList());
+        return requestedResourceService.getAll(Pageable.unpaged())
+                .stream()
+                .map(viewer::create)
+                .collect(Collectors.toList());
     }
 
 }

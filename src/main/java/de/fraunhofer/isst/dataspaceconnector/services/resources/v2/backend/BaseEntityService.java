@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -86,13 +85,10 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
     /**
      * Get a list of all entities with of the same type.
      *
+     * @param pageable Range selection of the complete data set.
      * @return The id list of all entities.
      */
-    public List<UUID> getAll() {
-        return repository.getAllIds();
-    }
-
-    public Page<T> getAllRaw(final Pageable pageable) {
+    public Page<T> getAll(final Pageable pageable) {
         return repository.findAll(pageable);
     }
 

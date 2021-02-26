@@ -12,6 +12,7 @@ import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -84,9 +85,9 @@ public class PolicyEnforcement {
     public void checkResources() throws ParseException, IOException {
         LOGGER.info("Check data...");
 
-        for (final var resourceId : requestedResourceService.getAll()) {
+        for (final var resource : requestedResourceService.getAll(Pageable.unpaged())) {
             try {
-                final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)requestedResourceService.get(resourceId).getContracts().values().toArray()[0];
+                final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)requestedResourceService.get(resource.getId()).getContracts().values().toArray()[0];
                 final var rules = (ContractRule)dscContract.getRules().values().toArray()[0];
                 final var policy =rules.getValue();
 
@@ -101,7 +102,7 @@ public class PolicyEnforcement {
                             Action action = postDuties.get(0).getAction().get(0);
                             if (action == Action.DELETE) {
                                 if (policyVerifier.checkForDelete(postDuties.get(0))) {
-                                    requestedResourceService.delete(resourceId);
+                                    requestedResourceService.delete(resource.getId());
                                 }
                             }
                         }
