@@ -362,10 +362,12 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 return getDataByRepresentation(resourceId, representationId, null);
             } catch (ResourceException exception) {
                 // The resource is incomplete or wrong.
-                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), " +
+                        "exception=({})]", resourceId, representationId, exception);
             } catch (RuntimeException exception) {
                 // The resource could not be received.
-                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), " +
+                        "exception=({})]", resourceId, representationId, exception);
             }
         }
 
@@ -387,8 +389,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @throws ResourceException if the resource data could not be retrieved
      */
     @Override
-    public String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws
-            ResourceNotFoundException, ResourceException {
+    public String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput)
+            throws ResourceNotFoundException, ResourceException {
         final var resource = getResource(resourceId);
         if (resource == null) {
             throw new ResourceNotFoundException("The resource does not exist.");
@@ -449,9 +451,8 @@ public class OfferedResourceServiceImpl implements ResourceService {
         metaData.getRepresentations().put(representation.getUuid(), representation);
 
         updateResource(resourceId, metaData);
-        LOGGER.debug(
-            "Added representation to resource. [resourceId=({}), representationId=({}), representation=({})]",
-            resourceId, representationId, representation);
+        LOGGER.debug("Added representation to resource. [resourceId=({}), representationId=({}), " +
+                        "representation=({})]", resourceId, representationId, representation);
         return representationId;
     }
 
@@ -480,7 +481,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 "Updated representation of resource. [resourceId=({}), representationId=({}), representation=({})]",
                 resourceId, representationId, representation);
         } else {
-            LOGGER.debug("Failed to update resource representation. It does not exist. [resourceId=({}), representationId=({}), representation=({})]", resourceId, representationId, representation);
+            LOGGER.debug("Failed to update resource representation. It does not exist. " +
+                    "[resourceId=({}), representationId=({}), representation=({})]",
+                    resourceId, representationId, representation);
             throw new ResourceNotFoundException("The resource representation does not exist.");
         }
     }
@@ -596,16 +599,20 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 }
             } catch (URISyntaxException exception) {
                 // One of the http requests received a non url as address
-                LOGGER.debug("Failed to resolve the target address. The resource representation is not a URI. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
+                LOGGER.debug("Failed to resolve the target address. The resource representation " +
+                        "is not a URI. [resource=({}), representation=({}), exception=({}))]",
+                        resource, representation, exception);
                 throw new ResourceException("The resource source representation is not a URI.",
                     exception);
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
-                LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), exception=({}))]", resource, representation, exception);
+                LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), " +
+                        "exception=({}))]", resource, representation, exception);
                 throw new ResourceException("The resource could not be found.", exception);
             }
         } else {
-            LOGGER.debug("Failed to receive the resource. The resource has no defined backend. [resource=({}), representation=({}))]", resource, representation);
+            LOGGER.debug("Failed to receive the resource. The resource has no defined backend. " +
+                    "[resource=({}), representation=({}))]", resource, representation);
             throw new ResourceException("The resource has no defined backend.");
         }
     }

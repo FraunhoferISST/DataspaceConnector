@@ -33,10 +33,9 @@ public class HttpUtils {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public HttpUtils(final HttpService httpService)
-        throws IllegalArgumentException {
+    public HttpUtils(final HttpService httpService) throws IllegalArgumentException {
         if (httpService == null) {
-            throw new IllegalArgumentException("The HttpService cannot be null");
+            throw new IllegalArgumentException("The HttpService cannot be null.");
         }
 
         this.httpService = httpService;
@@ -54,19 +53,17 @@ public class HttpUtils {
      */
     public String sendHttpGetRequest(String address, QueryInput queryInput) throws
             RuntimeException, URISyntaxException {
-
         try {
-            if(queryInput != null) {
+            if (queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
             final var uri = new URI(address);
 
             Response response;
-
-            if(queryInput != null) {
+            if (queryInput != null) {
                 response = httpService.getWithHeaders(uri,queryInput.getHeaders());
-            }else {
+            } else {
                 response = httpService.get(uri);
             }
 
@@ -89,7 +86,6 @@ public class HttpUtils {
                 throw new NotImplementedException("Unsupported return value " +
                         "from getResponseCode.");
             }
-
         } catch (URISyntaxException exception) {
             // The parameter address is not an url.
             throw exception;
@@ -97,7 +93,6 @@ public class HttpUtils {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
-
     }
 
     /**
@@ -112,7 +107,6 @@ public class HttpUtils {
      */
     public String sendHttpsGetRequest(String address, QueryInput queryInput)
             throws URISyntaxException, RuntimeException {
-
         return sendHttpGetRequest(address, queryInput);
 
     }
@@ -131,21 +125,18 @@ public class HttpUtils {
      */
     public String sendHttpsGetRequestWithBasicAuth(String address, String username,
         String password, QueryInput queryInput) throws URISyntaxException, RuntimeException {
-
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
-
-        try{
-            if(queryInput != null) {
+        try {
+            if (queryInput != null) {
                 address = addQueryParamsToURL(address, queryInput.getParams());
             }
 
             final var uri = new URI(address);
 
             Response response;
-
             if (queryInput != null && queryInput.getHeaders() != null) {
                 queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
                 response = httpService.getWithHeaders(uri,queryInput.getHeaders());
@@ -169,7 +160,6 @@ public class HttpUtils {
             // Catch all the HTTP, IOExceptions
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
-
     }
 
     /**
@@ -187,7 +177,6 @@ public class HttpUtils {
                     address = address.concat(URLEncoder.encode(param.getKey(), StandardCharsets.UTF_8)
                                     + "=" + URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8) + "&");
                 }
-
                 return StringUtils.removeEnd(address,"&");
             }
         }
