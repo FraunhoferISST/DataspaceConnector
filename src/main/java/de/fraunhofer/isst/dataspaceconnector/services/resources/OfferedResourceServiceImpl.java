@@ -364,10 +364,12 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 // The resource is incomplete or wrong.
                 LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), " +
                         "exception=({})]", resourceId, representationId, exception);
+                throw exception;
             } catch (RuntimeException exception) {
                 // The resource could not be received.
                 LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), " +
                         "exception=({})]", resourceId, representationId, exception);
+                throw exception;
             }
         }
 
@@ -602,13 +604,13 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 LOGGER.debug("Failed to resolve the target address. The resource representation " +
                         "is not a URI. [resource=({}), representation=({}), exception=({}))]",
                         resource, representation, exception);
-                throw new ResourceException("The resource source representation is not a URI.",
+                throw new ResourceException("The deposited address is not a valid URI.",
                     exception);
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
-                LOGGER.debug("Failed to find the resource. [resource=({}), representation=({}), " +
-                        "exception=({}))]", resource, representation, exception);
-                throw new ResourceException("The resource could not be found.", exception);
+                LOGGER.debug("Failed to establish source connection. [resource=({}), " +
+                        "representation=({}), exception=({}))]", resource, representation, exception);
+                throw new ResourceException("Failed to retrieve the data.", exception);
             }
         } else {
             LOGGER.debug("Failed to receive the resource. The resource has no defined backend. " +
