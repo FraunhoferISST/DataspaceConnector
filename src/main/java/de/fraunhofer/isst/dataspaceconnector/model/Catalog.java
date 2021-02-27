@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Catalog extends AbstractEntity {
     /**
      * The offered resources grouped by the catalog.
      **/
-    @OneToMany
+    @ManyToMany
     @RestResource
     private List<OfferedResource> offeredResources;
 
