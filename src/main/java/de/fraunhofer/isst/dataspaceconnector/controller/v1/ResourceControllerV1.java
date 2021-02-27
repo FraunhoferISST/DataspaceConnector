@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -192,30 +192,33 @@ public class ResourceControllerV1 {
                    @PathVariable("resource-id") final UUID resourceId,
                    @Parameter(description = "A new resource contract.", required = true)
                    @RequestBody final String policy) {
-        final var representations = resourceRepresentationLinker.get(resourceId);
+//        final var representations = resourceRepresentationLinker.get(resourceId);
+//
+//        if (representations.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        final var contracts = resourceContractLinker.get((UUID) representations.toArray()[0]);
+//
+//        if (contracts.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
+//
+//        if (rules.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        final var template = EntityApiBridge.toRuleTemplate(policy);
+//        template.getDesc().setStaticId(((EndpointId) rules.toArray()[0]).getResourceId());
+//
+//        final var rule = templateBuilder.build(template);
+//
+//        return new ResponseEntity<>(rule, HttpStatus.OK);
 
-        if (representations.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
 
-        final var contracts = resourceContractLinker.get((UUID) representations.toArray()[0]);
-
-        if (contracts.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
-
-        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
-
-        if (rules.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
-
-        final var template = EntityApiBridge.toRuleTemplate(policy);
-        template.getDesc().setStaticId(((EndpointId) rules.toArray()[0]).getResourceId());
-
-        final var rule = templateBuilder.build(template);
-
-        return new ResponseEntity<>(rule, HttpStatus.OK);
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -237,20 +240,23 @@ public class ResourceControllerV1 {
     public ResponseEntity<String> getContract(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        final var contracts = resourceContractLinker.get(resourceId);
+//        final var contracts = resourceContractLinker.get(resourceId);
+//
+//        if (contracts.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
+//
+//        if (rules.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        return new ResponseEntity<>(
+//                ruleService.get((UUID) rules.toArray()[0]).getValue(), HttpStatus.OK);
 
-        if (contracts.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
 
-        final var rules = contractRuleLinker.get((UUID) contracts.toArray()[0]);
-
-        if (rules.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
-
-        return new ResponseEntity<>(
-                ruleService.get((UUID) rules.toArray()[0]).getValue(), HttpStatus.OK);
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -272,22 +278,25 @@ public class ResourceControllerV1 {
     public ResponseEntity<Object> getAccess(
             @Parameter(description = "The resource uuid.", required = true)
             @PathVariable("resource-id") final UUID resourceId) {
-        final var representations = resourceRepresentationLinker.get(resourceId);
+//        final var representations = resourceRepresentationLinker.get(resourceId);
+//
+//        if (representations.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        final var artifacts =
+//                representationArtifactLinker.get((UUID) representations.toArray()[0]);
+//
+//        if (artifacts.isEmpty()) {
+//            throw new ResourceNotFoundException("");
+//        }
+//
+//        return new ResponseEntity<>(
+//                artifactService.get((UUID) artifacts.toArray()[0]).getNumAccessed(),
+//                HttpStatus.OK);
 
-        if (representations.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
 
-        final var artifacts =
-                representationArtifactLinker.get((UUID) representations.toArray()[0]);
-
-        if (artifacts.isEmpty()) {
-            throw new ResourceNotFoundException("");
-        }
-
-        return new ResponseEntity<>(
-                artifactService.get((UUID) artifacts.toArray()[0]).getNumAccessed(),
-                HttpStatus.OK);
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -365,7 +374,7 @@ public class ResourceControllerV1 {
 
         // Try to access the relation. This will throw 404, when the relation does not exists,
         // preventing the builder to create a new resource and representation.
-        if (!resourceRepresentationLinker.get(resourceId).contains(representationId)) {
+        if (!resourceRepresentationLinker.get(resourceId, Pageable.unpaged()).contains(representationId)) {
             throw new ResourceNotFoundException("");
         }
 

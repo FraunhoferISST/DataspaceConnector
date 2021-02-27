@@ -2,11 +2,13 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.util.Assert;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Create a parent-children relationship between two types of resources.
@@ -45,9 +47,9 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId The id of the entity whose children should be received.
      * @return The ids of the children.
      */
-    public Set<UUID> get(final UUID ownerId) {
+    public List<UUID> get(final UUID ownerId, final Pageable pageable) {
         final var owner = oneService.get(ownerId);
-        return getInternal(owner).keySet();
+        return getInternal(owner).parallelStream().map(AbstractEntity::getId).collect(Collectors.toList());
     }
 
     /**
@@ -102,7 +104,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param owner The entity whose children should be received.
      * @return The children assigned to the entity.
      */
-    protected abstract Map<UUID, W> getInternal(K owner);
+    protected abstract List<W> getInternal(K owner);
 
     /**
      * Adds children to an entity.
@@ -115,7 +117,7 @@ public abstract class BaseUniDirectionalLinkerService<
             Assert.isTrue(manyService.doesExist(entityId),
                     "The resource must exist.");
             final var entity = manyService.get(entityId);
-            getInternal(owner).put(entityId, entity);
+            getInternal(owner).add(entity);
         }
     }
 
@@ -129,7 +131,7 @@ public abstract class BaseUniDirectionalLinkerService<
         for (final var entityId : entities) {
             Assert.isTrue(manyService.doesExist(entityId),
                     "The resource must exist.");
-            getInternal(owner).remove(entityId);
+            getInternal(owner).removeIf(x -> x.getId().equals(entityId));
         }
     }
 

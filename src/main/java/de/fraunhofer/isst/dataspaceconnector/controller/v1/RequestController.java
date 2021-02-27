@@ -492,9 +492,9 @@ public class RequestController {
      * @throws ResourceException if any.
      */
     private void saveData(final String response, final UUID resourceId) throws ResourceException {
-        final var representations = requestedResourceRepresentationLinker.get(resourceId);
-        final var artifacts =
-                representationArtifactLinker.get((UUID) representations.toArray()[0]);
+        // final var representations = requestedResourceRepresentationLinker.get(resourceId);
+         // final var artifacts =
+               // representationArtifactLinker.get((UUID) representations.toArray()[0]);
         // TODO: Implement
         // artifactService.saveData((UUID) artifacts.toArray()[0], response);
     }

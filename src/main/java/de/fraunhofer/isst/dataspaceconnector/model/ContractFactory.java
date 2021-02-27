@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Creates and updates a contract.
@@ -27,7 +27,7 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
     @Override
     public Contract create(final ContractDesc desc) {
         final var contract = new Contract();
-        contract.setRules(new HashMap<>());
+        contract.setRules(new ArrayList<>());
 
         update(contract, desc);
 

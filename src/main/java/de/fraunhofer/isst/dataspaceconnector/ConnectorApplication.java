@@ -9,7 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 
 import java.io.IOException;
@@ -21,8 +20,8 @@ import java.util.Properties;
  * Swagger UI is created.
  */
 
-@EnableHypermediaSupport(type = {EnableHypermediaSupport.HypermediaType.HAL})
 @SpringBootApplication
+@EnableHypermediaSupport(type = {EnableHypermediaSupport.HypermediaType.HAL})
 @ComponentScan({
     "de.fraunhofer.isst.ids.framework.messaging",
     "de.fraunhofer.isst.dataspaceconnector",

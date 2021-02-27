@@ -7,11 +7,9 @@ import lombok.Setter;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.Entity;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * A representation describes how data is presented.
@@ -46,8 +44,7 @@ public class Representation extends AbstractEntity {
     /**
      * The artifacts associated with this representation.
      **/
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, Artifact> artifacts;
+    private List<Artifact> artifacts;
 }

@@ -6,8 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 public abstract class CatalogResourceLinker<T extends Resource> extends BaseUniDirectionalLinkerService<
         Catalog, T, CatalogService, ResourceService<T, ?>> {
@@ -17,7 +16,7 @@ public abstract class CatalogResourceLinker<T extends Resource> extends BaseUniD
 final class CatalogOfferedResourceLinker extends CatalogResourceLinker<OfferedResource> {
 
     @Override
-    protected Map<UUID, OfferedResource> getInternal(final Catalog owner) {
+    protected List<OfferedResource> getInternal(final Catalog owner) {
         // TODO Make it safe
         return owner.getOfferedResources();
     }
@@ -27,7 +26,7 @@ final class CatalogOfferedResourceLinker extends CatalogResourceLinker<OfferedRe
 final class CatalogRequestedResourceLinker extends CatalogResourceLinker<RequestedResource> {
 
     @Override
-    protected Map<UUID, RequestedResource> getInternal(final Catalog owner) {
+    protected List<RequestedResource> getInternal(final Catalog owner) {
         // TODO Make it safe
         return owner.getRequestedResources();
     }

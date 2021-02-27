@@ -8,13 +8,10 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.MapKey;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToMany;
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * A resource describes offered or requested data.
@@ -69,16 +66,14 @@ public class Resource extends AbstractEntity {
     /**
      * The representation available for the resource.
      */
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, Representation> representations;
+    private List<Representation> representations;
 
     /**
      * The contracts available for the resource.
      */
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, Contract> contracts;
+    private List<Contract> contracts;
 }

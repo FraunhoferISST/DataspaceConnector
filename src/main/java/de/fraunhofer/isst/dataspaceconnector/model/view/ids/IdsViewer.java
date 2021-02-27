@@ -81,10 +81,10 @@ public final class IdsViewer {
                 + ((EndpointId) endpoints.toArray()[0]).getResourceId());
 
         final var contracts = CompletableFuture.supplyAsync(
-                () -> batchCreateContract(resource.getContracts().values()));
+                () -> batchCreateContract(resource.getContracts()));
         final var keywords = CompletableFuture.supplyAsync(() -> getKeywords(resource));
         final var representations = CompletableFuture.supplyAsync(
-                () -> batchCreateRepresentation(resource.getRepresentations().values()));
+                () -> batchCreateRepresentation(resource.getRepresentations()));
 
         final var language = resource.getLanguage();
 
@@ -121,7 +121,7 @@ public final class IdsViewer {
                 + ((EndpointId) endpoints.toArray()[0]).getResourceId());
 
         final var artifacts = CompletableFuture.supplyAsync(
-                () -> batchCreateArtifact(representation.getArtifacts().values()));
+                () -> batchCreateArtifact(representation.getArtifacts()));
 
         Representation output;
         try {
@@ -181,7 +181,7 @@ public final class IdsViewer {
     public ContractOffer create(
             final de.fraunhofer.isst.dataspaceconnector.model.Contract contract) {
         // At the moment the contract is stored in the first rule
-        final var rule = (ContractRule) contract.getRules().values().toArray()[0];
+        final var rule = (ContractRule) contract.getRules().toArray()[0];
 
         // Add the provider to the contract offer.
         try {

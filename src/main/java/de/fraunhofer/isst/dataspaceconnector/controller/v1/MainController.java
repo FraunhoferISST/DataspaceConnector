@@ -7,6 +7,12 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.ArtifactController;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.CatalogController;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.ContractController;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceController;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.RepresentationController;
+import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
@@ -19,8 +25,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * This class provides endpoints for basic connector services.
@@ -214,15 +225,20 @@ public class MainController {
         }
     }
 
-//    @GetMapping("/")
-//    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-//    public void root(final HttpServletRequest request, final HttpServletResponse response) {
-//        final var root = request.getRequestURI();
-//        final var template = new UriTemplate("{root}{resources}").expand(root, "catalogs");
-//        final var linkTo = entityLinks.;
-//
-//        response.addHeader("Link", linkTo);
-//    }
+    @GetMapping("/api")
+    public ResponseEntity<RepresentationModel>  root() {
+        final var model = new RepresentationModel();
+
+        model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
+        model.add(linkTo(methodOn(ArtifactController.class).getAll(null, null, null)).withRel("artifacts"));
+        model.add(linkTo(methodOn(CatalogController.class).getAll(null, null, null)).withRel("catalogs"));
+        model.add(linkTo(methodOn(ContractController.class).getAll(null, null, null)).withRel("contracts"));
+        model.add(linkTo(methodOn(RepresentationController.class).getAll(null, null, null)).withRel("representations"));
+        model.add(linkTo(methodOn(OfferedResourceController.class).getAll(null, null, null)).withRel("resources"));
+        model.add(linkTo(methodOn(RuleController.class).getAll(null, null, null)).withRel("rules"));
+
+        return ResponseEntity.ok(model);
+    }
 
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
         return new ResourceCatalogBuilder()

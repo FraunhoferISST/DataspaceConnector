@@ -4,8 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class RepresentationArtifactLinker
@@ -13,7 +12,7 @@ public class RepresentationArtifactLinker
         RepresentationService, ArtifactService> {
 
     @Override
-    protected Map<UUID, Artifact> getInternal(final Representation owner) {
+    protected List<Artifact> getInternal(final Representation owner) {
         return owner.getArtifacts();
     }
 }

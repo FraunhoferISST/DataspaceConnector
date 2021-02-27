@@ -4,15 +4,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class ContractRuleLinker extends BaseUniDirectionalLinkerService<
         Contract, ContractRule, ContractService, RuleService> {
 
     @Override
-    protected Map<UUID, ContractRule> getInternal(final Contract owner) {
+    protected List<ContractRule> getInternal(final Contract owner) {
         return owner.getRules();
     }
 }

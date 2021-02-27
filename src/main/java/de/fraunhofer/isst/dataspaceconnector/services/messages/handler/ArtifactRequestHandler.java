@@ -131,8 +131,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
             try {
                 // Find the requested resource and its metadata.
-                final var contracts = resource.get().getContracts().values();
-                final var rules = contractService.get((UUID) contracts.toArray()[0]).getRules().values();
+                final var contracts = resource.get().getContracts();
+                final var rules = contractService.get((UUID) contracts.toArray()[0]).getRules();
                 // TODO Should this happen in the backend?
                 final var policy = ruleService.get((UUID)rules.toArray()[0]).getValue();
 

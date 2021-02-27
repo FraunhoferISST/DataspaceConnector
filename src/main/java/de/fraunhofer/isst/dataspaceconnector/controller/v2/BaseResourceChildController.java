@@ -3,6 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseUniDirectionalLinkerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Offers REST-Api Endpoints for modifying relations between resources.
@@ -47,9 +49,9 @@ public class BaseResourceChildController
      * @return The children of the resource.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<Set<UUID>> getResource(
+    public HttpEntity<List<UUID>> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId) {
-        return ResponseEntity.ok(linker.get(ownerId));
+        return ResponseEntity.ok(linker.get(ownerId, Pageable.unpaged()));
     }
 
     /**
@@ -60,12 +62,10 @@ public class BaseResourceChildController
      * @return Response with code 200 (Ok) and the new children's list.
      */
     @PostMapping
-    public ResponseEntity<Set<UUID>> addResources(
+    public HttpEntity<List<UUID>> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
-        // TODO
-        // linker.add(ownerId, new HashSet<>(resources));
-        linker.add(ownerId, null);
+        linker.add(ownerId, resources.parallelStream().map(EndpointId::getResourceId).collect(Collectors.toSet()));
         // Send back the list of children after modification.
         // See https://tools.ietf.org/html/rfc7231#section-4.3.3 and
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
@@ -81,7 +81,7 @@ public class BaseResourceChildController
      * @return Response with code 204 (No_Content).
      */
     @PutMapping
-    public ResponseEntity<Void> replaceResources(
+    public HttpEntity<Void> replaceResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         // TODO
@@ -97,7 +97,7 @@ public class BaseResourceChildController
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping
-    public ResponseEntity<Void> removeResources(
+    public HttpEntity<Void> removeResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<EndpointId> resources) {
         // TODO

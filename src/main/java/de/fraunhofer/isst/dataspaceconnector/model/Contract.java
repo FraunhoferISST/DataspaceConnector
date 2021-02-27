@@ -7,11 +7,9 @@ import lombok.Setter;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.Entity;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * A contract documents access and usage behaviours.
@@ -36,8 +34,7 @@ public class Contract extends AbstractEntity {
     /**
      * The rules used by this contract.
      **/
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, ContractRule> rules;
+    private List<ContractRule> rules;
 }

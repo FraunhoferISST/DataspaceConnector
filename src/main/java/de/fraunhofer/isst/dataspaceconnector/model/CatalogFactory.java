@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     @Override
     public Catalog create(final CatalogDesc desc) {
         final var catalog = new Catalog();
-        catalog.setOfferedResources(new HashMap<>());
-        catalog.setRequestedResources(new HashMap<>());
+        catalog.setOfferedResources(new ArrayList<>());
+        catalog.setRequestedResources(new ArrayList<>());
 
         update(catalog, desc);
 

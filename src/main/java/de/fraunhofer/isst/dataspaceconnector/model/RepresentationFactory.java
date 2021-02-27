@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Creates and updates a representation.
@@ -21,7 +21,7 @@ public class RepresentationFactory implements AbstractFactory<Representation,
     @Override
     public Representation create(final RepresentationDesc desc) {
         final var representation = new Representation();
-        representation.setArtifacts(new HashMap<>());
+        representation.setArtifacts(new ArrayList<>());
 
         update(representation, desc);
 

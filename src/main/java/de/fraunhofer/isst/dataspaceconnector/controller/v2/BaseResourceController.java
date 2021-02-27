@@ -4,7 +4,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.UUID;
@@ -82,8 +84,12 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 200 (Ok) and the list of all endpoints of this
      * resource type.
      */
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public HttpEntity<CollectionModel<V>> get(final Pageable pageable) {
+    @RequestMapping(method = RequestMethod.GET)
+    public HttpEntity<CollectionModel<V>> getAll(@RequestParam(required = false) final Integer page,
+                                                 @RequestParam(required = false) final Integer size,
+                                                 @RequestParam(required = false) final Sort sort) {
+        final var pageable = PageRequest.of(page == null ? 1 : page,
+                size == null ? 30 : size);
         final var entities = service.getAll(pageable);
         final var model = pagedResourcesAssembler.toModel(entities, assembler);
 
@@ -112,11 +118,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * and been moved to a new endpoint.
      */
     @PutMapping(value = "{id}")
-    public ResponseEntity<Void> update(
+    public HttpEntity<Object> update(
             @Valid @PathVariable(name = "id") final UUID resourceId, @RequestBody final D desc) {
         final var resource = service.update(resourceId, desc);
 
-        ResponseEntity<Void> response;
+        ResponseEntity<Object> response;
         if (resource.getId().equals(resourceId)) {
             // The resource was not moved
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -125,7 +131,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             final var headers = new HttpHeaders();
             headers.setLocation(assembler.toModel(resource).getLink("self").get().toUri());
 
-            response = new ResponseEntity<>(headers, HttpStatus.CREATED);
+            response = new ResponseEntity<>(assembler.toModel(resource), headers, HttpStatus.CREATED);
         }
 
         return response;

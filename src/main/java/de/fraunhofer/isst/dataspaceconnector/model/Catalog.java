@@ -7,11 +7,9 @@ import lombok.Setter;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import javax.persistence.Entity;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 /**
  * A catalog groups resources.
@@ -40,16 +38,14 @@ public class Catalog extends AbstractEntity {
     /**
      * The offered resources grouped by the catalog.
      **/
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, OfferedResource> offeredResources;
+    private List<OfferedResource> offeredResources;
 
     /**
      * The requested resources grouped by the catalog.
      **/
-    @MapKey(name = "id")
     @OneToMany
     @RestResource
-    private Map<UUID, RequestedResource> requestedResources;
+    private List<RequestedResource> requestedResources;
 }

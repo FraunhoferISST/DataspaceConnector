@@ -181,8 +181,8 @@ public class PolicyHandler {
                 return true;
         }
 
-        final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)dataResource.getContracts().values().toArray()[0];
-        final var rules = (ContractRule)dscContract.getRules().values().toArray()[0];
+        final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)dataResource.getContracts().toArray()[0];
+        final var rules = (ContractRule)dscContract.getRules().toArray()[0];
         final var policy =rules.getValue();
 
         final var ignoreUnsupportedPatterns = policyConfiguration.isAllowUnsupported();

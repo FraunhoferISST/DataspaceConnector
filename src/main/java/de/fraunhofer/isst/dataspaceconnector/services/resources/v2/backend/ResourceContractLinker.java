@@ -6,15 +6,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.List;
 
 public class ResourceContractLinker<T extends Resource>
         extends BaseUniDirectionalLinkerService<T,
         Contract, ResourceService<T, ?>, ContractService> {
 
     @Override
-    protected Map<UUID, Contract> getInternal(final Resource owner) {
+    protected List<Contract> getInternal(final Resource owner) {
         return owner.getContracts();
     }
 }

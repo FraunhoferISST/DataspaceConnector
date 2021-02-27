@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc<T>>
@@ -27,8 +26,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     @Override
     public T create(final D desc) {
         final var resource = createInternal(desc);
-        resource.setRepresentations(new HashMap<>());
-        resource.setContracts(new HashMap<>());
+        resource.setRepresentations(new ArrayList<>());
+        resource.setContracts(new ArrayList<>());
         resource.setKeywords(new ArrayList<>());
         // Set to -1 the following update will increment it to 0
         resource.setVersion(-1);

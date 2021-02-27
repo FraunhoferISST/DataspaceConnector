@@ -87,8 +87,8 @@ public class PolicyEnforcement {
 
         for (final var resource : requestedResourceService.getAll(Pageable.unpaged())) {
             try {
-                final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)requestedResourceService.get(resource.getId()).getContracts().values().toArray()[0];
-                final var rules = (ContractRule)dscContract.getRules().values().toArray()[0];
+                final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)requestedResourceService.get(resource.getId()).getContracts().toArray()[0];
+                final var rules = (ContractRule)dscContract.getRules().toArray()[0];
                 final var policy =rules.getValue();
 
                 try {
