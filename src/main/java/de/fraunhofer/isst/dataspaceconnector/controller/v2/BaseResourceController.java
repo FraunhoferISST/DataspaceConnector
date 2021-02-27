@@ -85,8 +85,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public HttpEntity<CollectionModel<V>> getAll(@RequestParam(required = false) final Integer page,
-                                                 @RequestParam(required = false) final Integer size,
+    public HttpEntity<CollectionModel<V>> getAll(@RequestParam(required = false, defaultValue = "1") final Integer page,
+                                                 @RequestParam(required = false, defaultValue = "30") final Integer size,
                                                  @RequestParam(required = false) final Sort sort) {
         final var pageable = PageRequest.of(page == null ? 1 : page,
                 size == null ? 30 : size);
