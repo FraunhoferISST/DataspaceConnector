@@ -7,9 +7,10 @@ import java.util.Date;
 import java.util.Map;
 
 @Data
-public class ContractView  extends RepresentationModel<ContractView> {
+public class ContractRuleView extends RepresentationModel<ContractRuleView> {
     private Date creationDate;
     private Date modificationDate;
     private String title;
+    private String value;
     private Map<String, String> additional;
 }

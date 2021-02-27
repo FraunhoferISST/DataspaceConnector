@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v2/artifacts")
-public final class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
+public class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
         ArtifactService> {
     @RequestMapping(value = "{id}/data", method = RequestMethod.GET)
     public ResponseEntity<Object> getData(@Valid @PathVariable final UUID artifactId) {

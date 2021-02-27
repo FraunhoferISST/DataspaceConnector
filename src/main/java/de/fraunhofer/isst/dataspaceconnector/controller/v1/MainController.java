@@ -214,6 +214,16 @@ public class MainController {
         }
     }
 
+//    @GetMapping("/")
+//    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+//    public void root(final HttpServletRequest request, final HttpServletResponse response) {
+//        final var root = request.getRequestURI();
+//        final var template = new UriTemplate("{root}{resources}").expand(root, "catalogs");
+//        final var linkTo = entityLinks.;
+//
+//        response.addHeader("Link", linkTo);
+//    }
+
     private ResourceCatalog buildResourceCatalog() throws ConstraintViolationException {
         return new ResourceCatalogBuilder()
             ._offeredResource_((ArrayList<? extends Resource>) idsResourceService.getAllOfferedResources())

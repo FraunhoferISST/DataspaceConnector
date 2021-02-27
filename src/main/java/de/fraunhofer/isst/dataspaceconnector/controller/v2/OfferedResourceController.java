@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @ExposesResourceFor(OfferedResource.class)
-@RequestMapping("/api/v2/offeredresources")
+@RequestMapping("/api/v2/resources")
 public class OfferedResourceController extends BaseResourceController<OfferedResource, OfferedResourceDesc, OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
 }

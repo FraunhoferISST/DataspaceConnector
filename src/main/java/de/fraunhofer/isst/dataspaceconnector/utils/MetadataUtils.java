@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +40,18 @@ public final class MetadataUtils {
         final var newValues = cleanStringList(newList == null ? defaultList : newList);
 
         if (oldList == null || !oldList.equals(newValues)) {
+            return Optional.of(newValues);
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<Map<String, String>> updateStringMap(final Map<String, String> oldMap,
+                                                                final Map<String, String> newMap,
+                                                                final Map<String, String> defaultMap) {
+        // TODO Implement cleaning like in updateStringList
+        final var newValues = newMap == null ? defaultMap : newMap;
+        if (oldMap == null || !newMap.equals(newValues)) {
             return Optional.of(newValues);
         }
 

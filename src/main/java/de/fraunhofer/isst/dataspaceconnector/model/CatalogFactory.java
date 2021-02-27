@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates and updates a catalog.
@@ -44,8 +45,9 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     public boolean update(final Catalog catalog, final CatalogDesc desc) {
         final var hasUpdatedTitle = this.updateTitle(catalog, desc.getTitle());
         final var hasUpdatedDesc = this.updateDescription(catalog, desc.getDescription());
+        final var hasUpdatedAdditional = this.updateAdditional(catalog, desc.getAdditional());
 
-        return hasUpdatedTitle || hasUpdatedDesc;
+        return hasUpdatedTitle || hasUpdatedDesc || hasUpdatedAdditional;
     }
 
     private boolean updateTitle(final Catalog catalog, final String title) {
@@ -61,5 +63,13 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
         newDescription.ifPresent(catalog::setDescription);
 
         return newDescription.isPresent();
+    }
+
+    private boolean updateAdditional(final Catalog catalog, final Map<String, String> additional) {
+        final var newAdditional =
+                MetadataUtils.updateStringMap(catalog.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(catalog::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

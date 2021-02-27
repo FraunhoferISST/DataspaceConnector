@@ -4,10 +4,15 @@ import lombok.Data;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class OfferedResourceView extends RepresentationModel<OfferedResourceView> {
+
+    private Date creationDate;
+    private Date modificationDate;
 
     /**
      * The title of the resource.
@@ -43,4 +48,7 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
      * The version of the resource.
      */
     private long version;
+
+
+    private Map<String, String> additional;
 }

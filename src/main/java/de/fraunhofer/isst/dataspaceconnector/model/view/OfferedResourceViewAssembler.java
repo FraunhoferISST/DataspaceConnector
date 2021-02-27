@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceContro
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.ResourceContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.ResourceRepresentations;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +16,8 @@ public class OfferedResourceViewAssembler implements RepresentationModelAssemble
 
     @Override
     public OfferedResourceView toModel(final OfferedResource entity) {
-        final var view = new OfferedResourceView();
-        view.setTitle(entity.getTitle());
-        view.setDescription(entity.getDescription());
-        view.setKeywords(entity.getKeywords());
-        view.setLanguage(entity.getLanguage());
-        view.setVersion(entity.getVersion());
-        view.setLicence(entity.getLicence());
-        view.setPublisher(entity.getPublisher());
+        final var modelMapper = new ModelMapper();
+        final var view = modelMapper.map(entity, OfferedResourceView.class);
 
         final var selfLink = linkTo(OfferedResourceController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);

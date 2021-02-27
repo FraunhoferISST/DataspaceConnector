@@ -1,10 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -69,7 +68,6 @@ public class AbstractEntity implements Serializable {
 
     @ElementCollection
     @Setter(AccessLevel.PACKAGE)
-    @Getter(AccessLevel.PACKAGE)
-    @JsonUnwrapped
+    @JsonProperty
     private Map<String, String> additional;
 }
