@@ -204,6 +204,16 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                 .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
+                        } catch (IllegalArgumentException exception) {
+                            LOGGER.warn("Failed to fetch resource data. [id=({}), " +
+                                            "resourceId=({}), artifactId=({}), exception=({})]",
+                                    requestMessage.getId(), resourceId, artifactId,
+                                    exception.getMessage());
+                            return ErrorResponse
+                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                                            "Invalid query input.",
+                                            connector.getId(),
+                                            connector.getOutboundModelVersion());
                         }
 
                         // Build artifact response.
