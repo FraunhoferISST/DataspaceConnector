@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoun
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidateUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidationUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,21 +40,20 @@ public class ResourceDataController { // Header: Content-Type: application/json
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDataController.class);
 
-    private final ResourceService offeredResourceService, requestedResourceService;
-    private final ValidateUtils validateUtils;
+    private final OfferedResourceServiceImpl offeredResourceService;
+    private final RequestedResourceServiceImpl requestedResourceService;
 
     /**
      * Constructor for ResourceDataController.
      *
-     * @param offeredResourceService The service for the offered resources
-     * @param requestedResourceService The service for the requested resources
-     * @param validateUtils
+     * @param offeredResourceService The service for the offered resources.
+     * @param requestedResourceService The service for the requested resources.
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
     public ResourceDataController(OfferedResourceServiceImpl offeredResourceService,
-                                  RequestedResourceServiceImpl requestedResourceService,
-                                  ValidateUtils validateUtils) throws IllegalArgumentException {
+                                  RequestedResourceServiceImpl requestedResourceService)
+            throws IllegalArgumentException {
         if (offeredResourceService == null)
             throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
 
@@ -63,7 +62,6 @@ public class ResourceDataController { // Header: Content-Type: application/json
 
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
-        this.validateUtils = validateUtils;
     }
 
     /**
@@ -128,7 +126,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
                       "data from the backend system.")
               @RequestBody(required = false) QueryInput queryInput) {
         try {
-            validateUtils.validateQueryInput(queryInput);
+            ValidationUtils.validateQueryInput(queryInput);
             try {
                 return new ResponseEntity<>(offeredResourceService.getData(id, queryInput),
                         HttpStatus.OK);
@@ -200,7 +198,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
                     "data from the backend system.")
             @RequestBody(required = false) QueryInput queryInput) {
         try {
-            validateUtils.validateQueryInput(queryInput);
+            ValidationUtils.validateQueryInput(queryInput);
             try {
                 return new ResponseEntity<>(
                         offeredResourceService.getDataByRepresentation(resourceId, representationId, queryInput),

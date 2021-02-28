@@ -18,7 +18,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.De
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidateUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidationUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,8 +54,7 @@ public class RequestController {
     private final NegotiationService negotiationService;
     private final ResourceService resourceService;
     private final ObjectMapper objectMapper;
-    private final ValidateUtils validateUtils;
-    
+
 
     /**
      * Constructor for RequestController
@@ -66,7 +65,6 @@ public class RequestController {
      * @param contractMessageService The service for contract messages
      * @param negotiationService The service for negotiations
      * @param requestedResourceService The service for the requested resources
-     * @param validateUtils
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
@@ -75,8 +73,7 @@ public class RequestController {
                              DescriptionMessageService descriptionMessageService,
                              ContractMessageService contractMessageService,
                              NegotiationService negotiationService,
-                             RequestedResourceServiceImpl requestedResourceService,
-                             ValidateUtils validateUtils)
+                             RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -103,7 +100,6 @@ public class RequestController {
         this.negotiationService = negotiationService;
         this.resourceService = requestedResourceService;
         this.objectMapper = new ObjectMapper();
-        this.validateUtils = validateUtils;
     }
 
     /**
@@ -338,7 +334,7 @@ public class RequestController {
         }
 
         try {
-            validateUtils.validateQueryInput(queryInput);
+            ValidationUtils.validateQueryInput(queryInput);
         } catch (IllegalArgumentException exception) {
             // There is an empty key or value string in the params or headers map
             LOGGER.debug("Invalid input for headers or params. [exception=({})]", exception.getMessage());

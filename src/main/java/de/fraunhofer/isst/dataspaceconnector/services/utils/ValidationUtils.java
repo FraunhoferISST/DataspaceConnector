@@ -1,16 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 /**
  * This class provides methods to validate values.
  */
-@Service
-public class ValidateUtils {
-    
+public final class ValidationUtils {
+
     /**
      * Checks a given query input. If any of the keys or values in the headers or params maps are
      * null, blank, or empty, an  exception is thrown.
@@ -18,7 +16,7 @@ public class ValidateUtils {
      * @param queryInput the query input to validate.
      * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
      */
-    public void validateQueryInput(QueryInput queryInput) {
+    public static void validateQueryInput(QueryInput queryInput) {
         if (queryInput != null && queryInput.getHeaders() != null) {
             for (Map.Entry<String, String> entry : queryInput.getHeaders().entrySet()) {
                 if (entry.getKey() == null || entry.getKey().trim().isEmpty()
@@ -36,7 +34,7 @@ public class ValidateUtils {
                 }
             }
         }
-    
+
         if (queryInput != null && queryInput.getPathVariables() != null) {
             for (Map.Entry<String, String> entry : queryInput.getPathVariables().entrySet()) {
                 if (entry.getKey() == null || entry.getKey().trim().isEmpty()
