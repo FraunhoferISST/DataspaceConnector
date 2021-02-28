@@ -140,7 +140,7 @@ public class HttpUtils {
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
-        if(queryInput != null) {
+        if (queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
             address = addQueryParamsToURL(address, queryInput.getParams());
         } else {
@@ -184,7 +184,8 @@ public class HttpUtils {
      * @param pathVariables map containing the values for the path variables by name
      * @return the URL with path variables substituted
      */
-    private String replacePathVariablesInUrl(String address, Map<String, String> pathVariables) {
+    private String replacePathVariablesInUrl(String address, Map<String, String> pathVariables)
+            throws IllegalArgumentException {
         if (pathVariables != null) {
             long pathVariableCount = address.chars().filter(ch -> ch == '{').count();
             if (pathVariableCount != pathVariables.size()) {
@@ -193,7 +194,7 @@ public class HttpUtils {
             }
 
             // http://localhost:8080/{path}/{id}
-            for(int i = 1; i <= pathVariableCount; i++) {
+            for (int i = 1; i <= pathVariableCount; i++) {
                 String pathVariableName = address.substring(address.indexOf("{") + 1,
                         address.indexOf("}"));
 
@@ -203,18 +204,18 @@ public class HttpUtils {
                             " name '" + pathVariableName + "'.");
                 }
 
-                //should always be first index of braces because all prior should have been replaced
+                // Should always be first index of braces because all prior should have been replaced.
                 address = address.substring(0, address.indexOf("{")) // http://localhost:8080/
                         + pathVariableValue // resource
                         + address.substring(address.indexOf("}") + 1); // /{id}
             }
         }
-
         return address;
     }
 
     /**
-     * Enrich the URL address with given query parameters. If the query parameters are empty, the address remains unchanged.
+     * Enrich the URL address with given query parameters. If the query parameters are empty, the
+     * address remains unchanged.
      *
      * @param address URL address to be enriched.
      * @param queryParams Query parameters that have to be added on the address.
