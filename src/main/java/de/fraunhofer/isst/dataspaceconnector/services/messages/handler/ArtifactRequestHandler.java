@@ -205,7 +205,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                     "Something went wrong.", connector.getId(),
                                     connector.getOutboundModelVersion());
                         } catch (IllegalArgumentException exception) {
-                            LOGGER.debug("Failed to fetch resource data. [id=({}), " +
+                            LOGGER.warn("Failed to fetch resource data. [id=({}), " +
                                             "resourceId=({}), artifactId=({}), exception=({})]",
                                     requestMessage.getId(), resourceId, artifactId,
                                     exception.getMessage());

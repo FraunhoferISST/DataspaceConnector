@@ -398,13 +398,19 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 return getDataByRepresentation(resourceId, representationId, queryInput);
             } catch (ResourceException exception) {
                 // The resource is incomplete or wrong.
-                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+                LOGGER.debug("Resource exception. [resourceId=({}), representationId=({}), " +
+                        "exception=({})]", resourceId, representationId, exception);
+                throw exception;
             } catch (IllegalArgumentException exception) {
-                // Query input was invalid
+                // Query input was invalid.
+                LOGGER.debug("Invalid query input. [resourceId=({}), representationId=({}), " +
+                        "exception=({})]", resourceId, representationId, exception);
                 throw exception;
             } catch (RuntimeException exception) {
                 // The resource could not be received.
-                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), exception=({})]", resourceId, representationId, exception);
+                LOGGER.debug("Failed to get resource data. [resourceId=({}), representationId=({}), " +
+                        "exception=({})]", resourceId, representationId, exception);
+                throw exception;
             }
         }
 
@@ -628,8 +634,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
      * @throws ResourceException if the resource source is not defined or source url is
      *                           ill-formatted.
      */
-    private String getDataString(OfferedResource resource, ResourceRepresentation representation, QueryInput queryInput)
-        throws ResourceException {
+    private String getDataString(OfferedResource resource,
+                                 ResourceRepresentation representation,
+                                 QueryInput queryInput) throws ResourceException {
         if (representation.getSource() != null) {
             try {
                 final var address = representation.getSource().getUrl();
@@ -660,7 +667,9 @@ public class OfferedResourceServiceImpl implements ResourceService {
                 throw new ResourceException("The deposited address is not a valid URI.",
                     exception);
             } catch (IllegalArgumentException exception) {
-                // Query input was invalid
+                // Query input was invalid.
+                LOGGER.debug("Invalid query input. [resource=({}), representation=({}), " +
+                        "exception=({})]", resource, representation, exception);
                 throw exception;
             } catch (RuntimeException exception) {
                 // One of the http calls encountered problems.
