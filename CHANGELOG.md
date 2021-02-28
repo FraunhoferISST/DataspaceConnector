@@ -7,8 +7,8 @@ All notable changes to this project will be documented in this file.
 - Handle ResourceUpdateMessage: Update the local copy of resource upon receiving a ResourceUpdateMessage.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
 - Store `ownerURI`, `contractID`, `artifactID`, and `originalUUID` in `RequestedResource`.
-- Add support for query params and additional headers when requesting artifacts.
-- Add input validation for query params and headers.
+- Add support for query params, path variables and additional headers when requesting artifacts.
+- Add input validation for query params, path variables and headers.
 - Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
 - Add example files for deployment in Kubernetes.
 

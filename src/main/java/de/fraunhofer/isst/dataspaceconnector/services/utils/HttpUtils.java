@@ -57,12 +57,17 @@ public class HttpUtils {
      *                               request.
      */
     public String sendHttpGetRequest(String address, QueryInput queryInput) throws
-            RuntimeException, URISyntaxException {
-        try {
-            if (queryInput != null) {
-                address = addQueryParamsToURL(address, queryInput.getParams());
+        RuntimeException, URISyntaxException {
+        if(queryInput != null) {
+            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
+            address = addQueryParamsToURL(address, queryInput.getParams());
+        } else {
+            if (address.contains("{")) {
+                throw new IllegalArgumentException("Missing path variables.");
             }
+        }
 
+        try {
             final var uri = new URI(address);
 
             Response response;
@@ -135,13 +140,17 @@ public class HttpUtils {
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
         final var authHeader = "Basic " + new String(encodedAuth);
 
-        try {
-            if (queryInput != null) {
-                address = addQueryParamsToURL(address, queryInput.getParams());
+        if(queryInput != null) {
+            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
+            address = addQueryParamsToURL(address, queryInput.getParams());
+        } else {
+            if (address.contains("{")) {
+                throw new IllegalArgumentException("Missing path variables.");
             }
+        }
 
+        try {
             final var uri = new URI(address);
-
             Response response;
             if (queryInput != null && queryInput.getHeaders() != null) {
                 queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
@@ -165,6 +174,43 @@ public class HttpUtils {
             LOGGER.warn("Failed to send the http get request. [url=({})]", address);
             throw new RuntimeException("Failed to send the http get request.", exception);
         }
+    }
+
+    /**
+     * Replaces all parts of a given URL that are marked as path variables, if any, using the values
+     * supplied in the path variables map.
+     *
+     * @param address the URL possibly containing path variables
+     * @param pathVariables map containing the values for the path variables by name
+     * @return the URL with path variables substituted
+     */
+    private String replacePathVariablesInUrl(String address, Map<String, String> pathVariables) {
+        if (pathVariables != null) {
+            long pathVariableCount = address.chars().filter(ch -> ch == '{').count();
+            if (pathVariableCount != pathVariables.size()) {
+                throw new IllegalArgumentException("The number of supplied path variables does not " +
+                        "match the number of path variables in the URL.");
+            }
+
+            // http://localhost:8080/{path}/{id}
+            for(int i = 1; i <= pathVariableCount; i++) {
+                String pathVariableName = address.substring(address.indexOf("{") + 1,
+                        address.indexOf("}"));
+
+                String pathVariableValue = pathVariables.get(pathVariableName); // resource
+                if (pathVariableValue == null) {
+                    throw new IllegalArgumentException("No value found for path variable with" +
+                            " name '" + pathVariableName + "'.");
+                }
+
+                //should always be first index of braces because all prior should have been replaced
+                address = address.substring(0, address.indexOf("{")) // http://localhost:8080/
+                        + pathVariableValue // resource
+                        + address.substring(address.indexOf("}") + 1); // /{id}
+            }
+        }
+
+        return address;
     }
 
     /**
