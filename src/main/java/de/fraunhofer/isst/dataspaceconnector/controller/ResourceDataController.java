@@ -85,7 +85,7 @@ public class ResourceDataController { // Header: Content-Type: application/json
             example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
         @PathVariable("resource-id") UUID id,
         @Parameter(description = "The resource data.", required = true, example = "Data String")
-        @RequestParam("data") String data) {
+        @RequestBody String data) {
         try {
             offeredResourceService.addData(id, data);
             return new ResponseEntity<>("", HttpStatus.CREATED);
