@@ -18,10 +18,9 @@
 The Dataspace Connector is an implementation of an IDS connector component following the 
 [IDS Reference Architecture Model](https://www.internationaldataspaces.org/wp-content/uploads/2019/03/IDS-Reference-Architecture-Model-3.0.pdf). 
 It integrates the [IDS Information Model](https://github.com/International-Data-Spaces-Association/InformationModel) 
-and uses the [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) 
+and uses the [IDS Connector Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) 
 for IDS functionalities and message handling. It provides a REST API for loading, updating, and 
-deleting resources with data and its metadata, persisted in a local database. Next to the internal 
-database, external REST endpoints may be connected as data sources. The Dataspace Connector 
+deleting resources with local or remote data with its metadata. The Dataspace Connector 
 supports IDS conform message handling with other IDS connectors and IDS brokers and implements 
 usage control for eight IDS usage policy patterns. 
 
@@ -34,6 +33,7 @@ usage control for eight IDS usage policy patterns.
     - [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
     - [IDS Communication Guide](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-communication-guide)
     - [IDS Connector Architecture](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-connector-architecture)
+    - [Kubernetes](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Kubernetes)
     - [Logging](https://github.com/FraunhoferISST/DataspaceConnector/wiki/logging)
     - [Roadmap](https://github.com/FraunhoferISST/DataspaceConnector/wiki/roadmap)
     - [Software Documentation](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-documentation)
@@ -73,7 +73,7 @@ Dataspace Connector and further IDS connector implementations. Both projects are
 | [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
 | [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) | 4.0.1 | Apache 2.0 | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
-| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | open core | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | open core | Fraunhofer IAIS | [Matthias Böckmann](mailto:matthias.boeckmann@iais.fraunhofer.de) |
 | [DAPS](https://daps.aisec.fraunhofer.de/) | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
 ## Contributing
@@ -96,6 +96,7 @@ The core development is driven by
 with significant contributions, comments, and support by (in alphabetical order):
 * [Haydar Qarawlus](https://github.com/hqarawlus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Johannes Pieperbeck](https://github.com/jpieperbeck), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
+* [René Brinkhege](https://github.com/renebrinkhege), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Steffen Biehs](https://github.com/steffen-biehs), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 ## License

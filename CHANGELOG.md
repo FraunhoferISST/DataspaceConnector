@@ -4,16 +4,22 @@ All notable changes to this project will be documented in this file.
 ## [4.1.0-SNAPSHOT]
 
 ### Added
+- Handle `ResourceUpdateMessage`: Update the local copy of resource upon receiving a `ResourceUpdateMessage`.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
-- Store `ownerURI` and `originalUUID` in `RequestedResource`.
-- Store `contract` URI in `ResourceRepresentation`.
-- Add support for query params and additional headers when requesting artifacts.
-- Add input validation for query params and headers.
+- Store `ownerURI`, `contractID`, `artifactID`, and `originalUUID` in `RequestedResource`.
+- Add support for query params, path variables, and additional headers when requesting artifacts.
+- Add input validation for query params, path variables, and headers.
 - Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
+- Add example files for deployment in Kubernetes.
 
 ### Changed
 - Configure Spring to fail on unknown properties in request bodies.
 - Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
+- Refactor HttpUtils to use the IDS Framework's `HttpService`.
+
+### Fixed
+- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and 
+  configurations to avoid state errors (relevant for the broker communication).
 
 ## [4.0.2] - 2021-02-04
 

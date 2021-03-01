@@ -6,12 +6,15 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import okhttp3.MultipartBody;
@@ -23,8 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Abstract class for building and sending IDS messages.
@@ -37,7 +39,7 @@ public abstract class MessageService {
     private final IDSHttpService idsHttpService;
     private final ResourceService resourceService;
     private final SerializerProvider serializerProvider;
-    private final IdsUtils idsUtils;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for MessageService.
@@ -45,9 +47,9 @@ public abstract class MessageService {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public MessageService(IDSHttpService idsHttpService, IdsUtils idsUtils,
-        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService)
-        throws IllegalArgumentException {
+    public MessageService(IDSHttpService idsHttpService,
+        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService,
+        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
         if (idsHttpService == null)
             throw new IllegalArgumentException("The IDSHttpService cannot be null.");
 
@@ -57,13 +59,13 @@ public abstract class MessageService {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         this.idsHttpService = idsHttpService;
         this.resourceService = resourceService;
         this.serializerProvider = serializerProvider;
-        this.idsUtils = idsUtils;
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -161,7 +163,8 @@ public abstract class MessageService {
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
-        final var connector = idsUtils.getConnector();
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
 
         for (var version : connector.getInboundModelVersion()) {
             if (version.equals(versionString)) {
@@ -211,6 +214,70 @@ public abstract class MessageService {
             return prohibitions.get(0).getTarget();
 
         return null;
+    }
+
+    /**
+     * Maps a received Infomodel resource to the internal metadata model.
+     *
+     * @param resource The resource
+     * @return the metadata object.
+     */
+    protected ResourceMetadata deserializeMetadata(Resource resource) {
+        var metadata = new ResourceMetadata();
+
+        if (resource.getKeyword() != null) {
+            List<String> keywords = new ArrayList<>();
+            for (var t : resource.getKeyword()) {
+                keywords.add(t.getValue());
+            }
+            metadata.setKeywords(keywords);
+        }
+
+        if (resource.getRepresentation() != null) {
+            var representations = new HashMap<UUID, ResourceRepresentation>();
+            for (Representation r : resource.getRepresentation()) {
+                int byteSize = 0;
+                String name = null;
+                String type = null;
+                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
+                    Artifact artifact = (Artifact) r.getInstance().get(0);
+                    if (artifact.getByteSize() != null)
+                        byteSize = artifact.getByteSize().intValue();
+                    if (artifact.getFileName() != null)
+                        name = artifact.getFileName();
+                    if (r.getMediaType() != null)
+                        type = r.getMediaType().getFilenameExtension();
+                }
+
+                ResourceRepresentation representation = new ResourceRepresentation(
+                        UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
+                        new BackendSource(BackendSource.Type.LOCAL, null, null, null)
+                );
+
+                representations.put(representation.getUuid(), representation);
+            }
+            metadata.setRepresentations(representations);
+        }
+
+        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
+            metadata.setTitle(resource.getTitle().get(0).getValue());
+
+        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
+            metadata.setDescription(resource.getDescription().get(0).getValue());
+
+        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
+            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
+
+        if (resource.getPublisher() != null)
+            metadata.setOwner(resource.getPublisher());
+
+        if (resource.getStandardLicense() != null)
+            metadata.setLicense(resource.getStandardLicense());
+
+        if (resource.getVersion() != null)
+            metadata.setVersion(resource.getVersion());
+
+        return metadata;
     }
 
     /**

@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentEx
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService.ResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
@@ -16,8 +17,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.Co
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.DescriptionMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidationUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,6 +55,7 @@ public class RequestController {
     private final ResourceService resourceService;
     private final ObjectMapper objectMapper;
 
+
     /**
      * Constructor for RequestController
      *
@@ -67,11 +69,11 @@ public class RequestController {
      */
     @Autowired
     public RequestController(DapsTokenProvider tokenProvider,
-        ArtifactMessageService artifactMessageService,
-        DescriptionMessageService descriptionMessageService,
-        ContractMessageService contractMessageService,
-        NegotiationService negotiationService,
-        RequestedResourceServiceImpl requestedResourceService)
+                             ArtifactMessageService artifactMessageService,
+                             DescriptionMessageService descriptionMessageService,
+                             ContractMessageService contractMessageService,
+                             NegotiationService negotiationService,
+                             RequestedResourceServiceImpl requestedResourceService)
         throws IllegalArgumentException {
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -168,7 +170,7 @@ public class RequestController {
             // Save metadata to database.
             try {
                 final var validationKey = descriptionMessageService
-                    .saveMetadata(payload, resourceId, recipient);
+                        .saveMetadata(payload, resourceId, recipient);
                 return new ResponseEntity<>("Validation: " + validationKey +
                     "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
@@ -332,7 +334,7 @@ public class RequestController {
         }
 
         try {
-            validateQueryInput(queryInput);
+            ValidationUtils.validateQueryInput(queryInput);
         } catch (IllegalArgumentException exception) {
             // There is an empty key or value string in the params or headers map
             LOGGER.debug("Invalid input for headers or params. [exception=({})]", exception.getMessage());
@@ -384,8 +386,18 @@ public class RequestController {
             return returnRejectionMessage(messageType, response);
 
         try {
-            // Set contractID
-            resourceService.getRepresentation(key, UUIDUtils.uuidFromUri(artifactId)).setContract(contractId);
+            // Save contract agreement id and requested artifact.
+            final var resource = (RequestedResource) resourceService.getResource(key);
+            resource.setContractAgreement(contractId);
+            resource.setRequestedArtifact(artifactId);
+        } catch (ResourceException exception) {
+            LOGGER.warn("Could not update resource. [exception=({})]",
+                    exception.getMessage());
+            return new ResponseEntity<>("Could not update metadata.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        try {
             // Save data to database.
             artifactMessageService.saveData(payload, key);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: " +
@@ -393,7 +405,7 @@ public class RequestController {
         } catch (ResourceException exception) {
             LOGGER.warn("Could not save data to database. [exception=({})]",
                 exception.getMessage());
-            return new ResponseEntity<>("Failed to save to database.",
+            return new ResponseEntity<>("Failed to save data to database.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -444,33 +456,6 @@ public class RequestController {
             return resourceService.getResource(resourceId) != null;
         } catch (ResourceException exception) {
             return false;
-        }
-    }
-
-    /**
-     * Checks a given query input. If any of the keys or values in the headers or params maps are
-     * null, blank, or empty, an  exception is thrown.
-     *
-     * @param queryInput the query input to validate.
-     * @throws IllegalArgumentException if any of the keys or values are null, blank, or empty.
-     */
-    private void validateQueryInput(QueryInput queryInput) {
-        if (queryInput != null && queryInput.getHeaders() != null) {
-            for (Map.Entry<String, String> entry: queryInput.getHeaders().entrySet()) {
-                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
-                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
-                    throw new IllegalArgumentException("Header key or value should not be null, blank or empty " +
-                            "(key:" + entry.getKey() + ", value: " + entry.getValue() + ").");
-                }
-            }
-        }
-        if (queryInput != null && queryInput.getParams() != null) {
-            for (Map.Entry<String, String> entry: queryInput.getParams().entrySet()) {
-                if (entry.getKey() == null || entry.getKey().trim().isEmpty()
-                        || entry.getValue() == null || entry.getValue().trim().isEmpty()) {
-                    throw new IllegalArgumentException("Param key or value should not be null, blank or empty.");
-                }
-            }
         }
     }
 }
