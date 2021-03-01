@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - Configure Spring to fail on unknown properties in request bodies.
 - Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
 - Refactor HttpUtils to use the IDS Framework's `HttpService`.
+- Add data string as request body instead of request parameter.
 
 ### Fixed
 - Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and 
