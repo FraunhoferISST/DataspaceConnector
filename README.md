@@ -9,9 +9,10 @@
 
 <p align="center">
   <a href="mailto:info@dataspace-connector.de">Contact</a> •
-  <a href="https://github.com/FraunhoferISST/DataspaceConnector/issues">Issues</a> •
   <a href="#con">Contribute</a> •
-  <a href="#license">License</a>
+  <a href="https://github.com/FraunhoferISST/DataspaceConnector/issues">Issues</a> •
+  <a href="#license">License</a> •
+  <a href="https://github.com/FraunhoferISST/DataspaceConnector/wiki">Wiki</a>
 </p>
 
 
@@ -20,14 +21,14 @@ The Dataspace Connector is an implementation of an IDS connector component follo
 It integrates the [IDS Information Model](https://github.com/International-Data-Spaces-Association/InformationModel) 
 and uses the [IDS Connector Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) 
 for IDS functionalities and message handling. It provides a REST API for loading, updating, and 
-deleting resources with local or remote data with its metadata. The Dataspace Connector 
+deleting resources with local or remote data enriched by its metadata. The Dataspace Connector 
 supports IDS conform message handling with other IDS connectors and IDS brokers and implements 
 usage control for eight IDS usage policy patterns. 
 
 ## Content
 - [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
     - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
-    - [Development](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
+    - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
     - [Examples](https://github.com/FraunhoferISST/DataspaceConnector/wiki/examples)
     - [Frequently Asked Questions](https://github.com/FraunhoferISST/DataspaceConnector/wiki/faq)   
     - [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
@@ -68,13 +69,13 @@ The [ConfigManager](https://github.com/FraunhoferISST/IDS-ConfigurationManager) 
 [GUI](https://github.com/fkie/ids-configmanager-ui) aim to facilitate the configuration of the 
 Dataspace Connector and further IDS connector implementations. Both projects are also open source.
 
-| Library/ Component | Version | License | Owner | Contact |
-| ------- | ------- | ------- | ----- | ------- |
-| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | 4.0.0 | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
-| [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) | 4.0.1 | Apache 2.0 | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
-| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | 4.0.0 | open core | Fraunhofer IAIS | [Matthias Böckmann](mailto:matthias.boeckmann@iais.fraunhofer.de) |
-| [DAPS](https://daps.aisec.fraunhofer.de/) | 2.0 | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
+| Library/ Component | License | Owner | Contact |
+| ------- | ------- | ----- | ------- |
+| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | Apache 2.0 | Fraunhofer IAIS | [Sebastian Bader](mailto:sebastian.bader@iais.fraunhofer.de) |
+| [IDS Framework](https://github.com/FraunhoferISST/IDS-Connector-Framework) | Apache 2.0 | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
+| [IDS Broker](https://broker.ids.isst.fraunhofer.de/) | open core | Fraunhofer IAIS | [Matthias Böckmann](mailto:matthias.boeckmann@iais.fraunhofer.de) |
+| [DAPS](https://daps.aisec.fraunhofer.de/) | not open source | Fraunhofer AISEC | [Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de) |
 
 ## Contributing
 
