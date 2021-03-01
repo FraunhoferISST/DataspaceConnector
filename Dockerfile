@@ -11,11 +11,13 @@ COPY src /tmp/src/
 RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Copy the jar and build image
-FROM adoptopenjdk/openjdk11:alpine-jre
-RUN mkdir /app
+FROM gcr.io/distroless/java:11
+COPY --from=maven --chown=65532:65532 /tmp/target/*.jar /app/app.jar
 
-COPY --from=maven /tmp/target/*.jar /app/app.jar
+WORKDIR /app
 
-WORKDIR /app/
+EXPOSE 8080
+
+USER nonroot
 
 ENTRYPOINT ["java","-jar","app.jar"]
