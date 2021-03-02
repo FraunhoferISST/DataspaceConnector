@@ -1,17 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,11 +32,6 @@ import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respon
 public class ConfigurationController {
 
     /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
-
-    /**
      * The current connector configuration.
      */
     private final @NonNull ConfigurationContainer configurationContainer;
@@ -48,40 +41,43 @@ public class ConfigurationController {
      */
     private final @NonNull SerializerProvider serializerProvider;
 
-    @Hidden
+    /**
+     * Update the connector's current configuration.
+     *
+     * @param configuration The new configuration.
+     * @return Ok or error response.
+     */
     @RequestMapping(value = "/configuration", method = RequestMethod.POST)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
-    public ResponseEntity<String> updateConfiguration(@RequestBody String updatedConfiguration) {
+    public ResponseEntity<String> updateConfiguration(@RequestBody final String configuration) {
         try {
             final var serializer = serializerProvider.getSerializer();
             if (serializer == null) {
                 throw new NullPointerException("No configuration serializer has been set.");
             }
 
-            final var new_configurationModel =
-                serializer.deserialize(updatedConfiguration, ConfigurationModel.class);
+            final var newConfigModel =
+                serializer.deserialize(configuration, ConfigurationModel.class);
 
-            configurationContainer.updateConfiguration(new_configurationModel);
+            configurationContainer.updateConfiguration(newConfigModel);
             return new ResponseEntity<>("Configuration successfully updated.", HttpStatus.OK);
         } catch (NullPointerException exception) {
-            LOGGER.warn("Failed to receive the serializer. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to update configuration.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (IOException exception) {
-            LOGGER.warn("Failed to deserialize the configuration. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to update configuration.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return ControllerUtils.responseFailedToLoadSerializer(exception);
         } catch (ConfigurationUpdateException exception) {
-            LOGGER.warn("Failed to update the configuration. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Failed to update configuration.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+            return ControllerUtils.respondConfigurationUpdateError(exception);
+        } catch (IOException exception) {
+            return ControllerUtils.responseDeserializationError(exception);
         }
     }
 
-    @Hidden
+    /**
+     * Return the connector's current configuration.
+     *
+     * @return The configuration object or an error.
+     */
     @RequestMapping(value = "/configuration", method = RequestMethod.GET)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -90,7 +86,7 @@ public class ConfigurationController {
     public ResponseEntity<String> getConfiguration() {
         final var config = configurationContainer.getConfigModel();
         if (config != null) {
-            // Return the config
+            // Return the config.
             return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
         } else {
             return respondConfigurationNotFound();

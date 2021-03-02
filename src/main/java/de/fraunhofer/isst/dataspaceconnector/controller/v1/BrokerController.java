@@ -1,24 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondBrokerCommunicationFailed;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceNotFound;
-import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondUpdateError;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.Resource;
@@ -36,6 +17,24 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondBrokerCommunicationFailed;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondConfigurationUpdateError;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceCouldNotBeLoaded;
+import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondResourceNotFound;
 
 /**
  * This class provides endpoints for the communication with an IDS broker instance.
@@ -193,8 +192,8 @@ public class BrokerController {
             // Send the update request to the broker.
             final var brokerResponse = brokerService.updateSelfDescriptionAtBroker(url);
             return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-        } catch (ConfigurationUpdateException e) {
-            return respondUpdateError(url);
+        } catch (ConfigurationUpdateException exception) {
+            return respondConfigurationUpdateError(exception);
         } catch (NullPointerException | IOException exception) {
             return respondBrokerCommunicationFailed(exception);
         }
@@ -244,8 +243,8 @@ public class BrokerController {
             // Send the unregister request to the broker
             final var brokerResponse = brokerService.unregisterAtBroker(url);
             return new ResponseEntity<>(brokerResponse.body().string(), HttpStatus.OK);
-        } catch (ConfigurationUpdateException e) {
-            return respondUpdateError(url);
+        } catch (ConfigurationUpdateException exception) {
+            return respondConfigurationUpdateError(exception);
         } catch (NullPointerException | IOException exception) {
             return respondBrokerCommunicationFailed(exception);
         }
