@@ -58,22 +58,11 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     @Override
     public MessageResponse handleMessage(DescriptionRequestMessageImpl requestMessage,
         MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
+        messageService.checkForEmptyMessage(requestMessage);
+        messageService.checkForVersionSupport(requestMessage.getModelVersion());
 
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.checkForVersionSupport(requestMessage.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.VERSION_NOT_SUPPORTED,
-                "Information model version not supported.",
-                connector.getId(), connector.getOutboundModelVersion());
-        }
 
         // Check if a specific resource has been requested.
         if (requestMessage.getRequestedElement() != null) {
