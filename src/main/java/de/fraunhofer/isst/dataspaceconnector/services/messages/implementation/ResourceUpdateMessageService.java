@@ -1,3 +1,4 @@
+/*
 package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
 import de.fraunhofer.iais.eis.*;
@@ -32,9 +33,11 @@ import java.util.*;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
+*/
 /**
  * The service for ResourceUpdateMessages messages
- */
+ *//*
+
 @Service
 public class ResourceUpdateMessageService extends MessageService {
     public static final Logger LOGGER = LoggerFactory.getLogger(ResourceUpdateMessageHandler.class);
@@ -45,7 +48,8 @@ public class ResourceUpdateMessageService extends MessageService {
     private final ArtifactMessageService artifactMessageService;
     private URI recipient, resourceID, correlationMessageId;
 
-    /**
+    */
+/**
      * Constructor
      *
      * @param tokenProvider The service for providing tokens
@@ -56,7 +60,8 @@ public class ResourceUpdateMessageService extends MessageService {
      * @param serializerProvider The service for serializing
      * @param requestedResourceService The requested resource service for managing requested resources
      * @throws IllegalArgumentException if any of the parameters is null
-     */
+     *//*
+
     @Autowired
     public ResourceUpdateMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
                                         ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
@@ -77,9 +82,11 @@ public class ResourceUpdateMessageService extends MessageService {
         this.artifactMessageService = artifactMessageService;
     }
 
-    /**
+    */
+/**
      * {@inheritDoc}
-     */
+     *//*
+
     @Override
     public Message buildRequestHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
@@ -96,9 +103,11 @@ public class ResourceUpdateMessageService extends MessageService {
                 .build();
     }
 
-    /**
+    */
+/**
      * {@inheritDoc}
-     */
+     *//*
+
     @Override
     public Message buildResponseHeader() throws MessageBuilderException {
         // Get a local copy of the current connector.
@@ -115,43 +124,51 @@ public class ResourceUpdateMessageService extends MessageService {
                 .build();
     }
 
-    /**
+    */
+/**
      * {@inheritDoc}
-     */
+     *//*
+
     @Override
     public URI getRecipient() {
         return recipient;
     }
 
-    /**
+    */
+/**
      * Set the request parameters for the message
      *
      * @param recipient The recipient of the request
      * @param resourceID The resource ID in the request
-     */
+     *//*
+
     public void setRequestParameters(URI recipient, URI resourceID) {
         this.recipient = recipient;
         this.resourceID = resourceID;
     }
 
-    /**
+    */
+/**
      * Set the response parameters for the message
      *
      * @param recipient The recipient of the response
      * @param correlationMessageId The id of the correlation message
-     */
+     *//*
+
     public void setResponseParameters(URI recipient, URI correlationMessageId) {
         this.recipient = recipient;
         this.correlationMessageId = correlationMessageId;
     }
 
-    /**
+    */
+/**
      * Update a resource in the internal database.
      *
      * @param remoteResource Resource instance of provider resource
      * @throws ResourceException if metadata or data could not be updated.
      * @throws MessageException if the artifact request has not been successful.
-     */
+     *//*
+
     public boolean updateResource(Resource remoteResource) throws ResourceException, MessageException {
         ResourceMetadata metadata;
         try {
@@ -188,14 +205,16 @@ public class ResourceUpdateMessageService extends MessageService {
         }
     }
 
-    /**
+    */
+/**
      * Update an artifact of a resource from a remote provider.
      * TODO Add previously used query parameters (save in RequestController)
      *
      * @param resource the requested resource to which the data belongs.
      * @throws MessageException if the artifact request has not been successful.
      * @throws ResourceException if the data could not be updated.
-     */
+     *//*
+
     private void updateArtifact(RequestedResource resource) throws MessageException, ResourceException {
         URI recipient = resource.getOwnerURI();
         URI artifactId = resource.getRequestedArtifact();
@@ -244,3 +263,4 @@ public class ResourceUpdateMessageService extends MessageService {
         }
     }
 }
+*/

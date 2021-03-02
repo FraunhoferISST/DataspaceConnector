@@ -67,7 +67,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
+        if (!messageService.checkForVersionSupport(requestMessage.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                 RejectionReason.VERSION_NOT_SUPPORTED,

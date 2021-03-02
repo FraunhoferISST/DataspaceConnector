@@ -41,30 +41,20 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message        The received notification message.
      * @param messagePayload The message notification messages content.
      * @return The response message.
-     * @throws RuntimeException                - if the response body failed to be build.
+     * @throws RuntimeException If the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(NotificationMessageImpl message,
-        MessagePayload messagePayload) throws RuntimeException {
-        if (message == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
+    public MessageResponse handleMessage(final NotificationMessageImpl message,
+        final MessagePayload messagePayload) throws RuntimeException {
+
+        messageService.checkForEmptyMessage(message);
+        messageService.checkForVersionSupport(message.getModelVersion());
 
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
-        // Check if version is supported.
-        if (!messageService.isVersionSupported(message.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.VERSION_NOT_SUPPORTED,
-                "Information model version not supported.",
-                connector.getId(), connector.getOutboundModelVersion());
-        }
-
         try {
-            // Build response header.
+            // Build the ids response.
             final var header = messageService.buildMessageProcessedNotification(message.getIssuerConnector(), message.getId());
             return BodyResponse.create(header, "Message received.");
         } catch (ConstraintViolationException | MessageException exception) {

@@ -78,7 +78,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         var connector = configurationContainer.getConnector();
 
         // Check if version is supported.
-        if (!messageService.isVersionSupported(message.getModelVersion())) {
+        if (!messageService.checkForVersionSupport(message.getModelVersion())) {
             LOGGER.debug("Information Model version of requesting connector is not supported.");
             return ErrorResponse.withDefaultHeader(
                     RejectionReason.VERSION_NOT_SUPPORTED,
