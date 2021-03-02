@@ -96,7 +96,7 @@ public class ExampleController {
                     .build()
                 )
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                    ._accessURL_(URI.create("/api/ids/data"))
+                    ._accessURL_(URI.create("https://localhost:8080/api/ids/data"))
                     .build())
                 .build())
             ._keyStore_(URI.create("file:///conf/keystore.p12"))
