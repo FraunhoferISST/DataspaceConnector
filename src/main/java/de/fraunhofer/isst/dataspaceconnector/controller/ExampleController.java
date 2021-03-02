@@ -77,7 +77,7 @@ public class ExampleController {
             ._connectorProxy_(Util.asList(new ProxyBuilder()
                 ._noProxy_(exceptions)
                 ._proxyAuthentication_(new BasicAuthenticationBuilder().build())
-                ._proxyURI_(URI.create("proxy.dortmund.isst.fraunhofer.de:3128"))
+                ._proxyURI_(URI.create("http://proxy.dortmund.isst.fraunhofer.de:3128"))
                 .build()))
             ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
             ._connectorDescription_(new BaseConnectorBuilder()
