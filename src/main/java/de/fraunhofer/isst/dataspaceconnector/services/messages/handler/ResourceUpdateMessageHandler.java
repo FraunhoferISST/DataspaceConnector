@@ -1,3 +1,4 @@
+/*
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -24,12 +25,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+*/
 /**
  * This @{@link ResourceUpdateMessageHandler} handles
  * all incoming messages that have a {@link de.fraunhofer.iais.eis.ResourceUpdateMessageImpl} as
  * part one in the multipart message. This header must have the correct '@type' reference as defined
  * in the {@link ResourceUpdateMessageImpl} JsonTypeName annotation.
- */
+ *//*
+
 @Component
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
@@ -40,13 +43,15 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
     private final ConfigurationContainer configurationContainer;
     private final SerializerProvider serializerProvider;
 
-    /**
+    */
+/**
      * Constructor for ResourceUpdateMessageHandler.
      *
      * @param configurationContainer The container with the configuration
      * @param resourceUpdateMessageService The service responsible for resourceUpdateMessages
      * @throws IllegalArgumentException if one of the parameters is null.
-     */
+     *//*
+
     @Autowired
     public ResourceUpdateMessageHandler(ConfigurationContainer configurationContainer,
                                         ResourceUpdateMessageService resourceUpdateMessageService,
@@ -67,14 +72,16 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
     }
 
-    /**
+    */
+/**
      * This method handles the resource update upon receiving a ResourceUpdateMessage
      *
      * @param message        The received ResourceUpdateMessage message.
      * @param messagePayload The ResourceUpdateMessage messages content.
      * @return The response message.
      * @throws RuntimeException if the response body failed to be build.
-     */
+     *//*
+
     @Override
     public MessageResponse handleMessage(ResourceUpdateMessageImpl message,
                                          MessagePayload messagePayload) throws RuntimeException {
@@ -146,3 +153,4 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         }
     }
 }
+*/

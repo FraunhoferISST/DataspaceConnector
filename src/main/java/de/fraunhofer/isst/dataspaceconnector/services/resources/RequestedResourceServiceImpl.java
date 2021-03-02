@@ -1,3 +1,4 @@
+/*
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.iais.eis.Resource;
@@ -19,10 +20,12 @@ import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
 
+*/
 /**
  * This class implements all methods of {@link ResourceService}.
  * It provides methods for performing the CRUD operations for requested resources.
- */
+ *//*
+
 @Service
 public class RequestedResourceServiceImpl implements ResourceService {
 
@@ -32,11 +35,13 @@ public class RequestedResourceServiceImpl implements ResourceService {
     private final IdsUtils idsUtils;
     private final PolicyHandler policyHandler;
 
-    /**
+    */
+/**
      * Constructor for RequestedResourceServiceImpl.
      *
      * @throws IllegalArgumentException if any of the parameters is null.
-     */
+     *//*
+
     @Autowired
     public RequestedResourceServiceImpl(RequestedResourceRepository requestedResourceRepository,
         IdsUtils idsUtils, PolicyHandler policyHandler) throws IllegalArgumentException {
@@ -54,13 +59,15 @@ public class RequestedResourceServiceImpl implements ResourceService {
         this.policyHandler = policyHandler;
     }
 
-    /**
+    */
+/**
      * Saves the resource with its metadata.
      *
      * @param resourceMetadata the resource's metadata.
      * @return the UUID of the newly created resource.
      * @throws InvalidResourceException if the resource is not valid.
-     */
+     *//*
+
     @Override
     public UUID addResource(ResourceMetadata resourceMetadata) throws InvalidResourceException {
         final var resource = new RequestedResource(new Date(), new Date(), resourceMetadata, "", 0);
@@ -71,14 +78,16 @@ public class RequestedResourceServiceImpl implements ResourceService {
     }
 
 
-    /**
+    */
+/**
      * Saves the resource with its metadata and a given ID.
      *
      * @param resourceMetadata the resource's metadata.
      * @param uuid the ID
      * @throws InvalidResourceException if the resource is not valid.
      * @throws ResourceAlreadyExistsException    - if the resource does already exists.
-     */
+     *//*
+
 
     public UUID addResourceWithInfo(URI ownerURI, UUID uuid, ResourceMetadata resourceMetadata)
             throws  InvalidResourceException {
@@ -92,14 +101,16 @@ public class RequestedResourceServiceImpl implements ResourceService {
         return resource.getUuid();
     }
 
-    /**
+    */
+/**
      * Updates resource metadata by ID.
      *
      * @param resourceId ID of the resource
      * @param resourceMetadata the updated metadata
      * @throws InvalidResourceException if the resource is invalid.
      * @throws ResourceNotFoundException if the resource could not be found
-     */
+     *//*
+
     public void updateResource(UUID resourceId, ResourceMetadata resourceMetadata) throws
             InvalidResourceException, ResourceNotFoundException {
         final var resource = getResource(resourceId);
@@ -113,14 +124,16 @@ public class RequestedResourceServiceImpl implements ResourceService {
                 resourceMetadata);
     }
 
-    /**
+    */
+/**
      * Publishes resource data by ID.
      *
      * @param resourceId ID of the resource
      * @param data data as string
      * @throws ResourceNotFoundException if the resource could not be found
      * @throws InvalidResourceException if the resource is invalid
-     */
+     *//*
+
     @Override
     public void addData(UUID resourceId, String data) throws ResourceNotFoundException,
         InvalidResourceException {
@@ -135,12 +148,14 @@ public class RequestedResourceServiceImpl implements ResourceService {
         LOGGER.debug("Added data to resource. [resourceId=({}), data=({})]", resourceId, data);
     }
 
-    /**
+    */
+/**
      * Deletes a resource by ID.
      *
      * @param resourceId ID of the resource
      * @return true, if the the resource was deleted; false otherwise
-     */
+     *//*
+
     @Override
     public boolean deleteResource(UUID resourceId) {
         try {
@@ -159,12 +174,14 @@ public class RequestedResourceServiceImpl implements ResourceService {
         return false;
     }
 
-    /**
+    */
+/**
      * Gets a resource by ID.
      *
      * @param resourceId ID of the resource
      * @return the resource
-     */
+     *//*
+
     @Override
     public RequestedResource getResource(UUID resourceId) throws InvalidResourceException {
         final var resource = requestedResourceRepository.findById(resourceId);
@@ -177,12 +194,14 @@ public class RequestedResourceServiceImpl implements ResourceService {
         }
     }
 
-    /**
+    */
+/**
      * Gets a resource by Original UUID.
      *
      * @param originalUUID ID of the resource
      * @return the linked list of resources, or null if not found
-     */
+     *//*
+
     public LinkedList<RequestedResource> getResourcesByOriginalUUID(UUID originalUUID) {
         LinkedList<RequestedResource> resources = new LinkedList<>();
         for (RequestedResource resource : getAllResources()) {
@@ -202,13 +221,15 @@ public class RequestedResourceServiceImpl implements ResourceService {
         return requestedResourceRepository.findAll();
     }
 
-    /**
+    */
+/**
      * Gets resource metadata by ID.
      *
      * @param resourceId ID of the resource
      * @return the metadata
      * @throws ResourceNotFoundException if the resource could not be found
-     */
+     *//*
+
     @Override
     public ResourceMetadata getMetadata(UUID resourceId) throws ResourceNotFoundException,
         InvalidResourceException {
@@ -220,20 +241,23 @@ public class RequestedResourceServiceImpl implements ResourceService {
         return resource.getResourceMetadata();
     }
 
-    /**
+    */
+/**
      * Returns all representations of a given resource as a map, where representations are mapped to their IDs.
      *
      * @param resourceId ID of the resource
      * @return the map
      * @throws InvalidResourceException if the resource is invalid.
      * @throws ResourceNotFoundException if the resource could not be found
-     */
+     *//*
+
     public Map<UUID, ResourceRepresentation> getAllRepresentations(UUID resourceId) throws
             ResourceNotFoundException, InvalidResourceException {
         return getMetadata(resourceId).getRepresentations();
     }
 
-    /**
+    */
+/**
      * Gets resource data by ID.
      *
      * @param resourceId ID of the resource
@@ -241,7 +265,8 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @throws ResourceNotFoundException if the resource could not be found.
      * @throws ResourceException if the data could not be retrieved.
      * @throws ContractException if the policy could not be parsed or the policy pattern in not supported.
-     */
+     *//*
+
     @Override
     public String getData(UUID resourceId) throws ResourceNotFoundException,
         ResourceException, ContractException {
@@ -260,16 +285,19 @@ public class RequestedResourceServiceImpl implements ResourceService {
         }
     }
 
-    /**
+    */
+/**
      * Returns all requested resources as a list.
-     */
+     *//*
+
     @Override
     public List<Resource> getResources() {
         return getAllResources().parallelStream().map(idsUtils::getAsResource)
             .collect(Collectors.toList());
     }
 
-    /**
+    */
+/**
      * Gets data from the local database or an external data source.
      *
      * @param resourceId ID of the resource
@@ -277,14 +305,16 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @param queryInput Header and params for data request from backend.
      * @return resource data as string
      * @throws OperationNotSupportedException always
-     */
+     *//*
+
     @Override
     public String getDataByRepresentation(UUID resourceId, UUID representationId, QueryInput queryInput) throws
         OperationNotSupportedException {
         throw new OperationNotSupportedException("Operation not supported.");
     }
 
-    /**
+    */
+/**
      * Finds a representation by ID.
      *
      * @param resourceId ID of the resource.
@@ -292,18 +322,21 @@ public class RequestedResourceServiceImpl implements ResourceService {
      * @return the representation
      * @throws InvalidResourceException if the resource is invalid.
      * @throws ResourceNotFoundException if the resource could not be found
-     */
+     *//*
+
     @Override
     public ResourceRepresentation getRepresentation(UUID resourceId, UUID representationId) throws
             ResourceNotFoundException, InvalidResourceException {
         return getAllRepresentations(resourceId).get(representationId);
     }
 
-    /**
+    */
+/**
      * Checks if a given requested resource is valid.
      * @param resource the requested resource
      * @return an optional string: empty, if the resource is valid; contains error description otherwise
-     */
+     *//*
+
     public Optional<String> isValidRequestedResource(RequestedResource resource) {
         if (resource == null) {
             return Optional.of("The resource cannot be null.");
@@ -320,12 +353,14 @@ public class RequestedResourceServiceImpl implements ResourceService {
         return Optional.empty();
     }
 
-    /**
+    */
+/**
      * Validates a requested resource.
      *
      * @param resource the resource to be validated
      * @throws InvalidResourceException if the resource is not valid.
-     */
+     *//*
+
     private void invalidResourceGuard(RequestedResource resource) throws InvalidResourceException {
         final var error = isValidRequestedResource(resource);
         if (error.isPresent()) {
@@ -340,3 +375,4 @@ public class RequestedResourceServiceImpl implements ResourceService {
         LOGGER.debug("Made resource persistent. [resource=({})]", resource);
     }
 }
+*/
