@@ -28,7 +28,7 @@ usage control for eight IDS usage policy patterns.
 ## Content
 - [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
     - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
-    - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/development)  
+    - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/deployment)  
     - [Examples](https://github.com/FraunhoferISST/DataspaceConnector/wiki/examples)
     - [Frequently Asked Questions](https://github.com/FraunhoferISST/DataspaceConnector/wiki/faq)   
     - [Getting started](https://github.com/FraunhoferISST/DataspaceConnector/wiki/getting-started)  
