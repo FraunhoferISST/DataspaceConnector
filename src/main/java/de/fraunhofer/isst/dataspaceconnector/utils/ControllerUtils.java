@@ -70,7 +70,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<String> responseDeserializationError(final Exception exception) {
-        LOGGER.warn("Failed to deserialize the input. [exception=({})]", exception.getMessage());
+        LOGGER.warn("Failed to deserialize the object. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -108,6 +108,30 @@ public final class ControllerUtils {
         LOGGER.debug("Resource not loaded. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Could not load resource.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that no predefined
+     * policy pattern has been recognized.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> responsePatternNotIdentified(final Exception exception) {
+        LOGGER.debug("Failed to identify policy pattern.", exception);
+        return new ResponseEntity<>("Could not identify pattern", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that the input was
+     * invalid.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> responseInvalidInput(final Exception exception) {
+        LOGGER.warn("Failed to deserialize the input. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Invalid input.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 // [exception=({})]", exception.getMessage()
