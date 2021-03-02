@@ -3,13 +3,14 @@ package de.fraunhofer.isst.dataspaceconnector.model.view;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
 @Data
-public class ResourceView<T extends Resource> implements BaseView<T> {
+public class ResourceView<T extends Resource> extends RepresentationModel<ResourceView<T>> {
     private String title;
     private String description;
     private List<String> keywords;

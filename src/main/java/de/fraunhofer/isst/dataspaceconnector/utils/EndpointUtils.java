@@ -45,4 +45,9 @@ public final class EndpointUtils {
     private static ServletUriComponentsBuilder getCurrentRequestUriBuilder() {
         return ServletUriComponentsBuilder.fromCurrentRequest();
     }
+
+    public static String getCurrentBasePathString() {
+        final var currentPath = EndpointUtils.getCurrentBasePath();
+        return currentPath.toString().substring(0, currentPath.toString().indexOf(currentPath.getPath()));
+    }
 }

@@ -3,21 +3,22 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceService;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class EntityDependencyResolver {
 
-    @Autowired
-    private BFFResourceService<OfferedResource, ?, ?> resourceService;
+    private final @NonNull ResourceService<OfferedResource, ?> resourceService;
 
     /**
      * Finds resource by a given artifact ID.
@@ -25,7 +26,7 @@ public class EntityDependencyResolver {
      * @param artifactId ID of the artifact
      * @return the resource
      */
-    public Resource findResourceFromArtifactId(UUID artifactId) {
+    public Optional<Resource> findResourceFromArtifactId(final UUID artifactId) {
 //        for (var resource : resourceService.getAll()) {
 //            for (var representation : resource.getRepresentation()) {
 //                final var representationId = UUIDUtils.uuidFromUri(representation.getId());
@@ -35,11 +36,7 @@ public class EntityDependencyResolver {
 //                }
 //            }
 //        }
-        return null;
-    }
-
-    public EndpointId findResourceFromArtifactId(EndpointId artifactId) {
-        return null;
+        return Optional.empty();
     }
 
     /**

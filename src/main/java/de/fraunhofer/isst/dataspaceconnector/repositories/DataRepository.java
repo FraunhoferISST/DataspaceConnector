@@ -8,12 +8,22 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+/**
+ * The repository containing all objects of type {@link Data}.
+ */
 public interface DataRepository extends JpaRepository<Data, Long> {
 
+    /**
+     * Find all data stored locally.
+     * @return All local objects.
+     */
     @Query("select d from LocalData d")
     List<LocalData> findAllLocalData();
 
+    /**
+     * Find all data stored remotely.
+     * @return All remote objects.
+     */
     @Query("select d from RemoteData d")
     List<RemoteData> findAllRemoteData();
-
 }

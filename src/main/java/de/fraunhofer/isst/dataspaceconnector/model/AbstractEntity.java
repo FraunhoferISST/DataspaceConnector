@@ -1,7 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,11 +12,14 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -33,6 +39,8 @@ public class AbstractEntity implements Serializable {
      */
     @Id
     @GeneratedValue
+    @Setter(AccessLevel.PUBLIC)
+    @Column(name = "id", unique = true, nullable = false)
     private UUID id;
 
     /**
@@ -50,4 +58,18 @@ public class AbstractEntity implements Serializable {
     @LastModifiedDate
     @UpdateTimestamp
     private Date modificationDate;
+
+    @JsonAnySetter
+    public void set(final String key, final String value) {
+        if(additional == null)
+            additional = new HashMap<String, String>();
+
+        additional.put(key, value);
+    }
+
+    @ElementCollection
+    @Setter(AccessLevel.PACKAGE)
+    @Getter(AccessLevel.PACKAGE)
+    @JsonUnwrapped
+    private Map<String, String> additional;
 }

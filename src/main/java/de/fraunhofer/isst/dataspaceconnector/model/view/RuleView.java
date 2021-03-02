@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 @Data
-public class RuleView implements BaseView<ContractRule> {
+public class RuleView extends RepresentationModel<RuleView> {
     private String title;
     private String value;
 }

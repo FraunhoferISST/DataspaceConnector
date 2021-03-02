@@ -8,14 +8,17 @@ import org.springframework.data.repository.NoRepositoryBean;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * The base repository for all entities of type {@link AbstractEntity}.
+ * @param <T> The entity type.
+ */
 @NoRepositoryBean
-public interface AbstractEntityRepository<T extends AbstractEntity> extends JpaRepository<T, UUID> {
+public interface BaseEntityRepository<T extends AbstractEntity> extends JpaRepository<T, UUID> {
+
+    /**
+     * Get all ids.
+     * @return The ids of all entities.
+     */
     @Query("select t.id from #{#entityName} t")
     List<UUID> getAllIds();
-
-//    @Query("select t.staticId from #{#entityName} t")
-//    List<UUID> getAllStaticIds();
-//
-//    Optional<T> findByStaticId(UUID id);
-//    void deleteByStaticId(UUID id);
 }

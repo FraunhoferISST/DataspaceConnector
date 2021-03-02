@@ -1,11 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend;
 
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+
 public enum Basepaths {
-    Resources("https://localhost:8080/api/v2/resources"),
-    Representations("https://localhost:8080/api/v2/representations"),
-    Contracts("https://localhost:8080/api/v2/contracts"),
-    Artifacts("https://localhost:8080/api/v2/artifacts"),
-    Rules("https://localhost:8080/api/v2/rules");
+    Resources("/api/v2/resources"),
+    Representations("/api/v2/representations"),
+    Contracts("/api/v2/contracts"),
+    Artifacts("/api/v2/artifacts"),
+    Rules("/api/v2/rules");
 
     public final String label;
 
@@ -15,6 +17,7 @@ public enum Basepaths {
 
     @Override
     public String toString() {
-        return label;
+        final var host = EndpointUtils.getCurrentBasePathString();
+        return host + "/" + label;
     }
 }

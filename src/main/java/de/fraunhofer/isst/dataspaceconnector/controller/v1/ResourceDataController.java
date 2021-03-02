@@ -2,18 +2,17 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.ArtifactBFFService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFRepresentationArtifactLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BFFResourceRepresentationLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,25 +30,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/resources")
 @Tag(name = "Resource Handling")
+@RequiredArgsConstructor
 public class ResourceDataController {
 
-    @Autowired
-    private BFFResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
+    private final @NonNull ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
 
-    @Autowired
-    private BFFRepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
 
-    @Autowired
-    private ArtifactBFFService artifactService;
-
-    /**
-     * Constructor for ResourceDataController.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
-     */
-    @Autowired
-    public ResourceDataController() throws IllegalArgumentException {
-    }
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Publishes the resource's data as a string.
@@ -70,32 +58,30 @@ public class ResourceDataController {
     public ResponseEntity<Void> publishResource(
             @Parameter(description = "The resource uuid.", required = true,
                     example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-            @PathVariable("resource-id") UUID resourceId,
+            @PathVariable("resource-id") final UUID resourceId,
             @Parameter(description = "The resource data.", required = true, example = "Data String")
-            @RequestParam("data") String data) {
+            @RequestParam("data") final String data) {
 
-        final var representations =
-                resourceRepresentationLinker.get(new EndpointId(Basepaths.Resources.toString(),
-                        resourceId));
+        final var representations = resourceRepresentationLinker.get(resourceId);
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
         final var artifacts =
-                representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
+                representationArtifactLinker.get((UUID) representations.toArray()[0]);
 
         if (artifacts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        final var endpointId = (EndpointId) artifacts.toArray()[0];
-        final var artifact = artifactService.get(endpointId);
+        final var artifactId = (UUID) artifacts.toArray()[0];
+        final var artifact = artifactService.get(artifactId);
         final var desc = new ArtifactDesc();
         desc.setTitle(artifact.getTitle());
         desc.setValue(data);
 
-        artifactService.update(endpointId, desc);
+        artifactService.update(artifactId, desc);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -117,24 +103,23 @@ public class ResourceDataController {
     @ResponseBody
     public ResponseEntity<Object> getDataById(@Parameter(description = "The resource uuid.",
             required = true, example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-                                              @PathVariable("resource-id") UUID resourceId) {
+                                              @PathVariable("resource-id") final UUID resourceId) {
 
-        final var representations =
-                resourceRepresentationLinker.get(new EndpointId(Basepaths.Resources.toString(),
-                        resourceId));
+        final var representations = resourceRepresentationLinker.get(resourceId);
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
         final var artifacts =
-                representationArtifactLinker.get((EndpointId) representations.toArray()[0]);
+                representationArtifactLinker.get((UUID) representations.toArray()[0]);
 
         if (artifacts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        return new ResponseEntity<>(artifactService.getData((EndpointId) artifacts.toArray()[0]),
+        // TODO Add Query
+        return new ResponseEntity<>(artifactService.getData((UUID) artifacts.toArray()[0], null),
                 HttpStatus.OK);
     }
 
@@ -157,25 +142,23 @@ public class ResourceDataController {
     public ResponseEntity<Object> getDataByRepresentation(
             @Parameter(description = "The resource uuid.", required = true,
                     example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-            @PathVariable("resource-id") UUID resourceId,
+            @PathVariable("resource-id") final UUID resourceId,
             @Parameter(description = "The representation uuid.", required = true)
-            @PathVariable("representation-id") UUID representationId) {
+            @PathVariable("representation-id") final UUID representationId) {
 
-        final var representations =
-                resourceRepresentationLinker.get(new EndpointId(Basepaths.Resources.toString(),
-                        resourceId));
+        final var representations = resourceRepresentationLinker.get(resourceId);
 
         if (representations.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        final var artifacts =
-                representationArtifactLinker.get(new EndpointId(Basepaths.Representations.toString(), representationId));
+        final var artifacts = representationArtifactLinker.get(representationId);
 
         if (artifacts.isEmpty()) {
             throw new ResourceNotFoundException("");
         }
 
-        return new ResponseEntity<>(artifactService.getData((EndpointId) artifacts.toArray()[0]), HttpStatus.OK);
+        // TODO Add Query
+        return new ResponseEntity<>(artifactService.getData((UUID) artifacts.toArray()[0], null), HttpStatus.OK);
     }
 }
