@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.contract;
+package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 /**
  * Thrown to indicate that a problem regarding the contract occurred.

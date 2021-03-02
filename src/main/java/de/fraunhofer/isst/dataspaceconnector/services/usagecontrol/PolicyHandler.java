@@ -8,7 +8,7 @@ import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;

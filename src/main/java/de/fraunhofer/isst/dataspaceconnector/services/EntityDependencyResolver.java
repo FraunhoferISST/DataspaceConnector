@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
