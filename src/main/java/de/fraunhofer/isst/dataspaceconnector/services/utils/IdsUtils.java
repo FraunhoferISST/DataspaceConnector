@@ -53,22 +53,6 @@ public class IdsUtils {
     }
 
     /**
-     * Returns the current IDS base connector object from the application context.
-     *
-     * @return The {@link de.fraunhofer.iais.eis.Connector} object from the IDS Framework.
-     * @throws ConnectorConfigurationException If the connector was not found.
-     */
-    public Connector getConnector() throws ConnectorConfigurationException {
-        final var connector = configurationContainer.getConnector();
-        if (connector == null) {
-            // The connector is needed for every answer and cannot be null
-            throw new ConnectorConfigurationException("No connector configured.");
-        }
-
-        return connector;
-    }
-
-    /**
      * Maps a resource metadata object to the corresponding Information Model object.
      *
      * @param resource the connector resource.
@@ -114,6 +98,9 @@ public class IdsUtils {
             }
         }
 
+        // Get a local copy of the current connector.
+        var connector = configurationContainer.getConnector();
+
         // Get the list of contracts.
         var contracts = new ArrayList<ContractOffer>();
         if (metadata.getPolicy() != null) {
@@ -128,7 +115,7 @@ public class IdsUtils {
                     ._contractStart_(contractOffer.getContractStart())
                     ._contractDate_(contractOffer.getContractDate())
                     ._consumer_(contractOffer.getConsumer())
-                    ._provider_(getConnector().getId())
+                    ._provider_(connector.getId())
                     ._contractEnd_(contractOffer.getContractEnd())
                     ._contractAnnex_(contractOffer.getContractAnnex())
                     ._contractDocument_(contractOffer.getContractDocument())
@@ -139,6 +126,19 @@ public class IdsUtils {
                 throw new RuntimeException("Could not deserialize contract.", exception);
             }
         }
+
+        // Build the connector endpoint
+        ConnectorEndpoint ce;
+        if (resource.getResourceMetadata().getEndpointDocumentation() != null) {
+            ce = new ConnectorEndpointBuilder(connector.getHasDefaultEndpoint().getId())
+                    ._accessURL_(connector.getHasDefaultEndpoint().getAccessURL())
+                    ._endpointDocumentation_(Util.asList(
+                            resource.getResourceMetadata().getEndpointDocumentation()))
+                    .build();
+        } else {
+            ce = connector.getHasDefaultEndpoint();
+        }
+
 
         // Build the ids resource.
         try {
@@ -152,8 +152,7 @@ public class IdsUtils {
                 ._modified_(getGregorianOf(resource.getModified()))
                 ._publisher_(metadata.getOwner())
                 ._representation_(representations)
-                ._resourceEndpoint_(
-                    Util.asList(configurationContainer.getConnector().getHasDefaultEndpoint()))
+                ._resourceEndpoint_(Util.asList(ce))
                 ._standardLicense_(metadata.getLicense())
                 ._title_(Util.asList(new TypedLiteral(metadata.getTitle(), language)))
                 ._version_(metadata.getVersion())

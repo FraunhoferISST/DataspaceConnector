@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
@@ -25,8 +26,7 @@ public class PolicyHandler {
     private static Contract contract;
     private final PolicyVerifier policyVerifier;
     private final SerializerProvider serializerProvider;
-
-    private boolean ignoreUnsupportedPatterns;
+    private final PolicyConfiguration policyConfiguration;
 
     /**
      * Constructor for PolicyHandler.
@@ -34,7 +34,9 @@ public class PolicyHandler {
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Autowired
-    public PolicyHandler(PolicyVerifier policyVerifier, SerializerProvider serializerProvider)
+    public PolicyHandler(PolicyVerifier policyVerifier,
+                         SerializerProvider serializerProvider,
+                         PolicyConfiguration policyConfiguration)
         throws IllegalArgumentException {
         if (policyVerifier == null)
             throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
@@ -42,9 +44,12 @@ public class PolicyHandler {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
+
         this.policyVerifier = policyVerifier;
         this.serializerProvider = serializerProvider;
-        this.ignoreUnsupportedPatterns = false;
+        this.policyConfiguration = policyConfiguration;
     }
 
     /**
@@ -133,14 +138,21 @@ public class PolicyHandler {
      */
     public boolean onDataProvision(String policy) throws UnsupportedPatternException,
         RequestFormatException {
-        switch (getPattern(policy)) {
-            case PROVIDE_ACCESS:
-                return policyVerifier.allowAccess();
-            case PROHIBIT_ACCESS:
-                return policyVerifier.inhibitAccess();
-            case USAGE_DURING_INTERVAL:
-            case USAGE_UNTIL_DELETION:
-                return policyVerifier.checkInterval(contract);
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                switch (getPattern(policy)) {
+                    case PROVIDE_ACCESS:
+                        return policyVerifier.allowAccess();
+                    case PROHIBIT_ACCESS:
+                        return policyVerifier.inhibitAccess();
+                    case USAGE_DURING_INTERVAL:
+                    case USAGE_UNTIL_DELETION:
+                        return policyVerifier.checkInterval(contract);
+                    default:
+                        return true;
+                }
+            case MYDATA: // TODO
+            case MYDATA_INTERCEPTOR: // TODO
             default:
                 return true;
         }
@@ -156,7 +168,18 @@ public class PolicyHandler {
      */
     public boolean onDataAccess(RequestedResource dataResource) throws UnsupportedPatternException,
         RequestFormatException{
+        switch (policyConfiguration.getUsageControlFramework()) {
+            case INTERNAL:
+                break;
+            case MYDATA: // TODO
+            case MYDATA_INTERCEPTOR: // TODO
+            default:
+                return true;
+        }
+
         final var policy = dataResource.getResourceMetadata().getPolicy();
+        final var ignoreUnsupportedPatterns = policyConfiguration.isUnsupportedPatterns();
+
         Pattern pattern;
         try {
             pattern = getPattern(policy);
@@ -182,22 +205,6 @@ public class PolicyHandler {
             default:
                 return true;
         }
-    }
-
-    /**
-     * Returns the current value of {@link PolicyHandler#ignoreUnsupportedPatterns}.
-     * @return true, if unsupported patterns in policies are ignored; false otherwise.
-     */
-    public boolean isIgnoreUnsupportedPatterns() {
-        return ignoreUnsupportedPatterns;
-    }
-
-    /**
-     * Sets whether unsupported patterns in policies should be ignored.
-     * @param ignoreUnsupportedPatterns true, if unsupported patterns in policies should be ignored; false otherwise.
-     */
-    public void setIgnoreUnsupportedPatterns(boolean ignoreUnsupportedPatterns) {
-        this.ignoreUnsupportedPatterns = ignoreUnsupportedPatterns;
     }
 
     public enum Pattern {

@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,6 +21,18 @@ public class RequestedResource implements ConnectorResource {
     @GeneratedValue
     @JsonProperty("uuid")
     private UUID uuid;
+
+    @JsonProperty("ownerURI")
+    private URI ownerURI;
+
+    @JsonProperty("originalUUID")
+    private UUID originalUUID;
+
+    @JsonProperty("contractAgreement")
+    private URI contractAgreement;
+
+    @JsonProperty("requestedArtifact")
+    private URI requestedArtifact;
 
     @JsonProperty("created")
     private Date created;
@@ -65,6 +78,34 @@ public class RequestedResource implements ConnectorResource {
     }
 
     /**
+     * Get owner URI
+     */
+    public URI getOwnerURI() {
+        return ownerURI;
+    }
+
+    /**
+     * Set owner URI
+     */
+    public void setOwnerURI(URI ownerURI) {
+        this.ownerURI = ownerURI;
+    }
+
+    /**
+     * Get original UUID
+     */
+    public UUID getOriginalUUID() {
+        return originalUUID;
+    }
+
+    /**
+     * Set original UUID
+     */
+    public void setOriginalUUID(UUID originalUUID) {
+        this.originalUUID = originalUUID;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -78,6 +119,34 @@ public class RequestedResource implements ConnectorResource {
     @Override
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    /**
+     * Get Contract Agreement URI
+     */
+    public URI getContractAgreement() {
+        return contractAgreement;
+    }
+
+    /**
+     * Set Contract Agreement URI
+     */
+    public void setContractAgreement(URI contractAgreement) {
+        this.contractAgreement = contractAgreement;
+    }
+
+    /**
+     * Return URI of requested artifact.
+     */
+    public URI getRequestedArtifact() {
+        return requestedArtifact;
+    }
+
+    /**
+     * Set URI of requested artifact.
+     */
+    public void setRequestedArtifact(URI requestedArtifact) {
+        this.requestedArtifact = requestedArtifact;
     }
 
     /**
@@ -125,6 +194,7 @@ public class RequestedResource implements ConnectorResource {
      */
     @Override
     public void setResourceMetadata(ResourceMetadata resourceMetadata) {
+        this.setModified(new Date());
         this.resourceMetadata = resourceMetadata;
     }
 

@@ -5,14 +5,11 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -24,9 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
@@ -51,20 +45,18 @@ public class DescriptionMessageService extends MessageService {
      * @param idsHttpService The service for ids messaging
      * @param resourceService The service for resources
      * @param configurationContainer The container with the configuration
-     * @param idsUtils The utilities for ids messages
      * @param serializerProvider The service for serializing
      * @param requestedResourceService The service for requested resources
      * @throws IllegalArgumentException if any of the parameters is null
      */
     @Autowired
-    public DescriptionMessageService(DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-        ConfigurationContainer configurationContainer, OfferedResourceServiceImpl resourceService,
-        IdsUtils idsUtils, SerializerProvider serializerProvider,
+    public DescriptionMessageService(DapsTokenProvider tokenProvider,
+                                     IDSHttpService idsHttpService,
+                                     ConfigurationContainer configurationContainer,
+                                     OfferedResourceServiceImpl resourceService,
+                                     SerializerProvider serializerProvider,
         RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        super(idsHttpService, serializerProvider, resourceService, configurationContainer);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");
@@ -165,7 +157,7 @@ public class DescriptionMessageService extends MessageService {
      * @throws ResourceException if any.
      * @throws InvalidResourceException If the ids object could not be deserialized.
      */
-    public UUID saveMetadata(String response, URI resourceId) throws ResourceException,
+    public UUID saveMetadata(String response, URI resourceId, URI ownerURI) throws ResourceException,
         InvalidResourceException {
         Resource resource;
         try {
@@ -183,7 +175,8 @@ public class DescriptionMessageService extends MessageService {
         }
 
         try {
-            return resourceService.addResource(metadata);
+            return ((RequestedResourceServiceImpl) resourceService)
+                    .addResourceWithInfo(ownerURI, UUIDUtils.uuidFromUri(resourceId), metadata);
         } catch (Exception exception) {
             LOGGER.info("Failed to save metadata. [exception=({})]", exception.getMessage());
             throw new ResourceException("Metadata could not be saved to database.");
@@ -215,69 +208,5 @@ public class DescriptionMessageService extends MessageService {
             throw new InvalidResourceException("Response could not be deserialized: " + payload);
         }
         return resource;
-    }
-
-    /**
-     * Maps a received Infomodel resource to the internal metadata model.
-     *
-     * @param resource The resource
-     * @return the metadata object.
-     */
-    private ResourceMetadata deserializeMetadata(Resource resource) {
-        var metadata = new ResourceMetadata();
-
-        if (resource.getKeyword() != null) {
-            List<String> keywords = new ArrayList<>();
-            for (var t : resource.getKeyword()) {
-                keywords.add(t.getValue());
-            }
-            metadata.setKeywords(keywords);
-        }
-
-        if (resource.getRepresentation() != null) {
-            var representations = new HashMap<UUID, ResourceRepresentation>();
-            for (Representation r : resource.getRepresentation()) {
-                int byteSize = 0;
-                String name = null;
-                String type = null;
-                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
-                    Artifact artifact = (Artifact) r.getInstance().get(0);
-                    if (artifact.getByteSize() != null)
-                        byteSize = artifact.getByteSize().intValue();
-                    if (artifact.getFileName() != null)
-                        name = artifact.getFileName();
-                    if (r.getMediaType() != null)
-                        type = r.getMediaType().getFilenameExtension();
-                }
-
-                ResourceRepresentation representation = new ResourceRepresentation(
-                    UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
-                    new BackendSource(BackendSource.Type.LOCAL, null, null, null)
-                );
-
-                representations.put(representation.getUuid(), representation);
-            }
-            metadata.setRepresentations(representations);
-        }
-
-        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
-            metadata.setTitle(resource.getTitle().get(0).getValue());
-
-        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
-            metadata.setDescription(resource.getDescription().get(0).getValue());
-
-        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
-            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
-
-        if (resource.getPublisher() != null)
-            metadata.setOwner(resource.getPublisher());
-
-        if (resource.getStandardLicense() != null)
-            metadata.setLicense(resource.getStandardLicense());
-
-        if (resource.getVersion() != null)
-            metadata.setVersion(resource.getVersion());
-
-        return metadata;
     }
 }

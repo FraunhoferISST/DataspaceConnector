@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.Duration;
-import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -199,15 +199,15 @@ public class PolicyVerifier {
         URI pip = policyReader.getPipEndpoint(contract.getPermission().get(0));
 
         try {
-            String accessed = httpUtils
-                .sendHttpsGetRequestWithBasicAuth(pip + uuid.toString() + "/access", "admin",
-                    "password");
+            String accessed = httpUtils.sendHttpsGetRequestWithBasicAuth(
+                    pip + uuid.toString() + "/access", "admin",
+                    "password", null);
             if (Integer.parseInt(accessed) >= max) {
                 return inhibitAccess();
             } else {
                 return allowAccess();
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (URISyntaxException | RuntimeException e) {
             return inhibitAccess();
         }
     }

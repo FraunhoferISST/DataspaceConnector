@@ -10,7 +10,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -41,7 +40,6 @@ public class ArtifactMessageService extends MessageService {
      * @param tokenProvider The service for providing tokens
      * @param idsHttpService The service for ids messaging
      * @param resourceService The service for resources
-     * @param idsUtils The utilities for ids messages
      * @param requestedResourceService The service for requested resources
      * @param serializerProvider The service for serializing
      * @throws IllegalArgumentException if any of the parameters is null
@@ -49,13 +47,9 @@ public class ArtifactMessageService extends MessageService {
     @Autowired
     public ArtifactMessageService(ConfigurationContainer configurationContainer,
         DapsTokenProvider tokenProvider, IDSHttpService idsHttpService,
-        OfferedResourceServiceImpl resourceService, IdsUtils idsUtils,
-        RequestedResourceServiceImpl requestedResourceService,
-        SerializerProvider serializerProvider) throws IllegalArgumentException {
-        super(idsHttpService, idsUtils, serializerProvider, resourceService);
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+        OfferedResourceServiceImpl resourceService, SerializerProvider serializerProvider,
+        RequestedResourceServiceImpl requestedResourceService) throws IllegalArgumentException {
+        super(idsHttpService, serializerProvider, resourceService, configurationContainer);
 
         if (tokenProvider == null)
             throw new IllegalArgumentException("The TokenProvider cannot be null.");

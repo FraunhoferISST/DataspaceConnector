@@ -5,13 +5,12 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,7 +21,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,9 +41,8 @@ public class MainController {
 
     private final SerializerProvider serializerProvider;
     private final ResourceService offeredResourceService, requestedResourceService;
-    private final IdsUtils idsUtils;
-    private final NegotiationService negotiationService;
-    private final PolicyHandler policyHandler;
+    private final PolicyConfiguration policyConfiguration;
+    private final ConfigurationContainer configurationContainer;
 
     /**
      * Constructor for MainController.
@@ -48,17 +50,14 @@ public class MainController {
      * @param serializerProvider The provider for serialization
      * @param offeredResourceService The service for the offered resources
      * @param requestedResourceService The service for the requested resources
-     * @param idsUtils The utilities for ids messages
-     * @param negotiationService The service for negotiations
-     * @param policyHandler The service for handling policies
      * @throws IllegalArgumentException if one of the parameters is null.
      */
     @Autowired
     public MainController(SerializerProvider serializerProvider,
-        OfferedResourceServiceImpl offeredResourceService,
-        RequestedResourceServiceImpl requestedResourceService,
-        IdsUtils idsUtils, NegotiationService negotiationService,
-        PolicyHandler policyHandler) throws IllegalArgumentException {
+                          OfferedResourceServiceImpl offeredResourceService,
+                          RequestedResourceServiceImpl requestedResourceService,
+                          ConfigurationContainer configurationContainer,
+                          PolicyConfiguration policyConfiguration) throws IllegalArgumentException {
         if (serializerProvider == null)
             throw new IllegalArgumentException("The SerializerProvider cannot be null.");
 
@@ -68,21 +67,17 @@ public class MainController {
         if (requestedResourceService == null)
             throw new IllegalArgumentException("The RequestedResourceService cannot be null.");
 
-        if (idsUtils == null)
-            throw new IllegalArgumentException("The IdsUtils cannot be null.");
+        if (policyConfiguration == null)
+            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
 
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
-
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+        if (configurationContainer == null)
+            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
 
         this.serializerProvider = serializerProvider;
         this.offeredResourceService = offeredResourceService;
         this.requestedResourceService = requestedResourceService;
-        this.idsUtils = idsUtils;
-        this.negotiationService = negotiationService;
-        this.policyHandler = policyHandler;
+        this.policyConfiguration = policyConfiguration;
+        this.configurationContainer = configurationContainer;
     }
 
     /**
@@ -99,10 +94,11 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getPublicSelfDescription() {
         try {
-            // Modify a connector for exposing the reduced self-description
-            var connector = (BaseConnectorImpl) idsUtils.getConnector();
+            // Get a local copy of the current connector.
+            var connector = (BaseConnectorImpl) configurationContainer.getConnector();
+
+            // Modify a connector for exposing the reduced self-description.
             connector.setResourceCatalog(null);
-            connector.setPublicKey(null);
 
             return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector),
                 HttpStatus.OK);
@@ -134,8 +130,10 @@ public class MainController {
     @ResponseBody
     public ResponseEntity<String> getSelfService() {
         try {
+            // Get a local copy of the current connector.
+            var connector = (BaseConnectorImpl) configurationContainer.getConnector();
+
             // Modify a connector for exposing a resource catalog
-            var connector = (BaseConnectorImpl) idsUtils.getConnector();
             connector.setResourceCatalog(Util.asList(buildResourceCatalog()));
 
             return new ResponseEntity<>(serializerProvider.getSerializer().serialize(connector),
@@ -166,9 +164,9 @@ public class MainController {
     @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
-        negotiationService.setStatus(status);
+        policyConfiguration.setPolicyNegotiation(status);
 
-        if (negotiationService.isStatus()) {
+        if (policyConfiguration.isPolicyNegotiation()) {
             return new ResponseEntity<>("Policy Negotiation was turned on.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Policy Negotiation was turned off.", HttpStatus.OK);
@@ -186,7 +184,7 @@ public class MainController {
     @RequestMapping(value = {"/admin/api/negotiation"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getNegotiationStatus() {
-        if (negotiationService.isStatus()) {
+        if (policyConfiguration.isPolicyNegotiation()) {
             return new ResponseEntity<>("Policy Negotiation is turned on.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Policy Negotiation is turned off.", HttpStatus.OK);
@@ -205,9 +203,9 @@ public class MainController {
     @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus(@RequestParam("status") boolean status) {
-        policyHandler.setIgnoreUnsupportedPatterns(status);
+        policyConfiguration.setUnsupportedPatterns(status);
 
-        if (policyHandler.isIgnoreUnsupportedPatterns()) {
+        if (policyConfiguration.isUnsupportedPatterns()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {
@@ -227,7 +225,7 @@ public class MainController {
     @RequestMapping(value = {"/admin/api/ignore-unsupported-patterns"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus() {
-        if (policyHandler.isIgnoreUnsupportedPatterns()) {
+        if (policyConfiguration.isUnsupportedPatterns()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {
