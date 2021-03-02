@@ -2,8 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InfoModelVersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;

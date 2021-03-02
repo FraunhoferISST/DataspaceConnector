@@ -14,7 +14,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;

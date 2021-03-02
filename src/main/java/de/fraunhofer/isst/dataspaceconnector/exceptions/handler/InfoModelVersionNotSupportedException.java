@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions;
+package de.fraunhofer.isst.dataspaceconnector.exceptions.handler;
 
 /**
  * Thrown to indicate that a problem occurred while creating an uuid.
