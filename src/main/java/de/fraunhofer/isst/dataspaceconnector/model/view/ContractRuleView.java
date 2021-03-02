@@ -1,12 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import lombok.Data;
-import org.springframework.hateoas.RepresentationModel;
-
 import java.util.Date;
 import java.util.Map;
 
-@Data
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+@Getter
+@Setter
+@Relation(collectionRelation = "rules", itemRelation = "rule")
 public class ContractRuleView extends RepresentationModel<ContractRuleView> {
     private Date creationDate;
     private Date modificationDate;

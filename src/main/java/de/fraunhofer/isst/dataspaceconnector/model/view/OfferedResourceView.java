@@ -1,14 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import lombok.Data;
-import org.springframework.hateoas.RepresentationModel;
-
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Data
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+@Getter
+@Setter
+@Relation(collectionRelation = "resources", itemRelation = "resource")
 public class OfferedResourceView extends RepresentationModel<OfferedResourceView> {
 
     private Date creationDate;
