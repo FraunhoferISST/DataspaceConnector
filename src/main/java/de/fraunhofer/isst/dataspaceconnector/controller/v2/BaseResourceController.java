@@ -1,15 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.EntityLinks;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,9 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
 /**
  * Offers REST-Api endpoints for resource handling.
  *
@@ -35,8 +36,9 @@ import java.util.UUID;
  *            REST calls.
  * @param <S> The underlying service for handling the resource logic.
  */
-public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>,
-        V extends RepresentationModel<V>, S extends BaseEntityService<T, D>> {
+public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
+                                            extends RepresentationModel<V>, S
+                                            extends BaseEntityService<T, D>> {
     /**
      * The service for the resource logic.
      **/
@@ -46,19 +48,18 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @Autowired
     private RepresentationModelAssembler<T, V> assembler;
 
-    private Class<T> tClass;
-
-    @Autowired
-    private EntityLinks entityLinks;
-
     @Autowired
     private PagedResourcesAssembler<T> pagedResourcesAssembler;
+
+    private final Class<T> resourceType;
 
     /**
      * Default constructor.
      */
     protected BaseResourceController() {
-        // This constructor is intentionally empty. Nothing to do here.
+        final var resolved =
+                GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceController.class);
+        resourceType = (Class<T>) resolved[2];
     }
 
     /**
@@ -85,13 +86,18 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
-    public HttpEntity<CollectionModel<V>> getAll(@RequestParam(required = false, defaultValue = "1") final Integer page,
-                                                 @RequestParam(required = false, defaultValue = "30") final Integer size,
-                                                 @RequestParam(required = false) final Sort sort) {
-        final var pageable = PageRequest.of(page == null ? 1 : page,
-                size == null ? 30 : size);
+    public HttpEntity<CollectionModel<V>> getAll(
+            @RequestParam(required = false, defaultValue = "0") final Integer page,
+            @RequestParam(required = false, defaultValue = "30") final Integer size,
+            @RequestParam(required = false) final Sort sort) {
+        final var pageable = PageRequest.of(page == null ? 1 : page, size == null ? 30 : size);
         final var entities = service.getAll(pageable);
-        final var model = pagedResourcesAssembler.toModel(entities, assembler);
+        PagedModel<V> model;
+        if (entities.hasContent()) {
+            model = pagedResourcesAssembler.toModel(entities, assembler);
+        } else {
+            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+        }
 
         return ResponseEntity.ok(model);
     }
@@ -131,7 +137,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             final var headers = new HttpHeaders();
             headers.setLocation(assembler.toModel(resource).getLink("self").get().toUri());
 
-            response = new ResponseEntity<>(assembler.toModel(resource), headers, HttpStatus.CREATED);
+            response =
+                    new ResponseEntity<>(assembler.toModel(resource), headers, HttpStatus.CREATED);
         }
 
         return response;

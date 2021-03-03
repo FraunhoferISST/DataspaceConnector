@@ -22,10 +22,10 @@ public class OfferedResourceViewAssembler implements RepresentationModelAssemble
         final var selfLink = linkTo(OfferedResourceController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var contractsLink = linkTo(methodOn(ResourceContracts.class).getResource(entity.getId())).withRel("contracts");
+        final var contractsLink = linkTo(methodOn(ResourceContracts.class).getResource(entity.getId(), null, null, null)).withRel("contracts");
         view.add(contractsLink);
 
-        final var representationLink = linkTo(methodOn(ResourceRepresentations.class).getResource(entity.getId())).withRel("representations");
+        final var representationLink = linkTo(methodOn(ResourceRepresentations.class).getResource(entity.getId(), null, null, null)).withRel("representations");
         view.add(representationLink);
 
         return view;

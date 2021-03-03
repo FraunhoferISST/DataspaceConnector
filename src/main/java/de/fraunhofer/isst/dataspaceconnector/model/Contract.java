@@ -1,15 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-import org.springframework.data.rest.core.annotation.RestResource;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.List;
 
 /**
  * A contract documents access and usage behaviours.
@@ -34,7 +33,6 @@ public class Contract extends AbstractEntity {
     /**
      * The rules used by this contract.
      **/
-    @OneToMany
-    @RestResource
+    @ManyToMany
     private List<ContractRule> rules;
 }

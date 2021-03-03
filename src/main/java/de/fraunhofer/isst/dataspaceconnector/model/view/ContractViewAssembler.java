@@ -21,7 +21,7 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         final var selfLink = linkTo(ContractController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var rulesLink = linkTo(methodOn(ContractRules.class).getResource(entity.getId())).withRel("rules");
+        final var rulesLink = linkTo(methodOn(ContractRules.class).getResource(entity.getId(), null, null, null)).withRel("rules");
         view.add(rulesLink);
 
         return view;

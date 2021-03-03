@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v2/catalogs")
+@RequestMapping("/api/catalogs")
 @Tag(name = "Catalogs")
 public class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
 }

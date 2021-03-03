@@ -1,6 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import java.util.Collections;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
@@ -25,7 +27,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,9 +37,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.UUID;
 
 /**
  * This class provides endpoints for the internal resource handling. Resources can be created and
@@ -372,11 +370,11 @@ public class ResourceControllerV1 {
         // preventing the builder to create a new representation.
         representationService.get(representationId);
 
-        // Try to access the relation. This will throw 404, when the relation does not exists,
-        // preventing the builder to create a new resource and representation.
-        if (!resourceRepresentationLinker.get(resourceId, Pageable.unpaged()).contains(representationId)) {
-            throw new ResourceNotFoundException("");
-        }
+//        // Try to access the relation. This will throw 404, when the relation does not exists,
+//        // preventing the builder to create a new resource and representation.
+//        if (!resourceRepresentationLinker.get(resourceId, Pageable.unpaged()).contains(representationId)) {
+//            throw new ResourceNotFoundException("");
+//        }
 
         final var template = EntityApiBridge.toRepresentationTemplate(representation);
         templateBuilder.build(template);

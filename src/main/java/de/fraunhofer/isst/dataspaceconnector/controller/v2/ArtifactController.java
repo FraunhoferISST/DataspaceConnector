@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v2/artifacts")
+@RequestMapping("/api/artifacts")
 @Tag(name = "Artifacts")
 public class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
         ArtifactService> {

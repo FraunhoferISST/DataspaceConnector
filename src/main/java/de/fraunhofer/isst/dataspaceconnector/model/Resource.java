@@ -1,17 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.ManyToMany;
+import javax.persistence.MappedSuperclass;
+import java.net.URI;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.rest.core.annotation.RestResource;
-
-import javax.persistence.ElementCollection;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import java.net.URI;
-import java.util.List;
 
 /**
  * A resource describes offered or requested data.
@@ -66,14 +65,12 @@ public class Resource extends AbstractEntity {
     /**
      * The representation available for the resource.
      */
-    @OneToMany
-    @RestResource
+    @ManyToMany
     private List<Representation> representations;
 
     /**
      * The contracts available for the resource.
      */
-    @OneToMany
-    @RestResource
+    @ManyToMany
     private List<Contract> contracts;
 }

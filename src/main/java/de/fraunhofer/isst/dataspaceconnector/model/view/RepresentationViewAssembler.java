@@ -21,7 +21,7 @@ public class RepresentationViewAssembler implements RepresentationModelAssembler
         final var selfLink = linkTo(RepresentationController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var artifactsLink = linkTo(methodOn(RepresentationArtifactController.class).getResource(entity.getId())).withRel("artifacts");
+        final var artifactsLink = linkTo(methodOn(RepresentationArtifactController.class).getResource(entity.getId(), null, null, null)).withRel("artifacts");
         view.add(artifactsLink);
 
         return view;

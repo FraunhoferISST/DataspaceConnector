@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v2/rules")
+@RequestMapping("/api/rules")
 @Tag(name = "Rules")
 public class RuleController extends BaseResourceController<ContractRule, ContractRuleDesc, ContractView, RuleService> {
 }

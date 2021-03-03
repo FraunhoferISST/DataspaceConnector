@@ -21,7 +21,7 @@ public class CatalogViewAssembler implements RepresentationModelAssembler<Catalo
         final var selfLink = linkTo(CatalogController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var offeredResLink = linkTo(methodOn(CatalogOfferedResources.class).getResource(entity.getId())).withRel("resources");
+        final var offeredResLink = linkTo(methodOn(CatalogOfferedResources.class).getResource(entity.getId(), null, null, null)).withRel("resources");
         view.add(offeredResLink);
 
         return view;

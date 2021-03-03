@@ -1,14 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.util.Assert;
-
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.util.Assert;
 
 /**
  * Create a parent-children relationship between two types of resources.
@@ -47,9 +48,9 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId The id of the entity whose children should be received.
      * @return The ids of the children.
      */
-    public List<UUID> get(final UUID ownerId, final Pageable pageable) {
+    public Page<W> get( final UUID ownerId, final Pageable pageable) {
         final var owner = oneService.get(ownerId);
-        return getInternal(owner).parallelStream().map(AbstractEntity::getId).collect(Collectors.toList());
+        return getInternal(owner, pageable);
     }
 
     /**
@@ -105,6 +106,13 @@ public abstract class BaseUniDirectionalLinkerService<
      * @return The children assigned to the entity.
      */
     protected abstract List<W> getInternal(K owner);
+
+    protected Page<W> getInternal(final K owner, final Pageable pageable) {
+        final var entities = getInternal(owner);
+        final var startPage = pageable.getOffset();
+        final var endPage = Math.min((startPage + pageable.getPageSize()), entities.size());
+        return new PageImpl<>(entities.subList((int)startPage, (int)endPage), pageable, entities.size());
+    }
 
     /**
      * Adds children to an entity.

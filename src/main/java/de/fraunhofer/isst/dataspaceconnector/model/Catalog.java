@@ -1,16 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-import org.springframework.data.rest.core.annotation.RestResource;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.List;
 
 /**
  * A catalog groups resources.
@@ -40,13 +38,11 @@ public class Catalog extends AbstractEntity {
      * The offered resources grouped by the catalog.
      **/
     @ManyToMany
-    @RestResource
     private List<OfferedResource> offeredResources;
 
     /**
      * The requested resources grouped by the catalog.
      **/
-    @OneToMany
-    @RestResource
+    @ManyToMany
     private List<RequestedResource> requestedResources;
 }

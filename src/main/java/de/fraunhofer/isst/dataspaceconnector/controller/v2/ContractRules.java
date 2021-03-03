@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v2/contracts/{id}/rules")
+@RequestMapping("/api/contracts/{id}/rules")
 @Tag(name = "Contracts")
 public class ContractRules extends BaseResourceChildController<ContractRuleLinker> {
 }

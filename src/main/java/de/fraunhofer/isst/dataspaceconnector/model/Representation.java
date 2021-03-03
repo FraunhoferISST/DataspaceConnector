@@ -1,15 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-import org.springframework.data.rest.core.annotation.RestResource;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.List;
 
 /**
  * A representation describes how data is presented.
@@ -44,7 +43,6 @@ public class Representation extends AbstractEntity {
     /**
      * The artifacts associated with this representation.
      **/
-    @OneToMany
-    @RestResource
+    @ManyToMany
     private List<Artifact> artifacts;
 }
