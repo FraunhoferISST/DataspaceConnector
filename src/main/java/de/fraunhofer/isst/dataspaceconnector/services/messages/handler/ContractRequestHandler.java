@@ -12,9 +12,9 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
@@ -79,24 +79,11 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     @Override
     public MessageResponse handleMessage(ContractRequestMessageImpl requestMessage,
                                          MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        } else {
-            this.requestMessage = requestMessage;
-        }
+        messageService.checkForEmptyMessage(requestMessage);
+        messageService.checkForVersionSupport(requestMessage.getModelVersion());
 
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.VERSION_NOT_SUPPORTED,
-                    "Information model version not supported.",
-                    connector.getId(), connector.getOutboundModelVersion());
-        }
 
         // Read message payload as string.
         String payload;

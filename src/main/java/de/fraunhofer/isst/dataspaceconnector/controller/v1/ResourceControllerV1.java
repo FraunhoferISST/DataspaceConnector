@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
 import java.util.Collections;
 import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;

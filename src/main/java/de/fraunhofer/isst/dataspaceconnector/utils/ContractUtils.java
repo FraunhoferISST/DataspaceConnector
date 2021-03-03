@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractBuilderException;
 
 import java.net.URI;
 

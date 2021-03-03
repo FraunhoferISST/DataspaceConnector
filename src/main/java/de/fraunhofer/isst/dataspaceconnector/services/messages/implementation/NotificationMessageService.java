@@ -5,12 +5,13 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -22,18 +23,18 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Service class for notification messages.
  */
 @Service
+@RequiredArgsConstructor
 public class NotificationMessageService extends MessageService {
+
     /**
      * The configuration container.
      */
-    @Autowired
-    private ConfigurationContainer configurationContainer;
+    private final @NonNull ConfigurationContainer configurationContainer;
 
     /**
      * The token provider.
      */
-    @Autowired
-    private DapsTokenProvider tokenProvider;
+    private final @NonNull DapsTokenProvider tokenProvider;
 
     /**
      * Build an ids notification message.

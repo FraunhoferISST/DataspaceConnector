@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.resource;
+package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 /**
  * Thrown to indicate that the resource already exists.

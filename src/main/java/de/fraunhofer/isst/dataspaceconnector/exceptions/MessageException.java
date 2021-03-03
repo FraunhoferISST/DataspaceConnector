@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.message;
+package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 /**
  * Thrown to indicate that a problem regarding a message occurred.

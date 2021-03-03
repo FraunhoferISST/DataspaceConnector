@@ -2,9 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -90,13 +92,13 @@ public abstract class MessageService {
     }
 
     /**
-     * Checks if the outbound model version of the requesting connector is listed in the inbound
+     * Check if the outbound model version of the requesting connector is listed in the inbound
      * model versions.
      *
      * @param versionString The outbound model version of the requesting connector.
      * @return True if the outbound model version is supported; false otherwise.
      */
-    public boolean isVersionSupported(final String versionString) {
+    public void checkForVersionSupport(final String versionString) throws InfoModelVersionNotSupportedException {
         final var connector = configContainer.getConnector();
         boolean versionSupported = false;
 
@@ -106,6 +108,20 @@ public abstract class MessageService {
                 break;
             }
         }
-        return versionSupported;
+
+        if (!versionSupported) {
+            throw new InfoModelVersionNotSupportedException("InfoModel version not supported.");
+        }
+    }
+
+    /**
+     * Check if the received message is empty.
+     *
+     * @param message The message.
+     */
+    public void checkForEmptyMessage(final Message message) {
+        if (message == null) {
+            throw new MessageEmptyException("The incoming request message cannot be null.");
+        }
     }
 }

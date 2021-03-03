@@ -9,12 +9,12 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractAgreementNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
@@ -84,22 +84,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     @Override
     // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
     public MessageResponse handleMessage(final ArtifactRequestMessageImpl requestMessage, final MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
+        messageService.checkForEmptyMessage(requestMessage);
+        messageService.checkForVersionSupport(requestMessage.getModelVersion());
 
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.isVersionSupported(requestMessage.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.VERSION_NOT_SUPPORTED,
-                "Information model version not supported.",
-                connector.getId(), connector.getOutboundModelVersion());
-        }
 
         try {
             // Find artifact and matching resource.

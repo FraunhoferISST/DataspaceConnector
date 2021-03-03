@@ -3,11 +3,11 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
@@ -69,22 +69,11 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     @Override
     public MessageResponse handleMessage(ContractAgreementMessageImpl message,
                                          MessagePayload messagePayload) throws RuntimeException {
-        if (message == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
+        messageService.checkForEmptyMessage(message);
+        messageService.checkForVersionSupport(message.getModelVersion());
 
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.isVersionSupported(message.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.VERSION_NOT_SUPPORTED,
-                    "Information model version not supported.",
-                    connector.getId(), connector.getOutboundModelVersion());
-        }
 
         // Read message payload as string.
         String payload;
