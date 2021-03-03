@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceAlreadyExistsException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.repositories.EndpointRepository;

@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
