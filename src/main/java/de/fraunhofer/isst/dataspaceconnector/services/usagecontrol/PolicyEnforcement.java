@@ -1,17 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
-import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,94 +24,110 @@ import java.util.ArrayList;
  */
 @Component
 @EnableScheduling
+@RequiredArgsConstructor
 public class PolicyEnforcement {
 
+    /**
+     * Class level logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcement.class);
 
-    private final PolicyVerifier policyVerifier;
-    private final SerializerProvider serializerProvider;
-    private final PolicyConfiguration policyConfiguration;
-
-    @Autowired
-    private ResourceService<RequestedResource, ?> requestedResourceService;
+    /**
+     * Service for verifying policies.
+     */
+    private final @NonNull PolicyVerifier policyVerifier;
 
     /**
-     * Constructor for PolicyEnforcement.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * Service for configuring policy settings.
      */
-    @Autowired
-    public PolicyEnforcement(PolicyVerifier policyVerifier,
-                             PolicyConfiguration policyConfiguration,
-                             SerializerProvider serializerProvider) throws IllegalArgumentException {
-        if (policyVerifier == null)
-            throw new IllegalArgumentException("The PolicyVerifier cannot be null.");
+    private final @NonNull PolicyConfiguration policyConfig;
 
-        if (policyConfiguration == null)
-            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
+    /**
+     * Service for contract handling.
+     */
+    private final @NonNull IdsContractService contractService;
 
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+    /**
+     * Service for handling requested resources.
+     */
+    private final @NonNull ResourceService<RequestedResource, ?> resourceService;
 
-        this.policyVerifier = policyVerifier;
-        this.policyConfiguration = policyConfiguration;
-        this.serializerProvider = serializerProvider;
-    }
+    /**
+     * The amount of delay for the scheduler.
+     */
+    private static final int FIXED_DELAY = 60000;
+
 
     /**
      * Periodically (every minute) calls {@link PolicyEnforcement#checkResources()}.
-     * 1000 = 1 sec * 60 * 60 = every hour (3600000)
      */
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = FIXED_DELAY)
     public void schedule() {
-        if (policyConfiguration.getUcFramework() ==
-                PolicyConfiguration.UsageControlFramework.INTERNAL) {
-            try {
+        try {
+            if (policyConfig.getUcFramework()
+                    == PolicyConfiguration.UsageControlFramework.INTERNAL) {
                 checkResources();
-            } catch (ParseException | IOException exception) {
-                LOGGER.warn("Failed to check policy. [exception=({})]", exception.getMessage());
             }
+        } catch (ParseException | IOException exception) {
+            LOGGER.warn("Failed to check policy. [exception=({})]", exception.getMessage());
         }
     }
 
     /**
      * Checks all known resources and their policies to delete them if necessary.
      *
-     * @throws java.text.ParseException if a date from a policy cannot be parsed.
-     * @throws java.io.IOException if an error occurs while deserializing a contract.
+     * @throws java.text.ParseException If a date from a policy cannot be parsed.
+     * @throws java.io.IOException      If an error occurs while deserializing a contract.
      */
     public void checkResources() throws ParseException, IOException {
-        LOGGER.info("Check data...");
+        LOGGER.info("Check contracts...");
 
-        for (final var resource : requestedResourceService.getAll(Pageable.unpaged())) {
-            try {
-                final var dscContract = (de.fraunhofer.isst.dataspaceconnector.model.Contract)requestedResourceService.get(resource.getId()).getContracts().toArray()[0];
-                final var rules = (ContractRule)dscContract.getRules().toArray()[0];
-                final var policy =rules.getValue();
-
-                try {
-                    Contract contract = serializerProvider.getSerializer()
-                            .deserialize(policy, Contract.class);
-                    if (contract.getPermission() != null && contract.getPermission().get(0) != null) {
-                        Permission permission = contract.getPermission().get(0);
-                        ArrayList<? extends Duty> postDuties = permission.getPostDuty();
-
-                        if (postDuties != null && postDuties.get(0) != null) {
-                            Action action = postDuties.get(0).getAction().get(0);
-                            if (action == Action.DELETE) {
-                                if (policyVerifier.checkForDelete(postDuties.get(0))) {
-                                    requestedResourceService.delete(resource.getId());
-                                }
-                            }
-                        }
+        for (final var resource : resourceService.getAll(Pageable.unpaged())) {
+            final var contracts = resourceService.get(resource.getId()).getContracts();
+            for (final var contract : contracts) {
+                final var rules = contract.getRules();
+                for (final var rule : rules) {
+                    if (checkRule(rule.getValue())) {
+                        resourceService.delete(resource.getId());
                     }
-                } catch (IOException e) {
-                    throw new IOException(
-                            "The policy could not be read. Please check the policy syntax.");
                 }
-            } catch(NullPointerException exception) {
-                // Do nothing, there might be no contracts or rules
             }
         }
+    }
+
+    /**
+     * Check rule for post duties.
+     *
+     * @param policy The rule string.
+     * @return True if resource should be deleted, false if not.
+     * @throws IOException    If the policy could not be deserialized.
+     * @throws ParseException If the policy could not be checked.
+     */
+    public boolean checkRule(final String policy) throws IOException, ParseException {
+        final var rule = contractService.deserializeRule(policy);
+
+        final var postDuties = ((Permission) rule).getPostDuty();
+        if (postDuties != null && !postDuties.isEmpty()) {
+            return checkDuty(postDuties);
+        }
+        return false;
+    }
+
+    /**
+     * Check duty for deletion.
+     *
+     * @param duties The post duty list.
+     * @return True if resource should be deleted, false if not.
+     * @throws ParseException If the policy could not be checked.
+     */
+    public boolean checkDuty(final ArrayList<? extends Duty> duties) throws ParseException {
+        for (final var duty : duties) {
+            for (final var action : duty.getAction()) {
+                if (action == Action.DELETE) {
+                    return policyVerifier.checkForDelete(duty);
+                }
+            }
+        }
+        return false;
     }
 }
