@@ -276,7 +276,7 @@ public class ExampleController {
                         .build()))
                     .build();
                 break;
-            case CONNECTORBASED:
+            case CONNECTOR_RESTRICTED_USAGE:
                 contractOffer = new ContractOfferBuilder()
                         ._permission_(Util.asList(new PermissionBuilder()
                                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))

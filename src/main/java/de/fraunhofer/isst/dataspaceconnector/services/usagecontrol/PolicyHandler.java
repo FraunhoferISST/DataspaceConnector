@@ -105,7 +105,7 @@ public class PolicyHandler {
                         return Pattern.DURATION_USAGE;
                     } else if ((leftOperand == LeftOperand.SYSTEM )
                             && (constraints.get(0).getOperator() == BinaryOperator.SAME_AS))  {
-                        return Pattern.CONNECTORBASED;
+                        return Pattern.CONNECTOR_RESTRICTED_USAGE;
                     } else {
                         throw new UnsupportedPatternException(
                             "The recognized policy pattern is not supported by this connector.");
@@ -152,7 +152,7 @@ public class PolicyHandler {
                     case USAGE_DURING_INTERVAL:
                     case USAGE_UNTIL_DELETION:
                         return policyVerifier.checkInterval(contract);
-                    case CONNECTORBASED:
+                    case CONNECTOR_RESTRICTED_USAGE:
                         return policyVerifier.checkIssuerConnector(contract, issuerConnector);
                     default:
                         return true;
@@ -250,7 +250,7 @@ public class PolicyHandler {
         /**
          * Type: Connector-restricted access https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/ConnectorbasedAgreementTemplates/CONNECTORBASED_OFFER_TEMPLATE.jsonld
          */
-        CONNECTORBASED("CONNECTORBASED");
+        CONNECTOR_RESTRICTED_USAGE("CONNECTOR_RESTRICTED_USAGE");
 
         private final String pattern;
 
