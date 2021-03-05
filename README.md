@@ -27,6 +27,7 @@ usage control for eight IDS usage policy patterns.
 
 ## Content
 - [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
+    - [Camel](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Using-Camel)
     - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
     - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/deployment)  
     - [Examples](https://github.com/FraunhoferISST/DataspaceConnector/wiki/examples)
