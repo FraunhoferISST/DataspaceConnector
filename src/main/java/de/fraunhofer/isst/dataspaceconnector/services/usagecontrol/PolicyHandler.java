@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -102,6 +103,9 @@ public class PolicyHandler {
                         return Pattern.N_TIMES_USAGE;
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
                         return Pattern.DURATION_USAGE;
+                    } else if ((leftOperand == LeftOperand.SYSTEM )
+                            && (constraints.get(0).getOperator() == BinaryOperator.SAME_AS))  {
+                        return Pattern.CONNECTORBASED;
                     } else {
                         throw new UnsupportedPatternException(
                             "The recognized policy pattern is not supported by this connector.");
@@ -136,7 +140,7 @@ public class PolicyHandler {
      * @throws UnsupportedPatternException if no pattern could be recognized.
      * @throws RequestFormatException if the string could not be deserialized.
      */
-    public boolean onDataProvision(String policy) throws UnsupportedPatternException,
+    public boolean onDataProvision(String policy, URI issuerConnector) throws UnsupportedPatternException,
         RequestFormatException {
         switch (policyConfiguration.getUsageControlFramework()) {
             case INTERNAL:
@@ -148,6 +152,8 @@ public class PolicyHandler {
                     case USAGE_DURING_INTERVAL:
                     case USAGE_UNTIL_DELETION:
                         return policyVerifier.checkInterval(contract);
+                    case CONNECTORBASED:
+                        return policyVerifier.checkIssuerConnector(contract, issuerConnector);
                     default:
                         return true;
                 }
@@ -240,7 +246,11 @@ public class PolicyHandler {
         /**
          * Type: Notification https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld
          */
-        USAGE_NOTIFICATION("USAGE_NOTIFICATION");
+        USAGE_NOTIFICATION("USAGE_NOTIFICATION"),
+        /**
+         * Type: Connector-restricted access https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/ConnectorbasedAgreementTemplates/CONNECTORBASED_OFFER_TEMPLATE.jsonld
+         */
+        CONNECTORBASED("CONNECTORBASED");
 
         private final String pattern;
 
