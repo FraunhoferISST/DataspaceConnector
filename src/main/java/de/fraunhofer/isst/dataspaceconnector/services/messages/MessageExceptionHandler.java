@@ -1,9 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.InfoModelVersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.MessageResponseBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageResponseBuilderException;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -74,5 +75,22 @@ public class MessageExceptionHandler {
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.", connector.getId(),
                 connector.getOutboundModelVersion());
+    }
+
+    /**
+     * Handles thrown {@link PolicyRestrictionOnDataProvisionException}.
+     *
+     * @param exception Exception that was thrown when checking for data access.
+     * @return A message response.
+     */
+    @ExceptionHandler(PolicyRestrictionOnDataProvisionException.class)
+    public MessageResponse handlePolicyRestrictionOnDataProvisionException(final PolicyRestrictionOnDataProvisionException exception) {
+        // Get a local copy of the current connector.
+        final var connector = configurationContainer.getConnector();
+
+        LOGGER.debug("Policy restriction detected. [exception=({})]", exception.getMessage());
+        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
+                "Policy restriction detected." + exception.getMessage(),
+                connector.getId(), connector.getOutboundModelVersion());
     }
 }
