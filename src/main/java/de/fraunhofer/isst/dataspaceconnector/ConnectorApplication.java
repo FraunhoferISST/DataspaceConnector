@@ -31,7 +31,11 @@ import java.util.Properties;
 })
 public class ConnectorApplication {
 
-    public static void main(String[] args) {
+    /**
+     * The main method.
+     * @param args List of arguments.
+     */
+    public static void main(final String[] args) {
         SpringApplication.run(ConnectorApplication.class, args);
     }
 
