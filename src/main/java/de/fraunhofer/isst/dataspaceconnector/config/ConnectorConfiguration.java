@@ -23,13 +23,13 @@ public class ConnectorConfiguration {
      * The policy negotiation status from application.properties.
      */
     @Value("${policy.negotiation}")
-    private final @NonNull boolean policyNegotiation;
+    private @NonNull boolean policyNegotiation;
 
     /**
      * Setting for allowing unsupported patterns from application.properties.
      */
     @Value("${policy.allow-unsupported-patterns}")
-    private final @NonNull boolean allowUnsupported;
+    private @NonNull boolean allowUnsupported;
 
     /**
      * Usage control framework from application.properties.
