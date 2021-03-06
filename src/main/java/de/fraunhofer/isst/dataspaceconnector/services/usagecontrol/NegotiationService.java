@@ -40,11 +40,11 @@ public class NegotiationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
-    private final PolicyHandler policyHandler;
+    private final PolicyDecisionService policyDecisionService;
     private final ResponseMessageService responseMessageService;
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
-    private final @NonNull IdsContractService idsContractService;
+    private final @NonNull PolicyManagementService pmp;
 
     /**
      * Deserializes a contract, adds a given artifact ID to the contract's rules and sends it as contract request
@@ -61,7 +61,7 @@ public class NegotiationService {
         Contract contract;
         try {
             // Validate contract input.
-            contract = policyHandler.validateContract(contractAsString);
+            contract = pmp.deserializeContract(contractAsString);
         } catch (RequestFormatException exception) {
             LOGGER.debug("Could not deserialize contract. [exception=({})]",
                 exception.getMessage());
@@ -73,7 +73,7 @@ public class NegotiationService {
 
         // Build contract request. TODO: Change to curator or maintainer?
         return fillContract(artifactId, connector.getId(),
-                idsContractService.buildRequestFromContract(contract));
+                pmp.buildRequestFromContract(contract));
     }
 
     /**
@@ -92,7 +92,7 @@ public class NegotiationService {
             Contract contract;
             try {
                 // Validate received contract.
-                contract = policyHandler.validateContract(payload);
+                contract = pmp.deserializeContract(payload);
             } catch (UnsupportedPatternException exception) {
                 LOGGER.warn("Could not deserialize contract. [exception=({})]",
                     exception.getMessage());
@@ -112,7 +112,7 @@ public class NegotiationService {
                 }
 
                 // Send ContractAgreementMessage to recipient.
-                ContractAgreement agreement = idsContractService.buildAgreementFromContract(contract, contract.getId());
+                ContractAgreement agreement = pmp.buildAgreementFromContract(contract, contract.getId());
                 response = responseMessageService.sendContractAgreement(recipient, correlationMessage, agreement.toRdf());
             } catch (MessageBuilderException exception) {
                 // Failed to build the contract agreement message.

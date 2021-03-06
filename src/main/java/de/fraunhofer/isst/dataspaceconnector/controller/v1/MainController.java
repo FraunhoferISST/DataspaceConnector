@@ -6,7 +6,7 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
+import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.ArtifactController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.CatalogController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.ContractController;
@@ -67,7 +67,7 @@ public class MainController {
     /**
      * The current policy configuration.
      */
-    private final @NonNull PolicyConfiguration policyConfiguration;
+    private final @NonNull ConnectorConfiguration connectorConfiguration;
 
     /**
      * The service for getting resources in ids format.
@@ -155,9 +155,9 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/contract-negotiation"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> setNegotiationStatus(@RequestParam("status") boolean status) {
-        policyConfiguration.setPolicyNegotiation(status);
+        connectorConfiguration.setPolicyNegotiation(status);
 
-        if (policyConfiguration.isPolicyNegotiation()) {
+        if (connectorConfiguration.isPolicyNegotiation()) {
             return new ResponseEntity<>("Policy Negotiation was turned on.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Policy Negotiation was turned off.", HttpStatus.OK);
@@ -175,7 +175,7 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/contract-negotiation"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getNegotiationStatus() {
-        if (policyConfiguration.isPolicyNegotiation()) {
+        if (connectorConfiguration.isPolicyNegotiation()) {
             return new ResponseEntity<>("Policy Negotiation is turned on.", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("Policy Negotiation is turned off.", HttpStatus.OK);
@@ -194,9 +194,9 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.PUT)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus(@RequestParam("status") boolean status) {
-        policyConfiguration.setAllowUnsupported(status);
+        connectorConfiguration.setAllowUnsupported(status);
 
-        if (policyConfiguration.isAllowUnsupported()) {
+        if (connectorConfiguration.isAllowUnsupported()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {
@@ -216,7 +216,7 @@ public class MainController {
     @RequestMapping(value = {"/api/configuration/ignore-unsupported-patterns"}, method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<String> getPatternStatus() {
-        if (policyConfiguration.isAllowUnsupported()) {
+        if (connectorConfiguration.isAllowUnsupported()) {
             return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
                 HttpStatus.OK);
         } else {

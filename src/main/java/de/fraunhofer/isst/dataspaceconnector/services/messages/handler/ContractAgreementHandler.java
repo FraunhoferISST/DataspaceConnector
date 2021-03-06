@@ -11,7 +11,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException
 import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v1.ContractAgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -53,7 +53,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     private String clearingHouse;
 
     private final @NonNull ConfigurationContainer configurationContainer;
-    private final @NonNull PolicyHandler policyHandler;
+    private final @NonNull PolicyManagementService pmp;
     private final @NonNull NotificationMessageService messageService;
     private final @NonNull ContractAgreementService contractAgreementService;
 
@@ -123,8 +123,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
      */
     private void saveContract(String agreement) throws ContractException, MessageException {
 
-        ContractAgreement contractAgreement =
-                (ContractAgreement) policyHandler.validateContract(agreement);
+        ContractAgreement contractAgreement = pmp.deserializeContractAgreement(agreement);
 
         try {
             // Save contract agreement to database.
