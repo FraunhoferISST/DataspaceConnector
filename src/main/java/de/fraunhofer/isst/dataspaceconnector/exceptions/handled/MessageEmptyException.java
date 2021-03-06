@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.handler;
+package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 
