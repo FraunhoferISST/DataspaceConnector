@@ -10,20 +10,20 @@ import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
-import de.fraunhofer.isst.dataspaceconnector.utils.ContractUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,6 +35,7 @@ import java.util.Map;
  * Contains methods required for policy negotiation.
  */
 @Service
+@RequiredArgsConstructor
 public class NegotiationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
@@ -43,34 +44,7 @@ public class NegotiationService {
     private final ResponseMessageService responseMessageService;
     private final SerializerProvider serializerProvider;
     private final ConfigurationContainer configurationContainer;
-
-    /**
-     * Constructor for NegotiationService.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
-     */
-    @Autowired
-    public NegotiationService(ResponseMessageService contractMessageService,
-        PolicyHandler policyHandler, SerializerProvider serializerProvider,
-        ConfigurationContainer configurationContainer)
-        throws IllegalArgumentException {
-        if (contractMessageService == null)
-            throw new IllegalArgumentException("The ResponseMessageService cannot be null.");
-
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
-
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
-
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
-
-        this.responseMessageService = contractMessageService;
-        this.policyHandler = policyHandler;
-        this.serializerProvider = serializerProvider;
-        this.configurationContainer = configurationContainer;
-    }
+    private final @NonNull IdsContractService idsContractService;
 
     /**
      * Deserializes a contract, adds a given artifact ID to the contract's rules and sends it as contract request
@@ -99,7 +73,7 @@ public class NegotiationService {
 
         // Build contract request. TODO: Change to curator or maintainer?
         return fillContract(artifactId, connector.getId(),
-            ContractUtils.buildContractRequest(contract, connector));
+                idsContractService.buildRequestFromContract(contract));
     }
 
     /**
@@ -138,7 +112,7 @@ public class NegotiationService {
                 }
 
                 // Send ContractAgreementMessage to recipient.
-                ContractAgreement agreement = ContractUtils.buildContractAgreement(contract, contract.getId());
+                ContractAgreement agreement = idsContractService.buildAgreementFromContract(contract, contract.getId());
                 response = responseMessageService.sendContractAgreement(recipient, correlationMessage, agreement.toRdf());
             } catch (MessageBuilderException exception) {
                 // Failed to build the contract agreement message.

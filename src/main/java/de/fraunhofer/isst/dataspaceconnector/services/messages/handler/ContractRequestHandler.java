@@ -18,9 +18,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFo
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.IdsContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.utils.ContractUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
@@ -64,6 +64,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final @NonNull NotificationMessageService logMessageService;
 
     private final @NonNull EntityDependencyResolver entityDependencyResolver;
+    private final @NonNull IdsContractService idsContractService;
 
     private RequestMessage requestMessage;
 
@@ -191,7 +192,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
         final var header = messageService.buildContractAgreementMessage(requestMessage.getIssuerConnector(), requestMessage.getId());
         // Turn the accepted contract request into a contract agreement.
-        final var contractAgreement = ContractUtils.buildContractAgreement(contractRequest);
+        final var contractAgreement = idsContractService.buildAgreementFromContract(contractRequest);
 
         // Send response to the data consumer.
         return BodyResponse.create(header, contractAgreement.toRdf());
