@@ -2,34 +2,33 @@ package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleFactory;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@RunWith(JUnit4.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ContractRuleFactoryTest {
 
     private ContractRuleFactory factory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.factory = new ContractRuleFactory();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void create_nullDesc_throwNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        factory.create(null);
+        assertThrows(NullPointerException.class, () -> factory.create(null));
     }
 
     @Test
@@ -141,25 +140,25 @@ public class ContractRuleFactoryTest {
         assertFalse(factory.update(rule, getValidDesc()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_nullResourceValidDesc_throwsNullPointerException() {
         /* ARRANGE */
         var desc = getValidDesc();
 
         /* ACT && ASSERT */
-        factory.update(null, desc);
+        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_nullResourceNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        factory.update(null, null);
+        assertThrows(NullPointerException.class, () -> factory.update(null, null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_validResourceNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
@@ -168,7 +167,7 @@ public class ContractRuleFactoryTest {
         assertNotNull(rule);
 
         /* ACT && ASSERT */
-        factory.update(rule, null);
+        assertThrows(NullPointerException.class, () -> factory.update(rule, null));
     }
 
     ContractRuleDesc getValidDesc() {
