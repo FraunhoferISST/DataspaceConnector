@@ -112,8 +112,6 @@ public class OfferedResourceFactoryTest {
         /* ARRANGE */
         var resource = factory.create(getValidDesc());
 
-        assertNotNull(resource);
-
         var idBefore = resource.getId();
         var creationDateBefore = resource.getCreationDate();
         var lastModificationDateBefore = resource.getModificationDate();
@@ -166,8 +164,6 @@ public class OfferedResourceFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var resource = factory.create(initialDesc);
-
-        assertNotNull(resource);
 
         var idBefore = resource.getId();
         var creationDateBefore = resource.getCreationDate();
@@ -247,8 +243,6 @@ public class OfferedResourceFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var resource = factory.create(initialDesc);
-
-        assertNotNull(resource);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(resource, null));
