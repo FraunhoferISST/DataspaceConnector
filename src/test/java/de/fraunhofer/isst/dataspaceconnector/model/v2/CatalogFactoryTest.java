@@ -84,9 +84,6 @@ public class CatalogFactoryTest {
     public void update_allDescMembersNotNull_returnUpdatedCatalog() {
         /* ARRANGE */
         var catalog = factory.create(getValidDesc());
-
-        assertNotNull(catalog);
-
         var idBefore = catalog.getId();
         var creationDateBefore = catalog.getCreationDate();
         var lastModificationDateBefore = catalog.getModificationDate();
@@ -118,9 +115,6 @@ public class CatalogFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
-
-        assertNotNull(catalog);
-
         var idBefore = catalog.getId();
         var creationDateBefore = catalog.getCreationDate();
         var lastModificationDateBefore = catalog.getModificationDate();
@@ -190,8 +184,6 @@ public class CatalogFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
-
-        assertNotNull(catalog);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(catalog, null));
