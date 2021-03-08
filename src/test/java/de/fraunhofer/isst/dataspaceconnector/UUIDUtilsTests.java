@@ -1,23 +1,25 @@
 package de.fraunhofer.isst.dataspaceconnector;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.net.URI;
 import java.util.UUID;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class UUIDUtilsTests {
 
-    @Test(expected = UUIDFormatException.class)
+    @Test
     public void UUIDUtils_uuidFromUri_Uri_without_Uuid_In() {
         final var uuidString = "";
         final var uriString = "https://dsc/anon42/api/" + uuidString;
 
         final var inputUri = URI.create(uriString);
 
-        UUIDUtils.uuidFromUri(inputUri);
+        assertThrows(UUIDFormatException.class, () -> UUIDUtils.uuidFromUri(inputUri));
     }
 
     @Test
@@ -30,7 +32,7 @@ public class UUIDUtilsTests {
 
         final var resultUUID = UUIDUtils.uuidFromUri(inputUri);
 
-        Assert.assertEquals(resultUUID, expectedUUID);
+        assertEquals(resultUUID, expectedUUID);
     }
 
     @Test
@@ -44,7 +46,7 @@ public class UUIDUtilsTests {
 
         final var resultUUID = UUIDUtils.uuidFromUri(inputUri);
 
-        Assert.assertEquals(resultUUID, expectedUUID);
+        assertEquals(resultUUID, expectedUUID);
     }
 
 
@@ -59,7 +61,7 @@ public class UUIDUtilsTests {
 
         final var resultUUID = UUIDUtils.uuidFromUri(inputUri);
 
-        Assert.assertEquals(resultUUID, expectedUUID);
+        assertEquals(resultUUID, expectedUUID);
     }
 
 }
