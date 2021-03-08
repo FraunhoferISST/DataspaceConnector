@@ -231,7 +231,6 @@ public class ArtifactFactoryTest {
         /* ARRANGE */
         final var desc = getValidDescRemoteDataV1();
         final var artifact = factory.create(desc);
-        assertNotNull(artifact);
 
         /* ACT */
         factory.update(artifact, getDescWithNullMembers());
@@ -255,8 +254,6 @@ public class ArtifactFactoryTest {
     public void update_localDataValidLocalDataDesc_returnLocalDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescLocalDataV2();
 
         /* ACT */
@@ -281,8 +278,6 @@ public class ArtifactFactoryTest {
     public void update_localDataValidRemoteDataDesc_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescRemoteDataV1();
 
         /* ACT */
@@ -311,8 +306,6 @@ public class ArtifactFactoryTest {
     public void update_localDataAllDataMembersSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescAllSetV1();
 
         /* ACT */
@@ -341,8 +334,6 @@ public class ArtifactFactoryTest {
     public void update_remoteDataValidLocalDataDesc_returnLocalDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescLocalDataV1();
 
         /* ACT */
@@ -367,8 +358,6 @@ public class ArtifactFactoryTest {
     public void update_remoteDataValidRemoteDataDesc_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescRemoteDataV2();
 
         /* ACT */
@@ -397,8 +386,6 @@ public class ArtifactFactoryTest {
     public void update_remoteDataAllDataMembersSet_returnRemoteDataArtifact() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescAllSetV2();
 
         /* ACT */
@@ -427,8 +414,6 @@ public class ArtifactFactoryTest {
     public void update_localDataChangeValidLocalDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescLocalDataV2();
 
         /* ACT && ASSERT */
@@ -439,8 +424,6 @@ public class ArtifactFactoryTest {
     public void update_localDataChangeValidRemoteDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescRemoteDataV1();
 
         /* ACT && ASSERT */
@@ -451,8 +434,6 @@ public class ArtifactFactoryTest {
     public void update_localDataSameValidLocalDesc_false() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescLocalDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescLocalDataV1();
 
         /* ACT && ASSERT */
@@ -463,8 +444,6 @@ public class ArtifactFactoryTest {
     public void update_remoteDataSameValidRemoteDesc_false() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescRemoteDataV1();
 
         /* ACT && ASSERT */
@@ -475,8 +454,6 @@ public class ArtifactFactoryTest {
     public void update_remoteDataSameValidLocalDesc_true() {
         /* ARRANGE */
         final var artifact = factory.create(getValidDescRemoteDataV1());
-        assertNotNull(artifact);
-
         final var desc = getValidDescLocalDataV1();
 
         /* ACT && ASSERT */
@@ -505,8 +482,6 @@ public class ArtifactFactoryTest {
     public void update_validArtifactNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var artifact = factory.create(getValidDescAllSetV1());
-
-        assertNotNull(artifact);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(null, null));
