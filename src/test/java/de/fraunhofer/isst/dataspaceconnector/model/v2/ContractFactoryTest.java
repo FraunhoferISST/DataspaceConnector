@@ -76,13 +76,9 @@ public class ContractFactoryTest {
     public void update_allDescMembersNotNull_returnUpdatedContract() {
         /* ARRANGE */
         var contract = factory.create(getValidDesc());
-
-        assertNotNull(contract);
-
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getModificationDate();
-
         var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getUpdatedValidDesc();
 
@@ -106,13 +102,9 @@ public class ContractFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var contract = factory.create(initialDesc);
-
-        assertNotNull(contract);
-
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getModificationDate();
-
         var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
         var desc = getDescWithNullMembers();
 
@@ -171,8 +163,6 @@ public class ContractFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var catalog = factory.create(initialDesc);
-
-        assertNotNull(catalog);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(catalog, null));
