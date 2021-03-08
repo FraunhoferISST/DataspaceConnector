@@ -2,8 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.InfoModelVersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageDeserializationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
@@ -81,7 +82,7 @@ public abstract class MessageService {
      * @param header The ids header.
      * @return The response message.
      */
-    public ResponseMessage getIdsHeader(final String header) {
+    public ResponseMessage getIdsHeader(final String header) throws MessageDeserializationException {
         try {
             return serializer.getSerializer().deserialize(header, ResponseMessage.class);
         } catch (IOException exception) {
@@ -96,7 +97,7 @@ public abstract class MessageService {
      * model versions.
      *
      * @param versionString The outbound model version of the requesting connector.
-     * @return True if the outbound model version is supported; false otherwise.
+     * @throws InfoModelVersionNotSupportedException Handled in the {@link MessageExceptionHandler}.
      */
     public void checkForVersionSupport(final String versionString) throws InfoModelVersionNotSupportedException {
         final var connector = configContainer.getConnector();

@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handler.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;

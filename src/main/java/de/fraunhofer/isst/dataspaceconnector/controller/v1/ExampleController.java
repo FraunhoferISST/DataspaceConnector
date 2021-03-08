@@ -23,7 +23,9 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyInformationService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -61,9 +63,14 @@ public class ExampleController {
     private final @NonNull DapsTokenProvider tokenProvider;
 
     /**
-     * The service for handling policies.
+     * Policy information point.
      */
-    private final @NonNull PolicyHandler policyHandler;
+    private final @NonNull PolicyInformationService pip;
+
+    /**
+     * Policy management point.
+     */
+    private final @NonNull PolicyManagementService pmp;
 
     /**
      * Get an example configuration.
@@ -133,8 +140,8 @@ public class ExampleController {
             @Parameter(description = "The JSON string representing a policy", required = true)
             @RequestBody final String policy) {
         try {
-            // Return the policy pattern.
-            return new ResponseEntity<>(policyHandler.getPattern(policy), HttpStatus.OK);
+            final var rule= pmp.deserializeRule(policy);
+            return new ResponseEntity<>(pip.getPatternByRule(rule), HttpStatus.OK);
         } catch (ContractException exception) {
             return ControllerUtils.responsePatternNotIdentified(exception);
         } catch (Exception exception) {
@@ -145,7 +152,7 @@ public class ExampleController {
     /**
      * Get an example policy pattern.
      *
-     * @param pattern a {@link PolicyHandler.Pattern} object.
+     * @param pattern a {@link PolicyPattern} object.
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */
     @Operation(summary = "Get example policy",
@@ -155,7 +162,7 @@ public class ExampleController {
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
             @Parameter(description = "The policy pattern.", required = true)
-            @RequestParam("pattern") final PolicyHandler.Pattern pattern) {
+            @RequestParam("pattern") final PolicyPattern pattern) {
         Rule rule = null;
 
         switch (pattern) {
