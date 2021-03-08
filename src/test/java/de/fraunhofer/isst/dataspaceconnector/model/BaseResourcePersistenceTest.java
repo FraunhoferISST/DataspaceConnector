@@ -1,25 +1,28 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
-import de.fraunhofer.isst.dataspaceconnector.repositories.RuleRepository;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.Date;
 
+import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
+import de.fraunhofer.isst.dataspaceconnector.repositories.RuleRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * This class tests persistence of BaseResources (@CreationTimestamp, @UpdateTimestamp) using
  * ContractRule as an example.
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DatabaseTestsConfig.class})
 public class BaseResourcePersistenceTest {
 
@@ -29,41 +32,41 @@ public class BaseResourcePersistenceTest {
     @Autowired
     private RuleRepository ruleRepository;
 
-    @Before
+    @BeforeEach
     public void init() {
         ruleRepository.findAll().forEach(r -> ruleRepository.delete(r));
     }
 
     @Transactional
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createBaseResource_noSubclass_throwIllegalArgumentException() {
         /*ACT*/
-        entityManager.persist(new AbstractEntity());
+        assertThrows(IllegalArgumentException.class, () -> entityManager.persist(new AbstractEntity()));
     }
 
     @Test
     public void createBaseResource_noCreationTimestamp_creationAndUpdateTimestampSet() {
         /*ARRANGE*/
-        Assert.assertTrue(ruleRepository.findAll().isEmpty());
+        assertTrue(ruleRepository.findAll().isEmpty());
 
         ContractRule contractRule = getContractRule();
 
-        Assert.assertNull(contractRule.getCreationDate());
-        Assert.assertNull(contractRule.getModificationDate());
+        assertNull(contractRule.getCreationDate());
+        assertNull(contractRule.getModificationDate());
 
         /*ACT*/
         contractRule = ruleRepository.save(contractRule);
 
         /*ASSERT*/
-        Assert.assertNotNull(contractRule.getCreationDate());
-        Assert.assertNotNull(contractRule.getModificationDate());
+        assertNotNull(contractRule.getCreationDate());
+        assertNotNull(contractRule.getModificationDate());
     }
 
     @Transactional
     @Test
     public void readBaseResource_multipleTimes_creationAndUpdateTimestampsUnchanged() {
         /*ARRANGE*/
-        Assert.assertTrue(ruleRepository.findAll().isEmpty());
+        assertTrue(ruleRepository.findAll().isEmpty());
 
         ContractRule contractRule = ruleRepository.save(getContractRule());
 
@@ -76,15 +79,15 @@ public class BaseResourcePersistenceTest {
             ContractRule persisted = ruleRepository.getOne(contractRule.getId());
 
             /*ASSERT*/
-            Assert.assertEquals(creationDate, persisted.getCreationDate());
-            Assert.assertEquals(modificationDate, persisted.getModificationDate());
+            assertEquals(creationDate, persisted.getCreationDate());
+            assertEquals(modificationDate, persisted.getModificationDate());
         }
     }
 
     @Test
     public void updateBaseResource_creationTimestampUnchangedAndUpdateTimestampUpdated() {
         /*ARRANGE*/
-        Assert.assertTrue(ruleRepository.findAll().isEmpty());
+        assertTrue(ruleRepository.findAll().isEmpty());
 
         ContractRule original = ruleRepository.save(getContractRule());
 
@@ -96,8 +99,8 @@ public class BaseResourcePersistenceTest {
         ContractRule updated = ruleRepository.save(original);
 
         /*ASSERT*/
-        Assert.assertEquals(creationDate, updated.getCreationDate());
-        Assert.assertNotEquals(modificationDate, updated.getModificationDate());
+        assertEquals(creationDate, updated.getCreationDate());
+        assertNotEquals(modificationDate, updated.getModificationDate());
     }
 
     @Transactional
@@ -105,7 +108,7 @@ public class BaseResourcePersistenceTest {
     public void updateBaseResource_changedCreationTimestamp_creationTimestampNotUpdated()
             throws NoSuchFieldException, IllegalAccessException {
         /*ARRANGE*/
-        Assert.assertTrue(ruleRepository.findAll().isEmpty());
+        assertTrue(ruleRepository.findAll().isEmpty());
 
         ContractRule contractRule = ruleRepository.saveAndFlush(getContractRule());
 
