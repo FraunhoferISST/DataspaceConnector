@@ -1,19 +1,5 @@
 //package de.fraunhofer.isst.dataspaceconnector.model;
 //
-//import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
-//import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
-//import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-//import de.fraunhofer.isst.dataspaceconnector.repositories.CatalogRepository;
-//import de.fraunhofer.isst.dataspaceconnector.repositories.ResourceRepository;
-//import org.junit.Assert;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.dao.DataIntegrityViolationException;
-//import org.springframework.test.context.junit4.SpringRunner;
-//
 //import javax.transaction.Transactional;
 //import java.net.URI;
 //import java.util.Arrays;
@@ -21,7 +7,20 @@
 //import java.util.Map;
 //import java.util.UUID;
 //
-//@RunWith(SpringRunner.class)
+//import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
+//import de.fraunhofer.isst.dataspaceconnector.repositories.CatalogRepository;
+//import de.fraunhofer.isst.dataspaceconnector.repositories.ResourceRepository;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.dao.DataIntegrityViolationException;
+//
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertFalse;
+//import static org.junit.jupiter.api.Assertions.assertThrows;
+//import static org.junit.jupiter.api.Assertions.assertTrue;
+//
 //@SpringBootTest(classes = {DatabaseTestsConfig.class})
 //public class CatalogPersistenceTest {
 //
@@ -31,7 +30,7 @@
 //    @Autowired
 //    private ResourceRepository resourceRepository;
 //
-//    @Before
+//    @BeforeEach
 //    public void init() {
 //        catalogRepository.findAll().forEach(c -> catalogRepository.delete(c));
 //        resourceRepository.findAll().forEach(r -> resourceRepository.delete(r));
@@ -41,7 +40,7 @@
 //    @Test
 //    public void createCatalog_noResources_returnSameCatalog() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Catalog original = getCatalog();
 //
@@ -50,15 +49,15 @@
 //        Catalog persisted = catalogRepository.getOne(original.getId());
 //
 //        /*ASSERT*/
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(original, persisted);
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(original, persisted);
 //    }
 //
 //    @Transactional
 //    @Test
 //    public void createCatalog_withResource_returnSameCatalog() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Resource resource = resourceRepository.save(getResource());
 //        Catalog original = getCatalogWithResources(resource);
@@ -68,21 +67,21 @@
 //        Catalog persisted = catalogRepository.getOne(original.getId());
 //
 //        /*ASSERT*/
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(original, persisted);
-//        Assert.assertEquals(original.getResources(), persisted.getResources());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(original, persisted);
+//        assertEquals(original.getResources(), persisted.getResources());
 //    }
 //
 //    @Transactional
 //    @Test
 //    public void updateCatalog_newTitle_returnUpdatedCatalog() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Catalog original = catalogRepository.save(getCatalog());
 //        String newTitle = "newTitle";
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, catalogRepository.findAll().size());
 //
 //        /*ACT*/
 //        original.setTitle(newTitle);
@@ -90,24 +89,24 @@
 //        Catalog updated = catalogRepository.getOne(original.getId());
 //
 //        /*ASSERT*/
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(newTitle, updated.getTitle());
-//        Assert.assertEquals(original.getDescription(), updated.getDescription());
-//        Assert.assertEquals(original.getResources(), updated.getResources());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(newTitle, updated.getTitle());
+//        assertEquals(original.getDescription(), updated.getDescription());
+//        assertEquals(original.getResources(), updated.getResources());
 //    }
 //
 //    @Transactional
 //    @Test
 //    public void updateCatalog_addResource_returnUpdatedCatalog() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Resource resource1 = resourceRepository.save(getResource());
 //        Resource resource2 = resourceRepository.save(getResource());
 //        Catalog original = catalogRepository.save(getCatalogWithResources(resource1));
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(1, original.getResources().size());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, original.getResources().size());
 //
 //        /*ACT*/
 //        original.getResources().put(resource2.getId(), resource2);
@@ -115,26 +114,26 @@
 //        Catalog updated = catalogRepository.getOne(original.getId());
 //
 //        /*ASSERT*/
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(2, updated.getResources().size());
-//        Assert.assertTrue(updated.getResources().keySet()
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(2, updated.getResources().size());
+//        assertTrue(updated.getResources().keySet()
 //                .containsAll(Arrays.asList(resource1.getId(), resource2.getId())));
-//        Assert.assertEquals(original.getTitle(), updated.getTitle());
-//        Assert.assertEquals(original.getDescription(), updated.getDescription());
+//        assertEquals(original.getTitle(), updated.getTitle());
+//        assertEquals(original.getDescription(), updated.getDescription());
 //    }
 //
 //    @Transactional
 //    @Test
 //    public void updateCatalog_removeResource_returnUpdatedCatalog() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Resource resource1 = resourceRepository.save(getResource());
 //        Resource resource2 = resourceRepository.save(getResource());
 //        Catalog original = catalogRepository.save(getCatalogWithResources(resource1, resource2));
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(2, original.getResources().size());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(2, original.getResources().size());
 //
 //        /*ACT*/
 //        original.getResources().remove(resource2.getId());
@@ -142,64 +141,64 @@
 //        Catalog updated = catalogRepository.getOne(original.getId());
 //
 //        /*ASSERT*/
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(1, updated.getResources().size());
-//        Assert.assertFalse(updated.getResources().containsKey(resource2.getId()));
-//        Assert.assertTrue(updated.getResources().containsKey(resource1.getId()));
-//        Assert.assertEquals(original.getTitle(), updated.getTitle());
-//        Assert.assertEquals(original.getDescription(), updated.getDescription());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, updated.getResources().size());
+//        assertFalse(updated.getResources().containsKey(resource2.getId()));
+//        assertTrue(updated.getResources().containsKey(resource1.getId()));
+//        assertEquals(original.getTitle(), updated.getTitle());
+//        assertEquals(original.getDescription(), updated.getDescription());
 //    }
 //
 //    @Test
 //    public void deleteCatalog_noResources_catalogDeleted() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //
 //        Catalog catalog = catalogRepository.save(getCatalog());
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, catalogRepository.findAll().size());
 //
 //        /*ACT*/
 //        catalogRepository.delete(catalog);
 //
 //        /*ASSERT*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
 //    }
 //
 //    @Test
 //    public void deleteCatalog_withResources_catalogDeleted() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
-//        Assert.assertTrue(resourceRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(resourceRepository.findAll().isEmpty());
 //
 //        Resource resource = resourceRepository.save(getResource());
 //        Catalog catalog = catalogRepository.save(getCatalogWithResources(resource));
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(1, resourceRepository.findAll().size());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, resourceRepository.findAll().size());
 //
 //        /*ACT*/
 //        catalogRepository.delete(catalog);
 //
 //        /*ASSERT*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
-//        Assert.assertEquals(1, resourceRepository.findAll().size());
+//        assertTrue(catalogRepository.findAll().isEmpty());
+//        assertEquals(1, resourceRepository.findAll().size());
 //    }
 //
-//    @Test(expected = DataIntegrityViolationException.class)
+//    @Test
 //    public void deleteResource_resourceReferencedByCatalog_throwDataIntegrityViolationException() {
 //        /*ARRANGE*/
-//        Assert.assertTrue(catalogRepository.findAll().isEmpty());
-//        Assert.assertTrue(resourceRepository.findAll().isEmpty());
+//        assertTrue(catalogRepository.findAll().isEmpty());
+//        assertTrue(resourceRepository.findAll().isEmpty());
 //
 //        Resource resource = resourceRepository.save(getResource());
 //        Catalog catalog = catalogRepository.save(getCatalogWithResources(resource));
 //
-//        Assert.assertEquals(1, catalogRepository.findAll().size());
-//        Assert.assertEquals(1, resourceRepository.findAll().size());
+//        assertEquals(1, catalogRepository.findAll().size());
+//        assertEquals(1, resourceRepository.findAll().size());
 //
 //        /*ACT*/
-//        resourceRepository.delete(resource);
+//        assertThrows(DataIntegrityViolationException.class, () -> resourceRepository.delete(resource));
 //    }
 //
 //    private Resource getResource() {
