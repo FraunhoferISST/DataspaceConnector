@@ -1,14 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Contract;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,30 +8,37 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceFactory;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@RunWith(JUnit4.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class OfferedResourceFactoryTest {
 
     private OfferedResourceFactory factory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.factory = new OfferedResourceFactory();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void create_nullDesc_throwNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        factory.create(null);
+        assertThrows(NullPointerException.class, () -> factory.create(null));
     }
 
     @Test
@@ -226,25 +224,25 @@ public class OfferedResourceFactoryTest {
         assertFalse(factory.update(resource, getValidDesc()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_nullResourceValidDesc_throwsNullPointerException() {
         /* ARRANGE */
         var desc = getValidDesc();
 
         /* ACT && ASSERT */
-        factory.update(null, desc);
+        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_nullResourceNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        factory.update(null, null);
+        assertThrows(NullPointerException.class, () -> factory.update(null, null));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void update_validResourceNullDesc_throwsNullPointerException() {
         /* ARRANGE */
         var initialDesc = getValidDesc();
@@ -253,7 +251,7 @@ public class OfferedResourceFactoryTest {
         assertNotNull(resource);
 
         /* ACT && ASSERT */
-        factory.update(resource, null);
+        assertThrows(NullPointerException.class, () -> factory.update(resource, null));
     }
 
     OfferedResourceDesc getValidDesc() {
