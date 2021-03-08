@@ -77,8 +77,6 @@ public class RepresentationFactoryTest {
         /* ARRANGE */
         var representation = factory.create(getValidDesc());
 
-        assertNotNull(representation);
-
         var idBefore = representation.getId();
         var creationDateBefore = representation.getCreationDate();
         var lastModificationDateBefore =
@@ -106,8 +104,6 @@ public class RepresentationFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
-
-        assertNotNull(representation);
 
         var idBefore = representation.getId();
         var creationDateBefore = representation.getCreationDate();
@@ -173,8 +169,6 @@ public class RepresentationFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var representation = factory.create(initialDesc);
-
-        assertNotNull(representation);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(representation, null));
