@@ -71,13 +71,9 @@ public class ContractRuleFactoryTest {
     public void update_allDescMembersNotNull_returnUpdatedContractRule() {
         /* ARRANGE */
         var rule = factory.create(getValidDesc());
-
-        assertNotNull(rule);
-
         var idBefore = rule.getId();
         var creationDateBefore = rule.getCreationDate();
         var lastModificationDateBefore = rule.getModificationDate();
-
         var desc = getUpdatedDesc();
 
         /* ACT */
@@ -99,13 +95,9 @@ public class ContractRuleFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var rule = factory.create(initialDesc);
-
-        assertNotNull(rule);
-
         var idBefore = rule.getId();
         var creationDateBefore = rule.getCreationDate();
         var lastModificationDateBefore = rule.getModificationDate();
-
         var desc = getDescWithNullMembers();
 
         /* ACT */
@@ -163,8 +155,6 @@ public class ContractRuleFactoryTest {
         /* ARRANGE */
         var initialDesc = getValidDesc();
         var rule = factory.create(initialDesc);
-
-        assertNotNull(rule);
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class, () -> factory.update(rule, null));
