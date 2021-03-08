@@ -51,7 +51,7 @@ public final class MetadataUtils {
                                                                 final Map<String, String> defaultMap) {
         // TODO Implement cleaning like in updateStringList
         final var newValues = newMap == null ? defaultMap : newMap;
-        if (oldMap == null || !newMap.equals(newValues)) {
+        if (oldMap == null || !oldMap.equals(newValues)) {
             return Optional.of(newValues);
         }
 
