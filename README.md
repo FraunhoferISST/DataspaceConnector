@@ -27,7 +27,6 @@ usage control for eight IDS usage policy patterns.
 
 ## Content
 - [Wiki](https://github.com/FraunhoferISST/DataspaceConnector/wiki)   
-    - [Camel](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Using-Camel)
     - [Database Configuration](https://github.com/FraunhoferISST/DataspaceConnector/wiki/database-configuration)
     - [Deployment](https://github.com/FraunhoferISST/DataspaceConnector/wiki/deployment)  
     - [Examples](https://github.com/FraunhoferISST/DataspaceConnector/wiki/examples)
@@ -37,10 +36,12 @@ usage control for eight IDS usage policy patterns.
     - [IDS Connector Architecture](https://github.com/FraunhoferISST/DataspaceConnector/wiki/ids-connector-architecture)
     - [Kubernetes](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Kubernetes)
     - [Logging](https://github.com/FraunhoferISST/DataspaceConnector/wiki/logging)
+    - [Parametrized Backend Calls](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Parametrized-Backend-Calls) 
     - [Roadmap](https://github.com/FraunhoferISST/DataspaceConnector/wiki/roadmap)
     - [Software Documentation](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-documentation)
     - [Software Tests](https://github.com/FraunhoferISST/DataspaceConnector/wiki/software-tests)
     - [Usage Control](https://github.com/FraunhoferISST/DataspaceConnector/wiki/usage-control)
+    - [Using Camel](https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki/Using-Camel)
 - [Quick Start](#quick-start)
 - [IDS Components](#ids-components)
 - [Contributing](#contributing)
