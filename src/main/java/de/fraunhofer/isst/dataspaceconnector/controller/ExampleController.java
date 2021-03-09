@@ -276,6 +276,22 @@ public class ExampleController {
                         .build()))
                     .build();
                 break;
+            case CONNECTOR_RESTRICTED_USAGE:
+                contractOffer = new ContractOfferBuilder()
+                        ._permission_(Util.asList(new PermissionBuilder()
+                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                                ._description_(Util.asList(new TypedLiteral("duration-usage")))
+                                ._action_(Util.asList(Action.USE))
+                                ._constraint_(Util.asList(new ConstraintBuilder()
+                                        ._leftOperand_(LeftOperand.SYSTEM)
+                                        ._operator_(BinaryOperator.SAME_AS)
+                                        ._rightOperand_(
+                                                new RdfResource("https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-9f65-669219dde4ae",
+                                                        URI.create("xsd:anyURI")))
+                                        .build()))
+                                .build()))
+                        .build();
+                break;
         }
 
         return new ResponseEntity<>(contractOffer.toRdf(), HttpStatus.OK);

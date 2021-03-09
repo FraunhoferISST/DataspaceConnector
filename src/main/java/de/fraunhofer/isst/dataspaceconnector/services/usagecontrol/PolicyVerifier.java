@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
@@ -227,5 +228,11 @@ public class PolicyVerifier {
         } else {
             return false;
         }
+    }
+
+    public boolean checkIssuerConnector(Contract contract, URI issuerConnector) {
+        Rule rule = contract.getPermission().get(0);
+        URI allowedURI = policyReader.getAllowedConnector(rule);
+        return allowedURI.equals(issuerConnector);
     }
 }
