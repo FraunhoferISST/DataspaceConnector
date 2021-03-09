@@ -116,6 +116,19 @@ public class PolicyReader {
         }
     }
 
+
+    /**
+     * Returns the right operand value as an URI.
+     *
+     * @param rule the policy constraint object
+     * @return the URI of the connector
+     */
+    public URI getAllowedConnector(Rule rule) {
+        Constraint constraint = rule.getConstraint().get(0);
+        String allowedConnectorAsString = constraint.getRightOperand().getValue();
+        return URI.create(allowedConnectorAsString);
+    }
+
     /**
      * Inner class for a time interval format.
      */

@@ -171,7 +171,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
                 try {
                     // Check if the policy allows data access. TODO: Change to contract agreement. (later)
-                    if (policyHandler.onDataProvision(resourceMetadata.getPolicy())) {
+                    if (policyHandler.onDataProvision(resourceMetadata.getPolicy(), requestMessage.getIssuerConnector())) {
                         String data;
 
                         try {
