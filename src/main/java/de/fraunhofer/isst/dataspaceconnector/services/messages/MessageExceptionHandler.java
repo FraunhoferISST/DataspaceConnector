@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageResponseBuilderException;

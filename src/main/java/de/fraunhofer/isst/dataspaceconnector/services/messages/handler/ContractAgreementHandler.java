@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;

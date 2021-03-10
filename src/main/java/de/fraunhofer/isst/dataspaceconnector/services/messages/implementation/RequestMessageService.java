@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;

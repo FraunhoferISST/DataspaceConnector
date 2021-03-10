@@ -14,7 +14,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;

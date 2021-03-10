@@ -11,7 +11,7 @@ import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;

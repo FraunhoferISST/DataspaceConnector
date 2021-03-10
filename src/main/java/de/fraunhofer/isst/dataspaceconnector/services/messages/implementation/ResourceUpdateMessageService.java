@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;

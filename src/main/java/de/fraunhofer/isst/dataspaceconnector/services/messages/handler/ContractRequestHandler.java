@@ -10,7 +10,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;

@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
