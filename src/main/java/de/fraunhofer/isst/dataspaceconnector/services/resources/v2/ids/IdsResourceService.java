@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services;
+package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
@@ -49,6 +49,7 @@ public class IdsResourceService {
     }
 
     // TODO Check if the id is the internal or the external one
+    // TODO add exception handling
     public List<Resource> getAllOfferedResources() {
         return offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
