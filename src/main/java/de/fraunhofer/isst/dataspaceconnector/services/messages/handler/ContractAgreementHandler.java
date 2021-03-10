@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
@@ -139,7 +139,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         // TODO: Activate Clearing House communication as soon as it accepts IM 4.
         try {
             messageService.sendLogMessage(URI.create(clearingHouse), contractAgreement.toRdf());
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             // Failed to build the log message.
             LOGGER.warn("Failed to build log message. [exception=({})]", exception.getMessage());
         } catch (MessageResponseException exception) {

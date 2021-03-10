@@ -12,7 +12,7 @@ public class MessageResponseBuilderException extends MessageResponseException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Construct a MessageResponseBuilderException with the specified detail message and cause.
+     * Construct a ResponseMessageBuilderException with the specified detail message and cause.
      *
      * @param msg The detail message.
      */
@@ -21,7 +21,7 @@ public class MessageResponseBuilderException extends MessageResponseException {
     }
 
     /**
-     * Construct a MessageResponseBuilderException with the specified detail message and cause.
+     * Construct a ResponseMessageBuilderException with the specified detail message and cause.
      *
      * @param msg   The detail message.
      * @param cause The cause.

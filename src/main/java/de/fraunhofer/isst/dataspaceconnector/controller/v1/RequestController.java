@@ -14,7 +14,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
@@ -121,7 +121,7 @@ public class RequestController {
         try {
             // Send DescriptionRequestMessage.
             response = requestMessageService.sendDescriptionRequest(recipient, resourceId, "");
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             // Failed to send the description request message.
             LOGGER.info(
                     "Failed to send or build a request. [exception=({})]", exception.getMessage());
@@ -213,7 +213,7 @@ public class RequestController {
                     "Failed to build contract request. [exception=({})]", exception.getMessage());
             return new ResponseEntity<>(
                     "Failed to build contract request.", HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             // Failed to send the contract request message.
             LOGGER.info(
                     "Failed to send or build a request. [exception=({})]", exception.getMessage());
@@ -339,7 +339,7 @@ public class RequestController {
         try {
             // Send ArtifactRequestMessage.
             response = requestMessageService.sendArtifactRequest(recipient, artifactId, contractId, new ObjectMapper().writeValueAsString(queryInput));
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             // Failed to send the artifact request message.
             LOGGER.info(
                     "Failed to send or build a request. [exception=({})]", exception.getMessage());

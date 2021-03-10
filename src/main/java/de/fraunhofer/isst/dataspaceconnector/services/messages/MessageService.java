@@ -100,6 +100,7 @@ public abstract class MessageService {
      * @throws InfoModelVersionNotSupportedException Handled in the {@link MessageExceptionHandler}.
      */
     public void checkForVersionSupport(final String versionString) throws InfoModelVersionNotSupportedException {
+        // Get a local copy of the current connector.
         final var connector = configContainer.getConnector();
         boolean versionSupported = false;
 

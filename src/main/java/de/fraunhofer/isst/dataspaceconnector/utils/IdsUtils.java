@@ -1,6 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.ManagedEntity;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
@@ -97,5 +101,31 @@ public class IdsUtils {
             throw new ConnectorConfigurationException("The connector language configuration could" +
                 " not be received.", exception);
         }
+    }
+
+    /**
+     * Get rdf string from instance of type {@link BaseConnector}.
+     *
+     * @param baseConnector The ids connector.
+     * @return The ids connector as rdf string.
+     * @throws ConstraintViolationException If the response could not be extracted.
+     */
+    public static String convertConnectorToRdf(final BaseConnector baseConnector) throws ConstraintViolationException {
+        return baseConnector.toRdf();
+    }
+
+    /**
+     * Get rdf string from instance of type {@link Resource}.
+     *
+     * @param resource The ids resource.
+     * @return The ids resource as rdf string.
+     * @throws ConstraintViolationException If the response could not be extracted.
+     */
+    public static String convertResourceToRdf(final Resource resource) throws ConstraintViolationException {
+        return resource.toRdf();
+    }
+
+    public static String convertManagedEntityToRdf(final ManagedEntity entity) throws ConstraintViolationException {
+        return entity.toRdf();
     }
 }

@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.implementation;
 
 import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
@@ -88,7 +88,7 @@ public class ResourceUpdateMessageService extends MessageService {
      *//*
 
     @Override
-    public Message buildRequestHeader() throws MessageBuilderException {
+    public Message buildRequestHeader() throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
@@ -109,7 +109,7 @@ public class ResourceUpdateMessageService extends MessageService {
      *//*
 
     @Override
-    public Message buildResponseHeader() throws MessageBuilderException {
+    public Message buildResponseHeader() throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
         var connector = configurationContainer.getConnector();
 
@@ -225,7 +225,7 @@ public class ResourceUpdateMessageService extends MessageService {
             // Send ArtifactRequestMessage.
             artifactMessageService.setRequestParameters(recipient, artifactId, contractAgreementId);
             response = artifactMessageService.sendRequestMessage("");
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             // Failed to build the artifact request message.
             LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
             throw new MessageException("Failed to build a request.");

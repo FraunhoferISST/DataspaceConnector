@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.NotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -41,11 +41,11 @@ public class NotificationMessageService extends MessageService {
      *
      * @param recipient The message's recipient.
      * @return The notification message.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws ResponseMessageBuilderException If the message could not be built.
      */
-    public NotificationMessage buildNotificationMessage(final URI recipient) throws MessageBuilderException {
+    public NotificationMessage buildNotificationMessage(final URI recipient) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new NotificationMessageBuilder()
             ._issued_(getGregorianNow())
@@ -77,11 +77,11 @@ public class NotificationMessageService extends MessageService {
      * @param recipient The recipient of the response.
      * @param correlationId The id of the correlation message.
      * @return The notification message.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws ResponseMessageBuilderException If the message could not be built.
      */
-    public NotificationMessage buildMessageProcessedNotification(final URI recipient, final URI correlationId) throws MessageBuilderException {
+    public NotificationMessage buildMessageProcessedNotification(final URI recipient, final URI correlationId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new MessageProcessedNotificationMessageBuilder()
                 ._securityToken_(tokenProvider.getDAT())
@@ -104,8 +104,8 @@ public class NotificationMessageService extends MessageService {
         return sendMessage(header, payload, recipient);
     }
 
-//    catch (MessageBuilderException exception) {
+//    catch (ResponseMessageBuilderException exception) {
 //        LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-//        throw new MessageBuilderException("Message could not be built.", exception);
+//        throw new ResponseMessageBuilderException("Message could not be built.", exception);
 //    }
 }
