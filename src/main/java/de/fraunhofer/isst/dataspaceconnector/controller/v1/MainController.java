@@ -14,7 +14,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceContro
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.services.IdsResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.Operation;

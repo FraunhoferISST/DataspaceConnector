@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessageBuilder;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -42,11 +42,11 @@ public class ResponseMessageService extends MessageService {
      * @param contractId The id of the contract.
      * @param correlationId The id of the request.
      * @return The ids response message.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws ResponseMessageBuilderException If the message could not be built.
      */
-    public ResponseMessage buildArtifactResponseMessage(final URI recipient, final URI contractId, final URI correlationId) throws MessageBuilderException {
+    public ResponseMessage buildArtifactResponseMessage(final URI recipient, final URI contractId, final URI correlationId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new ArtifactResponseMessageBuilder()
             ._securityToken_(tokenProvider.getDAT())
@@ -66,11 +66,11 @@ public class ResponseMessageService extends MessageService {
      * @param recipient The message's recipient.
      * @param correlationId The correlation message id.
      * @return The ids response message.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws ResponseMessageBuilderException If the message could not be built.
      */
-    public ResponseMessage buildDescriptionResponseMessage(final URI recipient, final URI correlationId) throws MessageBuilderException {
+    public ResponseMessage buildDescriptionResponseMessage(final URI recipient, final URI correlationId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new DescriptionResponseMessageBuilder()
                 ._securityToken_(tokenProvider.getDAT())
@@ -83,9 +83,9 @@ public class ResponseMessageService extends MessageService {
                 .build();
     }
 
-    public ResponseMessage buildContractAgreementMessage(final URI recipient, final URI correlationId) throws MessageBuilderException {
+    public ResponseMessage buildContractAgreementMessage(final URI recipient, final URI correlationId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new ContractAgreementMessageBuilder()
                 ._issued_(getGregorianNow())

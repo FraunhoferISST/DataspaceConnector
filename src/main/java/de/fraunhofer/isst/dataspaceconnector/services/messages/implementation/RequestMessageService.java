@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -42,9 +42,9 @@ public class RequestMessageService extends MessageService {
      * @param artifactId The id of the artifact.
      * @param contractId The id of the contract.
      */
-    public RequestMessage buildArtifactRequestMessage(final URI recipient, final URI artifactId, final URI contractId) throws MessageBuilderException {
+    public RequestMessage buildArtifactRequestMessage(final URI recipient, final URI artifactId, final URI contractId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new ArtifactRequestMessageBuilder()
             ._issued_(getGregorianNow())
@@ -64,11 +64,11 @@ public class RequestMessageService extends MessageService {
      * @param recipient The recipient of the request.
      * @param resourceId The id of the resource.
      * @return The ids request message.
-     * @throws MessageBuilderException If the message could not be built.
+     * @throws ResponseMessageBuilderException If the message could not be built.
      */
-    public RequestMessage buildDescriptionRequestMessage(final URI recipient, final URI resourceId) throws MessageBuilderException {
+    public RequestMessage buildDescriptionRequestMessage(final URI recipient, final URI resourceId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new DescriptionRequestMessageBuilder()
                 ._issued_(getGregorianNow())
@@ -81,9 +81,9 @@ public class RequestMessageService extends MessageService {
                 .build();
     }
 
-    public RequestMessage buildContractRequestMessage(final URI recipient, final URI contractId) throws MessageBuilderException {
+    public RequestMessage buildContractRequestMessage(final URI recipient, final URI contractId) throws ResponseMessageBuilderException {
         // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+        final var connector = configurationContainer.getConnector();
 
         return new ContractRequestMessageBuilder()
                 ._issued_(getGregorianNow())

@@ -10,9 +10,9 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.RequestMessage;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
@@ -163,7 +163,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
                     "Artifact not found.", connector.getId(),
                     connector.getOutboundModelVersion());
-        } catch (MessageBuilderException exception) {
+        } catch (ResponseMessageBuilderException exception) {
             LOGGER.warn("Response could not be constructed. [id=({}), exception=({})]",
                     requestMessage.getId(), exception.getMessage());
             return ErrorResponse.withDefaultHeader(

@@ -32,7 +32,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @param message The received notification message as header.
+     * @param message The ids notification message as header.
      * @param payload The message notification message's content.
      * @return The response message.
      * @throws MessageResponseBuilderException If the response body failed to be build.

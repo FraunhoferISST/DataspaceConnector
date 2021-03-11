@@ -11,7 +11,7 @@ import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
@@ -114,7 +114,7 @@ public class NegotiationService {
                 // Send ContractAgreementMessage to recipient.
                 ContractAgreement agreement = pmp.buildAgreementFromContract(contract, contract.getId());
                 response = responseMessageService.sendContractAgreement(recipient, correlationMessage, agreement.toRdf());
-            } catch (MessageBuilderException exception) {
+            } catch (ResponseMessageBuilderException exception) {
                 // Failed to build the contract agreement message.
                 LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
                 throw new MessageNotSentException("Failed to build the ids message. " +
