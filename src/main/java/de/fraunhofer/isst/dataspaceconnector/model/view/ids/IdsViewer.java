@@ -114,6 +114,13 @@ public final class IdsViewer {
         return output;
     }
 
+    public List<Resource> batchCreateResource(final Collection<de.fraunhofer.isst.dataspaceconnector.model.Resource> resources) {
+        return resources.parallelStream()
+                .map(this::create)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     public Representation create(
             final de.fraunhofer.isst.dataspaceconnector.model.Representation representation) {
         final var endpoints = endpointService.getByEntity(representation.getId());
