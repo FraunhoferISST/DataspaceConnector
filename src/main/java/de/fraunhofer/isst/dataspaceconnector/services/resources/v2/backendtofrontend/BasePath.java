@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofro
 
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 
-public enum Basepaths {
+public enum BasePath {
     Resources("/api/v2/resources"),
     Representations("/api/v2/representations"),
     Contracts("/api/v2/contracts"),
@@ -11,7 +11,7 @@ public enum Basepaths {
 
     public final String label;
 
-    private Basepaths(String label) {
+    private BasePath(String label) {
         this.label = label;
     }
 
