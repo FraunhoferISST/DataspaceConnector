@@ -120,8 +120,9 @@ public abstract class MessageService {
      * Check if the received message is empty.
      *
      * @param message The message.
+     * @throws MessageEmptyException If the message is empty.
      */
-    public void checkForEmptyMessage(final Message message) {
+    public void checkForEmptyMessage(final Message message) throws MessageEmptyException {
         if (message == null) {
             throw new MessageEmptyException("The incoming request message cannot be null.");
         }
