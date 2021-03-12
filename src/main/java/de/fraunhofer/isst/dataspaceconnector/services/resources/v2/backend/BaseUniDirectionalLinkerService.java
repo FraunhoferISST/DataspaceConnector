@@ -49,7 +49,13 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId The id of the entity whose children should be received.
      * @return The ids of the children.
      */
-    public Page<W> get( final UUID ownerId, final Pageable pageable) {
+    public Page<W> get(final UUID ownerId, final Pageable pageable) {
+        throwIfOwnerIsNull(ownerId);
+
+        if (pageable == null) {
+            throw new IllegalArgumentException("The pageable cannot be null.");
+        }
+
         final var owner = oneService.get(ownerId);
         return getInternal(owner, pageable);
     }
@@ -63,6 +69,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
             return;
@@ -86,6 +94,8 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
             return;
@@ -107,6 +117,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The new children for the entity.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
             return;
@@ -168,6 +180,20 @@ public abstract class BaseUniDirectionalLinkerService<
     protected void replaceInternal(final K owner, final Set<UUID> entities) {
         getInternal(owner).clear();
         addInternal(owner, entities);
+    }
+
+    private void throwIfAnyIsNull(final UUID ownerId, final Set<UUID> entities) {
+        throwIfOwnerIsNull(ownerId);
+
+        if (entities == null) {
+            throw new IllegalArgumentException("The entities cannot be null.");
+        }
+    }
+
+    private void throwIfOwnerIsNull(final UUID ownerId) {
+        if (ownerId == null) {
+            throw new IllegalArgumentException("The owner cannot be null.");
+        }
     }
 
     private void throwIfEntityDoesNotExist(final Set<UUID> entities) {
