@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageResponseBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -35,11 +35,11 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message The ids notification message as header.
      * @param payload The message notification message's content.
      * @return The response message.
-     * @throws MessageResponseBuilderException If the response body failed to be build.
+     * @throws ResponseMessageBuilderException If the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(final NotificationMessageImpl message,
-                                         final MessagePayload payload) throws MessageResponseBuilderException {
+                                         final MessagePayload payload) throws ResponseMessageBuilderException {
         // Validate incoming message.
         messageService.checkForEmptyMessage(message);
         messageService.checkForVersionSupport(message.getModelVersion());
