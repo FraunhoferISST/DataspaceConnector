@@ -7,7 +7,6 @@ import java.util.UUID;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -33,16 +32,6 @@ public class RepresentationArtifactLinkerTest {
 
     @Autowired @InjectMocks
     RepresentationArtifactLinker linker;
-
-    /**************************************************************************
-     * Setup
-     *************************************************************************/
-
-    @BeforeEach
-    public void init() {
-        representationService.getAll(Pageable.unpaged()).forEach((x) -> representationService.delete(x.getId()));
-        artifactService.getAll(Pageable.unpaged()).forEach((x) -> artifactService.delete(x.getId()));
-    }
 
     /**************************************************************************
      * get
@@ -232,18 +221,21 @@ public class RepresentationArtifactLinkerTest {
     public void add_knownEntities_createRelation() {
         /* ARRANGE */
         final var knownId = representationService.create(getRepresentation()).getId();
-        final var artifactOne = artifactService.create(getArtifactOne()).getId();
-        final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
-        final var artifactThree = artifactService.create(getArtifactThree()).getId();
+        final var realArtifactOne = artifactService.create(getArtifactOne());
+        final var realArtifactTwo = artifactService.create(getArtifactTwo());
+        final var realArtifactThree = artifactService.create(getArtifactThree());
+        final var artifactOne = realArtifactOne.getId();
+        final var artifactTwo = realArtifactTwo.getId();
+        final var artifactThree = realArtifactThree.getId();
 
         /* ACT */
         linker.add(knownId, Set.of(artifactOne, artifactTwo, artifactThree));
 
         /* ASSERT */
         final var elements = linker.get(knownId, Pageable.unpaged()).toList();
-        assertTrue(elements.contains(artifactOne));
-        assertTrue(elements.contains(artifactTwo));
-        assertTrue(elements.contains(artifactThree));
+        assertTrue(elements.contains(realArtifactOne));
+        assertTrue(elements.contains(realArtifactTwo));
+        assertTrue(elements.contains(realArtifactThree));
     }
 
     @Test
@@ -262,7 +254,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
-        assertEquals(before, after + 3);
+        assertEquals(before + 3, after );
     }
 
     @Test
@@ -283,7 +275,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
-        assertEquals(before, after + 1);
+        assertEquals(before + 1, after);
     }
 
     @Test
@@ -410,9 +402,10 @@ public class RepresentationArtifactLinkerTest {
     public void remove_knownEntities_removeRelation() {
         /* ARRANGE */
         final var knownId = representationService.create(getRepresentation()).getId();
+        final var realArtifactThree = artifactService.create(getArtifactThree());
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
-        final var artifactThree = artifactService.create(getArtifactThree()).getId();
+        final var artifactThree = realArtifactThree.getId();
 
         linker.add(knownId, Set.of(artifactOne, artifactTwo, artifactThree));
 
@@ -421,7 +414,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ASSERT */
         final var elements = linker.get(knownId, Pageable.unpaged()).toList();
-        assertTrue(elements.contains(artifactThree));
+        assertTrue(elements.contains(realArtifactThree));
     }
 
     @Test
@@ -512,7 +505,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ASSERT */
         final var numElements = linker.get(knownId, Pageable.unpaged()).getTotalElements();
-        assertEquals(numElements, 0);
+        assertEquals(0, numElements);
     }
 
     @Test
@@ -535,7 +528,8 @@ public class RepresentationArtifactLinkerTest {
     public void replace_knownIdSetWithUnknownEntities_doNotModify() {
         /* ARRANGE */
         final var knownId = representationService.create(getRepresentation()).getId();
-        final var artifactOne = artifactService.create(getArtifactOne()).getId();
+        final var realArtifactOne = artifactService.create(getArtifactOne());
+        final var artifactOne = realArtifactOne.getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -547,7 +541,7 @@ public class RepresentationArtifactLinkerTest {
         }catch(ResourceNotFoundException exception) {
             /* ASSERT */
             final var entities = linker.get(knownId, Pageable.unpaged()).toList();
-            assertTrue(entities.contains(artifactOne));
+            assertTrue(entities.contains(realArtifactOne));
             assertEquals(entities.size(), 1);
         }
     }
@@ -557,9 +551,12 @@ public class RepresentationArtifactLinkerTest {
     public void replace_addKnownEntities_removeRelation() {
         /* ARRANGE */
         final var knownId = representationService.create(getRepresentation()).getId();
-        final var artifactOne = artifactService.create(getArtifactOne()).getId();
-        final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
-        final var artifactThree = artifactService.create(getArtifactThree()).getId();
+        final var realArtifactOne = artifactService.create(getArtifactOne());
+        final var realArtifactTwo = artifactService.create(getArtifactTwo());
+        final var realArtifactThree = artifactService.create(getArtifactThree());
+        final var artifactOne = realArtifactOne.getId();
+        final var artifactTwo = realArtifactTwo.getId();
+        final var artifactThree = realArtifactThree.getId();
 
         linker.add(knownId, Set.of(artifactOne));
 
@@ -568,9 +565,9 @@ public class RepresentationArtifactLinkerTest {
 
         /* ASSERT */
         final var elements = linker.get(knownId, Pageable.unpaged()).toList();
-        assertTrue(elements.contains(artifactTwo));
-        assertTrue(elements.contains(artifactThree));
-        assertFalse(elements.contains(artifactOne));
+        assertTrue(elements.contains(realArtifactTwo));
+        assertTrue(elements.contains(realArtifactThree));
+        assertFalse(elements.contains(realArtifactOne));
     }
 
     @Test
