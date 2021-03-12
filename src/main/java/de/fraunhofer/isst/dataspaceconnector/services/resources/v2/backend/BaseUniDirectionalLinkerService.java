@@ -1,15 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.util.Assert;
 
 /**
  * Create a parent-children relationship between two types of resources.
@@ -48,7 +51,13 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId The id of the entity whose children should be received.
      * @return The ids of the children.
      */
-    public Page<W> get( final UUID ownerId, final Pageable pageable) {
+    public Page<W> get(final UUID ownerId, final Pageable pageable) {
+        throwIfOwnerIsNull(ownerId);
+
+        if (pageable == null) {
+            throw new IllegalArgumentException("The pageable cannot be null.");
+        }
+
         final var owner = oneService.get(ownerId);
         return getInternal(owner, pageable);
     }
@@ -62,6 +71,15 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+
+        if (entities.isEmpty()) {
+            // Prevent read call to database for the owner.
+            return;
+        }
+
+        throwIfEntityDoesNotExist(entities);
+
         final var owner = oneService.get(ownerId);
 
         addInternal(owner, entities);
@@ -78,6 +96,15 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+
+        if (entities.isEmpty()) {
+            // Prevent read call to database for the owner.
+            return;
+        }
+
+        throwIfEntityDoesNotExist(entities);
+
         final var owner = oneService.get(ownerId);
 
         removeInternal(owner, entities);
@@ -92,6 +119,9 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The new children for the entity.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
+        throwIfAnyIsNull(ownerId, entities);
+        throwIfEntityDoesNotExist(entities);
+
         final var owner = oneService.get(ownerId);
 
         replaceInternal(owner, entities);
@@ -119,11 +149,15 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children added to the entity.
      */
     protected void addInternal(final K owner, final Set<UUID> entities) {
-        for (final var entityId : entities) {
-            Assert.isTrue(manyService.doesExist(entityId),
-                    "The resource must exist.");
+        final var existingEntities = getInternal(owner);
+        final var existingIds =
+                getInternal(owner).parallelStream().map(W::getId).collect(Collectors.toSet());
+        final var copySet = new HashSet<>(entities);
+        copySet.removeAll(existingIds);
+
+        for (final var entityId : copySet) {
             final var entity = manyService.get(entityId);
-            getInternal(owner).add(entity);
+            existingEntities.add(entity);
         }
     }
 
@@ -134,10 +168,10 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be removed.
      */
     protected void removeInternal(final K owner, final Set<UUID> entities) {
+        final var existingEntities = getInternal(owner);
+
         for (final var entityId : entities) {
-            Assert.isTrue(manyService.doesExist(entityId),
-                    "The resource must exist.");
-            getInternal(owner).removeIf(x -> x.getId().equals(entityId));
+            existingEntities.removeIf(x -> x.getId().equals(entityId));
         }
     }
 
@@ -150,5 +184,36 @@ public abstract class BaseUniDirectionalLinkerService<
     protected void replaceInternal(final K owner, final Set<UUID> entities) {
         getInternal(owner).clear();
         addInternal(owner, entities);
+    }
+
+    private void throwIfAnyIsNull(final UUID ownerId, final Set<UUID> entities) {
+        throwIfOwnerIsNull(ownerId);
+
+        if (entities == null) {
+            throw new IllegalArgumentException("The entities cannot be null.");
+        }
+    }
+
+    private void throwIfOwnerIsNull(final UUID ownerId) {
+        if (ownerId == null) {
+            throw new IllegalArgumentException("The owner cannot be null.");
+        }
+    }
+
+    private void throwIfEntityDoesNotExist(final Set<UUID> entities) {
+        if (!doesExist(entities, (x) -> manyService.doesExist(x))) {
+            throw new ResourceNotFoundException("Could not find resource.");
+        }
+    }
+
+    private boolean doesExist(
+            final Set<UUID> entities, final Function<UUID, Boolean> doesElementExist) {
+        for (final var entity : entities) {
+            if (!doesElementExist.apply(entity)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
