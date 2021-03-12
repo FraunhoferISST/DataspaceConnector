@@ -5,7 +5,14 @@ import de.fraunhofer.iais.eis.Message;
 
 import java.net.URI;
 
+/**
+ * Class providing util methods for message utility.
+ */
 public final class MessageUtils {
+
+    private MessageUtils() {
+        // not called
+    }
 
     /**
      * Extract requested element from ids description request message.
