@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BasePath;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -51,5 +52,9 @@ public final class EndpointUtils {
     public static String getCurrentBasePathString() {
         final var currentPath = EndpointUtils.getCurrentBasePath();
         return currentPath.toString().substring(0, currentPath.toString().indexOf(currentPath.getPath()));
+    }
+
+    public static BasePath getBasePathEnumFromString(final String path) {
+        return BasePath.fromString(path);
     }
 }
