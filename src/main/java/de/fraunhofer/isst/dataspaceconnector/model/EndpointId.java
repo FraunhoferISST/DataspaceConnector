@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.Basepaths;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BasePath;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import lombok.Data;
 
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @Embeddable
 public class EndpointId implements Serializable {
-    
+
     /**
      * Serial version uid.
      **/
@@ -26,16 +26,15 @@ public class EndpointId implements Serializable {
     @JsonIgnore
     private UUID resourceId;
 
+    @JsonIgnore
+    private BasePath basePathEnum;
+
     public EndpointId() {
     }
 
     public EndpointId(final String basePath, final UUID resourceId) {
         this.basePath = basePath;
-        this.resourceId = resourceId;
-    }
-
-    public EndpointId(final Basepaths basepaths, final UUID resourceId) {
-        this.basePath = basepaths.toString();
+        this.basePathEnum = BasePath.valueOf(basePath);
         this.resourceId = resourceId;
     }
 

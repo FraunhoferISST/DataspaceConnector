@@ -3,11 +3,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofro
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 
 public enum BasePath {
-    Resources("/api/v2/resources"),
-    Representations("/api/v2/representations"),
-    Contracts("/api/v2/contracts"),
-    Artifacts("/api/v2/artifacts"),
-    Rules("/api/v2/rules");
+    RESOURCES("/api/resources"),
+    REPRESENTATIONS("/api/representations"),
+    CONTRACTS("/api/contracts"),
+    ARTIFACTS("/api/artifacts"),
+    RULES("/api/rules"),
+    CATALOGS("/api/catalogs");
 
     public final String label;
 

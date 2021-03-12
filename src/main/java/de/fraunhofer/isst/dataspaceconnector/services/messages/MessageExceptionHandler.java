@@ -2,11 +2,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageResponseBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -14,11 +15,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * This class handles exceptions of type {@link MessageEmptyException}.
  */
+@ControllerAdvice
 @RequiredArgsConstructor
 public class MessageExceptionHandler {
 
@@ -128,5 +131,22 @@ public class MessageExceptionHandler {
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
                 connector.getId(), connector.getOutboundModelVersion());
+    }
+
+    /**
+     * Handles thrown {@link InvalidResourceException}.
+     *
+     * @param exception Exception that was thrown when building the response message.
+     * @return A message response.
+     */
+    @ExceptionHandler(InvalidResourceException.class)
+    public MessageResponse handleInvalidResourceException(final InvalidResourceException exception) {
+        // Get a local copy of the current connector.
+        final var connector = configurationContainer.getConnector();
+
+        LOGGER.debug("Resource is not in a valid format. exception=({})]", exception.getMessage());
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Requested element malformed.", connector.getId(),
+                connector.getOutboundModelVersion());
     }
 }

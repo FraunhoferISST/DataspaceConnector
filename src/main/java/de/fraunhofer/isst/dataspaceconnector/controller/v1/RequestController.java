@@ -25,6 +25,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
+import de.fraunhofer.isst.dataspaceconnector.services.ControllerService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
@@ -90,6 +91,8 @@ public class RequestController {
      */
     private final @NonNull NegotiationService negotiationService;
 
+    private final @NonNull ControllerService controllerService;
+
     /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.
      *
@@ -104,15 +107,12 @@ public class RequestController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @RequestMapping(value = "/description", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<String>
-    requestMetadata(@Parameter(description = "The URI of the requested IDS connector.",
-            required = true, example = "https://localhost:8080/api/ids/data")
-                    @RequestParam("recipient") final URI recipient,
-                    @Parameter(description = "The URI of the requested resource.",
-                            example =
-                                    "https://w3id.org/idsa/autogen/resource/a4212311-86e4-40b3" +
-                                            "-ace3-ef29cd687cf9")
-                    @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
+    public ResponseEntity<String> sendDescriptionRequest(
+            @Parameter(description = "The URL of the requested IDS connector.", required = true) @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The URI of the requested resource.") @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
+
+        controllerService.checkDynamicAttributeToken();
+
         if (tokenProvider.getDAT() == null) {
             return respondRejectUnauthorized(recipient, resourceId);
         }

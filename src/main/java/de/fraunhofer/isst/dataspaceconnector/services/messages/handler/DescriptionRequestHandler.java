@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
-import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.services.ConfigurationService;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.IdsEntityResolver;
@@ -13,7 +13,6 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,8 @@ import java.net.URI;
  * {@link de.fraunhofer.iais.eis.DescriptionRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(DescriptionRequestMessageImpl.class)
 @RequiredArgsConstructor
+@SupportedMessageType(DescriptionRequestMessageImpl.class)
 public class DescriptionRequestHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
     /**
@@ -106,26 +105,30 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     public MessageResponse constructResourceDescription(final URI requestedElement,
                                                         final URI issuerConnector,
                                                         final URI messageId) {
-        final var entity = entityResolver.getEntityById(requestedElement);
+        try {
+            final var entity = entityResolver.getEntityById(requestedElement);
+        } catch (InvalidResourceException e) {
+            LOGGER.warn("XXX");
+        }
+
 
         MessageResponse response;
-        if (entity == null) {
-            // If the resource has not been found, inform and reject.
-            LOGGER.debug("Element could not be found. [id=({}), resourceId=({})]",
-                    requestedElement, messageId);
-            response = ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
-                    "The requested element %s could not be found.", requestedElement),
-                    configService.extractIdFromConnector(),
-                    configService.extractOutboundModelVersionFromConnector());
-        } else {
-            // If the element has been found, build and send the description.
-            final var header = messageService
-                    .buildDescriptionResponseMessage(issuerConnector, messageId);
-            final var idsEntity = idsEntityResolver.getEntityAsIdsObject(entity);
-            final var payload = IdsUtils.convertManagedEntityToRdf(idsEntity);
-            response = BodyResponse.create(header, payload);
-        }
-        return response;
+//        if (entity == null) {
+//            // If the resource has not been found, inform and reject.
+//            LOGGER.debug("Element could not be found. [id=({}), resourceId=({})]",
+//                    requestedElement, messageId);
+//            response = ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
+//                    "The requested element %s could not be found.", requestedElement),
+//                    configService.extractIdFromConnector(),
+//                    configService.extractOutboundModelVersionFromConnector());
+//        } else {
+//            // If the element has been found, build and send the description.
+//            final var header = messageService
+//                    .buildDescriptionResponseMessage(issuerConnector, messageId);
+//            final var payload = idsEntityResolver.getEntityAsIdsRdfString(entity);
+//            response = BodyResponse.create(header, payload);
+//        }
+        return null;
     }
 
     /**

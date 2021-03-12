@@ -38,6 +38,8 @@ public final class EndpointUtils {
         return new EndpointId(basePath, resourceId);
     }
 
+    // Methode basePath String to Enum
+
     public static URI getCurrentBasePath() {
         return getCurrentRequestUriBuilder().build().toUri();
     }
