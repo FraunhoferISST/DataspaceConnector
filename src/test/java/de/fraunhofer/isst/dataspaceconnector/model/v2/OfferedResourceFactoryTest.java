@@ -4,9 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
-import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
@@ -117,10 +115,8 @@ public class OfferedResourceFactoryTest {
         var lastModificationDateBefore = resource.getModificationDate();
 
         var versionBefore = resource.getVersion();
-        var representationsBefore =
-                ((HashMap<UUID, Representation>) resource.getRepresentations()).clone();
-        var contractsBefore =
-                ((HashMap<UUID, Contract>) resource.getContracts()).clone();
+        var representationsBefore = ((ArrayList<Representation>) resource.getRepresentations()).clone();
+        var contractsBefore = ((ArrayList<Contract>) resource.getContracts()).clone();
         var desc = getUpdatedDesc();
 
         /* ACT */
@@ -170,10 +166,8 @@ public class OfferedResourceFactoryTest {
         var lastModificationDateBefore = resource.getModificationDate();
 
         var versionBefore = resource.getVersion();
-        var representationsBefore =
-                ((HashMap<UUID, Representation>) resource.getRepresentations()).clone();
-        var contractsBefore =
-                ((HashMap<UUID, Contract>) resource.getContracts()).clone();
+        var representationsBefore = ((ArrayList<Representation>) resource.getRepresentations()).clone();
+        var contractsBefore = ((ArrayList<Contract>) resource.getContracts()).clone();
 
         var desc = getDescWithNullMembers();
 

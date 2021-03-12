@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.ArrayList;
 
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
@@ -88,8 +87,8 @@ public class CatalogFactoryTest {
         var creationDateBefore = catalog.getCreationDate();
         var lastModificationDateBefore = catalog.getModificationDate();
 
-        var offeredResourcesBefore = ((HashMap<UUID, OfferedResource>) catalog.getOfferedResources()).clone();
-        var requestedResourcesBefore = ((HashMap<UUID, RequestedResource>) catalog.getRequestedResources()).clone();
+        var offeredResourcesBefore = ((ArrayList<OfferedResource>) catalog.getOfferedResources()).clone();
+        var requestedResourcesBefore = ((ArrayList<RequestedResource>) catalog.getRequestedResources()).clone();
         var desc = getUpdatedValidDesc();
 
         /* ACT */
@@ -119,8 +118,8 @@ public class CatalogFactoryTest {
         var creationDateBefore = catalog.getCreationDate();
         var lastModificationDateBefore = catalog.getModificationDate();
 
-        var offeredResourcesBefore = ((HashMap<UUID, OfferedResource>) catalog.getOfferedResources()).clone();
-        var requestedResourcesBefore = ((HashMap<UUID, RequestedResource>) catalog.getRequestedResources()).clone();
+        var offeredResourcesBefore = ((ArrayList<OfferedResource>) catalog.getOfferedResources()).clone();
+        var requestedResourcesBefore = ((ArrayList<RequestedResource>) catalog.getRequestedResources()).clone();
         var desc = getDescWithNullMembers();
 
         /* ACT */

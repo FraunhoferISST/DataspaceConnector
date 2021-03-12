@@ -109,9 +109,7 @@ public abstract class BaseUniDirectionalLinkerService<
 
     protected Page<W> getInternal(final K owner, final Pageable pageable) {
         final var entities = getInternal(owner);
-        final var startPage = pageable.getOffset();
-        final var endPage = Math.min((startPage + pageable.getPageSize()), entities.size());
-        return new PageImpl<>(entities.subList((int)startPage, (int)endPage), pageable, entities.size());
+        return new PageImpl<>(entities, pageable, entities.size());
     }
 
     /**

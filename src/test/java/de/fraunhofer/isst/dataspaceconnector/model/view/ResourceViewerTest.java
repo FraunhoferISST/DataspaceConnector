@@ -1,17 +1,17 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view;
-
-import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.net.URI;
-import java.util.Arrays;
-
-public class ResourceViewerTest {
-
+//package de.fraunhofer.isst.dataspaceconnector.model.view;
+//
+//import de.fraunhofer.isst.dataspaceconnector.model.Resource;
+//import de.fraunhofer.isst.dataspaceconnector.model.ResourceDesc;
+//import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceFactory;
+//import org.junit.Assert;
+//import org.junit.Before;
+//import org.junit.Test;
+//
+//import java.net.URI;
+//import java.util.Arrays;
+//
+//public class ResourceViewerTest {
+//
 //    private ResourceViewFactory factory;
 //
 //    @Before
@@ -57,4 +57,4 @@ public class ResourceViewerTest {
 //
 //        return resourceFactory.create(desc);
 //    }
-}
+//}

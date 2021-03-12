@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.v2;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.ArrayList;
 
 import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractFactory;
@@ -79,7 +78,7 @@ public class ContractFactoryTest {
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getModificationDate();
-        var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
+        var rulesBefore = ((ArrayList<ContractRule>) contract.getRules()).clone();
         var desc = getUpdatedValidDesc();
 
         /* ACT */
@@ -105,7 +104,7 @@ public class ContractFactoryTest {
         var idBefore = contract.getId();
         var creationDateBefore = contract.getCreationDate();
         var lastModificationDateBefore = contract.getModificationDate();
-        var rulesBefore = ((HashMap<UUID, ContractRule>) contract.getRules()).clone();
+        var rulesBefore = ((ArrayList<ContractRule>) contract.getRules()).clone();
         var desc = getDescWithNullMembers();
 
         /* ACT */
