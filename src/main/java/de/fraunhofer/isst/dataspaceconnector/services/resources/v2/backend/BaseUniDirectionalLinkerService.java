@@ -1,9 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
@@ -118,12 +120,6 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
         throwIfAnyIsNull(ownerId, entities);
-
-        if (entities.isEmpty()) {
-            // Prevent read call to database for the owner.
-            return;
-        }
-
         throwIfEntityDoesNotExist(entities);
 
         final var owner = oneService.get(ownerId);
@@ -153,9 +149,15 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children added to the entity.
      */
     protected void addInternal(final K owner, final Set<UUID> entities) {
-        for (final var entityId : entities) {
+        final var existingEntities = getInternal(owner);
+        final var existingIds =
+                getInternal(owner).parallelStream().map(W::getId).collect(Collectors.toSet());
+        final var copySet = new HashSet<>(entities);
+        copySet.removeAll(existingIds);
+
+        for (final var entityId : copySet) {
             final var entity = manyService.get(entityId);
-            getInternal(owner).add(entity);
+            existingEntities.add(entity);
         }
     }
 
@@ -166,8 +168,10 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be removed.
      */
     protected void removeInternal(final K owner, final Set<UUID> entities) {
+        final var existingEntities = getInternal(owner);
+
         for (final var entityId : entities) {
-            getInternal(owner).removeIf(x -> x.getId().equals(entityId));
+            existingEntities.removeIf(x -> x.getId().equals(entityId));
         }
     }
 
