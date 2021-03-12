@@ -1,10 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
-import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsSerializationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respondConfigurationNotFound;
 
@@ -34,12 +31,12 @@ public class ConfigurationController {
     /**
      * The current connector configuration.
      */
-    private final @NonNull ConfigurationContainer configurationContainer;
+    private final @NonNull ConfigurationContainer configContainer;
 
     /**
-     * The provider for ids serialization.
+     * Service for deserializing ids objects.
      */
-    private final @NonNull SerializerProvider serializerProvider;
+    private final @NonNull IdsSerializationService idsService;
 
     /**
      * Update the connector's current configuration.
@@ -54,21 +51,15 @@ public class ConfigurationController {
     @ResponseBody
     public ResponseEntity<String> updateConfiguration(@RequestBody final String configuration) {
         try {
-            final var serializer = serializerProvider.getSerializer();
-            if (serializer == null) {
-                throw new NullPointerException("No configuration serializer has been set.");
-            }
+            // Deserialize input.
+            final var newConfig = idsService.deserializeConfigurationModel(configuration);
 
-            final var newConfigModel =
-                serializer.deserialize(configuration, ConfigurationModel.class);
-
-            configurationContainer.updateConfiguration(newConfigModel);
+            // Update configuration of connector.
+            configContainer.updateConfiguration(newConfig);
             return new ResponseEntity<>("Configuration successfully updated.", HttpStatus.OK);
-        } catch (NullPointerException exception) {
-            return ControllerUtils.responseFailedToLoadSerializer(exception);
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (IOException exception) {
+        } catch (IllegalArgumentException exception) {
             return ControllerUtils.responseDeserializationError(exception);
         }
     }
@@ -84,12 +75,11 @@ public class ConfigurationController {
             @ApiResponse(responseCode = "404", description = "Not found")})
     @ResponseBody
     public ResponseEntity<String> getConfiguration() {
-        final var config = configurationContainer.getConfigModel();
-        if (config != null) {
-            // Return the config.
-            return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
-        } else {
+        final var config = configContainer.getConfigModel();
+        if (config == null) {
             return respondConfigurationNotFound();
+        } else {
+            return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
         }
     }
 }
