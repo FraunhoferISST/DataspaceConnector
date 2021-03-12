@@ -38,10 +38,12 @@ public class EntityResolver {
 
     public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
         final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
-        final var basePath = endpointId.getBasePathEnum();
+        final var basePath = endpointId.getBasePath();
         final var entityId = endpointId.getResourceId();
 
-        switch (basePath) {
+        final var pathEnum = EndpointUtils.getBasePathEnumFromString(basePath);
+
+        switch (pathEnum) {
             case ARTIFACTS:
                 return artifactService.get(entityId);
             case REPRESENTATIONS:
