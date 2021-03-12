@@ -7,6 +7,7 @@ import java.util.UUID;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
@@ -32,6 +33,16 @@ public class RepresentationArtifactLinkerTest {
 
     @Autowired @InjectMocks
     RepresentationArtifactLinker linker;
+
+    /**************************************************************************
+     * Setup
+     *************************************************************************/
+
+    @BeforeEach
+    public void init() {
+        representationService.getAll(Pageable.unpaged()).forEach((x) -> representationService.delete(x.getId()));
+        artifactService.getAll(Pageable.unpaged()).forEach((x) -> artifactService.delete(x.getId()));
+    }
 
     /**************************************************************************
      * get
@@ -515,11 +526,8 @@ public class RepresentationArtifactLinkerTest {
 
         linker.add(knownId, Set.of(artifactOne));
 
-        /* ACT */
-        linker.replace(knownId, Set.of(artifactTwo, unknownUuid));
-
-        /* ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.remove(knownId, Set.of(artifactOne, unknownUuid)));
+        /* ACT && ASSERT */
+        assertThrows(ResourceNotFoundException.class, () -> linker.replace(knownId, Set.of(artifactTwo, unknownUuid)));
     }
 
     @Test
