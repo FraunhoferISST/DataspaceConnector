@@ -19,17 +19,6 @@ public final class ControllerUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerUtils.class);
 
     /**
-     * Creates a ResponseEntity with status code 401 and a message indicating an invalid DAT token.
-     *
-     * @param url the URL that was called.
-     * @return ResponseEntity with status code 401.
-     */
-    public static ResponseEntity<Object> respondRejectUnauthorized(final String url) {
-        LOGGER.debug("Unauthorized call. No DAT token found. [url=({})]", url);
-        return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
-    }
-
-    /**
      * Creates a ResponseEntity with status code 500 and a message indicating that an error occurred
      * in the broker communication.
      *

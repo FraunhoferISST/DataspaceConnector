@@ -14,18 +14,17 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceImpl;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.BackendSource;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceMetadata;
 import de.fraunhofer.isst.dataspaceconnector.model.v1.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.ControllerService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.RequestMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
@@ -49,6 +48,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,11 +71,11 @@ import java.util.UUID;
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 @RequiredArgsConstructor
-public class RequestController {
+public class IdsMessageController {
     /**
      * The logging service.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdsMessageController.class);
 
     /**
      * The token provider.
@@ -91,8 +92,6 @@ public class RequestController {
      */
     private final @NonNull NegotiationService negotiationService;
 
-    private final @NonNull ControllerService controllerService;
-
     /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.
      *
@@ -100,23 +99,19 @@ public class RequestController {
      * @param resourceId The requested resource uri.
      * @return OK or error response.
      */
-    @Operation(summary = "Description request", description = "Request metadata from another IDS connector.")
+    @PostMapping("/description")
+    @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/description", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
-    public ResponseEntity<String> sendDescriptionRequest(
-            @Parameter(description = "The URL of the requested IDS connector.", required = true) @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The URI of the requested resource.") @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
-
-        controllerService.checkDynamicAttributeToken();
-
-        if (tokenProvider.getDAT() == null) {
-            return respondRejectUnauthorized(recipient, resourceId);
-        }
-
+    public ResponseEntity<String> sendDescriptionRequestMessage(
+            @Parameter(description = "The URL of the requested IDS connector.", required = true)
+            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The URI of the requested resource.")
+            @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
         Map<String, String> response;
         try {
             // Send DescriptionRequestMessage.
@@ -186,6 +181,7 @@ public class RequestController {
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/contract", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
     public ResponseEntity<String>
     requestContract(@Parameter(description = "The URI of the requested IDS connector.",
@@ -198,9 +194,6 @@ public class RequestController {
                     @RequestParam(value = "requestedArtifact") final URI artifactId,
                     @Parameter(description = "The contract offer for the requested resource.") @RequestBody(
                             required = false) final String contractOffer) {
-        if (tokenProvider.getDAT() == null) {
-            return respondRejectUnauthorized(recipient, null);
-        }
 
         Map<String, String> response;
         try {
@@ -293,6 +286,7 @@ public class RequestController {
                     @ApiResponse(responseCode = "500", description = "Internal server error")
             })
     @RequestMapping(value = "/artifact", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
     public ResponseEntity<String>
     requestData(@Parameter(description = "The URI of the requested IDS connector.", required = true,
@@ -313,9 +307,6 @@ public class RequestController {
                 @Parameter(description = "The query parameters and headers to use when fetching the " +
                         "data from the backend system.")
                 @RequestBody(required = false) final QueryInput queryInput) {
-        if (tokenProvider.getDAT() == null) {
-            return respondRejectUnauthorized(recipient, artifactId);
-        }
 
         if (!resourceExists(key)) {
             // The resource does not exist.
@@ -387,21 +378,6 @@ public class RequestController {
             return new ResponseEntity<>(
                     "Failed to save to database.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * The request was unauthorized.
-     *
-     * @param recipient         The recipient url.
-     * @param requestedArtifact The id of the requested artifact.
-     * @return An http response.
-     */
-    private ResponseEntity<String> respondRejectUnauthorized(final URI recipient, final URI requestedArtifact) {
-        LOGGER.debug(
-                "Unauthorized call. No DAT token found. [recipient=({}), requestedArtifact=({})]",
-                recipient.toString(), requestedArtifact.toString());
-
-        return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
 
     /**
