@@ -38,9 +38,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,12 +66,12 @@ public class ExampleController {
     /**
      * Policy information point.
      */
-    private final @NonNull PolicyInformationService pip;
+    private final @NonNull PolicyInformationService informationService;
 
     /**
      * Policy management point.
      */
-    private final @NonNull PolicyManagementService pmp;
+    private final @NonNull PolicyManagementService managementService;
 
     /**
      * Get an example configuration.
@@ -81,7 +82,7 @@ public class ExampleController {
     @Operation(summary = "Get sample connector configuration",
             description = "Get a sample connector configuration for the config.json.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    @RequestMapping(value = "/configuration", method = RequestMethod.GET)
+    @GetMapping("/configuration")
     @ResponseBody
     public ResponseEntity<String> getConnectorConfiguration() {
         // NOTE: This needs some cleanup. Skip exception handling.
@@ -105,8 +106,9 @@ public class ExampleController {
                         ._outboundModelVersion_("4.0.0")
                         ._inboundModelVersion_(Util.asList("4.0.0"))
                         ._title_(Util.asList(new TypedLiteral("Dataspace Connector")))
-                        ._description_(Util.asList(new TypedLiteral("IDS Connector with static " +
-                                "example resources hosted by the Fraunhofer ISST")))
+                        ._description_(Util.asList(new TypedLiteral(
+                                "IDS Connector with static "
+                                        + "example resources hosted by the Fraunhofer ISST.")))
                         ._version_("v3.0.0")
                         ._publicKey_(new PublicKeyBuilder()
                                 ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey()
@@ -124,24 +126,24 @@ public class ExampleController {
     }
 
     /**
-     * Get the policy pattern.
+     * Validate a rule and get the policy pattern.
      *
-     * @param policy a {@link java.lang.String} object.
-     * @return a {@link org.springframework.http.ResponseEntity} object.
+     * @param ruleAsString Policy as string.
+     * @return A pattern enum or error.
      */
     @Operation(summary = "Get pattern of policy",
             description = "Get the policy pattern represented by a given JSON string.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @RequestMapping(value = "/policy/validation", method = RequestMethod.POST)
+    @PostMapping("/validation")
     @ResponseBody
     public ResponseEntity<Object> getPolicyPattern(
             @Parameter(description = "The JSON string representing a policy", required = true)
-            @RequestBody final String policy) {
+            @RequestBody final String ruleAsString) {
         try {
-            final var rule= pmp.deserializeRule(policy);
-            return new ResponseEntity<>(pip.getPatternByRule(rule), HttpStatus.OK);
+            final var rule = managementService.deserializeRule(ruleAsString);
+            return new ResponseEntity<>(informationService.getPatternByRule(rule), HttpStatus.OK);
         } catch (ContractException exception) {
             return ControllerUtils.responsePatternNotIdentified(exception);
         } catch (Exception exception) {
@@ -152,17 +154,17 @@ public class ExampleController {
     /**
      * Get an example policy pattern.
      *
-     * @param pattern a {@link PolicyPattern} object.
-     * @return a {@link org.springframework.http.ResponseEntity} object.
+     * @param pattern Policy pattern type.
+     * @return An example policy object that can be filled out.
      */
     @Operation(summary = "Get example policy",
             description = "Get an example policy for a given policy pattern.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    @RequestMapping(value = "/policy", method = RequestMethod.POST)
+    @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
-            @Parameter(description = "The policy pattern.", required = true)
-            @RequestParam("pattern") final PolicyPattern pattern) {
+            @Parameter(description = "Selection of supported policy patterns.", required = true)
+            @RequestParam("type") final PolicyPattern pattern) {
         Rule rule = null;
 
         switch (pattern) {
@@ -271,16 +273,17 @@ public class ExampleController {
                                 ._constraint_(Util.asList(new ConstraintBuilder()
                                         ._leftOperand_(LeftOperand.ENDPOINT)
                                         ._operator_(BinaryOperator.DEFINES_AS)
-                                        ._rightOperand_(
-                                                new RdfResource("https://localhost:8000/api/ids" +
-                                                        "/data",
-                                                        URI.create("xsd:anyURI")))
+                                        ._rightOperand_(new RdfResource(
+                                                "https://localhost:8000/api/ids"
+                                                        + "/data", URI.create("xsd:anyURI")))
                                         .build()))
                                 .build()))
                         .build();
                 break;
+            default:
+                break;
         }
 
-        return new ResponseEntity<>(rule.toRdf(), HttpStatus.OK);
+        return new ResponseEntity<>(rule, HttpStatus.OK);
     }
 }
