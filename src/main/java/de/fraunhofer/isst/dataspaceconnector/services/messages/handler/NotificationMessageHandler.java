@@ -64,7 +64,8 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         try {
             // Build the ids response.
             final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
-            final var params = List.of(message.getId());
+            final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+            final var params = List.of(messageId);
             final var header = messageService.buildMessage(issuerConnector, params);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException exception) {
