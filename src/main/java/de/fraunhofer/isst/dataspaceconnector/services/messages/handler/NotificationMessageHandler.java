@@ -1,8 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -11,6 +15,8 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageRespons
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * This @{@link NotificationMessageHandler} handles all incoming messages that have a
@@ -26,7 +32,12 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Service for handling notification messages.
      */
-    private final @NonNull NotificationMessageService messageService;
+    private final @NonNull NotificationService messageService;
+
+    /**
+     * Service for the message exception handling.
+     */
+    private final @NonNull MessageExceptionService exceptionService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -35,19 +46,31 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message The ids notification message as header.
      * @param payload The message notification message's content.
      * @return The response message.
-     * @throws ResponseMessageBuilderException If the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(final NotificationMessageImpl message,
-                                         final MessagePayload payload) throws ResponseMessageBuilderException {
+                                         final MessagePayload payload) {
         // Validate incoming message.
-        messageService.checkForEmptyMessage(message);
-        messageService.checkForVersionSupport(message.getModelVersion());
+        try {
+            messageService.checkForEmptyMessage(message);
+            messageService.checkForVersionSupport(message.getModelVersion());
+        } catch (MessageEmptyException exception) {
+            return exceptionService.handleMessageEmptyException(exception);
+        } catch (InfoModelVersionNotSupportedException exception) {
+            return exceptionService.handleInfoModelNotSupportedException(exception,
+                    message.getModelVersion());
+        }
 
-        // Build the ids response.
-        final var header =
-                messageService.buildMessageProcessedNotification(message.getIssuerConnector(),
-                        message.getId());
-        return BodyResponse.create(header, "Message received.");
+        try {
+            // Build the ids response.
+            final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
+            final var params = List.of(message.getId());
+            final var header = messageService.buildMessage(issuerConnector, params);
+            return BodyResponse.create(header, "Message received.");
+        } catch (IllegalStateException exception) {
+            return exceptionService.handleIllegalStateException(exception);
+        } catch (ConstraintViolationException exception) {
+            return exceptionService.handleConstraintViolationException(exception);
+        }
     }
 }
