@@ -6,10 +6,10 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all incoming messages that have a
@@ -45,12 +46,12 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for handling response messages.
      */
-    private final @NonNull ResponseMessageService messageService;
+    private final @NonNull DescriptionResponseService messageService;
 
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionHandler exceptionHandler;
+    private final @NonNull MessageExceptionService exceptionService;
 
     /**
      * Service for ids connector management.
@@ -74,14 +75,14 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     @Override
     public MessageResponse handleMessage(final DescriptionRequestMessageImpl message,
                                          final MessagePayload payload) {
-        // Check general message details.
+        // Validate incoming message.
         try {
             messageService.checkForEmptyMessage(message);
             messageService.checkForVersionSupport(message.getModelVersion());
         } catch (MessageEmptyException exception) {
-            return exceptionHandler.handleMessageEmptyException(exception);
+            return exceptionService.handleMessageEmptyException(exception);
         } catch (InfoModelVersionNotSupportedException exception) {
-            return exceptionHandler.handleInfoModelNotSupportedException(exception,
+            return exceptionService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
@@ -115,30 +116,30 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         try {
             final var entity = entityResolver.getEntityById(requestedElement);
 
-            MessageResponse response;
             if (entity == null) {
-                response = exceptionHandler.handleResourceNotFoundException(requestedElement,
+                return exceptionService.handleResourceNotFoundException(requestedElement,
                         issuerConnector, messageId);
             } else {
-                // If the element has been found, build and send the description.
-                final var header = messageService
-                        .buildDescriptionResponseMessage(issuerConnector, messageId);
+                // If the element has been found, build the ids response message.
+                final var params = List.of(messageId);
+                final var header = messageService.buildMessage(issuerConnector, params);
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
-                response = BodyResponse.create(header, payload);
+
+                // Send ids response message.
+                return BodyResponse.create(header, payload);
             }
-            return response;
         } catch (ResourceNotFoundException exception) {
-            return exceptionHandler.handleResourceNotFoundException(exception, requestedElement,
+            return exceptionService.handleResourceNotFoundException(exception, requestedElement,
                     issuerConnector, messageId);
         } catch (InvalidResourceException exception) {
-            return exceptionHandler.handleInvalidResourceException(exception, requestedElement,
+            return exceptionService.handleInvalidResourceException(exception, requestedElement,
                     issuerConnector, messageId);
-        } catch (ResponseMessageBuilderException exception) {
-            return exceptionHandler.handleResponseMessageBuilderException(exception);
+        } catch (MessageBuilderException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception);
         } catch (IllegalStateException exception) {
-            return exceptionHandler.handleIllegalStateException(exception);
+            return exceptionService.handleIllegalStateException(exception);
         } catch (ConstraintViolationException exception) {
-            return exceptionHandler.handleConstraintViolationException(exception);
+            return exceptionService.handleConstraintViolationException(exception);
         }
     }
 
@@ -156,18 +157,18 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var selfDescription = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
-            final var header = messageService
-                    .buildDescriptionResponseMessage(issuerConnector, messageId);
+            final var params = List.of(messageId);
+            final var header = messageService.buildMessage(issuerConnector, params);
             final var payload = IdsUtils.convertConnectorToRdf(selfDescription);
 
             // Send ids response message.
             return BodyResponse.create(header, payload);
         } catch (ConstraintViolationException exception) {
-            return exceptionHandler.handleConstraintViolationException(exception);
-        } catch (ResponseMessageBuilderException exception) {
-            return exceptionHandler.handleResponseMessageBuilderException(exception);
+            return exceptionService.handleConstraintViolationException(exception);
+        } catch (MessageBuilderException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception);
         } catch (IllegalStateException exception) {
-            return exceptionHandler.handleIllegalStateException(exception);
+            return exceptionService.handleIllegalStateException(exception);
         }
     }
 }
