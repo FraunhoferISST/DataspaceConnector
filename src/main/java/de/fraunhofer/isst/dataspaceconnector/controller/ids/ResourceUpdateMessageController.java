@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.controller.v1;
+package de.fraunhofer.isst.dataspaceconnector.controller.ids;
 
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;

@@ -1,11 +1,11 @@
-package de.fraunhofer.isst.dataspaceconnector.controller.v1;
+package de.fraunhofer.isst.dataspaceconnector.controller.ids;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,13 +25,13 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Controller for sending ids connector unavailable messages.
+ * Controller for sending ids query messages.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
-public class ConnectorUnavailableMessageController {
+public class QueryMessageController {
 
     /**
      * The service for communication with the ids broker.
@@ -38,19 +39,20 @@ public class ConnectorUnavailableMessageController {
     private final @NonNull IDSBrokerService brokerService;
 
     /**
-     * Service for the current connector configuration.
+     * Service for ids resources.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull IdsResourceService resourceService;
 
     /**
-     * Sending an ids connector unavailable message with the current connector as payload.
+     * Sending an ids query message with a query message as payload.
      *
      * @param recipient The url of the recipient.
+     * @param query     The query statement.
      * @return The response message or an error.
      */
-    @PostMapping("/unavailable/connector")
-    @Operation(summary = "Connector unavailable message", description = "Can be used for "
-            + "unregistering the connector at an IDS broker.")
+    @PostMapping("/query")
+    @Operation(summary = "Connector update message", description = "Can be used for querying an "
+            + "IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -60,18 +62,19 @@ public class ConnectorUnavailableMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient) {
+            @RequestParam("recipient") final String recipient,
+            @Schema(description = "Database query (SparQL)", required = true,
+                    example = "SELECT ?subject ?predicate ?object\n"
+                            + "FROM <urn:x-arq:UnionGraph>\n"
+                            + "WHERE {\n"
+                            + "  ?subject ?predicate ?object\n"
+                            + "};") @RequestBody final String query) {
         try {
-            // Update the config model.
-            connectorService.updateConfigModel();
-
-            // Send the connector unavailable message.
-            final var response = brokerService.unregisterAtBroker(recipient);
+            // Send the resource update message.
+            final var response = brokerService.queryBroker(recipient, query, null, null, null);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
-        } catch (ConfigurationUpdateException exception) {
-            return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (NullPointerException | IOException exception) {
+        } catch (IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }
