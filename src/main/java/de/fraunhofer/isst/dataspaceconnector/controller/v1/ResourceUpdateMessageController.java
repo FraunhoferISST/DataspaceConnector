@@ -1,9 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v1;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -30,7 +30,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
-public class ConnectorUpdateMessageController {
+public class ResourceUpdateMessageController {
 
     /**
      * The service for communication with the ids broker.
@@ -38,14 +38,15 @@ public class ConnectorUpdateMessageController {
     private final @NonNull IDSBrokerService brokerService;
 
     /**
-     * Service for the current connector configuration.
+     * Service for ids resources.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull IdsResourceService resourceService;
 
     /**
      * Sending an ids connector update message with the current connector as payload.
      *
-     * @param recipient The url of the recipient.
+     * @param recipient  The url of the recipient.
+     * @param resourceId The resource id.
      * @return The response message or an error.
      */
     @PostMapping("/update/connector")
@@ -60,18 +61,23 @@ public class ConnectorUpdateMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient) {
+            @RequestParam("recipient") final String recipient,
+            @Parameter(description = "The resource id.")
+            @RequestParam(value = "resourceId") final URI resourceId) {
         try {
-            connectorService.updateConfigModel();
+            final var resource = resourceService.getOfferedResourceById(resourceId);
+            if (resource == null) {
+                return ControllerUtils.respondResourceNotFound(resourceId);
+            }
 
-            // Send the connector update message.
-            final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
+            // Send the resource update message.
+            final var response = brokerService.updateResourceAtBroker(recipient, resource);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
-        } catch (ConfigurationUpdateException exception) {
-            return ControllerUtils.respondConfigurationUpdateError(exception);
+        } catch (ClassCastException exception) {
+            return ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
         } catch (NullPointerException | IOException exception) {
-            return ControllerUtils.respondConnectorUpdateMessageFailed(exception);
+            return ControllerUtils.respondResourceUpdateMessageFailed(exception);
         }
     }
 }
