@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFo
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataProvisionException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.ConfigurationService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -24,12 +24,12 @@ import java.net.URI;
  */
 @Service
 @RequiredArgsConstructor
-public class MessageExceptionHandler {
+public class MessageExceptionService {
 
     /**
      * Class level logger.
      */
-    public static final Logger LOGGER = LoggerFactory.getLogger(MessageExceptionHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MessageExceptionService.class);
 
     /**
      * Service for the current connector configuration.
@@ -46,8 +46,8 @@ public class MessageExceptionHandler {
         LOGGER.debug("Cannot respond when there is no request. [exception=({})]",
                 exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                exception.getMessage(), configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                exception.getMessage(), configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -61,8 +61,8 @@ public class MessageExceptionHandler {
         LOGGER.debug("Information Model version of requesting connector is not supported. "
                 + "[version=({}), exception=({})]", version, exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.VERSION_NOT_SUPPORTED,
-                exception.getMessage(), configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                exception.getMessage(), configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -75,8 +75,8 @@ public class MessageExceptionHandler {
         LOGGER.debug("Policy restriction detected. [exception=({})]", exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                 "Policy restriction detected." + exception.getMessage(),
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -90,22 +90,22 @@ public class MessageExceptionHandler {
                 exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
-     * Handles thrown {@link ResponseMessageBuilderException}.
+     * Handles thrown {@link MessageBuilderException}.
      *
      * @param exception Exception that was thrown when building the response message.
      * @return A message response.
      */
-    public MessageResponse handleResponseMessageBuilderException(final ResponseMessageBuilderException exception) {
+    public MessageResponse handleResponseMessageBuilderException(final MessageBuilderException exception) {
         LOGGER.warn("Failed to convert ids object to string. [exception=({})]", exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -117,8 +117,8 @@ public class MessageExceptionHandler {
     public MessageResponse handleIllegalStateException(final IllegalStateException exception) {
         LOGGER.debug("Wrong ids message type as response. [exception=({})]", exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Internal server error.", configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                "Internal server error.", configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -138,8 +138,8 @@ public class MessageExceptionHandler {
                 exception.getMessage(), requestedElement, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -157,8 +157,8 @@ public class MessageExceptionHandler {
                 requestedElement, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 
     /**
@@ -178,7 +178,7 @@ public class MessageExceptionHandler {
                 exception.getMessage(), requestedElement, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
-                configService.extractIdFromConnector(),
-                configService.extractOutboundModelVersionFromConnector());
+                configService.getConnectorId(),
+                configService.getConnectorOutboundModelVersion());
     }
 }
