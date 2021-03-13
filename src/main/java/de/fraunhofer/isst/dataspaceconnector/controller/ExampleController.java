@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.controller.v1;
+package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
