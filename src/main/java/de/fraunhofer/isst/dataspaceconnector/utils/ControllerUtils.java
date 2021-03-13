@@ -24,7 +24,7 @@ public final class ControllerUtils {
      * @param url the URL that was called.
      * @return ResponseEntity with status code 401.
      */
-    public static ResponseEntity<String> respondRejectUnauthorized(final String url) {
+    public static ResponseEntity<Object> respondRejectUnauthorized(final String url) {
         LOGGER.debug("Unauthorized call. No DAT token found. [url=({})]", url);
         return new ResponseEntity<>("Please check your DAT token.", HttpStatus.UNAUTHORIZED);
     }
@@ -36,13 +36,13 @@ public final class ControllerUtils {
      * @param exception Exception that was thrown during broker communication.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<String> respondBrokerCommunicationFailed(final Exception exception) {
+    public static ResponseEntity<Object> respondBrokerCommunicationFailed(final Exception exception) {
         LOGGER.debug("Broker communication failed. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("The communication with the broker failed.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public static ResponseEntity<String> responseFailedToLoadSerializer(final Exception exception) {
+    public static ResponseEntity<Object> responseFailedToLoadSerializer(final Exception exception) {
         LOGGER.warn("Failed to receive the serializer. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -55,7 +55,7 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<String> respondConfigurationUpdateError(final Exception exception) {
+    public static ResponseEntity<Object> respondConfigurationUpdateError(final Exception exception) {
         LOGGER.debug("Failed to update the configuration. [exception=({})]",
                 exception.getMessage());
         return new ResponseEntity<>("Failed to update configuration.",
@@ -69,7 +69,7 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<String> responseDeserializationError(final Exception exception) {
+    public static ResponseEntity<Object> responseDeserializationError(final Exception exception) {
         LOGGER.warn("Failed to deserialize the object. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -80,7 +80,7 @@ public final class ControllerUtils {
      *
      * @return ResponseEntity with status code 404.
      */
-    public static ResponseEntity<String> respondConfigurationNotFound() {
+    public static ResponseEntity<Object> respondConfigurationNotFound() {
         LOGGER.info("No configuration could be found.");
         return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
     }
@@ -92,7 +92,7 @@ public final class ControllerUtils {
      * @param resourceId ID for that no match was found.
      * @return ResponseEntity with status code 404.
      */
-    public static ResponseEntity<String> respondResourceNotFound(final UUID resourceId) {
+    public static ResponseEntity<Object> respondResourceNotFound(final UUID resourceId) {
         LOGGER.debug("The resource does not exist. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
@@ -104,7 +104,7 @@ public final class ControllerUtils {
      * @param resourceId ID of the resource.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<String> respondResourceCouldNotBeLoaded(final UUID resourceId) {
+    public static ResponseEntity<Object> respondResourceCouldNotBeLoaded(final UUID resourceId) {
         LOGGER.debug("Resource not loaded. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Could not load resource.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
