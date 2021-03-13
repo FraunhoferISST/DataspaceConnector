@@ -35,7 +35,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.NegotiationSe
 import de.fraunhofer.isst.dataspaceconnector.utils.EntityApiBridge;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,7 +51,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,11 +76,6 @@ public class IdsMessageController {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdsMessageController.class);
 
     /**
-     * The token provider.
-     */
-    private final @NonNull DapsTokenProvider tokenProvider;
-
-    /**
      * The service for request messages.
      */
     private final @NonNull RequestMessageService requestMessageService;
@@ -95,11 +88,11 @@ public class IdsMessageController {
     /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.
      *
-     * @param recipient  The target connector uri.
-     * @param resourceId The requested resource uri.
+     * @param recipient  The target connector url.
+     * @param elementId The requested element id.
      * @return OK or error response.
      */
-    @PostMapping("/description")
+    @PostMapping("/request/description")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -108,14 +101,14 @@ public class IdsMessageController {
     @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
     public ResponseEntity<String> sendDescriptionRequestMessage(
-            @Parameter(description = "The URL of the requested IDS connector.", required = true)
+            @Parameter(description = "The recipient URL.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The URI of the requested resource.")
-            @RequestParam(value = "requestedResource", required = false) final URI resourceId) {
+            @RequestParam(value = "elementId", required = false) final URI elementId) {
         Map<String, String> response;
         try {
             // Send DescriptionRequestMessage.
-            response = requestMessageService.sendDescriptionRequest(recipient, resourceId, "");
+            response = requestMessageService.sendDescriptionRequest(recipient, elementId, "");
         } catch (ResponseMessageBuilderException exception) {
             // Failed to send the description request message.
             LOGGER.info(
@@ -146,10 +139,10 @@ public class IdsMessageController {
             return returnRejectionMessage(idsHeader, response);
         }
 
-        if (resourceId != null) {
+        if (elementId != null) {
             // Save metadata to database.
             try {
-                final var validationKey = saveMetadata(payload, resourceId);
+                final var validationKey = saveMetadata(payload, elementId);
                 return new ResponseEntity<>(
                         "Validation: " + validationKey + "\nResponse: " + payload, HttpStatus.OK);
             } catch (InvalidResourceException exception) {
@@ -167,33 +160,26 @@ public class IdsMessageController {
     /**
      * Sends a contract request to a connector by building an ContractRequestMessage.
      *
-     * @param recipient     The URI of the requested IDS connector.
-     * @param artifactId    The URI of the requested artifact.
-     * @param contractOffer The contract offer for the requested resource.
+     * @param recipient     The recipient url.
+     * @param artifactId    The requested artifact id.
+     * @param contractOffer The contract offer for the requested artifact.
      * @return OK or error response.
      */
-    @Operation(summary = "Contract request",
-            description = "Send a contract request to another IDS connector.")
-    @ApiResponses(value =
-            {
-                    @ApiResponse(responseCode = "200", description = "Ok")
-                    , @ApiResponse(responseCode = "401", description = "Unauthorized"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
-            })
-    @RequestMapping(value = "/contract", method = RequestMethod.POST)
+    @RequestMapping("/request/contract")
+    @Operation(summary = "Send ids contract request message")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
-    public ResponseEntity<String>
-    requestContract(@Parameter(description = "The URI of the requested IDS connector.",
-            required = true, example = "https://localhost:8080/api/ids/data")
-                    @RequestParam("recipient") final URI recipient,
-                    @Parameter(description = "The URI of the requested artifact.", required = true,
-                            example =
-                                    "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3" +
-                                            "-ace3-ef29cd687cf9")
-                    @RequestParam(value = "requestedArtifact") final URI artifactId,
-                    @Parameter(description = "The contract offer for the requested resource.") @RequestBody(
-                            required = false) final String contractOffer) {
+    public ResponseEntity<String> sendContractRequestMessage(
+            @Parameter(description = "The recipient URL.", required = true)
+            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The URI of the requested artifact.", required = true)
+            @RequestParam(value = "artifactId") final URI artifactId,
+            @Parameter(description = "The contract offer for the requested resource.", required = true)
+            @RequestBody final String contractOffer) {
 
         Map<String, String> response;
         try {
@@ -267,52 +253,40 @@ public class IdsMessageController {
     /**
      * Requests data from an external connector by building an ArtifactRequestMessage.
      *
-     * @param recipient  The target connector uri.
-     * @param artifactId The requested artifact uri.
-     * @param contractId The URI of the contract agreement.
-     * @param key        a {@link java.util.UUID} object.
+     * @param recipient  The recipient url.
+     * @param artifactId The requested artifact id.
+     * @param contractId The id of the contract agreement.
+     * @param resourceId The id of the resource to which the artifact is to be saved.
+     * @param queryInput The query input to forward to the provider's backend API.
      * @return OK or error response.
      */
-    @Operation(summary = "Artifact request",
-            description = "Request data from another IDS connector. "
-                    + "INFO: Before an artifact can be requested, the metadata must be queried. " +
-                    "The key"
-                    + " generated in this process must be passed in the artifact query.")
-    @ApiResponses(value =
-            {
-                    @ApiResponse(responseCode = "200", description = "Ok")
-                    , @ApiResponse(responseCode = "401", description = "Unauthorized"),
-                    @ApiResponse(responseCode = "403", description = "Forbidden"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
-            })
-    @RequestMapping(value = "/artifact", method = RequestMethod.POST)
+    @PostMapping("/request/artifact")
+    @Operation(summary = "Send ids artifact request message")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#url, 'rw')")
     @ResponseBody
-    public ResponseEntity<String>
-    requestData(@Parameter(description = "The URI of the requested IDS connector.", required = true,
-            example = "https://localhost:8080/api/ids/data") @RequestParam("recipient")
-                        URI recipient,
-                @Parameter(description = "The URI of the requested artifact.", required = true,
-                        example =
-                                "https://w3id.org/idsa/autogen/artifact/a4212311-86e4-40b3-ace3" +
-                                        "-ef29cd687cf9")
-                @RequestParam(value = "requestedArtifact") URI artifactId,
-                @Parameter(description = "The URI of the contract agreement.",
-                        example =
-                                "https://w3id.org/idsa/autogen/contractAgreement/a4212311-86e4" +
-                                        "-40b3-ace3-ef29cd687cf9")
-                @RequestParam(value = "transferContract", required = false) URI contractId,
-                @Parameter(description = "A unique validation key.", required = true) @RequestParam(
-                        "key") UUID key,
-                @Parameter(description = "The query parameters and headers to use when fetching the " +
-                        "data from the backend system.")
-                @RequestBody(required = false) final QueryInput queryInput) {
+    public ResponseEntity<String> sendArtifactRequestMessage(
+            @Parameter(description = "The recipient URL.", required = true)
+            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The requested artifactId.", required = true)
+            @RequestParam(value = "artifactId") final URI artifactId,
+            @Parameter(description = "The contract agreement id.")
+            @RequestParam(value = "transferContract", required = false) final URI contractId,
+            @Parameter(description = "The consumer's resource id.", required = true)
+            @RequestParam("resourceId") final UUID resourceId,
+            @Parameter(description = "The query parameters, path variables and headers to use when "
+                    + "fetching the data from the backend system.")
+            @RequestBody(required = false) final QueryInput queryInput) {
 
-        if (!resourceExists(key)) {
+        if (!resourceExists(resourceId)) {
             // The resource does not exist.
             LOGGER.warn(String.format("Failed data request due to invalid key.\nRecipient: "
                             + "%s\nrequestedArtifact:%s\nkey:%s",
-                    recipient.toString(), artifactId.toString(), key.toString()));
+                    recipient.toString(), artifactId.toString(), resourceId.toString()));
             return new ResponseEntity<>(
                     "Your key is not valid. Please request metadata first.", HttpStatus.FORBIDDEN);
         }
@@ -367,10 +341,10 @@ public class IdsMessageController {
 
         try {
             // Save data to database.
-            saveData(payload, key);
+            saveData(payload, resourceId);
             return new ResponseEntity<>(String.format("Saved at: %s\nResponse: "
                             + "%s",
-                    key, payload),
+                    resourceId, payload),
                     HttpStatus.OK);
         } catch (ResourceException exception) {
             LOGGER.warn(
