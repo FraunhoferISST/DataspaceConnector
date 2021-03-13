@@ -24,13 +24,13 @@ import java.io.IOException;
 import java.util.Objects;
 
 /**
- * Controller for sending ids connector update messages.
+ * Controller for sending ids connector unavailable messages.
  */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
-public class ConnectorUpdateMessageController {
+public class ConnectorUnavailableMessageController {
 
     /**
      * The service for communication with the ids broker.
@@ -43,14 +43,14 @@ public class ConnectorUpdateMessageController {
     private final @NonNull IdsConnectorService connectorService;
 
     /**
-     * Sending an ids connector update message with the current connector as payload.
+     * Sending an ids connector unavailable message with the current connector as payload.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping("/update/connector")
-    @Operation(summary = "Connector update message", description = "Can be used for registering or "
-            + "updating the connector at an IDS broker.")
+    @PostMapping("/unavailable/connector")
+    @Operation(summary = "Connector unavailable message", description = "Can be used for "
+            + "unregistering the connector at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -65,8 +65,8 @@ public class ConnectorUpdateMessageController {
             // Update the config model.
             connectorService.updateConfigModel();
 
-            // Send the connector update message.
-            final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
+            // Send the connector unavailable message.
+            final var response = brokerService.unregisterAtBroker(recipient);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
         } catch (ConfigurationUpdateException exception) {

@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.Objects;
 
 /**
- * Controller for sending ids connector update messages.
+ * Controller for sending ids resource update messages.
  */
 @RestController
 @RequiredArgsConstructor
@@ -43,15 +43,15 @@ public class ResourceUpdateMessageController {
     private final @NonNull IdsResourceService resourceService;
 
     /**
-     * Sending an ids connector update message with the current connector as payload.
+     * Sending an ids resource update message with a resource as payload.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.
      * @return The response message or an error.
      */
-    @PostMapping("/update/connector")
+    @PostMapping("/update/resource")
     @Operation(summary = "Connector update message", description = "Can be used for registering or "
-            + "updating the connector at an IDS broker.")
+            + "updating a resource at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -77,7 +77,7 @@ public class ResourceUpdateMessageController {
         } catch (ClassCastException exception) {
             return ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
         } catch (NullPointerException | IOException exception) {
-            return ControllerUtils.respondResourceUpdateMessageFailed(exception);
+            return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }
 }
