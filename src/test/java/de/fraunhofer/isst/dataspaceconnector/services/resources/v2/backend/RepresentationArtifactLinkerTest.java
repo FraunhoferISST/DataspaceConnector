@@ -1,17 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.AdditionalMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class RepresentationArtifactLinkerTest {
 
-    @SpyBean
+    @MockBean
     RepresentationService representationService;
 
     @SpyBean
@@ -32,6 +41,16 @@ public class RepresentationArtifactLinkerTest {
 
     @Autowired @InjectMocks
     RepresentationArtifactLinker linker;
+
+    Representation representation = getRepresentation();
+
+    @BeforeEach
+    public void init() {
+        Mockito.when(representationService.get(Mockito.eq(representation.getId()))).thenReturn(representation);
+        Mockito.when(representationService.get(AdditionalMatchers.not(AdditionalMatchers.and(Mockito.notNull(), Mockito.eq(representation.getId()))))).thenThrow(ResourceNotFoundException.class);
+        Mockito.when(representationService.persist(Mockito.any())).thenAnswer(
+                (Answer<Representation>) invocationOnMock -> invocationOnMock.getArgument(0));
+    }
 
     /**************************************************************************
      * get
@@ -50,7 +69,6 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void get_knownId_notNull() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
         final var artifactOne = artifactService.create(getArtifactOne());
         final var artifactTwo = artifactService.create(getArtifactTwo());
         final var artifactThree = artifactService.create(getArtifactThree());
@@ -78,7 +96,6 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void get_nullPageable_throwIllegalArgumentException() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
         artifactService.create(getArtifactOne());
 
         /* ACT && ASSERT */
@@ -99,7 +116,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void get_knownId_getArtifacts() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
+        
         final var artifactOne = artifactService.create(getArtifactOne());
         final var artifactTwo = artifactService.create(getArtifactTwo());
         final var artifactThree = artifactService.create(getArtifactThree());
@@ -133,7 +150,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownIdNullEntities_throwsIllegalArgumentsException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> linker.add(knownId, null));
@@ -174,9 +191,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownIdEmptyEntities_noOwnerServiceActions() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
-
-        Mockito.reset(representationService);
+        final var knownId = representation.getId();
 
         /* ACT */
         linker.add(knownId, Set.of());
@@ -189,7 +204,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownIdSetWithUnknownEntities_throwsResourceNotFoundException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -201,7 +216,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownIdSetWithUnknownEntities_doNotModify() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -220,7 +235,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownEntities_createRelation() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var realArtifactOne = artifactService.create(getArtifactOne());
         final var realArtifactTwo = artifactService.create(getArtifactTwo());
         final var realArtifactThree = artifactService.create(getArtifactThree());
@@ -242,7 +257,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownEntities_createRelationOneOfEach() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
         final var artifactThree = artifactService.create(getArtifactThree()).getId();
@@ -261,7 +276,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_knownEntitiesAlreadyExists_createOnlyMissingRelations() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
         final var artifactThree = artifactService.create(getArtifactThree()).getId();
@@ -282,7 +297,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void add_validInput_isPersisted() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
+        
         final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
 
@@ -311,7 +326,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_knownIdNullEntities_throwsIllegalArgumentsException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> linker.remove(knownId, null));
@@ -352,9 +367,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_knownIdEmptyEntities_noOwnerServiceActions() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
-
-        Mockito.reset(representationService);
+        final var knownId = representation.getId();
 
         /* ACT */
         linker.remove(knownId, Set.of());
@@ -367,7 +380,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_knownIdSetWithUnknownEntities_throwsResourceNotFoundException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -382,7 +395,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_knownIdSetWithUnknownEntities_doNotModify() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -401,7 +414,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_knownEntities_removeRelation() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var realArtifactThree = artifactService.create(getArtifactThree());
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
@@ -421,13 +434,11 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void remove_validInput_isPersisted() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
+        
         final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
 
         linker.add(knownId, Set.of(artifactOne));
-
-        Mockito.reset(representationService);
 
         /* ACT */
         linker.remove(knownId, Set.of(artifactOne));
@@ -454,7 +465,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_knownIdNullEntities_throwsIllegalArgumentsException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> linker.replace(knownId, null));
@@ -495,7 +506,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_knownIdEmptySet_throwsResourceNotFoundException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
 
         linker.add(knownId, Set.of(artifactOne));
@@ -512,7 +523,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_knownIdSetWithUnknownEntities_throwsResourceNotFoundException() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
@@ -527,7 +538,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_knownIdSetWithUnknownEntities_doNotModify() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var realArtifactOne = artifactService.create(getArtifactOne());
         final var artifactOne = realArtifactOne.getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
@@ -550,7 +561,7 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_addKnownEntities_removeRelation() {
         /* ARRANGE */
-        final var knownId = representationService.create(getRepresentation()).getId();
+        final var knownId = representation.getId();
         final var realArtifactOne = artifactService.create(getArtifactOne());
         final var realArtifactTwo = artifactService.create(getArtifactTwo());
         final var realArtifactThree = artifactService.create(getArtifactThree());
@@ -574,15 +585,13 @@ public class RepresentationArtifactLinkerTest {
     @Transactional
     public void replace_validInput_isPersisted() {
         /* ARRANGE */
-        final var representation = representationService.create(getRepresentation());
+        
         final var knownId = representation.getId();
         final var artifactOne = artifactService.create(getArtifactOne()).getId();
         final var artifactTwo = artifactService.create(getArtifactTwo()).getId();
         final var artifactThree = artifactService.create(getArtifactThree()).getId();
 
         linker.add(knownId, Set.of(artifactOne));
-
-        Mockito.reset(representationService);
 
         /* ACT */
         linker.replace(knownId, Set.of(artifactTwo, artifactThree));
@@ -591,17 +600,55 @@ public class RepresentationArtifactLinkerTest {
         Mockito.verify(representationService, Mockito.atLeastOnce()).persist(Mockito.eq(representation));
     }
 
+    @Test
+    public void test() {
+        getRepresentation();
+    }
+
     /**************************************************************************
      * Utilities
      *************************************************************************/
 
-    private RepresentationDesc getRepresentation() {
-        final var desc = new RepresentationDesc();
-        desc.setTitle("HELLO");
-        desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
-        desc.setLanguage("en");
+    @SneakyThrows
+    private Representation getRepresentation() {
+        final var constructor = Representation.class.getConstructor();
+        constructor.setAccessible(true);
 
-        return desc;
+        final var representation = constructor.newInstance();
+
+        final var titleField = representation.getClass().getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(representation, "Hello");
+
+        final var mediaTypeField = representation.getClass().getDeclaredField("mediaType");
+        mediaTypeField.setAccessible(true);
+        mediaTypeField.set(representation, "application/json");
+
+        final var languageField = representation.getClass().getDeclaredField("language");
+        languageField.setAccessible(true);
+        languageField.set(representation, "en");
+
+        final var artifactsField = representation.getClass().getDeclaredField("artifacts");
+        artifactsField.setAccessible(true);
+        artifactsField.set(representation, new ArrayList<ArtifactImpl>());
+
+        final var idField = representation.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(representation, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+
+        final var creationDateField = representation.getClass().getSuperclass().getDeclaredField("creationDate");
+        creationDateField.setAccessible(true);
+        creationDateField.set(representation, new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+
+        final var modificationDateField = representation.getClass().getSuperclass().getDeclaredField("modificationDate");
+        modificationDateField.setAccessible(true);
+        modificationDateField.set(representation, new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+
+        final var additionalField = representation.getClass().getSuperclass().getDeclaredField("additional");
+        additionalField.setAccessible(true);
+        additionalField.set(representation, new HashMap<>());
+
+        return representation;
     }
 
     private ArtifactDesc getArtifactOne() {
