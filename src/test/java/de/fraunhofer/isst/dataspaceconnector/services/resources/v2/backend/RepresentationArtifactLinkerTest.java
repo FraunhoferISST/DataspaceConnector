@@ -28,16 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest( classes = { RepresentationArtifactLinker.class } )
+@SpringBootTest(classes = {RepresentationArtifactLinker.class})
 public class RepresentationArtifactLinkerTest {
-
     @MockBean
     RepresentationService representationService;
 
     @MockBean
     ArtifactService artifactService;
 
-    @Autowired @InjectMocks
+    @Autowired
+    @InjectMocks
     RepresentationArtifactLinker linker;
 
     Representation representation = getRepresentation();
@@ -47,19 +47,23 @@ public class RepresentationArtifactLinkerTest {
 
     @BeforeEach
     public void init() {
-        Mockito.when(representationService.get(Mockito.eq(representation.getId()))).thenReturn(representation);
-        Mockito.when(representationService.get(AdditionalMatchers.not(AdditionalMatchers.and(Mockito.notNull(), Mockito.eq(representation.getId()))))).thenThrow(ResourceNotFoundException.class);
-        Mockito.when(representationService.persist(Mockito.any())).thenAnswer(
-                (Answer<Representation>) invocationOnMock -> invocationOnMock.getArgument(0));
+        Mockito.when(representationService.get(Mockito.eq(representation.getId())))
+                .thenReturn(representation);
+        Mockito.when(representationService.get(AdditionalMatchers.not(AdditionalMatchers.and(
+                             Mockito.notNull(), Mockito.eq(representation.getId())))))
+                .thenThrow(ResourceNotFoundException.class);
+        Mockito.when(representationService.persist(Mockito.any()))
+                .thenAnswer((Answer<Representation>)
+                                    invocationOnMock -> invocationOnMock.getArgument(0));
 
         Mockito.when(artifactService.get(Mockito.eq(artifactOne.getId()))).thenReturn(artifactOne);
         Mockito.when(artifactService.get(Mockito.eq(artifactTwo.getId()))).thenReturn(artifactTwo);
-        Mockito.when(artifactService.get(Mockito.eq(artifactThree.getId()))).thenReturn(artifactThree);
+        Mockito.when(artifactService.get(Mockito.eq(artifactThree.getId())))
+                .thenReturn(artifactThree);
 
         Mockito.when(artifactService.doesExist(Mockito.eq(artifactOne.getId()))).thenReturn(true);
         Mockito.when(artifactService.doesExist(Mockito.eq(artifactTwo.getId()))).thenReturn(true);
         Mockito.when(artifactService.doesExist(Mockito.eq(artifactThree.getId()))).thenReturn(true);
-        // Mockito.when(artifactService.doesExist(AdditionalMatchers.(artifactThree.getId()))).thenReturn(true);
     }
 
     /**************************************************************************
@@ -72,13 +76,15 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.get(unknownUuid, Pageable.unpaged()));
+        assertThrows(
+                ResourceNotFoundException.class, () -> linker.get(unknownUuid, Pageable.unpaged()));
     }
 
     @Test
     public void get_knownId_notNull() {
         /* ARRANGE */
-        linker.add(representation.getId(), Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(representation.getId(),
+                Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ACT */
         final var linkedArtifacts = linker.get(representation.getId(), Pageable.unpaged());
@@ -102,7 +108,8 @@ public class RepresentationArtifactLinkerTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> linker.get(representation.getId(), null));
+        assertThrows(
+                IllegalArgumentException.class, () -> linker.get(representation.getId(), null));
     }
 
     @Test
@@ -117,7 +124,8 @@ public class RepresentationArtifactLinkerTest {
     @Test
     public void get_knownId_getArtifacts() {
         /* ARRANGE */
-        linker.add(representation.getId(), Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(representation.getId(),
+                Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ACT */
         final var linkedArtifacts = linker.get(representation.getId(), Pageable.unpaged()).toList();
@@ -138,7 +146,8 @@ public class RepresentationArtifactLinkerTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> linker.add(null, Set.of(artifactOne.getId())));
+        assertThrows(IllegalArgumentException.class,
+                () -> linker.add(null, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -160,7 +169,7 @@ public class RepresentationArtifactLinkerTest {
     }
 
     @Test
-    
+
     public void add_null_throwsIllegalArgumentsException() {
         /* ARRANGE */
         // Nothing to arrange.
@@ -175,7 +184,8 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.add(unknownUuid, Set.of(artifactOne.getId())));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.add(unknownUuid, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -197,7 +207,8 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-         assertThrows(ResourceNotFoundException.class, () -> linker.add(knownId, Set.of(artifactOne.getId(), unknownUuid)));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.add(knownId, Set.of(artifactOne.getId(), unknownUuid)));
     }
 
     @Test
@@ -209,7 +220,7 @@ public class RepresentationArtifactLinkerTest {
         try {
             /* ACT */
             linker.add(knownId, Set.of(artifactOne.getId(), unknownUuid));
-        } catch(ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundException exception) {
             /* ASSERT */
             assertEquals(0, linker.get(knownId, Pageable.unpaged()).getTotalElements());
         }
@@ -221,7 +232,8 @@ public class RepresentationArtifactLinkerTest {
         final var knownId = representation.getId();
 
         /* ACT */
-        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(
+                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ASSERT */
         final var elements = linker.get(knownId, Pageable.unpaged()).toList();
@@ -238,11 +250,12 @@ public class RepresentationArtifactLinkerTest {
         final var before = linker.get(knownId, Pageable.unpaged()).toList().size();
 
         /* ACT */
-        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(
+                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
-        assertEquals(before + 3, after );
+        assertEquals(before + 3, after);
     }
 
     @Test
@@ -255,7 +268,8 @@ public class RepresentationArtifactLinkerTest {
         final var before = linker.get(knownId, Pageable.unpaged()).toList().size();
 
         /* ACT */
-        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(
+                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
@@ -271,7 +285,8 @@ public class RepresentationArtifactLinkerTest {
         linker.add(knownId, Set.of(artifactOne.getId()));
 
         /* ASSERT */
-        Mockito.verify(representationService, Mockito.atLeast(1)).persist(Mockito.eq(representation));
+        Mockito.verify(representationService, Mockito.atLeast(1))
+                .persist(Mockito.eq(representation));
     }
 
     /**************************************************************************
@@ -284,7 +299,8 @@ public class RepresentationArtifactLinkerTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> linker.remove(null, Set.of(artifactOne.getId())));
+        assertThrows(IllegalArgumentException.class,
+                () -> linker.remove(null, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -320,7 +336,8 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.remove(unknownUuid, Set.of(artifactOne.getId())));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.remove(unknownUuid, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -345,7 +362,8 @@ public class RepresentationArtifactLinkerTest {
         linker.add(knownId, Set.of(artifactOne.getId()));
 
         /* ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.remove(knownId, Set.of(artifactOne.getId(), unknownUuid)));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.remove(knownId, Set.of(artifactOne.getId(), unknownUuid)));
     }
 
     @Test
@@ -359,7 +377,7 @@ public class RepresentationArtifactLinkerTest {
         try {
             /* ACT */
             linker.remove(knownId, Set.of(artifactOne.getId(), unknownUuid));
-        }catch(ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundException exception) {
             /* ASSERT */
             assertEquals(1, linker.get(knownId, Pageable.unpaged()).getTotalElements());
         }
@@ -370,7 +388,8 @@ public class RepresentationArtifactLinkerTest {
         /* ARRANGE */
         final var knownId = representation.getId();
 
-        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(
+                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
 
         /* ACT */
         linker.remove(knownId, Set.of(artifactOne.getId(), artifactTwo.getId()));
@@ -393,7 +412,8 @@ public class RepresentationArtifactLinkerTest {
         linker.remove(knownId, Set.of(artifactOne.getId()));
 
         /* ASSERT */
-        Mockito.verify(representationService, Mockito.atLeast(2)).persist(Mockito.eq(representation));
+        Mockito.verify(representationService, Mockito.atLeast(2))
+                .persist(Mockito.eq(representation));
     }
 
     /**************************************************************************
@@ -406,7 +426,8 @@ public class RepresentationArtifactLinkerTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> linker.replace(null, Set.of(artifactOne.getId())));
+        assertThrows(IllegalArgumentException.class,
+                () -> linker.replace(null, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -442,7 +463,8 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.remove(unknownUuid, Set.of(artifactOne.getId())));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.remove(unknownUuid, Set.of(artifactOne.getId())));
     }
 
     @Test
@@ -469,7 +491,8 @@ public class RepresentationArtifactLinkerTest {
         linker.add(knownId, Set.of(artifactOne.getId()));
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> linker.replace(knownId, Set.of(artifactTwo.getId(), unknownUuid)));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.replace(knownId, Set.of(artifactTwo.getId(), unknownUuid)));
     }
 
     @Test
@@ -483,7 +506,7 @@ public class RepresentationArtifactLinkerTest {
         try {
             /* ACT */
             linker.replace(knownId, Set.of(artifactTwo.getId(), unknownUuid));
-        }catch(ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundException exception) {
             /* ASSERT */
             final var entities = linker.get(knownId, Pageable.unpaged()).toList();
             assertTrue(entities.contains(artifactOne));
@@ -521,7 +544,8 @@ public class RepresentationArtifactLinkerTest {
         linker.replace(knownId, Set.of(artifactTwo.getId(), artifactThree.getId()));
 
         /* ASSERT */
-        Mockito.verify(representationService, Mockito.atLeast(2)).persist(Mockito.eq(representation));
+        Mockito.verify(representationService, Mockito.atLeast(2))
+                .persist(Mockito.eq(representation));
     }
 
     /**************************************************************************
@@ -555,15 +579,20 @@ public class RepresentationArtifactLinkerTest {
         idField.setAccessible(true);
         idField.set(representation, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
-        final var creationDateField = representation.getClass().getSuperclass().getDeclaredField("creationDate");
+        final var creationDateField =
+                representation.getClass().getSuperclass().getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
-        creationDateField.set(representation, new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+        creationDateField.set(representation,
+                new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
 
-        final var modificationDateField = representation.getClass().getSuperclass().getDeclaredField("modificationDate");
+        final var modificationDateField =
+                representation.getClass().getSuperclass().getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
-        modificationDateField.set(representation, new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+        modificationDateField.set(representation,
+                new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
 
-        final var additionalField = representation.getClass().getSuperclass().getDeclaredField("additional");
+        final var additionalField =
+                representation.getClass().getSuperclass().getDeclaredField("additional");
         additionalField.setAccessible(true);
         additionalField.set(representation, new HashMap<>());
 
@@ -581,7 +610,8 @@ public class RepresentationArtifactLinkerTest {
         titleField.setAccessible(true);
         titleField.set(artifact, "ArtifactOne");
 
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+        final var idField =
+                artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
@@ -599,7 +629,8 @@ public class RepresentationArtifactLinkerTest {
         titleField.setAccessible(true);
         titleField.set(artifact, "ArtifactTwo");
 
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+        final var idField =
+                artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.fromString("1d853fc2-91a8-4a01-9e59-dfb742eee849"));
 
@@ -617,7 +648,8 @@ public class RepresentationArtifactLinkerTest {
         titleField.setAccessible(true);
         titleField.set(artifact, "ArtifactThree");
 
-        final var idField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+        final var idField =
+                artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
 
