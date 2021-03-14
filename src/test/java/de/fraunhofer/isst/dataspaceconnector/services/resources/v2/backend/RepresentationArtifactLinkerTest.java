@@ -211,7 +211,7 @@ public class RepresentationArtifactLinkerTest {
             linker.add(knownId, Set.of(artifactOne.getId(), unknownUuid));
         } catch(ResourceNotFoundException exception) {
             /* ASSERT */
-            assertEquals(linker.get(knownId, Pageable.unpaged()).getTotalElements(), 0);
+            assertEquals(0, linker.get(knownId, Pageable.unpaged()).getTotalElements());
         }
     }
 
@@ -361,7 +361,7 @@ public class RepresentationArtifactLinkerTest {
             linker.remove(knownId, Set.of(artifactOne.getId(), unknownUuid));
         }catch(ResourceNotFoundException exception) {
             /* ASSERT */
-            assertEquals(linker.get(knownId, Pageable.unpaged()).getTotalElements(), 1);
+            assertEquals(1, linker.get(knownId, Pageable.unpaged()).getTotalElements());
         }
     }
 
@@ -487,7 +487,7 @@ public class RepresentationArtifactLinkerTest {
             /* ASSERT */
             final var entities = linker.get(knownId, Pageable.unpaged()).toList();
             assertTrue(entities.contains(artifactOne));
-            assertEquals(entities.size(), 1);
+            assertEquals(1, entities.size());
         }
     }
 
