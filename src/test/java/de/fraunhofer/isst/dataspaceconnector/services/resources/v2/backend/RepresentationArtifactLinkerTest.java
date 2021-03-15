@@ -1,11 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
@@ -17,17 +23,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
-
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
-import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import lombok.SneakyThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {RepresentationArtifactLinker.class})
 public class RepresentationArtifactLinkerTest {
@@ -579,6 +579,32 @@ public class RepresentationArtifactLinkerTest {
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class,
                 () -> linker.replace(knownId, Set.of(artifactOne.getId(), null)));
+    }
+
+    /**************************************************************************
+     * getInternal
+     *************************************************************************/
+
+    @Test
+    public void getInternal_null_throwsNullPointerException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(NullPointerException.class, () -> linker.getInternal(null));
+    }
+
+    @Test
+    public void getInternal_Valid_returnArtifacts() {
+        /* ARRANGE */
+        representation.getArtifacts().add(artifactOne);
+
+        /* ACT */
+        final var artifacts = linker.getInternal(representation);
+
+        /* ASSERT */
+        final var expected = List.of(artifactOne);
+        assertEquals(expected, artifacts);
     }
 
     /**************************************************************************
