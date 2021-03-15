@@ -4,14 +4,8 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.services.ConfigurationService;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import lombok.NonNull;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestDesc;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.List;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
@@ -19,29 +13,16 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids description request messages.
  */
 @Service
-public final class DescriptionRequestService extends MessageService {
-
-    /**
-     * Class constructor with params.
-     *
-     * @param idsHttpService  The ids http service.
-     * @param configContainer The configuration container.
-     * @param configService   Service for the current connector configuration.
-     */
-    public DescriptionRequestService(@NonNull final IDSHttpService idsHttpService,
-                                     @NonNull final ConfigurationContainer configContainer,
-                                     @NonNull final ConfigurationService configService) {
-        super(idsHttpService, configContainer, configService);
-    }
+public final class DescriptionRequestService extends MessageService<DescriptionRequestDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient,
-                                final List<URI> params) throws ConstraintViolationException {
-        final var connectorId = getConfigService().getConnectorId();
-        final var modelVersion = getConfigService().getConnectorOutboundModelVersion();
-        final var token = getConfigService().getCurrentDat();
+    public Message buildMessage(final DescriptionRequestDesc desc) throws ConstraintViolationException {
+        final var connectorId = getConnectorService().getConnectorId();
+        final var modelVersion = getConnectorService().getOutboundModelVersion();
+        final var token = getConnectorService().getCurrentDat();
 
-        final var elementId = params.get(0);
+        final var recipient = desc.getRecipient();
+        final var elementId = desc.getRequestedElement();
 
         return new DescriptionRequestMessageBuilder()
                 ._issued_(getGregorianNow())

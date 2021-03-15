@@ -4,14 +4,8 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.services.ConfigurationService;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import lombok.NonNull;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationDesc;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.List;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
@@ -19,29 +13,16 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids message processed notification messages.
  */
 @Service
-public final class MessageProcessedNotificationService extends MessageService {
-
-    /**
-     * Class constructor with params.
-     *
-     * @param idsHttpService  The ids http service.
-     * @param configContainer The configuration container.
-     * @param configService   Service for the current connector configuration.
-     */
-    public MessageProcessedNotificationService(@NonNull final IDSHttpService idsHttpService,
-                                               @NonNull final ConfigurationContainer configContainer,
-                                               @NonNull final ConfigurationService configService) {
-        super(idsHttpService, configContainer, configService);
-    }
+public final class MessageProcessedNotificationService extends MessageService<MessageProcessedNotificationDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient,
-                                final List<URI> params) throws ConstraintViolationException {
-        final var connectorId = getConfigService().getConnectorId();
-        final var modelVersion = getConfigService().getConnectorOutboundModelVersion();
-        final var token = getConfigService().getCurrentDat();
+    public Message buildMessage(final MessageProcessedNotificationDesc desc) throws ConstraintViolationException {
+        final var connectorId = getConnectorService().getConnectorId();
+        final var modelVersion = getConnectorService().getOutboundModelVersion();
+        final var token = getConnectorService().getCurrentDat();
 
-        final var correlationMessage = params.get(0);
+        final var recipient = desc.getRecipient();
+        final var correlationMessage = desc.getCorrelationMessage();
 
         return new MessageProcessedNotificationMessageBuilder()
                 ._securityToken_(token)
