@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.v2.ContractController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -78,7 +78,7 @@ public class MainController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
-    public ResponseEntity<Object> getSelfService() {
+    public ResponseEntity<Object> getPrivateSelfDescription() {
         try {
             final var connector = connectorService.getConnectorWithAllResources();
             return new ResponseEntity<>(connector, HttpStatus.OK);

@@ -1,25 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
-import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import de.fraunhofer.iais.eis.ConstraintBuilder;
-import de.fraunhofer.iais.eis.DutyBuilder;
 import de.fraunhofer.iais.eis.KeyType;
-import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.ProxyBuilder;
 import de.fraunhofer.iais.eis.PublicKeyBuilder;
-import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
@@ -27,6 +18,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyInforma
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.PatternUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,7 +46,7 @@ import java.util.ArrayList;
  */
 @RestController
 @RequestMapping("/api/examples")
-@Tag(name = "Connector", description = "Endpoints for testing purpose")
+@Tag(name = "Example", description = "Endpoints for testing purpose")
 @RequiredArgsConstructor
 public class ExampleController {
 
@@ -84,7 +76,7 @@ public class ExampleController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @GetMapping("/configuration")
     @ResponseBody
-    public ResponseEntity<String> getConnectorConfiguration() {
+    public ResponseEntity<Object> getConnectorConfiguration() {
         // NOTE: This needs some cleanup. Skip exception handling.
         var exceptions = new ArrayList<URI>();
         exceptions.add(URI.create("https://localhost:8080/"));
@@ -122,7 +114,7 @@ public class ExampleController {
                         .build())
                 ._keyStore_(URI.create("file:///conf/keystore.p12"))
                 ._trustStore_(URI.create("file:///conf/truststore.p12"))
-                .build().toRdf(), HttpStatus.OK);
+                .build(), HttpStatus.OK);
     }
 
     /**
@@ -145,9 +137,9 @@ public class ExampleController {
             final var rule = managementService.deserializeRule(ruleAsString);
             return new ResponseEntity<>(informationService.getPatternByRule(rule), HttpStatus.OK);
         } catch (ContractException exception) {
-            return ControllerUtils.responsePatternNotIdentified(exception);
+            return ControllerUtils.respondPatternNotIdentified(exception);
         } catch (Exception exception) {
-            return ControllerUtils.responseInvalidInput(exception);
+            return ControllerUtils.respondInvalidInput(exception);
         }
     }
 
@@ -159,131 +151,35 @@ public class ExampleController {
      */
     @Operation(summary = "Get example policy",
             description = "Get an example policy for a given policy pattern.")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")})
     @PostMapping("/policy")
     @ResponseBody
     public ResponseEntity<Object> getExampleUsagePolicy(
             @Parameter(description = "Selection of supported policy patterns.", required = true)
             @RequestParam("type") final PolicyPattern pattern) {
-        Rule rule = null;
-
         switch (pattern) {
             case PROVIDE_ACCESS:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("provide-access")))
-                        ._action_(Util.asList(Action.USE))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildProvideAccessRule(), HttpStatus.OK);
             case PROHIBIT_ACCESS:
-                rule = new ProhibitionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("prohibit-access")))
-                        ._action_(Util.asList(Action.USE))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildProhibitAccessRule(), HttpStatus.OK);
             case N_TIMES_USAGE:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("n-times-usage")))
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.COUNT)
-                                ._operator_(BinaryOperator.LTEQ)
-                                ._rightOperand_(new RdfResource("5", URI.create("xsd:double")))
-                                ._pipEndpoint_(
-                                        URI.create("https://localhost:8080/admin/api/resources/"))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildNTimesUsageRule(), HttpStatus.OK);
             case DURATION_USAGE:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("duration-usage")))
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                                ._operator_(BinaryOperator.SHORTER_EQ)
-                                ._rightOperand_(new RdfResource("PT4H", URI.create("xsd:duration")))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildDurationUsageRule(), HttpStatus.OK);
             case USAGE_DURING_INTERVAL:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("usage-during-interval")))
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                ._operator_(BinaryOperator.AFTER)
-                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                        URI.create("xsd:dateTimeStamp")))
-                                .build(), new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                ._operator_(BinaryOperator.BEFORE)
-                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                        URI.create("xsd:dateTimeStamp")))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildIntervalUsageRule(), HttpStatus.OK);
             case USAGE_UNTIL_DELETION:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("usage-until-deletion")))
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                ._operator_(BinaryOperator.AFTER)
-                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                        URI.create("xsd:dateTimeStamp")))
-                                .build(), new ConstraintBuilder()
-                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                ._operator_(BinaryOperator.BEFORE)
-                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                        URI.create("xsd:dateTimeStamp")))
-                                .build()))
-                        ._postDuty_(Util.asList(new DutyBuilder()
-                                ._action_(Util.asList(Action.DELETE))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.TEMPORAL_EQUALS)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                                URI.create("xsd:dateTimeStamp")))
-                                        .build()))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildUsageUntilDeletionRule(),
+                        HttpStatus.OK);
             case USAGE_LOGGING:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("usage-logging")))
-                        ._action_(Util.asList(Action.USE))
-                        ._postDuty_(Util.asList(new DutyBuilder()
-                                ._action_(Util.asList(Action.LOG))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildUsageLoggingRule(), HttpStatus.OK);
             case USAGE_NOTIFICATION:
-                rule = new PermissionBuilder()
-                        ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                        ._description_(Util.asList(new TypedLiteral("usage-notification")))
-                        ._action_(Util.asList(Action.USE))
-                        ._postDuty_(Util.asList(new DutyBuilder()
-                                ._action_(Util.asList(Action.NOTIFY))
-                                ._constraint_(Util.asList(new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.ENDPOINT)
-                                        ._operator_(BinaryOperator.DEFINES_AS)
-                                        ._rightOperand_(new RdfResource(
-                                                "https://localhost:8000/api/ids"
-                                                        + "/data", URI.create("xsd:anyURI")))
-                                        .build()))
-                                .build()))
-                        .build();
-                break;
+                return new ResponseEntity<>(PatternUtils.buildUsageNotificationRule(),
+                        HttpStatus.OK);
             default:
-                break;
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(rule, HttpStatus.OK);
     }
 }
