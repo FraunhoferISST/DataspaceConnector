@@ -26,23 +26,47 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class EntityResolver {
 
+    /**
+     * Service for ids artifacts.
+     */
     private final @NonNull ArtifactService artifactService;
 
+    /**
+     * Service for ids representations.
+     */
     private final @NonNull RepresentationService representationService;
 
+    /**
+     * Service for offered resources.
+     */
     private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offeredResourceService;
 
+    /**
+     * Service for ids catalogs.
+     */
     private final @NonNull CatalogService catalogService;
 
+    /**
+     * Service for ids mapping.
+     */
     private final @NonNull IdsViewer idsViewer;
 
+    /**
+     * Return any connector entity by its id.
+     *
+     * @param elementId The entity id.
+     * @return The respective object.
+     * @throws ResourceNotFoundException If the resource could not be found.
+     */
     public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
         final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
         final var basePath = endpointId.getBasePath();
         final var entityId = endpointId.getResourceId();
 
+        // Get type of requested element.
         final var pathEnum = EndpointUtils.getBasePathEnumFromString(basePath);
 
+        // Find the right service and return the requested element.
         switch (pathEnum) {
             case ARTIFACTS:
                 return artifactService.get(entityId);
@@ -58,26 +82,24 @@ public class EntityResolver {
     }
 
     /**
-     * TODO Add catalog
+     * Translate a connector entity to an ids rdf string. TODO Add catalogs
+     *
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public String getEntityAsIdsRdfString(final AbstractEntity entity) throws ConstraintViolationException, InvalidResourceException {
-        String rdf;
-
+    public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
+            ConstraintViolationException, InvalidResourceException {
         if (entity instanceof Artifact) {
             final var artifact = idsViewer.create((Artifact) entity);
-            rdf = IdsUtils.convertArtifactToRdf(artifact);
+            return IdsUtils.convertArtifactToRdf(artifact);
         } else if (entity instanceof Resource) {
             final var resource = idsViewer.create((Resource) entity);
-            rdf = IdsUtils.convertResourceToRdf(resource);
+            return IdsUtils.convertResourceToRdf(resource);
         } else if (entity instanceof Representation) {
             final var representation = idsViewer.create((Representation) entity);
-            rdf = IdsUtils.convertRepresentationToRdf(representation);
+            return IdsUtils.convertRepresentationToRdf(representation);
         } else {
-            throw new InvalidResourceException("No provided IDS description for requested element.");
+            throw new InvalidResourceException("No provided description for requested element.");
         }
-
-        return rdf;
     }
 }
