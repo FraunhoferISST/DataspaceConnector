@@ -50,7 +50,7 @@ public class ResourceUpdateMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/update")
-    @Operation(summary = "Connector update message", description = "Can be used for registering or "
+    @Operation(summary = "Resource update message", description = "Can be used for registering or "
             + "updating a resource at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

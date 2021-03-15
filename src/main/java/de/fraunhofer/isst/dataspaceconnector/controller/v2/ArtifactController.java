@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/artifacts")
-@Tag(name = "Artifacts")
+@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
 public class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
         ArtifactService> {
     @RequestMapping(value = "{id}/data", method = RequestMethod.GET)

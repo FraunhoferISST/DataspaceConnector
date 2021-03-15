@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.ids;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,11 +38,6 @@ public class QueryMessageController {
     private final @NonNull IDSBrokerService brokerService;
 
     /**
-     * Service for ids resources.
-     */
-    private final @NonNull IdsResourceService resourceService;
-
-    /**
      * Sending an ids query message with a query message as payload.
      *
      * @param recipient The url of the recipient.
@@ -51,7 +45,7 @@ public class QueryMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/query")
-    @Operation(summary = "Connector update message", description = "Can be used for querying an "
+    @Operation(summary = "Query message", description = "Can be used for querying an "
             + "IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

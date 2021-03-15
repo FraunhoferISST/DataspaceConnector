@@ -31,7 +31,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * This class provides endpoints for basic connector services.
  */
 @RestController
-@Tag(name = "Connector", description = "Endpoints for connector information and configuration")
+@Tag(name = "Connector", description = "Endpoints for connector information")
 @RequiredArgsConstructor
 public class MainController {
 

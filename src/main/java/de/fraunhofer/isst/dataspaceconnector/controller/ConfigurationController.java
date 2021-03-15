@@ -29,7 +29,7 @@ import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respon
  */
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Connector")
+@Tag(name = "Configuration", description = "Endpoint for connector configurations")
 @RequiredArgsConstructor
 public class ConfigurationController {
 
@@ -119,7 +119,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping("/api/configuration/negotiation")
+    @GetMapping("/configuration/negotiation")
     @Operation(summary = "Get contract negotiation status")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
@@ -137,7 +137,7 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping("/api/configuration/pattern")
+    @PutMapping("/configuration/pattern")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
@@ -158,7 +158,7 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping("/api/configuration/pattern")
+    @GetMapping("/configuration/pattern")
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
