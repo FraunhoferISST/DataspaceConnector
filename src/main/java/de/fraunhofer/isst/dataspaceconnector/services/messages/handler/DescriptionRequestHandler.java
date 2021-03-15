@@ -4,13 +4,14 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all incoming messages that have a
@@ -54,7 +54,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     private final @NonNull MessageExceptionService exceptionService;
 
     /**
-     * Service for ids connector management.
+     * Service for the current connector configuration.
      */
     private final @NonNull IdsConnectorService connectorService;
 
@@ -77,11 +77,11 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            messageService.checkForEmptyMessage(message);
-            messageService.checkForVersionSupport(message.getModelVersion());
+            MessageUtils.checkForEmptyMessage(message);
+            exceptionService.checkForVersionSupport(message.getModelVersion());
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
-        } catch (InfoModelVersionNotSupportedException exception) {
+        } catch (VersionNotSupportedException exception) {
             return exceptionService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
@@ -121,7 +121,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                         issuerConnector, messageId);
             } else {
                 // If the element has been found, build the ids response message.
-                final var params = List.of(messageId);
+                final var params = new DescriptionResponseDesc(messageId);
                 final var header = messageService.buildMessage(issuerConnector, params);
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
 
@@ -157,8 +157,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var selfDescription = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
-            final var params = List.of(messageId);
-            final var header = messageService.buildMessage(issuerConnector, params);
+            final var desc = new DescriptionResponseDesc(messageId);
+            final var header = messageService.buildMessage(issuerConnector, desc);
             final var payload = IdsUtils.convertConnectorToRdf(selfDescription);
 
             // Send ids response message.

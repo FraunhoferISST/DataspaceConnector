@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
@@ -16,8 +16,6 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageRespons
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This @{@link NotificationMessageHandler} handles all incoming messages that have a
@@ -57,7 +55,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             exceptionService.checkForVersionSupport(message.getModelVersion());
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
-        } catch (InfoModelVersionNotSupportedException exception) {
+        } catch (VersionNotSupportedException exception) {
             return exceptionService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
@@ -66,28 +64,14 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             // Build the ids response.
             final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
             final var messageId = MessageUtils.extractMessageIdFromMessage(message);
-            final var desc = buildDesc(issuerConnector, messageId);
+            final var desc = new NotificationMessageDesc(messageId);
 
-            final var header = messageService.buildMessage(desc);
+            final var header = messageService.buildMessage(issuerConnector, desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException exception) {
             return exceptionService.handleIllegalStateException(exception);
         } catch (ConstraintViolationException exception) {
             return exceptionService.handleConstraintViolationException(exception);
         }
-    }
-
-    /**
-     * Build parameters for the message service.
-     *
-     * @param issuerConnector The message recipient.
-     * @param messageId       The correlation message id.
-     * @return The notification message description.
-     */
-    private NotificationMessageDesc buildDesc(final URI issuerConnector, final URI messageId) {
-        NotificationMessageDesc desc = new NotificationMessageDesc();
-        desc.setRecipient(issuerConnector);
-        desc.setCorrelationMessage(messageId);
-        return desc;
     }
 }

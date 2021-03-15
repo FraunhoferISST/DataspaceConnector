@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
-import de.fraunhofer.isst.dataspaceconnector.services.IdsSerializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -46,7 +46,7 @@ public class ConfigurationController {
     /**
      * Service for deserializing ids objects.
      */
-    private final @NonNull IdsSerializationService idsService;
+    private final @NonNull DeserializationService idsService;
 
     /**
      * Update the connector's current configuration.
@@ -71,7 +71,7 @@ public class ConfigurationController {
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
-            return ControllerUtils.responseDeserializationError(exception);
+            return ControllerUtils.respondDeserializationError(exception);
         }
     }
 
