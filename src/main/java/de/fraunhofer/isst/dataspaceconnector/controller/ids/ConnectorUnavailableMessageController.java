@@ -48,7 +48,7 @@ public class ConnectorUnavailableMessageController {
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping("/unavailable/connector")
+    @PostMapping("/connector/unavailable")
     @Operation(summary = "Connector unavailable message", description = "Can be used for "
             + "unregistering the connector at an IDS broker.")
     @ApiResponses(value = {

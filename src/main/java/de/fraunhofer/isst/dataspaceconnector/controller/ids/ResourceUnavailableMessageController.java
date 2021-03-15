@@ -49,7 +49,7 @@ public class ResourceUnavailableMessageController {
      * @param resourceId The resource id.
      * @return The response message or an error.
      */
-    @PostMapping("/unavailable/resource")
+    @PostMapping("/resource/unavailable")
     @Operation(summary = "Connector update message", description = "Can be used for unregistering "
             + "a resource at an IDS broker.")
     @ApiResponses(value = {

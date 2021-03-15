@@ -48,7 +48,7 @@ public class ConnectorUpdateMessageController {
      * @param recipient The url of the recipient.
      * @return The response message or an error.
      */
-    @PostMapping("/update/connector")
+    @PostMapping("/connector/update")
     @Operation(summary = "Connector update message", description = "Can be used for registering or "
             + "updating the connector at an IDS broker.")
     @ApiResponses(value = {
