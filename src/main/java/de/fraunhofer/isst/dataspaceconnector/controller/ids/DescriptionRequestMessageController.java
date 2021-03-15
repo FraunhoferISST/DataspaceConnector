@@ -68,6 +68,7 @@ public class DescriptionRequestMessageController {
             @RequestParam(value = "elementId", required = false) final URI elementId) {
         Map<String, String> response;
         try {
+            // Build and send a description request message.
             final var desc = new DescriptionRequestDesc(elementId);
             response = requestService.sendMessage(recipient, desc, "");
         } catch (MessageException exception) {
@@ -76,6 +77,7 @@ public class DescriptionRequestMessageController {
 
         String payload = null;
         try {
+            // Read and process the response message.
             final var validResponse = responseService.isValidDescriptionResponse(response);
             if (validResponse) {
                 payload = MessageUtils.extractPayloadFromMultipartMessage(response);
