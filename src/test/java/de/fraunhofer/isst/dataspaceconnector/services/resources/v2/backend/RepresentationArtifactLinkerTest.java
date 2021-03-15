@@ -227,6 +227,16 @@ public class RepresentationArtifactLinkerTest {
     }
 
     @Test
+    public void add_knownIdSetWithNullAndValidEntities_throwsNullPointerException() {
+        /* ARRANGE */
+        final var knownId = representation.getId();
+
+        /* ACT && ASSERT */
+        assertThrows(NullPointerException.class,
+                     () -> linker.add(knownId, Set.of(artifactOne.getId(), null)));
+    }
+
+    @Test
     public void add_knownEntities_createRelation() {
         /* ARRANGE */
         final var knownId = representation.getId();
@@ -416,6 +426,17 @@ public class RepresentationArtifactLinkerTest {
                 .persist(Mockito.eq(representation));
     }
 
+    @Test
+    public void remove_knownIdSetWithNullAndValidEntities_throwsNullPointerException() {
+        /* ARRANGE */
+        final var knownId = representation.getId();
+        linker.add(knownId, Set.of(artifactOne.getId()));
+
+        /* ACT && ASSERT */
+        assertThrows(NullPointerException.class,
+                     () -> linker.remove(knownId, Set.of(artifactOne.getId(), null)));
+    }
+
     /**************************************************************************
      * replace
      *************************************************************************/
@@ -546,6 +567,17 @@ public class RepresentationArtifactLinkerTest {
         /* ASSERT */
         Mockito.verify(representationService, Mockito.atLeast(2))
                 .persist(Mockito.eq(representation));
+    }
+
+    @Test
+    public void replace_knownIdSetWithNullAndValidEntities_throwsNullPointerException() {
+        /* ARRANGE */
+        final var knownId = representation.getId();
+        linker.add(knownId, Set.of(artifactOne.getId()));
+
+        /* ACT && ASSERT */
+        assertThrows(NullPointerException.class,
+                     () -> linker.replace(knownId, Set.of(artifactOne.getId(), null)));
     }
 
     /**************************************************************************
