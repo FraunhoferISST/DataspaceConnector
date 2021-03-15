@@ -22,6 +22,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class PolicyInformationService {
 
+    /**
+     * Class level logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyInformationService.class);
 
     /**
