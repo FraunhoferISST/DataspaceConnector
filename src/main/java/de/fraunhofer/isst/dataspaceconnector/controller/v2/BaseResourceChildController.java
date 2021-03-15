@@ -1,14 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Offers REST-Api Endpoints for modifying relations between resources.
@@ -51,6 +54,8 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
      * @return The children of the resource.
      */
     @RequestMapping(method = RequestMethod.GET)
+    @Operation(summary = "Get all children of a base resource with pagination")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public HttpEntity<?> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
@@ -76,6 +81,8 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
      * @return Response with code 200 (Ok) and the new children's list.
      */
     @PostMapping
+    @Operation(summary = "Add a list of children to a base resource")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public HttpEntity<?> addResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         linker.add(ownerId, toSet(resources));
@@ -88,12 +95,13 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
     /**
      * Replace the children of a resource. Endpoint for PUT requests.
      *
-     * @param ownerId   The id of the resource which children should be
-     *                  replaced.
+     * @param ownerId   The id of the resource which children should be replaced.
      * @param resources The resources that should be added as children.
      * @return Response with code 204 (No_Content).
      */
     @PutMapping
+    @Operation(summary = "Update a list of children of a base resource")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         linker.replace(ownerId, toSet(resources));
@@ -108,6 +116,8 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping
+    @Operation(summary = "Remove a list of children from a base resource")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
     public HttpEntity<Void> removeResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         linker.remove(ownerId, toSet(resources));
