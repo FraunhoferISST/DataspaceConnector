@@ -1,16 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
-import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
@@ -22,11 +17,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.UUID;
+
+import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import lombok.SneakyThrows;
 
 @SpringBootTest(classes = {RepresentationArtifactLinker.class})
 public class RepresentationArtifactLinkerTest {
@@ -233,7 +234,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class,
-                     () -> linker.add(knownId, Set.of(artifactOne.getId(), null)));
+                () -> linker.add(knownId, Set.of(artifactOne.getId(), null)));
     }
 
     @Test
@@ -434,7 +435,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class,
-                     () -> linker.remove(knownId, Set.of(artifactOne.getId(), null)));
+                () -> linker.remove(knownId, Set.of(artifactOne.getId(), null)));
     }
 
     /**************************************************************************
@@ -577,7 +578,7 @@ public class RepresentationArtifactLinkerTest {
 
         /* ACT && ASSERT */
         assertThrows(NullPointerException.class,
-                     () -> linker.replace(knownId, Set.of(artifactOne.getId(), null)));
+                () -> linker.replace(knownId, Set.of(artifactOne.getId(), null)));
     }
 
     /**************************************************************************
