@@ -7,6 +7,8 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
@@ -16,12 +18,11 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public final class LogMessageService extends MessageService<LogMessageDesc> {
 
     @Override
-    public Message buildMessage(final LogMessageDesc desc) throws ConstraintViolationException {
+    public Message buildMessage(final URI recipient, final LogMessageDesc desc)
+            throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
-
-        final var recipient = desc.getRecipient();
 
         return new LogMessageBuilder()
                 ._issued_(getGregorianNow())

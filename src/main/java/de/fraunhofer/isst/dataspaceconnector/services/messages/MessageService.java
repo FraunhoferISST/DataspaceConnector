@@ -44,25 +44,26 @@ public abstract class MessageService<T extends MessageDesc> {
     /**
      * Build ids message with params.
      *
-     * @param desc Type-specific message parameter.
+     * @param recipient The message recipient.
+     * @param desc      Type-specific message parameter.
      * @return An ids message.
      * @throws ConstraintViolationException If the ids message could not be built.
      */
-    public abstract Message buildMessage(T desc) throws ConstraintViolationException;
+    public abstract Message buildMessage(URI recipient, T desc) throws ConstraintViolationException;
 
     /**
      * Build and sent a multipart message with header and payload.
      *
      * @param recipient The message's recipient.
-     * @param desc    Type-specific message parameter.
-     * @param payload The message's payload.
+     * @param desc      Type-specific message parameter.
+     * @param payload   The message's payload.
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
     public Map<String, String> sendMessage(final URI recipient, final T desc, final String payload)
             throws MessageException {
         try {
-            final var header = buildMessage(desc);
+            final var header = buildMessage(recipient, desc);
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             LOGGER.info(String.valueOf(body));
 

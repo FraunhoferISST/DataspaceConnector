@@ -7,6 +7,8 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseDesc;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
@@ -16,12 +18,12 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public final class DescriptionResponseService extends MessageService<DescriptionResponseDesc> {
 
     @Override
-    public Message buildMessage(final DescriptionResponseDesc desc) throws ConstraintViolationException {
+    public Message buildMessage(final URI recipient, final DescriptionResponseDesc desc)
+            throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
-        final var recipient = desc.getRecipient();
         final var correlationMessage = desc.getCorrelationMessage();
 
         return new DescriptionResponseMessageBuilder()
