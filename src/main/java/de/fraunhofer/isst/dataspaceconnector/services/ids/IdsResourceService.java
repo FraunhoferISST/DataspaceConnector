@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.ids;
+package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
@@ -39,8 +39,8 @@ public class IdsResourceService {
 
     public de.fraunhofer.iais.eis.Resource getResource(final URI resourceUri) {
         final var allEndpoints = endpointService.getAll();
-        for(final var endpoint : allEndpoints) {
-            if(endpoint.toUri().equals(resourceUri)) {
+        for (final var endpoint : allEndpoints) {
+            if (endpoint.toUri().equals(resourceUri)) {
                 return getResource(endpoint);
             }
         }
@@ -64,4 +64,33 @@ public class IdsResourceService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Get offered resource by its id.
+     *
+     * @param resourceId The resource id.
+     * @return The ids resource.
+     */
+    public Resource getOfferedResourceById(final URI resourceId) {
+        final var resource = offeredResourceService.getAll(Pageable.unpaged())
+                .stream()
+                .filter(x -> x.getId().toString().contains(resourceId.toString()))
+                .findAny();
+
+        return resource.map(offeredResource -> viewer.create(offeredResource)).orElse(null);
+    }
+
+    /**
+     * Get requested resource by its id.
+     *
+     * @param resourceId The resource id.
+     * @return The ids resource.
+     */
+    public Resource getRequestedResourceById(final URI resourceId) {
+        final var resource = requestedResourceService.getAll(Pageable.unpaged())
+                .stream()
+                .filter(x -> x.getId().toString().contains(resourceId.toString()))
+                .findAny();
+
+        return resource.map(offeredResource -> viewer.create(offeredResource)).orElse(null);
+    }
 }
