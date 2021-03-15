@@ -13,6 +13,10 @@ import java.net.URI;
  */
 public final class ControllerUtils {
 
+    private ControllerUtils() {
+        // not used
+    }
+
     /**
      * Class level logger.
      */
@@ -58,7 +62,8 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondConfigurationUpdateError(final Exception exception) {
-        LOGGER.debug("Failed to update the configuration. [exception=({})]", exception.getMessage());
+        LOGGER.debug("Failed to update the configuration. [exception=({})]",
+                exception.getMessage());
         return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

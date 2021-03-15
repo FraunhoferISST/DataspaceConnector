@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public final class EndpointUtils {
     private EndpointUtils() {
+        // not used
     }
 
     /**
@@ -51,7 +52,8 @@ public final class EndpointUtils {
 
     public static String getCurrentBasePathString() {
         final var currentPath = EndpointUtils.getCurrentBasePath();
-        return currentPath.toString().substring(0, currentPath.toString().indexOf(currentPath.getPath()));
+        return currentPath.toString().substring(0,
+                currentPath.toString().indexOf(currentPath.getPath()));
     }
 
     public static BasePath getBasePathEnumFromString(final String path) {

@@ -17,6 +17,16 @@ import java.net.URI;
 
 public final class PatternUtils {
 
+    private PatternUtils() {
+        // not used
+    }
+
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildProvideAccessRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -25,6 +35,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildProhibitAccessRule() throws ConstraintViolationException {
         return new ProhibitionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -33,6 +49,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildNTimesUsageRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -48,6 +70,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildDurationUsageRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -61,6 +89,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildIntervalUsageRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -80,6 +114,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildUsageUntilDeletionRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -108,6 +148,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildUsageLoggingRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
@@ -119,6 +165,12 @@ public final class PatternUtils {
                 .build();
     }
 
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
     public static Rule buildUsageNotificationRule() throws ConstraintViolationException {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))

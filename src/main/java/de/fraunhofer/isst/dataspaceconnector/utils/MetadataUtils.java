@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public final class MetadataUtils {
     private MetadataUtils() {
-
+        // not used
     }
 
     public static Optional<String> updateString(final String oldTitle,

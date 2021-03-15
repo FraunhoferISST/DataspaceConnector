@@ -30,7 +30,7 @@ public final class MessageUtils {
      * Class constructor without params.
      */
     private MessageUtils() {
-        // not called
+        // not used
     }
 
     /**
