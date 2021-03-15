@@ -19,7 +19,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Contr
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.AbstractResourceContractLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
@@ -45,7 +45,7 @@ public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
 
     private final @NonNull ResourceRepresentationLinker<T> resourceRepresentationLinker;
 
-    private final @NonNull ResourceContractLinker<T> resourceContractLinker;
+    private final @NonNull AbstractResourceContractLinker<T> resourceContractLinker;
 
     public T build(final ResourceTemplate<D> template) {
         final var representationIds = new HashSet<UUID>();
@@ -159,7 +159,7 @@ final class TemplateBuilderOfferedResource
     public TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
             final ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker,
-            final ResourceContractLinker<OfferedResource> resourceContractLinker,
+            final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,
@@ -177,7 +177,7 @@ final class TemplateBuilderRequestedResource
     public TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
             final ResourceRepresentationLinker<RequestedResource> resourceRepresentationLinker,
-            final ResourceContractLinker<RequestedResource> resourceContractLinker,
+            final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,

@@ -12,7 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Artif
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ContractRuleLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.AbstractResourceContractLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
@@ -50,9 +50,9 @@ public class ResourceControllerV1 {
 
     private final @NonNull ResourceService<OfferedResource, ?> resourceService;
     private final @NonNull RepresentationService representationService;
-    private final @NonNull ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker;
-    private final @NonNull ResourceContractLinker<OfferedResource> resourceContractLinker;
-    private final @NonNull ContractRuleLinker contractRuleLinker;
+    private final @NonNull ResourceRepresentationLinker<OfferedResource>   resourceRepresentationLinker;
+    private final @NonNull AbstractResourceContractLinker<OfferedResource> resourceContractLinker;
+    private final @NonNull ContractRuleLinker                              contractRuleLinker;
     private final @NonNull RuleService ruleService;
     private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
     private final @NonNull ArtifactService artifactService;

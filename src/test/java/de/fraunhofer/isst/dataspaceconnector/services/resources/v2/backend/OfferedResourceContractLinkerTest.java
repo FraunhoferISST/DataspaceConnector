@@ -17,8 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ResourceContractLinker.class})
-class ResourceContractLinkerTest {
+@SpringBootTest(classes = {OfferedResourceContractLinker.class})
+class OfferedResourceContractLinkerTest {
     @MockBean
     ResourceService<OfferedResource, OfferedResourceDesc> resourceService;
 
@@ -27,7 +27,7 @@ class ResourceContractLinkerTest {
 
     @Autowired
     @InjectMocks
-    ResourceContractLinker<OfferedResource> linker;
+    OfferedResourceContractLinker linker;
 
     OfferedResource resource = getResource();
     Contract contract = getContract();
