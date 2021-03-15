@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceContro
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -61,9 +62,7 @@ public class MainController {
             return new ResponseEntity<>(connector, HttpStatus.OK);
         } catch (Exception exception) {
             // Connector could not be loaded or deserialized.
-            LOGGER.warn("Connector could not be loaded. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Connector could not be loaded.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return ControllerUtils.respondConnectorNotLoaded(exception);
         }
     }
 
@@ -84,9 +83,7 @@ public class MainController {
             return new ResponseEntity<>(connector, HttpStatus.OK);
         } catch (Exception exception) {
             // Connector could not be loaded or deserialized.
-            LOGGER.warn("Connector could not be loaded. [exception=({})]", exception.getMessage());
-            return new ResponseEntity<>("Connector could not be loaded.",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+            return ControllerUtils.respondConnectorNotLoaded(exception);
         }
     }
 

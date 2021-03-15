@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.UUID;
+import java.net.URI;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -20,18 +20,31 @@ public final class ControllerUtils {
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that an error occurred
-     * in the broker communication.
+     * in the ids communication.
      *
-     * @param exception Exception that was thrown during broker communication.
+     * @param exception Exception that was thrown during communication.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> respondBrokerCommunicationFailed(final Exception exception) {
-        LOGGER.debug("Broker communication failed. [exception=({})]", exception.getMessage());
-        return new ResponseEntity<>("The communication with the broker failed.",
+    public static ResponseEntity<Object> respondIdsMessageFailed(final Exception exception) {
+        LOGGER.debug("Ids message handling failed. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Ids message handling failed.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public static ResponseEntity<Object> responseFailedToLoadSerializer(final Exception exception) {
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that an error occurred
+     * in the ids communication.
+     *
+     * @param exception Exception that was thrown during communication.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondReceivedInvalidResponse(final Exception exception) {
+        LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Failed to read the ids response message.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public static ResponseEntity<Object> respondFailedToLoadSerializer(final Exception exception) {
         LOGGER.warn("Failed to receive the serializer. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -45,8 +58,7 @@ public final class ControllerUtils {
      * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondConfigurationUpdateError(final Exception exception) {
-        LOGGER.debug("Failed to update the configuration. [exception=({})]",
-                exception.getMessage());
+        LOGGER.debug("Failed to update the configuration. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -58,7 +70,7 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> responseDeserializationError(final Exception exception) {
+    public static ResponseEntity<Object> respondDeserializationError(final Exception exception) {
         LOGGER.warn("Failed to deserialize the object. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to update.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -81,7 +93,7 @@ public final class ControllerUtils {
      * @param resourceId ID for that no match was found.
      * @return ResponseEntity with status code 404.
      */
-    public static ResponseEntity<Object> respondResourceNotFound(final UUID resourceId) {
+    public static ResponseEntity<Object> respondResourceNotFound(final URI resourceId) {
         LOGGER.debug("The resource does not exist. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
@@ -93,7 +105,7 @@ public final class ControllerUtils {
      * @param resourceId ID of the resource.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> respondResourceCouldNotBeLoaded(final UUID resourceId) {
+    public static ResponseEntity<Object> respondResourceCouldNotBeLoaded(final URI resourceId) {
         LOGGER.debug("Resource not loaded. [resourceId=({})]", resourceId);
         return new ResponseEntity<>("Could not load resource.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -106,7 +118,7 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> responsePatternNotIdentified(final Exception exception) {
+    public static ResponseEntity<Object> respondPatternNotIdentified(final Exception exception) {
         LOGGER.debug("Failed to identify policy pattern.", exception);
         return new ResponseEntity<>("Could not identify pattern", HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -118,9 +130,22 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> responseInvalidInput(final Exception exception) {
+    public static ResponseEntity<Object> respondInvalidInput(final Exception exception) {
         LOGGER.warn("Failed to deserialize the input. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Invalid input.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that the connector
+     * could not be loaded or deserialized.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondConnectorNotLoaded(final Exception exception) {
+        LOGGER.warn("Connector could not be loaded. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Connector could not be loaded.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 // [exception=({})]", exception.getMessage()
