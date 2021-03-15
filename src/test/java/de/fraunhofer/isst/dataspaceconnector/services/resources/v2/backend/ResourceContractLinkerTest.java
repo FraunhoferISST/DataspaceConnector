@@ -51,11 +51,11 @@ class ResourceContractLinkerTest {
         resource.getContracts().add(contract);
 
         /* ACT */
-        final var artifacts = linker.getInternal(resource);
+        final var contracts = linker.getInternal(resource);
 
         /* ASSERT */
         final var expected = List.of(contract);
-        assertEquals(expected, artifacts);
+        assertEquals(expected, contracts);
     }
 
     /**************************************************************************
