@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataProvisionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
@@ -41,9 +41,9 @@ public class MessageExceptionService {
      * model versions.
      *
      * @param versionString The outbound model version of the requesting connector.
-     * @throws InfoModelVersionNotSupportedException Handled in the {@link MessageExceptionService}.
+     * @throws VersionNotSupportedException If the Infomodel version is not supported.
      */
-    public void checkForVersionSupport(final String versionString) throws InfoModelVersionNotSupportedException {
+    public void checkForVersionSupport(final String versionString) throws VersionNotSupportedException {
         // Get a local copy of the current connector.
         final var inboundVersions = connectorService.getInboundModelVersion();
         boolean versionSupported = false;
@@ -56,7 +56,7 @@ public class MessageExceptionService {
         }
 
         if (!versionSupported) {
-            throw new InfoModelVersionNotSupportedException("Infomodel version not supported.");
+            throw new VersionNotSupportedException("Infomodel version not supported.");
         }
     }
 
@@ -75,14 +75,14 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link InfoModelVersionNotSupportedException}.
+     * Handles thrown {@link VersionNotSupportedException}.
      *
      * @param exception Exception that was thrown when checking the Infomodel version.
      * @param version   Infomodel version of incoming message.
      * @return A message response.
      */
     public MessageResponse handleInfoModelNotSupportedException(
-            final InfoModelVersionNotSupportedException exception, final String version) {
+            final VersionNotSupportedException exception, final String version) {
         LOGGER.debug("Information Model version of requesting connector is not supported. "
                 + "[version=({}), exception=({})]", version, exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.VERSION_NOT_SUPPORTED,

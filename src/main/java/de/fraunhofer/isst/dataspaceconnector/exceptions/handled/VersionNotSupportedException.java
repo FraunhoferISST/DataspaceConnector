@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
 /**
  * Thrown to indicate that a problem occurred while creating an uuid.
  */
-public class InfoModelVersionNotSupportedException extends RuntimeException {
+public class VersionNotSupportedException extends RuntimeException {
     /**
      * Default serial version uid.
      */
@@ -14,7 +14,7 @@ public class InfoModelVersionNotSupportedException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public InfoModelVersionNotSupportedException(final String msg) {
+    public VersionNotSupportedException(final String msg) {
         super(msg);
     }
 }
