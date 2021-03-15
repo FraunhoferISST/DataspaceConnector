@@ -95,7 +95,7 @@ class ResourceContractLinkerTest {
 
         final var titleField = contract.getClass().getDeclaredField("title");
         titleField.setAccessible(true);
-        titleField.set(contract, "ArtifactOne");
+        titleField.set(contract, "Contract");
 
         final var idField = contract.getClass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
