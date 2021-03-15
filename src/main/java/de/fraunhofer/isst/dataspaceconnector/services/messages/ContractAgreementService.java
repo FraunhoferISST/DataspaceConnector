@@ -12,7 +12,7 @@ import java.net.URI;
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
- * Message service for ids contract request messages.
+ * Message service for ids contract agreement messages.
  */
 @Service
 public final class ContractAgreementService extends MessageService<ContractAgreementDesc> {

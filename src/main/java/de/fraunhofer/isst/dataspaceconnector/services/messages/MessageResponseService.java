@@ -67,7 +67,7 @@ public class MessageResponseService {
     public ResponseEntity<Object> showRejectionMessage(final Map<String, String> response) {
         try {
             final var message = getResponseMessageContent(response);
-            return new ResponseEntity<>(message, HttpStatus.OK);
+            return new ResponseEntity<>(message, HttpStatus.OK); // TODO show ok here?
         } catch (MessageResponseException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         }
@@ -132,6 +132,7 @@ public class MessageResponseService {
         final var resource = service.getIdsResourceAsRequestedResource(metadata);
         final var requestedResource = resourceService.create(resource);
 
+        // Get endpoint of new resource and return it.
         final var endpoint = EndpointUtils.getCurrentEndpoint(requestedResource.getId());
         return endpoint.toUri();
     }
