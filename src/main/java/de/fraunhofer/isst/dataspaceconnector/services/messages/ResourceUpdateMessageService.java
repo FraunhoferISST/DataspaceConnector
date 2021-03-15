@@ -190,7 +190,7 @@ public class ResourceUpdateMessageService extends MessageService {
             }
             return true;
         } catch (MessageException exception) {
-            LOGGER.warn("Failed to send or process new artifact request. [exception=({})]",
+            LOGGER.warn("Failed to sendMessage or process new artifact request. [exception=({})]",
                     exception.getMessage());
             throw new MessageException("Data could not be updated.");
         } catch (ResourceException exception) {
@@ -234,9 +234,9 @@ public class ResourceUpdateMessageService extends MessageService {
             LOGGER.debug("Received invalid ids response. [exception=({})]", exception.getMessage());
             throw new MessageException("Received invalid ids response.");
         } catch (MessageNotSentException exception) {
-            // Failed to send the artifact request message.
-            LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
-            throw new MessageException("Failed to send a request.");
+            // Failed to sendMessage the artifact request message.
+            LOGGER.warn("Failed to sendMessage a request. [exception=({})]", exception.getMessage());
+            throw new MessageException("Failed to sendMessage a request.");
         }
 
         String header, payload;
