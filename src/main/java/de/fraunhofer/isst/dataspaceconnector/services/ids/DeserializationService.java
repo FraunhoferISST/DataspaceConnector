@@ -5,7 +5,6 @@ import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageDeserializationException;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -97,15 +96,5 @@ public class DeserializationService {
             LOGGER.warn("Could not deserialize response message. [exception=({})]", e.getMessage());
             throw new MessageDeserializationException("Could not deserialize response message.");
         }
-    }
-
-    /**
-     * Translate ids resource to connector resource. TODO
-     *
-     * @param resource The ids resource.
-     * @return The connector resource.
-     */
-    public RequestedResourceDesc getIdsResourceAsRequestedResource(final Resource resource) {
-        return null;
     }
 }
