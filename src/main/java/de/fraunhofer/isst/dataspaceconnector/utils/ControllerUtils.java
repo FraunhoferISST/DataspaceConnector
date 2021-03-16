@@ -31,7 +31,7 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondIdsMessageFailed(final Exception exception) {
         LOGGER.debug("Ids message handling failed. [exception=({})]", exception.getMessage());
-        return new ResponseEntity<>("Ids message handling failed.",
+        return new ResponseEntity<>("Ids message handling failed. " + exception.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -150,6 +150,17 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondConnectorNotLoaded(final Exception exception) {
         LOGGER.warn("Connector could not be loaded. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Connector could not be loaded.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     *
+     * @param exception
+     * @return
+     */
+    public static ResponseEntity<Object> respondGlobalException(final Exception exception) {
+        LOGGER.warn("Something else went wrong. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Something else went wrong.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
