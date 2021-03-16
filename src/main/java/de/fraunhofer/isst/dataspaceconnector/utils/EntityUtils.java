@@ -15,6 +15,10 @@ public final class EntityUtils {
      * @return True if it is empty, false if not.
      */
     public static boolean parameterIsEmpty(final URI param) {
-        return param.toString().equals("");
+        if (param == null) {
+            return true;
+        } else {
+            return param.toString().equals("");
+        }
     }
 }
