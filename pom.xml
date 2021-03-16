@@ -470,7 +470,7 @@
 						<param>de.fraunhofer.isst.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>de.fraunhofer.isst.dataspaceconnector.model.v2.*Persistence*</param>
+						<param>de.fraunhofer.isst.dataspaceconnector.model.*Persistence*</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
