@@ -10,10 +10,10 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class ContractRequestDesc implements MessageDesc {
+public class MessageProcessedNotificationMessageDesc implements MessageDesc {
 
     /**
-     * The transfer contract of the message.
+     * The ids of the correlation message.
      */
-    private URI transferContract;
+    private URI correlationMessage;
 }

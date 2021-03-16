@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -15,10 +15,10 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids description request messages.
  */
 @Service
-public final class DescriptionRequestService extends MessageService<DescriptionRequestDesc> {
+public final class DescriptionRequestService extends MessageService<DescriptionRequestMessageDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient, final DescriptionRequestDesc desc)
+    public Message buildMessage(final URI recipient, final DescriptionRequestMessageDesc desc)
             throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();

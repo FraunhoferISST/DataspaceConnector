@@ -10,10 +10,15 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class MessageProcessedNotificationDesc implements MessageDesc {
+public class ArtifactResponseMessageDesc implements MessageDesc {
 
     /**
      * The ids of the correlation message.
      */
     private URI correlationMessage;
+
+    /**
+     * The transfer contract of the message.
+     */
+    private URI transferContract;
 }

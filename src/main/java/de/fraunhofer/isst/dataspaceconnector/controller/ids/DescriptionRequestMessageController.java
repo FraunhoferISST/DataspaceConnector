@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.ids;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
@@ -77,7 +77,7 @@ public class DescriptionRequestMessageController {
         Map<String, String> response;
         try {
             // Build and send a description request message.
-            final var desc = new DescriptionRequestDesc(elementId);
+            final var desc = new DescriptionRequestMessageDesc(elementId);
             response = requestService.sendMessage(recipient, desc, "");
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);

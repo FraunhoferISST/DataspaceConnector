@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFo
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionResponseService;
@@ -121,7 +121,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                         issuerConnector, messageId);
             } else {
                 // If the element has been found, build the ids response message.
-                final var params = new DescriptionResponseDesc(messageId);
+                final var params = new DescriptionResponseMessageDesc(messageId);
                 final var header = messageService.buildMessage(issuerConnector, params);
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
 
@@ -157,7 +157,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var selfDescription = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
-            final var desc = new DescriptionResponseDesc(messageId);
+            final var desc = new DescriptionResponseMessageDesc(messageId);
             final var header = messageService.buildMessage(issuerConnector, desc);
             final var payload = IdsUtils.convertConnectorToRdf(selfDescription);
 

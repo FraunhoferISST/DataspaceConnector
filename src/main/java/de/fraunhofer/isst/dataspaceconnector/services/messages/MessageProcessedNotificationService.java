@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -15,10 +15,10 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids message processed notification messages.
  */
 @Service
-public final class MessageProcessedNotificationService extends MessageService<MessageProcessedNotificationDesc> {
+public final class MessageProcessedNotificationService extends MessageService<MessageProcessedNotificationMessageDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient, final MessageProcessedNotificationDesc desc)
+    public Message buildMessage(final URI recipient, final MessageProcessedNotificationMessageDesc desc)
             throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
