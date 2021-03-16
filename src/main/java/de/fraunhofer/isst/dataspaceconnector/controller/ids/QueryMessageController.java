@@ -65,7 +65,8 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the resource update message.
-            final var response = brokerService.queryBroker(recipient, query, null, null, null);
+            final var response = brokerService.queryBroker(recipient, query,
+                    null, null, null);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
         } catch (IOException exception) {
