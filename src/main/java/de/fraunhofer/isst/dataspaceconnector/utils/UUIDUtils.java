@@ -14,7 +14,11 @@ import java.util.regex.Pattern;
 /**
  * This class offers support functions for working with UUIDs.
  */
-public class UUIDUtils {
+public final class UUIDUtils {
+
+    private UUIDUtils() {
+        // not used
+    }
 
     /**
      * Finds all UUIDs in a string.
@@ -24,7 +28,8 @@ public class UUIDUtils {
      */
     public static List<String> findUuids(@NotNull String input) {
         final var pairRegex = Pattern
-            .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{12}");
+                .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit" +
+                        "}{12}");
         final var matcher = pairRegex.matcher(input);
 
         // Extract all UUIDs
@@ -60,11 +65,11 @@ public class UUIDUtils {
      * @param index the index when more then one UUID is found. Set to a negative number when the
      *              last UUID should be extracted.
      * @return the extracted uuid.
-     * @throws UUIDFormatException if the URI does not contain a parsable UUID.
+     * @throws UUIDFormatException       if the URI does not contain a parsable UUID.
      * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
     public static UUID uuidFromUri(@NotNull URI uri, int index) throws UUIDFormatException,
-        IndexOutOfBoundsException {
+            IndexOutOfBoundsException {
         // Find all uuids in the uri
         final var uuids = findUuids(uri.toString());
 
@@ -78,7 +83,7 @@ public class UUIDUtils {
             // This exception should never be thrown since the pattern matcher (in splitUuids)
             // found the uuid.
             throw new UUIDFormatException("Could not convert string to uuid. This indicates a " +
-                "problem with the uuid pattern.", exception);
+                    "problem with the uuid pattern.", exception);
         }
     }
 
@@ -122,6 +127,6 @@ public class UUIDUtils {
         }
 
         throw new UUIDCreationException("Could not create a new uuid. No unused uuid could be " +
-            "found.");
+                "found.");
     }
 }

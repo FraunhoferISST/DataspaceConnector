@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public final class EntityApiBridge {
     private EntityApiBridge(){
-        // Nothing
+        // not used
     }
 
     public static ResourceTemplate<OfferedResourceDesc> toOfferedResourceTemplate(final UUID uuid, final ResourceMetadata resourceMetadata) {

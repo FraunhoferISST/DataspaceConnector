@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/catalogs")
-@Tag(name = "Catalogs")
+@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
 public class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
 }

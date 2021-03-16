@@ -1,129 +1,93 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.InfoModelVersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageDeserializationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import org.apache.commons.fileupload.FileUploadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
 /**
- * Abstract class for building, sending, and process ids messages.
+ * Abstract class for building, sending, and processing ids messages.
  */
-@Service
-public abstract class MessageService {
+public abstract class MessageService<T extends MessageDesc> {
     /**
      * The logging service.
      */
-    private final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
     /**
-     * The ids http service.
+     * Service for ids communication.
      */
     @Autowired
     private IDSHttpService idsHttpService;
 
     /**
-     * The serializer provider.
+     * Service for the current connector configuration.
      */
     @Autowired
-    private SerializerProvider serializer;
+    private IdsConnectorService connectorService;
 
     /**
-     * The configuration container.
-     */
-    @Autowired
-    private ConfigurationContainer configContainer;
-
-    /**
-     * Sends an ids message with header and payload.
+     * Build ids message with params.
      *
-     * @param header The ids message header.
-     * @param payload   The message payload.
-     * @param recipient The message's recipient.
-     * @return The http response.
-     * @throws MessageException If a header could not be built or the message could not be sent.
+     * @param recipient The message recipient.
+     * @param desc      Type-specific message parameter.
+     * @return An ids message.
+     * @throws ConstraintViolationException If the ids message could not be built.
      */
-    public Map<String, String> sendMessage(final Message header,
-                                           final String payload,
-                                           final URI recipient) throws MessageException {
+    public abstract Message buildMessage(URI recipient, T desc) throws ConstraintViolationException;
+
+    /**
+     * Build and sent a multipart message with header and payload.
+     *
+     * @param recipient The message's recipient.
+     * @param desc      Type-specific message parameter.
+     * @param payload   The message's payload.
+     * @return The response as map.
+     * @throws MessageException If message building, sending, or processing failed.
+     */
+    public Map<String, String> sendMessage(final URI recipient, final T desc, final String payload)
+            throws MessageException {
         try {
-            final var body = InfomodelMessageBuilder.messageWithString(header, payload);
+            final var header = buildMessage(recipient, desc);
+            final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
+            LOGGER.info(String.valueOf(body));
+
+            // Send message and check response.
             return idsHttpService.sendAndCheckDat(body, recipient);
+        } catch (ConstraintViolationException e) {
+            LOGGER.warn("Ids message header could not be built. [exception=({})]", e.getMessage());
+            throw new MessageBuilderException("Ids message header could not be built.");
         } catch (ClaimsException exception) {
-            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]",
+            LOGGER.debug("Invalid DAT in incoming message. [exception=({})]",
                     exception.getMessage());
-            throw new MessageResponseException("Invalid DAT in incoming message.", exception);
+            throw new MessageResponseException("Invalid DAT in incoming message.");
         } catch (FileUploadException | IOException exception) {
             LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageNotSentException("Message could not be sent.", exception);
+            throw new MessageNotSentException("Message could not be sent.");
         }
     }
 
     /**
-     * Returns the ids header of a http multipart response.
+     * Getter for ids connector service.
      *
-     * @param header The ids header.
-     * @return The response message.
+     * @return The service class
      */
-    public ResponseMessage getIdsHeader(final String header) throws MessageDeserializationException {
-        try {
-            return serializer.getSerializer().deserialize(header, ResponseMessage.class);
-        } catch (IOException exception) {
-            LOGGER.debug("Message could not be parsed to response. [exception=({})]",
-                    exception.getMessage());
-            throw new MessageResponseException("Could not deserialize ids response message.");
-        }
-    }
-
-    /**
-     * Check if the outbound model version of the requesting connector is listed in the inbound
-     * model versions.
-     *
-     * @param versionString The outbound model version of the requesting connector.
-     * @throws InfoModelVersionNotSupportedException Handled in the {@link MessageExceptionHandler}.
-     */
-    public void checkForVersionSupport(final String versionString) throws InfoModelVersionNotSupportedException {
-        // Get a local copy of the current connector.
-        final var connector = configContainer.getConnector();
-        boolean versionSupported = false;
-
-        for (final var version : connector.getInboundModelVersion()) {
-            if (version.equals(versionString)) {
-                versionSupported = true;
-                break;
-            }
-        }
-
-        if (!versionSupported) {
-            throw new InfoModelVersionNotSupportedException("InfoModel version not supported.");
-        }
-    }
-
-    /**
-     * Check if the received message is empty.
-     *
-     * @param message The message.
-     */
-    public void checkForEmptyMessage(final Message message) {
-        if (message == null) {
-            throw new MessageEmptyException("The incoming request message cannot be null.");
-        }
+    public IdsConnectorService getConnectorService() {
+        return connectorService;
     }
 }

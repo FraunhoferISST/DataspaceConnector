@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
-import de.fraunhofer.iais.eis.ManagedEntity;
+import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
@@ -125,7 +126,11 @@ public class IdsUtils {
         return resource.toRdf();
     }
 
-    public static String convertManagedEntityToRdf(final ManagedEntity entity) throws ConstraintViolationException {
-        return entity.toRdf();
+    public static String convertArtifactToRdf(final Artifact artifact) throws ConstraintViolationException {
+        return artifact.toRdf();
+    }
+
+    public static String convertRepresentationToRdf(final Representation representation) throws ConstraintViolationException {
+        return representation.toRdf();
     }
 }

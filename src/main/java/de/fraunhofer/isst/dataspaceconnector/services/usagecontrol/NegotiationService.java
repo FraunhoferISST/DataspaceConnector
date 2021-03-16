@@ -1,44 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestImpl;
-import de.fraunhofer.iais.eis.DutyImpl;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionImpl;
-import de.fraunhofer.iais.eis.ProhibitionImpl;
-import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResponseMessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResponseMessageService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Map;
-
 /**
- * Contains methods required for policy negotiation.
+ * Contains methods required for policy negotiation. TODO
  */
 @Service
 @RequiredArgsConstructor
 public class NegotiationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
+    /*private static final Logger LOGGER = LoggerFactory.getLogger(NegotiationService.class);
 
     private final PolicyDecisionService policyDecisionService;
     private final ResponseMessageService responseMessageService;
@@ -46,7 +20,7 @@ public class NegotiationService {
     private final ConfigurationContainer configurationContainer;
     private final @NonNull PolicyManagementService pmp;
 
-    /**
+    *//**
      * Deserializes a contract, adds a given artifact ID to the contract's rules and sends it as contract request
      * message.
      *
@@ -55,7 +29,7 @@ public class NegotiationService {
      * @return The http response.
      * @throws IllegalArgumentException if the contract could not be deserialized.
      * @throws MessageException if the message could not be built.
-     */
+     *//*
     public ContractRequest buildContractRequest(String contractAsString, URI artifactId)
         throws IllegalArgumentException, MessageException {
         Contract contract;
@@ -76,7 +50,7 @@ public class NegotiationService {
                 pmp.buildRequestFromContract(contract));
     }
 
-    /**
+    *//**
      * Checks if the contract request has been successful and, if so, sends a contract agreement message.
      *
      * @param recipient recipient of the contract agreement message.
@@ -85,7 +59,7 @@ public class NegotiationService {
      * @return the contract agreement ID.
      * @throws ContractException if the contract could not be read.
      * @throws MessageException if the contract request message could not be sent.
-     */
+     *//*
     public URI contractAccepted(URI recipient, String header, String payload) throws ContractException,
         MessageException {
         if (payload != null && !payload.equals("")) {
@@ -114,7 +88,7 @@ public class NegotiationService {
                 // Send ContractAgreementMessage to recipient.
                 ContractAgreement agreement = pmp.buildAgreementFromContract(contract, contract.getId());
                 response = responseMessageService.sendContractAgreement(recipient, correlationMessage, agreement.toRdf());
-            } catch (ResponseMessageBuilderException exception) {
+            } catch (MessageBuilderException exception) {
                 // Failed to build the contract agreement message.
                 LOGGER.warn("Failed to build a request. [exception=({})]", exception.getMessage());
                 throw new MessageNotSentException("Failed to build the ids message. " +
@@ -125,9 +99,9 @@ public class NegotiationService {
                 throw new MessageResponseException("Failed to read the ids response message. " +
                         "[exception=({})]", exception);
             } catch (MessageNotSentException exception) {
-                // Failed to send the contract agreement message.
-                LOGGER.warn("Failed to send a request. [exception=({})]", exception.getMessage());
-                throw new MessageNotSentException("Failed to send the ids message. " +
+                // Failed to sendMessage the contract agreement message.
+                LOGGER.warn("Failed to sendMessage a request. [exception=({})]", exception.getMessage());
+                throw new MessageNotSentException("Failed to sendMessage the ids message. " +
                         "[exception=({})]", exception);
             }
 
@@ -145,14 +119,14 @@ public class NegotiationService {
         }
     }
 
-    /**
+    *//**
      * Adds an artifact ID to every rule in a given contract contract.
      *
      * @param artifactId ID of the artifact
      * @param consumer consumer of the contract request
      * @param contract the contract
      * @return A valid contract request.
-     */
+     *//*
     private ContractRequest fillContract(URI artifactId, URI consumer, ContractRequest contract) {
         ContractRequestImpl request = (ContractRequestImpl) contract;
 
@@ -180,13 +154,13 @@ public class NegotiationService {
         return request;
     }
 
-    /**
+    *//**
      * Compares two contracts to each other.
      *
      * @param request the requested contract
      * @param offer the offered contract
      * @return true, if the contracts are equal; false otherwise
-     */
+     *//*
     public boolean compareContracts(Contract request, Contract offer) {
         if (request == null || offer == null)
             return false;
@@ -215,13 +189,13 @@ public class NegotiationService {
         return permissions && prohibitions && obligations;
     }
 
-    /**
+    *//**
      * Compares the content of two permissions lists.
      *
      * @param request list of requested permissions
      * @param offer list of offered permissions
      * @return true, if the contents are equal; false otherwise
-     */
+     *//*
     private boolean comparePermissions(
         ArrayList<? extends Permission> request, ArrayList<? extends Permission> offer) {
         if (request.size() != offer.size())
@@ -266,13 +240,13 @@ public class NegotiationService {
         return true;
     }
 
-    /**
+    *//**
      * Compares the content of two lists of prohibitions or obligations.
      *
      * @param request list of requested prohibitions or obligations
      * @param offer list of offered prohibitions or obligations
      * @return true, if the contents are equal; false otherwise
-     */
+     *//*
     private boolean compareRules(
         ArrayList<? extends Rule> request, ArrayList<? extends Rule> offer) {
         if (request.size() != offer.size())
@@ -297,5 +271,5 @@ public class NegotiationService {
         }
 
         return true;
-    }
+    }*/
 }

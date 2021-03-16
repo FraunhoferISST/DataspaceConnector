@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 
 /**
  * Thrown to indicate that the message could not be deserialized.
  */
-public class MessageDeserializationException extends MessageException {
+public class MessageDeserializationException extends MessageResponseException {
     /**
      * Default serial version uid.
      */

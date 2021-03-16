@@ -1,8 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageResponseBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -26,7 +31,12 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Service for handling notification messages.
      */
-    private final @NonNull NotificationMessageService messageService;
+    private final @NonNull NotificationService messageService;
+
+    /**
+     * Service for the message exception handling.
+     */
+    private final @NonNull MessageExceptionService exceptionService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -35,19 +45,33 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @param message The ids notification message as header.
      * @param payload The message notification message's content.
      * @return The response message.
-     * @throws MessageResponseBuilderException If the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(final NotificationMessageImpl message,
-                                         final MessagePayload payload) throws MessageResponseBuilderException {
+                                         final MessagePayload payload) {
         // Validate incoming message.
-        messageService.checkForEmptyMessage(message);
-        messageService.checkForVersionSupport(message.getModelVersion());
+        try {
+            MessageUtils.checkForEmptyMessage(message);
+            exceptionService.checkForVersionSupport(message.getModelVersion());
+        } catch (MessageEmptyException exception) {
+            return exceptionService.handleMessageEmptyException(exception);
+        } catch (VersionNotSupportedException exception) {
+            return exceptionService.handleInfoModelNotSupportedException(exception,
+                    message.getModelVersion());
+        }
 
-        // Build the ids response.
-        final var header =
-                messageService.buildMessageProcessedNotification(message.getIssuerConnector(),
-                        message.getId());
-        return BodyResponse.create(header, "Message received.");
+        try {
+            // Build the ids response.
+            final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
+            final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+            final var desc = new NotificationMessageDesc(messageId);
+
+            final var header = messageService.buildMessage(issuerConnector, desc);
+            return BodyResponse.create(header, "Message received.");
+        } catch (IllegalStateException exception) {
+            return exceptionService.handleIllegalStateException(exception);
+        } catch (ConstraintViolationException exception) {
+            return exceptionService.handleConstraintViolationException(exception);
+        }
     }
 }

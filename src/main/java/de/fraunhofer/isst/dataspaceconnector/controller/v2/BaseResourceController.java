@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.PageRequest;
@@ -28,17 +28,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 /**
  * Offers REST-Api endpoints for resource handling.
  *
  * @param <T> The type of the resource.
- * @param <D> The type of the resource description expected to be passed with
- *            REST calls.
+ * @param <D> The type of the resource description expected to be passed with REST calls.
  * @param <S> The underlying service for handling the resource logic.
  */
 public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
-                                            extends RepresentationModel<V>, S
-                                            extends BaseEntityService<T, D>> {
+        extends RepresentationModel<V>, S
+        extends BaseEntityService<T, D>> {
     /**
      * The service for the resource logic.
      **/
@@ -69,6 +71,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 201 (Created).
      */
     @PostMapping
+    @Operation(summary = "Create a base resource")
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
     public HttpEntity<V> create(@RequestBody final D desc) {
         final var entity = assembler.toModel(service.create(desc));
 
@@ -82,10 +86,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * Get a list of all resources endpoints of this type.
      * Endpoint for GET requests.
      *
-     * @return Response with code 200 (Ok) and the list of all endpoints of this
-     * resource type.
+     * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
+    @Operation(summary = "Get a list of base resources with pagination")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public HttpEntity<CollectionModel<V>> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,
@@ -109,6 +114,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return The resource.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    @Operation(summary = "Get a base resource by id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public HttpEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
         final var resource = assembler.toModel(service.get(resourceId));
         return ResponseEntity.ok(resource);
@@ -119,11 +126,14 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      *
      * @param resourceId The id of the resource to be updated.
      * @param desc       The new description of the resource.
-     * @return Response with code (No_Content) when the resource has been
-     * updated or response with code (201) if the resource has been updated
-     * and been moved to a new endpoint.
+     * @return Response with code (No_Content) when the resource has been updated or response with
+     * code (201) if the resource has been updated and been moved to a new endpoint.
      */
     @PutMapping(value = "{id}")
+    @Operation(summary = "Update a base resource by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "204", description = "No Content")})
     public HttpEntity<Object> update(
             @Valid @PathVariable(name = "id") final UUID resourceId, @RequestBody final D desc) {
         final var resource = service.update(resourceId, desc);
@@ -151,6 +161,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 204 (No_Content).
      */
     @DeleteMapping(value = "{id}")
+    @Operation(summary = "Delete a base resource by id")
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
     public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

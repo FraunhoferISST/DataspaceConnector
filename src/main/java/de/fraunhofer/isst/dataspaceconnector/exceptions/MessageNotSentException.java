@@ -10,6 +10,15 @@ public class MessageNotSentException extends MessageException {
     private static final long serialVersionUID = 1L;
 
     /**
+     * Construct a MessageNotSentException with the specified detail message.
+     *
+     * @param msg The detail message.
+     */
+    public MessageNotSentException(final String msg) {
+        super(msg);
+    }
+
+    /**
      * Construct a MessageNotSentException with the specified detail message and cause.
      *
      * @param msg   The detail message.

@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessLoggingFailedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessNotificationFailedException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.NotificationMessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.NotificationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -50,7 +50,7 @@ public class PolicyExecutionService {
     /**
      * Service for ids notification messages.
      */
-    private final @NonNull NotificationMessageService messageService;
+    private final @NonNull NotificationService messageService;
 
     /**
      * Delete a resource by its id.
@@ -75,7 +75,7 @@ public class PolicyExecutionService {
 
         Map<String, String> response;
         try {
-            response = messageService.sendLogMessage(URI.create(recipient), log);
+            response = messageService.sendMessage(URI.create(recipient), null, log);
         } catch (Exception exception) {
             LOGGER.debug("Unsuccessful logging. [exception=({})]", exception.getMessage());
             throw new DataAccessLoggingFailedException("Log message could not be sent.");
@@ -102,7 +102,7 @@ public class PolicyExecutionService {
 
         Map<String, String> response;
         try {
-            response = messageService.sendNotificationMessage(URI.create(recipient), log);
+            response = messageService.sendMessage(URI.create(recipient), null, log);
         } catch (Exception exception) {
             LOGGER.debug("Notification message not sent. [exception=({})]", exception.getMessage());
             throw new DataAccessNotificationFailedException("Notification was not successful.");

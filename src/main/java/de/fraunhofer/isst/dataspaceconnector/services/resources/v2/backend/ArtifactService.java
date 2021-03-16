@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
+import java.net.MalformedURLException;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
@@ -8,38 +11,28 @@ import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.net.MalformedURLException;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
  */
 @Service
+@RequiredArgsConstructor
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
     // TODO Clean up the code / Refactor
 
     /**
      * Repository for storing data.
      **/
-    @Autowired
-    private DataRepository dataRepository;
+    private @NonNull DataRepository dataRepository;
 
     /**
      * Service for http communication.
      **/
-    @Autowired
-    private HttpService httpService;
-
-    /**
-     * Default constructor.
-     */
-    protected ArtifactService() {
-        super();
-    }
+    private @NonNull HttpService httpService;
 
     /**
      * Persist the artifact and its data.

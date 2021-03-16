@@ -20,7 +20,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.Contr
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.AbstractResourceContractLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.AbstractResourceRepresentationLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RuleService;
 import lombok.NonNull;
@@ -43,7 +43,7 @@ public class TemplateBuilder42<T extends Resource, D extends ResourceDesc<T>> {
 
     private final @NonNull ResourceService<T, D> resourceService;
 
-    private final @NonNull ResourceRepresentationLinker<T> resourceRepresentationLinker;
+    private final @NonNull AbstractResourceRepresentationLinker<T> resourceRepresentationLinker;
 
     private final @NonNull AbstractResourceContractLinker<T> resourceContractLinker;
 
@@ -158,7 +158,7 @@ final class TemplateBuilderOfferedResource
     @Autowired
     public TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
-            final ResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker,
+            final AbstractResourceRepresentationLinker<OfferedResource> resourceRepresentationLinker,
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker representationArtifactLinker,
@@ -176,7 +176,7 @@ final class TemplateBuilderRequestedResource
     @Autowired
     public TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
-            final ResourceRepresentationLinker<RequestedResource> resourceRepresentationLinker,
+            final AbstractResourceRepresentationLinker<RequestedResource> resourceRepresentationLinker,
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RepresentationArtifactLinker representationArtifactLinker,
