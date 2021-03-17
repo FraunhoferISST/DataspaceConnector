@@ -2,8 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.config.UsageControlFramework;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataAccessException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataAccessException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;

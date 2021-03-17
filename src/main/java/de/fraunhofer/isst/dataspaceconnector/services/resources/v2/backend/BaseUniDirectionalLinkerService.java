@@ -1,18 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Create a parent-children relationship between two types of resources.

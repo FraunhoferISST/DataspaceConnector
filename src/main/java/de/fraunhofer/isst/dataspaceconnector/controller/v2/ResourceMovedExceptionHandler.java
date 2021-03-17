@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceMovedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceMovedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResponseMessage;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageDeserializationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageDeserializationException;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
