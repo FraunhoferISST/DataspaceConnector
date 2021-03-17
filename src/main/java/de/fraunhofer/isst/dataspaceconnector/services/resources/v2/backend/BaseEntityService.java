@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,8 +44,11 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      *
      * @param desc The description of the new entity.
      * @return The new entity.
+     * @throws IllegalArgumentException if the desc is null.
      */
     public T create(final D desc) {
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
         return persist(factory.create(desc));
     }
 
@@ -54,8 +58,13 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @param entityId The id of the entity.
      * @param desc     The new description of the entity.
      * @return The updated entity.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if the entity is unknown.
      */
     public T update(final UUID entityId, final D desc) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
         var entity = get(entityId);
 
         if (factory.update(entity, desc)) {
@@ -70,8 +79,12 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      *
      * @param entityId The id of the entity.
      * @return The entity.
+     * @throws IllegalArgumentException if the passed id is null.
+     * @throws ResourceNotFoundException if the entity is unknown.
      */
     public T get(final UUID entityId) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
+
         final var entity = repository.findById(entityId);
 
         if (entity.isEmpty()) {
@@ -87,20 +100,22 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      *
      * @param pageable Range selection of the complete data set.
      * @return The id list of all entities.
+     * @throws IllegalArgumentException if the passed pageable is null.
      */
     public Page<T> getAll(final Pageable pageable) {
+        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
         return repository.findAll(pageable);
     }
-
-    // public Stream<T> getAll(){return repository.}
 
     /**
      * Checks if a entity exists for a given id.
      *
      * @param entityId The id of entity.
      * @return True if the entity exists.
+     * @throws IllegalArgumentException if the passed id is null.
      */
     public boolean doesExist(final UUID entityId) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         return repository.findById(entityId).isPresent();
     }
 
@@ -108,8 +123,10 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * Delete an entity with the given id.
      *
      * @param entityId The id of the entity.
+     * @throws IllegalArgumentException if the passed id is null.
      */
     public void delete(final UUID entityId) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         repository.deleteById(entityId);
     }
 
