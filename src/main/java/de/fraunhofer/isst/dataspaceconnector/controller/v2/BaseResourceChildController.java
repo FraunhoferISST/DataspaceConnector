@@ -100,7 +100,7 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
      * @return Response with code 204 (No_Content).
      */
     @PutMapping
-    @Operation(summary = "Update a list of children of a base resource")
+    @Operation(summary = "Replace the children of a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
     public HttpEntity<Void> replaceResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
