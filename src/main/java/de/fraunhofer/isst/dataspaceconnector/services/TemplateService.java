@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTempl
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,21 +71,9 @@ public class TemplateService {
 
     public List<RuleTemplate> getRuleTemplates(final Contract contract) {
         final var list = new ArrayList<RuleTemplate>();
+        final var ruleList = PolicyUtils.extractRulesFromContract(contract);
 
-        final var permissionList = contract.getPermission();
-        for (final var rule : permissionList) {
-            final var ruleTemplate = mapper.fromIdsRule(rule);
-            list.add(ruleTemplate);
-        }
-
-        final var prohibitionList = contract.getProhibition();
-        for (final var rule : prohibitionList) {
-            final var ruleTemplate = mapper.fromIdsRule(rule);
-            list.add(ruleTemplate);
-        }
-
-        final var obligationList = contract.getObligation();
-        for (final var rule : obligationList) {
+        for (final var rule : ruleList) {
             final var ruleTemplate = mapper.fromIdsRule(rule);
             list.add(ruleTemplate);
         }

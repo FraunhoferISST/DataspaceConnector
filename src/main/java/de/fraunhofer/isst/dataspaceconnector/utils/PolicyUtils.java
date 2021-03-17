@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
+import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public final class PolicyUtils {
 
@@ -27,6 +29,25 @@ public final class PolicyUtils {
 
     private PolicyUtils() {
         // not used
+    }
+
+    /**
+     * Return all contract rules as one list.
+     *
+     * @param contract The ids contract.
+     * @return A list of ids rules.
+     */
+    public static List<Rule> extractRulesFromContract(final Contract contract) {
+        final var permissionList = contract.getPermission();
+        final var ruleList = new ArrayList<Rule>(permissionList);
+
+        final var prohibitionList = contract.getProhibition();
+        ruleList.addAll(prohibitionList);
+
+        final var obligationList = contract.getObligation();
+        ruleList.addAll(obligationList);
+
+        return ruleList;
     }
 
     /**
