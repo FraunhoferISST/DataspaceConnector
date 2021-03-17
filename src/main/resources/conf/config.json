@@ -9,7 +9,7 @@
     "@id" : "idsc:MINIMAL_LOGGING"
   },
   "ids:connectorDeployMode" : {
-    "@id" : "idsc:PRODUCTIVE_DEPLOYMENT"
+    "@id" : "idsc:TEST_DEPLOYMENT"
   },
   "ids:connectorDescription" : {
     "@type" : "ids:BaseConnector",
@@ -57,7 +57,7 @@
     "@id" : "idsc:CONNECTOR_OFFLINE"
   },
   "ids:keyStore" : {
-    "@id" : "file:///conf/keystore.p12"
+    "@id" : "file:///conf/keystore-localhost.p12"
   },
   "ids:connectorProxy" : [ {
     "@type" : "ids:Proxy",
