@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
