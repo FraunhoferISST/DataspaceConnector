@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessLoggingFailedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessNotificationFailedException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;

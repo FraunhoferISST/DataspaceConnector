@@ -14,8 +14,8 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyInformationService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PatternUtils;
@@ -63,7 +63,7 @@ public class ExampleController {
     /**
      * Policy management point.
      */
-    private final @NonNull PolicyManagementService managementService;
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Get an example configuration.
@@ -134,7 +134,7 @@ public class ExampleController {
             @Parameter(description = "The JSON string representing a policy", required = true)
             @RequestBody final String ruleAsString) {
         try {
-            final var rule = managementService.deserializeRule(ruleAsString);
+            final var rule = deserializationService.deserializeRule(ruleAsString);
             return new ResponseEntity<>(informationService.getPatternByRule(rule), HttpStatus.OK);
         } catch (ContractException exception) {
             return ControllerUtils.respondPatternNotIdentified(exception);

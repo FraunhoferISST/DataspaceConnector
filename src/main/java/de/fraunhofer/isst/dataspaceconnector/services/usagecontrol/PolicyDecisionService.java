@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
@@ -57,6 +58,8 @@ public class PolicyDecisionService {
      */
     private final @NonNull PolicyInformationService pip;
 
+    private final @NonNull DeserializationService deserializationService;
+
     /**
      * Checks all known resources and their policies to delete them if necessary.
      *
@@ -69,7 +72,7 @@ public class PolicyDecisionService {
             for (final var contract : contracts) {
                 final var rules = contract.getRules();
                 for (final var rule : rules) {
-                    final var idsRule = pmp.deserializeRule(rule.getValue());
+                    final var idsRule = deserializationService.deserializeRule(rule.getValue());
                     if (PolicyUtils.checkRuleForPostDuties(idsRule)) {
                         final var resourceId = resource.getId();
                         pep.deleteResource(resourceId);

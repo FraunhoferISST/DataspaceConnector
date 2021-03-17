@@ -91,13 +91,13 @@ public class EntityResolver {
             ConstraintViolationException, InvalidResourceException {
         if (entity instanceof Artifact) {
             final var artifact = idsViewer.create((Artifact) entity);
-            return IdsUtils.convertArtifactToRdf(artifact);
+            return IdsUtils.getArtifactAsRdf(artifact);
         } else if (entity instanceof Resource) {
             final var resource = idsViewer.create((Resource) entity);
-            return IdsUtils.convertResourceToRdf(resource);
+            return IdsUtils.getResourceAsRdf(resource);
         } else if (entity instanceof Representation) {
             final var representation = idsViewer.create((Representation) entity);
-            return IdsUtils.convertRepresentationToRdf(representation);
+            return IdsUtils.getRepresentationAsRdf(representation);
         } else {
             throw new InvalidResourceException("No provided description for requested element.");
         }

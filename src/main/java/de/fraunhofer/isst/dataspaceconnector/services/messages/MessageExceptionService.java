@@ -3,11 +3,13 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -35,30 +37,6 @@ public class MessageExceptionService {
      * Service for the current connector configuration.
      */
     private final @NonNull IdsConnectorService connectorService;
-
-    /**
-     * Check if the outbound model version of the requesting connector is listed in the inbound
-     * model versions.
-     *
-     * @param versionString The outbound model version of the requesting connector.
-     * @throws VersionNotSupportedException If the Infomodel version is not supported.
-     */
-    public void checkForVersionSupport(final String versionString) throws VersionNotSupportedException {
-        // Get a local copy of the current connector.
-        final var inboundVersions = connectorService.getInboundModelVersion();
-        boolean versionSupported = false;
-
-        for (final var version : inboundVersions) {
-            if (version.equals(versionString)) {
-                versionSupported = true;
-                break;
-            }
-        }
-
-        if (!versionSupported) {
-            throw new VersionNotSupportedException("Infomodel version not supported.");
-        }
-    }
 
     /**
      * Handles thrown {@link MessageEmptyException}.
@@ -163,7 +141,8 @@ public class MessageExceptionService {
                                                            final URI issuerConnector,
                                                            final URI messageId) {
         LOGGER.debug("Element could not be found. [exception=({}), resourceId=({}), issuer=({}), "
-                + "messageId=({})]", exception.getMessage(), requestedElement, issuerConnector,
+                        + "messageId=({})]", exception.getMessage(), requestedElement,
+                issuerConnector,
                 messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
@@ -203,11 +182,49 @@ public class MessageExceptionService {
                                                           final URI requestedElement,
                                                           final URI issuerConnector,
                                                           final URI messageId) {
-        LOGGER.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), " +
-                        "messageId=({})]",
+        LOGGER.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), "
+                        + "messageId=({})]",
                 exception.getMessage(), requestedElement, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handles throw {@link MissingPayloadException}.
+     *
+     * @param exception       Exception that was thrown because of a missing payload.
+     * @param messageId       The message id of the incoming message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMissingPayloadException(final MissingPayloadException exception,
+                                                         final URI messageId,
+                                                         final URI issuerConnector) {
+        LOGGER.debug("Expected payload is missing. [exception=({}), messageId=({}), issuer=({})]",
+                exception.getMessage(), messageId, issuerConnector);
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "Expected payload could not be found.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handles thrown {@link MalformedPayloadException}.
+     *
+     * @param exception       Exception that was thrown while reading a message's payload.
+     * @param messageId       The message id of the incoming message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMalformedPayloadException(final MalformedPayloadException exception,
+                                                           final URI messageId,
+                                                           final URI issuerConnector) {
+        LOGGER.debug("Failed to read payload. [exception=({}), messageId=({}), issuer=({})]",
+                exception.getMessage(), messageId, issuerConnector);
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "Malformed payload.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }

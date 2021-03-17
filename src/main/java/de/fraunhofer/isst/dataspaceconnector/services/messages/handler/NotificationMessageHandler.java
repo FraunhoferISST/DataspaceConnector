@@ -2,11 +2,12 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -39,6 +40,11 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     private final @NonNull MessageExceptionService exceptionService;
 
     /**
+     * Service for message processing.
+     */
+    private final @NonNull MessageProcessingService processingService;
+
+    /**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
@@ -51,8 +57,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            MessageUtils.checkForEmptyMessage(message);
-            exceptionService.checkForVersionSupport(message.getModelVersion());
+            processingService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -60,12 +65,13 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                     message.getModelVersion());
         }
 
+        // Read relevant parameters for message processing.
+        final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
+        final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+
         try {
             // Build the ids response.
-            final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
-            final var messageId = MessageUtils.extractMessageIdFromMessage(message);
             final var desc = new NotificationMessageDesc(messageId);
-
             final var header = messageService.buildMessage(issuerConnector, desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException exception) {

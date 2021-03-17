@@ -3,24 +3,27 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
 import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,8 @@ public class PolicyManagementService {
      * The current connector configuration.
      */
     private final @NonNull ConfigurationContainer configurationContainer;
+
+    private final @NonNull IdsConnectorService connectorService;
 
     /**
      * Get stored contract agreement for requested element.
@@ -156,84 +161,40 @@ public class PolicyManagementService {
     }
 
     /**
-     * Deserialize string to ids rule.
+     * Build contract request from a list of rules - with assignee and provider.
      *
-     * @param policy The policy string.
-     * @return The ids rule.
-     * @throws InvalidContractException If deserialization fails.
-     */
-    public Rule deserializeRule(final String policy) throws InvalidContractException {
-        try {
-            return serializerProvider.getSerializer().deserialize(policy, Rule.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize rule. [exception=({})]", exception.getMessage());
-            throw new InvalidContractException("Could not deserialize rule.");
-        }
-    }
-
-    /**
-     * Deserialize string to ids contract.
-     *
-     * @param contract The contract string.
-     * @return The ids contract.
-     * @throws InvalidContractException If deserialization fails.
-     */
-    public Contract deserializeContract(final String contract) throws InvalidContractException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize contract. [exception=({})]", exception.getMessage());
-            throw new InvalidContractException("Could not deserialize contract.");
-        }
-    }
-
-    /**
-     * Deserialize string to ids contract agreement.
-     *
-     * @param contract The contract string.
-     * @return The ids contract agreement.
-     * @throws InvalidContractException If deserialization fails.
-     */
-    public ContractAgreement deserializeContractAgreement(final String contract) throws InvalidContractException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract,
-                    ContractAgreement.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize agreement. [exception=({})]",
-                    exception.getMessage());
-            throw new InvalidContractException("Could not deserialize contract agreement.");
-        }
-    }
-
-    /**
-     * Deserialize string to ids contract request.
-     *
-     * @param contract The contract string.
+     * @param ruleList  The rule list.
+     * @param recipient The data provider.
      * @return The ids contract request.
-     * @throws InvalidContractException If deserialization fails.
      */
-    public ContractRequest deserializeContractRequest(final String contract) throws InvalidContractException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, ContractRequest.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize request. [exception=({})]", exception.getMessage());
-            throw new InvalidContractException("Could not deserialize contract request.");
-        }
-    }
+    public ContractRequest buildContractRequest(final List<? extends Rule> ruleList,
+                                                final URI recipient) {
+        final var connectorId = connectorService.getConnectorId();
+        final var permissions = new ArrayList<Permission>();
+        final var prohibitions = new ArrayList<Prohibition>();
+        final var obligations = new ArrayList<Duty>();
 
-    /**
-     * Deserialize string to ids contract offer.
-     *
-     * @param contract The contract string.
-     * @return The ids contract offer.
-     * @throws IOException If deserialization fails.
-     */
-    public ContractOffer deserializeContractOffer(final String contract) throws IOException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, ContractOffer.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize offer. [exception=({})]", exception.getMessage());
-            throw new InvalidContractException("Could not deserialize contract offer.");
+        for (final var rule : ruleList) {
+            if (rule instanceof Permission) {
+                ((PermissionImpl) rule).setAssignee(Util.asList(connectorId));
+                permissions.add((Permission) rule);
+            } else if (rule instanceof Prohibition) {
+                ((ProhibitionImpl) rule).setAssignee(Util.asList(connectorId));
+                prohibitions.add((Prohibition) rule);
+            } else if (rule instanceof Duty) {
+                ((DutyImpl) rule).setAssignee(Util.asList(connectorId));
+                obligations.add((Duty) rule);
+            }
         }
+
+        return new ContractRequestBuilder()
+                ._consumer_(connectorId)
+                ._contractDate_(IDSUtils.getGregorianNow())
+                ._contractStart_(IDSUtils.getGregorianNow())
+                ._obligation_(obligations)
+                ._permission_(permissions)
+                ._prohibition_(prohibitions)
+                ._provider_(recipient)
+                .build();
     }
 }

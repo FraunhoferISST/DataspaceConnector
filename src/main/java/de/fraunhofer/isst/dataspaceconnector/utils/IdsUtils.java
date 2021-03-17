@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Connector;
+import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -13,6 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * This class provides methods to map local connector models to IDS Information Model objects.
@@ -111,7 +118,7 @@ public class IdsUtils {
      * @return The ids connector as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String convertConnectorToRdf(final BaseConnector baseConnector) throws ConstraintViolationException {
+    public static String getConnectorAsRdf(final BaseConnector baseConnector) throws ConstraintViolationException {
         return baseConnector.toRdf();
     }
 
@@ -122,15 +129,36 @@ public class IdsUtils {
      * @return The ids resource as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String convertResourceToRdf(final Resource resource) throws ConstraintViolationException {
+    public static String getResourceAsRdf(final Resource resource) throws ConstraintViolationException {
         return resource.toRdf();
     }
 
-    public static String convertArtifactToRdf(final Artifact artifact) throws ConstraintViolationException {
+    public static String getArtifactAsRdf(final Artifact artifact) throws ConstraintViolationException {
         return artifact.toRdf();
     }
 
-    public static String convertRepresentationToRdf(final Representation representation) throws ConstraintViolationException {
+    public static String getRepresentationAsRdf(final Representation representation) throws ConstraintViolationException {
         return representation.toRdf();
+    }
+
+    public static String getContractRequestAsRdf(final ContractRequest request) throws ConstraintViolationException {
+        return request.toRdf();
+    }
+
+    /**
+     * Converts a date to XMLGregorianCalendar format.
+     *
+     * @param date the date object.
+     * @return the XMLGregorianCalendar object or null.
+     */
+    public XMLGregorianCalendar getGregorianOf(final Date date) {
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(date);
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        } catch (DatatypeConfigurationException exception) {
+            // Rethrow but do not register in function header
+            throw new RuntimeException(exception);
+        }
     }
 }

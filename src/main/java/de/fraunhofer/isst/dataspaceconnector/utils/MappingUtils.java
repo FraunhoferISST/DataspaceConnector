@@ -63,7 +63,7 @@ public final class MappingUtils {
     public RuleTemplate fromIdsRule(final Rule rule) {
         final var desc = new ContractRuleDesc();
         desc.setTitle(String.valueOf(rule.getTitle()));
-        desc.setContent(rule.toRdf());
+        // desc.setContent(rule.toRdf());
 
         final var template = new RuleTemplate();
         template.setDesc(desc);

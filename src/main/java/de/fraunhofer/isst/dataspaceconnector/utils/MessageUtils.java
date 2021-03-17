@@ -4,16 +4,23 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import okhttp3.MultipartBody;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,6 +71,16 @@ public final class MessageUtils {
     }
 
     /**
+     * Extract the ids of an ids message.
+     *
+     * @param message The ids message.
+     * @return The ids of an ids message.
+     */
+    public static String extractModelVersionFromMessage(final Message message) {
+        return message.getModelVersion();
+    }
+
+    /**
      * Extract the rejection reason from an ids rejection message.
      *
      * @param message The ids message.
@@ -82,6 +99,29 @@ public final class MessageUtils {
     public static void checkForEmptyMessage(final Message message) throws MessageEmptyException {
         if (message == null) {
             throw new MessageEmptyException("The incoming request message cannot be null.");
+        }
+    }
+
+    /**
+     * Check if the outbound model version of the requesting connector is listed in the inbound
+     * model versions.
+     *
+     * @param versionString   The outbound model version of the requesting connector.
+     * @param inboundVersions The inbound model version of the current connector.
+     * @throws VersionNotSupportedException If the Infomodel version is not supported.
+     */
+    public static void checkForVersionSupport(final String versionString, final List<String> inboundVersions)
+            throws VersionNotSupportedException {
+        boolean versionSupported = false;
+        for (final var version : inboundVersions) {
+            if (version.equals(versionString)) {
+                versionSupported = true;
+                break;
+            }
+        }
+
+        if (!versionSupported) {
+            throw new VersionNotSupportedException("Infomodel version not supported.");
         }
     }
 
@@ -115,7 +155,7 @@ public final class MessageUtils {
         try {
             return message.get("header");
         } catch (Exception exception) {
-            throw new MessageResponseException("Cannot read header.");
+            throw new MessageResponseException("Cannot read header.", exception);
         }
     }
 
@@ -133,5 +173,45 @@ public final class MessageUtils {
         } catch (Exception exception) {
             throw new MessageResponseException("Cannot read header.");
         }
+    }
+
+    /**
+     * Read string from stream.
+     *
+     * @param payload The message payload as stream.
+     * @return The stream's content.
+     * @throws IOException If the stream could not be read.
+     */
+    public static String getStreamAsString(final MessagePayload payload) throws IOException {
+        return IOUtils.toString(payload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Get the payload as string.
+     *
+     * @param payload The message's payload.
+     * @return The payload as string.
+     * @throws MalformedPayloadException If the payload is malformed.
+     * @throws MissingPayloadException   If the payload's content is missing.
+     */
+    public static String getPayloadAsString(final MessagePayload payload)
+            throws MalformedPayloadException, MissingPayloadException {
+        if (payload == null) {
+            throw new MissingPayloadException("Missing payload.");
+        }
+
+        String content;
+        try {
+            content = MessageUtils.getStreamAsString(payload);
+        } catch (IOException exception) {
+            throw new MalformedPayloadException("Failed to read payload content.", exception);
+        }
+
+        // If request is empty, return rejection message.
+        if (content.equals("")) {
+            throw new MissingPayloadException("Missing payload.");
+        }
+
+        return content;
     }
 }

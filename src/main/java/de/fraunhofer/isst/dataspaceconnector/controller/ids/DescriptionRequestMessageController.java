@@ -1,12 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.ids;
 
+import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionRequestService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.EntityUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -40,19 +41,20 @@ import java.util.Map;
 public class DescriptionRequestMessageController {
 
     /**
-     * Service for description request messages.
+     * Service for message handling;
      */
-    private final @NonNull DescriptionRequestService requestService;
+    private final @NonNull MessageService messageService;
 
     /**
      * Service for message responses.
      */
-    private final @NonNull MessageResponseService responseService;
+    private final @NonNull MessageProcessingService messageProcessor;
 
     /**
      * Resource view assembler.
+     * TODO implement requested resource view assembler
      */
-    private final @NonNull OfferedResourceViewAssembler viewAssembler; // TODO implement requested resource view assembler
+    private final @NonNull OfferedResourceViewAssembler viewAssembler; //
 
     /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.
@@ -61,7 +63,7 @@ public class DescriptionRequestMessageController {
      * @param elementId The requested element id.
      * @return OK or error response.
      */
-    @PostMapping("/request/description")
+    @PostMapping("/description")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -74,11 +76,12 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        Map<String, String> response;
+        Map<String, String> response = null;
         try {
-            // Build and send a description request message.
-            final var desc = new DescriptionRequestMessageDesc(elementId);
-            response = requestService.sendMessage(recipient, desc, "");
+            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+        } catch (UnexpectedMessageType exception) {
+            // If the response is not a description response message, show the response.
+            return messageProcessor.returnResponseMessageContent(response);
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
@@ -86,30 +89,14 @@ public class DescriptionRequestMessageController {
         String payload = null;
         try {
             // Read and process the response message.
-            final var validResponse = responseService.isValidDescriptionResponse(response);
-            if (validResponse) {
-                payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            payload = MessageUtils.extractPayloadFromMultipartMessage(response);
 
-                // Handle response.
-                if (!EntityUtils.parameterIsEmpty(elementId)) {
-                    // Get payload as resource and save it as requested resource.
-                    final var resource = responseService.getResourceFromPayload(payload);
-                    final var newResource = responseService.saveMetadata(resource);
-
-                    // Return the uri of the saved resource.
-                    final var entity = viewAssembler.toModel((OfferedResource) newResource); // TODO
-                    final var headers = new HttpHeaders();
-                    headers.setLocation(entity.getLink("self").get().toUri());
-
-                    return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
-                } else {
-                    // Get payload as component.
-                    final var component = responseService.getComponentFromPayload(payload);
-                    return new ResponseEntity<>(component, HttpStatus.OK);
-                }
+            if (!EntityUtils.parameterIsEmpty(elementId)) {
+                return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
-                // If the response is not a description response message, show the response.
-                return responseService.showRejectionMessage(response);
+                // Get payload as component.
+                final var component = messageProcessor.getComponentFromPayload(payload);
+                return new ResponseEntity<>(component, HttpStatus.OK);
             }
         } catch (IllegalArgumentException exception) {
             // If the response is not of type resource or base connector.
@@ -119,5 +106,22 @@ public class DescriptionRequestMessageController {
         } catch (Exception exception) {
             return ControllerUtils.respondGlobalException(exception);
         }
+    }
+
+    /**
+     * Save the incoming resource as requested resource.
+     *
+     * @param resource The ids resource.
+     * @return The response body.
+     */
+    private ResponseEntity<Object> saveResponse(final Resource resource) {
+        final var newResource = messageProcessor.saveMetadata(resource);
+
+        // Return the uri of the saved resource.
+        final var entity = viewAssembler.toModel((OfferedResource) newResource);
+        final var headers = new HttpHeaders();
+        headers.setLocation(entity.getLink("self").get().toUri());
+
+        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 }

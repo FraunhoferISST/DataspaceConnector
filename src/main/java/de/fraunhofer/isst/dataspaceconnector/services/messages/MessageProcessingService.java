@@ -1,17 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.ArtifactResponseMessage;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.TemplateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,13 +21,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class MessageResponseService {
+public class MessageProcessingService {
 
     /**
      * Service for deserialization.
@@ -33,38 +34,43 @@ public class MessageResponseService {
     private final @NonNull DeserializationService service;
 
     /**
-     * Service for requested resources.
+     * Template builder.
      */
-    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> resourceService;
+    private final @NonNull TemplateBuilder42<RequestedResource, RequestedResourceDesc> templateBuilder;
 
     /**
-     * Checks if the response message is of the right type.
-     *
-     * @param message The received message response.
-     * @return True if the response is valid, false if not.
-     * @throws MessageResponseException If the header could not be extracted or deserialized.
+     * Service for current connector configuration.
      */
-    public boolean isValidDescriptionResponse(final Map<String, String> message) throws MessageResponseException {
-        final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-        final var idsMessage = service.deserializeResponseMessage(header);
-        return idsMessage instanceof DescriptionResponseMessage;
+    private final @NonNull IdsConnectorService connectorService;
+
+    /**
+     * Service for creating templates using the template builder.
+     */
+    private final @NonNull TemplateService templateService;
+
+    /**
+     * The ids message.
+     *
+     * @param message The message that should be validated.
+     * @throws MessageEmptyException        If the message is empty.
+     * @throws VersionNotSupportedException If the message version is not supported.
+     */
+    public void validateIncomingRequestMessage(final Message message)
+            throws MessageEmptyException, VersionNotSupportedException {
+        MessageUtils.checkForEmptyMessage(message);
+
+        final var modelVersion = MessageUtils.extractModelVersionFromMessage(message);
+        final var inboundVersions = connectorService.getInboundModelVersion();
+        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
     }
 
     /**
-     * Checks if the response message is of the right type.
+     * Show response message that was not expected.
      *
-     * @param message The received message response.
-     * @return True if the response is valid, false if not.
-     * @throws MessageResponseException If the header could not be extracted or deserialized.
+     * @param response The response map.
+     * @return ResponseEntity with status code 200 or 500.
      */
-    public boolean isValidArtifactResponse(final Map<String, String> message) throws MessageResponseException {
-        final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-        final var idsMessage = service.deserializeResponseMessage(header);
-        return idsMessage instanceof ArtifactResponseMessage;
-    }
-
-
-    public ResponseEntity<Object> showRejectionMessage(final Map<String, String> response) {
+    public ResponseEntity<Object> returnResponseMessageContent(final Map<String, String> response) {
         try {
             final var message = getResponseMessageContent(response);
             return new ResponseEntity<>(message, HttpStatus.OK); // TODO show ok here?
@@ -106,7 +112,7 @@ public class MessageResponseService {
      *
      * @param payload The message payload as string.
      * @return The ids infrastructure component.
-     * @throws IllegalArgumentException If deserialization failes.
+     * @throws IllegalArgumentException If deserialization fails.
      */
     public InfrastructureComponent getComponentFromPayload(final String payload) throws IllegalArgumentException {
         return service.deserializeInfrastructureComponent(payload);
@@ -117,27 +123,34 @@ public class MessageResponseService {
      *
      * @param payload The message payload as string.
      * @return The ids resource.
-     * @throws IllegalArgumentException If deserialization failes.
+     * @throws IllegalArgumentException If deserialization fails.
      */
     public Resource getResourceFromPayload(final String payload) throws IllegalArgumentException {
         return service.deserializeResource(payload);
     }
 
     /**
+     * Map resource to internal data model and save in database.
      *
-     * @param metadata
-     * @return
+     * @param resource The ids resource.
+     * @return The persisted resource.
      */
-    public URI saveMetadata(final Resource metadata) {
-        final var resource = service.getIdsResourceAsRequestedResource(metadata);
-        final var requestedResource = resourceService.create(resource);
+    public de.fraunhofer.isst.dataspaceconnector.model.Resource saveMetadata(final Resource resource) {
+        final var resourceTemplate = templateService.getResourceTemplate(resource);
 
-        // Get endpoint of new resource and return it.
-        final var endpoint = EndpointUtils.getCurrentEndpoint(requestedResource.getId());
-        return endpoint.toUri();
+        // Read all contract offers.
+        final var contractTemplateList = templateService.getContractTemplates(resource);
+        resourceTemplate.setContracts(contractTemplateList);
+
+        // Read all representations.
+        final var representationTemplateList = templateService.getRepresentationTemplates(resource);
+        resourceTemplate.setRepresentations(representationTemplateList);
+
+        // Save all entities.
+        return templateBuilder.build(resourceTemplate);
     }
 
     public void saveData(final String data) {
-
+        // add data to artifact TODO
     }
 }

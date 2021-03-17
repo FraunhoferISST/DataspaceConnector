@@ -10,8 +10,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedExcep
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.DescriptionResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -64,6 +65,11 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     private final @NonNull EntityResolver entityResolver;
 
     /**
+     * Service for message processing.
+     */
+    private final @NonNull MessageProcessingService processingService;
+
+    /**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
@@ -76,8 +82,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            MessageUtils.checkForEmptyMessage(message);
-            exceptionService.checkForVersionSupport(message.getModelVersion());
+            processingService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -90,15 +95,12 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
         final var messageId = MessageUtils.extractMessageIdFromMessage(message);
 
-        MessageResponse response;
         // Check if a specific resource has been requested.
         if (requestedElement == null) {
-            response = constructConnectorSelfDescription(issuerConnector, messageId);
+            return constructConnectorSelfDescription(issuerConnector, messageId);
         } else {
-            response = constructResourceDescription(requestedElement, issuerConnector, messageId);
+            return constructResourceDescription(requestedElement, issuerConnector, messageId);
         }
-
-        return response;
     }
 
     /**
@@ -158,7 +160,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             // Build ids response message.
             final var desc = new DescriptionResponseMessageDesc(messageId);
             final var header = messageService.buildMessage(issuerConnector, desc);
-            final var payload = IdsUtils.convertConnectorToRdf(selfDescription);
+            final var payload = IdsUtils.getConnectorAsRdf(selfDescription);
 
             // Send ids response message.
             return BodyResponse.create(header, payload);

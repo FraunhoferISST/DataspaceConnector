@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -127,9 +128,9 @@ public class IdsConnectorService {
      * Get a local copy of the current connector and extract the inbound model versions.
      * @return A list of supported model versions.
      */
-    public ArrayList<? extends String> getInboundModelVersion() {
+    public List<String> getInboundModelVersion() {
         final var connector = configContainer.getConnector();
-        return connector.getInboundModelVersion();
+        return (List<String>) connector.getInboundModelVersion();
     }
 
     /**

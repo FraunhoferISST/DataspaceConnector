@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ErrorMessages;
 import lombok.experimental.UtilityClass;
 
 /**

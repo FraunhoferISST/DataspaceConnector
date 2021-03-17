@@ -159,7 +159,7 @@ public final class EntityApiBridge {
         final var desc = new ContractRuleDesc();
         desc.setTitle(null);
         desc.setStaticId(null);
-        desc.setRule(policy);
+        desc.setValue(policy);
 
         return desc;
     }
