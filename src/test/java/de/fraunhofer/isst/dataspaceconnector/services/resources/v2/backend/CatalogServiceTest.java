@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.CatalogRepository;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalMatchers;
@@ -21,7 +21,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,44 +32,52 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest( classes = { CatalogService.class } )
+@SpringBootTest(classes = {CatalogService.class})
 class CatalogServiceTest {
-    @SpyBean
+    @MockBean
     private CatalogFactory factory;
 
     @MockBean
     private CatalogRepository repository;
 
-    List<Catalog> catalogList;
-
     @Autowired
     @InjectMocks
     private CatalogService service;
 
+    CatalogDesc catalogOneDesc = getCatalogOneDesc();
+    CatalogDesc catalogTwoDesc = getCatalogTwoDesc();
+    Catalog     catalogOne     = getCatalogOne();
+    Catalog     catalogTwo  = getCatalogTwo();
+
+    List<Catalog> catalogList = new ArrayList<>();
+
+    /**************************************************************************
+     * Setup
+     *************************************************************************/
+
     @BeforeEach
     public void init() {
-        catalogList = new ArrayList<>();
-
-        final Catalog persistedCatalog = getCatalogFromValidDesc(
-                getValidDesc().getStaticId(), getNewCatalog(getValidDesc()));
-        Mockito.when(repository.saveAndFlush(Mockito.eq(getNewCatalog(getValidDesc()))))
-               .thenReturn(persistedCatalog);
+        Mockito.when(factory.create(catalogOneDesc)).thenReturn(catalogOne);
+        Mockito.when(factory.create(catalogTwoDesc)).thenReturn(catalogTwo);
+        Mockito.when(repository.findById(Mockito.eq(catalogOne.getId())))
+                .thenReturn(Optional.of(catalogOne));
+        Mockito.when(repository.findById(Mockito.eq(catalogTwo.getId())))
+               .thenReturn(Optional.of(catalogTwo));
+        Mockito.when(repository.saveAndFlush(Mockito.eq(catalogOne)))
+                .thenReturn(catalogOne);
+        Mockito.when(repository.saveAndFlush(Mockito.eq(catalogTwo)))
+               .thenReturn(catalogTwo);
 
         Mockito.when(repository.saveAndFlush(Mockito.any())).thenAnswer(this::saveAndFlushMock);
-        Mockito.when(repository.findById(Mockito.eq(persistedCatalog.getId())))
-               .thenReturn(Optional.of(persistedCatalog));
-        Mockito.when(repository.findById(
-                AdditionalMatchers.not(Mockito.eq(persistedCatalog.getId()))))
-               .thenReturn(Optional.empty());
+        Mockito.when(repository.findById(AdditionalMatchers.not(Mockito.eq(catalogOne.getId()))))
+                .thenReturn(Optional.empty());
         Mockito.when(repository.findById(Mockito.isNull()))
-               .thenThrow(IllegalArgumentException.class);
+                .thenThrow(InvalidDataAccessApiUsageException.class);
         Mockito.when(repository.findAll(Pageable.unpaged())).thenAnswer(this::findAllMock);
-        Mockito.doThrow(IllegalArgumentException.class)
-               .when(repository)
-               .deleteById(Mockito.isNull());
-        Mockito.doAnswer(x -> deleteByIdMock(x))
-               .when(repository)
-               .deleteById(Mockito.isA(UUID.class));
+        Mockito.doThrow(InvalidDataAccessApiUsageException.class)
+                .when(repository)
+                .deleteById(Mockito.isNull());
+        Mockito.doAnswer(this::deleteByIdMock).when(repository).deleteById(Mockito.isA(UUID.class));
     }
 
     private static Page<Catalog> toPage( final List<Catalog> catalogList, final Pageable pageable ) {
@@ -94,21 +102,25 @@ class CatalogServiceTest {
         return null;
     }
 
+    /**************************************************************************
+     * create
+     *************************************************************************/
+
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> service.create(null));
+        assertThrows(IllegalArgumentException.class, () -> service.create(null));
     }
 
     @Test
     public void create_ValidDesc_returnCatalog() {
         /* ARRANGE */
-        final var desc = getValidDesc();
+        // Nothing to arrange here.
 
         /* ACT */
-        final var catalog = service.create(desc);
+        final var catalog = service.create(catalogOneDesc);
 
         /* ACT && ASSERT */
         assertNotNull(catalog);
@@ -117,39 +129,39 @@ class CatalogServiceTest {
     @Test
     public void create_ValidDesc_returnHasId() {
         /* ARRANGE */
-        final var desc = getValidDesc();
+        // Nothing to arrange here.
 
         /* ACT */
-        final var catalog = service.create(desc);
+        final var catalog = service.create(catalogOneDesc);
 
         /* ACT && ASSERT */
-        assertEquals(catalog,
-                     getCatalogFromValidDesc(
-                             getValidDesc().getStaticId(), getNewCatalog(getValidDesc())));
+        assertEquals(catalogOne, catalog);
     }
 
     @Test
     public void create_ValidDesc_createOnlyOneCatalog() {
         /* ARRANGE */
-        final var desc = getValidDesc();
         final var beforeCount = service.getAll(Pageable.unpaged()).getSize();
 
         /* ACT */
-        service.create(desc);
+        service.create(catalogOneDesc);
 
         /* ASSERT */
         assertEquals(beforeCount + 1, service.getAll(Pageable.unpaged()).getSize());
     }
 
+    /**************************************************************************
+     * update
+     *************************************************************************/
+
     @Test
-    public void update_nullDesc_throwNullPointerException() {
+    public void update_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
-        final var persistedCatalog = getCatalogFromValidDesc(
-                getValidDesc().getStaticId(), getNewCatalog(getValidDesc()));
+        // Nothing to arrange here.
 
         /* ACT && ASSERT */
         assertThrows(
-                NullPointerException.class, () -> service.update(persistedCatalog.getId(), null));
+                IllegalArgumentException.class, () -> service.update(catalogOne.getId(), null));
     }
 
     @Test
@@ -157,7 +169,7 @@ class CatalogServiceTest {
         /* ARRANGE */
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.update(null, getValidDesc()));
+        assertThrows(IllegalArgumentException.class, () -> service.update(null, catalogOneDesc));
     }
 
     @Test
@@ -168,6 +180,10 @@ class CatalogServiceTest {
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> service.get(unknownUuid));
     }
+
+    /**************************************************************************
+     * get
+     *************************************************************************/
 
     @Test
     public void get_nullId_throwIllegalArgumentException() {
@@ -180,11 +196,10 @@ class CatalogServiceTest {
     @Test
     public void get_knownId_returnCatalog() {
         /* ARRANGE */
-        final var persistedCatalog = getCatalogFromValidDesc(
-                getValidDesc().getStaticId(), getNewCatalog(getValidDesc()));
+        // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertNotNull(service.get(persistedCatalog.getId()));
+        assertNotNull(service.get(catalogOne.getId()));
     }
 
     @Test
@@ -197,8 +212,22 @@ class CatalogServiceTest {
         assertEquals(unknownUuid.toString(), msg.getMessage());
     }
 
+    /**************************************************************************
+     * getAll
+     *************************************************************************/
+
     @Test
-    public void getAll() {}
+    public void getAll_null_throwsIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> service.getAll(null));
+    }
+
+    /**************************************************************************
+     * doesExist
+     *************************************************************************/
 
     @Test
     public void doesExist_null_throwIllegalArgumentException() {
@@ -211,9 +240,7 @@ class CatalogServiceTest {
     @Test
     public void doesExist_knownId_returnTrue() {
         /* ARRANGE */
-        final var knownUuid =
-                getCatalogFromValidDesc(getValidDesc().getStaticId(), getNewCatalog(getValidDesc()))
-                        .getId();
+        final var knownUuid = catalogOne.getId();
 
         /* ACT && ASSERT */
         assertTrue(service.doesExist(knownUuid));
@@ -228,6 +255,11 @@ class CatalogServiceTest {
         assertFalse(service.doesExist(unknownUuid));
     }
 
+
+    /**************************************************************************
+     * delete
+     *************************************************************************/
+
     @Test
     public void delete_nullId_throwsIllegalArgumentException() {
         /* ARRANGE */
@@ -239,11 +271,8 @@ class CatalogServiceTest {
     @Test
     public void delete_knownId_removedObject() {
         /* ARRANGE */
-        final var desc0 = getValidDesc();
-        final var desc1 = getValidDesc();
-
-        final var id = service.create(desc0);
-        service.create(desc1);
+        final var id = service.create(catalogOneDesc);
+        service.create(catalogTwoDesc);
 
         final var beforeCount = service.getAll(Pageable.unpaged()).getSize();
 
@@ -257,32 +286,23 @@ class CatalogServiceTest {
     @Test
     public void delete_knownId_removedObjectWithId() {
         /* ARRANGE */
-        final var desc0 = getValidDesc();
-        final var desc1 = getValidDesc();
-
-        final var id = service.create(desc0);
-        service.create(desc1);
+        final var id = service.create(catalogOneDesc);
+        service.create(catalogTwoDesc);
 
         /* ACT */
         service.delete(id.getId());
 
         /* ASSERT */
-        assertEquals(service.getAll(Pageable.unpaged())
-                            .stream()
-                            .filter(x -> x.getId().equals(id.getId()))
-                            .collect(Collectors.toList())
-                            .size(),
-                     0);
+        assertEquals(0, (int) service.getAll(Pageable.unpaged())
+                                  .stream()
+                                  .filter(x -> x.getId().equals(id.getId())).count());
     }
 
     @Test
     public void delete_unknownId_removedObject() {
         /* ARRANGE */
-        final var desc0 = getValidDesc();
-        final var desc1 = getValidDesc();
-
-        final var id = service.create(desc0);
-        service.create(desc1);
+        final var id = service.create(catalogOneDesc);
+        service.create(catalogTwoDesc);
 
         final var beforeCount = service.getAll(Pageable.unpaged()).getSize();
 
@@ -295,21 +315,60 @@ class CatalogServiceTest {
         assertEquals(beforeCount, service.getAll(Pageable.unpaged()).getSize());
     }
 
-    private CatalogDesc getValidDesc() {
+    /**************************************************************************
+     * Utilities
+     *************************************************************************/
+
+    private CatalogDesc getCatalogOneDesc() {
         var desc = new CatalogDesc();
-        desc.setDescription("The new description.");
         desc.setTitle("The new title.");
         desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return desc;
     }
 
-    private Catalog getNewCatalog( final CatalogDesc desc ) {
-        return factory.create(desc);
+    private CatalogDesc getCatalogTwoDesc() {
+        var desc = new CatalogDesc();
+        desc.setTitle("The different title.");
+        desc.setStaticId(UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
+
+        return desc;
     }
 
-    private Catalog getCatalogFromValidDesc( final UUID id, final Catalog catalog ) {
-        catalog.setId(id);
+    @SneakyThrows
+    private Catalog getCatalogOne() {
+        final var desc = getCatalogOneDesc();
+
+        final var catalogConstructor = Catalog.class.getConstructor();
+
+        final var catalog = catalogConstructor.newInstance();
+
+        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(catalog, desc.getStaticId());
+
+        final var titleField = catalog.getClass().getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(catalog, desc.getTitle());
+
+        return catalog;
+    }
+
+    @SneakyThrows
+    private Catalog getCatalogTwo() {
+        final var desc = getCatalogTwoDesc();
+
+        final var catalogConstructor = Catalog.class.getConstructor();
+
+        final var catalog = catalogConstructor.newInstance();
+
+        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(catalog, desc.getStaticId());
+
+        final var titleField = catalog.getClass().getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(catalog, desc.getTitle());
 
         return catalog;
     }

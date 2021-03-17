@@ -44,7 +44,6 @@ public class CatalogServiceUpdateTest {
         Mockito.when(repository.findById(Mockito.eq(newCatalog.getId()))).thenReturn(Optional.of(newCatalog));
     }
 
-
     @Test
     public void update_sameDesc_returnSameCatalog() {
         /* ARRANGE */
