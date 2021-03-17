@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 /**
- * Create a parent-children relationship between two types of resources.
+ * Creates a parent-children relationship between two types of resources.
  *
  * @param <K> The type of the parent resource.
  * @param <W> The type of the child resource.
@@ -50,6 +50,9 @@ public abstract class BaseUniDirectionalLinkerService<
      * Get all children of an entity.
      *
      * @param ownerId The id of the entity whose children should be received.
+     * @param pageable The {@link Pageable} object for getting only a page of objects.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if the ownerId entity does not exists.
      * @return The ids of the children.
      */
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
@@ -67,6 +70,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId  The id of the entity that the children should be added
      *                 to.
      * @param entities The children to be added.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
@@ -92,6 +97,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param ownerId  The id of the entity that the children should be removed
      *                 from.
      * @param entities The children to be removed.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
@@ -117,6 +124,8 @@ public abstract class BaseUniDirectionalLinkerService<
      *
      * @param ownerId  The id of the entity whose children should be replaced.
      * @param entities The new children for the entity.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
@@ -138,6 +147,13 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     protected abstract List<W> getInternal(K owner);
 
+    /**
+     * Receives a page of children assigned to the entity.
+     *
+     * @param owner The entity whose children should be received.
+     * @param pageable The children assigned to the entity.
+     * @return The page of the children entities.
+     */
     protected Page<W> getInternal(final K owner, final Pageable pageable) {
         final var entities = getInternal(owner);
         return new PageImpl<>(entities, pageable, entities.size());
@@ -152,7 +168,7 @@ public abstract class BaseUniDirectionalLinkerService<
     protected void addInternal(final K owner, final Set<UUID> entities) {
         final var existingEntities = getInternal(owner);
         final var existingIds =
-                getInternal(owner).parallelStream().map(W::getId).collect(Collectors.toSet());
+                existingEntities.parallelStream().map(W::getId).collect(Collectors.toSet());
         final var copySet = new HashSet<>(entities);
         copySet.removeAll(existingIds);
 
@@ -187,12 +203,23 @@ public abstract class BaseUniDirectionalLinkerService<
         addInternal(owner, entities);
     }
 
+    /**
+     * Check if all entities in a set are known to the children's service.
+     * @param entities The set of entities to be checked.
+     * @throws ResourceNotFoundException if any of the entities is unknown.
+     */
     private void throwIfEntityDoesNotExist(final Set<UUID> entities) {
         if (!doesExist(entities, (x) -> manyService.doesExist(x))) {
             throw new ResourceNotFoundException("Could not find resource.");
         }
     }
 
+    /**
+     * Check if all entities in a set are known.
+     * @param entities The set of entities to be checked.
+     * @param doesElementExist The function that evaluates if an entity does exist.
+     * @return true if all entities are known.
+     */
     private boolean doesExist(
             final Set<UUID> entities, final Function<UUID, Boolean> doesElementExist) {
         for (final var entity : entities) {
