@@ -1,93 +1,76 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
-import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
-import org.apache.commons.fileupload.FileUploadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
-/**
- * Abstract class for building, sending, and processing ids messages.
- */
-public abstract class MessageService<T extends MessageDesc> {
-    /**
-     * The logging service.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
+@Service
+@RequiredArgsConstructor
+public class MessageService {
 
     /**
-     * Service for ids communication.
+     * Service for description request messages.
      */
-    @Autowired
-    private IDSHttpService idsHttpService;
+    private final @NonNull DescriptionRequestService descriptionRequestService;
 
     /**
-     * Service for the current connector configuration.
+     * Service for description request messages.
      */
-    @Autowired
-    private IdsConnectorService connectorService;
+    private final @NonNull ContractRequestService contractRequestService;
 
     /**
-     * Build ids message with params.
+     * Build and send a description request message. Validate response.
      *
-     * @param recipient The message recipient.
-     * @param desc      Type-specific message parameter.
-     * @return An ids message.
-     * @throws ConstraintViolationException If the ids message could not be built.
+     * @param recipient The recipient.
+     * @param elementId The requested element.
+     * @return The response map.
+     * @throws MessageResponseException If message handling failed.
+     * @throws UnexpectedMessageType    If the validation failed.
      */
-    public abstract Message buildMessage(URI recipient, T desc) throws ConstraintViolationException;
+    public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
+                                                             final URI elementId)
+            throws MessageResponseException, UnexpectedMessageType {
+        Map<String, String> response;
 
-    /**
-     * Build and sent a multipart message with header and payload.
-     *
-     * @param recipient The message's recipient.
-     * @param desc      Type-specific message parameter.
-     * @param payload   The message's payload.
-     * @return The response as map.
-     * @throws MessageException If message building, sending, or processing failed.
-     */
-    public Map<String, String> sendMessage(final URI recipient, final T desc, final String payload)
-            throws MessageException {
-        try {
-            final var header = buildMessage(recipient, desc);
-            final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
-            LOGGER.info(String.valueOf(body));
+        final var desc = new DescriptionRequestMessageDesc(elementId);
+        response = descriptionRequestService.sendMessage(recipient, desc, "");
+        descriptionRequestService.validateResponse(response);
 
-            // Send message and check response.
-            return idsHttpService.sendAndCheckDat(body, recipient);
-        } catch (ConstraintViolationException e) {
-            LOGGER.warn("Ids message header could not be built. [exception=({})]", e.getMessage());
-            throw new MessageBuilderException("Ids message header could not be built.");
-        } catch (ClaimsException exception) {
-            LOGGER.debug("Invalid DAT in incoming message. [exception=({})]",
-                    exception.getMessage());
-            throw new MessageResponseException("Invalid DAT in incoming message.");
-        } catch (FileUploadException | IOException exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageNotSentException("Message could not be sent.");
-        }
+        return response;
     }
 
     /**
-     * Getter for ids connector service.
+     * Build and send a description request message. Validate response.
      *
-     * @return The service class
+     * @param recipient The recipient.
+     * @return The response map.
+     * @throws MessageResponseException If message handling failed.
+     * @throws UnexpectedMessageType    If the validation failed.
      */
-    public IdsConnectorService getConnectorService() {
-        return connectorService;
+    public Map<String, String> sendContractRequestMessage(final URI recipient,
+                                                          final ContractRequest contractRequest)
+            throws MessageResponseException, UnexpectedMessageType, ConstraintViolationException {
+        Map<String, String> response;
+
+        final var contractId = contractRequest.getId();
+        final var contractRdf = IdsUtils.getContractRequestAsRdf(contractRequest);
+
+        final var desc = new ContractRequestMessageDesc(contractId);
+        response = contractRequestService.sendMessage(recipient, desc, contractRdf);
+        contractRequestService.validateResponse(response);
+
+        return response;
     }
 }
