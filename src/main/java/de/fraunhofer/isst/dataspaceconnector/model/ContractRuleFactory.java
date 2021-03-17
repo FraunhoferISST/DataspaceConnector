@@ -40,7 +40,7 @@ public class ContractRuleFactory implements AbstractFactory<ContractRule, Contra
     @Override
     public boolean update(final ContractRule contractRule, final ContractRuleDesc desc) {
         final var hasUpdatedTitle = this.updateTitle(contractRule, desc.getTitle());
-        final var hasUpdatedRule = this.updateRule(contractRule, desc.getRule());
+        final var hasUpdatedRule = this.updateRule(contractRule, desc.getValue());
 
         return hasUpdatedTitle || hasUpdatedRule;
     }

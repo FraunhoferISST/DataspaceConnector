@@ -42,7 +42,7 @@ public class ContractRuleFactoryTest {
         /* ASSERT */
         assertNotNull(rule);
         assertEquals(desc.getTitle(), rule.getTitle());
-        assertEquals(desc.getRule(), rule.getValue());
+        assertEquals(desc.getValue(), rule.getValue());
 
         assertNull(rule.getId());
         assertNull(rule.getCreationDate());
@@ -82,7 +82,7 @@ public class ContractRuleFactoryTest {
         /* ASSERT */
         assertNotNull(rule);
         assertEquals(desc.getTitle(), rule.getTitle());
-        assertEquals(desc.getRule(), rule.getValue());
+        assertEquals(desc.getValue(), rule.getValue());
 
         assertEquals(idBefore, rule.getId());
         assertEquals(creationDateBefore, rule.getCreationDate());
@@ -163,7 +163,7 @@ public class ContractRuleFactoryTest {
     ContractRuleDesc getValidDesc() {
         var desc = new ContractRuleDesc();
         desc.setTitle("Default");
-        desc.setRule("");
+        desc.setValue("");
 
         return desc;
     }
@@ -171,7 +171,7 @@ public class ContractRuleFactoryTest {
     ContractRuleDesc getUpdatedDesc() {
         var desc = new ContractRuleDesc();
         desc.setTitle("The new default.");
-        desc.setRule("none");
+        desc.setValue("none");
 
         return desc;
     }
@@ -179,7 +179,7 @@ public class ContractRuleFactoryTest {
     ContractRuleDesc getDescWithNullMembers() {
         var desc = new ContractRuleDesc();
         desc.setTitle(null);
-        desc.setRule(null);
+        desc.setValue(null);
 
         return desc;
     }
