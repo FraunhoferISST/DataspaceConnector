@@ -1,11 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
@@ -30,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ErrorMessagesTest {
 
