@@ -17,4 +17,14 @@ public class InvalidContractException extends ContractException {
     public InvalidContractException(final String msg) {
         super(msg);
     }
+
+    /**
+     * Construct a InvalidContractException with the specified detail message and cause.
+     *
+     * @param msg   The detail message.
+     * @param cause The cause.
+     */
+    public InvalidContractException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
 }
