@@ -3,10 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
@@ -68,9 +68,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
      * the input as string the messagePayload-InputStream is converted to a String.
      *
      * @param message The ids request message as header.
-     * @param payload The request message payload
-     * @return The message response
-     * @throws RuntimeException if the response body failed to be build or requestMessage is null.
+     * @param payload The request message payload.
+     * @return The response message.
      */
     @Override
     public MessageResponse handleMessage(final DescriptionRequestMessageImpl message,
