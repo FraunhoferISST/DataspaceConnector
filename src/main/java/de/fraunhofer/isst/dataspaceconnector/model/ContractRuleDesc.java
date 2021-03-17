@@ -17,5 +17,5 @@ public class ContractRuleDesc extends AbstractDescription<ContractRule> {
     /**
      * The rule to be enforced.
      */
-    private String rule;
+    private String content;
 }
