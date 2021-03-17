@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
+package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 

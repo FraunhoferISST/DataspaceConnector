@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.controller;
+package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
 
 /**
  * Thrown to indicate that the requested resource could not be found.

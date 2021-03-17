@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.exceptions.controller;
+package de.fraunhofer.isst.dataspaceconnector.exceptions.handled;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Endpoint;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
