@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.controller.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -52,11 +53,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @return The ids of the children.
      */
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
-        throwIfOwnerIsNull(ownerId);
-
-        if (pageable == null) {
-            throw new IllegalArgumentException("The pageable cannot be null.");
-        }
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
 
         final var owner = oneService.get(ownerId);
         return getInternal(owner, pageable);
@@ -71,7 +69,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The children to be added.
      */
     public void add(final UUID ownerId, final Set<UUID> entities) {
-        throwIfAnyIsNull(ownerId, entities);
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
 
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
@@ -96,7 +95,8 @@ public abstract class BaseUniDirectionalLinkerService<
      */
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
-        throwIfAnyIsNull(ownerId, entities);
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
 
         if (entities.isEmpty()) {
             // Prevent read call to database for the owner.
@@ -119,7 +119,8 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param entities The new children for the entity.
      */
     public void replace(final UUID ownerId, final Set<UUID> entities) {
-        throwIfAnyIsNull(ownerId, entities);
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
         throwIfEntityDoesNotExist(entities);
 
         final var owner = oneService.get(ownerId);
@@ -184,20 +185,6 @@ public abstract class BaseUniDirectionalLinkerService<
     protected void replaceInternal(final K owner, final Set<UUID> entities) {
         getInternal(owner).clear();
         addInternal(owner, entities);
-    }
-
-    private void throwIfAnyIsNull(final UUID ownerId, final Set<UUID> entities) {
-        throwIfOwnerIsNull(ownerId);
-
-        if (entities == null) {
-            throw new IllegalArgumentException("The entities cannot be null.");
-        }
-    }
-
-    private void throwIfOwnerIsNull(final UUID ownerId) {
-        if (ownerId == null) {
-            throw new IllegalArgumentException("The owner cannot be null.");
-        }
     }
 
     private void throwIfEntityDoesNotExist(final Set<UUID> entities) {
