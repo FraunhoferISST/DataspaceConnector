@@ -1,10 +1,9 @@
-package de.fraunhofer.isst.dataspaceconnector;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.net.URI;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
