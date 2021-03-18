@@ -48,12 +48,6 @@ public final class ControllerUtils {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    public static ResponseEntity<Object> respondFailedToLoadSerializer(final Exception exception) {
-        LOGGER.warn("Failed to receive the serializer. [exception=({})]", exception.getMessage());
-        return new ResponseEntity<>("Failed to update configuration.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the configuration
      * could not be updated.
@@ -154,9 +148,11 @@ public final class ControllerUtils {
     }
 
     /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that something went
+     * wrong. Note: Should never be thrown.
      *
-     * @param exception
-     * @return
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
      */
     public static ResponseEntity<Object> respondGlobalException(final Exception exception) {
         LOGGER.warn("Something else went wrong. [exception=({})]", exception.getMessage());
@@ -164,4 +160,3 @@ public final class ControllerUtils {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
-// [exception=({})]", exception.getMessage()
