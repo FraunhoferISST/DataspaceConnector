@@ -10,11 +10,18 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 
+/**
+ * The interface for describing data in the backend.
+ */
 @lombok.Data
 @Entity
 @Inheritance
 @Setter(AccessLevel.NONE)
 public class Data {
+
+    /**
+     * The primary key of the data.
+     */
     @Id
     @GeneratedValue
     @JsonIgnore
