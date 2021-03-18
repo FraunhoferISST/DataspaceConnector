@@ -10,7 +10,6 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageDeserializationException;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -92,15 +91,14 @@ public class DeserializationService {
      *
      * @param response A ids response message.
      * @return The response message.
-     * @throws MessageDeserializationException If deserialization fails.
+     * @throws IllegalArgumentException If deserialization fails.
      */
-    public ResponseMessage deserializeResponseMessage(final String response)
-            throws MessageDeserializationException {
+    public ResponseMessage deserializeResponseMessage(final String response) throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
         } catch (IOException exception) {
             LOGGER.warn("Could not deserialize response message. [exception=({})]", exception.getMessage());
-            throw new MessageDeserializationException("Could not deserialize response message.", exception);
+            throw new IllegalArgumentException("Could not deserialize response message.", exception);
         }
     }
 

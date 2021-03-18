@@ -1,4 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.model.messages;
 
-public interface MessageDesc {
+import lombok.Data;
+
+import java.net.URI;
+
+@Data
+public class MessageDesc {
+    /**
+     * The message's recipient.
+     */
+    private URI recipient;
 }

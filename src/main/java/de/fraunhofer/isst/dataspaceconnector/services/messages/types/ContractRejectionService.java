@@ -42,4 +42,9 @@ public final class ContractRejectionService extends AbstractMessageService<Contr
                 ._contractRejectionReason_(rejectionReason)
                 .build();
     }
+
+    @Override
+    protected Class<?> getResponseMessageType() {
+        return null;
+    }
 }

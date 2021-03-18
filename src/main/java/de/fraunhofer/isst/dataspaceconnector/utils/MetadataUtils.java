@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +28,15 @@ public final class MetadataUtils {
                                                          final URI defaultUri) {
         final var newValue = newUri == null ? defaultUri : newUri;
         if (oldUri == null || !oldUri.equals(newValue)) {
+            return Optional.of(newValue);
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<Date> updateDate(final Date oldDate, final Date newDate, final Date defaultDate) {
+        final var newValue = newDate == null ? defaultDate : newDate;
+        if (oldDate == null || !oldDate.equals(newValue)) {
             return Optional.of(newValue);
         }
 

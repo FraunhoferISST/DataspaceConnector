@@ -10,7 +10,7 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class ContractRequestMessageDesc implements MessageDesc {
+public class ContractRequestMessageDesc extends MessageDesc {
 
     /**
      * The transfer contract of the message.

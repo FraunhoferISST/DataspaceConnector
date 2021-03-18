@@ -10,7 +10,7 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class ContractRejectionMessageDesc implements MessageDesc {
+public class ContractRejectionMessageDesc extends MessageDesc {
 
     /**
      * The ids of the correlation message.

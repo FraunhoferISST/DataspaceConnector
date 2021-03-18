@@ -4,10 +4,10 @@ import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -30,9 +30,9 @@ import org.springframework.stereotype.Component;
 public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
 
     /**
-     * Service for handling notification messages.
+     * Service for handling message processed notification messages.
      */
-    private final @NonNull NotificationService messageService;
+    private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
      * Service for the message exception handling.
@@ -71,7 +71,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
         try {
             // Build the ids response.
-            final var desc = new NotificationMessageDesc(messageId);
+            final var desc = new MessageProcessedNotificationMessageDesc(messageId);
             final var header = messageService.buildMessage(issuerConnector, desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException exception) {

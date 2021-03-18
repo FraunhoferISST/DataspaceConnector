@@ -34,4 +34,9 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
                 ._recipientConnector_(Util.asList(recipient))
                 .build();
     }
+
+    @Override
+    protected Class<?> getResponseMessageType() {
+        return null;
+    }
 }

@@ -10,7 +10,7 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class DescriptionRequestMessageDesc implements MessageDesc {
+public class DescriptionRequestMessageDesc extends MessageDesc {
 
     /**
      * The requested element of the message.

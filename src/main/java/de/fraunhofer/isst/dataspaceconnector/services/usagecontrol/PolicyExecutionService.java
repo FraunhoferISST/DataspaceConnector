@@ -5,6 +5,9 @@ import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessLoggingFailedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessNotificationFailedException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
@@ -50,7 +53,12 @@ public class PolicyExecutionService {
     /**
      * Service for ids notification messages.
      */
-    private final @NonNull NotificationService messageService;
+    private final @NonNull NotificationService notificationService;
+
+    /**
+     * Service for ids log messages.
+     */
+    private final @NonNull LogMessageService logMessageService;
 
     /**
      * Delete a resource by its id.
@@ -75,7 +83,9 @@ public class PolicyExecutionService {
 
         Map<String, String> response;
         try {
-            response = messageService.sendMessage(URI.create(recipient), null, log);
+            final var desc = new LogMessageDesc();
+            desc.setRecipient(recipient);
+            response = logMessageService.sendMessage(desc, log);
         } catch (Exception exception) {
             LOGGER.debug("Unsuccessful logging. [exception=({})]", exception.getMessage());
             throw new DataAccessLoggingFailedException("Log message could not be sent.");
@@ -102,7 +112,9 @@ public class PolicyExecutionService {
 
         Map<String, String> response;
         try {
-            response = messageService.sendMessage(URI.create(recipient), null, log);
+            final var desc = new NotificationMessageDesc();
+            desc.setRecipient(URI.create(recipient));
+            response = notificationService.sendMessage(desc, log);
         } catch (Exception exception) {
             LOGGER.debug("Notification message not sent. [exception=({})]", exception.getMessage());
             throw new DataAccessNotificationFailedException("Notification was not successful.");

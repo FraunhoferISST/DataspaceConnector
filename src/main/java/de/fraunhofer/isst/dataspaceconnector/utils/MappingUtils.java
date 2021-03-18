@@ -13,9 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
-import org.springframework.stereotype.Service;
 
-@Service
 public final class MappingUtils {
 
     private MappingUtils() {
@@ -28,7 +26,7 @@ public final class MappingUtils {
      * @param resource The ids resource.
      * @return The connector resource.
      */
-    public ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
+    public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
         // TODO Mapping
         return null;
     }
@@ -39,17 +37,17 @@ public final class MappingUtils {
      * @param representation The ids representation.
      * @return The connector representation.
      */
-    public RepresentationTemplate fromIdsRepresentation(final Representation representation) {
+    public static RepresentationTemplate fromIdsRepresentation(final Representation representation) {
         // TODO Mapping
         return null;
     }
 
-    public ArtifactTemplate fromIdsArtifact(final RepresentationInstance instance) {
+    public static ArtifactTemplate fromIdsArtifact(final RepresentationInstance instance) {
         // TODO Mapping
         return null;
     }
 
-    public ContractTemplate fromIdsContract(final Contract contract) {
+    public static ContractTemplate fromIdsContract(final Contract contract) {
         final var desc = new ContractDesc();
         // desc.setTitle(contract.get);
 
@@ -62,7 +60,7 @@ public final class MappingUtils {
      * @param rule The ids rule.
      * @return A rule template.
      */
-    public RuleTemplate fromIdsRule(final Rule rule) {
+    public static RuleTemplate fromIdsRule(final Rule rule) {
         final var desc = new ContractRuleDesc();
         desc.setTitle(String.valueOf(rule.getTitle()));
         // desc.setContent(rule.toRdf());

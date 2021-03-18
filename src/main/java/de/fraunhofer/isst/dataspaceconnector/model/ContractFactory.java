@@ -4,6 +4,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Creates and updates a contract.
@@ -43,7 +44,11 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
      */
     @Override
     public boolean update(final Contract contract, final ContractDesc desc) {
-        return this.updateTitle(contract, desc.getTitle());
+        final var updateTitle = this.updateTitle(contract, desc.getTitle());
+        final var updateStart = this.updateStart(contract, desc.getStart());
+        final var updateEnd = this.updateEnd(contract, desc.getEnd());
+
+        return updateTitle || updateStart || updateEnd;
     }
 
     private boolean updateTitle(final Contract contract, final String title) {
@@ -52,5 +57,19 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         newTitle.ifPresent(contract::setTitle);
 
         return newTitle.isPresent();
+    }
+
+    private boolean updateStart(final Contract contract, final Date start) {
+        final var newStart = MetadataUtils.updateDate(contract.getStart(), start, new Date());
+        newStart.ifPresent(contract::setStart);
+
+        return newStart.isPresent();
+    }
+
+    private boolean updateEnd(final Contract contract, final Date end) {
+        final var newEnd = MetadataUtils.updateDate(contract.getEnd(), end, new Date());
+        newEnd.ifPresent(contract::setEnd);
+
+        return newEnd.isPresent();
     }
 }

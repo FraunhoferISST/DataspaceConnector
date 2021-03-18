@@ -4,10 +4,10 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedHeaderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
@@ -148,14 +148,14 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids header.
-     * @throws MessageResponseException If the map contains no header property.
+     * @throws MalformedHeaderException If the map contains no header property.
      */
     public static String extractHeaderFromMultipartMessage(final Map<String, String> message)
-            throws MessageResponseException {
+            throws MalformedHeaderException {
         try {
             return message.get("header");
         } catch (Exception exception) {
-            throw new MessageResponseException("Cannot read header.", exception);
+            throw new MalformedHeaderException("Cannot read header.", exception);
         }
     }
 
@@ -164,14 +164,14 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids payload.
-     * @throws MessageResponseException If the map contains no payload property.
+     * @throws MalformedPayloadException If the map contains no payload property.
      */
     public static String extractPayloadFromMultipartMessage(final Map<String, String> message)
-            throws MessageResponseException {
+            throws MalformedPayloadException {
         try {
             return message.get("payload");
         } catch (Exception exception) {
-            throw new MessageResponseException("Cannot read header.");
+            throw new MalformedPayloadException("Cannot read payload.", exception);
         }
     }
 
