@@ -10,7 +10,7 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
-public class ArtifactRequestMessageDesc implements MessageDesc {
+public class ArtifactRequestMessageDesc extends MessageDesc {
 
     /**
      * The requested artifact of the message.

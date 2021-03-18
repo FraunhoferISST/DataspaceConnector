@@ -8,5 +8,5 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class LogMessageDesc implements MessageDesc {
+public class LogMessageDesc extends MessageDesc {
 }
