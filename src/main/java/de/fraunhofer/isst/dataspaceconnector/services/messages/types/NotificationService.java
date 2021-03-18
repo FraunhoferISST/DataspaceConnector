@@ -34,4 +34,9 @@ public final class NotificationService extends AbstractMessageService<Notificati
                 ._recipientConnector_(Util.asList(recipient))
                 .build();
     }
+
+    @Override
+    protected Class<?> getResponseMessageType() {
+        return null;
+    }
 }

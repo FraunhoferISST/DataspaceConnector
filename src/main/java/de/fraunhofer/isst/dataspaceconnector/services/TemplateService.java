@@ -11,7 +11,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,20 +21,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TemplateService {
 
-    /**
-     * Service for mapping ids to connector objects.
-     */
-    private final @NonNull MappingUtils mapper;
-
     public ResourceTemplate<RequestedResourceDesc> getResourceTemplate(final Resource resource) {
-        return mapper.fromIdsResource(resource);
+        return MappingUtils.fromIdsResource(resource);
     }
 
     public List<ContractTemplate> getContractTemplates(final Resource resource) {
         final var list = new ArrayList<ContractTemplate>();
         final var contractList = resource.getContractOffer();
         for (final var contract : contractList) {
-            final var contractTemplate = mapper.fromIdsContract(contract);
+            final var contractTemplate = MappingUtils.fromIdsContract(contract);
 
             contractTemplate.setRules(getRuleTemplates(contract));
             list.add(contractTemplate);
@@ -48,7 +42,7 @@ public class TemplateService {
         final var list = new ArrayList<RepresentationTemplate>();
         final var representationList = resource.getRepresentation();
         for (final var representation : representationList) {
-            final var representationTemplate = mapper.fromIdsRepresentation(representation);
+            final var representationTemplate = MappingUtils.fromIdsRepresentation(representation);
             final var artifactTemplateList = getArtifactTemplates(representation);
 
             representationTemplate.setArtifacts(artifactTemplateList);
@@ -62,7 +56,7 @@ public class TemplateService {
         final var list = new ArrayList<ArtifactTemplate>();
         final var artifactList = representation.getInstance();
         for (final var artifact : artifactList) {
-            final var artifactTemplate = mapper.fromIdsArtifact(artifact);
+            final var artifactTemplate = MappingUtils.fromIdsArtifact(artifact);
             list.add(artifactTemplate);
         }
 
@@ -74,7 +68,7 @@ public class TemplateService {
         final var ruleList = PolicyUtils.extractRulesFromContract(contract);
 
         for (final var rule : ruleList) {
-            final var ruleTemplate = mapper.fromIdsRule(rule);
+            final var ruleTemplate = MappingUtils.fromIdsRule(rule);
             list.add(ruleTemplate);
         }
 

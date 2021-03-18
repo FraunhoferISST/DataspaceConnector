@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
@@ -36,41 +36,36 @@ public class MessageService {
      * @param recipient The recipient.
      * @param elementId The requested element.
      * @return The response map.
-     * @throws MessageResponseException If message handling failed.
-     * @throws UnexpectedMessageType    If the validation failed.
+     * @throws MessageException      If message handling failed.
+     * @throws UnexpectedMessageType If the validation failed.
      */
     public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
                                                              final URI elementId)
-            throws MessageResponseException, UnexpectedMessageType {
-        Map<String, String> response;
-
+            throws MessageException, UnexpectedMessageType {
         final var desc = new DescriptionRequestMessageDesc(elementId);
-        response = descriptionRequestService.sendMessage(recipient, desc, "");
-        descriptionRequestService.validateResponse(response);
+        desc.setRecipient(recipient);
 
-        return response;
+        return descriptionRequestService.sendMessage(desc, "");
     }
 
     /**
      * Build and send a description request message. Validate response.
      *
-     * @param recipient The recipient.
+     * @param recipient       The recipient.
+     * @param contractRequest The contract request.
      * @return The response map.
-     * @throws MessageResponseException If message handling failed.
-     * @throws UnexpectedMessageType    If the validation failed.
+     * @throws MessageException      If message handling failed.
+     * @throws UnexpectedMessageType If the validation failed.
      */
     public Map<String, String> sendContractRequestMessage(final URI recipient,
                                                           final ContractRequest contractRequest)
-            throws MessageResponseException, UnexpectedMessageType, ConstraintViolationException {
-        Map<String, String> response;
-
+            throws MessageException, UnexpectedMessageType, ConstraintViolationException {
         final var contractId = contractRequest.getId();
         final var contractRdf = IdsUtils.getContractRequestAsRdf(contractRequest);
 
         final var desc = new ContractRequestMessageDesc(contractId);
-        response = contractRequestService.sendMessage(recipient, desc, contractRdf);
-        contractRequestService.validateResponse(response);
+        desc.setRecipient(recipient);
 
-        return response;
+        return contractRequestService.sendMessage(desc, contractRdf);
     }
 }

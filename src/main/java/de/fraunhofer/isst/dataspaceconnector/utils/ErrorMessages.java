@@ -27,7 +27,12 @@ public enum ErrorMessages {
     /**
      * Rule is missing a target parameter.
      */
-    MISSING_TARGET("Missing target id in rules");
+    MISSING_TARGET("Missing target id in rules"),
+
+    /**
+     * The response message type is not as expected.
+     */
+    UNEXPECTED_RESPONSE_TYPE("Unexpected ids response type.");
 
     /**
      * Holds the enums string.
@@ -36,6 +41,7 @@ public enum ErrorMessages {
 
     /**
      * Constructor.
+     *
      * @param value The msg of the error message.
      */
     ErrorMessages(final String value) {

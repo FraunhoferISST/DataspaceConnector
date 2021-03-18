@@ -39,4 +39,9 @@ public final class ArtifactResponseService extends AbstractMessageService<Artifa
                 ._transferContract_(contractId)
                 .build();
     }
+
+    @Override
+    protected Class<?> getResponseMessageType() {
+        return null;
+    }
 }

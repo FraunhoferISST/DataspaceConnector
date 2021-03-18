@@ -37,4 +37,9 @@ public final class DescriptionResponseService extends AbstractMessageService<Des
                 ._recipientConnector_(Util.asList(recipient))
                 .build();
     }
+
+    @Override
+    protected Class<?> getResponseMessageType() {
+        return null;
+    }
 }
