@@ -9,8 +9,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssem
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.EntityUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -91,7 +91,7 @@ public class DescriptionRequestMessageController {
             // Read and process the response message.
             payload = MessageUtils.extractPayloadFromMultipartMessage(response);
 
-            if (!EntityUtils.parameterIsEmpty(elementId)) {
+            if (!Utils.isEmptyOrNull(elementId)) {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
                 // Get payload as component.

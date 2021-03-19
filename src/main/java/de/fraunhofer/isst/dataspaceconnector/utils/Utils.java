@@ -1,12 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This utility class contains general purpose functions.
@@ -47,5 +47,19 @@ public class Utils {
         }
 
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }
+
+    /**
+     * Check if a parameter is empty.
+     *
+     * @param param The parameter.
+     * @return True if it is empty, false if not.
+     */
+    public static <T> boolean isEmptyOrNull(final T param) {
+        if (param == null) {
+            return true;
+        } else {
+            return param.toString().equals("");
+        }
     }
 }
