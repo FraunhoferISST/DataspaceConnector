@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -8,15 +16,6 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  *
@@ -103,13 +102,18 @@ public final class IdsUtils {
      * @return The ids language object.
      */
     public static List<Language> getLanguages(final String language) {
+        final var list = new ArrayList<Language>();
+
         switch (language) {
             case "de":
-                return Collections.singletonList(Language.DE);
+                list.add(Language.DE);
+                break;
             case "en":
             default:
-                return Collections.singletonList(Language.EN);
+                list.add(Language.EN);
         }
+
+        return list;
     }
 
     /**
