@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +34,10 @@ public class CatalogPersistenceTest {
     @BeforeEach
     public void init() {
         catalogRepository.findAll().forEach(c -> catalogRepository.delete(c));
+        catalogRepository.flush();
+
         resourceRepository.findAll().forEach(r -> resourceRepository.delete(r));
+        resourceRepository.flush();
     }
 
     @Transactional
@@ -46,7 +49,7 @@ public class CatalogPersistenceTest {
         Catalog original = getCatalog();
 
         /*ACT*/
-        original = catalogRepository.save(original);
+        original = catalogRepository.saveAndFlush(original);
         Catalog persisted = catalogRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -60,11 +63,11 @@ public class CatalogPersistenceTest {
         /*ARRANGE*/
         assertTrue(catalogRepository.findAll().isEmpty());
 
-        OfferedResource resource = (OfferedResource) resourceRepository.save(getResource());
+        OfferedResource resource = (OfferedResource) resourceRepository.saveAndFlush(getResource());
         Catalog original = getCatalogWithResources(resource);
 
         /*ACT*/
-        original = catalogRepository.save(original);
+        original = catalogRepository.saveAndFlush(original);
         Catalog persisted = catalogRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -79,14 +82,14 @@ public class CatalogPersistenceTest {
         /*ARRANGE*/
         assertTrue(catalogRepository.findAll().isEmpty());
 
-        Catalog original = catalogRepository.save(getCatalog());
+        Catalog original = catalogRepository.saveAndFlush(getCatalog());
         String newTitle = "newTitle";
 
         assertEquals(1, catalogRepository.findAll().size());
 
         /*ACT*/
         original.setTitle(newTitle);
-        catalogRepository.save(original);
+        catalogRepository.saveAndFlush(original);
         Catalog updated = catalogRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -103,19 +106,19 @@ public class CatalogPersistenceTest {
         assertTrue(catalogRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus resource1 is equal to resource2 if no field changed
-        OfferedResource resource1 = (OfferedResource) resourceRepository.save(getResource());
+        OfferedResource resource1 = (OfferedResource) resourceRepository.saveAndFlush(getResource());
         OfferedResource resource2 = getResource();
         resource2.setTitle("another resource title");
-        resource2 = (OfferedResource) resourceRepository.save(resource2);
+        resource2 = (OfferedResource) resourceRepository.saveAndFlush(resource2);
 
-        Catalog original = catalogRepository.save(getCatalogWithResources(resource1));
+        Catalog original = catalogRepository.saveAndFlush(getCatalogWithResources(resource1));
 
         assertEquals(1, catalogRepository.findAll().size());
         assertEquals(1, original.getOfferedResources().size());
 
         /*ACT*/
         original.getOfferedResources().add(resource2);
-        catalogRepository.save(original);
+        catalogRepository.saveAndFlush(original);
         Catalog updated = catalogRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -134,12 +137,12 @@ public class CatalogPersistenceTest {
         assertTrue(catalogRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus resource1 is equal to resource2 if no field changed
-        OfferedResource resource1 = (OfferedResource) resourceRepository.save(getResource());
+        OfferedResource resource1 = (OfferedResource) resourceRepository.saveAndFlush(getResource());
         OfferedResource resource2 = getResource();
         resource2.setTitle("another resource title");
-        resource2 = (OfferedResource) resourceRepository.save(resource2);
+        resource2 = (OfferedResource) resourceRepository.saveAndFlush(resource2);
 
-        Catalog original = catalogRepository.save(getCatalogWithResources(resource1, resource2));
+        Catalog original = catalogRepository.saveAndFlush(getCatalogWithResources(resource1, resource2));
 
         assertEquals(1, catalogRepository.findAll().size());
         assertEquals(2, original.getOfferedResources().size());
@@ -163,7 +166,7 @@ public class CatalogPersistenceTest {
         /*ARRANGE*/
         assertTrue(catalogRepository.findAll().isEmpty());
 
-        Catalog catalog = catalogRepository.save(getCatalog());
+        Catalog catalog = catalogRepository.saveAndFlush(getCatalog());
 
         assertEquals(1, catalogRepository.findAll().size());
 
@@ -180,8 +183,8 @@ public class CatalogPersistenceTest {
         assertTrue(catalogRepository.findAll().isEmpty());
         assertTrue(resourceRepository.findAll().isEmpty());
 
-        OfferedResource resource = (OfferedResource) resourceRepository.save(getResource());
-        Catalog catalog = catalogRepository.save(getCatalogWithResources(resource));
+        OfferedResource resource = (OfferedResource) resourceRepository.saveAndFlush(getResource());
+        Catalog catalog = catalogRepository.saveAndFlush(getCatalogWithResources(resource));
 
         assertEquals(1, catalogRepository.findAll().size());
         assertEquals(1, resourceRepository.findAll().size());
@@ -200,8 +203,8 @@ public class CatalogPersistenceTest {
         assertTrue(catalogRepository.findAll().isEmpty());
         assertTrue(resourceRepository.findAll().isEmpty());
 
-        OfferedResource resource = (OfferedResource) resourceRepository.save(getResource());
-        Catalog catalog = catalogRepository.save(getCatalogWithResources(resource));
+        OfferedResource resource = (OfferedResource) resourceRepository.saveAndFlush(getResource());
+        Catalog catalog = catalogRepository.saveAndFlush(getCatalogWithResources(resource));
 
         assertEquals(1, catalogRepository.findAll().size());
         assertEquals(1, resourceRepository.findAll().size());

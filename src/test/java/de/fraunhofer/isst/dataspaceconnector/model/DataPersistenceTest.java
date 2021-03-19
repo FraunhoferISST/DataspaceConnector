@@ -1,16 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.transaction.Transactional;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-
 import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,6 +26,7 @@ public class DataPersistenceTest {
     @BeforeEach
     public void init() {
         dataRepository.findAll().forEach(d -> dataRepository.delete(d));
+        dataRepository.flush();
     }
 
     @Transactional
@@ -33,7 +35,7 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData original = dataRepository.save(getLocalData());
+        LocalData original = dataRepository.saveAndFlush(getLocalData());
 
         assertEquals(1, dataRepository.findAll().size());
 
@@ -50,7 +52,7 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        RemoteData original = dataRepository.save(getRemoteData());
+        RemoteData original = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(1, dataRepository.findAll().size());
 
@@ -66,8 +68,8 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(2, dataRepository.findAll().size());
 
@@ -84,8 +86,8 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(2, dataRepository.findAll().size());
 
@@ -102,8 +104,8 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(2, dataRepository.findAll().size());
 
@@ -121,13 +123,13 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(1, dataRepository.findAll().size());
 
         /*ACT*/
         remoteData.setUsername("new name");
-        dataRepository.save(remoteData);
+        dataRepository.saveAndFlush(remoteData);
 
         /*ASSERT*/
         RemoteData updated = (RemoteData) dataRepository.getOne(remoteData.getId());
@@ -142,7 +144,7 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
 
         assertEquals(1, dataRepository.findAll().size());
     }
@@ -152,7 +154,7 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
 
         assertEquals(1, dataRepository.findAll().size());
 
@@ -168,7 +170,7 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(1, dataRepository.findAll().size());
 
@@ -184,8 +186,8 @@ public class DataPersistenceTest {
         /*ARRANGE*/
         assertTrue(dataRepository.findAll().isEmpty());
 
-        LocalData localData = dataRepository.save(getLocalData());
-        RemoteData remoteData = dataRepository.save(getRemoteData());
+        LocalData localData = dataRepository.saveAndFlush(getLocalData());
+        RemoteData remoteData = dataRepository.saveAndFlush(getRemoteData());
 
         assertEquals(2, dataRepository.findAll().size());
 

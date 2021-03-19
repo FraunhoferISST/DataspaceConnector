@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,10 @@ public class ContractPersistenceTest {
     @BeforeEach
     public void init() {
         contractRepository.findAll().forEach(e -> contractRepository.delete(e));
+        contractRepository.flush();
+
         ruleRepository.findAll().forEach(r -> ruleRepository.delete(r));
+        ruleRepository.flush();
     }
 
     @Transactional
@@ -40,7 +44,7 @@ public class ContractPersistenceTest {
         /*ARRANGE*/
         assertTrue(contractRepository.findAll().isEmpty());
 
-        Contract original = contractRepository.save(getContract());
+        Contract original = contractRepository.saveAndFlush(getContract());
 
         assertEquals(1, contractRepository.findAll().size());
 
@@ -57,10 +61,10 @@ public class ContractPersistenceTest {
         /*ARRANGE*/
         assertTrue(contractRepository.findAll().isEmpty());
 
-        ContractRule contractRule1 = ruleRepository.save(getContractRule());
-        ContractRule contractRule2 = ruleRepository.save(getContractRule());
+        ContractRule contractRule1 = ruleRepository.saveAndFlush(getContractRule());
+        ContractRule contractRule2 = ruleRepository.saveAndFlush(getContractRule());
         Contract original = contractRepository
-                .save(getContractWithRules(contractRule1, contractRule2));
+                .saveAndFlush(getContractWithRules(contractRule1, contractRule2));
 
         assertEquals(1, contractRepository.findAll().size());
 
@@ -78,13 +82,13 @@ public class ContractPersistenceTest {
         /*ARRANGE*/
         assertTrue(contractRepository.findAll().isEmpty());
 
-        Contract original = contractRepository.save(getContract());
+        Contract original = contractRepository.saveAndFlush(getContract());
 
         String newTitle = "new title";
 
         /*ACT*/
         original.setTitle(newTitle);
-        contractRepository.save(original);
+        contractRepository.saveAndFlush(original);
 
         /*ASSERT*/
         Contract updated = contractRepository.getOne(original.getId());
@@ -99,18 +103,18 @@ public class ContractPersistenceTest {
         assertTrue(contractRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus contractRule1 is equal to contractRule2 if no field changed
-        ContractRule contractRule1 = ruleRepository.save(getContractRule());
+        ContractRule contractRule1 = ruleRepository.saveAndFlush(getContractRule());
         ContractRule contractRule2 = getContractRule();
         contractRule2.setTitle("another rule title");
-        contractRule2 = ruleRepository.save(contractRule2);
+        contractRule2 = ruleRepository.saveAndFlush(contractRule2);
 
-        Contract original = contractRepository.save(getContractWithRules(contractRule1));
+        Contract original = contractRepository.saveAndFlush(getContractWithRules(contractRule1));
 
         assertEquals(1, original.getRules().size());
 
         /*ACT*/
         original.getRules().add(contractRule2);
-        contractRepository.save(original);
+        contractRepository.saveAndFlush(original);
 
         /*ASSERT*/
         Contract updated = contractRepository.getOne(original.getId());
@@ -127,19 +131,19 @@ public class ContractPersistenceTest {
         assertTrue(contractRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus contractRule1 is equal to contractRule2 if no field changed
-        ContractRule contractRule1 = ruleRepository.save(getContractRule());
+        ContractRule contractRule1 = ruleRepository.saveAndFlush(getContractRule());
         ContractRule contractRule2 = getContractRule();
         contractRule2.setTitle("another rule title");
-        contractRule2 = ruleRepository.save(contractRule2);
+        contractRule2 = ruleRepository.saveAndFlush(contractRule2);
 
         Contract original = contractRepository
-                .save(getContractWithRules(contractRule1, contractRule2));
+                .saveAndFlush(getContractWithRules(contractRule1, contractRule2));
 
         assertEquals(2, original.getRules().size());
 
         /*ACT*/
         original.getRules().remove(contractRule2);
-        contractRepository.save(original);
+        contractRepository.saveAndFlush(original);
 
         /*ASSERT*/
         Contract updated = contractRepository.getOne(original.getId());
@@ -154,7 +158,7 @@ public class ContractPersistenceTest {
         /*ARRANGE*/
         assertTrue(contractRepository.findAll().isEmpty());
 
-        Contract original = contractRepository.save(getContract());
+        Contract original = contractRepository.saveAndFlush(getContract());
 
         assertEquals(1, contractRepository.findAll().size());
 
@@ -171,10 +175,10 @@ public class ContractPersistenceTest {
         assertTrue(contractRepository.findAll().isEmpty());
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule contractRule1 = ruleRepository.save(getContractRule());
-        ContractRule contractRule2 = ruleRepository.save(getContractRule());
+        ContractRule contractRule1 = ruleRepository.saveAndFlush(getContractRule());
+        ContractRule contractRule2 = ruleRepository.saveAndFlush(getContractRule());
         Contract contract = contractRepository
-                .save(getContractWithRules(contractRule1, contractRule2));
+                .saveAndFlush(getContractWithRules(contractRule1, contractRule2));
 
         assertEquals(1, contractRepository.findAll().size());
         assertEquals(2, ruleRepository.findAll().size());
@@ -193,8 +197,8 @@ public class ContractPersistenceTest {
         assertTrue(contractRepository.findAll().isEmpty());
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule contractRule = ruleRepository.save(getContractRule());
-        Contract contract = contractRepository.save(getContractWithRules(contractRule));
+        ContractRule contractRule = ruleRepository.saveAndFlush(getContractRule());
+        Contract contract = contractRepository.saveAndFlush(getContractWithRules(contractRule));
 
         assertEquals(1, contractRepository.findAll().size());
         assertEquals(1, ruleRepository.findAll().size());

@@ -1,16 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
-import java.lang.reflect.Field;
-import java.util.Date;
-
 import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import java.lang.reflect.Field;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -35,6 +35,7 @@ public class BaseResourcePersistenceTest {
     @BeforeEach
     public void init() {
         ruleRepository.findAll().forEach(r -> ruleRepository.delete(r));
+        ruleRepository.flush();
     }
 
     @Transactional
@@ -55,7 +56,7 @@ public class BaseResourcePersistenceTest {
         assertNull(contractRule.getModificationDate());
 
         /*ACT*/
-        contractRule = ruleRepository.save(contractRule);
+        contractRule = ruleRepository.saveAndFlush(contractRule);
 
         /*ASSERT*/
         assertNotNull(contractRule.getCreationDate());
@@ -68,7 +69,7 @@ public class BaseResourcePersistenceTest {
         /*ARRANGE*/
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule contractRule = ruleRepository.save(getContractRule());
+        ContractRule contractRule = ruleRepository.saveAndFlush(getContractRule());
 
         final var creationDate = contractRule.getCreationDate();
         final var modificationDate = contractRule.getModificationDate();
@@ -89,14 +90,14 @@ public class BaseResourcePersistenceTest {
         /*ARRANGE*/
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule original = ruleRepository.save(getContractRule());
+        ContractRule original = ruleRepository.saveAndFlush(getContractRule());
 
         final var creationDate = original.getCreationDate();
         final var modificationDate = original.getModificationDate();
 
         /*ACT*/
         original.setTitle("new rule title");
-        ContractRule updated = ruleRepository.save(original);
+        ContractRule updated = ruleRepository.saveAndFlush(original);
 
         /*ASSERT*/
         assertEquals(creationDate, updated.getCreationDate());

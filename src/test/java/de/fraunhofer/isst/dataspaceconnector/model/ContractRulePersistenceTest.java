@@ -1,13 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.transaction.Transactional;
-
 import de.fraunhofer.isst.dataspaceconnector.configuration.DatabaseTestsConfig;
 import de.fraunhofer.isst.dataspaceconnector.repositories.RuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,6 +20,7 @@ public class ContractRulePersistenceTest {
     @BeforeEach
     public void init() {
         ruleRepository.findAll().forEach(r -> ruleRepository.delete(r));
+        ruleRepository.flush();
     }
 
     @Transactional
@@ -32,7 +32,7 @@ public class ContractRulePersistenceTest {
         ContractRule original = getContractRule();
 
         /*ACT*/
-        original = ruleRepository.save(original);
+        original = ruleRepository.saveAndFlush(original);
         ContractRule persisted = ruleRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -46,14 +46,14 @@ public class ContractRulePersistenceTest {
         /*ARRANGE*/
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule original = ruleRepository.save(getContractRule());
+        ContractRule original = ruleRepository.saveAndFlush(getContractRule());
         String newTitle = "new title";
 
         assertEquals(1, ruleRepository.findAll().size());
 
         /*ACT*/
         original.setTitle(newTitle);
-        ruleRepository.save(original);
+        ruleRepository.saveAndFlush(original);
         ContractRule updated = ruleRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -67,7 +67,7 @@ public class ContractRulePersistenceTest {
         /*ARRANGE*/
         assertTrue(ruleRepository.findAll().isEmpty());
 
-        ContractRule contractRule = ruleRepository.save(getContractRule());
+        ContractRule contractRule = ruleRepository.saveAndFlush(getContractRule());
 
         assertEquals(1, ruleRepository.findAll().size());
 

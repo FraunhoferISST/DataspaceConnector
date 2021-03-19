@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +31,10 @@ public class RepresentationPersistenceTest {
     @BeforeEach
     public void init() {
         representationRepository.findAll().forEach(r -> representationRepository.delete(r));
+        representationRepository.flush();
+
         artifactRepository.findAll().forEach(a -> artifactRepository.delete(a));
+        artifactRepository.flush();
     }
 
     @Transactional
@@ -43,7 +46,7 @@ public class RepresentationPersistenceTest {
         Representation original = getRepresentation();
 
         /*ACT*/
-        original = representationRepository.save(original);
+        original = representationRepository.saveAndFlush(original);
         Representation persisted = representationRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -57,12 +60,12 @@ public class RepresentationPersistenceTest {
         /*ASSERT*/
         assertTrue(representationRepository.findAll().isEmpty());
 
-        Artifact artifact = artifactRepository.save(getArtifact());
+        Artifact artifact = artifactRepository.saveAndFlush(getArtifact());
         Representation original = representationRepository
-                .save(getRepresentationWithArtifacts(artifact));
+                .saveAndFlush(getRepresentationWithArtifacts(artifact));
 
         /*ACT*/
-        original = representationRepository.save(original);
+        original = representationRepository.saveAndFlush(original);
         Representation persisted = representationRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -77,14 +80,14 @@ public class RepresentationPersistenceTest {
         /*ASSERT*/
         assertTrue(representationRepository.findAll().isEmpty());
 
-        Representation original = representationRepository.save(getRepresentation());
+        Representation original = representationRepository.saveAndFlush(getRepresentation());
         String newTitle = "new title";
 
         assertEquals(1, representationRepository.findAll().size());
 
         /*ACT*/
         original.setTitle(newTitle);
-        representationRepository.save(original);
+        representationRepository.saveAndFlush(original);
         Representation updated = representationRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -102,20 +105,20 @@ public class RepresentationPersistenceTest {
         assertTrue(representationRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus artifact1 is equal to artifact2 if no field changed
-        Artifact artifact1 = artifactRepository.save(getArtifact());
+        Artifact artifact1 = artifactRepository.saveAndFlush(getArtifact());
         Artifact artifact2 = getArtifact();
         artifact2.setTitle("another artifact title");
-        artifact2 = artifactRepository.save(artifact2);
+        artifact2 = artifactRepository.saveAndFlush(artifact2);
 
         Representation original = representationRepository
-                .save(getRepresentationWithArtifacts(artifact1));
+                .saveAndFlush(getRepresentationWithArtifacts(artifact1));
 
         assertEquals(1, representationRepository.findAll().size());
         assertEquals(1, original.getArtifacts().size());
 
         /*ACT*/
         original.getArtifacts().add(artifact2);
-        representationRepository.save(original);
+        representationRepository.saveAndFlush(original);
         Representation updated = representationRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -137,20 +140,20 @@ public class RepresentationPersistenceTest {
         assertTrue(representationRepository.findAll().isEmpty());
 
         //IDs not used in equals(), thus artifact1 is equal to artifact2 if no field changed
-        Artifact artifact1 = artifactRepository.save(getArtifact());
+        Artifact artifact1 = artifactRepository.saveAndFlush(getArtifact());
         Artifact artifact2 = getArtifact();
         artifact2.setTitle("another artifact title");
-        artifact2 = artifactRepository.save(artifact2);
+        artifact2 = artifactRepository.saveAndFlush(artifact2);
 
         Representation original = representationRepository
-                .save(getRepresentationWithArtifacts(artifact1, artifact2));
+                .saveAndFlush(getRepresentationWithArtifacts(artifact1, artifact2));
 
         assertEquals(1, representationRepository.findAll().size());
         assertEquals(2, original.getArtifacts().size());
 
         /*ACT*/
         original.getArtifacts().remove(artifact1);
-        representationRepository.save(original);
+        representationRepository.saveAndFlush(original);
         Representation updated = representationRepository.getOne(original.getId());
 
         /*ASSERT*/
@@ -170,7 +173,7 @@ public class RepresentationPersistenceTest {
         /*ASSERT*/
         assertTrue(representationRepository.findAll().isEmpty());
 
-        Representation representation = representationRepository.save(getRepresentation());
+        Representation representation = representationRepository.saveAndFlush(getRepresentation());
 
         assertEquals(1, representationRepository.findAll().size());
 
@@ -187,10 +190,10 @@ public class RepresentationPersistenceTest {
         assertTrue(representationRepository.findAll().isEmpty());
         assertTrue(artifactRepository.findAll().isEmpty());
 
-        Artifact artifact1 = artifactRepository.save(getArtifact());
-        Artifact artifact2 = artifactRepository.save(getArtifact());
+        Artifact artifact1 = artifactRepository.saveAndFlush(getArtifact());
+        Artifact artifact2 = artifactRepository.saveAndFlush(getArtifact());
         Representation representation = representationRepository
-                .save(getRepresentationWithArtifacts(artifact1, artifact2));
+                .saveAndFlush(getRepresentationWithArtifacts(artifact1, artifact2));
 
         assertEquals(1, representationRepository.findAll().size());
         assertEquals(2, artifactRepository.findAll().size());
@@ -209,9 +212,9 @@ public class RepresentationPersistenceTest {
         assertTrue(representationRepository.findAll().isEmpty());
         assertTrue(artifactRepository.findAll().isEmpty());
 
-        Artifact artifact = artifactRepository.save(getArtifact());
+        Artifact artifact = artifactRepository.saveAndFlush(getArtifact());
         Representation representation = representationRepository
-                .save(getRepresentationWithArtifacts(artifact));
+                .saveAndFlush(getRepresentationWithArtifacts(artifact));
 
         assertEquals(1, representationRepository.findAll().size());
         assertEquals(1, artifactRepository.findAll().size());
