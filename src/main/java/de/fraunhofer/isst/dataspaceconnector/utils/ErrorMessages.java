@@ -32,7 +32,12 @@ public enum ErrorMessages {
     /**
      * The response message type is not as expected.
      */
-    UNEXPECTED_RESPONSE_TYPE("Unexpected ids response type.");
+    UNEXPECTED_RESPONSE_TYPE("Unexpected ids response type."),
+
+    /**
+     * The passed list may not be null.
+     */
+    LIST_NULL("The passed list may not be null.");
 
     /**
      * Holds the enums string.

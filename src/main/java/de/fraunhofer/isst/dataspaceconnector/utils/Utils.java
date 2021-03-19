@@ -32,6 +32,13 @@ public class Utils {
 
 
     public static Page<?> toPage( final List<?> list, final Pageable pageable) {
+        Utils.requireNonNull(list, ErrorMessages.LIST_NULL);
+        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
+
+        if (pageable.equals(Pageable.unpaged())) {
+            return new PageImpl<>(list, pageable, list.size());
+        }
+
         final var start = (int)pageable.getOffset();
         final var end = Math.min(start + pageable.getPageSize(), list.size());
 
