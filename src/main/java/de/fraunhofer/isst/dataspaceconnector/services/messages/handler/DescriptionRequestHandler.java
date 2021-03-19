@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;

@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternExcept
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

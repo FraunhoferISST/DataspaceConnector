@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.CatalogController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.CatalogOfferedResources;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogOfferedResources;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

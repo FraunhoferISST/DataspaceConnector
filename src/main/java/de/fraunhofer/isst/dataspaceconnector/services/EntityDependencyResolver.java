@@ -2,10 +2,10 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

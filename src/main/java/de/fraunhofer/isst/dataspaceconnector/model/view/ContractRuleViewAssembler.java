@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

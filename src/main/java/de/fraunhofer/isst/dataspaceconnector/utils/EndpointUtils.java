@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BasePath;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;

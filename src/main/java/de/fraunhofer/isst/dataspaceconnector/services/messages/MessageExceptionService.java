@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;

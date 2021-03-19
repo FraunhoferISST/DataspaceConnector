@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.ArtifactController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.CatalogController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.ContractController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.OfferedResourceController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.RepresentationController;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.RuleController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.OfferedResourceController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Hidden;

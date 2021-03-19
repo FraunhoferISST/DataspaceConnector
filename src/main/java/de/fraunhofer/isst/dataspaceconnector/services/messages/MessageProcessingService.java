@@ -12,7 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.TemplateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.TemplateBuilder42;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
@@ -36,7 +36,7 @@ public class MessageProcessingService {
     /**
      * Template builder.
      */
-    private final @NonNull TemplateBuilder42<RequestedResource, RequestedResourceDesc> templateBuilder;
+    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> templateBuilder;
 
     /**
      * Service for current connector configuration.

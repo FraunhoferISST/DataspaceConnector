@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import lombok.NonNull;

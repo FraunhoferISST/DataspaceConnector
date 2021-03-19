@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.ArtifactController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
