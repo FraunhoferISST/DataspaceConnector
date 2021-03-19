@@ -2,13 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import lombok.NonNull;
@@ -29,24 +27,6 @@ public class IdsResourceService {
     private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestedResourceService;
 
     private final @NonNull CatalogService catalogService;
-
-    private final @NonNull EndpointService endpointService;
-
-    public de.fraunhofer.iais.eis.Resource getResource(final EndpointId endpointId) {
-        final var endpoint = endpointService.get(endpointId);
-        return IdsViewUtils.create(offeredResourceService.get(endpoint.getInternalId()));
-    }
-
-    public de.fraunhofer.iais.eis.Resource getResource(final URI resourceUri) {
-        final var allEndpoints = endpointService.getAll();
-        for (final var endpoint : allEndpoints) {
-            if (endpoint.toUri().equals(resourceUri)) {
-                return getResource(endpoint);
-            }
-        }
-
-        throw new RuntimeException("Not implemented");
-    }
 
     // TODO Check if the id is the internal or the external one
     // TODO add exception handling
