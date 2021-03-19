@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * The base class for linking contracts to resources.
+ * Base class for handling resource-contract relations.
  * @param <T> The resource type.
  */
 @NoArgsConstructor
@@ -29,14 +29,14 @@ public abstract class AbstractResourceContractLinker<T extends Resource>
 }
 
 /**
- * Links contracts to offered resources.
+ * Handles the relation between an offered resource and its contracts.
  */
 @Service
 @NoArgsConstructor
 class OfferedResourceContractLinker extends AbstractResourceContractLinker<OfferedResource> { }
 
 /**
- * Links contracts to requested resources.
+ * Handles the relation between a requested resource and its contracts.
  */
 @Service
 @NoArgsConstructor
