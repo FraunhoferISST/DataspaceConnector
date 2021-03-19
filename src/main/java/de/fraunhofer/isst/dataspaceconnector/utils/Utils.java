@@ -1,6 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.experimental.UtilityClass;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 /**
  * This utility class contains general purpose functions.
@@ -22,5 +28,17 @@ public class Utils {
         }
 
         return obj;
+    }
+
+
+    public static Page<?> toPage( final List<?> list, final Pageable pageable) {
+        final var start = (int)pageable.getOffset();
+        final var end = Math.min(start + pageable.getPageSize(), list.size());
+
+        if(start > pageable.getPageSize()) {
+            return new PageImpl<>(new ArrayList<>(), pageable, list.size());
+        }
+
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 }

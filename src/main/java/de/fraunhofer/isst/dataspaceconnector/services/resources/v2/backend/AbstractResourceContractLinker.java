@@ -22,14 +22,14 @@ public abstract class AbstractResourceContractLinker<T extends Resource>
 }
 
 @Service
-final class OfferedResourceContractLinker extends AbstractResourceContractLinker<OfferedResource> {
+class OfferedResourceContractLinker extends AbstractResourceContractLinker<OfferedResource> {
     public OfferedResourceContractLinker() {
         super();
     }
 }
 
 @Service
-final class RequestedResourceContractLinker
+class RequestedResourceContractLinker
         extends AbstractResourceContractLinker<RequestedResource> {
     public RequestedResourceContractLinker() {
         super();

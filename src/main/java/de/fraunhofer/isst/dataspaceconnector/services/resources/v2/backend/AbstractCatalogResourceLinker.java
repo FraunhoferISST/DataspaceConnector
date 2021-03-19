@@ -16,7 +16,7 @@ public abstract class AbstractCatalogResourceLinker<T extends Resource>
 }
 
 @Service
-final class CatalogOfferedResourceLinker extends AbstractCatalogResourceLinker<OfferedResource> {
+class CatalogOfferedResourceLinker extends AbstractCatalogResourceLinker<OfferedResource> {
     public CatalogOfferedResourceLinker() {
         super();
     }
@@ -28,7 +28,7 @@ final class CatalogOfferedResourceLinker extends AbstractCatalogResourceLinker<O
 }
 
 @Service
-final class CatalogRequestedResourceLinker extends AbstractCatalogResourceLinker<RequestedResource> {
+class CatalogRequestedResourceLinker extends AbstractCatalogResourceLinker<RequestedResource> {
     public CatalogRequestedResourceLinker() {
         super();
     }

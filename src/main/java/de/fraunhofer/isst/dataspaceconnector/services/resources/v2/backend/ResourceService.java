@@ -12,9 +12,9 @@ public class ResourceService<T extends Resource, D extends ResourceDesc<T>> exte
 }
 
 @Service
-final class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
+class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
 }
 
 @Service
-final class RequestedResourceService extends ResourceService<RequestedResource, RequestedResourceDesc> {
+class RequestedResourceService extends ResourceService<RequestedResource, RequestedResourceDesc> {
 }

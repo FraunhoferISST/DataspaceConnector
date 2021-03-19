@@ -1,13 +1,28 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.v2;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseEntityService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,30 +35,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 /**
  * Offers REST-Api Endpoints for modifying relations between resources.
  *
- * @param <T> The service type for handling the relations logic.
+ * @param <S> The service type for handling the relations logic.
  */
-public class BaseResourceChildController<T extends BaseUniDirectionalLinkerService<?, ?, ?, ?>> {
+public class BaseResourceChildController<S extends BaseUniDirectionalLinkerService<?, ?, ?, ?>,
+        T extends AbstractEntity,V extends RepresentationModel<V>> {
     /**
      * The linker between two resources.
      **/
     @Autowired
-    private T linker;
+    private S linker;
+
+    @Autowired
+    private RepresentationModelAssembler<T, V> assembler;
+
+    @Autowired
+    private PagedResourcesAssembler<T> pagedResourcesAssembler;
+
+    private final Class<S> resourceType;
 
     /**
      * Default constructor.
      */
     protected BaseResourceChildController() {
-        // This constructor is intentionally empty. Nothing to do here.
+        final var resolved = GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceChildController.class);
+        final var linkerServiceClass = resolved[0];
+        final var xxx = GenericTypeResolver.resolveTypeArguments(linkerServiceClass, BaseEntityService.class);
+        resourceType = (Class<S>) resolved[2];
     }
 
     /**
@@ -56,21 +76,22 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<?> getResource(
+    public HttpEntity<PagedModel<V>> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,
             @RequestParam(required = false) final Sort sort) {
-        final var pageable = PageRequest.of(page == null ? 1 : page, size == null ? 30 : size);
+        final var pageable = PageRequest.of(page == null ? 0 : page, size == null ? 30 : size);
         final var entities = linker.get(ownerId, pageable);
-//        PagedModel<V> model;
-//        if (entities.hasContent()) {
-//            model = pagedResourcesAssembler.toModel(entities, assembler);
-//        } else {
-//            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
-//        }
 
-        return ResponseEntity.ok(entities);
+        PagedModel<V> model;
+        if (entities.hasContent()) {
+            model = pagedResourcesAssembler.toModel((Page<T>) entities, assembler);
+        } else {
+            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+        }
+
+        return ResponseEntity.ok(model);
     }
 
     /**
@@ -83,7 +104,7 @@ public class BaseResourceChildController<T extends BaseUniDirectionalLinkerServi
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<?> addResources(@Valid @PathVariable(name = "id") final UUID ownerId,
+    public HttpEntity<PagedModel<V>> addResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         linker.add(ownerId, toSet(resources));
         // Send back the list of children after modification.

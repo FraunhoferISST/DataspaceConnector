@@ -1,20 +1,20 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
-import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
-import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-
+import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import de.fraunhofer.isst.dataspaceconnector.exceptions.handled.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Creates a parent-children relationship between two types of resources.
@@ -56,6 +56,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if the ownerId entity does not exists.
      */
+    @Transactional
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
@@ -74,6 +75,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Transactional
     public void add(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
@@ -101,6 +103,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Transactional
     public void remove(final UUID ownerId,
                        final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
@@ -128,6 +131,7 @@ public abstract class BaseUniDirectionalLinkerService<
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Transactional
     public void replace(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
@@ -155,9 +159,10 @@ public abstract class BaseUniDirectionalLinkerService<
      * @param pageable The children assigned to the entity.
      * @return The page of the children entities.
      */
+    @Transactional
     protected Page<W> getInternal(final K owner, final Pageable pageable) {
         final var entities = getInternal(owner);
-        return new PageImpl<>(entities, pageable, entities.size());
+        return (Page<W>) Utils.toPage(entities, pageable);
     }
 
     /**

@@ -22,7 +22,7 @@ public abstract class AbstractResourceRepresentationLinker<T extends Resource>
 }
 
 @Service
-final class OfferedResourceRepresentation
+class OfferedResourceRepresentation
         extends AbstractResourceRepresentationLinker<OfferedResource> {
     public OfferedResourceRepresentation() {
         super();
@@ -30,7 +30,7 @@ final class OfferedResourceRepresentation
 }
 
 @Service
-final class RequestedResourceRepresentation
+class RequestedResourceRepresentation
         extends AbstractResourceRepresentationLinker<RequestedResource> {
     public RequestedResourceRepresentation() {
         super();
