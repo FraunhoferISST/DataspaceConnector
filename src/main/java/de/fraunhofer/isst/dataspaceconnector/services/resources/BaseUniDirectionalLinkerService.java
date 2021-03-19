@@ -18,16 +18,14 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * Creates a parent-children relationship between two types of resources.
- *
  * @param <K> The type of the parent resource.
  * @param <W> The type of the child resource.
  * @param <T> The service type for the parent resource.
  * @param <X> The service type for the child resource.
  */
 public abstract class BaseUniDirectionalLinkerService<
-        K extends AbstractEntity, W extends AbstractEntity,
-        T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>> {
-
+        K extends AbstractEntity, W extends AbstractEntity, T extends BaseEntityService<K, ?>, X
+                extends BaseEntityService<W, ?>> {
     /**
      * The service for the entity whose relations are modified.
      **/
@@ -49,7 +47,6 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Get all children of an entity.
-     *
      * @param ownerId The id of the entity whose children should be received.
      * @param pageable The {@link Pageable} object for getting only a page of objects.
      * @return The ids of the children.
@@ -66,11 +63,8 @@ public abstract class BaseUniDirectionalLinkerService<
     }
 
     /**
-     * Add a list of children to an entity.
-     * The children must exist.
-     *
-     * @param ownerId  The id of the entity that the children should be added
-     *                 to.
+     * Add a list of children to an entity. The children must exist.
+     * @param ownerId  The id of the entity that the children should be added to.
      * @param entities The children to be added.
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
@@ -96,16 +90,13 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Remove a list of children from an entity.
-     *
-     * @param ownerId  The id of the entity that the children should be removed
-     *                 from.
+     * @param ownerId  The id of the entity that the children should be removed from.
      * @param entities The children to be removed.
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
     @Transactional
-    public void remove(final UUID ownerId,
-                       final Set<UUID> entities) {
+    public void remove(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
 
@@ -125,7 +116,6 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Replace the children of an entity.
-     *
      * @param ownerId  The id of the entity whose children should be replaced.
      * @param entities The new children for the entity.
      * @throws IllegalArgumentException if any of the passed arguments is null.
@@ -146,7 +136,6 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Receives the list of children assigned to the entity.
-     *
      * @param owner The entity whose children should be received.
      * @return The children assigned to the entity.
      */
@@ -154,7 +143,6 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Receives a page of children assigned to the entity.
-     *
      * @param owner The entity whose children should be received.
      * @param pageable The children assigned to the entity.
      * @return The page of the children entities.
@@ -167,7 +155,6 @@ public abstract class BaseUniDirectionalLinkerService<
 
     /**
      * Adds children to an entity.
-     *
      * @param owner    The entity that the children should be assigned to.
      * @param entities The children added to the entity.
      */
