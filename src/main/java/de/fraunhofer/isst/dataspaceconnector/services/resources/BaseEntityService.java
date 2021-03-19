@@ -16,12 +16,10 @@ import org.springframework.data.domain.Pageable;
 
 /**
  * The base service implements base logic for persistent entities.
- *
  * @param <T> The entity type.
  * @param <D> The description for the passed entity type.
  */
 public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescription<T>> {
-
     /**
      * Persists all entities of type T.
      **/
@@ -43,7 +41,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Creates a new persistent entity.
-     *
      * @param desc The description of the new entity.
      * @return The new entity.
      * @throws IllegalArgumentException if the desc is null.
@@ -57,7 +54,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Updates an existing entity.
-     *
      * @param entityId The id of the entity.
      * @param desc     The new description of the entity.
      * @return The updated entity.
@@ -80,7 +76,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Get the entity for a given id.
-     *
      * @param entityId The id of the entity.
      * @return The entity.
      * @throws IllegalArgumentException if the passed id is null.
@@ -102,7 +97,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Get a list of all entities with of the same type.
-     *
      * @param pageable Range selection of the complete data set.
      * @return The id list of all entities.
      * @throws IllegalArgumentException if the passed pageable is null.
@@ -115,7 +109,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Checks if a entity exists for a given id.
-     *
      * @param entityId The id of entity.
      * @return True if the entity exists.
      * @throws IllegalArgumentException if the passed id is null.
@@ -128,7 +121,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Delete an entity with the given id.
-     *
      * @param entityId The id of the entity.
      * @throws IllegalArgumentException if the passed id is null.
      */
@@ -140,7 +132,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
     /**
      * Persists an entity.
-     *
      * @param entity The entity.
      * @return The persisted entity.
      */
