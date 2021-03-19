@@ -6,32 +6,38 @@ import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * The base class for linking contracts to resources.
+ * @param <T> The resource type.
+ */
+@NoArgsConstructor
 public abstract class AbstractResourceContractLinker<T extends Resource>
         extends BaseUniDirectionalLinkerService<T, Contract, ResourceService<T, ?>,
                 ContractService> {
-    protected AbstractResourceContractLinker() {
-        super();
-    }
-
+    /**
+     * Get the list of contracts owned by the resource.
+     * @param owner The owner of the contracts.
+     * @return The list of owned contracts.
+     */
     @Override
     protected List<Contract> getInternal(final Resource owner) {
         return owner.getContracts();
     }
 }
 
+/**
+ * Links contracts to offered resources.
+ */
 @Service
-class OfferedResourceContractLinker extends AbstractResourceContractLinker<OfferedResource> {
-    public OfferedResourceContractLinker() {
-        super();
-    }
-}
+@NoArgsConstructor
+class OfferedResourceContractLinker extends AbstractResourceContractLinker<OfferedResource> { }
 
+/**
+ * Links contracts to requested resources.
+ */
 @Service
-class RequestedResourceContractLinker
-        extends AbstractResourceContractLinker<RequestedResource> {
-    public RequestedResourceContractLinker() {
-        super();
-    }
-}
+@NoArgsConstructor
+class RequestedResourceContractLinker extends AbstractResourceContractLinker<RequestedResource> { }
