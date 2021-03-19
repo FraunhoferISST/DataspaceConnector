@@ -1,7 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 
+/**
+ * The list of the api's paths.
+ */
 public enum BasePath {
     /**
      * The resource endpoint's base path.
@@ -60,6 +64,7 @@ public enum BasePath {
                 return b;
             }
         }
-        return null;
+
+        throw new UnreachableLineException("This code should not have been reached.");
     }
 }
