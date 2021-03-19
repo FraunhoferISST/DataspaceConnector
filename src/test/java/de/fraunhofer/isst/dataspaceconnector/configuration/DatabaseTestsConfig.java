@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.configuration;
 
-import de.fraunhofer.isst.dataspaceconnector.model.view.ids.IdsViewer;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +15,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = {"de.fraunhofer.isst.dataspaceconnector.repositories",
         "de.fraunhofer.isst.dataspaceconnector.model"},
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = IdsViewer.class)})
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = IdsViewUtils.class)})
 public class DatabaseTestsConfig {
 }

@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ids.IdsViewer;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.RepresentationService;
@@ -85,13 +85,13 @@ public class EntityResolver {
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
             ConstraintViolationException, InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = IdsViewer.create((Artifact) entity);
+            final var artifact = IdsViewUtils.create((Artifact) entity);
             return IdsUtils.getArtifactAsRdf(artifact);
         } else if (entity instanceof Resource) {
-            final var resource = IdsViewer.create((Resource) entity);
+            final var resource = IdsViewUtils.create((Resource) entity);
             return IdsUtils.getResourceAsRdf(resource);
         } else if (entity instanceof Representation) {
-            final var representation = IdsViewer.create((Representation) entity);
+            final var representation = IdsViewUtils.create((Representation) entity);
             return IdsUtils.getRepresentationAsRdf(representation);
         } else {
             throw new InvalidResourceException("No provided description for requested element.");

@@ -1,12 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view.ids;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -26,18 +18,27 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class IdsViewer {
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+
+public final class IdsViewUtils {
+
+    private IdsViewUtils() {
+        // not used
+    }
+
     /**
      * Class level logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdsViewer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdsViewUtils.class);
 
     /**
      * Build ids catalog from database contract and its children.
@@ -67,7 +68,7 @@ public final class IdsViewer {
      */
     public static List<Resource> batchCreateResource(final Collection<OfferedResource> resources) {
         return resources.parallelStream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -103,9 +104,9 @@ public final class IdsViewer {
 
         try {
             return new ResourceBuilder(uri) // TODO add values to data model
-                                            //                    ._accrualPeriodicity_()
-                                            //                    ._assetRefinement_()
-                                            //                    ._contentType_()
+//                    ._accrualPeriodicity_()
+//                    ._assetRefinement_()
+//                    ._contentType_()
                     ._contractOffer_((ArrayList<? extends ContractOffer>) contracts.get())
                     ._created_(IdsUtils.getGregorianOf(created))
                     ._description_(Util.asList(new TypedLiteral(description, language)))
@@ -114,14 +115,14 @@ public final class IdsViewer {
                     ._modified_(IdsUtils.getGregorianOf(modified))
                     ._publisher_(publisher)
                     ._representation_((ArrayList<? extends Representation>) representations.get())
-                    //                    ._resourceEndpoint_(Util.asList(ce)) // TODO add resource
-                    //                    endpoints
-                    //                    ._sovereign_()
-                    //                    ._spatialCoverage_()
-                    //                    ._shapesGraph_()
+//                    ._resourceEndpoint_(Util.asList(ce)) // TODO add resource
+//                    endpoints
+//                    ._sovereign_()
+//                    ._spatialCoverage_()
+//                    ._shapesGraph_()
                     ._standardLicense_(license)
-                    //                    ._temporalCoverage_()
-                    //                    ._temporalResolution_()
+//                    ._temporalCoverage_()
+//                    ._temporalResolution_()
                     ._title_(Util.asList(new TypedLiteral(title, language)))
                     ._version_(String.valueOf(version))
                     .build();
@@ -143,7 +144,7 @@ public final class IdsViewer {
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Representation>
                     representations) {
         return representations.parallelStream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -164,15 +165,15 @@ public final class IdsViewer {
 
         try {
             return new RepresentationBuilder(uri) // TODO add values to data model
-                                                  //                    ._created_()
+                    //                    ._created_()
                     ._instance_((ArrayList<? extends Artifact>) artifacts.get())
-                    //                    ._language_(Language.EN) // TODO parse the language (where
-                    //                    to get from?)
+//                    ._language_(Language.EN) // TODO parse the language (where
+//                    to get from?)
                     ._mediaType_(new IANAMediaTypeBuilder()
-                                         ._filenameExtension_(representation.getMediaType())
-                                         .build())
-                    //                    ._modified_()
-                    //                    ._shapesGraph_()
+                            ._filenameExtension_(representation.getMediaType())
+                            .build())
+//                    ._modified_()
+//                    ._shapesGraph_()
                     .build();
         } catch (Exception exception) {
             LOGGER.warn("Failed to build representation. [exception=({})]", exception.getMessage());
@@ -189,7 +190,7 @@ public final class IdsViewer {
     public static List<Artifact> batchCreateArtifact(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Artifact> artifacts) {
         return artifacts.parallelStream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -225,7 +226,7 @@ public final class IdsViewer {
      */
     public static List<ContractOffer> batchCreateContract(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts) {
-        return contracts.parallelStream().map(IdsViewer::create).collect(Collectors.toList());
+        return contracts.parallelStream().map(IdsViewUtils::create).collect(Collectors.toList());
     }
 
     /**
@@ -236,30 +237,30 @@ public final class IdsViewer {
      */
     public static ContractOffer create(
             final de.fraunhofer.isst.dataspaceconnector.model.Contract contract) {
-        //        final var rules = contract.getRules();
-        //
-        //        // Add the provider to the contract offer.
-        //        try {
-        //            final var contractOffer = serializerProvider.getSerializer().deserialize(
-        //                    rule.getValue(), ContractOffer.class);
-        //            return new ContractOfferBuilder()
-        //                    ._permission_(contractOffer.getPermission())
-        //                    ._prohibition_(contractOffer.getProhibition())
-        //                    ._obligation_(contractOffer.getObligation())
-        //                    ._contractStart_(contractOffer.getContractStart())
-        //                    ._contractDate_(contractOffer.getContractDate())
-        //                    ._consumer_(contractOffer.getConsumer())
-        //                    ._provider_(configContainer.getConnector().getId())
-        //                    ._contractEnd_(contractOffer.getContractEnd())
-        //                    ._contractAnnex_(contractOffer.getContractAnnex())
-        //                    ._contractDocument_(contractOffer.getContractDocument())
-        //                    .build();
-        //        } catch (IOException exception) {
-        //            LOGGER.debug("Could not deserialize contract. [exception=({}),
-        //            contract=({})]",
-        //                    rule.getValue(), exception.getMessage());
-        //            throw new RuntimeException("Could not deserialize contract.", exception);
-        //        }
+//        final var rules = contract.getRules();
+//
+//        // Add the provider to the contract offer.
+//        try {
+//            final var contractOffer = serializerProvider.getSerializer().deserialize(
+//                    rule.getValue(), ContractOffer.class);
+//            return new ContractOfferBuilder()
+//                    ._permission_(contractOffer.getPermission())
+//                    ._prohibition_(contractOffer.getProhibition())
+//                    ._obligation_(contractOffer.getObligation())
+//                    ._contractStart_(contractOffer.getContractStart())
+//                    ._contractDate_(contractOffer.getContractDate())
+//                    ._consumer_(contractOffer.getConsumer())
+//                    ._provider_(configContainer.getConnector().getId())
+//                    ._contractEnd_(contractOffer.getContractEnd())
+//                    ._contractAnnex_(contractOffer.getContractAnnex())
+//                    ._contractDocument_(contractOffer.getContractDocument())
+//                    .build();
+//        } catch (IOException exception) {
+//            LOGGER.debug("Could not deserialize contract. [exception=({}),
+//            contract=({})]",
+//                    rule.getValue(), exception.getMessage());
+//            throw new RuntimeException("Could not deserialize contract.", exception);
+//        }
         return null;
     }
 }

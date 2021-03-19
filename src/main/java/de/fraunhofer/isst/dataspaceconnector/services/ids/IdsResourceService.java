@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
@@ -11,14 +7,18 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ids.IdsViewer;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.EndpointService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backend.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class IdsResourceService {
 
     public de.fraunhofer.iais.eis.Resource getResource(final EndpointId endpointId) {
         final var endpoint = endpointService.get(endpointId);
-        return IdsViewer.create(offeredResourceService.get(endpoint.getInternalId()));
+        return IdsViewUtils.create(offeredResourceService.get(endpoint.getInternalId()));
     }
 
     public de.fraunhofer.iais.eis.Resource getResource(final URI resourceUri) {
@@ -53,21 +53,21 @@ public class IdsResourceService {
     public List<Resource> getAllOfferedResources() {
         return offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .collect(Collectors.toList());
     }
 
     public List<Resource> getAllRequestedResources() {
         return requestedResourceService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .collect(Collectors.toList());
     }
 
     public List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewer::create)
+                .map(IdsViewUtils::create)
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +83,7 @@ public class IdsResourceService {
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))
                 .findAny();
 
-        return resource.map(offeredResource -> IdsViewer.create(offeredResource)).orElse(null);
+        return resource.map(offeredResource -> IdsViewUtils.create(offeredResource)).orElse(null);
     }
 
     /**
@@ -98,6 +98,6 @@ public class IdsResourceService {
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))
                 .findAny();
 
-        return resource.map(offeredResource -> IdsViewer.create(offeredResource)).orElse(null);
+        return resource.map(offeredResource -> IdsViewUtils.create(offeredResource)).orElse(null);
     }
 }
