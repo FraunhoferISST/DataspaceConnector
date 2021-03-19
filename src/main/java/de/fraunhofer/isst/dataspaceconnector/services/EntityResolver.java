@@ -47,11 +47,6 @@ public class EntityResolver {
     private final @NonNull CatalogService catalogService;
 
     /**
-     * Service for ids mapping.
-     */
-    private final @NonNull IdsViewer idsViewer;
-
-    /**
      * Return any connector entity by its id.
      *
      * @param elementId The entity id.
@@ -90,13 +85,13 @@ public class EntityResolver {
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
             ConstraintViolationException, InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = idsViewer.create((Artifact) entity);
+            final var artifact = IdsViewer.create((Artifact) entity);
             return IdsUtils.getArtifactAsRdf(artifact);
         } else if (entity instanceof Resource) {
-            final var resource = idsViewer.create((Resource) entity);
+            final var resource = IdsViewer.create((Resource) entity);
             return IdsUtils.getResourceAsRdf(resource);
         } else if (entity instanceof Representation) {
-            final var representation = idsViewer.create((Representation) entity);
+            final var representation = IdsViewer.create((Representation) entity);
             return IdsUtils.getRepresentationAsRdf(representation);
         } else {
             throw new InvalidResourceException("No provided description for requested element.");
