@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.net.MalformedURLException;
+import java.util.UUID;
+
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
@@ -10,11 +14,9 @@ import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.net.MalformedURLException;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -22,7 +24,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
-    // TODO Clean up the code / Refactor
+    /**
+     * Class level logger.
+     */
+    static final Logger LOGGER = LoggerFactory.getLogger(ArtifactService.class);
 
     /**
      * Repository for storing data.
@@ -77,7 +82,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
         } else if (data instanceof RemoteData) {
             rawData = getData((RemoteData) data, queryInput);
         } else {
-            throw new NotImplementedException("Unknown data type.");
+            throw new UnreachableLineException("Unknown data type.");
         }
 
         artifact.incrementAccessCounter();
@@ -104,7 +109,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @return The stored data.
      */
     private Object getData(final RemoteData data, final QueryInput queryInput) {
-        // TODO: Passthrough Uri not string
         try {
             if (data.getUsername() != null || data.getPassword() != null) {
                 return httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
@@ -113,7 +117,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
                 return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
         } catch (MalformedURLException exception) {
-            // TODO: LOG
+            LOGGER.warn(
+                    "Could not connect to data source. [exception=({})]", exception.getMessage());
             throw new RuntimeException("Could not connect to data source.", exception);
         }
     }
