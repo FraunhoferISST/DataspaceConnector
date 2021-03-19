@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 @NoArgsConstructor
 public class ContractRuleLinker extends BaseUniDirectionalLinkerService<Contract, ContractRule,
         ContractService, RuleService> {
+    /**
+     * Get the list of rules owned by the contract.
+     * @param owner The owner of the rules.
+     * @return The list of owned rules.
+     */
     @Override
     protected List<ContractRule> getInternal(final Contract owner) {
         return owner.getRules();
