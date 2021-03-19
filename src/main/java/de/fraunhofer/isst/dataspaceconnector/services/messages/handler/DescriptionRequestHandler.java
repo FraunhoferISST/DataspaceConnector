@@ -160,7 +160,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             // Build ids response message.
             final var desc = new DescriptionResponseMessageDesc(messageId);
             final var header = messageService.buildMessage(issuerConnector, desc);
-            final var payload = IdsUtils.getConnectorAsRdf(selfDescription);
+            final var payload = IdsUtils.toRdf(selfDescription);
 
             // Send ids response message.
             return BodyResponse.create(header, payload);

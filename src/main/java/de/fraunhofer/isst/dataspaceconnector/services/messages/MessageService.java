@@ -61,7 +61,7 @@ public class MessageService {
                                                           final ContractRequest contractRequest)
             throws MessageException, UnexpectedMessageType, ConstraintViolationException {
         final var contractId = contractRequest.getId();
-        final var contractRdf = IdsUtils.getContractRequestAsRdf(contractRequest);
+        final var contractRdf = IdsUtils.toRdf(contractRequest);
 
         final var desc = new ContractRequestMessageDesc(contractId);
         desc.setRecipient(recipient);

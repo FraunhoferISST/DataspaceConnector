@@ -82,7 +82,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var header = buildMessage(recipient, desc);
             // Exception is handled at a higher level.
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
-            LOGGER.debug("Built request message:" + body);
+            LOGGER.debug("Built request message:" + body); // TODO Add logging house class
 
             final var response = idsHttpService.sendAndCheckDat(body, recipient);
 

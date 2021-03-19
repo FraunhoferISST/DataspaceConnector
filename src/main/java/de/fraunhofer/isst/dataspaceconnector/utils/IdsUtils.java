@@ -1,13 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -16,6 +8,14 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  *
@@ -33,7 +33,7 @@ public final class IdsUtils {
      * @return The ids connector as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String getConnectorAsRdf(final BaseConnector baseConnector)
+    public static String toRdf(final BaseConnector baseConnector)
             throws ConstraintViolationException {
         return baseConnector.toRdf();
     }
@@ -45,7 +45,7 @@ public final class IdsUtils {
      * @return The ids resource as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String getResourceAsRdf(final Resource resource)
+    public static String toRdf(final Resource resource)
             throws ConstraintViolationException {
         return resource.toRdf();
     }
@@ -57,7 +57,7 @@ public final class IdsUtils {
      * @return The ids artifact as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String getArtifactAsRdf(final Artifact artifact)
+    public static String toRdf(final Artifact artifact)
             throws ConstraintViolationException {
         return artifact.toRdf();
     }
@@ -69,7 +69,7 @@ public final class IdsUtils {
      * @return The ids representation as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String getRepresentationAsRdf(final Representation representation)
+    public static String toRdf(final Representation representation)
             throws ConstraintViolationException {
         return representation.toRdf();
     }
@@ -81,7 +81,7 @@ public final class IdsUtils {
      * @return The ids contract request as rdf string.
      * @throws ConstraintViolationException If the response could not be extracted.
      */
-    public static String getContractRequestAsRdf(final ContractRequest request)
+    public static String toRdf(final ContractRequest request)
             throws ConstraintViolationException {
         return request.toRdf();
     }
