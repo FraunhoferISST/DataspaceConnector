@@ -29,7 +29,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 // TODO cleaner split between IdsViewer and IdsResourceService
@@ -50,7 +50,8 @@ public final class IdsViewer {
      */
     public ResourceCatalog create(final Catalog catalog) {
         final var resources =
-                CompletableFuture.supplyAsync(() -> batchCreateResource(catalog.getOfferedResources()));
+                CompletableFuture.supplyAsync(() -> batchCreateResource(
+                        catalog.getOfferedResources()), Executors.newSingleThreadExecutor());
 
         try {
             return new ResourceCatalogBuilder()
@@ -88,9 +89,11 @@ public final class IdsViewer {
 
         // Build children.
         final var contracts =
-                CompletableFuture.supplyAsync(() -> batchCreateContract(resource.getContracts()));
+                CompletableFuture.supplyAsync(() -> batchCreateContract(
+                        resource.getContracts()), Executors.newSingleThreadExecutor());
         final var representations =
-                CompletableFuture.supplyAsync(() -> batchCreateRepresentation(resource.getRepresentations()));
+                CompletableFuture.supplyAsync(() -> batchCreateRepresentation(
+                        resource.getRepresentations()), Executors.newSingleThreadExecutor());
 
         // Prepare other information.
         final var created = resource.getCreationDate();
@@ -99,7 +102,7 @@ public final class IdsViewer {
         final var languages = IdsUtils.getLanguages(language);
         final var keywords =
                 CompletableFuture.supplyAsync(() -> IdsUtils.getKeywords(resource.getKeywords(),
-                        language));
+                        language), Executors.newSingleThreadExecutor());
         final var license = resource.getLicence();
         final var modified = resource.getModificationDate();
         final var publisher = resource.getPublisher();
@@ -114,8 +117,8 @@ public final class IdsViewer {
                     ._contractOffer_((ArrayList<? extends ContractOffer>) contracts.get())
                     ._created_(IdsUtils.getGregorianOf(created))
                     ._description_(Util.asList(new TypedLiteral(description, language)))
-                    ._keyword_((ArrayList<? extends TypedLiteral>) keywords.get())
                     ._language_((ArrayList<? extends Language>) languages)
+                    ._keyword_((ArrayList<? extends TypedLiteral>) keywords.get())
                     ._modified_(IdsUtils.getGregorianOf(modified))
                     ._publisher_(publisher)
                     ._representation_((ArrayList<? extends Representation>) representations.get())
@@ -163,7 +166,8 @@ public final class IdsViewer {
         final var representationId = new EndpointId(basePath, id).toUri();
 
         final var artifacts = CompletableFuture.supplyAsync(
-                () -> batchCreateArtifact(representation.getArtifacts()));
+                () -> batchCreateArtifact(representation.getArtifacts()),
+                Executors.newSingleThreadExecutor());
 
         try {
             return new RepresentationBuilder(representationId) // TODO add values to data model
@@ -176,7 +180,7 @@ public final class IdsViewer {
 //                    ._modified_()
 //                    ._shapesGraph_()
                     .build();
-        } catch (InterruptedException | ExecutionException exception) {
+        } catch (Exception exception) {
             LOGGER.warn("Failed to build representation. [exception=({})]", exception.getMessage());
             return null;
         }
