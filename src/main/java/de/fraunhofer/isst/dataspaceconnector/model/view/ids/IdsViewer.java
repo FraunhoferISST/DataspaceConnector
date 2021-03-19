@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.v2.backendtofrontend.BasePath;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.experimental.UtilityClass;
@@ -46,11 +47,11 @@ public final class IdsViewer {
      * @return The ids catalog.
      */
     public static ResourceCatalog create(final Catalog catalog) {
-        final var resources = batchCreateResource(catalog.getOfferedResources());
+        final var resources = CompletableFuture.supplyAsync(() -> batchCreateResource(catalog.getOfferedResources()));
 
         try {
             return new ResourceCatalogBuilder()
-                    ._offeredResource_((ArrayList<? extends Resource>) resources)
+                    ._offeredResource_((ArrayList<? extends Resource>) resources.get())
                     .build();
         } catch (Exception exception) {
             LOGGER.warn("Failed to build catalog. [exception=({})]", exception.getMessage());
@@ -78,9 +79,8 @@ public final class IdsViewer {
      * @return The ids resource.
      */
     public static Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
-        final var id = resource.getId();
-        final var basePath = BasePath.RESOURCES.toString();
-        final var resourceId = new EndpointId(basePath, id).toUri();
+        final var view = new OfferedResourceViewAssembler().toModel((OfferedResource) resource);
+        final var endpointUri = view.getLink("self").get().toUri();
 
         // Build children.
         final var contracts =
@@ -104,7 +104,7 @@ public final class IdsViewer {
         final var version = resource.getVersion();
 
         try {
-            return new ResourceBuilder(resourceId) // TODO add values to data model
+            return new ResourceBuilder(endpointUri) // TODO add values to data model
                                                    //                    ._accrualPeriodicity_()
                                                    //                    ._assetRefinement_()
                                                    //                    ._contentType_()
