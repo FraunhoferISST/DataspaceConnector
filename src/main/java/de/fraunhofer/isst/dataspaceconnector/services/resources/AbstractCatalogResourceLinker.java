@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Base class for linking resources to catalogs.
+ * Base class for handling catalog-resource relations.
  * @param <T> The resource type.
  */
 public abstract class AbstractCatalogResourceLinker<T extends Resource>
@@ -24,7 +24,7 @@ public abstract class AbstractCatalogResourceLinker<T extends Resource>
 }
 
 /**
- * Links offered resources to a catalog.
+ * Handles the relation between a catalog and its offered resources.
  */
 @Service
 @NoArgsConstructor
@@ -36,7 +36,7 @@ class CatalogOfferedResourceLinker extends AbstractCatalogResourceLinker<Offered
 }
 
 /**
- * Links requested resources to a catalog.
+ * Handles the relation between a catalog and its requested resources.
  */
 @Service
 @NoArgsConstructor
