@@ -4,10 +4,8 @@ import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
@@ -46,31 +44,11 @@ public class IdsConnectorService {
     public BaseConnector getConnectorWithOfferedResources() throws ConstraintViolationException {
         // Get a local copy of the current connector.
         final var connector = configContainer.getConnector();
+        final var catalogs = resourceService.getAllCatalogsWithOfferedResources();
 
         // Create a connector with a list of offered resources.
         final var connectorImpl = (BaseConnectorImpl) connector;
-        connectorImpl.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                ._offeredResource_((ArrayList<? extends Resource>)
-                        resourceService.getAllOfferedResources())
-                .build()));
-        return connectorImpl;
-    }
-
-    /**
-     * Build a base connector object with all offered and requested resources.
-     *
-     * @return The ids base connector object.
-     */
-    public BaseConnector getConnectorWithAllResources() throws ConstraintViolationException {
-        // Get a local copy of the current connector.
-        final var connector = configContainer.getConnector();
-
-        // Create a connector with a list of offered resources.
-        final var connectorImpl = (BaseConnectorImpl) connector;
-        connectorImpl.setResourceCatalog(Util.asList(new ResourceCatalogBuilder()
-                ._offeredResource_((ArrayList<? extends Resource>) resourceService.getAllOfferedResources())
-                ._requestedResource_((ArrayList<? extends Resource>) resourceService.getAllRequestedResources())
-                .build()));
+        connectorImpl.setResourceCatalog((ArrayList<? extends ResourceCatalog>) catalogs);
         return connectorImpl;
     }
 
@@ -96,7 +74,7 @@ public class IdsConnectorService {
      */
     public void updateConfigModel() throws ConfigurationUpdateException  {
         try {
-            final var connector = getConnectorWithAllResources();
+            final var connector = getConnectorWithOfferedResources();
             final var configModel = (ConfigurationModelImpl) configContainer.getConfigModel();
             configModel.setConnectorDescription(connector);
 

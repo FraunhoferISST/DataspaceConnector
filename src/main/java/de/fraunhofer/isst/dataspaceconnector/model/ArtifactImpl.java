@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * Contains the data kept in an artifact.
@@ -28,7 +28,7 @@ public class ArtifactImpl extends Artifact {
     /**
      * The data stored in the artifact.
      **/
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = { CascadeType.ALL })
     @JsonInclude
     @ToString.Exclude
     private Data data;
