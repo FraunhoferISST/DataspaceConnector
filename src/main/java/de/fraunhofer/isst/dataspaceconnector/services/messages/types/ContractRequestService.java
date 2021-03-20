@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
-import de.fraunhofer.iais.eis.ContractAgreementMessage;
+import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -41,6 +41,6 @@ public final class ContractRequestService extends AbstractMessageService<Contrac
 
     @Override
     protected Class<?> getResponseMessageType() {
-        return ContractAgreementMessage.class;
+        return ContractAgreementMessageImpl.class;
     }
 }

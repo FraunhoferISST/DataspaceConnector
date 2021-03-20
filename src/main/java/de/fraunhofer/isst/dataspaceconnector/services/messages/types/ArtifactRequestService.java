@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
-import de.fraunhofer.iais.eis.ArtifactResponseMessage;
+import de.fraunhofer.iais.eis.ArtifactResponseMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
@@ -43,6 +43,6 @@ public final class ArtifactRequestService extends AbstractMessageService<Artifac
 
     @Override
     protected Class<?> getResponseMessageType() {
-        return ArtifactResponseMessage.class;
+        return ArtifactResponseMessageImpl.class;
     }
 }

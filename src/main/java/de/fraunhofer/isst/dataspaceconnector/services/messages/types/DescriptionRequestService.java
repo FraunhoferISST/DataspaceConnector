@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
-import de.fraunhofer.iais.eis.DescriptionResponseMessage;
+import de.fraunhofer.iais.eis.DescriptionResponseMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
@@ -41,6 +41,6 @@ public final class DescriptionRequestService extends AbstractMessageService<Desc
 
     @Override
     protected Class<?> getResponseMessageType() {
-        return DescriptionResponseMessage.class;
+        return DescriptionResponseMessageImpl.class;
     }
 }
