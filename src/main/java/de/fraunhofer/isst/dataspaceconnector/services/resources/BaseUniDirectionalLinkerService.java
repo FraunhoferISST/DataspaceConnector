@@ -150,7 +150,7 @@ public abstract class BaseUniDirectionalLinkerService<
     @Transactional
     protected Page<W> getInternal(final K owner, final Pageable pageable) {
         final var entities = getInternal(owner);
-        return (Page<W>) Utils.toPage(entities, pageable);
+        return Utils.toPage(entities, pageable);
     }
 
     /**

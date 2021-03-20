@@ -1,12 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.experimental.UtilityClass;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This utility class contains general purpose functions.
@@ -31,7 +31,7 @@ public class Utils {
     }
 
 
-    public static Page<?> toPage( final List<?> list, final Pageable pageable) {
+    public static <T> Page<T> toPage( final List<T> list, final Pageable pageable) {
         Utils.requireNonNull(list, ErrorMessages.LIST_NULL);
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
 
