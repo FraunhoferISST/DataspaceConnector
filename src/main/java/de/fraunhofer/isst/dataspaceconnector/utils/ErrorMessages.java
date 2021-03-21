@@ -37,7 +37,17 @@ public enum ErrorMessages {
     /**
      * The passed list may not be null.
      */
-    LIST_NULL("The passed list may not be null.");
+    LIST_NULL("The passed list may not be null."),
+
+    /**
+     * One of the contracts is empty.
+     */
+    EMPTY_CONTRACT("Empty contracts cannot be compared."),
+
+    /**
+     * If the content of two contracts is not equal.
+     */
+    CONTRACT_MISMATCH("The contract's content do not match.");
 
     /**
      * Holds the enums string.

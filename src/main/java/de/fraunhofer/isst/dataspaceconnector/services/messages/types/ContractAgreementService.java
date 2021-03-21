@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
@@ -41,6 +41,6 @@ public final class ContractAgreementService extends AbstractMessageService<Contr
 
     @Override
     protected Class<?> getResponseMessageType() {
-        return MessageProcessedNotificationMessage.class;
+        return MessageProcessedNotificationMessageImpl.class;
     }
 }

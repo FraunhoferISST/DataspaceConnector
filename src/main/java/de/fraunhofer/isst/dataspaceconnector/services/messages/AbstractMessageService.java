@@ -92,7 +92,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             return response;
         } catch (MessageResponseException e) {
             LOGGER.warn("Failed to read ids response message. [exception=({})]", e.getMessage());
-            throw new MessageBuilderException("Ids message header could not be built.", e);
+            throw new MessageBuilderException("Invalid ids response message.", e);
         } catch (ConstraintViolationException e) {
             LOGGER.warn("Ids message could not be built. [exception=({})]", e.getMessage());
             throw new MessageBuilderException("Ids message header could not be built.", e);
@@ -116,7 +116,9 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
             final var idsMessage = getDeserializer().deserializeResponseMessage(header);
 
-            final var validType = idsMessage.getClass().equals(getResponseMessageType());
+            final var messageType = idsMessage.getClass();
+            final var allowedType = getResponseMessageType();
+            final var validType = messageType.equals(allowedType);
             if (!validType) {
                 throw new UnexpectedMessageType(ErrorMessages.UNEXPECTED_RESPONSE_TYPE.toString());
             }
