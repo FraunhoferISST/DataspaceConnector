@@ -51,5 +51,5 @@ public class Contract extends AbstractEntity {
      * The representations in which this contract is used.
      */
     @ManyToMany(mappedBy = "contracts")
-    private List<OfferedResource> resources;
+    private List<Resource> resources;
 }

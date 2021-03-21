@@ -25,5 +25,11 @@ public final class OfferedResource extends Resource {
      * The catalogs in which this resource is used.
      */
     @ManyToMany(mappedBy = "offeredResources")
-    private List<Catalog> catalogList;
+    private List<Catalog> catalogs;
+
+    @Override
+    public void setCatalogs(final List<Catalog> catalogs) { this.catalogs = catalogs; }
+
+    @Override
+    public List<Catalog> getCatalogs() { return catalogs; }
 }
