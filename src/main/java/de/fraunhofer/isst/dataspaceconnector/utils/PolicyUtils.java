@@ -4,9 +4,12 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -228,5 +231,173 @@ public final class PolicyUtils {
         cal.add(Calendar.YEAR, duration.getYears());
 
         return cal.getTime();
+    }
+
+    /**
+     * Check if each rule contains a target.
+     *
+     * @param ruleList The ids rule list.
+     * @throws InvalidContractException If a target is missing.
+     */
+    public static void validateRuleTarget(final List<? extends Rule> ruleList) throws InvalidContractException {
+        for (final var rule : ruleList) {
+            final var target = rule.getTarget();
+            if (target == null || target.toString().equals("")) {
+                throw new InvalidContractException(ErrorMessages.MISSING_TARGET.toString());
+            }
+        }
+    }
+
+    /**
+     * Validate if the assigner is the expected one.
+     *
+     * @param agreement The contract agreement.
+     * @throws ContractException If the assigner is not as expected.
+     */
+    public static void validateRuleAssigner(final ContractAgreement agreement) throws ContractException {
+        // TODO
+    }
+
+    /**
+     * Compare two lists of rules with each other.
+     *
+     * @param oldContract The old contract.
+     * @param newContract The new contract.
+     * @throws ContractException If a mismatch has been detected.
+     */
+    public static void validateRuleContent(final Contract oldContract,
+                                           final Contract newContract) throws ContractException {
+        if (oldContract == null || newContract == null) {
+            throw new ContractException(ErrorMessages.EMPTY_CONTRACT.toString());
+        }
+
+        final var oldPermissions = oldContract.getPermission();
+        final var newPermissions = newContract.getPermission();
+        if (oldPermissions != null && newPermissions != null) {
+            compareDuties(oldPermissions, newPermissions);
+            compareRules(oldPermissions, oldPermissions);
+        }
+
+        final var oldProhibitions = oldContract.getProhibition();
+        final var newProhibitions = newContract.getProhibition();
+        if (oldProhibitions != null && newProhibitions != null) {
+            compareRules(oldProhibitions, newProhibitions);
+        }
+
+        final var oldObligations = oldContract.getObligation();
+        final var newObligations = newContract.getObligation();
+        if (oldObligations != null && newObligations != null) {
+            compareRules(oldObligations, newObligations);
+        }
+    }
+
+    /**
+     * Compares the content of two permissions lists.
+     *
+     * @param oldRules List of rules from original contract.
+     * @param newRules List of rules from the contract that should be compared.
+     * @throws ContractException If a mismatch has been detected.
+     */
+    private static void compareDuties(final ArrayList<? extends Permission> oldRules,
+                                      final ArrayList<? extends Permission> newRules) throws ContractException {
+        final var oldSize = oldRules.size();
+        final var newSize = newRules.size();
+
+        if (oldSize != newSize) {
+            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+        }
+
+        for (int i = 0; i < oldSize; i++) {
+            final var oldPermissions = oldRules.get(i);
+            final var newPermissions = newRules.get(i);
+
+            final var oldPostDuties = oldPermissions.getPostDuty();
+            final var newPostDuties = newPermissions.getPostDuty();
+            compareRules(oldPostDuties, newPostDuties);
+
+            final var oldPreDuties = oldPermissions.getPreDuty();
+            final var newPreDuties = newPermissions.getPreDuty();
+            compareRules(oldPreDuties, newPreDuties);
+        }
+    }
+
+    /**
+     * Compares the content of two rule lists.
+     *
+     * @param oldRules List of rules from original contract.
+     * @param newRules List of rules from the contract that should be compared.
+     * @throws ContractException If a mismatch has been detected.
+     */
+    private static void compareRules(final ArrayList<? extends Rule> oldRules,
+                                     final ArrayList<? extends Rule> newRules) throws ContractException {
+        final var oldSize = oldRules.size();
+        final var newSize = newRules.size();
+
+        if (oldSize != newSize) {
+            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+        }
+
+        for (int i = 0; i < oldSize; i++) {
+            final var oldRule = oldRules.get(i);
+            final var newRule = newRules.get(i);
+
+            final var oldConstraints = oldRule.getConstraint();
+            final var newConstraints = newRule.getConstraint();
+            compareConstraints(oldConstraints, newConstraints);
+
+            final var oldAction = oldRule.getAction();
+            final var newAction = newRule.getAction();
+            compareActions(oldAction, newAction);
+        }
+    }
+
+    /**
+     * Compares the content of two actions lists.
+     *
+     * @param oldAction List of rules from original contract.
+     * @param newAction List of rules from the contract that should be compared.
+     * @throws ContractException If a mismatch has been detected.
+     */
+    private static void compareActions(final ArrayList<? extends Action> oldAction,
+                                       final ArrayList<? extends Action> newAction) throws ContractException {
+        final var oldSize = oldAction.size();
+        final var newSize = newAction.size();
+
+        if (oldSize != newSize) {
+            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+        }
+
+        for (int j = 0; j < oldSize; j++) {
+            final var oldActionAsRdf = oldAction.get(j).toRdf();
+            final var newActionAsRdf = newAction.get(j).toRdf();
+            if (!oldActionAsRdf.equals(newActionAsRdf)) {
+                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+            }
+        }
+    }
+
+    /**
+     * Compares the content of two constraint lists.
+     *
+     * @param oldConstraint List of rules from original contract.
+     * @param newConstraint List of rules from the contract that should be compared.
+     * @throws ContractException If a mismatch has been detected.
+     */
+    private static void compareConstraints(final ArrayList<? extends Constraint> oldConstraint,
+                                           final ArrayList<? extends Constraint> newConstraint) throws ContractException {
+        final var oldSize = oldConstraint.size();
+        final var newSize = newConstraint.size();
+
+        if (oldSize != newSize) {
+            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+        }
+
+        for (int j = 0; j < oldSize; j++) {
+            final var oldConstraintAsRdf = oldConstraint.get(j).toRdf();
+            final var newConstraintAsRdf = newConstraint.get(j).toRdf();
+            if (!oldConstraintAsRdf.equals(newConstraintAsRdf)) {
+                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+            }
+        }
     }
 }
