@@ -1,7 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table
@@ -30,4 +32,10 @@ public final class RequestedResource extends Resource {
     protected RequestedResource() {
         super();
     }
+
+    /**
+     * The catalogs in which this resource is used.
+     */
+    @ManyToMany(mappedBy = "requestedResources")
+    private List<Catalog> catalogs;
 }

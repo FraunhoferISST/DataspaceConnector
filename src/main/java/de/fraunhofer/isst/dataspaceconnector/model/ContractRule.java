@@ -1,12 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * A ContractRule defines a rule that should be enforced.
@@ -32,4 +34,10 @@ public class ContractRule extends AbstractEntity {
      * The definition of the rule.
      **/
     private String value;
+
+    /**
+     * The contracts in which this rule is used.
+     */
+    @ManyToMany(mappedBy = "rules")
+    private List<Contract> contracts;
 }

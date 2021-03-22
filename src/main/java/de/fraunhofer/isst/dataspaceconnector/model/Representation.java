@@ -45,4 +45,7 @@ public class Representation extends AbstractEntity {
      **/
     @ManyToMany
     private List<Artifact> artifacts;
+
+    @ManyToMany(mappedBy = "representations")
+    private List<Resource> resources;
 }

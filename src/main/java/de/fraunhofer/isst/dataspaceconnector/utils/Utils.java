@@ -1,18 +1,23 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import lombok.experimental.UtilityClass;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This utility class contains general purpose functions.
  */
-@UtilityClass
-public class Utils {
+public final class Utils {
+
+    /**
+     * Default constructor.
+     */
+    private Utils() {
+        // This constructor is intentionally empty. Nothing to do here.
+    }
 
     /**
      * Check if an object is not null.
@@ -30,22 +35,30 @@ public class Utils {
         return obj;
     }
 
-
-    public static Page<?> toPage( final List<?> list, final Pageable pageable) {
+    /**
+     * Get a page from a list.
+     * @param list The list the page  should be contructed from.
+     * @param pageable The page information.
+     * @param <T> The type of the list elements.
+     * @return The new page.
+     */
+    public static <T> Page<T> toPage(final List<T> list, final Pageable pageable) {
         Utils.requireNonNull(list, ErrorMessages.LIST_NULL);
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
 
         if (pageable.equals(Pageable.unpaged())) {
+            // All elements should be returned.
             return new PageImpl<>(list, pageable, list.size());
         }
 
-        final var start = (int)pageable.getOffset();
-        final var end = Math.min(start + pageable.getPageSize(), list.size());
+        final var start = (int) pageable.getOffset();
 
-        if(start > pageable.getPageSize()) {
+        if (start > pageable.getPageSize()) {
+            // There are no more list elements.
             return new PageImpl<>(new ArrayList<>(), pageable, list.size());
         }
 
+        final var end = Math.min(start + pageable.getPageSize(), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 

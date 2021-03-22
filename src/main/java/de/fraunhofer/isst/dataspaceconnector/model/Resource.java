@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
-import javax.persistence.MappedSuperclass;
 import java.net.URI;
 import java.util.List;
 
@@ -16,7 +17,8 @@ import org.springframework.data.annotation.Version;
  * A resource describes offered or requested data.
  */
 @Data
-@MappedSuperclass
+@Entity
+@Inheritance
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
 public class Resource extends AbstractEntity {
@@ -73,4 +75,8 @@ public class Resource extends AbstractEntity {
      */
     @ManyToMany
     private List<Contract> contracts;
+
+    public void setCatalogs(final List<Catalog> catalogs) { }
+
+    public List<Catalog> getCatalogs() { return null; }
 }
