@@ -68,9 +68,14 @@ public class ConnectorUpdateMessageController {
             // Send the connector update message.
             final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
             final var responseToString = Objects.requireNonNull(response.body()).string();
+            // final var multipart = MessageUtils.responseToMap(responseToString);
+            // TODO Validate response and return OK or other.
+
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
+//        } catch (FileUploadException exception) {
+//            return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
