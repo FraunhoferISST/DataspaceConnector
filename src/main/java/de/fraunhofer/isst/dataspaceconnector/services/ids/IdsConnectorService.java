@@ -78,6 +78,7 @@ public class IdsConnectorService {
             final var configModel = (ConfigurationModelImpl) configContainer.getConfigModel();
             configModel.setConnectorDescription(connector);
 
+            // Handled at a higher level.
             configContainer.updateConfiguration(configModel);
         } catch (ConstraintViolationException exception) {
             throw new ConfigurationUpdateException("Failed to retrieve connector.", exception);

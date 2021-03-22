@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedExcep
 import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRejectionService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -47,12 +47,12 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      */
     private final @NonNull DeserializationService deserializationService;
 
+    private final @NonNull ContractRejectionService rejectionService;
+
     /**
      * Service for message processing.
      */
-    private final @NonNull MessageProcessingService processingService;
-
-    private final @NonNull ContractRejectionService rejectionService;
+    private final @NonNull MessageService messageService;
 
 //    private final @NonNull ConfigurationContainer configurationContainer;
 //    private final @NonNull NegotiationService negotiationService;
@@ -79,7 +79,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            processingService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {

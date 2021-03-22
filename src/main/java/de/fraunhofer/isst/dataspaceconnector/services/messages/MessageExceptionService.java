@@ -4,12 +4,10 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -74,7 +72,7 @@ public class MessageExceptionService {
      * @param exception Exception that was thrown when checking for data access.
      * @return A message response.
      */
-    public MessageResponse handlePolicyRestrictionOnDataProvisionException(
+    public MessageResponse handlePolicyRestrictionException(
             final PolicyRestrictionOnDataProvisionException exception) {
         LOGGER.debug("Policy restriction detected. [exception=({})]", exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
@@ -99,12 +97,12 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link MessageBuilderException}.
+     * Handles thrown exceptions when building the response message.
      *
      * @param exception Exception that was thrown when building the response message.
      * @return A message response.
      */
-    public MessageResponse handleResponseMessageBuilderException(final MessageBuilderException exception) {
+    public MessageResponse handleResponseMessageBuilderException(final Exception exception) {
         LOGGER.warn("Failed to convert ids object to string. [exception=({})]",
                 exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
@@ -128,7 +126,7 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link ResourceNotFoundException}.
+     * Handles thrown exception while finding the requested element.
      *
      * @param exception        Exception that was thrown when trying to sendMessage the message.
      * @param requestedElement The requested element.
@@ -136,14 +134,13 @@ public class MessageExceptionService {
      * @param messageId        The message id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleResourceNotFoundException(final ResourceNotFoundException exception,
+    public MessageResponse handleResourceNotFoundException(final Exception exception,
                                                            final URI requestedElement,
                                                            final URI issuerConnector,
                                                            final URI messageId) {
         LOGGER.debug("Element could not be found. [exception=({}), resourceId=({}), issuer=({}), "
                         + "messageId=({})]", exception.getMessage(), requestedElement,
-                issuerConnector,
-                messageId);
+                issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
                 connectorService.getConnectorId(),

@@ -1,21 +1,21 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -51,9 +51,9 @@ public class EntityResolver {
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws ResourceNotFoundException If the resource could not be found.
+     * @throws UnreachableLineException If the resource could not be found.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public AbstractEntity getEntityById(final URI elementId) throws UnreachableLineException {
         final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
         final var basePath = endpointId.getBasePath();
         final var entityId = endpointId.getResourceId();
@@ -83,7 +83,7 @@ public class EntityResolver {
      * @return A rdf string of an ids object.
      */
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
-            ConstraintViolationException, InvalidResourceException {
+            RdfBuilderException, InvalidResourceException {
         if (entity instanceof Artifact) {
             final var artifact = IdsViewUtils.create((Artifact) entity);
             return IdsUtils.toRdf(artifact);

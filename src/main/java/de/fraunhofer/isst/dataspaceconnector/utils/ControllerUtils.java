@@ -135,6 +135,19 @@ public final class ControllerUtils {
     }
 
     /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that the contract
+     * request could not be built.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
+    public static ResponseEntity<Object> respondFailedToBuildContractRequest(final Exception exception) {
+        LOGGER.warn("Failed to build contract request. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Failed to build contract request.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the connector
      * could not be loaded or deserialized.
      *
@@ -157,6 +170,12 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondGlobalException(final Exception exception) {
         LOGGER.warn("Something else went wrong. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Something else went wrong.",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    public static ResponseEntity<Object> respondFailedToStoreEntity(final Exception exception) {
+        LOGGER.warn("Failed to store entity. [exception=({})]", exception.getMessage());
+        return new ResponseEntity<>("Failed to store entity. " + exception.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

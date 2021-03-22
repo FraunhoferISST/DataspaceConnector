@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedHeaderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
@@ -118,10 +117,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             if (!validType) {
                 throw new UnexpectedResponseType(ErrorMessages.UNEXPECTED_RESPONSE_TYPE.toString());
             }
-        } catch (MalformedHeaderException e) {
-            LOGGER.debug("Failed to read response header. [exception=({})]", e.getMessage());
-            throw new MessageResponseException(ErrorMessages.MISSING_RESPONSE_HEADER.toString(), e);
-        } catch (IllegalArgumentException e) {
+        } catch (MessageResponseException | IllegalArgumentException e) {
             LOGGER.debug("Failed to read response header. [exception=({})]", e.getMessage());
             throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_HEADER.toString(), e);
         } catch (Exception e) {
