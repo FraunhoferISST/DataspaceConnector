@@ -2,8 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -42,16 +41,11 @@ public class DescriptionRequestMessageController {
     private final @NonNull MessageService messageService;
 
     /**
-     * Service for message responses.
-     */
-    private final @NonNull MessageProcessingService messageProcessor;
-
-    /**
-     * Requests metadata from an external connector by building an ArtifactRequestMessage.
+     * Requests metadata from an external connector by building an DescriptionRequestMessage.
      *
      * @param recipient The target connector url.
      * @param elementId The requested element id.
-     * @return OK or error response.
+     * @return The response entity.
      */
     @PostMapping("/description")
     @Operation(summary = "Send ids description request message")
@@ -67,39 +61,32 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        Map<String, String> response;
-        try {
-            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        }
-
-        try {
-            messageService.validateDescriptionResponseMessage(response);
-        } catch (UnexpectedMessageType exception) {
-            // If the response is not a description response message, show the response.
-            return messageProcessor.returnResponseMessageContent(response);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        }
-
+        Map<String, String> response = null;
         String payload = null;
         try {
+            // Send and validate description request/response message.
+            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+            messageService.validateDescriptionResponseMessage(response);
+
             // Read and process the response message.
             payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-
             if (!Utils.isEmptyOrNull(elementId)) {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
                 // Get payload as component.
-                final var component = messageProcessor.getComponentFromPayload(payload);
+                final var component = messageService.getComponentFromPayload(payload);
                 return new ResponseEntity<>(component, HttpStatus.OK);
             }
+        } catch (MessageException exception) {
+            return ControllerUtils.respondIdsMessageFailed(exception);
+        } catch (MessageResponseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (UnexpectedResponseType exception) {
+            // If the response is not a description response message, show the response.
+            return messageService.returnResponseMessageContent(response);
         } catch (IllegalArgumentException exception) {
             // If the response is not of type resource or base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (Exception exception) {
             return ControllerUtils.respondGlobalException(exception);
         }
