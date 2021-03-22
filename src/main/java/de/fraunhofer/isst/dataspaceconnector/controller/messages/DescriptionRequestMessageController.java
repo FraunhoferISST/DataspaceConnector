@@ -1,11 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
@@ -18,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,12 +47,6 @@ public class DescriptionRequestMessageController {
     private final @NonNull MessageProcessingService messageProcessor;
 
     /**
-     * Resource view assembler.
-     * TODO implement requested resource view assembler
-     */
-    private final @NonNull OfferedResourceViewAssembler viewAssembler; //
-
-    /**
      * Requests metadata from an external connector by building an ArtifactRequestMessage.
      *
      * @param recipient The target connector url.
@@ -68,6 +58,7 @@ public class DescriptionRequestMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
@@ -76,14 +67,20 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        Map<String, String> response = null;
+        Map<String, String> response;
         try {
             response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+        } catch (MessageException exception) {
+            return ControllerUtils.respondIdsMessageFailed(exception);
+        }
+
+        try {
+            messageService.validateDescriptionResponseMessage(response);
         } catch (UnexpectedMessageType exception) {
             // If the response is not a description response message, show the response.
             return messageProcessor.returnResponseMessageContent(response);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
+        } catch (MessageResponseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
         }
 
         String payload = null;
@@ -106,22 +103,5 @@ public class DescriptionRequestMessageController {
         } catch (Exception exception) {
             return ControllerUtils.respondGlobalException(exception);
         }
-    }
-
-    /**
-     * Save the incoming resource as requested resource.
-     *
-     * @param resource The ids resource.
-     * @return The response body.
-     */
-    private ResponseEntity<Object> saveResponse(final Resource resource) {
-        final var newResource = messageProcessor.saveMetadata(resource);
-
-        // Return the uri of the saved resource.
-        final var entity = viewAssembler.toModel((OfferedResource) newResource);
-        final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
-
-        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 }
