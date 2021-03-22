@@ -1,6 +1,5 @@
-package de.fraunhofer.isst.dataspaceconnector.controller.v2;
+package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.BaseResourceController;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceView;
