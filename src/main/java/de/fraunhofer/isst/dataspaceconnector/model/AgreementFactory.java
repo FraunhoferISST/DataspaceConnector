@@ -42,6 +42,8 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         return this.updateValue(agreement, desc.getValue());
     }
 
+    // TODO update remote id
+
     private boolean updateValue(final Agreement agreement, final String value) {
         final var newValue = MetadataUtils.updateString(agreement.getValue(), value, "");
         newValue.ifPresent(agreement::setValue);

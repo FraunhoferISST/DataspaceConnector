@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.net.URI;
 
 /**
  * A contract agreement is an agreement between two parties on access and usage behaviours.
@@ -22,6 +23,11 @@ public class Agreement extends AbstractEntity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The agreement id on provider side.
+     */
+    private URI remoteId;
 
     /**
      * The definition of the contract.
