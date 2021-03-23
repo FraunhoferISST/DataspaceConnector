@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
+import java.util.List;
 
 /**
  * An artifact stores and encapsulates data.
@@ -35,7 +35,7 @@ public abstract class Artifact extends AbstractEntity {
     /**
      * The counter of how often the underlying data has been accessed.
      */
-    private Long numAccessed;
+    private long numAccessed;
 
     /**
      * Increment the data access counter.
