@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,6 +34,10 @@ public class RequestedResource implements ConnectorResource {
 
     @JsonProperty("requestedArtifact")
     private URI requestedArtifact;
+    
+    @ElementCollection
+    @JsonProperty("subscribers")
+    private List<URI> subscribers;
 
     @JsonProperty("created")
     private Date created;
