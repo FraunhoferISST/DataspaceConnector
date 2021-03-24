@@ -41,7 +41,7 @@ public abstract class Artifact extends AbstractEntity {
     /**
      * The counter of how often the underlying data has been accessed.
      */
-    private Long numAccessed;
+    private long numAccessed;
 
     /**
      * Increment the data access counter.
