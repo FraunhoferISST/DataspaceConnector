@@ -15,7 +15,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,6 +44,8 @@ public class EntityResolver {
      * Service for ids catalogs.
      */
     private final @NonNull CatalogService catalogService;
+
+    private final @NonNull IdsViewService idsViewService;
 
     /**
      * Return any connector entity by its id.
@@ -85,13 +86,13 @@ public class EntityResolver {
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
             RdfBuilderException, InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = IdsViewUtils.create((Artifact) entity);
+            final var artifact = idsViewService.create((Artifact) entity);
             return IdsUtils.toRdf(artifact);
         } else if (entity instanceof Resource) {
-            final var resource = IdsViewUtils.create((Resource) entity);
+            final var resource = idsViewService.create((Resource) entity);
             return IdsUtils.toRdf(resource);
         } else if (entity instanceof Representation) {
-            final var representation = IdsViewUtils.create((Representation) entity);
+            final var representation = idsViewService.create((Representation) entity);
             return IdsUtils.toRdf(representation);
         } else {
             throw new InvalidResourceException("No provided description for requested element.");

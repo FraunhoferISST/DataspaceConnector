@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
@@ -76,7 +77,7 @@ public final class TemplateUtils {
 
             // Artifact is only saved if it has been requested.
             if (requestedArtifacts.contains(id)) {
-                final var artifactTemplate = MappingUtils.fromIdsArtifact(artifact);
+                final var artifactTemplate = MappingUtils.fromIdsArtifact((Artifact) artifact);
                 list.add(artifactTemplate);
             }
         }

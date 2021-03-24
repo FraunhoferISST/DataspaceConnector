@@ -107,7 +107,7 @@ public class PolicyManagementService {
      * @param element   The requested element.
      * @return List of ids rules.
      */
-    public List<Rule> getRulesForRequestedElement(final ContractAgreement agreement,
+    public List<? extends Rule> getRulesForRequestedElement(final ContractAgreement agreement,
                                                   final URI element) {
         List<Rule> rules = new ArrayList<>();
 

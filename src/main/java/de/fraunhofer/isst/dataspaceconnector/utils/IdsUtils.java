@@ -7,6 +7,7 @@ import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
@@ -14,7 +15,10 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -119,13 +123,28 @@ public final class IdsUtils {
     }
 
     /**
+     * Get rdf string from instance of type {@link Rule}.
+     *
+     * @param rule The ids rule.
+     * @return The ids rule as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final Rule rule) throws RdfBuilderException {
+        try {
+            return rule.toRdf();
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+        }
+    }
+
+    /**
      * Get list of keywords as ids list of typed literals.
      *
      * @param keywords List of keywords.
      * @param language The language.
      * @return List of typed literal.
      */
-    public static List<TypedLiteral> getKeywords(final List<String> keywords,
+    public static List<TypedLiteral> getKeywordsAsTypedLiteral(final List<String> keywords,
                                                  final String language) {
         final var idsKeywords = new ArrayList<TypedLiteral>();
         for (final var keyword : keywords) {
@@ -141,16 +160,26 @@ public final class IdsUtils {
      * @param language The language as string.
      * @return The ids language object.
      */
-    public static List<Language> getLanguages(final String language) {
-        final var list = new ArrayList<Language>();
-
+    public static Language getLanguage(final String language) {
         switch (language) {
             case "de":
-                list.add(Language.DE);
-                break;
+                return Language.DE;
             case "en":
             default:
-                list.add(Language.EN);
+                return Language.EN;
+        }
+    }
+
+    /**
+     * Get list of ids keywords as list of strings.
+     *
+     * @param keywords List of typed literals.
+     * @return List of strings.
+     */
+    public static List<String> getKeywordsAsString(final ArrayList<? extends TypedLiteral> keywords) {
+        final var list = new ArrayList<String>();
+        for (final var keyword : keywords) {
+            list.add(keyword.getValue());
         }
 
         return list;
@@ -171,5 +200,18 @@ public final class IdsUtils {
             // Rethrow but do not register in function header
             throw new RuntimeException(exception);
         }
+    }
+
+    /**
+     * Convert string to date.
+     *
+     * @param calendar The XMLGregorianCalendar date as string.
+     * @return The calender object.
+     * @throws ParseException If parsing fails.
+     */
+    public static Date getDateOf(final String calendar) throws ParseException {
+        final var sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
+        return sdf.parse(calendar);
     }
 }
