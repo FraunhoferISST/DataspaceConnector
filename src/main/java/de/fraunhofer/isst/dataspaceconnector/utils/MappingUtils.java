@@ -62,7 +62,33 @@ public final class MappingUtils {
         final var variant = resource.getVariant();
         final var version = resource.getVersion();
 
+        // Add additional properties to map.
+        final var properties = resource.getProperties();
+        final var additional = propertiesToAdditional(properties);
+
+        additional.put("ids:accrualPeriodicity", accrualPeriodicity.toRdf());
+        additional.put("ids:assetRefinement", assetRefinement.toRdf());
+        additional.put("ids:contentPart", contentPart.toString());
+        additional.put("ids:contentStandard", contentStandard.toString());
+        additional.put("ids:contentType", contentType.toRdf());
+        additional.put("ids:created", created.toXMLFormat());
+        additional.put("ids:customLicense", customLicense.toString());
+        additional.put("ids:defaultRepresentation", defaultRepresentation.toString());
+        additional.put("ids:modified", modified.toXMLFormat());
+        additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+        additional.put("ids:resourcePart", resourcePart.toString());
+        additional.put("ids:sample", sample.toString());
+        additional.put("ids:shapesGraph", shapesGraph.toString());
+        additional.put("ids:sovereign", sovereign.toString());
+        additional.put("ids:spatialCoverage", spatialCoverage.toString());
+        additional.put("ids:temporalCoverage", temporalCoverage.toString());
+        additional.put("ids:temporalResolution", temporalResolution.toString());
+        additional.put("ids:theme", theme.toString());
+        additional.put("ids:variant", variant.toString());
+        additional.put("ids:version", version);
+
         final var desc = new RequestedResourceDesc();
+        desc.setAdditional(additional);
         desc.setRemoteId(id);
         desc.setKeywords(keywords);
         desc.setDescription(description.toString());
@@ -70,30 +96,6 @@ public final class MappingUtils {
         desc.setLicence(standardLicense);
         desc.setLanguage(language.toString());
         desc.setTitle(title.toString());
-
-        final var additional = new HashMap<String, String>() {{
-            put("ids:accrualPeriodicity", accrualPeriodicity.toRdf());
-            put("ids:assetRefinement", assetRefinement.toRdf());
-            put("ids:contentPart", contentPart.toString());
-            put("ids:contentStandard", contentStandard.toString());
-            put("ids:contentType", contentType.toRdf());
-            put("ids:created", created.toXMLFormat());
-            put("ids:customLicense", customLicense.toString());
-            put("ids:defaultRepresentation", defaultRepresentation.toString());
-            put("ids:modified", modified.toXMLFormat());
-            put("ids:resourceEndpoint", resourceEndpoint.toString());
-            put("ids:resourcePart", resourcePart.toString());
-            put("ids:sample", sample.toString());
-            put("ids:shapesGraph", shapesGraph.toString());
-            put("ids:sovereign", sovereign.toString());
-            put("ids:spatialCoverage", spatialCoverage.toString());
-            put("ids:temporalCoverage", temporalCoverage.toString());
-            put("ids:temporalResolution", temporalResolution.toString());
-            put("ids:theme", theme.toString());
-            put("ids:variant", variant.toString());
-            put("ids:version", temporalCoverage.toString());
-        }};
-        desc.setAdditional(additional);
 
         final var template = new ResourceTemplate<RequestedResourceDesc>();
         template.setDesc(desc);
@@ -116,19 +118,20 @@ public final class MappingUtils {
         final var standard = String.valueOf(representation.getRepresentationStandard());
         final var shape = representation.getShapesGraph();
 
+        // Add additional properties to map.
+        final var properties = representation.getProperties();
+        final var additional = propertiesToAdditional(properties);
+
+        additional.put("ids:created", created.toXMLFormat());
+        additional.put("ids:modified", modified.toXMLFormat());
+        additional.put("ids:shapesGraph", String.valueOf(shape));
+
         final var desc = new RepresentationDesc();
+        desc.setAdditional(additional);
         desc.setRemoteId(id);
         desc.setType(mediaType);
         desc.setLanguage(language);
         desc.setStandard(standard);
-
-        // Add additional properties to map.
-        final var additional = new HashMap<String, String>() {{
-            put("ids:created", created.toXMLFormat());
-            put("ids:modified", modified.toXMLFormat());
-            put("ids:shapesGraph", String.valueOf(shape));
-        }};
-        desc.setAdditional(additional);
 
         final var template = new RepresentationTemplate();
         template.setDesc(desc);
@@ -150,18 +153,19 @@ public final class MappingUtils {
         final var duration = artifact.getDuration();
         final var filename = artifact.getFileName();
 
+        // Add additional properties to map.
+        final var properties = artifact.getProperties();
+        final var additional = propertiesToAdditional(properties);
+
+        additional.put("ids:byteSize", byteSize.toString());
+        additional.put("ids:checkSum", checksum);
+        additional.put("ids:creationDate", created.toXMLFormat());
+        additional.put("ids:duration", duration.toString());
+
         final var desc = new ArtifactDesc();
+        desc.setAdditional(additional);
         desc.setRemoteId(id);
         desc.setTitle(filename);
-
-        // Add additional properties to map.
-        final var additional = new HashMap<String, String>() {{
-            put("ids:byteSize", byteSize.toString());
-            put("ids:checkSum", checksum);
-            put("ids:creationDate", created.toXMLFormat());
-            put("ids:duration", duration.toString());
-        }};
-        desc.setAdditional(additional);
 
         final var template = new ArtifactTemplate();
         template.setDesc(desc);
@@ -182,8 +186,9 @@ public final class MappingUtils {
         final var id = contract.getId();
         final var provider = contract.getProvider();
         final var start = contract.getContractStart();
-        final var properties = contract.getProperties();
 
+        // Add additional properties to map.
+        final var properties = contract.getProperties();
         final var additional = propertiesToAdditional(properties);
 
         final var desc = new ContractDesc();
