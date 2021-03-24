@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -19,7 +18,7 @@ public class UUIDUtilsTests {
     @Test
     public void findUuids_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> UUIDUtils.findUuids(null));
+        assertThrows(NullPointerException.class, () -> UUIDUtils.findUuids(null));
     }
 
     @Test
