@@ -1,8 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -12,6 +14,12 @@ import java.net.URL;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ArtifactDesc extends AbstractDescription<Artifact> {
+
+    /**
+     * The agreement id on provider side.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private URI remoteId;
 
     /**
      * The title of the artifact.

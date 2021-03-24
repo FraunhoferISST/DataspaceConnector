@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.net.URI;
 import java.util.List;
 
 @Entity
@@ -14,17 +15,12 @@ public final class RequestedResource extends Resource {
      **/
     private static final long serialVersionUID = 1L;
 
-//    @JsonProperty("ownerURI")
+    /**
+     * The resource id on provider side.
+     */
+    private URI remoteId;
+
 //    private URI ownerURI;
-//
-//    @JsonProperty("originalUUID")
-//    private UUID originalUUID;
-//
-//    @JsonProperty("contractAgreement")
-//    private URI contractAgreement;
-//
-//    @JsonProperty("requestedArtifact")
-//    private URI requestedArtifact;
 
     /**
      * Default constructor.

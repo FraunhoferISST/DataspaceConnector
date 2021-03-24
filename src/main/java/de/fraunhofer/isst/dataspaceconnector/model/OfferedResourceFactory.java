@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class OfferedResourceFactory extends ResourceFactory<OfferedResource, OfferedResourceDesc> {
     @Override
-    protected OfferedResource createInternal(OfferedResourceDesc desc) {
+    protected OfferedResource createInternal(final OfferedResourceDesc desc) {
         return new OfferedResource();
     }
 }

@@ -1,15 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.util.Date;
-import java.util.List;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A contract documents access and usage behaviours.
@@ -25,6 +26,26 @@ public class Contract extends AbstractEntity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The contract id on provider side.
+     */
+    private URI remoteId;
+
+    /**
+     * The consumer signing the contract.
+     */
+    private URI consumer;
+
+    /**
+     * The provider signing the contract.
+     */
+    private URI provider;
+
+    /**
+     * The date of the contract conclusion.
+     */
+    private Date date;
 
     /**
      * The title of the contract.
