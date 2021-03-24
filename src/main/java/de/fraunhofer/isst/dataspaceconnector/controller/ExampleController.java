@@ -46,7 +46,6 @@ import java.util.ArrayList;
  */
 @RestController
 @RequestMapping("/api/examples")
-@Tag(name = "Example", description = "Endpoints for testing purpose")
 @RequiredArgsConstructor
 public class ExampleController {
 
@@ -125,6 +124,7 @@ public class ExampleController {
      */
     @Operation(summary = "Get pattern of policy",
             description = "Get the policy pattern represented by a given JSON string.")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
@@ -151,6 +151,7 @@ public class ExampleController {
      */
     @Operation(summary = "Get example policy",
             description = "Get an example policy for a given policy pattern.")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "400", description = "Bad Request")})

@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/agreements")
-@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
+@Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
 public class AgreementController extends BaseResourceController<Agreement, AgreementDesc, AgreementView, AgreementService> {
     @Override
     @Hidden
