@@ -1,16 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.3.0]
+
+### Added 
+- Configure timeout values for http connections via `application.properties`.
+
 ## [4.2.0] - 2021-03-09
 
 ### Added
 - New policy pattern: connector-restricted data usage.
 - Validate `CONNECTOR_RESTRICTED_USAGE` on data request (as a provider).
-
-## [4.2.0]
-
-### Added 
-- Configure timeout values for http connections via `application.properties`.
 
 ## [4.1.0] - 2021-03-02
 
