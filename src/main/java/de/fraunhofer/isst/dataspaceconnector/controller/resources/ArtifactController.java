@@ -25,7 +25,7 @@ public class ArtifactController extends BaseResourceController<Artifact, Artifac
     @RequestMapping(value = "{id}/data", method = RequestMethod.GET)
     @Operation(summary = "Get data by artifact id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<Object> getData(@Valid @PathVariable final UUID artifactId) {
+    public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId) {
         final var artifactService = ((ArtifactService) this.getService());
         return ResponseEntity.ok(artifactService.getData(artifactId, null));
     }

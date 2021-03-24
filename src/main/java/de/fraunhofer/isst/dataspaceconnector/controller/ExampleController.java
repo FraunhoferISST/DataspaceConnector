@@ -66,7 +66,7 @@ public class ExampleController {
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Get an example configuration.
+     * Get an example configuration for the config.json.
      *
      * @return a {@link org.springframework.http.ResponseEntity} object.
      */

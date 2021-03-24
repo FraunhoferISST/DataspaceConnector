@@ -85,8 +85,7 @@ public class ContractRequestMessageController {
             @Parameter(description = "List of ids artifacts that should be requested.")
             @RequestParam(value = "artifactIds") final List<URI> artifactList,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
-//                    + "updates.")
-//            @RequestParam(value = "subscribe") final boolean subscribe,
+//                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
             @RequestParam(value = "download") final boolean download,
