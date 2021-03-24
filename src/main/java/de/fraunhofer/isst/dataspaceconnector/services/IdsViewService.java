@@ -303,11 +303,11 @@ public final class IdsViewService {
 
         final var rules = contract.getRules();
         final var permissions =
-                CompletableFuture.supplyAsync(() -> batchCreateObligation(rules));
+                CompletableFuture.supplyAsync(() -> batchCreatePermission(rules));
         final var prohibitions =
                 CompletableFuture.supplyAsync(() -> batchCreateProhibition(rules));
         final var obligations =
-                CompletableFuture.supplyAsync(() -> batchCreatePermission(rules));
+                CompletableFuture.supplyAsync(() -> batchCreateObligation(rules));
 
         final var contractStart = contract.getStart();
         final var contractEnd = contract.getEnd();
