@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/contracts")
-@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
+@Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
 public class ContractController extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
 }

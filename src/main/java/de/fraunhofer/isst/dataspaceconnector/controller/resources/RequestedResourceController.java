@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/requests")
-@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
+@Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
 public class RequestedResourceController extends BaseResourceController<RequestedResource, RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
     @Override
     @Hidden
