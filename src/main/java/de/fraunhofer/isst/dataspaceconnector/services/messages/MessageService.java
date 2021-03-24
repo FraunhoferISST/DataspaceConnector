@@ -19,19 +19,17 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMes
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.services.TemplateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -49,6 +47,11 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class MessageService {
+
+    /**
+     * Class level logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
     /**
      * Service for description request messages.
@@ -73,7 +76,7 @@ public class MessageService {
     /**
      * Service for deserialization.
      */
-    private final @NonNull DeserializationService service;
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Template builder.
@@ -86,21 +89,9 @@ public class MessageService {
     private final @NonNull IdsConnectorService connectorService;
 
     /**
-     * Service for creating templates using the template builder.
-     */
-    private final @NonNull TemplateService templateService;
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyManagementService.class);
-
-    /**
      * Requested resource view assembler.
      */
     private final @NonNull RequestedResourceViewAssembler viewAssembler;
-
-    private final @NonNull ArtifactService artifactService;
 
     /**
      * Build and send a description request message. Validate response.
@@ -119,6 +110,13 @@ public class MessageService {
         return descriptionRequestService.sendMessage(desc, "");
     }
 
+    /**
+     * Check if the response message is of type description response.
+     *
+     * @param response The response as map.
+     * @throws MessageResponseException If the response could not be read.
+     * @throws UnexpectedResponseType   If the response type is incorrect.
+     */
     public void validateDescriptionResponseMessage(final Map<String, String> response)
             throws MessageResponseException, UnexpectedResponseType {
         descriptionRequestService.validateResponse(response);
@@ -223,7 +221,7 @@ public class MessageService {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        final var idsMessage = service.deserializeResponseMessage(header);
+        final var idsMessage = deserializationService.deserializeResponseMessage(header);
         var responseMap = new HashMap<String, String>() {{
             put("type", String.valueOf(idsMessage.getClass()));
         }};
@@ -247,7 +245,7 @@ public class MessageService {
      * @throws IllegalArgumentException If deserialization fails.
      */
     public InfrastructureComponent getComponentFromPayload(final String payload) throws IllegalArgumentException {
-        return service.deserializeInfrastructureComponent(payload);
+        return deserializationService.deserializeInfrastructureComponent(payload);
     }
 
     /**
@@ -258,16 +256,15 @@ public class MessageService {
      * @throws IllegalArgumentException If deserialization fails.
      */
     public Resource getResourceFromPayload(final String payload) throws IllegalArgumentException {
-        return service.deserializeResource(payload);
+        return deserializationService.deserializeResource(payload);
     }
 
     /**
      * Validate response and save resource to database.
      *
-     * @param response The response message map.
+     * @param response     The response message map.
      * @param artifactList List of requested artifacts.
      * @return The persisted resource.
-     *
      */
     public URI saveResource(final Map<String, String> response, final List<URI> artifactList)
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
@@ -276,15 +273,12 @@ public class MessageService {
         final var resource = getResourceFromPayload(payload);
 
         try {
-            final var resourceTemplate = templateService.getResourceTemplate(resource);
-
-            // Read all contract offers.
-            final var contractTemplateList = templateService.getContractTemplates(resource);
-            resourceTemplate.setContracts(contractTemplateList);
-
-            // Read all representations.
+            final var resourceTemplate = TemplateUtils.getResourceTemplate(resource);
+            final var contractTemplateList = TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
-                    templateService.getRepresentationTemplates(resource);
+                    TemplateUtils.getRepresentationTemplates(resource, artifactList);
+
+            resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);
 
             // Save all entities.

@@ -103,7 +103,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Checks if the response message is of the right type.
      *
      * @param message The received message response.
-     * @throws MessageResponseException If the response could not be read or the type is incorrect.
+     * @throws MessageResponseException If the response could not be read.
+     * @throws UnexpectedResponseType If the response type is incorrect.
      */
     public void validateResponse(final Map<String, String> message) throws MessageResponseException, UnexpectedResponseType {
         try {

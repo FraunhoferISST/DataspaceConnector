@@ -24,6 +24,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ContractViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
@@ -66,13 +67,23 @@ public final class IdsViewService {
      * @return The ids catalog.
      */
     public ResourceCatalog create(final Catalog catalog) {
+        final var view = new CatalogViewAssembler().toModel(catalog);
+        final var uri = view.getLink("self").get().toUri();
+        final var additional = catalog.getAdditional();
+
         final var resources = CompletableFuture.supplyAsync(
                 () -> batchCreateResource(catalog.getOfferedResources()));
 
         try {
-            return new ResourceCatalogBuilder()
+            final var idsCatalog = new ResourceCatalogBuilder(uri)
                     ._offeredResource_((ArrayList<? extends Resource>) resources.get())
                     .build();
+
+            for (final var entry : additional.entrySet()) {
+                idsCatalog.setProperty(entry.getKey(), entry.getValue());
+            }
+
+            return idsCatalog;
         } catch (Exception exception) {
             LOGGER.warn("Failed to build catalog. [exception=({})]", exception.getMessage());
             return null;
@@ -101,6 +112,7 @@ public final class IdsViewService {
     public Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
         final var view = new OfferedResourceViewAssembler().toModel((OfferedResource) resource);
         final var uri = view.getLink("self").get().toUri();
+        final var additional = resource.getAdditional();
 
         // Build children.
         final var contracts = CompletableFuture.supplyAsync(
@@ -126,7 +138,7 @@ public final class IdsViewService {
                 .build();
 
         try {
-            return new ResourceBuilder(uri) // TODO add values to data model (?)
+            final var idsResource = new ResourceBuilder(uri) // TODO add values to data model (?)
 //                    ._accrualPeriodicity_()
 //                    ._assetRefinement_()
 //                    ._contentType_()
@@ -148,6 +160,12 @@ public final class IdsViewService {
                     ._title_(Util.asList(new TypedLiteral(title, language)))
                     ._version_(String.valueOf(version))
                     .build();
+
+            for (final var entry : additional.entrySet()) {
+                idsResource.setProperty(entry.getKey(), entry.getValue());
+            }
+
+            return idsResource;
         } catch (Exception exception) {
             LOGGER.warn("Failed to build resource. [exception=({})]", exception.getMessage());
             return null;
@@ -180,6 +198,7 @@ public final class IdsViewService {
     public Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation representation) {
         final var view = new RepresentationViewAssembler().toModel(representation);
         final var uri = view.getLink("self").get().toUri();
+        final var additional = representation.getAdditional();
 
         final var artifacts = CompletableFuture.supplyAsync(
                 () -> batchCreateArtifact(representation.getArtifacts()));
@@ -191,7 +210,7 @@ public final class IdsViewService {
         final var standard = representation.getStandard();
 
         try {
-            return new RepresentationBuilder(uri)
+            final var idsRepresentation = new RepresentationBuilder(uri)
                     ._created_(created)
                     ._instance_((ArrayList<? extends Artifact>) artifacts.get())
                     ._language_(language)
@@ -199,6 +218,12 @@ public final class IdsViewService {
                     ._modified_(modified)
                     ._representationStandard_(URI.create(standard))
                     .build();
+
+            for (final var entry : additional.entrySet()) {
+                idsRepresentation.setProperty(entry.getKey(), entry.getValue());
+            }
+
+            return idsRepresentation;
         } catch (Exception exception) {
             LOGGER.warn("Failed to build representation. [exception=({})]", exception.getMessage());
             return null;
@@ -228,16 +253,23 @@ public final class IdsViewService {
     public Artifact create(final de.fraunhofer.isst.dataspaceconnector.model.Artifact artifact) {
         final var view = new ArtifactViewAssembler().toModel(artifact);
         final var uri = view.getLink("self").get().toUri();
+        final var additional = artifact.getAdditional();
 
         final var created = IdsUtils.getGregorianOf(artifact.getCreationDate());
         final var title = artifact.getTitle();
 
         try {
-            return new ArtifactBuilder(uri)
+            final var idsArtifact = new ArtifactBuilder(uri)
                     ._byteSize_(BigInteger.ONE) // TODO get the real file size (how?)
                     ._creationDate_(created)
                     ._fileName_(title)
                     .build();
+
+            for (final var entry : additional.entrySet()) {
+                idsArtifact.setProperty(entry.getKey(), entry.getValue());
+            }
+
+            return idsArtifact;
         } catch (Exception exception) {
             LOGGER.warn("Failed to build artifact. [exception=({})]", exception.getMessage());
             return null;
@@ -267,6 +299,7 @@ public final class IdsViewService {
     public ContractOffer create(final de.fraunhofer.isst.dataspaceconnector.model.Contract contract) {
         final var view = new ContractViewAssembler().toModel(contract);
         final var uri = view.getLink("self").get().toUri();
+        final var additional = contract.getAdditional();
 
         final var rules = contract.getRules();
         final var permissions =
@@ -283,7 +316,7 @@ public final class IdsViewService {
         final var provider = contract.getProvider();
 
         try {
-            return new ContractOfferBuilder(uri)
+            final var idsContract = new ContractOfferBuilder(uri)
                     ._permission_((ArrayList<? extends Permission>) permissions.get())
                     ._prohibition_((ArrayList<? extends Prohibition>) prohibitions.get())
                     ._obligation_((ArrayList<? extends Duty>) obligations.get())
@@ -293,12 +326,24 @@ public final class IdsViewService {
                     ._provider_(provider)
                     ._contractEnd_(IdsUtils.getGregorianOf(contractEnd))
                     .build();
+
+            for (final var entry : additional.entrySet()) {
+                idsContract.setProperty(entry.getKey(), entry.getValue());
+            }
+
+            return idsContract;
         } catch (Exception exception) {
-            LOGGER.warn("Failed to build artifact. [exception=({})]", exception.getMessage());
+            LOGGER.warn("Failed to build contract. [exception=({})]", exception.getMessage());
             return null;
         }
     }
 
+    /**
+     * Create list of ids obligations.
+     *
+     * @param rules List of database rules.
+     * @return List of ids obligations.
+     */
     private List<Duty> batchCreateObligation(final List<ContractRule> rules) {
         return rules.parallelStream()
                 .map(this::createObligation)
@@ -306,6 +351,12 @@ public final class IdsViewService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Create list of ids prohibitions.
+     *
+     * @param rules List of database rules.
+     * @return List of ids prohibitions.
+     */
     private List<Prohibition> batchCreateProhibition(final List<ContractRule> rules) {
         return rules.parallelStream()
                 .map(this::createProhibition)
@@ -313,6 +364,12 @@ public final class IdsViewService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Create list of ids permissions.
+     *
+     * @param rules List of database rules.
+     * @return List of ids permissions.
+     */
     private List<Permission> batchCreatePermission(final List<ContractRule> rules) {
         return rules.parallelStream()
                 .map(this::createPermission)

@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.net.MalformedURLException;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
@@ -17,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.net.MalformedURLException;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -97,7 +97,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) {
+    private Object getData(final LocalData data) { // TODO send artifact request if no data available
         return data.getValue();
     }
 

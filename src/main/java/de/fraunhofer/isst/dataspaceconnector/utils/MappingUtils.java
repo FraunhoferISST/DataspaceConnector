@@ -255,19 +255,4 @@ public final class MappingUtils {
 
         return additional;
     }
-
-    /**
-     * Map ids additional map from the internal data model to ids properties map.
-     *
-     * @param additional A string string map.
-     * @return A string object map.
-     */
-    private static Map<String, Object> additionalToProperties(final Map<String, String> additional) {
-        final var properties = new HashMap<String, Object>();
-        for (Map.Entry<String, String> entry : additional.entrySet()) {
-            properties.put(entry.getKey(), entry.getValue());
-        }
-
-        return properties;
-    }
 }
