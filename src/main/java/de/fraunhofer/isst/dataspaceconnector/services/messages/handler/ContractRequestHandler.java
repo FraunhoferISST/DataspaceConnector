@@ -5,7 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadExceptio
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.services.EntityDependencyResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
