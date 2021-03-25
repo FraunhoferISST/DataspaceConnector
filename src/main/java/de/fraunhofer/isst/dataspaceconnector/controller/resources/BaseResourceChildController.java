@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -80,7 +79,7 @@ public class BaseResourceChildController<S extends BaseUniDirectionalLinkerServi
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,
-            @RequestParam(required = false) final Sort sort) {
+            @RequestParam(required = false) final String sort) {
         final var pageable = PageRequest.of(page == null ? 0 : page, size == null ? 30 : size);
         final var entities = linker.get(ownerId, pageable);
 

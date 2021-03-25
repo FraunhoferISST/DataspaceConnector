@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +20,7 @@ public class RequestedResourceController extends BaseResourceController<Requeste
     @Override
     @Hidden
     @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-    public HttpEntity<RequestedResourceView> create(final RequestedResourceDesc desc) {
+    public ResponseEntity<RequestedResourceView> create(final RequestedResourceDesc desc) {
         return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
     }
 }
