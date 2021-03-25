@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.resources.RequestedResou
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceRepresentations;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  * Assembles the REST resource for a requested resource.
  */
 @Component
+@NoArgsConstructor
 public class RequestedResourceViewAssembler
         implements RepresentationModelAssembler<RequestedResource, RequestedResourceView> {
     /**

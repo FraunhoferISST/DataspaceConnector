@@ -42,7 +42,7 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         view.add(rulesLink);
 
         final var resourceType = contract.getResources();
-        final Link resourceLinker;
+        Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
             resourceLinker =

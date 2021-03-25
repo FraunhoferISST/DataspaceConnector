@@ -8,6 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -20,6 +21,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
  * Assembles the REST resource for an representation.
  */
 @Component
+@NoArgsConstructor
 public class RepresentationViewAssembler
         implements RepresentationModelAssembler<Representation, RepresentationView> {
     /**
@@ -43,7 +45,7 @@ public class RepresentationViewAssembler
         view.add(artifactsLink);
 
         final var resourceType = representation.getResources();
-        final Link resourceLinker;
+        Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
             resourceLinker =
