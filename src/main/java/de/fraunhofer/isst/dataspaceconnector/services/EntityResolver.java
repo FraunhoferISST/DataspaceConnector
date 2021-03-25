@@ -1,15 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
@@ -46,14 +45,16 @@ public class EntityResolver {
      */
     private final @NonNull CatalogService catalogService;
 
+    private final @NonNull IdsViewService idsViewService;
+
     /**
      * Return any connector entity by its id.
      *
      * @param elementId The entity id.
      * @return The respective object.
-     * @throws ResourceNotFoundException If the resource could not be found.
+     * @throws UnreachableLineException If the resource could not be found.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public AbstractEntity getEntityById(final URI elementId) throws UnreachableLineException {
         final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
         final var basePath = endpointId.getBasePath();
         final var entityId = endpointId.getResourceId();
@@ -83,15 +84,15 @@ public class EntityResolver {
      * @return A rdf string of an ids object.
      */
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
-            ConstraintViolationException, InvalidResourceException {
+            RdfBuilderException, InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = IdsViewUtils.create((Artifact) entity);
+            final var artifact = idsViewService.create((Artifact) entity);
             return IdsUtils.toRdf(artifact);
         } else if (entity instanceof Resource) {
-            final var resource = IdsViewUtils.create((Resource) entity);
+            final var resource = idsViewService.create((Resource) entity);
             return IdsUtils.toRdf(resource);
         } else if (entity instanceof Representation) {
-            final var representation = IdsViewUtils.create((Representation) entity);
+            final var representation = idsViewService.create((Representation) entity);
             return IdsUtils.toRdf(representation);
         } else {
             throw new InvalidResourceException("No provided description for requested element.");

@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -32,7 +32,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Service for handling message processed notification messages.
      */
-    private final @NonNull MessageProcessedNotificationService messageService;
+    private final @NonNull MessageProcessedNotificationService notificationService;
 
     /**
      * Service for the message exception handling.
@@ -42,7 +42,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Service for message processing.
      */
-    private final @NonNull MessageProcessingService processingService;
+    private final @NonNull MessageService messageService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -57,7 +57,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            processingService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -72,12 +72,10 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         try {
             // Build the ids response.
             final var desc = new MessageProcessedNotificationMessageDesc(messageId);
-            final var header = messageService.buildMessage(issuerConnector, desc);
+            final var header = notificationService.buildMessage(issuerConnector, desc);
             return BodyResponse.create(header, "Message received.");
-        } catch (IllegalStateException exception) {
-            return exceptionService.handleIllegalStateException(exception);
-        } catch (ConstraintViolationException exception) {
-            return exceptionService.handleConstraintViolationException(exception);
+        } catch (IllegalStateException | ConstraintViolationException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception);
         }
     }
 }

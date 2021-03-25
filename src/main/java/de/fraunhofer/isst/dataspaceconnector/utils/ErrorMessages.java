@@ -47,7 +47,25 @@ public enum ErrorMessages {
     /**
      * If the content of two contracts is not equal.
      */
-    CONTRACT_MISMATCH("The contract's content do not match.");
+    CONTRACT_MISMATCH("The contract's content do not match."),
+
+    INVALID_RESPONSE("Invalid ids response message."),
+
+    HEADER_BUILD_FAILED("Ids message header could not be built."),
+
+    INVALID_RESPONSE_DAT("Invalid DAT in incoming message."),
+
+    MESSAGE_NOT_SENT("Message could not be sent."),
+
+    MISSING_RESPONSE_HEADER("Missing response header."),
+
+    MALFORMED_RESPONSE_HEADER("Malformed response header."),
+
+    MALFORMED_RESPONSE_PAYLOAD("Malformed response payload."),
+
+    EMTPY_ENTITY("Element could not be found."),
+
+    RDF_FAILED("Could not retrieve rdf string.");
 
     /**
      * Holds the enums string.

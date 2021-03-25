@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
 /**
  * Thrown to indicate that the message response type was not expected.
  */
-public class UnexpectedMessageType extends MessageResponseException {
+public class UnexpectedResponseType extends RuntimeException {
     /**
      * Default serial version uid.
      */
@@ -14,7 +14,7 @@ public class UnexpectedMessageType extends MessageResponseException {
      *
      * @param msg The detail message.
      */
-    public UnexpectedMessageType(final String msg) {
+    public UnexpectedResponseType(final String msg) {
         super(msg);
     }
 
@@ -24,7 +24,7 @@ public class UnexpectedMessageType extends MessageResponseException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public UnexpectedMessageType(final String msg, final Throwable cause) {
+    public UnexpectedResponseType(final String msg, final Throwable cause) {
         super(msg, cause);
     }
 }

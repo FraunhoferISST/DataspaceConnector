@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.exceptions;
 /**
  * Thrown to indicate that a problem with a message response occurred.
  */
-public class MessageResponseException extends MessageException {
+public class MessageResponseException extends RuntimeException {
     /**
      * Default serial version uid.
      */

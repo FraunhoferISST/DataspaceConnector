@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/representations")
-@Tag(name = "Resources", description = "Endpoints for CRUD operations on base resources")
+@Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
 public class RepresentationController
         extends BaseResourceController<Representation, RepresentationDesc, RepresentationView, RepresentationService> {
 }

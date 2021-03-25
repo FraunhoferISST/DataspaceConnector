@@ -20,49 +20,49 @@ public final class RelationshipControllers {
 
     @RestController
     @RequestMapping("/api/rules/{id}/contracts")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @Tag(name = "Rules", description = "Endpoints for linking rules to contracts")
     public static class RulesToContracts extends BaseResourceChildController<RelationshipServices.RuleContractLinker, ContractRule, ContractRuleView> {
     }
 
     @RestController
     @RequestMapping("/api/artifacts/{id}/representations")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @Tag(name = "Artifacts", description = "Endpoints for linking artifacts to representations")
     public static class ArtifactsToRepresentations extends BaseResourceChildController<RelationshipServices.ArtifactRepresentationLinker, Artifact, ArtifactView> {
     }
 
     @RestController
-    @RequestMapping("/api/representations/{id}/offered")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/representations/{id}/offers")
+    @Tag(name = "Representations", description = "Endpoints for linking representations to offered resources")
     public static class RepresentationsToOfferedResources extends BaseResourceChildController<RelationshipServices.RepresentationOfferedResourceLinker, Representation, RepresentationView> {
     }
 
     @RestController
-    @RequestMapping("/api/representations/{id}/requested")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/representations/{id}/requests")
+    @Tag(name = "Representations", description = "Endpoints for linking representations to requested resources")
     public static class RepresentationsToRequestedResources extends BaseResourceChildController<RelationshipServices.RepresentationOfferedResourceLinker, Representation, RepresentationView> {
     }
 
     @RestController
-    @RequestMapping("/api/offered/{id}/catalogs")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/offers/{id}/catalogs")
+    @Tag(name = "Resources", description = "Endpoints for linking offered resources to catalogs")
     public static class OfferedResourcesToCatalogs extends BaseResourceChildController<RelationshipServices.OfferedResourceCatalogLinker, OfferedResource, OfferedResourceView> {
     }
 
     @RestController
-    @RequestMapping("/api/requested/{id}/catalogs")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/requests/{id}/catalogs")
+    @Tag(name = "Resources", description = "Endpoints for linking requested resources to catalogs")
     public static class RequestedResourcesToCatalogs extends BaseResourceChildController<RelationshipServices.RequestedResourceCatalogLinker, RequestedResource, OfferedResourceView> {
     }
 
     @RestController
-    @RequestMapping("/api/contracts/{id}/offered")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/contracts/{id}/offers")
+    @Tag(name = "Contracts", description = "Endpoints for linking contracts to offers")
     public static class ContractsToOfferedResources extends BaseResourceChildController<RelationshipServices.ContractOfferedResourceLinker, Contract, ContractView> {
     }
 
     @RestController
-    @RequestMapping("/api/contracts/{id}/requested")
-    @Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+    @RequestMapping("/api/contracts/{id}/requests")
+    @Tag(name = "Contracts", description = "Endpoints for linking contracts to requests")
     public static class ContractsToRequestedResources extends BaseResourceChildController<RelationshipServices.ContractRequestedResourceLinker, Contract, ContractView> {
     }
 }

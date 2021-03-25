@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.net.MalformedURLException;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
@@ -13,16 +10,18 @@ import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.net.MalformedURLException;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
  */
 @Service
-@RequiredArgsConstructor
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
     /**
      * Class level logger.
@@ -38,6 +37,18 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * Service for http communication.
      **/
     private @NonNull HttpService httpService;
+
+    /**
+     * Constructor for ArtifactService.
+     *
+     * @param dataRepository the data repository
+     * @param httpService the HTTP service for fetching remote data
+     */
+    @Autowired
+    public ArtifactService(final DataRepository dataRepository, final HttpService httpService) {
+        this.dataRepository = dataRepository;
+        this.httpService = httpService;
+    }
 
     /**
      * Persist the artifact and its data.
@@ -97,7 +108,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) {
+    private Object getData(final LocalData data) { // TODO send artifact request if no data available
         return data.getValue();
     }
 

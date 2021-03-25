@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model.view;
 
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceRepresentations;
-import de.fraunhofer.isst.dataspaceconnector.controller.v2.RequestedResourceController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RequestedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

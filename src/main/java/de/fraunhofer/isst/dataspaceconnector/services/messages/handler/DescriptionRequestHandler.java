@@ -3,16 +3,19 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -47,7 +50,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for handling response messages.
      */
-    private final @NonNull DescriptionResponseService messageService;
+    private final @NonNull DescriptionResponseService descriptionService;
 
     /**
      * Service for the message exception handling.
@@ -67,7 +70,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for message processing.
      */
-    private final @NonNull MessageProcessingService processingService;
+    private final @NonNull MessageService messageService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -82,7 +85,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            processingService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
             return exceptionService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -118,29 +121,25 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var entity = entityResolver.getEntityById(requestedElement);
 
             if (entity == null) {
-                return exceptionService.handleResourceNotFoundException(requestedElement,
-                        issuerConnector, messageId);
+                throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
             } else {
                 // If the element has been found, build the ids response message.
                 final var params = new DescriptionResponseMessageDesc(messageId);
-                final var header = messageService.buildMessage(issuerConnector, params);
+                final var header = descriptionService.buildMessage(issuerConnector, params);
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
 
                 // Send ids response message.
                 return BodyResponse.create(header, payload);
             }
-        } catch (ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundException | UnreachableLineException exception) {
             return exceptionService.handleResourceNotFoundException(exception, requestedElement,
                     issuerConnector, messageId);
         } catch (InvalidResourceException exception) {
             return exceptionService.handleInvalidResourceException(exception, requestedElement,
                     issuerConnector, messageId);
-        } catch (MessageBuilderException exception) {
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
+                | RdfBuilderException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception);
-        } catch (IllegalStateException exception) {
-            return exceptionService.handleIllegalStateException(exception);
-        } catch (ConstraintViolationException exception) {
-            return exceptionService.handleConstraintViolationException(exception);
         }
     }
 
@@ -159,17 +158,14 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
             // Build ids response message.
             final var desc = new DescriptionResponseMessageDesc(messageId);
-            final var header = messageService.buildMessage(issuerConnector, desc);
+            final var header = descriptionService.buildMessage(issuerConnector, desc);
             final var payload = IdsUtils.toRdf(selfDescription);
 
             // Send ids response message.
             return BodyResponse.create(header, payload);
-        } catch (ConstraintViolationException exception) {
-            return exceptionService.handleConstraintViolationException(exception);
-        } catch (MessageBuilderException exception) {
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
+                | RdfBuilderException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception);
-        } catch (IllegalStateException exception) {
-            return exceptionService.handleIllegalStateException(exception);
         }
     }
 }

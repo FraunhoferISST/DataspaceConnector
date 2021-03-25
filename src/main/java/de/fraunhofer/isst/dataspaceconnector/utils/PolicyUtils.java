@@ -11,13 +11,14 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import java.net.URI;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,10 +27,13 @@ import java.util.List;
 public final class PolicyUtils {
 
     /**
-     * The date format pattern.
+     * Class level logger.
      */
-    private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyUtils.class);
 
+    /**
+     * Constructor without params.
+     */
     private PolicyUtils() {
         // not used
     }
@@ -40,7 +44,7 @@ public final class PolicyUtils {
      * @param contract The ids contract.
      * @return A list of ids rules.
      */
-    public static List<Rule> extractRulesFromContract(final Contract contract) {
+    public static List<? extends Rule> extractRulesFromContract(final Contract contract) {
         final var permissionList = contract.getPermission();
         final var ruleList = new ArrayList<Rule>(permissionList);
 
@@ -95,7 +99,7 @@ public final class PolicyUtils {
      * @throws java.text.ParseException if a duration cannot be parsed.
      */
     public static boolean checkRuleForDeletion(final Rule rule) throws ParseException {
-        Date max = getDate(rule);
+        final var max = getDate(rule);
         if (max != null) {
             return checkDate(new Date(), max);
         } else {
@@ -131,16 +135,25 @@ public final class PolicyUtils {
      * @param rule the policy rule object.
      * @return the number of allowed accesses.
      */
-    public static Integer getMaxAccess(final Rule rule) {
-        Constraint constraint = rule.getConstraint().get(0);
+    public static Integer getMaxAccess(final Rule rule) throws NumberFormatException {
+        final var constraint = rule.getConstraint().get(0);
+        final var value = constraint.getRightOperand().getValue();
+        final var operator = constraint.getOperator();
 
-        int value = Integer.parseInt(constraint.getRightOperand().getValue());
-        switch (constraint.getOperator()) {
+        int number;
+        try {
+            number = Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            LOGGER.debug("Failed to parse value to integer. [exception=({})]", e.getMessage());
+            number = 1;
+        }
+
+        switch (operator) {
             case EQ:
             case LTEQ:
-                return value;
+                return number;
             case LT:
-                return value - 1;
+                return number - 1;
             default:
                 return 0;
         }
@@ -153,20 +166,21 @@ public final class PolicyUtils {
      * @return the time interval.
      */
     public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
-        TimeInterval timeInterval = new TimeInterval();
+        final var interval = new TimeInterval();
 
         for (var constraint : rule.getConstraint()) {
-            if (constraint.getOperator() == BinaryOperator.AFTER) {
-                final var start = new SimpleDateFormat(DATE_FORMAT)
-                        .parse(constraint.getRightOperand().getValue());
-                timeInterval.setStart(start);
-            } else if (constraint.getOperator() == BinaryOperator.BEFORE) {
-                final var end = new SimpleDateFormat(DATE_FORMAT)
-                        .parse(constraint.getRightOperand().getValue());
-                timeInterval.setEnd(end);
+            final var operator = constraint.getOperator();
+            if (operator == BinaryOperator.AFTER) {
+                final var value = constraint.getRightOperand().getValue();
+                final var start = IdsUtils.getDateOf(value);
+                interval.setStart(start);
+            } else if (operator == BinaryOperator.BEFORE) {
+                final var value = constraint.getRightOperand().getValue();
+                final var end = IdsUtils.getDateOf(value);
+                interval.setEnd(end);
             }
         }
-        return timeInterval;
+        return interval;
     }
 
     /**
@@ -191,9 +205,7 @@ public final class PolicyUtils {
         final var constraint = rule.getConstraint().get(0);
         final var date = constraint.getRightOperand().getValue();
 
-        final var sdf = new SimpleDateFormat(DATE_FORMAT);
-        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
-        return sdf.parse(date);
+        return IdsUtils.getDateOf(date);
     }
 
     /**
@@ -205,8 +217,10 @@ public final class PolicyUtils {
      */
     public static Duration getDuration(final Rule rule) throws DatatypeConfigurationException {
         final var constraint = rule.getConstraint().get(0);
-        if (constraint.getRightOperand().getType().equals("xsd:duration")) {
-            String duration = constraint.getRightOperand().getValue();
+        final var type = constraint.getRightOperand().getType();
+
+        if (type.equals("xsd:duration")) {
+            final var duration = constraint.getRightOperand().getValue();
             return DatatypeFactory.newInstance().newDuration(duration);
         } else {
             return null;
@@ -221,7 +235,7 @@ public final class PolicyUtils {
      * @return The new date.
      */
     public static Date getCalculatedDate(final Date original, final Duration duration) {
-        Calendar cal = Calendar.getInstance();
+        final var cal = Calendar.getInstance();
         cal.setTime(original);
         cal.add(Calendar.SECOND, duration.getSeconds());
         cal.add(Calendar.MINUTE, duration.getMinutes());

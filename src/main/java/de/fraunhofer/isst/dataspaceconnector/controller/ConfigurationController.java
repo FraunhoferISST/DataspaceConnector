@@ -29,7 +29,6 @@ import static de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils.respon
  */
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Configuration", description = "Endpoint for connector configurations")
 @RequiredArgsConstructor
 public class ConfigurationController {
 
@@ -56,6 +55,7 @@ public class ConfigurationController {
      */
     @PostMapping("/configuration")
     @Operation(summary = "Update current configuration.")
+    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
@@ -82,6 +82,7 @@ public class ConfigurationController {
      */
     @GetMapping("/configuration")
     @Operation(summary = "Get current configuration.")
+    @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "404", description = "Not found")})
@@ -103,6 +104,7 @@ public class ConfigurationController {
      */
     @PutMapping("/configuration/negotiation")
     @Operation(summary = "Set contract negotiation status")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
     public ResponseEntity<Object> setNegotiationStatus(@RequestParam("status") final boolean status) {
@@ -121,6 +123,7 @@ public class ConfigurationController {
      */
     @GetMapping("/configuration/negotiation")
     @Operation(summary = "Get contract negotiation status")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
     public ResponseEntity<Object> getNegotiationStatus() {
@@ -140,6 +143,7 @@ public class ConfigurationController {
     @PutMapping("/configuration/pattern")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
     public ResponseEntity<Object> getPatternStatus(@RequestParam("status") final boolean status) {
@@ -161,6 +165,7 @@ public class ConfigurationController {
     @GetMapping("/configuration/pattern")
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
+    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
     public ResponseEntity<Object> getPatternStatus() {

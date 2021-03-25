@@ -4,15 +4,17 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedHeaderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import okhttp3.MultipartBody;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,8 +112,8 @@ public final class MessageUtils {
      * @param inboundVersions The inbound model version of the current connector.
      * @throws VersionNotSupportedException If the Infomodel version is not supported.
      */
-    public static void checkForVersionSupport(final String versionString, final List<String> inboundVersions)
-            throws VersionNotSupportedException {
+    public static void checkForVersionSupport(final String versionString,
+                                              final List<String> inboundVersions) throws VersionNotSupportedException {
         boolean versionSupported = false;
         for (final var version : inboundVersions) {
             if (version.equals(versionString)) {
@@ -139,8 +141,19 @@ public final class MessageUtils {
             return InfomodelMessageBuilder.messageWithString(header, payload);
         } catch (IOException exception) {
             LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be built.");
+            throw new MessageBuilderException("Message could not be built.", exception);
         }
+    }
+
+    /**
+     * Convert response string to map.
+     *
+     * @param response The http response.
+     * @return The multipart map.
+     * @throws FileUploadException If string could not be parsed as multipart map.
+     */
+    public static Map<String, String> responseToMap(final String response) throws FileUploadException {
+        return MultipartStringParser.stringToMultipart(response);
     }
 
     /**
@@ -148,14 +161,14 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids header.
-     * @throws MalformedHeaderException If the map contains no header property.
+     * @throws MessageResponseException If the map contains no header property.
      */
     public static String extractHeaderFromMultipartMessage(final Map<String, String> message)
-            throws MalformedHeaderException {
+            throws MessageResponseException {
         try {
             return message.get("header");
         } catch (Exception exception) {
-            throw new MalformedHeaderException("Cannot read header.", exception);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_HEADER.toString(), exception);
         }
     }
 
@@ -164,14 +177,14 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids payload.
-     * @throws MalformedPayloadException If the map contains no payload property.
+     * @throws MessageResponseException If the map contains no payload property.
      */
     public static String extractPayloadFromMultipartMessage(final Map<String, String> message)
-            throws MalformedPayloadException {
+            throws MessageResponseException {
         try {
             return message.get("payload");
         } catch (Exception exception) {
-            throw new MalformedPayloadException("Cannot read payload.", exception);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_PAYLOAD.toString(), exception);
         }
     }
 

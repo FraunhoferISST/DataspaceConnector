@@ -1,12 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageProcessingService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -18,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,28 +41,18 @@ public class DescriptionRequestMessageController {
     private final @NonNull MessageService messageService;
 
     /**
-     * Service for message responses.
-     */
-    private final @NonNull MessageProcessingService messageProcessor;
-
-    /**
-     * Resource view assembler.
-     * TODO implement requested resource view assembler
-     */
-    private final @NonNull OfferedResourceViewAssembler viewAssembler; //
-
-    /**
-     * Requests metadata from an external connector by building an ArtifactRequestMessage.
+     * Requests metadata from an external connector by building an DescriptionRequestMessage.
      *
      * @param recipient The target connector url.
      * @param elementId The requested element id.
-     * @return OK or error response.
+     * @return The response entity.
      */
     @PostMapping("/description")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "417", description = "Expectation failed"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
@@ -77,51 +62,33 @@ public class DescriptionRequestMessageController {
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
         Map<String, String> response = null;
-        try {
-            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
-        } catch (UnexpectedMessageType exception) {
-            // If the response is not a description response message, show the response.
-            return messageProcessor.returnResponseMessageContent(response);
-        } catch (MessageException exception) {
-            return ControllerUtils.respondIdsMessageFailed(exception);
-        }
-
         String payload = null;
         try {
+            // Send and validate description request/response message.
+            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+            messageService.validateDescriptionResponseMessage(response);
+
             // Read and process the response message.
             payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-
             if (!Utils.isEmptyOrNull(elementId)) {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
                 // Get payload as component.
-                final var component = messageProcessor.getComponentFromPayload(payload);
+                final var component = messageService.getComponentFromPayload(payload);
                 return new ResponseEntity<>(component, HttpStatus.OK);
             }
+        } catch (MessageException exception) {
+            return ControllerUtils.respondIdsMessageFailed(exception);
+        } catch (MessageResponseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (UnexpectedResponseType exception) {
+            // If the response is not a description response message, show the response.
+            return messageService.returnResponseMessageContent(response);
         } catch (IllegalArgumentException exception) {
             // If the response is not of type resource or base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (Exception exception) {
             return ControllerUtils.respondGlobalException(exception);
         }
-    }
-
-    /**
-     * Save the incoming resource as requested resource.
-     *
-     * @param resource The ids resource.
-     * @return The response body.
-     */
-    private ResponseEntity<Object> saveResponse(final Resource resource) {
-        final var newResource = messageProcessor.saveMetadata(resource);
-
-        // Return the uri of the saved resource.
-        final var entity = viewAssembler.toModel((OfferedResource) newResource);
-        final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
-
-        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 }

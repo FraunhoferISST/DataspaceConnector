@@ -2,12 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedHeaderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageNotSentException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedMessageType;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
@@ -80,28 +77,25 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         try {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(recipient, desc);
-            // Exception is handled at a higher level.
+
+            // MessageBuilderException is handled at a higher level.
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             LOGGER.debug("Built request message:" + body); // TODO Add logging house class
 
-            final var response = idsHttpService.sendAndCheckDat(body, recipient);
-
-            validateResponse(response);
-
-            // Send message and check response.
-            return response;
+            // Send message and return response.
+            return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (MessageResponseException e) {
             LOGGER.warn("Failed to read ids response message. [exception=({})]", e.getMessage());
-            throw new MessageBuilderException("Invalid ids response message.", e);
+            throw new MessageException(ErrorMessages.INVALID_RESPONSE.toString(), e);
         } catch (ConstraintViolationException e) {
             LOGGER.warn("Ids message could not be built. [exception=({})]", e.getMessage());
-            throw new MessageBuilderException("Ids message header could not be built.", e);
+            throw new MessageException(ErrorMessages.HEADER_BUILD_FAILED.toString(), e);
         } catch (ClaimsException e) {
             LOGGER.debug("Invalid DAT in incoming message. [exception=({})]", e.getMessage());
-            throw new MessageResponseException("Invalid DAT in incoming message.", e);
+            throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
         } catch (FileUploadException | IOException e) {
             LOGGER.warn("Message could not be sent. [exception=({})]", e.getMessage());
-            throw new MessageNotSentException("Message could not be sent.", e);
+            throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
         }
     }
 
@@ -109,10 +103,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Checks if the response message is of the right type.
      *
      * @param message The received message response.
-     * @throws MessageResponseException If the response could not be read or the type is incorrect.
+     * @throws MessageResponseException If the response could not be read.
+     * @throws UnexpectedResponseType If the response type is incorrect.
      */
-    private void validateResponse(final Map<String, String> message) throws MessageResponseException {
+    public void validateResponse(final Map<String, String> message) throws MessageResponseException, UnexpectedResponseType {
         try {
+            // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
             final var idsMessage = getDeserializer().deserializeResponseMessage(header);
 
@@ -120,14 +116,15 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var allowedType = getResponseMessageType();
             final var validType = messageType.equals(allowedType);
             if (!validType) {
-                throw new UnexpectedMessageType(ErrorMessages.UNEXPECTED_RESPONSE_TYPE.toString());
+                throw new UnexpectedResponseType(ErrorMessages.UNEXPECTED_RESPONSE_TYPE.toString());
             }
-        } catch (MalformedHeaderException e) {
+        } catch (MessageResponseException | IllegalArgumentException e) {
             LOGGER.debug("Failed to read response header. [exception=({})]", e.getMessage());
-            throw new MessageResponseException("Missing response header.", e);
-        } catch (IllegalArgumentException e) {
-            LOGGER.debug("Failed to read response header. [exception=({})]", e.getMessage());
-            throw new MessageResponseException("Malformed response header.", e);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_HEADER.toString(), e);
+        } catch (Exception e) {
+            // NOTE: Should not be reached.
+            LOGGER.warn("Something else went wrong. [exception=({})]", e.getMessage());
+            throw new MessageResponseException(ErrorMessages.INVALID_RESPONSE.toString(), e);
         }
     }
 

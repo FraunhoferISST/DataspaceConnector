@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/contracts/{id}/rules")
-@Tag(name = "Linker", description = "Endpoints for linking a base resource and its children")
+@Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
 public class ContractRules extends BaseResourceChildController<ContractRuleLinker, ContractRule, ContractRuleView> {
 }

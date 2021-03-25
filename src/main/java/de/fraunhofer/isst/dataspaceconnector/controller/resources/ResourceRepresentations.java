@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/resources/{id}/representations")
-@Tag(name = "Resources")
+@Tag(name = "Resources", description = "Endpoints for linking representations to resources")
 public class ResourceRepresentations extends BaseResourceChildController<AbstractResourceRepresentationLinker<OfferedResource>, OfferedResource, OfferedResourceView> {
 }

@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -56,7 +57,7 @@ public final class EndpointUtils {
                 currentPath.toString().indexOf(currentPath.getPath()));
     }
 
-    public static BasePath getBasePathEnumFromString(final String path) {
+    public static BasePath getBasePathEnumFromString(final String path) throws UnreachableLineException {
         return BasePath.fromString(path);
     }
 }

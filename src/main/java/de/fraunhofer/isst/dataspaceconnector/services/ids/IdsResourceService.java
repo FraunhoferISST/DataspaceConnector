@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsViewUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsViewService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,26 +28,28 @@ public class IdsResourceService {
 
     private final @NonNull CatalogService catalogService;
 
+    private final @NonNull IdsViewService idsViewService;
+
     // TODO Check if the id is the internal or the external one
     // TODO add exception handling
     public List<Resource> getAllOfferedResources() {
         return offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewUtils::create)
+                .map(idsViewService::create)
                 .collect(Collectors.toList());
     }
 
     public List<Resource> getAllRequestedResources() {
         return requestedResourceService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewUtils::create)
+                .map(idsViewService::create)
                 .collect(Collectors.toList());
     }
 
     public List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
-                .map(IdsViewUtils::create)
+                .map(idsViewService::create)
                 .collect(Collectors.toList());
     }
 
@@ -63,7 +65,7 @@ public class IdsResourceService {
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))
                 .findAny();
 
-        return resource.map(offeredResource -> IdsViewUtils.create(offeredResource)).orElse(null);
+        return resource.map(offeredResource -> idsViewService.create(offeredResource)).orElse(null);
     }
 
     /**
@@ -78,6 +80,6 @@ public class IdsResourceService {
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))
                 .findAny();
 
-        return resource.map(offeredResource -> IdsViewUtils.create(offeredResource)).orElse(null);
+        return resource.map(offeredResource -> idsViewService.create(offeredResource)).orElse(null);
     }
 }

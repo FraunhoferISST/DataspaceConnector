@@ -6,20 +6,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
-import java.util.List;
 
 /**
- * A ContractRule defines a rule that should be enforced.
+ * A contract agreement is an agreement between two parties on access and usage behaviours.
  */
 @Data
 @Entity
 @Table
 @EqualsAndHashCode(callSuper = false)
 @Setter(AccessLevel.PACKAGE)
-public class ContractRule extends AbstractEntity {
+public class Agreement extends AbstractEntity {
 
     /**
      * Serial version uid.
@@ -27,23 +25,12 @@ public class ContractRule extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The rule id on provider side.
+     * The agreement id on provider side.
      */
     private URI remoteId;
 
     /**
-     * The title of the rule.
-     */
-    private String title;
-
-    /**
-     * The definition of the rule.
+     * The definition of the contract.
      **/
     private String value;
-
-    /**
-     * The contracts in which this rule is used.
-     */
-    @ManyToMany(mappedBy = "rules")
-    private List<Contract> contracts;
 }
