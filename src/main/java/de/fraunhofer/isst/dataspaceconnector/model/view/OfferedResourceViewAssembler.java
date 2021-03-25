@@ -5,6 +5,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipCo
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceRepresentations;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -12,24 +13,41 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
+/**
+ * Constructor the REST resource for an offered resource.
+ */
 @Component
-public class OfferedResourceViewAssembler implements RepresentationModelAssembler<OfferedResource, OfferedResourceView> {
-
+@NoArgsConstructor
+public class OfferedResourceViewAssembler
+        implements RepresentationModelAssembler<OfferedResource, OfferedResourceView> {
+    /**
+     * Construct the OfferedResourceView from an OfferedResource.
+     * @param resource The resource.
+     * @return The new view.
+     */
     @Override
-    public OfferedResourceView toModel(final OfferedResource entity) {
+    public OfferedResourceView toModel(final OfferedResource resource) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(entity, OfferedResourceView.class);
+        final var view = modelMapper.map(resource, OfferedResourceView.class);
 
-        final var selfLink = linkTo(OfferedResourceController.class).slash(entity.getId()).withSelfRel();
+        final var selfLink =
+                linkTo(OfferedResourceController.class).slash(resource.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var contractsLink = linkTo(methodOn(ResourceContracts.class).getResource(entity.getId(), null, null, null)).withRel("contracts");
+        final var contractsLink = linkTo(
+                methodOn(ResourceContracts.class).getResource(resource.getId(), null, null, null))
+                                          .withRel("contracts");
         view.add(contractsLink);
 
-        final var representationLink = linkTo(methodOn(ResourceRepresentations.class).getResource(entity.getId(), null, null, null)).withRel("representations");
-        view.add(representationLink);
+        final var repLink = linkTo(methodOn(ResourceRepresentations.class)
+                                           .getResource(resource.getId(), null, null, null))
+                                    .withRel("representations");
+        view.add(repLink);
 
-        final var catalogLink = linkTo(methodOn(RelationshipControllers.OfferedResourcesToCatalogs.class).getResource(entity.getId(), null, null, null)).withRel("catalogs");
+        final var catalogLink =
+                linkTo(methodOn(RelationshipControllers.OfferedResourcesToCatalogs.class)
+                                .getResource(resource.getId(), null, null, null))
+                        .withRel("catalogs");
         view.add(catalogLink);
 
         return view;
