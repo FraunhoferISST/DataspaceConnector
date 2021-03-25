@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 /**
  * This utility class contains general purpose functions.
@@ -75,4 +77,34 @@ public final class Utils {
             return param.toString().equals("");
         }
     }
+
+    public static Sort toSort( final String sort) {
+        //TODO Implement with Regex
+        if(sort == null)
+            return Sort.unsorted();
+
+        final var comma = sort.indexOf(",");
+        if(comma == -1)
+            return Sort.by(sort);
+
+        try {
+            final var dirString = sort.substring(comma + 1, sort.length()).toUpperCase();
+            final var dir = Sort.Direction.valueOf(dirString);
+            final var property = sort.substring(0, comma);
+            return Sort.by(dir, property);
+        }catch(Exception e) {
+            return Sort.unsorted();
+        }
+    }
+
+    public static PageRequest toPageRequest(final Integer page, final Integer size, final String sort) {
+        final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
+        final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
+
+        return PageRequest.of(pageIndex, sizeValue, Utils.toSort(sort));
+    }
+
+    public static final int DEFAULT_PAGE_SIZE = 30;
+    public static final int MAX_PAGE_SIZE = 100;
+    public static final int DEFAULT_FIRST_PAGE = 0;
 }

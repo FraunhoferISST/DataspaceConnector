@@ -11,13 +11,13 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseEntityService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -80,7 +80,7 @@ public class BaseResourceChildController<S extends BaseUniDirectionalLinkerServi
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,
             @RequestParam(required = false) final String sort) {
-        final var pageable = PageRequest.of(page == null ? 0 : page, size == null ? 30 : size);
+        final var pageable = Utils.toPageRequest(page, size, sort);
         final var entities = linker.get(ownerId, pageable);
 
         PagedModel<V> model;
