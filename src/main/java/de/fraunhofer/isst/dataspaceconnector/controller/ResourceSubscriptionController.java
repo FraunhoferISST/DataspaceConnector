@@ -76,31 +76,10 @@ public class ResourceSubscriptionController {
             @PathVariable("resourceID") UUID id,
             @Parameter(description = "The URL that has to unsubscribe of the resourceID.", required = true, example = "Data String")
             @RequestBody String data) {
-        
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        return subscriberNotificationService.deleteSubscribedUrl(id, data);
+
     }
     
-    /**
-     *
-     * @param id
-     * @param data
-     * @return
-     */
-    @Operation(summary = "Update an URL for a resource ID",
-            description = "Update an URL for a resource ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Updated"),
-            @ApiResponse(responseCode = "400", description = "Invalid resource"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @PutMapping(value = "/subscribe/{resourceID}")
-    @ResponseBody
-    public ResponseEntity<String> updateSubscribedUrl(
-            @Parameter(description = "The resource uuid.", required = true, example = "a4212311-86e4-40b3-ace3-ef29cd687cf9")
-            @PathVariable("resourceID") UUID id,
-            @Parameter(description = "The URL that has to be updated.", required = true, example = "Data String")
-            @RequestBody String data) {
-        
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+
 }

@@ -16,6 +16,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.handler.ResourceU
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourceServiceImpl;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.SubscriberNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -38,6 +39,7 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public class ResourceUpdateMessageService extends MessageService {
     public static final Logger LOGGER = LoggerFactory.getLogger(ResourceUpdateMessageHandler.class);
 
+    private final SubscriberNotificationService subscriberNotificationService;
     private final ConfigurationContainer configurationContainer;
     private final DapsTokenProvider tokenProvider;
     private final ResourceService requestedResourceService;
@@ -62,6 +64,7 @@ public class ResourceUpdateMessageService extends MessageService {
                                         OfferedResourceServiceImpl resourceService,
                                         SerializerProvider serializerProvider,
                                         RequestedResourceServiceImpl requestedResourceService,
+                                        SubscriberNotificationService subscriberNotificationService,
                                         ArtifactMessageService artifactMessageService) throws IllegalArgumentException {
         super(idsHttpService, serializerProvider, resourceService, configurationContainer);
 
@@ -72,6 +75,7 @@ public class ResourceUpdateMessageService extends MessageService {
         this.tokenProvider = tokenProvider;
         this.requestedResourceService = requestedResourceService;
         this.artifactMessageService = artifactMessageService;
+        this.subscriberNotificationService = subscriberNotificationService;
     }
 
     /**
@@ -239,5 +243,7 @@ public class ResourceUpdateMessageService extends MessageService {
                     exception.getMessage());
             throw new ResourceException("Could not save data to database.");
         }
+
+        subscriberNotificationService.notifySubscribers(resource);
     }
 }
