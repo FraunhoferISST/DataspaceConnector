@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ArtifactController.class})
 class ArtifactControllerTest {
-
     @MockBean
     ArtifactService service;
 
@@ -37,7 +36,8 @@ class ArtifactControllerTest {
     @Test
     public void getData_null_throwIllegalArgumentException() {
         /* ARRANGE */
-        Mockito.when(service.getData(Mockito.isNull(), Mockito.any())).thenThrow(IllegalArgumentException.class);
+        Mockito.when(service.getData(Mockito.isNull(), Mockito.any()))
+                .thenThrow(IllegalArgumentException.class);
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> controller.getData(null));
@@ -47,7 +47,8 @@ class ArtifactControllerTest {
     public void getData_unknownId_throwResourceNotFoundException() {
         /* ARRANGE */
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-        Mockito.when(service.getData(Mockito.eq(unknownUuid), Mockito.any())).thenThrow(ResourceNotFoundException.class);
+        Mockito.when(service.getData(Mockito.eq(unknownUuid), Mockito.any()))
+                .thenThrow(ResourceNotFoundException.class);
 
         /* ACT */
         assertThrows(ResourceNotFoundException.class, () -> controller.getData(unknownUuid));

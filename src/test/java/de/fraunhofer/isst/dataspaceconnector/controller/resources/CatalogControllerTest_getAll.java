@@ -1,15 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
-import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,11 +16,19 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
+import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import lombok.SneakyThrows;
 
 @SpringBootTest(classes = {CatalogController.class})
 class CatalogControllerTest_getAll {
-
     @MockBean
     private CatalogService service;
 
@@ -41,7 +41,7 @@ class CatalogControllerTest_getAll {
     private List<Catalog> catalogList = new ArrayList<>();
 
     @Autowired
-    //private MockMvc mockMvc;
+    // private MockMvc mockMvc;
     private CatalogController controller;
 
     /**
@@ -50,8 +50,7 @@ class CatalogControllerTest_getAll {
 
     @BeforeEach
     public void init() {
-        for(int i = 0; i < 50; i++)
-            catalogList.add(getCatalog(String.valueOf(i)));
+        for (int i = 0; i < 50; i++) catalogList.add(getCatalog(String.valueOf(i)));
     }
 
     /**
@@ -75,7 +74,8 @@ class CatalogControllerTest_getAll {
         /* ARRANGE */
         final var pageSize = 1;
         final var request = PageRequest.of(0, pageSize);
-        Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(Utils.toPage(catalogList, request));
+        Mockito.when(service.getAll(Mockito.eq(request)))
+                .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(null, pageSize, null);
@@ -84,7 +84,8 @@ class CatalogControllerTest_getAll {
         final var body = (PagedModel<CatalogView>) result.getBody();
         assertEquals(body.getLink("self").get().getHref(), body.getLink("first").get().getHref());
         assertEquals(1, body.getContent().size());
-        assertEquals(new CatalogViewAssembler().toModel(catalogList.get(0)), body.getContent().stream().findFirst().get());
+        assertEquals(new CatalogViewAssembler().toModel(catalogList.get(0)),
+                body.getContent().stream().findFirst().get());
     }
 
     @Test
@@ -93,7 +94,8 @@ class CatalogControllerTest_getAll {
         final var pageSize = 1;
         final var page = 0;
         final var request = PageRequest.of(page, pageSize);
-        Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(Utils.toPage(catalogList, request));
+        Mockito.when(service.getAll(Mockito.eq(request)))
+                .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(page, pageSize, null);
@@ -109,7 +111,8 @@ class CatalogControllerTest_getAll {
         final var pageSize = 13;
         final var page = 3;
         final var request = PageRequest.of(page, pageSize);
-        Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(Utils.toPage(catalogList, request));
+        Mockito.when(service.getAll(Mockito.eq(request)))
+                .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(page, pageSize, null);

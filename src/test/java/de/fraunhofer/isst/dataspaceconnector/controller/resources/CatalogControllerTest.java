@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {CatalogController.class})
 class CatalogControllerTest {
-
     @MockBean
     private CatalogService catalogService;
 
@@ -41,10 +40,10 @@ class CatalogControllerTest {
     @Autowired
     private CatalogController controller;
 
-    private CatalogDesc desc           = getDesc();
+    private CatalogDesc desc = getDesc();
     private CatalogDesc updatedDescOne = getUpdatedDesc();
     private CatalogDesc updateDescOneChangedId = getUpdatedDescChangedId();
-    private Catalog     catalogOne     = getCatalogOne();
+    private Catalog catalogOne = getCatalogOne();
     private Catalog updatedCatalogOne = getUpdatedCatalogOne();
     private Catalog updatedCatalogOneChangedID = getUpdatedCatalogOneChangedId();
     private boolean doesCatalogOneExist = true;
@@ -57,19 +56,36 @@ class CatalogControllerTest {
     @BeforeEach
     public void init() {
         Mockito.when(catalogService.create(Mockito.eq(getDesc()))).thenReturn(catalogOne);
-        Mockito.when(catalogService.get(Mockito.eq(unknownUUid))).thenThrow(ResourceNotFoundException.class);
+        Mockito.when(catalogService.get(Mockito.eq(unknownUUid)))
+                .thenThrow(ResourceNotFoundException.class);
         Mockito.when(catalogService.get(Mockito.eq(catalogOne.getId()))).thenReturn(catalogOne);
-        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.eq(desc))).thenReturn(catalogOne);
-        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.eq(updatedDescOne))).thenReturn(updatedCatalogOne);
-        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.eq(updateDescOneChangedId))).thenReturn(updatedCatalogOneChangedID);
+        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.eq(desc)))
+                .thenReturn(catalogOne);
+        Mockito.when(catalogService.update(
+                             Mockito.eq(catalogOne.getId()), Mockito.eq(updatedDescOne)))
+                .thenReturn(updatedCatalogOne);
+        Mockito.when(catalogService.update(
+                             Mockito.eq(catalogOne.getId()), Mockito.eq(updateDescOneChangedId)))
+                .thenReturn(updatedCatalogOneChangedID);
 
-        Mockito.when(catalogService.update(Mockito.isNull(), Mockito.eq(new CatalogDesc()))).thenThrow(IllegalArgumentException.class);
-        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.isNull())).thenThrow(IllegalArgumentException.class);
-        Mockito.when(catalogService.update(Mockito.eq(unknownUUid), Mockito.isNull())).thenThrow(IllegalArgumentException.class);
-        Mockito.when(catalogService.update(Mockito.isNull(), Mockito.isNull())).thenThrow(IllegalArgumentException.class);
+        Mockito.when(catalogService.update(Mockito.isNull(), Mockito.eq(new CatalogDesc())))
+                .thenThrow(IllegalArgumentException.class);
+        Mockito.when(catalogService.update(Mockito.eq(catalogOne.getId()), Mockito.isNull()))
+                .thenThrow(IllegalArgumentException.class);
+        Mockito.when(catalogService.update(Mockito.eq(unknownUUid), Mockito.isNull()))
+                .thenThrow(IllegalArgumentException.class);
+        Mockito.when(catalogService.update(Mockito.isNull(), Mockito.isNull()))
+                .thenThrow(IllegalArgumentException.class);
 
-        Mockito.doThrow(IllegalArgumentException.class).when(catalogService).delete(Mockito.isNull());
-        Mockito.doAnswer(invocation -> {doesCatalogOneExist = false; return null;}).when(catalogService).delete(Mockito.eq(catalogOne.getId()));
+        Mockito.doThrow(IllegalArgumentException.class)
+                .when(catalogService)
+                .delete(Mockito.isNull());
+        Mockito.doAnswer(invocation -> {
+                   doesCatalogOneExist = false;
+                   return null;
+               })
+                .when(catalogService)
+                .delete(Mockito.eq(catalogOne.getId()));
     }
 
     /**
@@ -177,7 +193,8 @@ class CatalogControllerTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> controller.update(null, new CatalogDesc()));
+        assertThrows(
+                IllegalArgumentException.class, () -> controller.update(null, new CatalogDesc()));
     }
 
     @Test
@@ -186,7 +203,8 @@ class CatalogControllerTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> controller.update(catalogOne.getId(), null));
+        assertThrows(
+                IllegalArgumentException.class, () -> controller.update(catalogOne.getId(), null));
     }
 
     @Test
@@ -423,30 +441,30 @@ class CatalogControllerTest {
         return catalog;
     }
 
-        @SneakyThrows
-        private Catalog getUpdatedCatalogOneChangedId() {
-            final var desc = getUpdatedDescChangedId();
-            final var constructor = Catalog.class.getConstructor();
-            constructor.setAccessible(true);
+    @SneakyThrows
+    private Catalog getUpdatedCatalogOneChangedId() {
+        final var desc = getUpdatedDescChangedId();
+        final var constructor = Catalog.class.getConstructor();
+        constructor.setAccessible(true);
 
-            final var catalog = constructor.newInstance();
+        final var catalog = constructor.newInstance();
 
-            final var titleField = catalog.getClass().getDeclaredField("title");
-            titleField.setAccessible(true);
-            titleField.set(catalog, desc.getTitle());
+        final var titleField = catalog.getClass().getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(catalog, desc.getTitle());
 
-            final var descriptionField = catalog.getClass().getDeclaredField("description");
-            descriptionField.setAccessible(true);
-            descriptionField.set(catalog, desc.getDescription());
+        final var descriptionField = catalog.getClass().getDeclaredField("description");
+        descriptionField.setAccessible(true);
+        descriptionField.set(catalog, desc.getDescription());
 
-            final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
-            offeredResourcesField.setAccessible(true);
-            offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
+        final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
+        offeredResourcesField.setAccessible(true);
+        offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
 
-            final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(catalog, desc.getStaticId());
+        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(catalog, desc.getStaticId());
 
-            return catalog;
-        }
+        return catalog;
+    }
 }
