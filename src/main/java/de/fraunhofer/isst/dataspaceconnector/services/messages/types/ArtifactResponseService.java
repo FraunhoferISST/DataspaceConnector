@@ -8,8 +8,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactResponseMess
 import de.fraunhofer.isst.dataspaceconnector.services.messages.AbstractMessageService;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
@@ -19,12 +17,13 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public final class ArtifactResponseService extends AbstractMessageService<ArtifactResponseMessageDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient, final ArtifactResponseMessageDesc desc)
+    public Message buildMessage(final ArtifactResponseMessageDesc desc)
             throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
+        final var recipient = desc.getRecipient();
         final var contractId = desc.getTransferContract();
         final var correlationMessage = desc.getCorrelationMessage();
 

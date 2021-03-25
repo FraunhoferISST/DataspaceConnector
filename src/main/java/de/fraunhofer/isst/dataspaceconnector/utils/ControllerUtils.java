@@ -131,7 +131,8 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondInvalidInput(final Exception exception) {
         LOGGER.warn("Failed to deserialize the input. [exception=({})]", exception.getMessage());
-        return new ResponseEntity<>("Invalid input.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Invalid input. " + exception.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**

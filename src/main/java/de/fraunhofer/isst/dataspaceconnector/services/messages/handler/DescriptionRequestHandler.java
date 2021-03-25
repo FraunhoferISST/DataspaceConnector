@@ -124,8 +124,9 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
             } else {
                 // If the element has been found, build the ids response message.
-                final var params = new DescriptionResponseMessageDesc(messageId);
-                final var header = descriptionService.buildMessage(issuerConnector, params);
+                final var desc = new DescriptionResponseMessageDesc(messageId);
+                desc.setRecipient(issuerConnector);
+                final var header = descriptionService.buildMessage(desc);
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
 
                 // Send ids response message.
@@ -158,7 +159,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
             // Build ids response message.
             final var desc = new DescriptionResponseMessageDesc(messageId);
-            final var header = descriptionService.buildMessage(issuerConnector, desc);
+            desc.setRecipient(issuerConnector);
+            final var header = descriptionService.buildMessage(desc);
             final var payload = IdsUtils.toRdf(selfDescription);
 
             // Send ids response message.

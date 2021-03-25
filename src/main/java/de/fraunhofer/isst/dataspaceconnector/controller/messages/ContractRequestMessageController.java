@@ -90,7 +90,7 @@ public class ContractRequestMessageController {
                     + "download data of an artifact.")
             @RequestParam(value = "download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
-            @RequestBody final List<? extends Rule> ruleList) {
+            @RequestBody final List<Rule> ruleList) {
         final var agreementLocations = new ArrayList<URI>();
         final var resourceLocations = new ArrayList<URI>();
         final var dataLocations = new ArrayList<URI>();

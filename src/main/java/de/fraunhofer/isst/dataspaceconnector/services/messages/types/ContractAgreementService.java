@@ -9,8 +9,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMes
 import de.fraunhofer.isst.dataspaceconnector.services.messages.AbstractMessageService;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
@@ -20,12 +18,13 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public final class ContractAgreementService extends AbstractMessageService<ContractAgreementMessageDesc> {
 
     @Override
-    public Message buildMessage(final URI recipient, final ContractAgreementMessageDesc desc)
+    public Message buildMessage(final ContractAgreementMessageDesc desc)
             throws ConstraintViolationException {
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
 
+        final var recipient = desc.getRecipient();
         final var correlationMessage = desc.getCorrelationMessage();
 
         return new ContractAgreementMessageBuilder()

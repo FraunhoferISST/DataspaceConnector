@@ -22,7 +22,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class PolicyUtils {
 
@@ -44,7 +46,7 @@ public final class PolicyUtils {
      * @param contract The ids contract.
      * @return A list of ids rules.
      */
-    public static List<? extends Rule> extractRulesFromContract(final Contract contract) {
+    public static List<Rule> extractRulesFromContract(final Contract contract) {
         final var permissionList = contract.getPermission();
         final var ruleList = new ArrayList<Rule>(permissionList);
 
@@ -55,6 +57,54 @@ public final class PolicyUtils {
         ruleList.addAll(obligationList);
 
         return ruleList;
+    }
+
+    /**
+     * Extract targets and save them together with the respective rules to a map.
+     *
+     * @param rules List of ids rules.
+     * @return Map with targets and matching rules.
+     */
+    public static Map<URI, List<Rule>> getTargetRuleMap(final List<Rule> rules) {
+        final var targetRuleMap = new HashMap<URI, List<Rule>>();
+
+        // Iterate over all rules.
+        for (final var rule : rules) {
+            // Get target of rule.
+            final var target = rule.getTarget();
+
+            // If the target is already in the map, add the rule to the value list.
+            if (targetRuleMap.containsKey(target)) {
+                final var value = targetRuleMap.get(target);
+                value.add(rule);
+            } else {
+                // If not, create a target-rule-entry to the map.
+                final var value = new ArrayList<Rule>();
+                value.add(rule);
+                targetRuleMap.put(target, value);
+            }
+        }
+
+        return targetRuleMap;
+    }
+
+    /**
+     * Check if contract offer has a restricted consumer. If the value does not match the issuer
+     * connector, remove the contract from the list.
+     *
+     * @param issuerConnector The requesting consumer.
+     * @param contracts       List of contracts.
+     * @return Cleaned list of contracts.
+     */
+    public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
+            final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts, final URI issuerConnector) {
+        for (final var contract : contracts) {
+            final var consumer = contract.getConsumer();
+            if (!consumer.equals(issuerConnector)) {
+                contracts.remove(contract);
+            }
+        }
+        return contracts;
     }
 
     /**
@@ -312,7 +362,7 @@ public final class PolicyUtils {
      * @param newRules List of rules from the contract that should be compared.
      * @throws ContractException If a mismatch has been detected.
      */
-    private static void compareDuties(final ArrayList<? extends Permission> oldRules,
+    public static void compareDuties(final ArrayList<? extends Permission> oldRules,
                                       final ArrayList<? extends Permission> newRules) throws ContractException {
         final var oldSize = oldRules.size();
         final var newSize = newRules.size();
@@ -342,7 +392,7 @@ public final class PolicyUtils {
      * @param newRules List of rules from the contract that should be compared.
      * @throws ContractException If a mismatch has been detected.
      */
-    private static void compareRules(final ArrayList<? extends Rule> oldRules,
+    public static void compareRules(final ArrayList<? extends Rule> oldRules,
                                      final ArrayList<? extends Rule> newRules) throws ContractException {
         final var oldSize = oldRules.size();
         final var newSize = newRules.size();

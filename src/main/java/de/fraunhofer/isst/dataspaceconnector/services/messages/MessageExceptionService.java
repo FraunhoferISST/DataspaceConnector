@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
@@ -112,14 +113,20 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link IllegalStateException}.
+     * Handles thrown {@link IllegalArgumentException}.
      *
-     * @param exception Exception that was thrown when trying to sendMessage the message.
+     * @param exception       Exception that was thrown when deserializing a message's payload.
+     * @param payload         The message's payload.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The message id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleIllegalStateException(final IllegalStateException exception) {
-        LOGGER.debug("Wrong ids message type as response. [exception=({})]",
-                exception.getMessage());
+    public MessageResponse handleIllegalArgumentException(final IllegalArgumentException exception,
+                                                          final String payload,
+                                                          final URI issuerConnector,
+                                                          final URI messageId) {
+        LOGGER.debug("Could not parse message payload. [exception=({}), payload=({}), issuer=({}), "
+                + "messageId=({})]", exception.getMessage(), payload, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Internal server error.", connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
@@ -222,6 +229,52 @@ public class MessageExceptionService {
                 exception.getMessage(), messageId, issuerConnector);
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Malformed payload.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    public MessageResponse handleMissingRules(final ContractRequest request,
+                                              final URI messageId,
+                                              final URI issuerConnector) {
+        LOGGER.debug("No rules found. [request=({}), messageId=({}), issuer=({})]",
+                request, messageId, issuerConnector);
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "Missing rules in contract request.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    public MessageResponse handleMissingTargetInRules(final ContractRequest request,
+                                                      final URI messageId,
+                                                      final URI issuerConnector) {
+        LOGGER.debug("No targets found. [request=({}), messageId=({}), issuer=({})]",
+                request, messageId, issuerConnector);
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "Missing targets in rules of contract request.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    public MessageResponse handleMissingContractOffers(final ContractRequest request,
+                                                       final URI messageId,
+                                                       final URI issuerConnector) {
+        LOGGER.debug("No contract offers found. [request=({}), messageId=({}), issuer=({})]",
+                request, messageId, issuerConnector);
+        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
+                "Could not find any matching contract offers for your request.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    public MessageResponse handleMessageProcessingFailed(final Exception exception,
+                                                         final String payload,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.warn("Could not process contract request. [exception=({}), payload=({}), issuer=({}), "
+                        + "messageId=({})]", exception.getMessage(), payload, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Could not process contract request.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
