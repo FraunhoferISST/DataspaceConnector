@@ -1,21 +1,23 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseEntityService;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * Offers REST-Api endpoints for resource handling.
@@ -73,7 +72,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @PostMapping
     @Operation(summary = "Create a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
-    public HttpEntity<V> create(@RequestBody final D desc) {
+    public ResponseEntity<V> create(@RequestBody final D desc) {
         final var entity = assembler.toModel(service.create(desc));
 
         final var headers = new HttpHeaders();
@@ -91,11 +90,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<CollectionModel<V>> getAll(
+    public ResponseEntity<CollectionModel<V>> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,
-            @RequestParam(required = false) final Sort sort) {
-        final var pageable = PageRequest.of(page == null ? 1 : page, size == null ? 30 : size);
+            @RequestParam(required = false) final String sort) {
+        final var pageable = PageRequest.of(page == null ? 1 : page, size == null ? 30 : size, Utils.toSort(sort));
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {
@@ -116,9 +115,9 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
-        final var resource = assembler.toModel(service.get(resourceId));
-        return ResponseEntity.ok(resource);
+    public ResponseEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+        final var view = assembler.toModel(service.get(resourceId));
+        return ResponseEntity.ok(view);
     }
 
     /**
@@ -134,7 +133,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "204", description = "No Content")})
-    public HttpEntity<Object> update(
+    public ResponseEntity<Object> update(
             @Valid @PathVariable(name = "id") final UUID resourceId, @RequestBody final D desc) {
         final var resource = service.update(resourceId, desc);
 
