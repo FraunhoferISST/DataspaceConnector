@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.Duty;
@@ -16,7 +17,9 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.services.IdsViewService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
@@ -56,6 +59,8 @@ public class PolicyManagementService {
     private final @NonNull AgreementService agreementService;
 
     private final @NonNull AgreementViewAssembler viewAssembler;
+
+    private final @NonNull IdsViewService viewService;
 
     /**
      * Validate rule input and build contract request.
@@ -108,7 +113,7 @@ public class PolicyManagementService {
      * @return List of ids rules.
      */
     public List<? extends Rule> getRulesForRequestedElement(final ContractAgreement agreement,
-                                                  final URI element) {
+                                                            final URI element) {
         List<Rule> rules = new ArrayList<>();
 
         for (Permission permission : agreement.getPermission()) {
@@ -176,6 +181,48 @@ public class PolicyManagementService {
     }
 
     /**
+     * Build contract agreement from contract request. Sign all rules as assigner.
+     * TODO: Add contract end.
+     *
+     * @param request The contract request.
+     * @return The contract agreement.
+     */
+    public ContractAgreement buildContractAgreement(final ContractRequest request) {
+        final var connectorId = connectorService.getConnectorId();
+
+        final var ruleList = PolicyUtils.extractRulesFromContract(request);
+
+        final var permissions = new ArrayList<Permission>();
+        final var prohibitions = new ArrayList<Prohibition>();
+        final var obligations = new ArrayList<Duty>();
+
+        // Add assigner to all rules.
+        for (final var rule : ruleList) {
+            if (rule instanceof Permission) {
+                ((PermissionImpl) rule).setAssignee(Util.asList(connectorId));
+                permissions.add((Permission) rule);
+            } else if (rule instanceof Prohibition) {
+                ((ProhibitionImpl) rule).setAssignee(Util.asList(connectorId));
+                prohibitions.add((Prohibition) rule);
+            } else if (rule instanceof Duty) {
+                ((DutyImpl) rule).setAssignee(Util.asList(connectorId));
+                obligations.add((Duty) rule);
+            }
+        }
+
+        // Return contract request.
+        return new ContractAgreementBuilder()
+                ._consumer_(request.getId())
+                ._contractDate_(IDSUtils.getGregorianNow())
+                ._contractStart_(IDSUtils.getGregorianNow())
+                ._obligation_(obligations)
+                ._permission_(permissions)
+                ._prohibition_(prohibitions)
+                ._provider_(connectorId)
+                .build();
+    }
+
+    /**
      * Validate the content if the received contract agreement.
      *
      * @param request The sent request.
@@ -227,5 +274,24 @@ public class PolicyManagementService {
         final var agreement = agreementService.get(uuid);
         // agreement.getOriginalId(); TODO
         return null;
+    }
+
+    public boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
+                                                final List<Rule> requestRules) {
+        final var idsRuleList = new ArrayList<Rule>();
+        for (final var rule : offerRules) {
+            final var value = rule.getValue();
+            final var idsRule = deserializationService.deserializeRule(value);
+            idsRuleList.add(idsRule);
+        }
+
+        try { // TODO What about duties?
+            PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules);
+        } catch (ContractException exception) {
+            LOGGER.debug("Rules do not match. [exception=({}), offer=({}), request=({})]",
+                    exception.getMessage(), idsRuleList, requestRules);
+            return false;
+        }
+        return true;
     }
 }

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Map;
 
 /**
@@ -51,12 +50,11 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     /**
      * Build ids message with params.
      *
-     * @param recipient The message recipient.
      * @param desc      Type-specific message parameter.
      * @return An ids message.
      * @throws ConstraintViolationException If the ids message could not be built.
      */
-    public abstract Message buildMessage(URI recipient, D desc) throws ConstraintViolationException;
+    public abstract Message buildMessage(D desc) throws ConstraintViolationException;
 
     /**
      * Return allowed response message type.
@@ -76,7 +74,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     public Map<String, String> sendMessage(final D desc, final String payload) throws MessageException {
         try {
             final var recipient = desc.getRecipient();
-            final var header = buildMessage(recipient, desc);
+            final var header = buildMessage(desc);
 
             // MessageBuilderException is handled at a higher level.
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);

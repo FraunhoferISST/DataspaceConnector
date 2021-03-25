@@ -17,4 +17,14 @@ public class ResourceException extends RuntimeException {
     public ResourceException(final String msg) {
         super(msg);
     }
+
+    /**
+     * Construct a ResourceException with the specified detail message and cause.
+     *
+     * @param msg   The detail message.
+     * @param cause The cause.
+     */
+    public ResourceException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
 }

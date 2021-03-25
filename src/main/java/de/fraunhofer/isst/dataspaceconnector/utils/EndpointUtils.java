@@ -29,7 +29,7 @@ public final class EndpointUtils {
         return new EndpointId(basePath, resourceId);
     }
 
-    public static EndpointId getEndpointIdFromPath(final URI uri) {
+    public static EndpointId getEndpointIdFromPath(final URI uri) throws IllegalArgumentException {
         final var fullPath = uri.toString();
         final var allUuids = UUIDUtils.findUuids(fullPath);
 

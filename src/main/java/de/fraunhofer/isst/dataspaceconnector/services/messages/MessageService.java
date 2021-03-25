@@ -260,6 +260,18 @@ public class MessageService {
     }
 
     /**
+     * Turns the payload into an ids contract request.
+     *
+     * @param payload The message payload as string.
+     * @return The ids contract request.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public ContractRequest getContractRequestFromPayload(final String payload)
+            throws IllegalArgumentException {
+        return deserializationService.deserializeContractRequest(payload);
+    }
+
+    /**
      * Validate response and save resource to database.
      *
      * @param response     The response message map.
