@@ -171,6 +171,8 @@ public class ResourceUpdateMessageService extends MessageService {
                 resource.setResourceMetadata(metadata);
                 // Update data.
                 updateArtifact(resource);
+
+                subscriberNotificationService.notifySubscribers(resource);
             }
             return true;
         } catch (MessageException exception) {
@@ -187,6 +189,7 @@ public class ResourceUpdateMessageService extends MessageService {
             LOGGER.warn("Unable to update resource. [exception=({})]", exception.getMessage());
             throw new ResourceException("Unable to update resource.");
         }
+
     }
 
     /**
@@ -244,6 +247,6 @@ public class ResourceUpdateMessageService extends MessageService {
             throw new ResourceException("Could not save data to database.");
         }
 
-        subscriberNotificationService.notifySubscribers(resource);
+
     }
 }

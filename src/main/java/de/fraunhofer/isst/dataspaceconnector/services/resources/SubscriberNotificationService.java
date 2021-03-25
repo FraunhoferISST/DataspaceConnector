@@ -50,11 +50,19 @@ public class SubscriberNotificationService {
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
+        if(requestedResource.isEmpty()){
+            LOGGER.error("Could not found resource for given ID.");
+            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+        }
+
         try {
+
             if (requestedResource.get().getSubscribers().contains(new URI(data))) {
                 return new ResponseEntity<>("The URL is already subscribed to the given resource.", HttpStatus.OK);
             } else {
                 requestedResource.get().getSubscribers().add(new URI(data));
+
+                requestedResourceRepository.save(requestedResource.get());
             }
         } catch (URISyntaxException e) {
             LOGGER.error(e.getMessage(), e);
@@ -78,8 +86,17 @@ public class SubscriberNotificationService {
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
+        if(requestedResource.isEmpty()){
+            LOGGER.error("Could not found resource for given ID.");
+            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+        }
+
         try {
-            requestedResource.get().getSubscribers().remove(new URI(data));
+            if (requestedResource.get().getSubscribers().contains(new URI(data))) {
+                requestedResource.get().getSubscribers().remove(new URI(data));
+
+                requestedResourceRepository.save(requestedResource.get());
+            }
         } catch (URISyntaxException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>("An internal error occurred.", HttpStatus.NOT_FOUND);
