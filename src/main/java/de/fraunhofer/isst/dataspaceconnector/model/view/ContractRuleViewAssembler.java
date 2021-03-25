@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 /**
- * Constructor the REST resource for an contract rule.
+ * Assembles the REST resource for an contract rule.
  */
 @Component
 @NoArgsConstructor

@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
- * Constructor the REST resource for a catalog.
+ * Assembles the REST resource for a catalog.
  */
 @Component
 @NoArgsConstructor

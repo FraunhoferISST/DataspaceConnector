@@ -17,7 +17,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 /**
- * Constructor the REST resource for an representation.
+ * Assembles the REST resource for an representation.
  */
 @Component
 public class RepresentationViewAssembler
