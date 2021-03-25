@@ -6,6 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAss
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,6 +42,7 @@ class RequestedResourceControllerTest {
         /* ASSERT */
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED.value(), result.getStatusCodeValue());
         assertNull(result.getBody());
+        Mockito.verifyNoInteractions(service);
     }
 
     @Test
@@ -54,5 +56,6 @@ class RequestedResourceControllerTest {
         /* ASSERT */
         assertEquals(HttpStatus.METHOD_NOT_ALLOWED.value(), result.getStatusCodeValue());
         assertNull(result.getBody());
+        Mockito.verifyNoInteractions(service);
     }
 }
