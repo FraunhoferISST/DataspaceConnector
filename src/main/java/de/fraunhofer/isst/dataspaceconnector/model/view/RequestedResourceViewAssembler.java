@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceRepresentations;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RequestedResourceController;
@@ -27,6 +28,9 @@ public class RequestedResourceViewAssembler implements RepresentationModelAssemb
 
         final var representationLink = linkTo(methodOn(ResourceRepresentations.class).getResource(entity.getId(), null, null, null)).withRel("representations");
         view.add(representationLink);
+
+        final var catalogLink = linkTo(methodOn(RelationshipControllers.RequestedResourcesToCatalogs.class).getResource(entity.getId(), null, null, null)).withRel("catalogs");
+        view.add(catalogLink);
 
         return view;
     }

@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -22,6 +23,9 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
 
         final var dataLink = linkTo(methodOn(ArtifactController.class).getData(entity.getId())).withRel("data");
         view.add(dataLink);
+
+        final var representationLink = linkTo(RelationshipControllers.ArtifactsToRepresentations.class).slash(entity.getId()).withRel("representations");
+        view.add(representationLink);
 
         return view;
     }

@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.modelmapper.ModelMapper;
@@ -18,6 +19,9 @@ public class ContractRuleViewAssembler implements RepresentationModelAssembler<C
 
         final var selfLink = linkTo(RuleController.class).slash(entity.getId()).withSelfRel();
         view.add(selfLink);
+
+        final var contractLink = linkTo(RelationshipControllers.RulesToContracts.class).slash(entity.getId()).withRel("contracts");
+        view.add(contractLink);
 
         return view;
     }

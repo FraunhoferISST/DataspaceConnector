@@ -49,6 +49,11 @@ public enum ErrorMessages {
      */
     CONTRACT_MISMATCH("The contract's content do not match."),
 
+    /**
+     * No behavior has been defined for the object type.
+     */
+    UNKNOWN_TYPE("No behavior has been defined for this type."),
+
     INVALID_RESPONSE("Invalid ids response message."),
 
     HEADER_BUILD_FAILED("Ids message header could not be built."),
