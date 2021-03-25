@@ -33,6 +33,7 @@ public class ContractDesc extends AbstractDescription<Contract> {
     /**
      * The date of the contract conclusion.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date date;
 
     /**
