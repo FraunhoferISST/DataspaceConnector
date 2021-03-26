@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 
 /**
  * Offers REST-Api endpoints for resource handling.
@@ -64,15 +65,16 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
 
     /**
      * Creates a new resource. Endpoint for POST requests.
-     *
      * @param desc The resource description.
      * @return Response with code 201 (Created).
+     * @throws IllegalArgumentException if the description is null.
      */
     @PostMapping
     @Operation(summary = "Create a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
     public ResponseEntity<V> create(@RequestBody final D desc) {
-        final var entity = assembler.toModel(service.create(desc));
+        final var obj = service.create(desc);
+        final var entity = assembler.toModel(obj);
 
         final var headers = new HttpHeaders();
         headers.setLocation(entity.getLink("self").get().toUri());
@@ -83,7 +85,6 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     /**
      * Get a list of all resources endpoints of this type.
      * Endpoint for GET requests.
-     *
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -107,9 +108,10 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
 
     /**
      * Get a resource. Endpoint for GET requests.
-     *
      * @param resourceId The id of the resource.
      * @return The resource.
+     * @throws IllegalArgumentException if the resourceId is null.
+     * @throws ResourceNotFoundException if the resourceId is unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
@@ -126,6 +128,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @param desc       The new description of the resource.
      * @return Response with code (No_Content) when the resource has been updated or response with
      * code (201) if the resource has been updated and been moved to a new endpoint.
+     * @throws IllegalArgumentException if the any of the parameters is null.
+     * @throws ResourceNotFoundException if the resourceId is unknown.
      */
     @PutMapping(value = "{id}")
     @Operation(summary = "Update a base resource by id")
@@ -154,9 +158,9 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
 
     /**
      * Delete a resource. Endpoint for DELETE requests.
-     *
      * @param resourceId The id of the resource to be deleted.
      * @return Response with code 204 (No_Content).
+     * @throws IllegalArgumentException if the resourceId is null.
      */
     @DeleteMapping(value = "{id}")
     @Operation(summary = "Delete a base resource by id")
