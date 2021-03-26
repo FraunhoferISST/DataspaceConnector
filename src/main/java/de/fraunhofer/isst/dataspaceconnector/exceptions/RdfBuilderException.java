@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+
 /**
  * Thrown to indicate that the rdf string could not be built.
  */
@@ -14,8 +16,8 @@ public class RdfBuilderException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public RdfBuilderException(final String msg) {
-        super(msg);
+    public RdfBuilderException(final ErrorMessages msg) {
+        super(msg.toString());
     }
 
     /**
