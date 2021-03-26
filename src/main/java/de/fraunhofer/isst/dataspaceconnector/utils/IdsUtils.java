@@ -2,7 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
@@ -93,6 +95,21 @@ public final class IdsUtils {
     }
 
     /**
+     * Get rdf string from instance of type {@link Catalog}.
+     *
+     * @param catalog The ids catalog.
+     * @return The ids catalog as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final Catalog catalog) throws RdfBuilderException {
+        try {
+            return catalog.toRdf();
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+        }
+    }
+
+    /**
      * Get rdf string from instance of type {@link ContractRequest}.
      *
      * @param request The ids contract request.
@@ -102,6 +119,21 @@ public final class IdsUtils {
     public static String toRdf(final ContractRequest request) throws RdfBuilderException {
         try {
             return request.toRdf();
+        } catch (Exception exception) {
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+        }
+    }
+
+    /**
+     * Get rdf string from instance of type {@link ContractOffer}.
+     *
+     * @param offer The ids contract offer.
+     * @return The ids contract offer as rdf string.
+     * @throws RdfBuilderException If the response could not be extracted.
+     */
+    public static String toRdf(final ContractOffer offer) throws RdfBuilderException {
+        try {
+            return offer.toRdf();
         } catch (Exception exception) {
             throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
         }
