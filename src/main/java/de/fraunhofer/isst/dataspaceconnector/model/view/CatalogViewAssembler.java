@@ -32,7 +32,7 @@ public class CatalogViewAssembler implements RepresentationModelAssembler<Catalo
 
         final var offeredResLink = linkTo(methodOn(CatalogOfferedResources.class)
                                                   .getResource(catalog.getId(), null, null, null))
-                                           .withRel("resources");
+                                           .withRel("offers");
         view.add(offeredResLink);
 
         return view;

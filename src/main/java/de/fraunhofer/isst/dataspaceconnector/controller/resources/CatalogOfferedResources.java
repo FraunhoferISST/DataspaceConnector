@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/catalogs/{id}/resources")
+@RequestMapping("/api/catalogs/{id}/offers")
 @Tag(name = "Catalogs", description = "Endpoints for linking offered resources to catalogs")
 public class CatalogOfferedResources extends BaseResourceChildController<AbstractCatalogResourceLinker<OfferedResource>, OfferedResource, OfferedResourceView> {
 }
