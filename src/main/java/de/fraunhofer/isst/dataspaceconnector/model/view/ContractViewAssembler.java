@@ -48,19 +48,19 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
             resourceLinker =
                     linkTo(methodOn(RelationshipControllers.ContractsToOfferedResources.class)
                                     .getResource(contract.getId(), null, null, null))
-                            .withRel("offered");
+                            .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationshipControllers.ContractsToOfferedResources.class)
                                         .getResource(contract.getId(), null, null, null))
-                                .withRel("offered");
+                                .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationshipControllers.ContractsToRequestedResources.class)
                                         .getResource(contract.getId(), null, null, null))
-                                .withRel("requested");
+                                .withRel("requests");
             } else {
                 throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
             }

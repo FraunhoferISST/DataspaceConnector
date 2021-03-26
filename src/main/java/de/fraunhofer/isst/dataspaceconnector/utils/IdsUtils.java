@@ -45,7 +45,7 @@ public final class IdsUtils {
         try {
             return baseConnector.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -60,7 +60,7 @@ public final class IdsUtils {
         try {
             return resource.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -75,7 +75,7 @@ public final class IdsUtils {
         try {
             return artifact.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -90,7 +90,7 @@ public final class IdsUtils {
         try {
             return representation.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -120,7 +120,7 @@ public final class IdsUtils {
         try {
             return request.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -150,7 +150,7 @@ public final class IdsUtils {
         try {
             return agreement.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -165,7 +165,7 @@ public final class IdsUtils {
         try {
             return rule.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -193,7 +193,7 @@ public final class IdsUtils {
      * @return The ids language object.
      */
     public static Language getLanguage(final String language) {
-        switch (language) {
+        switch (language.toLowerCase()) {
             case "de":
                 return Language.DE;
             case "en":
