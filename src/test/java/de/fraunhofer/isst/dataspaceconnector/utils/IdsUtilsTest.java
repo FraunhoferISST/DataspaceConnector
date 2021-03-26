@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdsUtilsTest {
 
-    Date date = new Date();
+    Date date = new Date(1616772571804L);
 
     @Test
     public void toRdf_inputNull_throwRdfBuilderException() {
@@ -280,9 +280,6 @@ public class IdsUtilsTest {
 
     @Test
     public void getGregorianOf_validDate_returnDateAsXMLGregorianCalendar() {
-        /* ARRANGE */
-        final var date = new Date();
-
         /* ACT */
         final var result = IdsUtils.getGregorianOf(date);
 
@@ -293,7 +290,7 @@ public class IdsUtilsTest {
         assertEquals(calendar.get(Calendar.YEAR), result.getYear());
         assertEquals(calendar.get(Calendar.MONTH) + 1, result.getMonth());
         assertEquals(calendar.get(Calendar.DAY_OF_MONTH), result.getDay());
-        assertEquals(calendar.get(Calendar.HOUR), result.getHour());
+        assertEquals(calendar.get(Calendar.HOUR_OF_DAY), result.getHour());
         assertEquals(calendar.get(Calendar.MINUTE), result.getMinute());
         assertEquals(calendar.get(Calendar.SECOND), result.getSecond());
 
@@ -330,14 +327,14 @@ public class IdsUtilsTest {
         sdf.setTimeZone(Calendar.getInstance().getTimeZone());
 
         //remove milliseconds from date as they are not present in the String format
-        final var date = DateUtils.truncate(new Date(), Calendar.SECOND);
-        String dateAsString = sdf.format(date);
+        final var dateWithoutMillis = DateUtils.truncate(date, Calendar.SECOND);
+        String dateAsString = sdf.format(dateWithoutMillis);
 
         /* ACT */
         var result = IdsUtils.getDateOf(dateAsString);
 
         /* ASSERT */
-        assertEquals(date, result);
+        assertEquals(dateWithoutMillis, result);
     }
 
     /**************************************************************************
