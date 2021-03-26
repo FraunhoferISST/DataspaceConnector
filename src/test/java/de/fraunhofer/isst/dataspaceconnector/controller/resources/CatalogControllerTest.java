@@ -74,6 +74,8 @@ class CatalogControllerTest {
                 .thenThrow(IllegalArgumentException.class);
         Mockito.when(catalogService.update(Mockito.eq(unknownUUid), Mockito.isNull()))
                 .thenThrow(IllegalArgumentException.class);
+        Mockito.when(catalogService.update(Mockito.eq(unknownUUid), Mockito.isNotNull()))
+               .thenThrow(ResourceNotFoundException.class);
         Mockito.when(catalogService.update(Mockito.isNull(), Mockito.isNull()))
                 .thenThrow(IllegalArgumentException.class);
 
@@ -214,6 +216,15 @@ class CatalogControllerTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> controller.update(unknownUUid, null));
+    }
+
+    @Test
+    public void update_knownIdValidDesc_throwResourceNotFoundException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(ResourceNotFoundException.class, () -> controller.update(unknownUUid, new CatalogDesc()));
     }
 
     @Test
