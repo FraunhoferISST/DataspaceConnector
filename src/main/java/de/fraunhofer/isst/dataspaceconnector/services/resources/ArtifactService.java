@@ -31,12 +31,12 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
     /**
      * Repository for storing data.
      **/
-    private @NonNull DataRepository dataRepository;
+    private final @NonNull DataRepository dataRepository;
 
     /**
      * Service for http communication.
      **/
-    private @NonNull HttpService httpService;
+    private final @NonNull HttpService httpService;
 
     /**
      * Constructor for ArtifactService.
