@@ -105,7 +105,7 @@ public final class IdsUtils {
         try {
             return catalog.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
@@ -135,7 +135,7 @@ public final class IdsUtils {
         try {
             return offer.toRdf();
         } catch (Exception exception) {
-            throw new RdfBuilderException(ErrorMessages.RDF_FAILED.toString());
+            throw new RdfBuilderException(ErrorMessages.RDF_FAILED);
         }
     }
 
