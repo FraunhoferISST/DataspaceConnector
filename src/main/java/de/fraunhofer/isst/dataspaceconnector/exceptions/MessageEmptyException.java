@@ -1,11 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
-
 /**
  * Thrown to indicate that the message could not be build.
  */
-public class MessageEmptyException extends MessageException {
+public class MessageEmptyException extends MessageRequestException {
     /**
      * Default serial version uid.
      */
