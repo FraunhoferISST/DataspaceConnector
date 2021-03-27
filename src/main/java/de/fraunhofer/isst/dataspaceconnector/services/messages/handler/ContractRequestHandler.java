@@ -5,17 +5,16 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
@@ -87,6 +86,11 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final @NonNull PolicyManagementService managementService;
 
     /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
+
+    /**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
@@ -115,11 +119,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         String payloadAsString;
         try {
             payloadAsString = MessageUtils.getPayloadAsString(payload);
-        } catch (MalformedPayloadException exception) {
-            return exceptionService.handleMalformedPayloadException(exception, messageId,
-                    issuerConnector);
-        } catch (MissingPayloadException exception) {
-            return exceptionService.handleMissingPayloadException(exception, messageId,
+        } catch (MessageRequestException exception) {
+            return exceptionService.handleMessagePayloadException(exception, messageId,
                     issuerConnector);
         }
 
@@ -141,7 +142,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                                 final URI issuerConnector) throws RuntimeException {
         try {
             // Deserialize string to contract object.
-            final var request = messageService.getContractRequestFromPayload(payload);
+            final var request = deserializationService.getContractRequest(payload);
 
             // Get all rules of the contract request.
             final var rules = PolicyUtils.extractRulesFromContract(request);
@@ -162,9 +163,6 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                 final List<Contract> contracts;
                 try {
                     contracts = dependencyResolver.getContractOffersByArtifactId(target);
-                } catch (InvalidResourceException exception) {
-                    return exceptionService.handleInvalidResourceException(exception, target,
-                            issuerConnector, messageId);
                 } catch (ResourceNotFoundException exception) {
                     return exceptionService.handleResourceNotFoundException(exception, target,
                             issuerConnector, messageId);
@@ -242,15 +240,18 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                            final URI correlationMessage) {
         try {
             // Turn the accepted contract request into a contract agreement.
-            final var payload = managementService.buildContractAgreement(request);
+            final var agreement = managementService.buildContractAgreement(request);
+            // Save agreement to database.
+            final var agreementId = managementService.saveContractAgreement(agreement, false);
 
             // Build ids response message.
             final var desc = new ContractAgreementMessageDesc(correlationMessage);
             desc.setRecipient(issuerConnector);
             final var header = agreementService.buildMessage(desc);
+            LOGGER.info("Contract request accepted. Saved agreement: " + agreementId);
 
             // Send ids response message.
-            return BodyResponse.create(header, payload);
+            return BodyResponse.create(header, agreement);
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
                 | RdfBuilderException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception);

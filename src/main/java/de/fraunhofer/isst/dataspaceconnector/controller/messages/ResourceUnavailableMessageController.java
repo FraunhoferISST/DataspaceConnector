@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +38,9 @@ public class ResourceUnavailableMessageController {
     private final @NonNull IDSBrokerService brokerService;
 
     /**
-     * Service for ids resources.
+     * Service for current connector configuration.
      */
-    private final @NonNull IdsResourceService resourceService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Sending an ids resource unavailable message with a resource as payload.
@@ -65,7 +65,7 @@ public class ResourceUnavailableMessageController {
             @Parameter(description = "The resource id.")
             @RequestParam(value = "resourceId") final URI resourceId) {
         try {
-            final var resource = resourceService.getOfferedResourceById(resourceId);
+            final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource == null) {
                 return ControllerUtils.respondResourceNotFound(resourceId);
             }

@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services;
+package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
@@ -44,12 +43,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public final class IdsViewService {
+public final class ViewService {
 
     /**
      * Class level logger.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(IdsViewService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewService.class);
 
     /**
      * Service for ids deserialization.
@@ -382,7 +381,7 @@ public final class IdsViewService {
      */
     private Duty createObligation(final ContractRule rule) {
         try {
-            final var idsRule = deserializationService.deserializeRule(rule.getValue());
+            final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Duty) {
                 final var obligation = (Duty) idsRule;
                 final var uri = EndpointUtils.getSelfLink(rule);
@@ -411,7 +410,7 @@ public final class IdsViewService {
      */
     private Prohibition createProhibition(final ContractRule rule) {
         try {
-            final var idsRule = deserializationService.deserializeRule(rule.getValue());
+            final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Prohibition) {
                 final var prohibition = (Prohibition) idsRule;
                 final var uri = EndpointUtils.getSelfLink(rule);
@@ -440,7 +439,7 @@ public final class IdsViewService {
      */
     private Permission createPermission(final ContractRule rule) {
         try {
-            final var idsRule = deserializationService.deserializeRule(rule.getValue());
+            final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Permission) {
                 final var permission = (Permission) idsRule;
                 final var uri = EndpointUtils.getSelfLink(rule);

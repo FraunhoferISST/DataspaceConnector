@@ -83,7 +83,7 @@ public class DescriptionRequestMessageController {
             } else {
                 // Get payload as component.
                 final var component =
-                        deserializationService.deserializeInfrastructureComponent(payload);
+                        deserializationService.getInfrastructureComponent(payload);
                 return new ResponseEntity<>(component, HttpStatus.OK);
             }
         } catch (MessageException exception) {

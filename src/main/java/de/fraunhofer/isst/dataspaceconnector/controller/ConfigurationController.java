@@ -63,7 +63,7 @@ public class ConfigurationController {
     public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
         try {
             // Deserialize input.
-            final var newConfig = idsService.deserializeConfigurationModel(configuration);
+            final var newConfig = idsService.getConfigurationModel(configuration);
 
             // Update configuration of connector.
             configContainer.updateConfiguration(newConfig);

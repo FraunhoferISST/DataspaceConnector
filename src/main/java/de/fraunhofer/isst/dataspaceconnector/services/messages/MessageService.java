@@ -21,7 +21,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
@@ -84,7 +84,7 @@ public class MessageService {
     /**
      * Service for current connector configuration.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Requested resource view assembler.
@@ -250,7 +250,7 @@ public class MessageService {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        final var idsMessage = deserializationService.deserializeResponseMessage(header);
+        final var idsMessage = deserializationService.getResponseMessage(header);
         var responseMap = new HashMap<String, Object>() {{
             put("type", idsMessage.getClass());
         }};
@@ -277,7 +277,7 @@ public class MessageService {
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        final var resource = deserializationService.deserializeResource(payload);
+        final var resource = deserializationService.getResource(payload);
 
         try {
             final var resourceTemplate = TemplateUtils.getResourceTemplate(resource);

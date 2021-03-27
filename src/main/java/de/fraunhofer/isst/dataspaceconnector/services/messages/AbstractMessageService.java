@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
@@ -39,7 +39,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Service for the current connector configuration.
      */
     @Autowired
-    private IdsConnectorService connectorService;
+    private ConnectorService connectorService;
 
     /**
      * Service for ids deserialization.
@@ -110,7 +110,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-            final var idsMessage = getDeserializer().deserializeResponseMessage(header);
+            final var idsMessage = getDeserializer().getResponseMessage(header);
 
             final var messageType = idsMessage.getClass();
             final var allowedType = getResponseMessageType();
@@ -130,7 +130,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @return The service class.
      */
-    public IdsConnectorService getConnectorService() {
+    public ConnectorService getConnectorService() {
         return connectorService;
     }
 

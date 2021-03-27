@@ -134,7 +134,7 @@ public class ExampleController {
             @Parameter(description = "The JSON string representing a policy", required = true)
             @RequestBody final String ruleAsString) {
         try {
-            final var rule = deserializationService.deserializeRule(ruleAsString);
+            final var rule = deserializationService.getRule(ruleAsString);
             return new ResponseEntity<>(informationService.getPatternByRule(rule), HttpStatus.OK);
         } catch (ContractException exception) {
             return ControllerUtils.respondPatternNotIdentified(exception);

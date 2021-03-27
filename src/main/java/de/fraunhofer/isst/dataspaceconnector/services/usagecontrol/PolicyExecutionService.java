@@ -8,7 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
@@ -44,7 +44,7 @@ public class PolicyExecutionService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Service for ids notification messages.

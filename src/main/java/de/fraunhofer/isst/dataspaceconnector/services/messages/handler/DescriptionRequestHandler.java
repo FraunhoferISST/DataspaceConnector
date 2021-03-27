@@ -7,11 +7,10 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
@@ -60,7 +59,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Service for resolving entities.
@@ -132,7 +131,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 // Send ids response message.
                 return BodyResponse.create(header, payload);
             }
-        } catch (ResourceNotFoundException | UnreachableLineException exception) {
+        } catch (ResourceNotFoundException exception) {
             return exceptionService.handleResourceNotFoundException(exception, requestedElement,
                     issuerConnector, messageId);
         } catch (InvalidResourceException exception) {

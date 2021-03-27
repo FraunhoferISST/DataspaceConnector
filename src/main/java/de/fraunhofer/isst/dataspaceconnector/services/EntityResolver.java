@@ -14,6 +14,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ViewService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -82,7 +83,7 @@ public class EntityResolver {
     /**
      * Service for building ids objects.
      */
-    private final @NonNull IdsViewService idsViewService;
+    private final @NonNull ViewService viewService;
 
     /**
      * Return any connector entity by its id.
@@ -134,19 +135,19 @@ public class EntityResolver {
     public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
             RdfBuilderException, InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = idsViewService.create((Artifact) entity);
+            final var artifact = viewService.create((Artifact) entity);
             return IdsUtils.toRdf(artifact);
         } else if (entity instanceof Resource) {
-            final var resource = idsViewService.create((Resource) entity);
+            final var resource = viewService.create((Resource) entity);
             return IdsUtils.toRdf(resource);
         } else if (entity instanceof Representation) {
-            final var representation = idsViewService.create((Representation) entity);
+            final var representation = viewService.create((Representation) entity);
             return IdsUtils.toRdf(representation);
         } else if (entity instanceof Catalog) {
-            final var catalog = idsViewService.create((Catalog) entity);
+            final var catalog = viewService.create((Catalog) entity);
             return IdsUtils.toRdf(catalog);
         } else if (entity instanceof Contract) {
-            final var contract = idsViewService.create((Contract) entity);
+            final var contract = viewService.create((Contract) entity);
             return IdsUtils.toRdf(contract);
         } else if (entity instanceof Agreement) {
             final var agreement = (Agreement) entity;

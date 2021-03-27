@@ -112,7 +112,8 @@ public final class MessageUtils {
      * @throws VersionNotSupportedException If the Infomodel version is not supported.
      */
     public static void checkForVersionSupport(final String versionString,
-                                              final List<String> inboundVersions) throws VersionNotSupportedException {
+                                              final List<? extends String> inboundVersions)
+            throws VersionNotSupportedException {
         boolean versionSupported = false;
         for (final var version : inboundVersions) {
             if (version.equals(versionString)) {

@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -40,7 +40,7 @@ public class ConnectorUnavailableMessageController {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Sending an ids connector unavailable message with the current connector as payload.

@@ -246,7 +246,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 //
 //                Contract agreement;
 //                try {
-//                    agreement = pmp.deserializeContractAgreement(contractToString);
+//                    agreement = pmp.getContractAgreement(contractToString);
 //                } catch (RequestFormatException exception) {
 //                    throw new ContractException("Could not deserialize contract.");
 //                }

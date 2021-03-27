@@ -73,7 +73,7 @@ public class PolicyDecisionService {
             ResourceNotFoundException {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
-            final var idsAgreement = deserializationService.deserializeContractAgreement(value);
+            final var idsAgreement = deserializationService.getContractAgreement(value);
             final var rules = PolicyUtils.extractRulesFromContract(idsAgreement);
 
             for (final var rule : rules) {
@@ -122,7 +122,7 @@ public class PolicyDecisionService {
         final var uuid = EndpointUtils.getUUIDFromPath(transferContract);
         final var agreement = agreementService.get(uuid);
         final var value = agreement.getValue();
-        final var idsAgreement = deserializationService.deserializeContractAgreement(value);
+        final var idsAgreement = deserializationService.getContractAgreement(value);
 
         final var rules = managementService.getRulesForRequestedElement(idsAgreement, target);
 

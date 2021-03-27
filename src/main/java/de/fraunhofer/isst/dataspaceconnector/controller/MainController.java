@@ -6,7 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractContro
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.OfferedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +43,7 @@ public class MainController {
     /**
      * Service for ids connector management.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Gets connector self-description without catalogs and resources.

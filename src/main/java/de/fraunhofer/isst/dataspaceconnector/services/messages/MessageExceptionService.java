@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
@@ -35,7 +35,7 @@ public class MessageExceptionService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull IdsConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Handles thrown {@link MessageEmptyException}.
