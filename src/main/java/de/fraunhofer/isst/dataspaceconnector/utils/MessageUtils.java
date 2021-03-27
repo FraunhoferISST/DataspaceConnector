@@ -4,11 +4,10 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -168,7 +167,8 @@ public final class MessageUtils {
         try {
             return message.get("header");
         } catch (Exception exception) {
-            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_HEADER.toString(), exception);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_HEADER.toString(),
+                    exception);
         }
     }
 
@@ -184,7 +184,8 @@ public final class MessageUtils {
         try {
             return message.get("payload");
         } catch (Exception exception) {
-            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_PAYLOAD.toString(), exception);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_PAYLOAD.toString(),
+                    exception);
         }
     }
 
@@ -204,25 +205,24 @@ public final class MessageUtils {
      *
      * @param payload The message's payload.
      * @return The payload as string.
-     * @throws MalformedPayloadException If the payload is malformed.
-     * @throws MissingPayloadException   If the payload's content is missing.
+     * @throws MessageRequestException If the payload could not be processed.
      */
     public static String getPayloadAsString(final MessagePayload payload)
-            throws MalformedPayloadException, MissingPayloadException {
+            throws MessageRequestException {
         if (payload == null) {
-            throw new MissingPayloadException("Missing payload.");
+            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
         }
 
         String content;
         try {
             content = MessageUtils.getStreamAsString(payload);
-        } catch (IOException exception) {
-            throw new MalformedPayloadException("Failed to read payload content.", exception);
+        } catch (IOException e) {
+            throw new MessageRequestException(ErrorMessages.MALFORMED_PAYLOAD.toString(), e);
         }
 
         // If request is empty, return rejection message.
         if (content.equals("")) {
-            throw new MissingPayloadException("Missing payload.");
+            throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
         }
 
         return content;
