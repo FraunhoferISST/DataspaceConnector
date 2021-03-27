@@ -35,7 +35,12 @@ public enum BasePath {
     /**
      * The catalog endpoint's base path.
      */
-    CATALOGS("/api/catalogs");
+    CATALOGS("/api/catalogs"),
+
+    /**
+     * The contract agreement's base path.
+     */
+    AGREEMENTS("/api/agreements");
 
     /**
      * The path as string.
