@@ -8,6 +8,7 @@ import lombok.Setter;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -29,6 +30,11 @@ public class Agreement extends AbstractEntity {
      * Indicates whether both parties have agreed.
      */
     private boolean confirmed;
+
+    /**
+     * The agreement id on provider side.
+     */
+    private URI remoteId;
 
     /**
      * The definition of the contract.
