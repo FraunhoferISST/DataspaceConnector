@@ -9,7 +9,7 @@ import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,13 +302,13 @@ public final class PolicyUtils {
      * Check if each rule contains a target.
      *
      * @param ruleList The ids rule list.
-     * @throws InvalidContractException If a target is missing.
+     * @throws InvalidInputException If a target is missing.
      */
-    public static void validateRuleTarget(final List<? extends Rule> ruleList) throws InvalidContractException {
+    public static void validateRuleTarget(final List<? extends Rule> ruleList) throws InvalidInputException {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
             if (target == null || target.toString().equals("")) {
-                throw new InvalidContractException(ErrorMessages.MISSING_TARGET.toString());
+                throw new InvalidInputException(ErrorMessages.MISSING_TARGET.toString());
             }
         }
     }
@@ -320,7 +320,8 @@ public final class PolicyUtils {
      * @throws ContractException If the assigner is not as expected.
      */
     public static void validateRuleAssigner(final ContractAgreement agreement) throws ContractException {
-        // TODO
+        // TODO implement later
+        // NOTE: Recipient url might not be the connector id.
     }
 
     /**
