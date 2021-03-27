@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MalformedPayloadException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MissingPayloadException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionOnDataProvisionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.net.URI;
 
 /**
- * This class handles exceptions of type {@link MessageEmptyException}.
+ * This class handles message responses.
  */
 @Service
 @RequiredArgsConstructor
@@ -68,31 +68,15 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link PolicyRestrictionOnDataProvisionException}.
+     * Handles thrown {@link PolicyRestrictionException}.
      *
      * @param exception Exception that was thrown when checking for data access.
      * @return A message response.
      */
-    public MessageResponse handlePolicyRestrictionException(
-            final PolicyRestrictionOnDataProvisionException exception) {
+    public MessageResponse handlePolicyRestrictionException(final PolicyRestrictionException exception) {
         LOGGER.debug("Policy restriction detected. [exception=({})]", exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                 "Policy restriction detected." + exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
-    /**
-     * Handles thrown {@link ConstraintViolationException}.
-     *
-     * @param exception Exception that was thrown when converting an ids object to a rdf string.
-     * @return A message response.
-     */
-    public MessageResponse handleConstraintViolationException(final ConstraintViolationException exception) {
-        LOGGER.debug("IDS response message could not be constructed. [exception=({})]",
-                exception.getMessage());
-        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Response could not be constructed.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
@@ -118,7 +102,7 @@ public class MessageExceptionService {
      * @param exception       Exception that was thrown when deserializing a message's payload.
      * @param payload         The message's payload.
      * @param issuerConnector The issuer connector extracted from the incoming message.
-     * @param messageId       The message id of the incoming message.
+     * @param messageId       The id of the incoming message.
      * @return A message response.
      */
     public MessageResponse handleIllegalArgumentException(final IllegalArgumentException exception,
@@ -138,35 +122,16 @@ public class MessageExceptionService {
      * @param exception        Exception that was thrown when trying to sendMessage the message.
      * @param requestedElement The requested element.
      * @param issuerConnector  The issuer connector extracted from the incoming message.
-     * @param messageId        The message id of the incoming message.
+     * @param messageId        The id of the incoming message.
      * @return A message response.
      */
     public MessageResponse handleResourceNotFoundException(final Exception exception,
                                                            final URI requestedElement,
                                                            final URI issuerConnector,
                                                            final URI messageId) {
-        LOGGER.debug("Element could not be found. [exception=({}), resourceId=({}), issuer=({}), "
+        LOGGER.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), "
                         + "messageId=({})]", exception.getMessage(), requestedElement,
                 issuerConnector, messageId);
-        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
-                "The requested element %s could not be found.", requestedElement),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
-    /**
-     * Build a message response telling the requester that the element could not be found.
-     *
-     * @param requestedElement The requested element.
-     * @param issuerConnector  The issuer connector extracted from the incoming message.
-     * @param messageId        The message id of the incoming message.
-     * @return A message response.
-     */
-    public MessageResponse handleResourceNotFoundException(final URI requestedElement,
-                                                           final URI issuerConnector,
-                                                           final URI messageId) {
-        LOGGER.debug("Element not found. [resourceId=({}), issuer=({}), messageId=({})]",
-                requestedElement, issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
                 connectorService.getConnectorId(),
@@ -179,7 +144,7 @@ public class MessageExceptionService {
      * @param exception        Exception that was thrown when building the response message.
      * @param requestedElement The requested element.
      * @param issuerConnector  The issuer connector extracted from the incoming message.
-     * @param messageId        The message id of the incoming message.
+     * @param messageId        The id of the incoming message.
      * @return A message response.
      */
     public MessageResponse handleInvalidResourceException(final InvalidResourceException exception,
@@ -196,43 +161,32 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles throw {@link MissingPayloadException}.
+     * Handles thrown {@link MessageRequestException}.
      *
-     * @param exception       Exception that was thrown because of a missing payload.
-     * @param messageId       The message id of the incoming message.
+     * @param exception       Exception that was thrown while reading a message's payload.
+     * @param messageId       The id of the incoming message.
      * @param issuerConnector The issuer connector extracted from the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleMissingPayloadException(final MissingPayloadException exception,
+    public MessageResponse handleMessagePayloadException(final MessageRequestException exception,
                                                          final URI messageId,
                                                          final URI issuerConnector) {
-        LOGGER.debug("Expected payload is missing. [exception=({}), messageId=({}), issuer=({})]",
+        LOGGER.debug("Failed to read payload. [exception=({}), messageId=({}), issuer=({})]",
                 exception.getMessage(), messageId, issuerConnector);
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                "Expected payload could not be found.",
+                exception.getMessage(),
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
 
     /**
-     * Handles thrown {@link MalformedPayloadException}.
+     * Handle missing rules in contract request message.
      *
-     * @param exception       Exception that was thrown while reading a message's payload.
-     * @param messageId       The message id of the incoming message.
+     * @param request         The contract request.
+     * @param messageId       The id of the incoming message.
      * @param issuerConnector The issuer connector extracted from the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleMalformedPayloadException(final MalformedPayloadException exception,
-                                                           final URI messageId,
-                                                           final URI issuerConnector) {
-        LOGGER.debug("Failed to read payload. [exception=({}), messageId=({}), issuer=({})]",
-                exception.getMessage(), messageId, issuerConnector);
-        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                "Malformed payload.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
     public MessageResponse handleMissingRules(final ContractRequest request,
                                               final URI messageId,
                                               final URI issuerConnector) {
@@ -244,6 +198,14 @@ public class MessageExceptionService {
                 connectorService.getOutboundModelVersion());
     }
 
+    /**
+     * Handle missing target in rules of a contract request.
+     *
+     * @param request         The contract request.
+     * @param messageId       The id of the incoming message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @return A message response.
+     */
     public MessageResponse handleMissingTargetInRules(final ContractRequest request,
                                                       final URI messageId,
                                                       final URI issuerConnector) {
@@ -255,6 +217,14 @@ public class MessageExceptionService {
                 connectorService.getOutboundModelVersion());
     }
 
+    /**
+     * Handle missing contract offers matching the contract request targets.
+     *
+     * @param request         The contract request.
+     * @param messageId       The id of the incoming message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @return A message response.
+     */
     public MessageResponse handleMissingContractOffers(final ContractRequest request,
                                                        final URI messageId,
                                                        final URI issuerConnector) {
@@ -266,14 +236,47 @@ public class MessageExceptionService {
                 connectorService.getOutboundModelVersion());
     }
 
+    /**
+     * Handle global message processing failed.
+     *
+     * @param exception       Exception that was thrown while processing a request message.
+     * @param payload         The message's payload.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
+     * @return A message response.
+     */
     public MessageResponse handleMessageProcessingFailed(final Exception exception,
                                                          final String payload,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.warn("Could not process contract request. [exception=({}), payload=({}), issuer=({}), "
-                        + "messageId=({})]", exception.getMessage(), payload, issuerConnector, messageId);
+        LOGGER.warn("Could not process contract request. [exception=({}), payload=({}), issuer="
+                        + "({}), messageId=({})]", exception.getMessage(), payload, issuerConnector,
+                messageId);
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Could not process contract request.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle contract exception.
+     *
+     * @param agreement       The contract agreement.
+     * @param storedAgreement The stored agreement.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleContractException(final ContractAgreement agreement,
+                                                   final Agreement storedAgreement,
+                                                   final URI issuerConnector,
+                                                   final URI messageId) {
+        LOGGER.warn("Invalid contract agreement request. [agreement=({}), storedAgreement=({}), "
+                        + "issuer=({}), messageId=({})]", agreement, storedAgreement,
+                issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
                 "Could not process contract request.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
