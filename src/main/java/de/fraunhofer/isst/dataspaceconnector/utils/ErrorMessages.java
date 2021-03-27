@@ -30,11 +30,6 @@ public enum ErrorMessages {
     MISSING_TARGET("Missing target id in rules"),
 
     /**
-     * The response message type is not as expected.
-     */
-    UNEXPECTED_RESPONSE_TYPE("Unexpected ids response type."),
-
-    /**
      * The passed list may not be null.
      */
     LIST_NULL("The passed list may not be null."),
@@ -54,23 +49,65 @@ public enum ErrorMessages {
      */
     UNKNOWN_TYPE("No behavior has been defined for this type."),
 
+    /**
+     * Failed to read response message.
+     */
     INVALID_RESPONSE("Invalid ids response message."),
 
+    /**
+     * Ids message building failed.
+     */
     HEADER_BUILD_FAILED("Ids message header could not be built."),
 
+    /**
+     * Multipart message building failed.
+     */
+    MESSAGE_BUILD_FAILED("Multipart message could not be built."),
+
+    /**
+     * DAT in response ids header is invalid.
+     */
     INVALID_RESPONSE_DAT("Invalid DAT in incoming message."),
 
+    /**
+     * Multipart message could not be sent.
+     */
     MESSAGE_NOT_SENT("Message could not be sent."),
 
-    MISSING_RESPONSE_HEADER("Missing response header."),
+    /**
+     * Header of multipart message is malformed.
+     */
+    MALFORMED_HEADER("Malformed message header."),
 
-    MALFORMED_RESPONSE_HEADER("Malformed response header."),
+    /**
+     * Payload of multipart message is malformed.
+     */
+    MALFORMED_PAYLOAD("Malformed message payload."),
 
-    MALFORMED_RESPONSE_PAYLOAD("Malformed response payload."),
+    /**
+     * Payload of multipart message is missing.
+     */
+    MISSING_PAYLOAD("Missing message payload."),
 
+    /**
+     * Entity is null.
+     */
     EMTPY_ENTITY("Element could not be found."),
 
-    RDF_FAILED("Could not retrieve rdf string.");
+    /**
+     * Failed to read rdf string from ids object.
+     */
+    RDF_FAILED("Could not retrieve rdf string."),
+
+    /**
+     * Number of data accesses has been reached.
+     */
+    DATA_ACCESS_NUMBER_REACHED("Valid access number reached."),
+
+    /**
+     * Data has been accessed in an invalid time interval.
+     */
+    DATA_ACCESS_INVALID_INTERVAL("Data access in invalid time interval.");
 
     /**
      * Holds the enums string.
@@ -80,10 +117,10 @@ public enum ErrorMessages {
     /**
      * Constructor.
      *
-     * @param value The msg of the error message.
+     * @param message The msg of the error message.
      */
-    ErrorMessages(final String value) {
-        this.value = value;
+    ErrorMessages(final String message) {
+        this.value = message;
     }
 
     @Override
