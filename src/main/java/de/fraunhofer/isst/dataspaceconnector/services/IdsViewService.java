@@ -23,14 +23,10 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ContractViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -67,18 +63,18 @@ public final class IdsViewService {
      * @return The ids catalog.
      */
     public ResourceCatalog create(final Catalog catalog) {
-        final var view = new CatalogViewAssembler().toModel(catalog);
-        final var uri = view.getLink("self").get().toUri();
-        final var additional = catalog.getAdditional();
-
+        // Build children.
         final var resources = CompletableFuture.supplyAsync(
                 () -> batchCreateResource(catalog.getOfferedResources()));
 
         try {
+            final var uri = EndpointUtils.getSelfLink(catalog);
             final var idsCatalog = new ResourceCatalogBuilder(uri)
                     ._offeredResource_((ArrayList<? extends Resource>) resources.get())
                     .build();
 
+            // Add additional attributes as property map.
+            final var additional = catalog.getAdditional();
             for (final var entry : additional.entrySet()) {
                 idsCatalog.setProperty(entry.getKey(), entry.getValue());
             }
@@ -104,41 +100,39 @@ public final class IdsViewService {
     }
 
     /**
-     * Build ids resource from database resource and its children.
+     * Build ids resource from database resource and its children. TODO Extend data model.
      *
      * @param resource The resource.
      * @return The ids resource.
      */
     public Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
-        final var view = new OfferedResourceViewAssembler().toModel((OfferedResource) resource);
-        final var uri = view.getLink("self").get().toUri();
-        final var additional = resource.getAdditional();
-
         // Build children.
         final var contracts = CompletableFuture.supplyAsync(
                 () -> batchCreateContract(resource.getContracts()));
         final var representations = CompletableFuture.supplyAsync(
                 () -> batchCreateRepresentation(resource.getRepresentations()));
 
-        // Prepare other information.
-        final var created = resource.getCreationDate();
-        final var description = resource.getDescription();
-        final var language = resource.getLanguage();
-        final var idsLanguage = IdsUtils.getLanguage(resource.getLanguage());
-        final var keywords = IdsUtils.getKeywordsAsTypedLiteral(resource.getKeywords(), language);
-        final var license = resource.getLicence();
-        final var modified = resource.getModificationDate();
-        final var publisher = resource.getPublisher();
-        final var sovereign = resource.getSovereign();
-        final var title = resource.getTitle();
-        final var version = resource.getVersion();
-
-        final var connectorEndpoint = new ConnectorEndpointBuilder()
-                ._accessURL_(uri)
-                .build();
-
         try {
-            final var idsResource = new ResourceBuilder(uri) // TODO add values to data model (?)
+            // Prepare resource attributes.
+            final var created = resource.getCreationDate();
+            final var description = resource.getDescription();
+            final var language = resource.getLanguage();
+            final var idsLanguage = IdsUtils.getLanguage(resource.getLanguage());
+            final var keywords = IdsUtils.getKeywordsAsTypedLiteral(resource.getKeywords(),
+                    language);
+            final var license = resource.getLicence();
+            final var modified = resource.getModificationDate();
+            final var publisher = resource.getPublisher();
+            final var sovereign = resource.getSovereign();
+            final var title = resource.getTitle();
+            final var version = resource.getVersion();
+
+            final var uri = EndpointUtils.getSelfLink((OfferedResource) resource);
+            final var endpoint = new ConnectorEndpointBuilder()
+                    ._accessURL_(uri)
+                    .build();
+
+            final var idsResource = new ResourceBuilder(uri)
 //                    ._accrualPeriodicity_()
 //                    ._assetRefinement_()
 //                    ._contentType_()
@@ -150,7 +144,7 @@ public final class IdsViewService {
                     ._modified_(IdsUtils.getGregorianOf(modified))
                     ._publisher_(publisher)
                     ._representation_((ArrayList<? extends Representation>) representations.get())
-                    ._resourceEndpoint_(Util.asList(connectorEndpoint))
+                    ._resourceEndpoint_(Util.asList(endpoint))
                     ._sovereign_(sovereign)
 //                    ._spatialCoverage_()
 //                    ._shapesGraph_()
@@ -161,6 +155,8 @@ public final class IdsViewService {
                     ._version_(String.valueOf(version))
                     .build();
 
+            // Add additional attributes as property map.
+            final var additional = resource.getAdditional();
             for (final var entry : additional.entrySet()) {
                 idsResource.setProperty(entry.getKey(), entry.getValue());
             }
@@ -196,20 +192,19 @@ public final class IdsViewService {
      * @return The ids representation.
      */
     public Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation representation) {
-        final var view = new RepresentationViewAssembler().toModel(representation);
-        final var uri = view.getLink("self").get().toUri();
-        final var additional = representation.getAdditional();
-
+        // Build children.
         final var artifacts = CompletableFuture.supplyAsync(
                 () -> batchCreateArtifact(representation.getArtifacts()));
 
-        final var modified = IdsUtils.getGregorianOf(representation.getModificationDate());
-        final var created = IdsUtils.getGregorianOf(representation.getCreationDate());
-        final var language = IdsUtils.getLanguage(representation.getLanguage());
-        final var mediaType = representation.getMediaType();
-        final var standard = representation.getStandard();
-
         try {
+            // Prepare representation attributes.
+            final var modified = IdsUtils.getGregorianOf(representation.getModificationDate());
+            final var created = IdsUtils.getGregorianOf(representation.getCreationDate());
+            final var language = IdsUtils.getLanguage(representation.getLanguage());
+            final var mediaType = representation.getMediaType();
+            final var standard = representation.getStandard();
+
+            final var uri = EndpointUtils.getSelfLink(representation);
             final var idsRepresentation = new RepresentationBuilder(uri)
                     ._created_(created)
                     ._instance_((ArrayList<? extends Artifact>) artifacts.get())
@@ -219,6 +214,8 @@ public final class IdsViewService {
                     ._representationStandard_(URI.create(standard))
                     .build();
 
+            // Add additional attributes as property map.
+            final var additional = representation.getAdditional();
             for (final var entry : additional.entrySet()) {
                 idsRepresentation.setProperty(entry.getKey(), entry.getValue());
             }
@@ -251,20 +248,20 @@ public final class IdsViewService {
      * @return The ids artifact.
      */
     public Artifact create(final de.fraunhofer.isst.dataspaceconnector.model.Artifact artifact) {
-        final var view = new ArtifactViewAssembler().toModel(artifact);
-        final var uri = view.getLink("self").get().toUri();
-        final var additional = artifact.getAdditional();
-
-        final var created = IdsUtils.getGregorianOf(artifact.getCreationDate());
-        final var title = artifact.getTitle();
-
         try {
+            // Prepare artifact attributes.
+            final var created = IdsUtils.getGregorianOf(artifact.getCreationDate());
+            final var title = artifact.getTitle();
+
+            final var uri = EndpointUtils.getSelfLink(artifact);
             final var idsArtifact = new ArtifactBuilder(uri)
                     ._byteSize_(BigInteger.ONE) // TODO get the real file size (how?)
                     ._creationDate_(created)
                     ._fileName_(title)
                     .build();
 
+            // Add additional attributes as property map.
+            final var additional = artifact.getAdditional();
             for (final var entry : additional.entrySet()) {
                 idsArtifact.setProperty(entry.getKey(), entry.getValue());
             }
@@ -297,10 +294,7 @@ public final class IdsViewService {
      * @return THe contract offer.
      */
     public ContractOffer create(final de.fraunhofer.isst.dataspaceconnector.model.Contract contract) {
-        final var view = new ContractViewAssembler().toModel(contract);
-        final var uri = view.getLink("self").get().toUri();
-        final var additional = contract.getAdditional();
-
+        // Build children.
         final var rules = contract.getRules();
         final var permissions =
                 CompletableFuture.supplyAsync(() -> batchCreatePermission(rules));
@@ -309,24 +303,27 @@ public final class IdsViewService {
         final var obligations =
                 CompletableFuture.supplyAsync(() -> batchCreateObligation(rules));
 
-        final var contractStart = contract.getStart();
-        final var contractEnd = contract.getEnd();
-        final var consumer = contract.getConsumer();
-        final var contractDate = contract.getDate();
-        final var provider = contract.getProvider();
-
         try {
+            // Prepare contract attributes.
+            final var contractStart = contract.getStart();
+            final var contractEnd = contract.getEnd();
+            final var consumer = contract.getConsumer();
+            final var provider = contract.getProvider();
+
+            final var uri = EndpointUtils.getSelfLink(contract);
             final var idsContract = new ContractOfferBuilder(uri)
                     ._permission_((ArrayList<? extends Permission>) permissions.get())
                     ._prohibition_((ArrayList<? extends Prohibition>) prohibitions.get())
                     ._obligation_((ArrayList<? extends Duty>) obligations.get())
                     ._contractStart_(IdsUtils.getGregorianOf(contractStart))
-                    ._contractDate_(IdsUtils.getGregorianOf(contractDate))
+                    ._contractDate_(IDSUtils.getGregorianNow())
                     ._consumer_(consumer)
                     ._provider_(provider)
                     ._contractEnd_(IdsUtils.getGregorianOf(contractEnd))
                     .build();
 
+            // Add additional attributes as property map.
+            final var additional = contract.getAdditional();
             for (final var entry : additional.entrySet()) {
                 idsContract.setProperty(entry.getKey(), entry.getValue());
             }
@@ -384,13 +381,11 @@ public final class IdsViewService {
      * @return The ids obligation.
      */
     private Duty createObligation(final ContractRule rule) {
-        final var view = new ContractRuleViewAssembler().toModel(rule);
-        final var uri = view.getLink("self").get().toUri();
-
         try {
             final var idsRule = deserializationService.deserializeRule(rule.getValue());
             if (idsRule instanceof Duty) {
                 final var obligation = (Duty) idsRule;
+                final var uri = EndpointUtils.getSelfLink(rule);
                 return new DutyBuilder(uri)
                         ._action_(obligation.getAction())
                         ._assignee_(obligation.getAssignee())
@@ -415,13 +410,11 @@ public final class IdsViewService {
      * @return The ids prohibition.
      */
     private Prohibition createProhibition(final ContractRule rule) {
-        final var view = new ContractRuleViewAssembler().toModel(rule);
-        final var uri = view.getLink("self").get().toUri();
-
         try {
             final var idsRule = deserializationService.deserializeRule(rule.getValue());
             if (idsRule instanceof Prohibition) {
                 final var prohibition = (Prohibition) idsRule;
+                final var uri = EndpointUtils.getSelfLink(rule);
                 return new ProhibitionBuilder(uri)
                         ._action_(prohibition.getAction())
                         ._assignee_(prohibition.getAssignee())
@@ -446,13 +439,11 @@ public final class IdsViewService {
      * @return The ids permission.
      */
     private Permission createPermission(final ContractRule rule) {
-        final var view = new ContractRuleViewAssembler().toModel(rule);
-        final var uri = view.getLink("self").get().toUri();
-
         try {
             final var idsRule = deserializationService.deserializeRule(rule.getValue());
             if (idsRule instanceof Permission) {
                 final var permission = (Permission) idsRule;
+                final var uri = EndpointUtils.getSelfLink(rule);
                 return new PermissionBuilder(uri)
                         ._action_(permission.getAction())
                         ._assignee_(permission.getAssignee())

@@ -1,11 +1,25 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
+import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ContractViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public final class EndpointUtils {
@@ -64,7 +78,7 @@ public final class EndpointUtils {
      *
      * @return The base path as uri.
      */
-    public static URI getCurrentBasePath() {
+    private static URI getCurrentBasePath() {
         return getCurrentRequestUriBuilder().build().toUri();
     }
 
@@ -88,6 +102,102 @@ public final class EndpointUtils {
             return BasePath.fromString(path);
         } catch (UnreachableLineException exception) {
             return null;
+        }
+    }
+
+    /**
+     * Get self-link of catalog.
+     *
+     * @param catalog The catalog.
+     * @return The self-link of the catalog.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Catalog catalog) throws ResourceNotFoundException {
+        try {
+            final var view = new CatalogViewAssembler().toModel(catalog);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of resource.
+     *
+     * @param resource The catalog.
+     * @return The self-link of the resource.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final OfferedResource resource) throws ResourceNotFoundException {
+        try {
+            final var view = new OfferedResourceViewAssembler().toModel(resource);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of representation.
+     *
+     * @param representation The representation.
+     * @return The self-link of the representation.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Representation representation) throws ResourceNotFoundException {
+        try {
+            final var view = new RepresentationViewAssembler().toModel(representation);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of artifact.
+     *
+     * @param artifact The artifact.
+     * @return The self-link of the artifact.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Artifact artifact) throws ResourceNotFoundException {
+        try {
+            final var view = new ArtifactViewAssembler().toModel(artifact);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of contract.
+     *
+     * @param contract The contract.
+     * @return The self-link of the contract.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Contract contract) throws ResourceNotFoundException {
+        try {
+            final var view = new ContractViewAssembler().toModel(contract);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of rule.
+     *
+     * @param rule The rule.
+     * @return The self-link of the rule.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
+        try {
+            final var view = new ContractRuleViewAssembler().toModel(rule);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
         }
     }
 }
