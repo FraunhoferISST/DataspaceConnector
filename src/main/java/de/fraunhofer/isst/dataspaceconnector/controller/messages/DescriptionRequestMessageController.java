@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.Map;
 
 /**
  * Controller for sending description request messages.
@@ -39,6 +38,11 @@ public class DescriptionRequestMessageController {
      * Service for message handling;
      */
     private final @NonNull MessageService messageService;
+
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Requests metadata from an external connector by building an DescriptionRequestMessage.
@@ -61,12 +65,16 @@ public class DescriptionRequestMessageController {
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
             @RequestParam(value = "elementId", required = false) final URI elementId) {
-        Map<String, String> response = null;
         String payload = null;
         try {
             // Send and validate description request/response message.
-            response = messageService.sendDescriptionRequestMessage(recipient, elementId);
-            messageService.validateDescriptionResponseMessage(response);
+            final var response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+            final var valid = messageService.validateDescriptionResponseMessage(response);
+            if (!valid) {
+                // If the response is not a description response message, show the response.
+                final var content = messageService.getResponseContent(response);
+                return ControllerUtils.respondWithMessageContent(content);
+            }
 
             // Read and process the response message.
             payload = MessageUtils.extractPayloadFromMultipartMessage(response);
@@ -74,18 +82,16 @@ public class DescriptionRequestMessageController {
                 return new ResponseEntity<>(payload, HttpStatus.OK);
             } else {
                 // Get payload as component.
-                final var component = messageService.getComponentFromPayload(payload);
+                final var component =
+                        deserializationService.deserializeInfrastructureComponent(payload);
                 return new ResponseEntity<>(component, HttpStatus.OK);
             }
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         } catch (MessageResponseException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
-        } catch (UnexpectedResponseType exception) {
-            // If the response is not a description response message, show the response.
-            return messageService.returnResponseMessageContent(response);
         } catch (IllegalArgumentException exception) {
-            // If the response is not of type resource or base connector.
+            // If the response is not of type base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);
         } catch (Exception exception) {
             return ControllerUtils.respondGlobalException(exception);

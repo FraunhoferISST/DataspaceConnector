@@ -3,10 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
@@ -60,11 +60,11 @@ public class ContractRequestMessageController {
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
-     * @param recipient The recipient.
+     * @param recipient    The recipient.
      * @param resourceList List of requested resources by IDs.
      * @param artifactList List of requested artifacts by IDs.
-     * @param download Download data directly after successful contract and description request.
-     * @param ruleList List of rules that should be used within a contract request.
+     * @param download     Download data directly after successful contract and description request.
+     * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
     @PostMapping("/contract")
@@ -95,60 +95,86 @@ public class ContractRequestMessageController {
         final var resourceLocations = new ArrayList<URI>();
         final var dataLocations = new ArrayList<URI>();
 
-        Map<String, String> response = null;
+        Map<String, String> response;
+        boolean valid;
         try {
             // Validate input for contract request.
             final var contractRequest = managementService
                     .validateAndBuildContractRequest(ruleList);
 
+            // CONTRACT NEGOTIATION. ---------------------------------------------------------------
             // Send and validate contract request/response message.
-            // NOTE: Not in a separate method as we need the response in the catch-block.
             response = messageService.sendContractRequestMessage(recipient, contractRequest);
-            messageService.validateContractRequestResponseMessage(response);
+            valid = messageService.validateContractRequestResponseMessage(response);
+            if (!valid) {
+                // If the response is not a contract agreement message, show the response.
+                final var content = messageService.getResponseContent(response);
+                return ControllerUtils.respondWithMessageContent(content);
+            }
 
             // Read and process the response message.
-            final var contractAgreement = managementService
+            final var agreement = managementService
                     .readAndValidateAgreementFromResponse(response, contractRequest);
 
-            // Send and validate contract request/response message.
-            // NOTE: Not in a separate method as we need the response in the catch-block.
-            response = messageService.sendContractAgreementMessage(recipient, contractAgreement);
-            messageService.validateContractAgreementResponseMessage(response);
+            // Send and validate contract agreement/response message.
+            response = messageService.sendContractAgreementMessage(recipient, agreement);
+            valid = messageService.validateContractAgreementResponseMessage(response);
+            if (!valid) {
+                // If the response is not a notification message, show the response.
+                final var content = messageService.getResponseContent(response);
+                return ControllerUtils.respondWithMessageContent(content);
+            }
 
             // Save contract agreement to database.
-            final var agreementId = managementService.saveContractAgreement(contractAgreement);
-            agreementLocations.add(agreementId);
-            LOGGER.info("Policy negotiation success. Saved agreement: " + agreementId);
+            final var id = managementService.saveContractAgreement(agreement, true);
+            agreementLocations.add(id);
+            LOGGER.info("Policy negotiation success. Saved agreement: " + id);
 
+            // DESCRIPTION REQUESTS. ---------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.
             for (final var resource : resourceList) {
                 // Send and validate description request/response message.
-                // NOTE: Not in a separate method as we need the response in the catch-block.
                 response = messageService.sendDescriptionRequestMessage(recipient, resource);
-                messageService.validateDescriptionResponseMessage(response);
+                valid = messageService.validateDescriptionResponseMessage(response);
+                if (!valid) {
+                    // If the response is not a description response message, show the response.
+                    final var content = messageService.getResponseContent(response);
+                    return ControllerUtils.respondWithMessageContent(content);
+                }
 
                 // Read and process the response message. Save resource to database.
                 final var resourceId = messageService.saveResource(response, artifactList);
                 resourceLocations.add(resourceId);
             }
 
+            // ARTIFACT REQUESTS. ------------------------------------------------------------------
             // Download data depending on user input.
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
                 for (final var artifact : artifactList) {
                     // Send and validate artifact request/response message.
-                    // NOTE: Not in a separate method as we need the response in the catch-block.
-                    final var remoteId = contractAgreement.getId();
+                    final var remoteId = agreement.getId();
                     response = messageService.sendArtifactRequestMessage(recipient, artifact,
                             remoteId);
-                    messageService.validateArtifactResponseMessage(response);
+                    valid = messageService.validateArtifactResponseMessage(response);
+                    if (!valid) {
+                        // If the response is not an artifact response message, show the response.
+                        final var content = messageService.getResponseContent(response);
+                        return ControllerUtils.respondWithMessageContent(content);
+                    }
 
                     // Read and process the response message.
-                    final var artifactId = messageService.saveData(response, artifact);
-                    resourceLocations.add(artifactId);
+                    try {
+                        final var artifactId = messageService.saveData(response, artifact);
+                        dataLocations.add(artifactId);
+                    } catch (ResourceNotFoundException | MessageResponseException exception) {
+                        LOGGER.warn("Could not save data for artifact with id" + artifact
+                                + ". [exception=({})]", exception.getMessage());
+                        // Ignore that the data saving failed. Another try can take place later.
+                    }
                 }
             }
-        } catch (InvalidContractException exception) {
+        } catch (InvalidInputException exception) {
             return ControllerUtils.respondInvalidInput(exception);
         } catch (ConstraintViolationException exception) {
             return ControllerUtils.respondFailedToBuildContractRequest(exception);
@@ -156,9 +182,6 @@ public class ContractRequestMessageController {
             return ControllerUtils.respondFailedToStoreEntity(exception);
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (UnexpectedResponseType exception) {
-            // If the response is not a contract agreement message, show the response.
-            return messageService.returnResponseMessageContent(response);
         } catch (MessageResponseException | IllegalArgumentException | ContractException exception) {
             return ControllerUtils.respondReceivedInvalidResponse(exception);
         }
