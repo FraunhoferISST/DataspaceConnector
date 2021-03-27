@@ -5,10 +5,10 @@ import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -23,13 +23,12 @@ import java.util.Date;
 public class PolicyInformationService {
 
     /**
-     * Class level logger.
+     * Service for handling artifacts.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyInformationService.class);
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Read the properties of an ids rule to automatically recognize the policy pattern.
-     * TODO check if the rules are of the right type
      *
      * @param rule The ids rule.
      * @return The recognized policy pattern.
@@ -76,27 +75,41 @@ public class PolicyInformationService {
             }
         }
 
-        if (detectedPattern == null) {
-            LOGGER.debug("No supported pattern could be recognized.");
-            throw new UnsupportedPatternException("No supported pattern could be recognized.");
-        }
-
         return detectedPattern;
     }
 
+    /**
+     * Get current system date.
+     *
+     * @return The date object.
+     */
     public Date getCurrentDate() {
         return new Date();
     }
 
-    public Date getCreationDate(final URI element) {
-        // find element by id
-        // return its creation date TODO Do all entities have a creation date?
-        return null;
+    /**
+     * Get creation date of artifact.
+     *
+     * @param target The target id.
+     * @return The artifact's creation date.
+     */
+    public Date getCreationDate(final URI target) {
+        final var resourceId = EndpointUtils.getUUIDFromPath(target);
+        final var artifact = artifactService.get(resourceId);
+
+        return artifact.getCreationDate();
     }
 
-    public Integer getAccessNumber(final URI element) {
-        // find element by id
-        // return its number of accesses TODO Do all entities have a creation date?
-        return null;
+    /**
+     * Get access number of artifact.
+     *
+     * @param target The target id.
+     * @return The artifact's access number.
+     */
+    public long getAccessNumber(final URI target) {
+        final var resourceId = EndpointUtils.getUUIDFromPath(target);
+        final var artifact = artifactService.get(resourceId);
+
+        return artifact.getNumAccessed();
     }
 }

@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessInvalidTimeIntervalException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.DataAccessNumberReachedException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.Duration;
-import java.io.IOException;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.List;
@@ -39,44 +38,49 @@ public class PolicyDecisionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyDecisionService.class);
 
     /**
-     * Service for handling requested resources.
-     */
-    private final @NonNull ResourceService<RequestedResource, ?> resourceService;
-
-    /**
      * Policy execution point.
      */
-    private final @NonNull PolicyExecutionService pep;
+    private final @NonNull PolicyExecutionService executionService;
 
     /**
      * Policy management point.
      */
-    private final @NonNull PolicyManagementService pmp;
+    private final @NonNull PolicyManagementService managementService;
 
     /**
      * Policy information point.
      */
-    private final @NonNull PolicyInformationService pip;
+    private final @NonNull PolicyInformationService informationService;
 
+    /**
+     * Service for ids deserialization.
+     */
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Checks all known resources and their policies to delete them if necessary.
-     *
-     * @throws java.text.ParseException If a date from a policy cannot be parsed.
-     * @throws java.io.IOException      If an error occurs while deserializing a contract.
+     * Service for ids deserialization.
      */
-    public void scanResources() throws ParseException, IOException {
-        for (final var resource : resourceService.getAll(Pageable.unpaged())) {
-            final var contracts = resourceService.get(resource.getId()).getContracts();
-            for (final var contract : contracts) {
-                final var rules = contract.getRules();
-                for (final var rule : rules) {
-                    final var idsRule = deserializationService.deserializeRule(rule.getValue());
-                    if (PolicyUtils.checkRuleForPostDuties(idsRule)) {
-                        final var resourceId = resource.getId();
-                        pep.deleteResource(resourceId);
-                    }
+    private final @NonNull AgreementService agreementService;
+
+    /**
+     * Checks all known agreements for artifacts that have to be deleted.
+     *
+     * @throws ParseException            If a date from a policy cannot be parsed.
+     * @throws IllegalArgumentException  If the rule could not be deserialized.
+     * @throws ResourceNotFoundException If the data could not be deleted.
+     */
+    public void scanAgreements() throws ParseException, IllegalArgumentException,
+            ResourceNotFoundException {
+        for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
+            final var value = agreement.getValue();
+            final var idsAgreement = deserializationService.deserializeContractAgreement(value);
+            final var rules = PolicyUtils.extractRulesFromContract(idsAgreement);
+
+            for (final var rule : rules) {
+                final var delete = PolicyUtils.checkRuleForPostDuties(rule);
+                if (delete) {
+                    final var target = rule.getTarget();
+                    executionService.deleteDataFromArtifact(target);
                 }
             }
         }
@@ -86,19 +90,47 @@ public class PolicyDecisionService {
      * Checks the contract content for data access.
      *
      * @param allowedPatterns List of patterns that should be checked.
-     * @param element         The requested element.
+     * @param target          The requested element.
      * @throws UnsupportedPatternException If no suitable pattern could be found.
      */
-    public void checkForDataAccess(final List<PolicyPattern> allowedPatterns, final URI element) {
+    public void checkForDataAccess(final List<PolicyPattern> allowedPatterns, final URI target) {
         // Get the contract agreement's rules for the target.
-        final var agreement = pmp.getContractAgreementForRequestedElement(element);
-        final var rules = pmp.getRulesForRequestedElement(agreement, element);
+        final var agreements = managementService.getContractAgreementsByTarget(target);
+        for (final var agreement : agreements) {
+            final var rules = managementService.getRulesForRequestedElement(agreement, target);
+
+            // Check the policy of each rule.
+            for (final var rule : rules) {
+                final var pattern = informationService.getPatternByRule(rule);
+                if (allowedPatterns.contains(pattern)) {
+                    validatePolicy(pattern, rule, target);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks the contract content for data access.
+     *
+     * @param allowedPatterns  List of patterns that should be checked.
+     * @param target           The requested element.
+     * @param transferContract The contract agreement id.
+     * @throws UnsupportedPatternException If no suitable pattern could be found.
+     */
+    public void checkForDataAccess(final List<PolicyPattern> allowedPatterns, final URI target,
+                                   final URI transferContract) {
+        final var uuid = EndpointUtils.getUUIDFromPath(transferContract);
+        final var agreement = agreementService.get(uuid);
+        final var value = agreement.getValue();
+        final var idsAgreement = deserializationService.deserializeContractAgreement(value);
+
+        final var rules = managementService.getRulesForRequestedElement(idsAgreement, target);
 
         // Check the policy of each rule.
-        for (Rule rule : rules) {
-            final var pattern = pip.getPatternByRule(rule);
+        for (final var rule : rules) {
+            final var pattern = informationService.getPatternByRule(rule);
             if (allowedPatterns.contains(pattern)) {
-                validatePolicy(pattern, rule, element);
+                validatePolicy(pattern, rule, target);
             }
         }
     }
@@ -108,10 +140,11 @@ public class PolicyDecisionService {
      *
      * @param pattern The recognized policy pattern.
      * @param rule    The ids rule.
-     * @param element The requested/accessed element.
+     * @param target  The requested/accessed element.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
-    public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI element) throws PolicyRestrictionException {
+    public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target)
+            throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -120,19 +153,20 @@ public class PolicyDecisionService {
                 validateInterval(rule);
                 break;
             case DURATION_USAGE:
-                validateDuration(rule, element);
+                validateDuration(rule, target);
                 break;
             case USAGE_LOGGING:
-                pep.logDataAccess(element);
+                executionService.logDataAccess(target);
                 break;
             case N_TIMES_USAGE:
-                validateAccessNumber(rule, element);
+                validateAccessNumber(rule, target);
                 break;
             case USAGE_NOTIFICATION:
-                pep.reportDataAccess(rule, element);
+                executionService.reportDataAccess(rule, target);
                 break;
             case PROHIBIT_ACCESS:
             default:
+                LOGGER.debug("No pattern detected. [target=({})]", target);
                 throw new PolicyRestrictionException("Policy restriction detected.");
         }
     }
@@ -141,65 +175,75 @@ public class PolicyDecisionService {
      * Checks if the requested data access is in the allowed time interval.
      *
      * @param rule The ids rule.
+     * @throws PolicyRestrictionException If the policy could not be read or a restriction is
+     *                                    detected.
      */
-    public void validateInterval(final Rule rule) {
+    private void validateInterval(final Rule rule) throws PolicyRestrictionException {
         TimeInterval timeInterval;
         try {
             timeInterval = PolicyUtils.getTimeInterval(rule);
         } catch (ParseException exception) {
             LOGGER.warn("Could not read time interval. [exception=({})]", exception.getMessage());
-            throw new DataAccessInvalidTimeIntervalException();
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), exception);
         }
 
-        final var current = pip.getCurrentDate();
+        final var current = informationService.getCurrentDate();
         if (!current.after(timeInterval.getStart()) || !current.before(timeInterval.getEnd())) {
-            throw new DataAccessInvalidTimeIntervalException();
+            LOGGER.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
         }
     }
 
     /**
      * Adds a duration to a given date and checks if the duration has already been exceeded.
      *
-     * @param rule    The ids rule.
-     * @param element The accessed element.
+     * @param rule   The ids rule.
+     * @param target The accessed element.
+     * @throws PolicyRestrictionException If the policy could not be read or a restriction is
+     *                                    detected.
      */
-    public void validateDuration(final Rule rule, final URI element) {
-        final var created = pip.getCreationDate(element);
+    private void validateDuration(final Rule rule, final URI target) throws PolicyRestrictionException {
+        final var created = informationService.getCreationDate(target);
 
         final Duration duration;
         try {
             duration = PolicyUtils.getDuration(rule);
         } catch (DatatypeConfigurationException exception) {
-            LOGGER.warn("Could not read duration. [exception=({})]", exception.getMessage());
-            throw new DataAccessInvalidTimeIntervalException();
+            LOGGER.warn("Could not read duration. [exception=({}), target=({})]",
+                    exception.getMessage(), target);
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), exception);
         }
 
         if (duration == null) {
-            throw new DataAccessInvalidTimeIntervalException();
+            LOGGER.warn("Duration is null. [target=({})]", target);
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
         }
 
         final var maxTime = PolicyUtils.getCalculatedDate(created, duration);
-        final var validDate = PolicyUtils.checkDate(pip.getCurrentDate(), maxTime);
+        final var validDate = PolicyUtils.checkDate(informationService.getCurrentDate(), maxTime);
 
         if (!validDate) {
-            throw new DataAccessInvalidTimeIntervalException();
+            LOGGER.debug("Invalid date time. [target=({})]", target);
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
         }
     }
 
     /**
      * Checks whether the maximum number of accesses has already been reached.
      *
-     * @param rule    The ids rule.
-     * @param element The accessed element.
+     * @param rule   The ids rule.
+     * @param target The accessed element.
+     * @throws PolicyRestrictionException If the access number has been reached.
      */
-    public void validateAccessNumber(final Rule rule, final URI element) {
+    private void validateAccessNumber(final Rule rule, final URI target) throws PolicyRestrictionException {
         final var max = PolicyUtils.getMaxAccess(rule);
         // final var endpoint = PolicyUtils.getPipEndpoint(rule);
         // NOTE: might be used later
 
-        final var accessed = pip.getAccessNumber(element);
+        final var accessed = informationService.getAccessNumber(target);
         if (accessed >= max) {
-            throw new DataAccessNumberReachedException();
+            LOGGER.debug("Access number reached. [target=({})]", target);
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_NUMBER_REACHED.toString());
         }
     }
 }
