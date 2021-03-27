@@ -82,9 +82,12 @@ public final class EndpointUtils {
      *
      * @param path The base path as string.
      * @return The type of base path.
-     * @throws UnreachableLineException If no enum could be detected.
      */
-    public static BasePath getBasePathEnumFromString(final String path) throws UnreachableLineException {
-        return BasePath.fromString(path);
+    public static BasePath getBasePathEnumFromString(final String path) {
+        try {
+            return BasePath.fromString(path);
+        } catch (UnreachableLineException exception) {
+            return null;
+        }
     }
 }
