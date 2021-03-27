@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
@@ -10,16 +9,22 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class EntityDependencyResolver {
+
+    /**
+     * Class level logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityDependencyResolver.class);
 
     /**
      * Service for linking artifact and representations.
@@ -52,17 +57,10 @@ public class EntityDependencyResolver {
      *
      * @param artifactId The artifact id.
      * @return List of contract offers.
+     * @throws ResourceNotFoundException If the artifact could not be found.
      */
-    public List<Contract> getContractOffersByArtifactId(final URI artifactId)
-            throws InvalidResourceException, ResourceNotFoundException {
-        final UUID uuid;
-        try {
-            final var endpoint = EndpointUtils.getEndpointIdFromPath(artifactId);
-            uuid = endpoint.getResourceId();
-        } catch (IllegalArgumentException exception) {
-            throw new InvalidResourceException("Not a valid target id.", exception);
-        }
-
+    public List<Contract> getContractOffersByArtifactId(final URI artifactId) throws ResourceNotFoundException {
+        final var uuid = EndpointUtils.getUUIDFromPath(artifactId);
         final var artifact = artifactService.get(uuid);
 
         final var contractList = new ArrayList<Contract>();
