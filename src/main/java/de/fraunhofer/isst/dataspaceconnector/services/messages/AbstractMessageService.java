@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
@@ -75,12 +76,14 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
 
-            // MessageBuilderException is handled at a higher level.
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             LOGGER.debug("Built request message:" + body); // TODO Add logging house class
 
             // Send message and return response.
             return idsHttpService.sendAndCheckDat(body, recipient);
+        } catch (MessageBuilderException e) {
+            LOGGER.warn("Failed to build ids request message. [exception=({})]", e.getMessage());
+            throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
         } catch (MessageResponseException e) {
             LOGGER.warn("Failed to read ids response message. [exception=({})]", e.getMessage());
             throw new MessageException(ErrorMessages.INVALID_RESPONSE.toString(), e);
