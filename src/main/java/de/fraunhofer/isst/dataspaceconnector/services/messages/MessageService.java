@@ -2,15 +2,14 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
@@ -18,7 +17,9 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactRequestMessa
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
@@ -26,7 +27,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgr
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
-import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
@@ -34,8 +34,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
@@ -94,13 +92,17 @@ public class MessageService {
     private final @NonNull RequestedResourceViewAssembler viewAssembler;
 
     /**
-     * Build and send a description request message. Validate response.
+     * Service for resolving database entities.
+     */
+    private final @NonNull EntityResolver entityResolver;
+
+    /**
+     * Build and send a description request message.
      *
      * @param recipient The recipient.
      * @param elementId The requested element.
      * @return The response map.
-     * @throws MessageException       If message handling failed.
-     * @throws UnexpectedResponseType If the validation failed.
+     * @throws MessageException If message handling failed.
      */
     public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
                                                              final URI elementId) throws MessageException {
@@ -114,25 +116,26 @@ public class MessageService {
      * Check if the response message is of type description response.
      *
      * @param response The response as map.
+     * @return True if the response type is as expected.
      * @throws MessageResponseException If the response could not be read.
-     * @throws UnexpectedResponseType   If the response type is incorrect.
      */
-    public void validateDescriptionResponseMessage(final Map<String, String> response)
-            throws MessageResponseException, UnexpectedResponseType {
-        descriptionRequestService.validateResponse(response);
+    public boolean validateDescriptionResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return descriptionRequestService.isValidResponseType(response);
     }
 
     /**
-     * Build and send a description request message. Validate response.
+     * Build and send a description request message.
      *
      * @param recipient       The recipient.
      * @param contractRequest The contract request.
      * @return The response map.
-     * @throws MessageException If message handling failed.
+     * @throws MessageException    If message handling failed.
+     * @throws RdfBuilderException If the contract request rdf string could not be built.
      */
     public Map<String, String> sendContractRequestMessage(final URI recipient,
                                                           final ContractRequest contractRequest)
-            throws MessageException, ConstraintViolationException {
+            throws MessageException, RdfBuilderException {
         final var contractId = contractRequest.getId();
         final var contractRdf = IdsUtils.toRdf(contractRequest);
 
@@ -142,11 +145,27 @@ public class MessageService {
         return contractRequestService.sendMessage(desc, contractRdf);
     }
 
-    public void validateContractRequestResponseMessage(final Map<String, String> response)
-            throws MessageResponseException, UnexpectedResponseType {
-        contractRequestService.validateResponse(response);
+    /**
+     * Check if the response message is of type contract agreement.
+     *
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
+     */
+    public boolean validateContractRequestResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return contractRequestService.isValidResponseType(response);
     }
 
+    /**
+     * Build and send a contract agreement message.
+     *
+     * @param recipient         The recipient.
+     * @param contractAgreement The contract agreement.
+     * @return The response map.
+     * @throws MessageException    If message handling failed.
+     * @throws RdfBuilderException If the contract agreement rdf string could not be built.
+     */
     public Map<String, String> sendContractAgreementMessage(final URI recipient,
                                                             final ContractAgreement contractAgreement)
             throws MessageException, ConstraintViolationException {
@@ -159,11 +178,27 @@ public class MessageService {
         return contractAgreementService.sendMessage(desc, contractRdf);
     }
 
-    public void validateContractAgreementResponseMessage(final Map<String, String> response)
-            throws MessageResponseException, UnexpectedResponseType {
-        contractAgreementService.validateResponse(response);
+    /**
+     * Check if the response message is of type message processed notification.
+     *
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
+     */
+    public boolean validateContractAgreementResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return contractAgreementService.isValidResponseType(response);
     }
 
+    /**
+     * Build and send an artifact request message.
+     *
+     * @param recipient   The recipient.
+     * @param elementId   The requested artifact.
+     * @param agreementId The transfer contract.
+     * @return The response map.
+     * @throws MessageException If message handling failed.
+     */
     public Map<String, String> sendArtifactRequestMessage(final URI recipient,
                                                           final URI elementId,
                                                           final URI agreementId) throws MessageException {
@@ -173,9 +208,16 @@ public class MessageService {
         return artifactRequestService.sendMessage(desc, "");
     }
 
-    public void validateArtifactResponseMessage(final Map<String, String> response)
-            throws MessageResponseException, UnexpectedResponseType {
-        artifactRequestService.validateResponse(response);
+    /**
+     * Check if the response message is of type artifact response.
+     *
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
+     */
+    public boolean validateArtifactResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return artifactRequestService.isValidResponseType(response);
     }
 
     /**
@@ -195,80 +237,33 @@ public class MessageService {
     }
 
     /**
-     * Show response message that was not expected.
-     *
-     * @param response The response map.
-     * @return ResponseEntity with status code 200 or 500.
-     */
-    public ResponseEntity<Object> returnResponseMessageContent(final Map<String, String> response) {
-        try {
-            final var message = getResponseMessageContent(response);
-            return new ResponseEntity<>(message, HttpStatus.EXPECTATION_FAILED);
-        } catch (MessageResponseException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
-        }
-    }
-
-    /**
      * If the response message is not of the expected type, message type, rejection reason, and the
      * payload are returned as an object.
      *
      * @param message The ids multipart message as map.
      * @return The object.
      * @throws MessageResponseException Of the response could not be read or deserialized.
+     * @throws IllegalArgumentException If deserialization fails.
      */
-    public Object getResponseMessageContent(final Map<String, String> message) throws MessageResponseException {
+    public Map<String, Object> getResponseContent(final Map<String, String> message)
+            throws MessageResponseException, IllegalArgumentException {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
         final var idsMessage = deserializationService.deserializeResponseMessage(header);
-        var responseMap = new HashMap<String, String>() {{
-            put("type", String.valueOf(idsMessage.getClass()));
+        var responseMap = new HashMap<String, Object>() {{
+            put("type", idsMessage.getClass());
         }};
 
         // If the message is of type exception, add the reason to the response object.
         if (idsMessage instanceof RejectionMessage) {
             final var rejectionMessage = (RejectionMessage) idsMessage;
             final var reason = MessageUtils.extractRejectionReasonFromMessage(rejectionMessage);
-            responseMap.put("reason", reason.toString());
+            responseMap.put("reason", reason);
         }
 
         responseMap.put("payload", payload);
         return responseMap;
-    }
-
-    /**
-     * Turns the payload into an ids infrastructure component.
-     *
-     * @param payload The message payload as string.
-     * @return The ids infrastructure component.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public InfrastructureComponent getComponentFromPayload(final String payload) throws IllegalArgumentException {
-        return deserializationService.deserializeInfrastructureComponent(payload);
-    }
-
-    /**
-     * Turns the payload into an ids resource.
-     *
-     * @param payload The message payload as string.
-     * @return The ids resource.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public Resource getResourceFromPayload(final String payload) throws IllegalArgumentException {
-        return deserializationService.deserializeResource(payload);
-    }
-
-    /**
-     * Turns the payload into an ids contract request.
-     *
-     * @param payload The message payload as string.
-     * @return The ids contract request.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public ContractRequest getContractRequestFromPayload(final String payload)
-            throws IllegalArgumentException {
-        return deserializationService.deserializeContractRequest(payload);
     }
 
     /**
@@ -282,7 +277,7 @@ public class MessageService {
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        final var resource = getResourceFromPayload(payload);
+        final var resource = deserializationService.deserializeResource(payload);
 
         try {
             final var resourceTemplate = TemplateUtils.getResourceTemplate(resource);
@@ -303,11 +298,23 @@ public class MessageService {
         }
     }
 
-    public URI saveData(final Map<String, String> response, final URI artifactId) throws MessageResponseException {
-        final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        // artifactService.update()
-        // add data to artifact TODO
+    /**
+     * Save data and return the uri of the respective artifact.
+     *
+     * @param response   The response message.
+     * @param artifactId The artifact id.
+     * @return The artifact uri.
+     * @throws MessageResponseException  If the message response could not be processed.
+     * @throws ResourceNotFoundException If the artifact could not be found.
+     */
+    public URI saveData(final Map<String, String> response, final URI artifactId)
+            throws MessageResponseException, ResourceNotFoundException {
+        final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var artifact = entityResolver.getArtifactByRemoteId(artifactId);
 
-        return null;
+        entityResolver.updateDataOfArtifact(artifact, data);
+
+        final var view = new ArtifactViewAssembler().toModel(artifact);
+        return view.getLink("self").get().toUri();
     }
 }
