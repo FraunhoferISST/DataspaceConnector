@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -99,12 +100,12 @@ public class ContractRequestMessageController {
         boolean valid;
         try {
             // Validate input for contract request.
-            final var contractRequest = managementService
-                    .validateAndBuildContractRequest(ruleList);
+            PolicyUtils.validateRuleTarget(ruleList);
+            final var request = managementService.buildContractRequest(ruleList);
 
             // CONTRACT NEGOTIATION. ---------------------------------------------------------------
             // Send and validate contract request/response message.
-            response = messageService.sendContractRequestMessage(recipient, contractRequest);
+            response = messageService.sendContractRequestMessage(recipient, request);
             valid = messageService.validateContractRequestResponseMessage(response);
             if (!valid) {
                 // If the response is not a contract agreement message, show the response.
@@ -114,7 +115,7 @@ public class ContractRequestMessageController {
 
             // Read and process the response message.
             final var agreement = managementService
-                    .readAndValidateAgreementFromResponse(response, contractRequest);
+                    .readAndValidateAgreementFromResponse(response, request);
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
