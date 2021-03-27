@@ -97,7 +97,8 @@ public final class PolicyUtils {
      * @return Cleaned list of contracts.
      */
     public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
-            final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts, final URI issuerConnector) {
+            final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
+            final URI issuerConnector) {
         for (final var contract : contracts) {
             final var consumer = contract.getConsumer();
             if (!consumer.equals(issuerConnector)) {
@@ -363,7 +364,7 @@ public final class PolicyUtils {
      * @throws ContractException If a mismatch has been detected.
      */
     public static void compareDuties(final ArrayList<? extends Permission> oldRules,
-                                      final ArrayList<? extends Permission> newRules) throws ContractException {
+                                     final ArrayList<? extends Permission> newRules) throws ContractException {
         final var oldSize = oldRules.size();
         final var newSize = newRules.size();
 
@@ -393,7 +394,7 @@ public final class PolicyUtils {
      * @throws ContractException If a mismatch has been detected.
      */
     public static void compareRules(final ArrayList<? extends Rule> oldRules,
-                                     final ArrayList<? extends Rule> newRules) throws ContractException {
+                                    final ArrayList<? extends Rule> newRules) throws ContractException {
         final var oldSize = oldRules.size();
         final var newSize = newRules.size();
 
@@ -462,6 +463,20 @@ public final class PolicyUtils {
             if (!oldConstraintAsRdf.equals(newConstraintAsRdf)) {
                 throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
             }
+        }
+    }
+
+    /**
+     * Compare two contract agreements to each other.
+     *
+     * @param consumer The consumer agreement.
+     * @param provider The provider agreement.
+     * @throws ContractException If both objects do not match.
+     */
+    public static void compareContractAgreements(final ContractAgreement consumer,
+                                                 final ContractAgreement provider) throws ContractException {
+        if (!consumer.equals(provider)) {
+            throw new ContractException("Contract Agreement does not match the cached one.");
         }
     }
 }
