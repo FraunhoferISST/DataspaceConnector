@@ -4,7 +4,6 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnexpectedResponseType;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
@@ -50,7 +49,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     /**
      * Build ids message with params.
      *
-     * @param desc      Type-specific message parameter.
+     * @param desc Type-specific message parameter.
      * @return An ids message.
      * @throws ConstraintViolationException If the ids message could not be built.
      */
@@ -101,10 +100,10 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Checks if the response message is of the right type.
      *
      * @param message The received message response.
+     * @return True if the response type is as expected.
      * @throws MessageResponseException If the response could not be read.
-     * @throws UnexpectedResponseType If the response type is incorrect.
      */
-    public void validateResponse(final Map<String, String> message) throws MessageResponseException, UnexpectedResponseType {
+    public boolean isValidResponseType(final Map<String, String> message) throws MessageResponseException {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
@@ -112,13 +111,10 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             final var messageType = idsMessage.getClass();
             final var allowedType = getResponseMessageType();
-            final var validType = messageType.equals(allowedType);
-            if (!validType) {
-                throw new UnexpectedResponseType(ErrorMessages.UNEXPECTED_RESPONSE_TYPE.toString());
-            }
+            return messageType.equals(allowedType);
         } catch (MessageResponseException | IllegalArgumentException e) {
             LOGGER.debug("Failed to read response header. [exception=({})]", e.getMessage());
-            throw new MessageResponseException(ErrorMessages.MALFORMED_RESPONSE_HEADER.toString(), e);
+            throw new MessageResponseException(ErrorMessages.MALFORMED_HEADER.toString(), e);
         } catch (Exception e) {
             // NOTE: Should not be reached.
             LOGGER.warn("Something else went wrong. [exception=({})]", e.getMessage());
