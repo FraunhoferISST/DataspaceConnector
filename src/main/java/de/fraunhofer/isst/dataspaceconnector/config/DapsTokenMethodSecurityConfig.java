@@ -13,8 +13,9 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DapsTokenMethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+
     /**
-     * Validator for daps token.
+     * Validator for DAT.
      */
     private DapsTokenValidator tokenValidator;
 
