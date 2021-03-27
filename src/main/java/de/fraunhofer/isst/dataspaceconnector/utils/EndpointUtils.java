@@ -29,6 +29,13 @@ public final class EndpointUtils {
         return new EndpointId(basePath, resourceId);
     }
 
+    /**
+     * Extracts base path and resource id from uri.
+     *
+     * @param uri The url.
+     * @return Endpoint containing base path and resource id (uuid).
+     * @throws IllegalArgumentException Failed to extract uuid from string.
+     */
     public static EndpointId getEndpointIdFromPath(final URI uri) throws IllegalArgumentException {
         final var fullPath = uri.toString();
         final var allUuids = UUIDUtils.findUuids(fullPath);
@@ -41,22 +48,42 @@ public final class EndpointUtils {
         return new EndpointId(basePath, resourceId);
     }
 
-    // Methode basePath String to Enum
-
-    public static URI getCurrentBasePath() {
-        return getCurrentRequestUriBuilder().build().toUri();
-    }
-
-    private static ServletUriComponentsBuilder getCurrentRequestUriBuilder() {
-        return ServletUriComponentsBuilder.fromCurrentRequest();
-    }
-
+    /**
+     * Get current base path as string.
+     *
+     * @return Base path as string.
+     */
     public static String getCurrentBasePathString() {
         final var currentPath = EndpointUtils.getCurrentBasePath();
         return currentPath.toString().substring(0,
                 currentPath.toString().indexOf(currentPath.getPath()));
     }
 
+    /**
+     * Determines the current base path from the request context.
+     *
+     * @return The base path as uri.
+     */
+    public static URI getCurrentBasePath() {
+        return getCurrentRequestUriBuilder().build().toUri();
+    }
+
+    /**
+     * Builds servlet uri from request context.
+     *
+     * @return The servlet uri component builder.
+     */
+    private static ServletUriComponentsBuilder getCurrentRequestUriBuilder() {
+        return ServletUriComponentsBuilder.fromCurrentRequest();
+    }
+
+    /**
+     * Get base path enum from base path string.
+     *
+     * @param path The base path as string.
+     * @return The type of base path.
+     * @throws UnreachableLineException If no enum could be detected.
+     */
     public static BasePath getBasePathEnumFromString(final String path) throws UnreachableLineException {
         return BasePath.fromString(path);
     }
