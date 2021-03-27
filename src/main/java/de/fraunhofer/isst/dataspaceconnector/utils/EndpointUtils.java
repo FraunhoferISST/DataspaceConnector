@@ -16,6 +16,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.view.ContractViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -23,6 +25,12 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 public final class EndpointUtils {
+
+    /**
+     * Class level logger.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(EndpointUtils.class);
+
     private EndpointUtils() {
         // not used
     }
@@ -101,6 +109,22 @@ public final class EndpointUtils {
         try {
             return BasePath.fromString(path);
         } catch (UnreachableLineException exception) {
+            return null;
+        }
+    }
+
+    /**
+     * Extract uuid from path url.
+     *
+     * @param url The url.
+     * @return The extracted uuid.
+     */
+    public static UUID getUUIDFromPath(final URI url) {
+        try {
+            final var endpoint = EndpointUtils.getEndpointIdFromPath(url);
+            return endpoint.getResourceId();
+        } catch (IllegalArgumentException e) {
+            LOGGER.debug("Could not retrieve uuid from path. [exception=({})]", e.getMessage());
             return null;
         }
     }
