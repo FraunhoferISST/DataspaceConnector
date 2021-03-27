@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -174,9 +175,27 @@ public final class ControllerUtils {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /**
+     * Creates a ResponseEntity with status code 500 and a message indicating that saving an entity
+     * has failed.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 500.
+     */
     public static ResponseEntity<Object> respondFailedToStoreEntity(final Exception exception) {
         LOGGER.warn("Failed to store entity. [exception=({})]", exception.getMessage());
         return new ResponseEntity<>("Failed to store entity. " + exception.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Show response message that was not expected.
+     *
+     * @param response The response map.
+     * @return ResponseEntity with status code 417.
+     */
+    public static ResponseEntity<Object> respondWithMessageContent(final Map<String, Object> response) {
+        LOGGER.warn("Expectation failed. [response=({})]", response);
+        return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
 }
