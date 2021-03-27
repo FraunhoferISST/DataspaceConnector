@@ -55,4 +55,10 @@ public abstract class Artifact extends AbstractEntity {
      */
     @ManyToMany(mappedBy = "artifacts")
     private List<Representation> representations;
+
+    /**
+     * The agreements that refer to this artifact
+     */
+    @ManyToMany(mappedBy = "artifacts")
+    private List<Agreement> agreements;
 }

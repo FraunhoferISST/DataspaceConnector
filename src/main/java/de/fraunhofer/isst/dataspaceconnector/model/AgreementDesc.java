@@ -3,18 +3,17 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.net.URI;
-
 /**
  * Describes a contract agreement's properties.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class AgreementDesc extends AbstractDescription<Agreement> {
+
     /**
-     * The agreement id on provider side.
+     * Indicates whether both parties have agreed.
      */
-    private URI remoteId;
+    private boolean confirmed;
 
     /**
      * The definition of the contract.

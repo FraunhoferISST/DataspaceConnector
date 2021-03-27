@@ -19,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ArtifactViewAssembler implements RepresentationModelAssembler<Artifact, ArtifactView> {
     /**
      * Construct the ArtifactView from an Artifact.
+     *
      * @param artifact The artifact.
      * @return The new view.
      */
@@ -31,13 +32,18 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
         view.add(selfLink);
 
         final var dataLink = linkTo(methodOn(ArtifactController.class).getData(artifact.getId()))
-                                     .withRel("data");
+                .withRel("data");
         view.add(dataLink);
 
         final var repLink = linkTo(RelationshipControllers.ArtifactsToRepresentations.class)
-                                    .slash(artifact.getId())
-                                    .withRel("representations");
+                .slash(artifact.getId())
+                .withRel("representations");
         view.add(repLink);
+
+        final var agreementLink = linkTo(RelationshipControllers.ArtifactsToAgreements.class)
+                .slash(artifact.getId())
+                .withRel("agreements");
+        view.add(agreementLink);
 
         return view;
     }
