@@ -313,6 +313,7 @@ public class MessageService {
         final var artifact = entityResolver.getArtifactByRemoteId(artifactId);
 
         entityResolver.updateDataOfArtifact(artifact, data);
+        LOGGER.info("Updated data from artifact. [target=({})]", artifactId);
 
         final var view = new ArtifactViewAssembler().toModel(artifact);
         return view.getLink("self").get().toUri();
