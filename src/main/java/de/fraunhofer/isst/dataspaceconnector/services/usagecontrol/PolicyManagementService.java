@@ -253,7 +253,6 @@ public class PolicyManagementService {
                 artifactList.add(artifact);
             }
 
-            final var agreementId = contractAgreement.getId();
             final var rdf = IdsUtils.toRdf(contractAgreement);
 
             final var desc = new AgreementDesc();
