@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
@@ -50,6 +51,11 @@ public class EntityDependencyResolver {
      * Service for handling artifacts.
      */
     private final @NonNull ArtifactService artifactService;
+
+    /**
+     * Service for linking agreements and artifacts.
+     */
+    private final @NonNull RelationshipServices.AgreementArtifactLinker agreementLinker;
 
     /**
      * Iterate over all artifacts, representations, and resources to get all contract offers that
@@ -110,10 +116,20 @@ public class EntityDependencyResolver {
     /**
      * Get rules by contract offer.
      *
-     * @param contract The contract.
+     * @param contract The contract offer.
      * @return List of rules.
      */
     public List<ContractRule> getRulesByContractOffer(final Contract contract) {
         return ruleLinker.getInternal(contract);
+    }
+
+    /**
+     * Get artifacts by agreement.
+     *
+     * @param agreement The contract agreement.
+     * @return List of artifacts.
+     */
+    public List<Artifact> getArtifactsByAgreement(final Agreement agreement) {
+        return agreementLinker.getInternal(agreement);
     }
 }
