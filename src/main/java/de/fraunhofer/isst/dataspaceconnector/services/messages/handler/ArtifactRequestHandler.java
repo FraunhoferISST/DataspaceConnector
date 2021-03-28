@@ -176,8 +176,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private void checkContractConditions(final URI transferContract, final URI requestedArtifact)
             throws IllegalArgumentException, ResourceNotFoundException,
             PolicyRestrictionException, ContractException {
-        // ResourceNotFoundException is handled at a higher level.
-        final var agreement = entityResolver.getAgreementByRemoteId(transferContract);
+        final var agreement = entityResolver.getAgreementByUri(transferContract);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
         final var valid = isValidTransferContract(artifacts, requestedArtifact);
