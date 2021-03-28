@@ -24,6 +24,7 @@ public class ArtifactController extends BaseResourceController<Artifact, Artifac
         ArtifactService> {
     /**
      * Return the data from the database or a remote data source.
+     * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
      *
      * @param artifactId The artifact id.
      * @return The data object.

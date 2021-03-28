@@ -108,7 +108,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) { // TODO send artifact request if no data available
+    private Object getData(final LocalData data) {
+        // TODO send artifact request if no data is available or the user input says "update".
+        // TODO If data belongs to a requested artifact, check contract conditions.
         return data.getValue();
     }
 
