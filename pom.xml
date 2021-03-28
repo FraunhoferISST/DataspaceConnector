@@ -12,7 +12,7 @@
 	<artifactId>dataspace-connector</artifactId>
 	<version>${revision}</version>
 	<name>dataspace-connector</name>
-	<description>IDS Connector developed by the Fraunhofer ISST</description>
+	<description>IDS Connector originally developed by the Fraunhofer ISST</description>
 	<url>https://www.dataspace-connector.io/</url>
 	<organization>
 		<name>Fraunhofer Institute for Software and Systems Engineering</name>
@@ -20,7 +20,7 @@
 	</organization>
 	<issueManagement>
 		<system>Github</system>
-		<url>https://github.com/FraunhoferISST/DataspaceConnector/issues</url>
+		<url>https://github.com/International-Data-Spaces-Association/DataspaceConnector/issues</url>
 	</issueManagement>
 	<developers>
 		<developer>
@@ -61,13 +61,9 @@
 	</licenses>
 	<inceptionYear>2020</inceptionYear>
 
-	<!-- 		Profiles		 -->
+	<!-- Profiles -->
 	<profiles>
-		<!--
-			 No tests
-
-			 Skip the execution of tests
-		-->
+		<!-- No tests. Skip the execution of tests. -->
 		<profile>
 			<id>no-tests</id>
 			<properties>
@@ -75,11 +71,7 @@
 			</properties>
 		</profile>
 
-		<!--
-			No documentation
-
-			Skip the updating and generation of documention.
-		-->
+		<!-- No documentation. Skip the updating and generation of documentation. -->
 		<profile>
 			<id>no-documentation</id>
 			<properties>
@@ -87,12 +79,8 @@
 			</properties>
 		</profile>
 
-		<!--
-			 Release
-
-			Enforce maximal compiler warning levels, perform all tests.
-			This profile overrides profile "no-tests" and profile "no-documentation".
-		-->
+		<!-- Release. Enforce maximal compiler warning levels, perform all tests.
+			This profile overrides profile "no-tests" and profile "no-documentation". -->
 		<!-- Note: Check if the two profiles could just be deactivated (if active).-->
 		<profile>
 			<id>release</id>
@@ -283,8 +271,6 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework.hateoas/spring-hateoas -->
-
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-hateoas</artifactId>
