@@ -185,6 +185,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             throw new ContractException("Transfer contract does not match the requested artifact.");
         }
 
+        // TODO Negotiation has to be finished to make the agreement valid.
+//        final var confirmed = agreement.getConfirmed();
+//        if (!confirmed) {
+//            return ...
+//        }
+
         final var value = agreement.getValue();
         final var idsAgreement = deserializationService.getContractAgreement(value);
         enforcementService.checkPolicyOnDataProvision(requestedArtifact, idsAgreement);

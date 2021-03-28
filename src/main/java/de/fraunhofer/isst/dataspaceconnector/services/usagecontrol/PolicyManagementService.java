@@ -219,7 +219,7 @@ public class PolicyManagementService {
             final var rdf = IdsUtils.toRdf(contractAgreement);
 
             final var desc = new AgreementDesc();
-            desc.setRemoteId(agreementId);
+            desc.setRemoteId(agreementId); // Necessary on consumer side.
             desc.setConfirmed(confirmed);
             desc.setValue(rdf);
 
@@ -245,6 +245,7 @@ public class PolicyManagementService {
                                      final boolean confirmed,
                                      final List<URI> targetList) throws PersistenceException {
         try {
+            // Iterate of all targets to add the corresponding artifacts to the agreement.
             final var artifactList = new ArrayList<Artifact>();
             for (final var target : targetList) {
                 final var uuid = EndpointUtils.getUUIDFromPath(target);
@@ -256,7 +257,6 @@ public class PolicyManagementService {
             final var rdf = IdsUtils.toRdf(contractAgreement);
 
             final var desc = new AgreementDesc();
-            desc.setRemoteId(agreementId);
             desc.setConfirmed(confirmed);
             desc.setValue(rdf);
             desc.setArtifacts(artifactList);

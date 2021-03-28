@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
@@ -143,5 +144,14 @@ public class EntityUpdateService {
                 LOGGER.info("Updated artifact: " + uri);
             }
         }
+    }
+
+    /**
+     * Set confirmed boolean to true.
+     *
+     * @param agreement The database agreement.
+     */
+    public void updateAgreementToConfirmed(final Agreement agreement) {
+        // TODO Get desc + update agreement to confirmed = true
     }
 }

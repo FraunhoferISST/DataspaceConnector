@@ -158,20 +158,20 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                 for (final var artifact : idsArtifacts) {
                     updateService.updateArtifact((Artifact) artifact);
 
-                    // TODO send artifact request if boolean is true
+                    // TODO Send artifact request if boolean is true.
                 }
             }
         } catch (Exception exception) {
             // As the message has been received, respond with message processed notification
             // message, although saving the resource failed.
             LOGGER.warn("Updating entities failed. [resource=({})]", idsResource);
-            final var message = "Message received but resource not updated.";
-            return respondToMessage(message, issuerConnector, messageId);
+            final var statement = "Message received but resource not updated.";
+            return respondToMessage(statement, issuerConnector, messageId);
         }
 
         // If everything has been saved.
-        final var message = "Message received and resource updated.";
-        return respondToMessage(message, issuerConnector, messageId);
+        final var statement = "Message received and resource updated.";
+        return respondToMessage(statement, issuerConnector, messageId);
     }
 
     /**

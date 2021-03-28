@@ -8,7 +8,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
@@ -279,22 +278,22 @@ public class MessageExceptionService {
     /**
      * Handle contract exception.
      *
-     * @param agreement       The contract agreement.
-     * @param storedAgreement The stored agreement.
+     * @param exception       The exception that was thrown when validating the contracts.
+     * @param payload         The message's payload.
      * @param issuerConnector The issuer connector extracted from the incoming message.
      * @param messageId       The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleContractException(final ContractAgreement agreement,
-                                                   final Agreement storedAgreement,
+    public MessageResponse handleContractException(final ContractException exception,
+                                                   final String payload,
                                                    final URI issuerConnector,
                                                    final URI messageId) {
-        LOGGER.debug("Invalid contract agreement request. [agreement=({}), storedAgreement=({}), "
-                        + "issuer=({}), messageId=({})]", agreement, storedAgreement,
-                issuerConnector, messageId);
+        LOGGER.debug("Invalid contract agreement request. [exception=({}), payload=({}), "
+                        + "issuer=({}), messageId=({})]", exception, payload, issuerConnector,
+                messageId);
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
-                "Could not process contract request.",
+                "This agreement does not match the one handled out before.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
