@@ -1,35 +1,38 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -87,14 +90,14 @@ public class MessageService {
     private final @NonNull ConnectorService connectorService;
 
     /**
-     * Requested resource view assembler.
-     */
-    private final @NonNull RequestedResourceViewAssembler viewAssembler;
-
-    /**
      * Service for resolving database entities.
      */
     private final @NonNull EntityResolver entityResolver;
+
+    /**
+     * Service for reading or writing JSON objects.
+     */
+    private final @NonNull ObjectMapper objectMapper;
 
     /**
      * Build and send a description request message.
@@ -105,7 +108,8 @@ public class MessageService {
      * @throws MessageException If message handling failed.
      */
     public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
-                                                             final URI elementId) throws MessageException {
+                                                             final URI elementId)
+            throws MessageException {
         final var desc = new DescriptionRequestMessageDesc(elementId);
         desc.setRecipient(recipient);
 
@@ -160,17 +164,17 @@ public class MessageService {
     /**
      * Build and send a contract agreement message.
      *
-     * @param recipient         The recipient.
-     * @param contractAgreement The contract agreement.
+     * @param recipient The recipient.
+     * @param agreement The contract agreement.
      * @return The response map.
      * @throws MessageException    If message handling failed.
      * @throws RdfBuilderException If the contract agreement rdf string could not be built.
      */
     public Map<String, String> sendContractAgreementMessage(final URI recipient,
-                                                            final ContractAgreement contractAgreement)
+                                                            final ContractAgreement agreement)
             throws MessageException, ConstraintViolationException {
-        final var contractId = contractAgreement.getId();
-        final var contractRdf = IdsUtils.toRdf(contractAgreement);
+        final var contractId = agreement.getId();
+        final var contractRdf = IdsUtils.toRdf(agreement);
 
         final var desc = new ContractAgreementMessageDesc(contractId);
         desc.setRecipient(recipient);
@@ -201,7 +205,8 @@ public class MessageService {
      */
     public Map<String, String> sendArtifactRequestMessage(final URI recipient,
                                                           final URI elementId,
-                                                          final URI agreementId) throws MessageException {
+                                                          final URI agreementId)
+            throws MessageException {
         final var desc = new ArtifactRequestMessageDesc(elementId, agreementId);
         desc.setRecipient(recipient);
 
@@ -231,7 +236,7 @@ public class MessageService {
             throws MessageEmptyException, VersionNotSupportedException {
         MessageUtils.checkForEmptyMessage(message);
 
-        final var modelVersion = MessageUtils.extractModelVersionFromMessage(message);
+        final var modelVersion = MessageUtils.extractModelVersion(message);
         final var inboundVersions = connectorService.getInboundModelVersion();
         MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
     }
@@ -245,7 +250,7 @@ public class MessageService {
      * @throws MessageResponseException Of the response could not be read or deserialized.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public Map<String, Object> getResponseContent(final Map<String, String> message)
+    public Map<String, Object> getContent(final Map<String, String> message)
             throws MessageResponseException, IllegalArgumentException {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
@@ -258,7 +263,7 @@ public class MessageService {
         // If the message is of type exception, add the reason to the response object.
         if (idsMessage instanceof RejectionMessage) {
             final var rejectionMessage = (RejectionMessage) idsMessage;
-            final var reason = MessageUtils.extractRejectionReasonFromMessage(rejectionMessage);
+            final var reason = MessageUtils.extractRejectionReason(rejectionMessage);
             responseMap.put("reason", reason);
         }
 
@@ -280,8 +285,10 @@ public class MessageService {
         final var resource = deserializationService.getResource(payload);
 
         try {
-            final var resourceTemplate = TemplateUtils.getResourceTemplate(resource);
-            final var contractTemplateList = TemplateUtils.getContractTemplates(resource);
+            final var resourceTemplate =
+                    TemplateUtils.getResourceTemplate(resource);
+            final var contractTemplateList =
+                    TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
                     TemplateUtils.getRepresentationTemplates(resource, artifactList);
 
@@ -290,8 +297,7 @@ public class MessageService {
 
             // Save all entities.
             final var requestedResource = templateBuilder.build(resourceTemplate);
-            final var entity = viewAssembler.toModel(requestedResource);
-            return entity.getLink("self").get().toUri();
+            return EndpointUtils.getSelfLink(requestedResource);
         } catch (Exception e) {
             LOGGER.warn("Could not store resource. [exception=({})]", e.getMessage());
             throw new PersistenceException("Could not store resource.", e);
@@ -315,7 +321,30 @@ public class MessageService {
         entityResolver.updateDataOfArtifact(artifact, data);
         LOGGER.info("Updated data from artifact. [target=({})]", artifactId);
 
-        final var view = new ArtifactViewAssembler().toModel(artifact);
-        return view.getLink("self").get().toUri();
+        return EndpointUtils.getSelfLink(artifact);
+    }
+
+    /**
+     * Read query parameters from message payload.
+     *
+     * @param messagePayload The message's payload.
+     * @return the query input.
+     * @throws InvalidInputException If the query input is not empty but invalid.
+     */
+    public QueryInput getQueryInputFromPayload(final MessagePayload messagePayload)
+            throws InvalidInputException {
+        try {
+            final var payload = MessageUtils.getStreamAsString(messagePayload);
+            if (payload.equals("")) {
+                // Query input is optional, so no rejection message will be sent. Query input will
+                // be checked for null value in HttpService.class.
+                return null;
+            } else {
+                return objectMapper.readValue(payload, QueryInput.class);
+            }
+        } catch (Exception exception) {
+            LOGGER.debug("Invalid query input. [exception=({})]", exception.getMessage());
+            throw new InvalidInputException("Invalid query input.", exception);
+        }
     }
 }

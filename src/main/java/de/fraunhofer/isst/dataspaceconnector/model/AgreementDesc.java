@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.net.URI;
+import java.util.List;
 
 /**
  * Describes a contract agreement's properties.
@@ -26,4 +27,9 @@ public class AgreementDesc extends AbstractDescription<Agreement> {
      * The definition of the contract.
      **/
     private String value;
+
+    /**
+     * The artifacts this agreement refers to.
+     */
+    private List<Artifact> artifacts;
 }

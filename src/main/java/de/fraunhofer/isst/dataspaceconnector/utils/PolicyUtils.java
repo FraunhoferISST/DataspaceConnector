@@ -60,6 +60,41 @@ public final class PolicyUtils {
     }
 
     /**
+     * Iterate over all rules of a contract and add the ones with the element as their target to a
+     * rule list.
+     *
+     * @param contract The contract.
+     * @param element  The requested element.
+     * @return List of ids rules.
+     */
+    public static List<? extends Rule> getRulesForTargetId(final Contract contract,
+                                                           final URI element) {
+        final var rules = new ArrayList<Rule>();
+        for (final var permission : contract.getPermission()) {
+            final var target = permission.getTarget();
+            if (element == target) {
+                rules.add(permission);
+            }
+        }
+
+        for (final var prohibition : contract.getProhibition()) {
+            final var target = prohibition.getTarget();
+            if (element == target) {
+                rules.add(prohibition);
+            }
+        }
+
+        for (final var obligation : contract.getObligation()) {
+            final var target = obligation.getTarget();
+            if (element == target) {
+                rules.add(obligation);
+            }
+        }
+
+        return rules;
+    }
+
+    /**
      * Extract targets and save them together with the respective rules to a map.
      *
      * @param rules List of ids rules.
@@ -370,19 +405,20 @@ public final class PolicyUtils {
         final var newSize = newRules.size();
 
         if (oldSize != newSize) {
+            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldRules, newRules);
             throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
         }
 
         for (int i = 0; i < oldSize; i++) {
-            final var oldPermissions = oldRules.get(i);
-            final var newPermissions = newRules.get(i);
+            final var oldRule = oldRules.get(i);
+            final var newRule = newRules.get(i);
 
-            final var oldPostDuties = oldPermissions.getPostDuty();
-            final var newPostDuties = newPermissions.getPostDuty();
+            final var oldPostDuties = oldRule.getPostDuty();
+            final var newPostDuties = newRule.getPostDuty();
             compareRules(oldPostDuties, newPostDuties);
 
-            final var oldPreDuties = oldPermissions.getPreDuty();
-            final var newPreDuties = newPermissions.getPreDuty();
+            final var oldPreDuties = oldRule.getPreDuty();
+            final var newPreDuties = newRule.getPreDuty();
             compareRules(oldPreDuties, newPreDuties);
         }
     }
@@ -400,6 +436,7 @@ public final class PolicyUtils {
         final var newSize = newRules.size();
 
         if (oldSize != newSize) {
+            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldRules, newRules);
             throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
         }
 
@@ -418,50 +455,59 @@ public final class PolicyUtils {
     }
 
     /**
-     * Compares the content of two actions lists.
+     * Compares the content of two constraint lists.
      *
-     * @param oldAction List of rules from original contract.
-     * @param newAction List of rules from the contract that should be compared.
+     * @param oldConstraints List of rules from original contract.
+     * @param newConstraints List of rules from the contract that should be compared.
      * @throws ContractException If a mismatch has been detected.
      */
-    private static void compareActions(final ArrayList<? extends Action> oldAction,
-                                       final ArrayList<? extends Action> newAction) throws ContractException {
-        final var oldSize = oldAction.size();
-        final var newSize = newAction.size();
+    private static void compareConstraints(final ArrayList<? extends Constraint> oldConstraints,
+                                           final ArrayList<? extends Constraint> newConstraints) throws ContractException {
+        final var oldSize = oldConstraints.size();
+        final var newSize = newConstraints.size();
 
         if (oldSize != newSize) {
+            LOGGER.debug("Size mismatch. [oldConstraints=({}), newConstraints=({})]",
+                    oldConstraints, newConstraints);
             throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
         }
 
         for (int j = 0; j < oldSize; j++) {
-            final var oldActionAsRdf = oldAction.get(j).toRdf();
-            final var newActionAsRdf = newAction.get(j).toRdf();
-            if (!oldActionAsRdf.equals(newActionAsRdf)) {
+            final var oldConstraint = oldConstraints.get(j);
+            final var newConstraint = newConstraints.get(j);
+            final var oldConstraintAsRdf = oldConstraint.toRdf();
+            final var newConstraintAsRdf = newConstraint.toRdf();
+            if (!oldConstraintAsRdf.equals(newConstraintAsRdf)) {
+                LOGGER.debug("Invalid constraint. [oldConstraint=({}), newConstraint=({})]",
+                        oldConstraint, newConstraint);
                 throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
             }
         }
     }
 
     /**
-     * Compares the content of two constraint lists.
+     * Compares the content of two actions lists.
      *
-     * @param oldConstraint List of rules from original contract.
-     * @param newConstraint List of rules from the contract that should be compared.
+     * @param oldActions List of rules from original contract.
+     * @param newActions List of rules from the contract that should be compared.
      * @throws ContractException If a mismatch has been detected.
      */
-    private static void compareConstraints(final ArrayList<? extends Constraint> oldConstraint,
-                                           final ArrayList<? extends Constraint> newConstraint) throws ContractException {
-        final var oldSize = oldConstraint.size();
-        final var newSize = newConstraint.size();
+    private static void compareActions(final ArrayList<? extends Action> oldActions,
+                                       final ArrayList<? extends Action> newActions) throws ContractException {
+        final var oldSize = oldActions.size();
+        final var newSize = newActions.size();
 
         if (oldSize != newSize) {
+            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldActions, newActions);
             throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
         }
 
         for (int j = 0; j < oldSize; j++) {
-            final var oldConstraintAsRdf = oldConstraint.get(j).toRdf();
-            final var newConstraintAsRdf = newConstraint.get(j).toRdf();
-            if (!oldConstraintAsRdf.equals(newConstraintAsRdf)) {
+            final var oldAction = oldActions.get(j).toRdf();
+            final var newAction = newActions.get(j).toRdf();
+            if (!oldAction.equals(newAction)) {
+                LOGGER.debug("Invalid action. [oldAction=({}), newAction=({})]", oldAction,
+                        newAction);
                 throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
             }
         }
@@ -477,6 +523,7 @@ public final class PolicyUtils {
     public static void compareContractAgreements(final ContractAgreement consumer,
                                                  final ContractAgreement provider) throws ContractException {
         if (!consumer.equals(provider)) {
+            LOGGER.debug("Invalid agreement. [consumer=({}), provider=({})]", consumer, provider);
             throw new ContractException("Contract Agreement does not match the cached one.");
         }
     }

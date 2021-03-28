@@ -3,6 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
@@ -68,20 +70,6 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link PolicyRestrictionException}.
-     *
-     * @param exception Exception that was thrown when checking for data access.
-     * @return A message response.
-     */
-    public MessageResponse handlePolicyRestrictionException(final PolicyRestrictionException exception) {
-        LOGGER.debug("Policy restriction detected. [exception=({})]", exception.getMessage());
-        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
-                "Policy restriction detected." + exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
-    /**
      * Handles thrown exceptions when building the response message.
      *
      * @param exception Exception that was thrown when building the response message.
@@ -92,6 +80,30 @@ public class MessageExceptionService {
                 exception.getMessage());
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handles thrown {@link PolicyRestrictionException}.
+     *
+     * @param exception         Exception that was thrown when checking for data access.
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handlePolicyRestrictionException(final PolicyRestrictionException exception,
+                                                            final URI requestedArtifact,
+                                                            final URI transferContract,
+                                                            final URI issuerConnector,
+                                                            final URI messageId) {
+        LOGGER.debug("Policy restriction detected. [exception=({}), artifact=({}), contract=({}), "
+                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
+                transferContract, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
+                "Policy restriction detected." + exception.getMessage(),
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
@@ -249,12 +261,37 @@ public class MessageExceptionService {
                                                          final String payload,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.warn("Could not process contract request. [exception=({}), payload=({}), issuer="
+        LOGGER.warn("Could not process request message. [exception=({}), payload=({}), issuer="
                         + "({}), messageId=({})]", exception.getMessage(), payload, issuerConnector,
                 messageId);
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Could not process contract request.",
+                "Could not process request message. " + exception.getMessage(),
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle global message processing failed.
+     *
+     * @param exception         Exception that was thrown while processing a request message.
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMessageProcessingFailed(final Exception exception,
+                                                         final URI requestedArtifact,
+                                                         final URI transferContract,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.warn("Could not process request message. [exception=({}), artifact=({}), "
+                        + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
+                requestedArtifact, transferContract, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Could not process request message. " + exception.getMessage(),
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
@@ -272,12 +309,154 @@ public class MessageExceptionService {
                                                    final Agreement storedAgreement,
                                                    final URI issuerConnector,
                                                    final URI messageId) {
-        LOGGER.warn("Invalid contract agreement request. [agreement=({}), storedAgreement=({}), "
+        LOGGER.debug("Invalid contract agreement request. [agreement=({}), storedAgreement=({}), "
                         + "issuer=({}), messageId=({})]", agreement, storedAgreement,
                 issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Could not process contract request.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle exceptions when saving a contract agreement.
+     *
+     * @param exception       Exception that was thrown while storing a contract agreement.
+     * @param agreement       The contract agreement.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleAgreementPersistenceException(final Exception exception,
+                                                               final ContractAgreement agreement,
+                                                               final URI issuerConnector,
+                                                               final URI messageId) {
+        LOGGER.warn("Could not store contract agreement. [exception=({}), agreement=({}), issuer="
+                        + "({}), messageId=({})]", exception.getMessage(), agreement,
+                issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Could not store contract agreement.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle missing transfer contract in request message.
+     *
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMissingTransferContract(final URI requestedArtifact,
+                                                         final URI transferContract,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.debug("Missing transfer contract. [artifact=({}), contract=({}), issuer=({}), "
+                        + "messageId=({})]", requestedArtifact, transferContract, issuerConnector,
+                messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Missing transfer contract.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle {@link ContractException} because of invalid transfer contract for requested artifact.
+     *
+     * @param exception         Exception that was thrown while checking the transfer contract.
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleInvalidTransferContract(final ContractException exception,
+                                                         final URI requestedArtifact,
+                                                         final URI transferContract,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.debug("Invalid transfer contract. [exception=({}), artifact=({}), contract=({}), "
+                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
+                transferContract, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Invalid transfer contract for requested artifact.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle missing requested artifact in request message.
+     *
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMissingRequestedArtifact(final URI requestedArtifact,
+                                                          final URI transferContract,
+                                                          final URI issuerConnector,
+                                                          final URI messageId) {
+        LOGGER.debug("Missing requested artifact. [artifact=({}), contract=({}), issuer=({}), "
+                        + "messageId=({})]", requestedArtifact, transferContract, issuerConnector,
+                messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Missing requested artifact.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle {@link InvalidInputException} because of an invalid query input in message payload.
+     *
+     * @param exception         Exception that was thrown while reading the query input.
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract id.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleInvalidQueryInput(final InvalidInputException exception,
+                                                   final URI requestedArtifact,
+                                                   final URI transferContract,
+                                                   final URI issuerConnector,
+                                                   final URI messageId) {
+        LOGGER.debug("Invalid query input. [exception=({}), artifact=({}), contract=({}), "
+                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
+                transferContract, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Invalid query input.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle exceptions when retrieving the data.
+     *
+     * @param exception         Exception that was thrown while getting the data.
+     * @param requestedArtifact The requested artifact.
+     * @param issuerConnector   The issuer connector extracted from the incoming message.
+     * @param messageId         The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleFailedToRetrieveData(final Exception exception,
+                                                      final URI requestedArtifact,
+                                                      final URI issuerConnector,
+                                                      final URI messageId) {
+        LOGGER.warn("Failed to load data. [exception=({}), artifact=({}), issuer=({}), "
+                        + "messageId=({})]", exception.getMessage(), requestedArtifact,
+                issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Could not retrieve data.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }

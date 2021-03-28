@@ -66,8 +66,8 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
-        final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
 
         try {
             // Build the ids response.

@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -47,8 +48,28 @@ public final class MessageUtils {
      * @param message The ids message.
      * @return The id of the requested element.
      */
-    public static URI extractRequestedElementFromMessage(final DescriptionRequestMessage message) {
+    public static URI extractRequestedElement(final DescriptionRequestMessage message) {
         return message.getRequestedElement();
+    }
+
+    /**
+     * Extract requested artifact from ids artifact request message.
+     *
+     * @param message The ids message.
+     * @return The id of the requested artifact.
+     */
+    public static URI extractRequestedArtifact(final ArtifactRequestMessage message) {
+        return message.getRequestedArtifact();
+    }
+
+    /**
+     * Extract transfer contract from ids artifact request message.
+     *
+     * @param message The ids message.
+     * @return The id of the transfer contract.
+     */
+    public static URI extractTransferContract(final ArtifactRequestMessage message) {
+        return message.getTransferContract();
     }
 
     /**
@@ -57,7 +78,7 @@ public final class MessageUtils {
      * @param message The ids message.
      * @return The issuer connector of an ids message.
      */
-    public static URI extractIssuerConnectorFromMessage(final Message message) {
+    public static URI extractIssuerConnector(final Message message) {
         return message.getIssuerConnector();
     }
 
@@ -67,7 +88,7 @@ public final class MessageUtils {
      * @param message The ids message.
      * @return The ids of an ids message.
      */
-    public static URI extractMessageIdFromMessage(final Message message) {
+    public static URI extractMessageId(final Message message) {
         return message.getId();
     }
 
@@ -77,7 +98,7 @@ public final class MessageUtils {
      * @param message The ids message.
      * @return The ids of an ids message.
      */
-    public static String extractModelVersionFromMessage(final Message message) {
+    public static String extractModelVersion(final Message message) {
         return message.getModelVersion();
     }
 
@@ -87,7 +108,7 @@ public final class MessageUtils {
      * @param message The ids message.
      * @return The rejection reason.
      */
-    public static RejectionReason extractRejectionReasonFromMessage(final RejectionMessage message) {
+    public static RejectionReason extractRejectionReason(final RejectionMessage message) {
         return message.getRejectionReason();
     }
 

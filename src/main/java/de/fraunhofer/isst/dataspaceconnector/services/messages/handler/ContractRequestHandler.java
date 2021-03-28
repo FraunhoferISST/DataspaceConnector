@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -35,7 +36,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.PersistenceException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -112,8 +115,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
-        final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
 
         // Read message payload as string.
         String payloadAsString;
@@ -158,6 +161,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                         issuerConnector);
             }
 
+            final var targetList = new ArrayList<URI>();
             // Retrieve matching contract offers to compare the content.
             for (final var target : targetRuleMap.keySet()) {
                 final List<Contract> contracts;
@@ -186,8 +190,11 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                 if (!valid) {
                     return rejectContract(issuerConnector, messageId);
                 }
+
+                targetList.add(target);
             }
-            return acceptContract(request, issuerConnector, messageId);
+
+            return acceptContract(request, issuerConnector, messageId, targetList);
         } catch (IllegalArgumentException exception) {
             return exceptionService.handleIllegalArgumentException(exception, payload,
                     issuerConnector, messageId);
@@ -233,17 +240,26 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * @param request            The contract request object from the data consumer.
      * @param issuerConnector    The issuer connector id.
      * @param correlationMessage The correlation message id.
+     * @param targetList         List of requested targets.
      * @return The message response to the requesting connector.
      */
     private MessageResponse acceptContract(final ContractRequest request,
                                            final URI issuerConnector,
-                                           final URI correlationMessage) {
+                                           final URI correlationMessage,
+                                           final List<URI> targetList) {
+        ContractAgreement agreement = null;
+        URI agreementId;
         try {
             // Turn the accepted contract request into a contract agreement.
-            final var agreement = managementService.buildContractAgreement(request);
+            agreement = managementService.buildContractAgreement(request);
             // Save agreement to database.
-            final var agreementId = managementService.saveContractAgreement(agreement, false);
+            agreementId = managementService.saveContractAgreement(agreement, false, targetList);
+        } catch (ConstraintViolationException | PersistenceException exception) {
+            return exceptionService.handleAgreementPersistenceException(exception, agreement,
+                    issuerConnector, correlationMessage);
+        }
 
+        try {
             // Build ids response message.
             final var desc = new ContractAgreementMessageDesc(correlationMessage);
             desc.setRecipient(issuerConnector);

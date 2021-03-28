@@ -93,9 +93,9 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         }
 
         // Read relevant parameters for message processing.
-        final var requestedElement = MessageUtils.extractRequestedElementFromMessage(message);
-        final var issuerConnector = MessageUtils.extractIssuerConnectorFromMessage(message);
-        final var messageId = MessageUtils.extractMessageIdFromMessage(message);
+        final var requestedElement = MessageUtils.extractRequestedElement(message);
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
 
         // Check if a specific resource has been requested.
         if (requestedElement == null) {

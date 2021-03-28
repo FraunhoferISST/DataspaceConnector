@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -7,7 +8,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternExcept
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
@@ -97,7 +97,7 @@ public class PolicyDecisionService {
         // Get the contract agreement's rules for the target.
         final var agreements = managementService.getContractAgreementsByTarget(target);
         for (final var agreement : agreements) {
-            final var rules = managementService.getRulesForRequestedElement(agreement, target);
+            final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
 
             // Check the policy of each rule.
             for (final var rule : rules) {
@@ -112,19 +112,14 @@ public class PolicyDecisionService {
     /**
      * Checks the contract content for data access.
      *
-     * @param allowedPatterns  List of patterns that should be checked.
-     * @param target           The requested element.
-     * @param transferContract The contract agreement id.
-     * @throws UnsupportedPatternException If no suitable pattern could be found.
+     * @param allowedPatterns List of patterns that should be checked.
+     * @param target          The requested element.
+     * @param agreement       The ids contract agreement.
+     * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
     public void checkForDataAccess(final List<PolicyPattern> allowedPatterns, final URI target,
-                                   final URI transferContract) {
-        final var uuid = EndpointUtils.getUUIDFromPath(transferContract);
-        final var agreement = agreementService.get(uuid);
-        final var value = agreement.getValue();
-        final var idsAgreement = deserializationService.getContractAgreement(value);
-
-        final var rules = managementService.getRulesForRequestedElement(idsAgreement, target);
+                                   final ContractAgreement agreement) throws PolicyRestrictionException {
+        final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
 
         // Check the policy of each rule.
         for (final var rule : rules) {

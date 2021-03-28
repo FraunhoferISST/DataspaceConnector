@@ -109,7 +109,7 @@ public class ContractRequestMessageController {
             valid = messageService.validateContractRequestResponseMessage(response);
             if (!valid) {
                 // If the response is not a contract agreement message, show the response.
-                final var content = messageService.getResponseContent(response);
+                final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -122,7 +122,7 @@ public class ContractRequestMessageController {
             valid = messageService.validateContractAgreementResponseMessage(response);
             if (!valid) {
                 // If the response is not a notification message, show the response.
-                final var content = messageService.getResponseContent(response);
+                final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -139,7 +139,7 @@ public class ContractRequestMessageController {
                 valid = messageService.validateDescriptionResponseMessage(response);
                 if (!valid) {
                     // If the response is not a description response message, show the response.
-                    final var content = messageService.getResponseContent(response);
+                    final var content = messageService.getContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
@@ -154,13 +154,13 @@ public class ContractRequestMessageController {
                 // Iterate over list of resource ids to send artifact request messages for each.
                 for (final var artifact : artifactList) {
                     // Send and validate artifact request/response message.
-                    final var remoteId = agreement.getId();
+                    final var transferContract = agreement.getId();
                     response = messageService.sendArtifactRequestMessage(recipient, artifact,
-                            remoteId);
+                            transferContract);
                     valid = messageService.validateArtifactResponseMessage(response);
                     if (!valid) {
                         // If the response is not an artifact response message, show the response.
-                        final var content = messageService.getResponseContent(response);
+                        final var content = messageService.getContent(response);
                         return ControllerUtils.respondWithMessageContent(content);
                     }
 
@@ -183,8 +183,8 @@ public class ContractRequestMessageController {
             return ControllerUtils.respondFailedToStoreEntity(exception);
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
-        } catch (MessageResponseException | IllegalArgumentException | ContractException exception) {
-            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (MessageResponseException | IllegalArgumentException | ContractException e) {
+            return ControllerUtils.respondReceivedInvalidResponse(e);
         }
 
         return new ResponseEntity<>(new HashMap<String, List<URI>>() {{

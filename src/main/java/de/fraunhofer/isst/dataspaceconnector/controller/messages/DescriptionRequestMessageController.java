@@ -35,7 +35,7 @@ import java.net.URI;
 public class DescriptionRequestMessageController {
 
     /**
-     * Service for message handling;
+     * Service for message handling.
      */
     private final @NonNull MessageService messageService;
 
@@ -68,11 +68,12 @@ public class DescriptionRequestMessageController {
         String payload = null;
         try {
             // Send and validate description request/response message.
-            final var response = messageService.sendDescriptionRequestMessage(recipient, elementId);
+            final var response =
+                    messageService.sendDescriptionRequestMessage(recipient, elementId);
             final var valid = messageService.validateDescriptionResponseMessage(response);
             if (!valid) {
                 // If the response is not a description response message, show the response.
-                final var content = messageService.getResponseContent(response);
+                final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 

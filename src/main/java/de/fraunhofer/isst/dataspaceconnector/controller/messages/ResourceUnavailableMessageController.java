@@ -50,8 +50,8 @@ public class ResourceUnavailableMessageController {
      * @return The response message or an error.
      */
     @PostMapping("/resource/unavailable")
-    @Operation(summary = "Resource unavailable message", description = "Can be used for unregistering "
-            + "a resource at an IDS broker.")
+    @Operation(summary = "Resource unavailable message", description = "Can be used for "
+            + "unregistering a resource at an IDS broker.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

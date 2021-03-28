@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
@@ -9,12 +10,15 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.EndpointId;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ContractViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,15 +150,31 @@ public final class EndpointUtils {
     }
 
     /**
-     * Get self-link of resource.
+     * Get self-link of offered resource.
      *
-     * @param resource The catalog.
-     * @return The self-link of the resource.
+     * @param resource The offered resource.
+     * @return The self-link of the offered resource.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final OfferedResource resource) throws ResourceNotFoundException {
         try {
             final var view = new OfferedResourceViewAssembler().toModel(resource);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of requested resource.
+     *
+     * @param resource The requested resource.
+     * @return The self-link of the requested resource.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final RequestedResource resource) throws ResourceNotFoundException {
+        try {
+            final var view = new RequestedResourceViewAssembler().toModel(resource);
             return view.getLink("self").get().toUri();
         } catch (NoSuchElementException | IllegalStateException exception) {
             throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
@@ -219,6 +239,22 @@ public final class EndpointUtils {
     public static URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
         try {
             final var view = new ContractRuleViewAssembler().toModel(rule);
+            return view.getLink("self").get().toUri();
+        } catch (NoSuchElementException | IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
+    /**
+     * Get self-link of agreement.
+     *
+     * @param agreement The agreement.
+     * @return The self-link of the agreement.
+     * @throws ResourceNotFoundException If the resource could not be loaded.
+     */
+    public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
+        try {
+            final var view = new AgreementViewAssembler().toModel(agreement);
             return view.getLink("self").get().toUri();
         } catch (NoSuchElementException | IllegalStateException exception) {
             throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);

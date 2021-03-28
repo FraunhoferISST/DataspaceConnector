@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.config.UsageControlFramework;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
@@ -65,11 +66,11 @@ public class PolicyEnforcementService {
      * Policy check on data provision on provider side.
      *
      * @param requestedElement The requested element.
-     * @param transferContract The contract agreement id.
+     * @param agreement The ids contract agreement.
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
     public void checkPolicyOnDataProvision(final URI requestedElement,
-                                           final URI transferContract) throws PolicyRestrictionException {
+                                           final ContractAgreement agreement) throws PolicyRestrictionException {
         final var ignorePatterns = connectorConfig.isAllowUnsupported();
         // Ignore patterns if unknown patterns are allowed.
         if (!ignorePatterns) {
@@ -83,7 +84,7 @@ public class PolicyEnforcementService {
                             PolicyPattern.USAGE_DURING_INTERVAL,
                             PolicyPattern.USAGE_UNTIL_DELETION,
                             PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
-                    decisionService.checkForDataAccess(allowedPatterns, requestedElement, transferContract);
+                    decisionService.checkForDataAccess(allowedPatterns, requestedElement, agreement);
                     break;
             }
         }

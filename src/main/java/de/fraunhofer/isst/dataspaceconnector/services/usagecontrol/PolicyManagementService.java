@@ -14,15 +14,14 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
-import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.services.IdsViewService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -49,105 +48,72 @@ public class PolicyManagementService {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(PolicyManagementService.class);
 
-    private final @NonNull IdsConnectorService connectorService;
+    /**
+     * Service for current connector configuration.
+     */
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Service for deserialization.
      */
     private final @NonNull DeserializationService deserializationService;
 
+    /**
+     * Service for contract agreements.
+     */
     private final @NonNull AgreementService agreementService;
 
-    private final @NonNull AgreementViewAssembler viewAssembler;
-
-    private final @NonNull IdsViewService viewService;
-
     /**
-     * Validate rule input and build contract request.
-     *
-     * @param ruleList The ids rule list.
-     * @return The ids contract request.
-     * @throws InvalidContractException     If the user input is invalid.
-     * @throws ConstraintViolationException If the contract request could not be built.
+     * Service for artifacts.
      */
-    public ContractRequest validateAndBuildContractRequest(final List<? extends Rule> ruleList)
-            throws InvalidContractException, ConstraintViolationException {
-        PolicyUtils.validateRuleTarget(ruleList);
-        return buildContractRequest(ruleList);
-    }
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Read and validate ids contract agreement from ids response message.
      *
-     * @param response        The response map containing ids header and payload.
-     * @param contractRequest The contract request that was sent.
+     * @param response The response map containing ids header and payload.
+     * @param request  The contract request that was sent.
      * @return The ids contract agreement.
      * @throws MessageResponseException If the response could not be processed.
      * @throws IllegalArgumentException If deserialization fails.
      * @throws ContractException        If the contract's content is invalid.
      */
     public ContractAgreement readAndValidateAgreementFromResponse(final Map<String, String> response,
-                                                                  final ContractRequest contractRequest)
+                                                                  final ContractRequest request)
             throws MessageResponseException, IllegalArgumentException, ContractException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
-        return validateContractAgreement(contractRequest, payload);
+        final var agreement = deserializationService.getContractAgreement(payload);
+        return validateContractAgreement(request, agreement);
     }
 
     /**
      * Get stored contract agreement for requested element.
      *
-     * @param element The requested element.
+     * @param target The requested element.
      * @return The respective contract agreement.
      */
-    public ContractAgreement getContractAgreementForRequestedElement(final URI element) {
-        // TODO Get abstract entity by id (resource, artifact, catalog)
-        return null;
+    public List<ContractAgreement> getContractAgreementsByTarget(final URI target) {
+        final var uuid = EndpointUtils.getUUIDFromPath(target);
+        final var artifact = artifactService.get(uuid);
+
+        final var agreements = artifact.getAgreements();
+        final var agreementList = new ArrayList<ContractAgreement>();
+        for (final var agreement : agreements) {
+            final var value = agreement.getValue();
+            final var idsAgreement = deserializationService.getContractAgreement(value);
+            agreementList.add(idsAgreement);
+        }
+        return agreementList;
     }
 
     /**
-     * Iterate over all rules of a contract agreement and add the ones with the element as their
-     * target to a rule list.
-     *
-     * @param agreement The contract agreement.
-     * @param element   The requested element.
-     * @return List of ids rules.
-     */
-    public List<? extends Rule> getRulesForRequestedElement(final ContractAgreement agreement,
-                                                            final URI element) {
-        List<Rule> rules = new ArrayList<>();
-
-        for (Permission permission : agreement.getPermission()) {
-            final var target = permission.getTarget();
-            if (element == target) {
-                rules.add(permission);
-            }
-        }
-
-        for (Prohibition prohibition : agreement.getProhibition()) {
-            final var target = prohibition.getTarget();
-            if (element == target) {
-                rules.add(prohibition);
-            }
-        }
-
-        for (Duty obligation : agreement.getObligation()) {
-            final var target = obligation.getTarget();
-            if (element == target) {
-                rules.add(obligation);
-            }
-        }
-
-        return rules;
-    }
-
-    /**
-     * Build contract request from a list of rules - with assignee and provider.
+     * Build contract request from a list of rules - with assignee and consumer.
      *
      * @param ruleList The rule list.
      * @return The ids contract request.
      * @throws ConstraintViolationException If ids contract building fails.
      */
-    private ContractRequest buildContractRequest(final List<? extends Rule> ruleList)
+    public ContractRequest buildContractRequest(final List<? extends Rule> ruleList)
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
@@ -172,8 +138,6 @@ public class PolicyManagementService {
         // Return contract request.
         return new ContractRequestBuilder()
                 ._consumer_(connectorId)
-                ._contractDate_(IDSUtils.getGregorianNow())
-                ._contractStart_(IDSUtils.getGregorianNow())
                 ._obligation_(obligations)
                 ._permission_(permissions)
                 ._prohibition_(prohibitions)
@@ -182,12 +146,12 @@ public class PolicyManagementService {
 
     /**
      * Build contract agreement from contract request. Sign all rules as assigner.
-     * TODO: Add contract end.
      *
      * @param request The contract request.
      * @return The contract agreement.
+     * @throws ConstraintViolationException If building a contract agreement fails.
      */
-    public ContractAgreement buildContractAgreement(final ContractRequest request) {
+    public ContractAgreement buildContractAgreement(final ContractRequest request) throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
         final var ruleList = PolicyUtils.extractRulesFromContract(request);
@@ -199,13 +163,13 @@ public class PolicyManagementService {
         // Add assigner to all rules.
         for (final var rule : ruleList) {
             if (rule instanceof Permission) {
-                ((PermissionImpl) rule).setAssignee(Util.asList(connectorId));
+                ((PermissionImpl) rule).setAssigner(Util.asList(connectorId));
                 permissions.add((Permission) rule);
             } else if (rule instanceof Prohibition) {
-                ((ProhibitionImpl) rule).setAssignee(Util.asList(connectorId));
+                ((ProhibitionImpl) rule).setAssigner(Util.asList(connectorId));
                 prohibitions.add((Prohibition) rule);
             } else if (rule instanceof Duty) {
-                ((DutyImpl) rule).setAssignee(Util.asList(connectorId));
+                ((DutyImpl) rule).setAssigner(Util.asList(connectorId));
                 obligations.add((Duty) rule);
             }
         }
@@ -215,6 +179,8 @@ public class PolicyManagementService {
                 ._consumer_(request.getId())
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._contractStart_(IDSUtils.getGregorianNow())
+                ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
+                // end.
                 ._obligation_(obligations)
                 ._permission_(permissions)
                 ._prohibition_(prohibitions)
@@ -225,16 +191,13 @@ public class PolicyManagementService {
     /**
      * Validate the content if the received contract agreement.
      *
-     * @param request The sent request.
-     * @param payload The message response's payload.
+     * @param request   The sent request.
+     * @param agreement The contract agreement.
      * @return The ids contract agreement.
-     * @throws IllegalArgumentException If deserialization fails.
-     * @throws ContractException        If the content does not match the original request.
+     * @throws ContractException If the content does not match the original request.
      */
     private ContractAgreement validateContractAgreement(final ContractRequest request,
-                                                        final String payload) throws IllegalArgumentException, ContractException {
-        final var agreement = deserializationService.deserializeContractAgreement(payload);
-
+                                                        final ContractAgreement agreement) throws ContractException {
         PolicyUtils.validateRuleAssigner(agreement);
         PolicyUtils.validateRuleContent(request, agreement);
 
@@ -242,26 +205,65 @@ public class PolicyManagementService {
     }
 
     /**
-     * Save contract agreement to database.
+     * Save contract agreement to database (consumer side).
      *
      * @param contractAgreement The ids contract agreement.
+     * @param confirmed         Indicates whether both parties have agreed.
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
-    public URI saveContractAgreement(final ContractAgreement contractAgreement)
-            throws PersistenceException {
+    public URI saveContractAgreement(final ContractAgreement contractAgreement,
+                                     final boolean confirmed) throws PersistenceException {
         try {
-            final var remoteId = contractAgreement.getId();
+            final var agreementId = contractAgreement.getId();
             final var rdf = IdsUtils.toRdf(contractAgreement);
 
             final var desc = new AgreementDesc();
-            desc.setRemoteId(remoteId);
+            desc.setRemoteId(agreementId);
+            desc.setConfirmed(confirmed);
             desc.setValue(rdf);
-            final var agreement = agreementService.create(desc);
 
-            // Get id of the stored agreement.
-            final var entity = viewAssembler.toModel(agreement);
-            return entity.getLink("self").get().toUri();
+            // Save agreement to return its id.
+            final var agreement = agreementService.create(desc);
+            return EndpointUtils.getSelfLink(agreement);
+        } catch (Exception e) {
+            LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
+            throw new PersistenceException("Could not store contract agreement.", e);
+        }
+    }
+
+    /**
+     * Save contract agreement to database with relation to targeted artifacts (provider side).
+     *
+     * @param contractAgreement The ids contract agreement.
+     * @param confirmed         Indicates whether both parties have agreed.
+     * @param targetList        List of artifacts.
+     * @return The id of the stored contract agreement.
+     * @throws PersistenceException If the contract agreement could not be saved.
+     */
+    public URI saveContractAgreement(final ContractAgreement contractAgreement,
+                                     final boolean confirmed,
+                                     final List<URI> targetList) throws PersistenceException {
+        try {
+            final var artifactList = new ArrayList<Artifact>();
+            for (final var target : targetList) {
+                final var uuid = EndpointUtils.getUUIDFromPath(target);
+                final var artifact = artifactService.get(uuid);
+                artifactList.add(artifact);
+            }
+
+            final var agreementId = contractAgreement.getId();
+            final var rdf = IdsUtils.toRdf(contractAgreement);
+
+            final var desc = new AgreementDesc();
+            desc.setRemoteId(agreementId);
+            desc.setConfirmed(confirmed);
+            desc.setValue(rdf);
+            desc.setArtifacts(artifactList);
+
+            // Save agreement to return its id.
+            final var agreement = agreementService.create(desc);
+            return EndpointUtils.getSelfLink(agreement);
         } catch (Exception e) {
             LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
             throw new PersistenceException("Could not store contract agreement.", e);
@@ -281,7 +283,7 @@ public class PolicyManagementService {
         final var idsRuleList = new ArrayList<Rule>();
         for (final var rule : offerRules) {
             final var value = rule.getValue();
-            final var idsRule = deserializationService.deserializeRule(value);
+            final var idsRule = deserializationService.getRule(value);
             idsRuleList.add(idsRule);
         }
 

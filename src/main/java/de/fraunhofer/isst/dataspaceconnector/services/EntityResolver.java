@@ -12,6 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ViewService;
@@ -162,6 +163,19 @@ public class EntityResolver {
     }
 
     /**
+     * Return artifact by uri.
+     *
+     * @param requestedArtifact The artifact uri.
+     * @param queryInput Http query for data request.
+     * @return Artifact from database.
+     */
+    public Object getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
+        final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
+
+        return artifactService.getData(endpoint, queryInput);
+    }
+
+    /**
      * Get artifact by remote id.
      *
      * @param id The remote id (at provider side).
@@ -181,6 +195,28 @@ public class EntityResolver {
         // Should not be reached.
         LOGGER.warn("Found no artifact with [remoteId=({})]", id);
         throw new ResourceNotFoundException("Found no artifact with this remote id: " + id);
+    }
+
+    /**
+     * Get agreement by remote id.
+     *
+     * @param id The remote id (at provider side).
+     * @return The artifact of the database.
+     * @throws ResourceNotFoundException If the resource could not be found.
+     */
+    public Agreement getAgreementByRemoteId(final URI id) throws ResourceNotFoundException {
+        final var agreements = agreementService.getAll(Pageable.unpaged());
+
+        for (final var agreement : agreements) {
+            final var remoteId = agreement.getRemoteId();
+            if (remoteId.equals(id)) {
+                return agreement;
+            }
+        }
+
+        // Should not be reached.
+        LOGGER.warn("Found no agreement with [remoteId=({})]", id);
+        throw new ResourceNotFoundException("Found no agreement with this remote id: " + id);
     }
 
     /**
