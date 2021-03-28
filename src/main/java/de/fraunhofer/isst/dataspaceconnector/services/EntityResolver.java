@@ -1,7 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
@@ -25,7 +24,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -133,23 +131,17 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public String getEntityAsIdsRdfString(final AbstractEntity entity) throws
-            RdfBuilderException, InvalidResourceException {
+    public Object getEntityAsIdsObject(final AbstractEntity entity) throws InvalidResourceException {
         if (entity instanceof Artifact) {
-            final var artifact = viewService.create((Artifact) entity);
-            return IdsUtils.toRdf(artifact);
+            return viewService.create((Artifact) entity);
         } else if (entity instanceof Resource) {
-            final var resource = viewService.create((Resource) entity);
-            return IdsUtils.toRdf(resource);
+            return viewService.create((Resource) entity);
         } else if (entity instanceof Representation) {
-            final var representation = viewService.create((Representation) entity);
-            return IdsUtils.toRdf(representation);
+            return viewService.create((Representation) entity);
         } else if (entity instanceof Catalog) {
-            final var catalog = viewService.create((Catalog) entity);
-            return IdsUtils.toRdf(catalog);
+            return viewService.create((Catalog) entity);
         } else if (entity instanceof Contract) {
-            final var contract = viewService.create((Contract) entity);
-            return IdsUtils.toRdf(contract);
+            return viewService.create((Contract) entity);
         } else if (entity instanceof Agreement) {
             final var agreement = (Agreement) entity;
             return agreement.getValue();
@@ -157,7 +149,7 @@ public class EntityResolver {
             final var rule = (ContractRule) entity;
             return rule.getValue();
         } else {
-            LOGGER.debug("Could not provide rdf value. [entity=({})]", entity);
+            LOGGER.debug("Could not provide ids object. [entity=({})]", entity);
             throw new InvalidResourceException("No provided description for requested element.");
         }
     }
@@ -166,7 +158,7 @@ public class EntityResolver {
      * Return artifact by uri.
      *
      * @param requestedArtifact The artifact uri.
-     * @param queryInput Http query for data request.
+     * @param queryInput        Http query for data request.
      * @return Artifact from database.
      */
     public Object getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {

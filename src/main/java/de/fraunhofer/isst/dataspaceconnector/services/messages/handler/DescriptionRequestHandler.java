@@ -5,7 +5,6 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
@@ -125,20 +124,15 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 final var desc = new DescriptionResponseMessageDesc(messageId);
                 desc.setRecipient(issuerConnector);
                 final var header = descriptionService.buildMessage(desc);
-                // TODO return as ids object?
-                final var payload = entityResolver.getEntityAsIdsRdfString(entity);
+                final var payload = entityResolver.getEntityAsIdsObject(entity);
 
                 // Send ids response message.
                 return BodyResponse.create(header, payload);
             }
-        } catch (ResourceNotFoundException exception) {
+        } catch (ResourceNotFoundException | InvalidResourceException exception) {
             return exceptionService.handleResourceNotFoundException(exception, requestedElement,
                     issuerConnector, messageId);
-        } catch (InvalidResourceException exception) {
-            return exceptionService.handleInvalidResourceException(exception, requestedElement,
-                    issuerConnector, messageId);
-        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-                | RdfBuilderException exception) {
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception);
         }
     }
