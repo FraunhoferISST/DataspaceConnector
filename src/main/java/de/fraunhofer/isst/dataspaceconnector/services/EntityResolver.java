@@ -194,18 +194,8 @@ public class EntityResolver {
      * @return The artifact of the database.
      * @throws ResourceNotFoundException If the resource could not be found.
      */
-    public Agreement getAgreementByRemoteId(final URI id) throws ResourceNotFoundException {
-        final var agreements = agreementService.getAll(Pageable.unpaged());
-
-        for (final var agreement : agreements) {
-            final var remoteId = agreement.getRemoteId();
-            if (remoteId.equals(id)) {
-                return agreement;
-            }
-        }
-
-        // Should not be reached.
-        LOGGER.warn("Found no agreement with [remoteId=({})]", id);
-        throw new ResourceNotFoundException("Found no agreement with this remote id: " + id);
+    public Agreement getAgreementByUri(final URI id) throws ResourceNotFoundException {
+        final var uuid = EndpointUtils.getUUIDFromPath(id);
+        return agreementService.get(uuid);
     }
 }
