@@ -44,6 +44,11 @@ public abstract class Artifact extends AbstractEntity {
     private long numAccessed;
 
     /**
+     * Indicates whether the artifact should be downloaded automatically
+     */
+    private boolean automatedDownload;
+
+    /**
      * Increment the data access counter.
      */
     public void incrementAccessCounter() {

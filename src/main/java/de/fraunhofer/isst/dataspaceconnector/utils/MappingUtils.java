@@ -143,9 +143,12 @@ public final class MappingUtils {
      * Build template from ids artifact.
      *
      * @param artifact The ids artifact.
+     * @param download Indicated whether the artifact is going to be downloaded
+     *                 automatically.
      * @return The artifact template.
      */
-    public static ArtifactTemplate fromIdsArtifact(final Artifact artifact) {
+    public static ArtifactTemplate fromIdsArtifact(final Artifact artifact,
+                                                   final boolean download) {
         final var id = artifact.getId();
         final var byteSize = artifact.getByteSize();
         final var checksum = artifact.getCheckSum();
@@ -166,6 +169,7 @@ public final class MappingUtils {
         desc.setAdditional(additional);
         desc.setRemoteId(id);
         desc.setTitle(filename);
+        desc.setAutomatedDownload(download);
 
         final var template = new ArtifactTemplate();
         template.setDesc(desc);

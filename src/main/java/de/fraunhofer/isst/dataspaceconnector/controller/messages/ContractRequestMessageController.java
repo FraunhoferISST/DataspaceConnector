@@ -144,7 +144,7 @@ public class ContractRequestMessageController {
                 }
 
                 // Read and process the response message. Save resource to database.
-                final var resourceId = messageService.saveResource(response, artifactList);
+                final var resourceId = messageService.saveResource(response, artifactList, download);
                 resourceLocations.add(resourceId);
             }
 

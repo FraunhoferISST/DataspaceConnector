@@ -45,4 +45,9 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
      * Some value for storing data locally.
      */
     private String value;
+
+    /**
+     * Indicates whether the artifact should be downloaded automatically
+     */
+    private boolean automatedDownload;
 }

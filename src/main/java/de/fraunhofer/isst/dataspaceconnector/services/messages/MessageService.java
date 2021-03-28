@@ -276,9 +276,11 @@ public class MessageService {
      *
      * @param response     The response message map.
      * @param artifactList List of requested artifacts.
+     * @param download     Indicated whether the artifact is going to be downloaded automatically.
      * @return The persisted resource.
      */
-    public URI saveResource(final Map<String, String> response, final List<URI> artifactList)
+    public URI saveResource(final Map<String, String> response, final List<URI> artifactList,
+                            final boolean download)
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
@@ -290,7 +292,7 @@ public class MessageService {
             final var contractTemplateList =
                     TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
-                    TemplateUtils.getRepresentationTemplates(resource, artifactList);
+                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download);
 
             resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);

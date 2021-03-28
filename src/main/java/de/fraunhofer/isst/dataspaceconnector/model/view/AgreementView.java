@@ -14,4 +14,5 @@ public class AgreementView extends RepresentationModel<AgreementView> {
     private Date creationDate;
     private Date modificationDate;
     private String value;
+    private boolean automatedDownload;
 }

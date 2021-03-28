@@ -34,12 +34,15 @@ public final class TemplateUtils {
     /**
      * Build a list of representation templates from ids resource.
      *
-     * @param resource The ids resource.
+     * @param resource           The ids resource.
      * @param requestedArtifacts List of requested artifacts (remote id).
+     * @param download           Indicated whether the artifact is going to be downloaded
+     *                           automatically.
      * @return List of representation templates.
      */
     public static List<RepresentationTemplate> getRepresentationTemplates(final Resource resource,
-                                                                          final List<URI> requestedArtifacts) {
+                                                                          final List<URI> requestedArtifacts,
+                                                                          final boolean download) {
         final var list = new ArrayList<RepresentationTemplate>();
 
         // Iterate over all representations.
@@ -47,7 +50,7 @@ public final class TemplateUtils {
         for (final var representation : representationList) {
             final var representationTemplate = MappingUtils.fromIdsRepresentation(representation);
             final var artifactTemplateList = getArtifactTemplates(representation,
-                    requestedArtifacts);
+                    requestedArtifacts, download);
 
             // Representation is only saved if it contains requested artifacts.
             if (!artifactTemplateList.isEmpty()) {
@@ -64,10 +67,13 @@ public final class TemplateUtils {
      *
      * @param representation     The ids representation.
      * @param requestedArtifacts List of requested artifacts (remote ids).
+     * @param download           Indicated whether the artifact is going to be downloaded
+     *                           automatically.
      * @return List of artifact templates.
      */
     public static List<ArtifactTemplate> getArtifactTemplates(final Representation representation,
-                                                              final List<URI> requestedArtifacts) {
+                                                              final List<URI> requestedArtifacts,
+                                                              final boolean download) {
         final var list = new ArrayList<ArtifactTemplate>();
 
         // Iterate over all artifacts.
@@ -77,7 +83,8 @@ public final class TemplateUtils {
 
             // Artifact is only saved if it has been requested.
             if (requestedArtifacts.contains(id)) {
-                final var artifactTemplate = MappingUtils.fromIdsArtifact((Artifact) artifact);
+                final var artifactTemplate =
+                        MappingUtils.fromIdsArtifact((Artifact) artifact, download);
                 list.add(artifactTemplate);
             }
         }
