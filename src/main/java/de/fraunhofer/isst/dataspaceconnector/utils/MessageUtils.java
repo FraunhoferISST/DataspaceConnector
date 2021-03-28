@@ -5,6 +5,7 @@ import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
@@ -70,6 +71,16 @@ public final class MessageUtils {
      */
     public static URI extractTransferContract(final ArtifactRequestMessage message) {
         return message.getTransferContract();
+    }
+
+    /**
+     * Extract affected resource from ids resource update message.
+     *
+     * @param message The ids message.
+     * @return The id of the affected resource.
+     */
+    public static URI extractAffectedResource(final ResourceUpdateMessage message) {
+        return message.getAffectedResource();
     }
 
     /**
