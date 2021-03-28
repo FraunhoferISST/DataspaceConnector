@@ -13,9 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.util.MultipartStringParser;
 import okhttp3.MultipartBody;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +139,7 @@ public final class MessageUtils {
      *
      * @param versionString   The outbound model version of the requesting connector.
      * @param inboundVersions The inbound model version of the current connector.
-     * @throws VersionNotSupportedException If the Infomodel version is not supported.
+     * @throws VersionNotSupportedException If the Information Model version is not supported.
      */
     public static void checkForVersionSupport(final String versionString,
                                               final List<? extends String> inboundVersions)
@@ -155,7 +153,7 @@ public final class MessageUtils {
         }
 
         if (!versionSupported) {
-            throw new VersionNotSupportedException("Infomodel version not supported.");
+            throw new VersionNotSupportedException("Information Model version not supported.");
         }
     }
 
@@ -175,17 +173,6 @@ public final class MessageUtils {
             LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
             throw new MessageBuilderException("Message could not be built.", exception);
         }
-    }
-
-    /**
-     * Convert response string to map.
-     *
-     * @param response The http response.
-     * @return The multipart map.
-     * @throws FileUploadException If string could not be parsed as multipart map.
-     */
-    public static Map<String, String> responseToMap(final String response) throws FileUploadException {
-        return MultipartStringParser.stringToMultipart(response);
     }
 
     /**
