@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyExecutionException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
@@ -57,9 +57,9 @@ public class PolicyExecutionService {
     private final @NonNull LogMessageService logMessageService;
 
     /**
-     * Service for resolving database entities.
+     * Service for updating database entities from ids object.
      */
-    private final @NonNull EntityResolver entityResolver;
+    private final @NonNull EntityUpdateService updateService;
 
     /**
      * Delete data by artifact id.
@@ -71,7 +71,7 @@ public class PolicyExecutionService {
         final var entityId = EndpointUtils.getUUIDFromPath(target);
 
         // Update data for artifact.
-        entityResolver.updateDataOfArtifact(entityId, "");
+        updateService.updateDataOfArtifact(entityId, "");
         LOGGER.info("Deleted data from artifact. [target=({})]", target);
     }
 

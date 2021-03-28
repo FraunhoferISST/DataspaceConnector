@@ -21,6 +21,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMes
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
@@ -98,6 +99,11 @@ public class MessageService {
      * Service for reading or writing JSON objects.
      */
     private final @NonNull ObjectMapper objectMapper;
+
+    /**
+     * Service for updating database entities from ids object.
+     */
+    private final @NonNull EntityUpdateService updateService;
 
     /**
      * Build and send a description request message.
@@ -320,7 +326,7 @@ public class MessageService {
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifact = entityResolver.getArtifactByRemoteId(artifactId);
 
-        entityResolver.updateDataOfArtifact(artifact, data);
+        updateService.updateDataOfArtifact(artifact, data);
         LOGGER.info("Updated data from artifact. [target=({})]", artifactId);
 
         return EndpointUtils.getSelfLink(artifact);

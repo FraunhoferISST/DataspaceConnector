@@ -270,7 +270,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             return BodyResponse.create(header, agreement);
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
                 | RdfBuilderException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, correlationMessage);
         }
     }
 
@@ -294,7 +295,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             return ErrorResponse.create(header, payload);
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
                 | RdfBuilderException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, correlationMessage);
         }
     }
 }

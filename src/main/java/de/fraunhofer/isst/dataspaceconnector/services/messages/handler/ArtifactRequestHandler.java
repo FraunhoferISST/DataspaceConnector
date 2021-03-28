@@ -235,7 +235,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             // Send ids response message.
             return BodyResponse.create(header, data);
         } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, messageId);
         }
     }
 }

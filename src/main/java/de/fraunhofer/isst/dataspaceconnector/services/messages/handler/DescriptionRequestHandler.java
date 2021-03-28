@@ -132,8 +132,9 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         } catch (ResourceNotFoundException | InvalidResourceException exception) {
             return exceptionService.handleResourceNotFoundException(exception, requestedElement,
                     issuerConnector, messageId);
-        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
+            return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
+                    messageId);
         }
     }
 
@@ -157,8 +158,9 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
             // Send ids response message.
             return BodyResponse.create(header, selfDescription);
-        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
+            return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
+                    messageId);
         }
     }
 }

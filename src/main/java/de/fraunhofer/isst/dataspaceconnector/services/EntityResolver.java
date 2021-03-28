@@ -5,7 +5,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
@@ -33,7 +32,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +55,7 @@ public class EntityResolver {
     /**
      * Service for offered resources.
      */
-    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offeredResourceService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     /**
      * Service for catalogs.
@@ -106,7 +104,7 @@ public class EntityResolver {
                 case REPRESENTATIONS:
                     return representationService.get(entityId);
                 case RESOURCES:
-                    return offeredResourceService.get(entityId);
+                    return offerService.get(entityId);
                 case CATALOGS:
                     return catalogService.get(entityId);
                 case CONTRACTS:
@@ -209,32 +207,5 @@ public class EntityResolver {
         // Should not be reached.
         LOGGER.warn("Found no agreement with [remoteId=({})]", id);
         throw new ResourceNotFoundException("Found no agreement with this remote id: " + id);
-    }
-
-    /**
-     * Update value of artifact.
-     *
-     * @param artifact The artifact.
-     * @param data     The data string.
-     */
-    public void updateDataOfArtifact(final Artifact artifact, final String data) {
-        final var desc = new ArtifactDesc();
-        desc.setValue(data);
-
-        final var artifactId = artifact.getId();
-        artifactService.update(artifactId, desc);
-    }
-
-    /**
-     * Update value of artifact by artifact id.
-     *
-     * @param artifactId The artifact id.
-     * @param data       The data string.
-     */
-    public void updateDataOfArtifact(final UUID artifactId, final String data) {
-        final var desc = new ArtifactDesc();
-        desc.setValue(data);
-
-        artifactService.update(artifactId, desc);
     }
 }

@@ -5,9 +5,7 @@ import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
@@ -56,8 +54,8 @@ public class MessageExceptionService {
     /**
      * Handles thrown {@link VersionNotSupportedException}.
      *
-     * @param exception Exception that was thrown when checking the Infomodel version.
-     * @param version   Infomodel version of incoming message.
+     * @param exception Exception that was thrown when checking the Information Model version.
+     * @param version   Information Model version of incoming message.
      * @return A message response.
      */
     public MessageResponse handleInfoModelNotSupportedException(
@@ -72,12 +70,16 @@ public class MessageExceptionService {
     /**
      * Handles thrown exceptions when building the response message.
      *
-     * @param exception Exception that was thrown when building the response message.
+     * @param exception       Exception that was thrown when building the response message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleResponseMessageBuilderException(final Exception exception) {
-        LOGGER.warn("Failed to convert ids object to string. [exception=({})]",
-                exception.getMessage());
+    public MessageResponse handleResponseMessageBuilderException(final Exception exception,
+                                                                 final URI issuerConnector,
+                                                                 final URI messageId) {
+        LOGGER.warn("Failed to convert ids object to string. [exception=({}), issuer=({}), "
+                + "messageId=({})]", exception.getMessage(), issuerConnector, messageId);
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
                 connectorService.getConnectorId(),
@@ -151,36 +153,14 @@ public class MessageExceptionService {
     }
 
     /**
-     * Handles thrown {@link InvalidResourceException}.
-     *
-     * @param exception        Exception that was thrown when building the response message.
-     * @param requestedElement The requested element.
-     * @param issuerConnector  The issuer connector extracted from the incoming message.
-     * @param messageId        The id of the incoming message.
-     * @return A message response.
-     */
-    public MessageResponse handleInvalidResourceException(final InvalidResourceException exception,
-                                                          final URI requestedElement,
-                                                          final URI issuerConnector,
-                                                          final URI messageId) {
-        LOGGER.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), "
-                        + "messageId=({})]",
-                exception.getMessage(), requestedElement, issuerConnector, messageId);
-        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
-                "The requested element %s could not be found.", requestedElement),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
-    /**
-     * Handles thrown {@link MessageRequestException}.
+     * Handles thrown exceptions in processing a message's payload.
      *
      * @param exception       Exception that was thrown while reading a message's payload.
      * @param messageId       The id of the incoming message.
      * @param issuerConnector The issuer connector extracted from the incoming message.
      * @return A message response.
      */
-    public MessageResponse handleMessagePayloadException(final MessageRequestException exception,
+    public MessageResponse handleMessagePayloadException(final Exception exception,
                                                          final URI messageId,
                                                          final URI issuerConnector) {
         LOGGER.debug("Failed to read payload. [exception=({}), messageId=({}), issuer=({})]",
@@ -457,6 +437,69 @@ public class MessageExceptionService {
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not retrieve data.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle missing affected resource in request message.
+     *
+     * @param affectedResource The affected resource.
+     * @param issuerConnector  The issuer connector extracted from the incoming message.
+     * @param messageId        The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMissingAffectedResource(final URI affectedResource,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.debug("Missing affected resource. [resource=({}), issuer=({}), messageId=({})]",
+                affectedResource, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Missing affected resource.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle missing payload content in request message.
+     *
+     * @param affectedResource The affected resource.
+     * @param issuerConnector  The issuer connector extracted from the incoming message.
+     * @param messageId        The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleMissingPayload(final URI affectedResource,
+                                                final URI issuerConnector,
+                                                final URI messageId) {
+        LOGGER.debug("Missing resource in payload. [resource=({}), issuer=({}), messageId=({})]",
+                affectedResource, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Missing resource in payload.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle mismatch in affected resource and resource id of the incoming payload.
+     *
+     * @param resourceId       The id of the resource in the payload.
+     * @param affectedResource The affected resource.
+     * @param issuerConnector  The issuer connector extracted from the incoming message.
+     * @param messageId        The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleInvalidAffectedResource(final URI resourceId,
+                                                         final URI affectedResource,
+                                                         final URI issuerConnector,
+                                                         final URI messageId) {
+        LOGGER.debug("Affected resource does not match the resource id. [resource=({}), "
+                        + "affectedResource=({}), issuer=({}), messageId=({})]", resourceId,
+                affectedResource, issuerConnector, messageId);
+        return ErrorResponse.withDefaultHeader(
+                RejectionReason.BAD_PARAMETERS,
+                "Affected resource does not match the resource id.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }

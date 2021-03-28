@@ -76,7 +76,8 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             final var header = notificationService.buildMessage(desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception);
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, messageId);
         }
     }
 }

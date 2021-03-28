@@ -20,8 +20,6 @@ public final class RequestedResource extends Resource {
      */
     private URI remoteId;
 
-//    private URI ownerURI;
-
     /**
      * Default constructor.
      */
