@@ -9,9 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -22,11 +22,19 @@ import java.util.UUID;
 @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
 public class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
         ArtifactService> {
-    @RequestMapping(value = "{id}/data", method = RequestMethod.GET)
+    /**
+     * Return the data from the database or a remote data source.
+     *
+     * @param artifactId The artifact id.
+     * @return The data object.
+     */
+    @GetMapping("{id}/data")
     @Operation(summary = "Get data by artifact id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId) {
         final var artifactService = ((ArtifactService) this.getService());
         return ResponseEntity.ok(artifactService.getData(artifactId, null));
     }
+
+    // TODO add method for retrieving data with custom headers or queries --> turned into query input.
 }
