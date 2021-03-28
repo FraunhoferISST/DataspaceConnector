@@ -103,7 +103,7 @@ public class ContractRequestMessageController {
             PolicyUtils.validateRuleTarget(ruleList);
             final var request = managementService.buildContractRequest(ruleList);
 
-            // CONTRACT NEGOTIATION. ---------------------------------------------------------------
+            // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
             response = messageService.sendContractRequestMessage(recipient, request);
             valid = messageService.validateContractRequestResponseMessage(response);
@@ -131,7 +131,7 @@ public class ContractRequestMessageController {
             agreementLocations.add(id);
             LOGGER.info("Policy negotiation success. Saved agreement: " + id);
 
-            // DESCRIPTION REQUESTS. ---------------------------------------------------------------
+            // DESCRIPTION REQUESTS ----------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.
             for (final var resource : resourceList) {
                 // Send and validate description request/response message.
@@ -144,11 +144,12 @@ public class ContractRequestMessageController {
                 }
 
                 // Read and process the response message. Save resource to database.
-                final var resourceId = messageService.saveResource(response, artifactList, download);
+                final var resourceId = messageService.saveResource(response, artifactList,
+                        download);
                 resourceLocations.add(resourceId);
             }
 
-            // ARTIFACT REQUESTS. ------------------------------------------------------------------
+            // ARTIFACT REQUESTS -------------------------------------------------------------------
             // Download data depending on user input.
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
