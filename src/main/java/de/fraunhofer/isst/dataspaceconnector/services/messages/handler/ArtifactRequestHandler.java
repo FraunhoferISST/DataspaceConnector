@@ -96,10 +96,10 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
-     * @param message The request message
-     * @param payload The message payload
-     * @return The response message
-     * @throws RuntimeException if the response body failed to be build.
+     * @param message The request message.
+     * @param payload The message payload.
+     * @return The response message.
+     * @throws RuntimeException If the response body failed to be build.
      */
     @Override
     public MessageResponse handleMessage(final ArtifactRequestMessageImpl message,
