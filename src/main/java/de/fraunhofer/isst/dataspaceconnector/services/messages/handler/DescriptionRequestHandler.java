@@ -15,7 +15,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionS
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -126,6 +125,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 final var desc = new DescriptionResponseMessageDesc(messageId);
                 desc.setRecipient(issuerConnector);
                 final var header = descriptionService.buildMessage(desc);
+                // TODO return as ids object?
                 final var payload = entityResolver.getEntityAsIdsRdfString(entity);
 
                 // Send ids response message.
@@ -160,12 +160,10 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var desc = new DescriptionResponseMessageDesc(messageId);
             desc.setRecipient(issuerConnector);
             final var header = descriptionService.buildMessage(desc);
-            final var payload = IdsUtils.toRdf(selfDescription);
 
             // Send ids response message.
-            return BodyResponse.create(header, payload);
-        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-                | RdfBuilderException exception) {
+            return BodyResponse.create(header, selfDescription);
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception);
         }
     }
