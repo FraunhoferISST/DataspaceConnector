@@ -270,14 +270,6 @@ public class PolicyManagementService {
         }
     }
 
-    public URI getOriginalContractAgreementId(final URI id) {
-        final var endpoint = EndpointUtils.getEndpointIdFromPath(id);
-        final var uuid = endpoint.getResourceId();
-        final var agreement = agreementService.get(uuid);
-        // agreement.getOriginalId(); TODO
-        return null;
-    }
-
     public boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
                                                 final List<Rule> requestRules) {
         final var idsRuleList = new ArrayList<Rule>();
