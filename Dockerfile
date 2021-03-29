@@ -1,5 +1,5 @@
+# Build the jar
 FROM maven:latest AS maven
-LABEL maintainer="Julia Pampus <julia.pampus@isst.fraunhofer.de>"
 
 COPY pom.xml /tmp/
 
@@ -10,11 +10,14 @@ COPY src /tmp/src/
 
 RUN mvn clean package -DskipTests -Dmaven.javadoc.skip=true
 
-FROM adoptopenjdk/openjdk11:jre-11.0.8_10-alpine
-RUN mkdir /app
+# Copy the jar and build image
+FROM gcr.io/distroless/java:11
+COPY --from=maven --chown=65532:65532 /tmp/target/*.jar /app/app.jar
 
-COPY --from=maven /tmp/target/*.jar /app/app.jar
+WORKDIR /app
 
-WORKDIR /app/
+EXPOSE 8080
+
+USER nonroot
 
 ENTRYPOINT ["java","-jar","app.jar"]

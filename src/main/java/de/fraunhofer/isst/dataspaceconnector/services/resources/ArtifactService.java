@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.UUID;
 
 /**
@@ -129,7 +129,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
             } else {
                 return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
-        } catch (MalformedURLException exception) {
+        } catch (URISyntaxException exception) {
             LOGGER.warn(
                     "Could not connect to data source. [exception=({})]", exception.getMessage());
             throw new RuntimeException("Could not connect to data source.", exception);
