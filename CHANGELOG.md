@@ -1,20 +1,37 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [4.1.0-SNAPSHOT]
+## [4.3.0] - 2021-03-24
+
+### Added 
+- Configure timeout values for http connections via `application.properties`.
+
+## [4.2.0] - 2021-03-09
 
 ### Added
-- Handle ResourceUpdateMessage: Update the local copy of resource upon receiving a ResourceUpdateMessage.
+- New policy pattern: connector-restricted data usage.
+- Validate `CONNECTOR_RESTRICTED_USAGE` on data request (as a provider).
+
+## [4.1.0] - 2021-03-02
+
+### Added
+- Handle `ResourceUpdateMessage`: Update the local copy of resource upon receiving a `ResourceUpdateMessage`.
 - Add attribute for endpoint documentation reference to `ResourceMetadata`.
 - Store `ownerURI`, `contractID`, `artifactID`, and `originalUUID` in `RequestedResource`.
-- Add support for query params and additional headers when requesting artifacts.
-- Add input validation for query params and headers.
+- Add support for query params, path variables, and additional headers when requesting artifacts.
+- Add input validation for query params, path variables, and headers.
 - Add usage control framework checking to the classes `PolicyEnforcement` and `PolicyHandler`.
-- Add example files for deployment in Kubernetes 
+- Add example files for deployment in Kubernetes.
 
 ### Changed
 - Configure Spring to fail on unknown properties in request bodies.
 - Move settings for policy negotiation and allowing unsupported patterns to `application.properties`.
+- Refactor HttpUtils to use the IDS Framework's `HttpService`.
+- Add data string as request body instead of request parameter.
+
+### Fixed
+- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and 
+  configurations to avoid state errors (relevant for the broker communication).
 
 ## [4.0.2] - 2021-02-04
 

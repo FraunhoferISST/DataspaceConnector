@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.Duration;
-import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -207,7 +208,7 @@ public class PolicyVerifier {
             } else {
                 return allowAccess();
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (URISyntaxException | RuntimeException e) {
             return inhibitAccess();
         }
     }
@@ -227,5 +228,11 @@ public class PolicyVerifier {
         } else {
             return false;
         }
+    }
+
+    public boolean checkIssuerConnector(Contract contract, URI issuerConnector) {
+        Rule rule = contract.getPermission().get(0);
+        URI allowedURI = policyReader.getAllowedConnector(rule);
+        return allowedURI.equals(issuerConnector);
     }
 }

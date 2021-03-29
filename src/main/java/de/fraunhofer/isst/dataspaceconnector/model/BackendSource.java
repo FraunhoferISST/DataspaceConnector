@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.net.URI;
+import java.net.URL;
 
 /**
  * This class is used to describe the resource source in the backend.
@@ -26,7 +26,7 @@ public class BackendSource implements Serializable {
     @JsonProperty("type")
     private Type type;
     @JsonProperty("url")
-    private URI url;
+    private URL url;
     @JsonProperty("username")
     private String username;
     @JsonProperty("password")
@@ -46,7 +46,7 @@ public class BackendSource implements Serializable {
      * @param username The username for authentication
      * @param password The password for authentication
      */
-    public BackendSource(Type type, URI url, String username, String password) {
+    public BackendSource(Type type, URL url, String username, String password) {
         this.type = type;
         this.url = url;
         this.username = username;

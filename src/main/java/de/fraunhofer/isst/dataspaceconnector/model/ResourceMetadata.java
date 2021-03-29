@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
     name = "ResourceMetadata",
     description = "Metadata of a resource",
     oneOf = ResourceMetadata.class,
-    example = "{\"title\":\"ExampleResource\",\"description\":\"ExampleResourceDescription\",\"policy\":\"Example policy\",\"representations\":[{\"uuid\":\"8e3a5056-1e46-42e1-a1c3-37aa08b2aedd\",\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}]}"
+    example = "{\"title\":\"ExampleResource\",\"description\":\"ExampleResourceDescription\",\"policy\":\"Example policy\",\"representations\":[{\"type\":\"XML\",\"byteSize\":101,\"name\":\"Example Representation\",\"source\":{\"type\":\"local\"}}]}"
 )
 @Data
 @JsonInclude(Include.NON_NULL)
@@ -62,7 +62,7 @@ public class ResourceMetadata implements Serializable {
 
     @JsonProperty("version")
     private String version;
-    
+
     @JsonProperty("endpointDocumentation")
     private URI endpointDocumentation;
 

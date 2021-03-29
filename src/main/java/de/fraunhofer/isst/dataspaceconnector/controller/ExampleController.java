@@ -77,7 +77,7 @@ public class ExampleController {
             ._connectorProxy_(Util.asList(new ProxyBuilder()
                 ._noProxy_(exceptions)
                 ._proxyAuthentication_(new BasicAuthenticationBuilder().build())
-                ._proxyURI_(URI.create("proxy.dortmund.isst.fraunhofer.de:3128"))
+                ._proxyURI_(URI.create("http://proxy.dortmund.isst.fraunhofer.de:3128"))
                 .build()))
             ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
             ._connectorDescription_(new BaseConnectorBuilder()
@@ -96,7 +96,7 @@ public class ExampleController {
                     .build()
                 )
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                    ._accessURL_(URI.create("/api/ids/data"))
+                    ._accessURL_(URI.create("https://localhost:8080/api/ids/data"))
                     .build())
                 .build())
             ._keyStore_(URI.create("file:///conf/keystore.p12"))
@@ -275,6 +275,22 @@ public class ExampleController {
                             .build()))
                         .build()))
                     .build();
+                break;
+            case CONNECTOR_RESTRICTED_USAGE:
+                contractOffer = new ContractOfferBuilder()
+                        ._permission_(Util.asList(new PermissionBuilder()
+                                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                                ._description_(Util.asList(new TypedLiteral("duration-usage")))
+                                ._action_(Util.asList(Action.USE))
+                                ._constraint_(Util.asList(new ConstraintBuilder()
+                                        ._leftOperand_(LeftOperand.SYSTEM)
+                                        ._operator_(BinaryOperator.SAME_AS)
+                                        ._rightOperand_(
+                                                new RdfResource("https://w3id.org/idsa/autogen/baseConnector/7b934432-a85e-41c5-9f65-669219dde4ae",
+                                                        URI.create("xsd:anyURI")))
+                                        .build()))
+                                .build()))
+                        .build();
                 break;
         }
 
