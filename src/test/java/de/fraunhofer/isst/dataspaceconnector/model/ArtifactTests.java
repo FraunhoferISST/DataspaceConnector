@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,23 +12,10 @@ public class ArtifactTests {
         ArtifactFactory factory = new ArtifactFactory();
         var artifact = factory.create(desc);
 
-        final var before = artifact.getNumAccessed();
-
         artifact.incrementAccessCounter();
 
-        assertEquals((long) artifact.getNumAccessed(), before + 1);
+        assertEquals(1, artifact.getNumAccessed());
     }
-
-//    @Test
-//    public void setTest() {
-//        ArtifactDesc desc = new ArtifactDesc();
-//        desc.setTitle("Test");
-//        ArtifactFactory factory = new ArtifactFactory();
-//        var artifact = factory.create(desc);
-//
-//        artifact.setTitle("Different");
-//        Assert.assertEquals(artifact.getTitle(), "Different");
-//    }
 
     @Test
     public void toStringTest() {
