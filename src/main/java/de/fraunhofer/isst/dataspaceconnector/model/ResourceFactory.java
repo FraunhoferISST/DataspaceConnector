@@ -41,7 +41,6 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var resource = createInternal(desc);
         resource.setRepresentations(new ArrayList<>());
         resource.setContracts(new ArrayList<>());
-        resource.setKeywords(DEFAULT_KEYWORDS);
         resource.setCatalogs(new ArrayList<>());
         // Set to -1 the following update will increment it to 0
         resource.setVersion(-1);
