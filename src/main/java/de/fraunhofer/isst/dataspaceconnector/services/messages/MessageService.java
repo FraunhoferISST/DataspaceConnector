@@ -295,12 +295,12 @@ public class MessageService {
         try {
             final var resourceTemplate =
                     TemplateUtils.getResourceTemplate(resource);
-            final var contractTemplateList =
-                    TemplateUtils.getContractTemplates(resource);
+//            final var contractTemplateList =
+//                    TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
                     TemplateUtils.getRepresentationTemplates(resource, artifactList, download);
 
-            resourceTemplate.setContracts(contractTemplateList);
+//            resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);
 
             // Save all entities.

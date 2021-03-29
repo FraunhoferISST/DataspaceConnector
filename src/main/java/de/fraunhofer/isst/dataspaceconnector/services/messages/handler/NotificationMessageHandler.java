@@ -5,7 +5,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -37,7 +37,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionService exceptionService;
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
      * Service for message processing.

@@ -16,7 +16,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRejectionService;
@@ -66,7 +66,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionService exceptionService;
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
      * Service for ids contract rejection messages.
@@ -224,8 +224,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var values = map.get(target);
 
             // Compare rules
-            valid = managementService.compareRulesOfOfferToRequest(ruleList, values);
-            if (valid) {
+            if (managementService.compareRulesOfOfferToRequest(ruleList, values)) {
+                valid = true;
                 break;
             }
         }

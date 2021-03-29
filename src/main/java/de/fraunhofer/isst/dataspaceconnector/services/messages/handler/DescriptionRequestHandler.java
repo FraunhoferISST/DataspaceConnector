@@ -10,7 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedExcep
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
@@ -52,7 +52,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionService exceptionService;
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
      * Service for the current connector configuration.

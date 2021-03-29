@@ -16,7 +16,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNoti
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
@@ -60,7 +60,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionService exceptionService;
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
      * Service for resolving entities.
