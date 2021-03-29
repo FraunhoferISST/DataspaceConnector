@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,11 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public final class ArtifactFactory implements AbstractFactory<Artifact, ArtifactDesc> {
+
+    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+    static final String DEFAULT_TITLE = "";
+    static final boolean DEFAULT_AUTO_DOWNLOAD = false;
+
     /**
      * Default constructor.
      */
@@ -33,7 +39,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var artifact = new ArtifactImpl();
-        artifact.setNumAccessed(0L);
+        artifact.setAgreements(new ArrayList<>());
 
         update(artifact, desc);
 
@@ -54,24 +60,34 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
         final var hasUpdatedRemoteId = updateRemoteId(artifact, desc.getRemoteId());
         final var hasUpdatedTitle = updateTitle(artifact, desc.getTitle());
+        final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
 
-        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedData || hasUpdatedAdditional;
+        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
-        final var newUri = MetadataUtils.updateUri(artifact.getRemoteId(), remoteId, URI.create("genesis"));
+        final var newUri = MetadataUtils.updateUri(artifact.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(artifact::setRemoteId);
 
         return newUri.isPresent();
     }
 
     private boolean updateTitle(final Artifact artifact, final String title) {
-        final var newTitle = MetadataUtils.updateString(artifact.getTitle(), title, "");
+        final var newTitle = MetadataUtils.updateString(artifact.getTitle(), title, DEFAULT_TITLE);
         newTitle.ifPresent(artifact::setTitle);
 
         return newTitle.isPresent();
+    }
+
+    private boolean updateAutoDownload(final Artifact artifact, final boolean autoDownload) {
+        if (artifact.isAutomatedDownload() != autoDownload) {
+            artifact.setAutomatedDownload(autoDownload);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean updateAdditional(final Artifact artifact, final Map<String, String> additional) {
@@ -86,7 +102,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         boolean hasChanged;
         if (isRemoteData(desc)) {
             hasChanged = updateRemoteData((ArtifactImpl) artifact, desc.getAccessUrl(),
-                    desc.getUsername(), desc.getUsername());
+                    desc.getUsername(), desc.getPassword());
         } else {
             hasChanged = updateLocalData((ArtifactImpl) artifact, desc.getValue());
         }
@@ -95,7 +111,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
     }
 
     private static boolean isRemoteData(final ArtifactDesc desc) {
-        return desc.getAccessUrl() != null && desc.getAccessUrl().toString().length() > 0;
+        return desc.getAccessUrl() != null && desc.getAccessUrl().getPath().length() > 0;
     }
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {

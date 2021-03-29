@@ -49,5 +49,5 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
     /**
      * Indicates whether the artifact should be downloaded automatically
      */
-    private boolean automatedDownload;
+    private boolean automatedDownload = ArtifactFactory.DEFAULT_AUTO_DOWNLOAD;
 }
