@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
@@ -20,6 +16,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class MappingUtils {
 
@@ -202,13 +206,13 @@ public final class MappingUtils {
         desc.setRemoteId(id);
 
         try {
-            desc.setEnd(IdsUtils.getDateOf(end.toXMLFormat()));
+            desc.setEnd(getDateOf(end.toXMLFormat()));
         } catch (ParseException ignored) {
             // Default values don't need to be set here.
         }
 
         try {
-            desc.setStart(IdsUtils.getDateOf(start.toXMLFormat()));
+            desc.setStart(getDateOf(start.toXMLFormat()));
         } catch (ParseException ignored) {
             // Default values don't need to be set here.
         }
@@ -252,5 +256,19 @@ public final class MappingUtils {
         }
 
         return additional;
+    }
+
+    /**
+     * Converts a string to a date, if the string is formatted as returned by
+     * {@link XMLGregorianCalendar#toXMLFormat()}.
+     *
+     * @param calendar The XMLGregorianCalendar date as string.
+     * @return The calender object.
+     * @throws ParseException If parsing fails.
+     */
+    public static Date getDateOf(final String calendar) throws ParseException {
+        final var sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
+        return sdf.parse(calendar);
     }
 }
