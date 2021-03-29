@@ -15,7 +15,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageExceptionService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
@@ -60,7 +60,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Service for the message exception handling.
      */
-    private final @NonNull MessageExceptionService exceptionService;
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
      * Service for resolving entities.

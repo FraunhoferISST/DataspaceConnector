@@ -119,7 +119,7 @@ public class ContractRequestMessageController {
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
-            valid = messageService.validateContractAgreementResponseMessage(response);
+            valid = messageService.validateContractAgreementResponseMessage(response); // TODO link artifacts and agreement
             if (!valid) {
                 // If the response is not a notification message, show the response.
                 final var content = messageService.getContent(response);
@@ -129,7 +129,7 @@ public class ContractRequestMessageController {
             // Save contract agreement to database.
             final var id = managementService.saveContractAgreement(agreement, true);
             agreementLocations.add(id);
-            LOGGER.info("Policy negotiation success. Saved agreement: " + id);
+            LOGGER.debug("Policy negotiation success. Saved agreement: " + id);
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.

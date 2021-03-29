@@ -24,12 +24,12 @@ import java.net.URI;
  */
 @Service
 @RequiredArgsConstructor
-public class MessageExceptionService {
+public class MessageResponseService {
 
     /**
      * Class level logger.
      */
-    public static final Logger LOGGER = LoggerFactory.getLogger(MessageExceptionService.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MessageResponseService.class);
 
     /**
      * Service for the current connector configuration.
