@@ -1,15 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import org.jetbrains.annotations.NotNull;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 
 /**
  * This class offers support functions for working with UUIDs.
@@ -26,7 +25,7 @@ public final class UUIDUtils {
      * @param input a string which maybe contains UUIDs.
      * @return the list of found UUIDs.
      */
-    public static List<String> findUuids(@NotNull String input) {
+    public static List<String> findUuids( String input) {
         final var pairRegex = Pattern
                 .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit" +
                         "}{12}");
@@ -49,7 +48,7 @@ public final class UUIDUtils {
      * @return the extracted UUID.
      * @throws UUIDFormatException if the URI does not contain a parsable UUID.
      */
-    public static UUID uuidFromUri(@NotNull URI uri) throws UUIDFormatException {
+    public static UUID uuidFromUri( URI uri) throws UUIDFormatException {
         try {
             return uuidFromUri(uri, -1);
         } catch (IndexOutOfBoundsException exception) {
@@ -68,7 +67,7 @@ public final class UUIDUtils {
      * @throws UUIDFormatException       if the URI does not contain a parsable UUID.
      * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
-    public static UUID uuidFromUri(@NotNull URI uri, int index) throws UUIDFormatException,
+    public static UUID uuidFromUri( URI uri, int index) throws UUIDFormatException,
             IndexOutOfBoundsException {
         // Find all uuids in the uri
         final var uuids = findUuids(uri.toString());

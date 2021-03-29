@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseEntityService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseUniDirectionalLinkerService;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,14 +69,15 @@ public class BaseResourceChildController<S extends BaseUniDirectionalLinkerServi
     /**
      * Get all resources of the same type linked to the passed resource.
      * Endpoint for GET requests.
-     *
      * @param ownerId The id of the owning resource.
      * @return The children of the resource.
+     * @throws IllegalArgumentException if the ownerId is null.
+     * @throws ResourceNotFoundException if the ownerId is not known.
      */
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<PagedModel<V>> getResource(
+    public ResponseEntity<PagedModel<V>> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size,

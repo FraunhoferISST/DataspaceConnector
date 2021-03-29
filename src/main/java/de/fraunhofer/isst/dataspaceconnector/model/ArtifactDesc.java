@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.net.URI;
+import java.net.URL;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
-import java.net.URL;
 
 /**
  * A description of an artifact.

@@ -15,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class OfferedResourceFactoryTest {
+public class RequestedResourceFactoryTest {
 
-    private OfferedResourceFactory factory;
+    private RequestedResourceFactory factory;
 
     @BeforeEach
     public void init() {
-        this.factory = new OfferedResourceFactory();
+        this.factory = new RequestedResourceFactory();
     }
 
     @Test
@@ -102,7 +102,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertNull(result.getCreationDate());
@@ -114,7 +114,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertNull(result.getModificationDate());
@@ -126,7 +126,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertNull(result.getId());
@@ -138,7 +138,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(0, result.getRepresentations().size());
@@ -150,7 +150,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(0, result.getContracts().size());
@@ -162,7 +162,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(1, result.getKeywords().size());
@@ -174,7 +174,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(0, result.getCatalogs().size());
@@ -187,7 +187,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullTitle_defaultTitle() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setTitle(null);
 
         /* ACT */
@@ -200,10 +200,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentTitle_setTitle() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setTitle("Random Title");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -215,10 +215,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentTitle_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setTitle("Random Title");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -230,10 +230,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameTitle_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -246,7 +246,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullDescription_defaultDescription() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setDescription(null);
 
         /* ACT */
@@ -259,10 +259,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentDescription_setDescription() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setDescription("Random Description");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -274,10 +274,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentDescription_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setDescription("Random Description");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -289,10 +289,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameDescription_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -305,7 +305,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullKeywords_defaultKeywords() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setKeywords(null);
 
         /* ACT */
@@ -323,10 +323,10 @@ public class OfferedResourceFactoryTest {
         keywords.add("Default");
         keywords.add("Key");
 
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setKeywords(keywords);
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -342,10 +342,10 @@ public class OfferedResourceFactoryTest {
         keywords.add("Default");
         keywords.add("Key");
 
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setKeywords(keywords);
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -357,10 +357,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameKeywords_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -373,7 +373,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullPublisher_defaultPublisher() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setPublisher(null);
 
         /* ACT */
@@ -386,10 +386,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentPublisher_setPublisher() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setPublisher(URI.create("RandomPublisher"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -401,10 +401,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentPublisher_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setPublisher(URI.create("RandomPublisher"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -416,10 +416,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_samePublisher_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -433,7 +433,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullLanguage_defaultLanguage() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLanguage(null);
 
         /* ACT */
@@ -446,10 +446,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentLanguage_setLanguage() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLanguage("Random Language");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -461,10 +461,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentLanguage_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLanguage("Random Language");
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -476,10 +476,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameLanguage_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -492,7 +492,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullLicence_defaultLicence() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLicence(null);
 
         /* ACT */
@@ -505,10 +505,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentLicence_setLicence() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLicence(URI.create("RandomLicence"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -520,10 +520,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentLicence_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setLicence(URI.create("RandomLicence"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -535,10 +535,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameLicence_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -552,7 +552,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullSovereign_defaultSovereign() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setSovereign(null);
 
         /* ACT */
@@ -565,10 +565,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentSovereign_setSovereign() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setSovereign(URI.create("RandomSovereign"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(resource, desc);
@@ -580,10 +580,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentSovereign_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setSovereign(URI.create("RandomSovereign"));
 
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(resource, desc);
@@ -595,10 +595,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameSovereign_returnFalse() {
         /* ARRANGE */
-        final var resource = factory.create(new OfferedResourceDesc());
+        final var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(resource, new OfferedResourceDesc());
+        final var result = factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -611,7 +611,7 @@ public class OfferedResourceFactoryTest {
     @Test
     public void create_nullAdditional_defaultAdditional() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setAdditional(null);
 
         /* ACT */
@@ -624,10 +624,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentAdditional_setAdditional() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setAdditional(Map.of("Y", "X"));
 
-        final var representation = factory.create(new OfferedResourceDesc());
+        final var representation = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         factory.update(representation, desc);
@@ -639,10 +639,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_differentAdditional_returnTrue() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setAdditional(Map.of("Y", "X"));
 
-        final var representation = factory.create(new OfferedResourceDesc());
+        final var representation = factory.create(new RequestedResourceDesc());
 
         /* ACT */
         final var result = factory.update(representation, desc);
@@ -654,10 +654,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_sameAdditional_returnFalse() {
         /* ARRANGE */
-        final var representation = factory.create(new OfferedResourceDesc());
+        final var representation = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        final var result = factory.update(representation, new OfferedResourceDesc());
+        final var result = factory.update(representation, new RequestedResourceDesc());
 
         /* ASSERT */
         assertFalse(result);
@@ -673,7 +673,7 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = factory.create(new OfferedResourceDesc());
+        final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(0, result.getVersion());
@@ -682,10 +682,10 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_same_sameVersion() {
         /* ARRANGE */
-        var resource = factory.create(new OfferedResourceDesc());
+        var resource = factory.create(new RequestedResourceDesc());
 
         /* ACT */
-        factory.update(resource, new OfferedResourceDesc());
+        factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(0, resource.getVersion());
@@ -694,16 +694,76 @@ public class OfferedResourceFactoryTest {
     @Test
     public void update_different_incrementVersion() {
         /* ARRANGE */
-        final var desc = new OfferedResourceDesc();
+        final var desc = new RequestedResourceDesc();
         desc.setTitle("RANDOM TITLE");
 
         var resource = factory.create(desc);
 
         /* ACT */
-        factory.update(resource, new OfferedResourceDesc());
+        factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
         assertEquals(1, resource.getVersion());
+    }
+
+
+    /**
+     * remoteId.
+     */
+
+    @Test
+    public void create_nullRemoteId_defaultRemoteId() {
+        /* ARRANGE */
+        final var desc = new RequestedResourceDesc();
+        desc.setRemoteId(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RequestedResourceFactory.DEFAULT_REMOTE_ID, result.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_setRemoteId() {
+        /* ARRANGE */
+        final var desc = new RequestedResourceDesc();
+        desc.setRemoteId(URI.create("RandomRemoteId"));
+
+        final var resource = factory.create(new RequestedResourceDesc());
+
+        /* ACT */
+        factory.update(resource, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getRemoteId(), resource.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RequestedResourceDesc();
+        desc.setRemoteId(URI.create("RandomRemoteId"));
+
+        final var resource = factory.create(new RequestedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameRemoteId_returnFalse() {
+        /* ARRANGE */
+        final var resource = factory.create(new RequestedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, new RequestedResourceDesc());
+
+        /* ASSERT */
+        assertFalse(result);
     }
 
     /**
@@ -711,18 +771,18 @@ public class OfferedResourceFactoryTest {
      */
 
     @Test
-    public void update_nullOfferedResource_throwIllegalArgumentException() {
+    public void update_nullRequestedResource_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new OfferedResourceDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new RequestedResourceDesc()));
     }
 
     @Test
     public void update_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
-        final var contract = factory.create(new OfferedResourceDesc());
+        final var contract = factory.create(new RequestedResourceDesc());
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> factory.update(contract, null));

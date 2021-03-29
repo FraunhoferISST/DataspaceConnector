@@ -3,11 +3,6 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
-import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
-import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,12 +25,12 @@ public class ArtifactFactoryTest {
     }
 
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT*/
-        assertThrows(NullPointerException.class, () -> factory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null));
     }
 
     @Test
@@ -461,30 +456,30 @@ public class ArtifactFactoryTest {
     }
 
     @Test
-    public void update_nullArtifactValidDesc_throwsNullPointerException() {
+    public void update_nullArtifactValidDesc_throwsIllegalArgumentException() {
         /* ARRANGE */
         var desc = getValidDescAllSetV1();
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, desc));
     }
 
     @Test
-    public void update_nullArtifactNullDesc_throwsNullPointerException() {
+    public void update_nullArtifactNullDesc_throwsIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, null));
     }
 
     @Test
-    public void update_validArtifactNullDesc_throwsNullPointerException() {
+    public void update_validArtifactNullDesc_throwsIllegalArgumentException() {
         /* ARRANGE */
         var artifact = factory.create(getValidDescAllSetV1());
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, null));
     }
 
     ArtifactDesc getDescWithNullMembers() {

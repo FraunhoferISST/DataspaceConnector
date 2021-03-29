@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 /**
  * A contract agreement is an agreement between two parties on access and usage behaviours.
@@ -44,6 +44,6 @@ public class Agreement extends AbstractEntity {
     /**
      * The artifacts this agreement refers to.
      */
-    @ManyToMany(mappedBy = "agreements")
+    @ManyToMany
     private List<Artifact> artifacts;
 }

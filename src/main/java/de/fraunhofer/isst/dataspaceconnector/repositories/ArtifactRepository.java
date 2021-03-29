@@ -1,16 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
 import java.util.List;
 import java.util.UUID;
+
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * The repository containing all objects of type {@link Artifact}.
  */
-@RepositoryRestResource(collectionResourceRel = "artifacts", path = "artifacts")
 public interface ArtifactRepository extends BaseEntityRepository<Artifact> {
 //    @Query("select a " +
 //            "FROM OfferedResource o " +

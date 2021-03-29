@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
-import java.util.Date;
 
 /**
  * Describes a contract's properties.
@@ -29,12 +29,6 @@ public class ContractDesc extends AbstractDescription<Contract> {
      * The provider signing the contract.
      */
     private URI provider;
-
-    /**
-     * The date of the contract conclusion.
-     */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Date date;
 
     /**
      * The title of the contract.

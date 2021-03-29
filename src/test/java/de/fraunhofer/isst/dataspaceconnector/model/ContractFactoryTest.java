@@ -1,16 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import java.util.ArrayList;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
-import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ContractFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,166 +23,491 @@ public class ContractFactoryTest {
     }
 
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void default_title_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", ContractFactory.DEFAULT_TITLE);
+    }
+
+    @Test
+    public void default_remoteId_is_genesis() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create("genesis"), ContractFactory.DEFAULT_REMOTE_ID);
+    }
+
+    @Test
+    public void default_consumer_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create(""), ContractFactory.DEFAULT_CONSUMER);
+    }
+
+    @Test
+    public void default_provider_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create(""), ContractFactory.DEFAULT_PROVIDER);
+    }
+
+    @Test
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null));
     }
 
     @Test
-    public void create_allDescMembersNotNull_returnContract() {
+    public void create_validDesc_creationDateNull() {
         /* ARRANGE */
-        final var desc = getValidDesc();
+        // Nothing to arrange.
 
         /* ACT */
-        final var contract = factory.create(desc);
+        final var result = factory.create(new ContractDesc());
 
         /* ASSERT */
-        assertNotNull(contract);
-        assertEquals(desc.getTitle(), contract.getTitle());
-        assertNotNull(contract.getRules());
-        assertEquals(contract.getRules().size(), 0);
-
-        assertNull(contract.getId());
-        assertNull(contract.getCreationDate());
-        assertNull(contract.getModificationDate());
+        assertNull(result.getCreationDate());
     }
 
     @Test
-    public void create_allDescMembersNull_returnDefaultContract() {
+    public void create_validDesc_modificationDateNull() {
         /* ARRANGE */
-        final var desc = getDescWithNullMembers();
+        // Nothing to arrange.
 
         /* ACT */
-        final var contract = factory.create(desc);
+        final var result = factory.create(new ContractDesc());
 
         /* ASSERT */
-        assertNotNull(contract);
-        assertNotNull(contract.getTitle());
-        assertNotNull(contract.getRules());
-        assertEquals(contract.getRules().size(), 0);
-
-        assertNull(contract.getId());
-        assertNull(contract.getCreationDate());
-        assertNull(contract.getModificationDate());
+        assertNull(result.getModificationDate());
     }
 
     @Test
-    public void update_allDescMembersNotNull_returnUpdatedContract() {
+    public void create_validDesc_idNull() {
         /* ARRANGE */
-        var contract = factory.create(getValidDesc());
-        var idBefore = contract.getId();
-        var creationDateBefore = contract.getCreationDate();
-        var lastModificationDateBefore = contract.getModificationDate();
-        var rulesBefore = ((ArrayList<ContractRule>) contract.getRules()).clone();
-        var desc = getUpdatedValidDesc();
+        // Nothing to arrange.
+
+        /* ACT */
+        final var result = factory.create(new ContractDesc());
+
+        /* ASSERT */
+        assertNull(result.getId());
+    }
+
+    @Test
+    public void create_validDesc_rulesEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new ContractDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getRules().size());
+    }
+
+    @Test
+    public void create_validDesc_resourcesEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new ContractDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getResources().size());
+    }
+
+    /**
+     * remoteId.
+     */
+    @Test
+    public void create_nullRemoteId_defaultRemoteId() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setRemoteId(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractFactory.DEFAULT_REMOTE_ID, result.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_setRemoteId() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setRemoteId(URI.create("uri"));
+
+        final var contract = factory.create(new ContractDesc());
 
         /* ACT */
         factory.update(contract, desc);
 
         /* ASSERT */
-        assertNotNull(contract);
-        assertEquals(desc.getTitle(), contract.getTitle());
-        assertNotNull(contract.getRules());
-        assertEquals(rulesBefore, contract.getRules());
-
-        assertEquals(idBefore, contract.getId());
-        assertEquals(creationDateBefore, contract.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                contract.getModificationDate());
+        assertEquals(desc.getRemoteId(), contract.getRemoteId());
     }
 
     @Test
-    public void update_allDescMembersNull_returnDefaultContract() {
+    public void update_differentRemoteId_returnTrue() {
         /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var contract = factory.create(initialDesc);
-        var idBefore = contract.getId();
-        var creationDateBefore = contract.getCreationDate();
-        var lastModificationDateBefore = contract.getModificationDate();
-        var rulesBefore = ((ArrayList<ContractRule>) contract.getRules()).clone();
-        var desc = getDescWithNullMembers();
+        final var desc = new ContractDesc();
+        desc.setRemoteId(URI.create("uri"));
+
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameRemoteId_returnFalse() {
+        /* ARRANGE */
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, new ContractDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * consumer.
+     */
+
+    @Test
+    public void create_nullConsumer_defaultConsumer() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setConsumer(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractFactory.DEFAULT_CONSUMER, result.getConsumer());
+    }
+
+    @Test
+    public void update_differentConsumer_setConsumer() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setConsumer(URI.create("uri"));
+
+        final var contract = factory.create(new ContractDesc());
 
         /* ACT */
         factory.update(contract, desc);
 
         /* ASSERT */
-        assertNotNull(contract);
-        assertNotNull(contract.getTitle());
-        assertNotNull(contract.getRules());
-        assertEquals(rulesBefore, contract.getRules());
-
-        assertEquals(idBefore, contract.getId());
-        assertEquals(creationDateBefore, contract.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                contract.getModificationDate());
+        assertEquals(desc.getConsumer(), contract.getConsumer());
     }
 
     @Test
-    public void update_changeValidDesc_true() {
+    public void update_differentConsumer_returnTrue() {
         /* ARRANGE */
-        var contract = factory.create(getValidDesc());
+        final var desc = new ContractDesc();
+        desc.setConsumer(URI.create("uri"));
 
-        /* ACT && ASSERT */
-        assertTrue(factory.update(contract, getUpdatedValidDesc()));
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, desc);
+
+        /* ASSERT */
+        assertTrue(result);
     }
 
     @Test
-    public void update_sameValidDesc_false() {
+    public void update_sameConsumer_returnFalse() {
         /* ARRANGE */
-        var contract = factory.create(getValidDesc());
+        final var contract = factory.create(new ContractDesc());
 
-        /* ACT && ASSERT */
-        assertFalse(factory.update(contract, getValidDesc()));
+        /* ACT */
+        final var result = factory.update(contract, new ContractDesc());
+
+        /* ASSERT */
+        assertFalse(result);
     }
+    
+    /**
+     * provider.
+     */
+    
     @Test
-    public void update_nullContractValidDesc_throwsNullPointerException() {
+    public void create_nullProvider_defaultProvider() {
         /* ARRANGE */
-        var desc = getValidDesc();
+        final var desc = new ContractDesc();
+        desc.setProvider(null);
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractFactory.DEFAULT_PROVIDER, result.getProvider());
     }
 
     @Test
-    public void update_nullContractNullDesc_throwsNullPointerException() {
+    public void update_differentProvider_setProvider() {
         /* ARRANGE */
-        // Nothing to arrange.
+        final var desc = new ContractDesc();
+        desc.setProvider(URI.create("uri"));
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        factory.update(contract, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getProvider(), contract.getProvider());
     }
 
     @Test
-    public void update_validContractNullDesc_throwsNullPointerException() {
+    public void update_differentProvider_returnTrue() {
         /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var catalog = factory.create(initialDesc);
+        final var desc = new ContractDesc();
+        desc.setProvider(URI.create("uri"));
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(catalog, null));
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, desc);
+
+        /* ASSERT */
+        assertTrue(result);
     }
 
-    ContractDesc getValidDesc() {
-        var desc = new ContractDesc();
-        desc.setTitle("Default");
+    @Test
+    public void update_sameProvider_returnFalse() {
+        /* ARRANGE */
+        final var contract = factory.create(new ContractDesc());
 
-        return desc;
+        /* ACT */
+        final var result = factory.update(contract, new ContractDesc());
+
+        /* ASSERT */
+        assertFalse(result);
     }
 
-    ContractDesc getUpdatedValidDesc() {
-        var desc = new ContractDesc();
-        desc.setTitle("The new default.");
+    /**
+     * title.
+     */
 
-        return desc;
-    }
-
-    ContractDesc getDescWithNullMembers() {
-        var desc = new ContractDesc();
+    @Test
+    public void create_nullTitle_defaultTitle() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
         desc.setTitle(null);
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractFactory.DEFAULT_TITLE, result.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_setTitle() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setTitle("Random Title");
+
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        factory.update(contract, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getTitle(), contract.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setTitle("Random Title");
+
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameTitle_returnFalse() {
+        /* ARRANGE */
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, new ContractDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * start.
+     */
+
+//    @Test
+//    public void create_nullStart_defaultStart() {
+//        /* ARRANGE */
+//        final var desc = new ContractDesc();
+//        desc.setStart(null);
+//
+//        final var now = new Date();
+//
+//        /* ACT */
+//        final var result = factory.create(desc);
+//
+//        /* ASSERT */
+//        assertTrue(now.before(result.getStart()));
+//    }
+//
+//    @Test
+//    public void update_differentStart_setStart() {
+//        /* ARRANGE */
+//        final var desc = new ContractDesc();
+//        desc.setStart(new Date());
+//
+//        final var contract = factory.create(new ContractDesc());
+//
+//        /* ACT */
+//        factory.update(contract, desc);
+//
+//        /* ASSERT */
+//        assertEquals(desc.getStart(), contract.getStart());
+//    }
+//
+//    @Test
+//    public void update_differentStart_returnTrue() throws ParseException {
+//        /* ARRANGE */
+//        final var initialStartTime = new Date();
+//        final var initialEndTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("20-Feb-2021 10:10:10");
+//
+//        final var initDesc = new ContractDesc();
+//        initDesc.setStart(initialStartTime);
+//        initDesc.setEnd(initialEndTime);
+//
+//        final var contract = factory.create(initDesc);
+//
+//        final var desc = new ContractDesc();
+//        desc.setStart(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("15-Feb-2021 10:10:10"));
+//        desc.setEnd(initialEndTime);
+//
+//        /* ACT */
+//        final var result = factory.update(contract, desc);
+//
+//        /* ASSERT */
+//        assertTrue(result);
+//    }
+//
+//    @Test
+//    public void update_sameStart_returnFalse() {
+//        /* ARRANGE */
+//        final var contract = factory.create(new ContractDesc());
+//
+//        /* ACT */
+//        final var result = factory.update(contract, new ContractDesc());
+//
+//        /* ASSERT */
+//        assertFalse(result);
+//    }
+
+    /**
+     * additional.
+     */
+    @Test
+    public void create_nullAdditional_defaultAdditional() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setAdditional(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(new HashMap<>(), result.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_setAdditional() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        factory.update(contract, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getAdditional(), contract.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameAdditional_returnFalse() {
+        /* ARRANGE */
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT */
+        final var result = factory.update(contract, new ContractDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * update inputs.
+     */
+
+    @Test
+    public void update_nullContract_throwIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ContractDesc()));
+    }
+
+    @Test
+    public void update_nullDesc_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var contract = factory.create(new ContractDesc());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(contract, null));
     }
 }

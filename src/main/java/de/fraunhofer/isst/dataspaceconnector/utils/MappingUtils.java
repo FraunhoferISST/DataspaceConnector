@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
@@ -16,10 +20,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
-
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class MappingUtils {
 
@@ -200,12 +200,6 @@ public final class MappingUtils {
         desc.setConsumer(consumer);
         desc.setProvider(provider);
         desc.setRemoteId(id);
-
-        try {
-            desc.setDate(IdsUtils.getDateOf(date.toXMLFormat()));
-        } catch (ParseException ignored) {
-            // Default values don't need to be set here.
-        }
 
         try {
             desc.setEnd(IdsUtils.getDateOf(end.toXMLFormat()));

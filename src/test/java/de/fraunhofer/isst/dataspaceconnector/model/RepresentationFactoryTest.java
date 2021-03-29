@@ -1,11 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,182 +23,492 @@ public class RepresentationFactoryTest {
     }
 
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void default_title_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", RepresentationFactory.DEFAULT_TITLE);
+    }
+
+    @Test
+    public void default_remoteId_is_genesis() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create("genesis"), RepresentationFactory.DEFAULT_REMOTE_ID);
+    }
+
+    @Test
+    public void default_language_is_EN() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("EN", RepresentationFactory.DEFAULT_LANGUAGE);
+    }
+
+    @Test
+    public void default_mediaType_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", RepresentationFactory.DEFAULT_MEDIA_TYPE);
+    }
+
+    @Test
+    public void default_standard_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", RepresentationFactory.DEFAULT_STANDARD);
+    }
+
+    @Test
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null));
     }
 
     @Test
-    public void create_allDescMembersNotNull_returnRepresentation() {
+    public void create_validDesc_creationDateNull() {
         /* ARRANGE */
-        final var desc = getValidDesc();
+        // Nothing to arrange.
 
         /* ACT */
-        final var representation = factory.create(desc);
+        final var result = factory.create(new RepresentationDesc());
 
         /* ASSERT */
-        assertNotNull(representation);
-        assertEquals(desc.getTitle(), representation.getTitle());
-        assertEquals(desc.getLanguage(), representation.getLanguage());
-        assertEquals(desc.getType(), representation.getMediaType());
-        assertNotNull(representation.getArtifacts());
-        assertEquals(representation.getArtifacts().size(), 0);
-
-        assertNull(representation.getId());
-        assertNull(representation.getCreationDate());
-        assertNull(representation.getModificationDate());
+        assertNull(result.getCreationDate());
     }
 
     @Test
-    public void create_allDescMembersNull_returnDefaultRepresentation() {
+    public void create_validDesc_modificationDateNull() {
         /* ARRANGE */
-        final var desc = getDescWithNullMembers();
+        // Nothing to arrange.
 
         /* ACT */
-        final var representation = factory.create(desc);
+        final var result = factory.create(new RepresentationDesc());
 
         /* ASSERT */
-        assertNotNull(representation);
-        assertNotNull(representation.getTitle());
-        assertNotNull(representation.getLanguage());
-        assertNotNull(representation.getMediaType());
-        assertNotNull(representation.getArtifacts());
-        assertEquals(representation.getArtifacts().size(), 0);
-
-        assertNull(representation.getId());
-        assertNull(representation.getCreationDate());
-        assertNull(representation.getModificationDate());
+        assertNull(result.getModificationDate());
     }
 
     @Test
-    public void update_allDescMembersNotNull_returnUpdatedRepresentation() {
+    public void create_validDesc_idNull() {
         /* ARRANGE */
-        var representation = factory.create(getValidDesc());
+        // Nothing to arrange.
 
-        var idBefore = representation.getId();
-        var creationDateBefore = representation.getCreationDate();
-        var lastModificationDateBefore =
-                representation.getModificationDate();
+        /* ACT */
+        final var result = factory.create(new RepresentationDesc());
 
-        var desc = getUpdatedValidDesc();
+        /* ASSERT */
+        assertNull(result.getId());
+    }
+
+    @Test
+    public void create_validDesc_artifactsEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new RepresentationDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getArtifacts().size());
+    }
+
+    @Test
+    public void create_validDesc_resourcesEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new RepresentationDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getResources().size());
+    }
+
+    /**
+     * remoteId.
+     */
+
+    @Test
+    public void create_nullRemoteId_defaultRemoteId() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setRemoteId(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RepresentationFactory.DEFAULT_REMOTE_ID, result.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_setRemoteId() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setRemoteId(URI.create("uri"));
+
+        final var representation = factory.create(new RepresentationDesc());
 
         /* ACT */
         factory.update(representation, desc);
 
         /* ASSERT */
-        assertNotNull(representation);
-        assertEquals(desc.getTitle(), representation.getTitle());
-        assertEquals(desc.getLanguage(), representation.getLanguage());
-        assertEquals(desc.getType(), representation.getMediaType());
-
-        assertEquals(idBefore, representation.getId());
-        assertEquals(creationDateBefore, representation.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                representation.getModificationDate());
+        assertEquals(desc.getRemoteId(), representation.getRemoteId());
     }
 
     @Test
-    public void update_allDescMembersNull_returnDefaultRepresentation() {
+    public void update_differentRemoteId_returnTrue() {
         /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var representation = factory.create(initialDesc);
+        final var desc = new RepresentationDesc();
+        desc.setRemoteId(URI.create("uri"));
 
-        var idBefore = representation.getId();
-        var creationDateBefore = representation.getCreationDate();
-        var lastModificationDateBefore =
-                representation.getModificationDate();
-
-        var desc = getDescWithNullMembers();
+        final var representation = factory.create(new RepresentationDesc());
 
         /* ACT */
-        factory.update(representation, desc);
+        final var result = factory.update(representation, desc);
 
         /* ASSERT */
-        assertNotNull(representation);
-        assertNotNull(representation.getTitle());
-        assertNotNull(representation.getLanguage());
-        assertNotNull(representation.getMediaType());
-        assertNotNull(representation.getArtifacts());
-
-        assertEquals(idBefore, representation.getId());
-        assertEquals(creationDateBefore, representation.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                representation.getModificationDate());
+        assertTrue(result);
     }
 
     @Test
-    public void update_changeValidDesc_true() {
+    public void update_sameRemoteId_returnFalse() {
         /* ARRANGE */
-        var representation = factory.create(getValidDesc());
+        final var representation = factory.create(new RepresentationDesc());
 
-        /* ACT && ASSERT */
-        assertTrue(factory.update(representation, getUpdatedValidDesc()));
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
     }
+    
+    /**
+     * title.
+     */
 
     @Test
-    public void update_sameValidDesc_false() {
+    public void create_nullTitle_defaultTitle() {
         /* ARRANGE */
-        var representation = factory.create(getValidDesc());
-
-        /* ACT && ASSERT */
-        assertFalse(factory.update(representation, getValidDesc()));
-    }
-
-    @Test
-    public void update_nullRepresentationValidDesc_throwsNullPointerException() {
-        /* ARRANGE */
-        var desc = getValidDesc();
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
-    }
-
-    @Test
-    public void update_nullRepresentationNullDesc_throwsNullPointerException() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
-    }
-
-    @Test
-    public void update_validContractNullDesc_throwsNullPointerException() {
-        /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var representation = factory.create(initialDesc);
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(representation, null));
-    }
-
-    RepresentationDesc getValidDesc() {
-        var desc = new RepresentationDesc();
-        desc.setTitle("Default");
-        desc.setLanguage("English");
-        desc.setType("TXT");
-
-        return desc;
-    }
-
-    RepresentationDesc getUpdatedValidDesc() {
-        var desc = new RepresentationDesc();
-        desc.setTitle("The new default.");
-        desc.setLanguage("German");
-        desc.setType("JSON");
-
-        return desc;
-    }
-
-    RepresentationDesc getDescWithNullMembers() {
-        var desc = new RepresentationDesc();
+        final var desc = new RepresentationDesc();
         desc.setTitle(null);
-        desc.setLanguage(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RepresentationFactory.DEFAULT_TITLE, result.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_setTitle() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setTitle("Random Title");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        factory.update(representation, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getTitle(), representation.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setTitle("Random Title");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameTitle_returnFalse() {
+        /* ARRANGE */
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * mediaType.
+     */
+
+    @Test
+    public void create_nullMediaType_defaultMediaType() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
         desc.setType(null);
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RepresentationFactory.DEFAULT_MEDIA_TYPE, result.getMediaType());
+    }
+
+    @Test
+    public void update_differentMediaType_setMediaType() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setType("Random MediaType");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        factory.update(representation, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getType(), representation.getMediaType());
+    }
+
+    @Test
+    public void update_differentMediaType_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setType("Random MediaType");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameMediaType_returnFalse() {
+        /* ARRANGE */
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * language.
+     */
+
+    @Test
+    public void create_nullLanguage_defaultLanguage() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setLanguage(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RepresentationFactory.DEFAULT_LANGUAGE, result.getLanguage());
+    }
+
+    @Test
+    public void update_differentLanguage_setLanguage() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setLanguage("Random Language");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        factory.update(representation, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getLanguage(), representation.getLanguage());
+    }
+
+    @Test
+    public void update_differentLanguage_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setLanguage("Random Language");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameLanguage_returnFalse() {
+        /* ARRANGE */
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * standard.
+     */
+
+    @Test
+    public void create_nullStandard_defaultStandard() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setStandard(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(RepresentationFactory.DEFAULT_STANDARD, result.getStandard());
+    }
+
+    @Test
+    public void update_differentStandard_setStandard() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setStandard("Random Standard");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        factory.update(representation, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getStandard(), representation.getStandard());
+    }
+
+    @Test
+    public void update_differentStandard_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setStandard("Random Standard");
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameStandard_returnFalse() {
+        /* ARRANGE */
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * additional.
+     */
+    
+    @Test
+    public void create_nullAdditional_defaultAdditional() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setAdditional(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(new HashMap<>(), result.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_setAdditional() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        factory.update(representation, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getAdditional(), representation.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_returnTrue() {
+        /* ARRANGE */
+        final var desc = new RepresentationDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameAdditional_returnFalse() {
+        /* ARRANGE */
+        final var representation = factory.create(new RepresentationDesc());
+
+        /* ACT */
+        final var result = factory.update(representation, new RepresentationDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * update inputs.
+     */
+
+    @Test
+    public void update_nullRepresentation_throwIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new RepresentationDesc()));
+    }
+
+    @Test
+    public void update_nullDesc_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var contract = factory.create(new RepresentationDesc());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(contract, null));
     }
 }

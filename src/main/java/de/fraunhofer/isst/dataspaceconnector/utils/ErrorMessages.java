@@ -15,6 +15,11 @@ public enum ErrorMessages {
     ENTITYID_NULL("The entity id may not be null."),
 
     /**
+     * The passed entity may not be null.
+     */
+    ENTITY_NULL("The entity may not be null."),
+
+    /**
      * The passed pageable parameter may not be null.
      */
     PAGEABLE_NULL("The pageable parameter may not be null"),

@@ -1,9 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
-import org.springframework.stereotype.Component;
-
+import java.net.URI;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -19,12 +24,14 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
     /**
      * Create a new artifact.
-     *
      * @param desc The description of the new artifact.
      * @return The new artifact.
+     * @throws IllegalArgumentException if desc is null.
      */
     @Override
     public Artifact create(final ArtifactDesc desc) {
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
         final var artifact = new ArtifactImpl();
         artifact.setNumAccessed(0L);
 
@@ -35,17 +42,29 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
     /**
      * Update an artifact.
-     *
      * @param artifact The artifact to be updated.
      * @param desc     The new artifact description.
      * @return True if the artifact has been modified.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Override
     public boolean update(final Artifact artifact, final ArtifactDesc desc) {
+        Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final var hasUpdatedRemoteId = updateRemoteId(artifact, desc.getRemoteId());
         final var hasUpdatedTitle = updateTitle(artifact, desc.getTitle());
         final var hasUpdatedData = updateData(artifact, desc);
+        final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
 
-        return hasUpdatedTitle || hasUpdatedData;
+        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedData || hasUpdatedAdditional;
+    }
+
+    private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
+        final var newUri = MetadataUtils.updateUri(artifact.getRemoteId(), remoteId, URI.create("genesis"));
+        newUri.ifPresent(artifact::setRemoteId);
+
+        return newUri.isPresent();
     }
 
     private boolean updateTitle(final Artifact artifact, final String title) {
@@ -53,6 +72,14 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         newTitle.ifPresent(artifact::setTitle);
 
         return newTitle.isPresent();
+    }
+
+    private boolean updateAdditional(final Artifact artifact, final Map<String, String> additional) {
+        final var newAdditional =
+                MetadataUtils.updateStringMap(artifact.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(artifact::setAdditional);
+
+        return newAdditional.isPresent();
     }
 
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {

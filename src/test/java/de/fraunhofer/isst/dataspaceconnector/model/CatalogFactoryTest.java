@@ -1,18 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,189 +22,288 @@ public class CatalogFactoryTest {
     }
 
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void default_title_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", CatalogFactory.DEFAULT_TITLE);
+    }
+
+    @Test
+    public void default_description_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", CatalogFactory.DEFAULT_DESCRIPTION);
+    }
+
+    @Test
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null));
     }
 
     @Test
-    public void create_allDescMembersNotNull_returnCatalog() {
-        /* ARRANGE */
-        final var desc = getValidDesc();
-
-        /* ACT */
-        final var catalog = factory.create(desc);
-
-        /* ASSERT */
-        assertNotNull(catalog);
-        assertEquals(desc.getTitle(), catalog.getTitle());
-        assertEquals(desc.getDescription(), catalog.getDescription());
-        assertNotNull(catalog.getOfferedResources());
-        assertEquals(catalog.getOfferedResources().size(), 0);
-        assertNotNull(catalog.getRequestedResources());
-        assertEquals(catalog.getRequestedResources().size(), 0);
-
-        assertNull(catalog.getId());
-        assertNull(catalog.getCreationDate());
-        assertNull(catalog.getModificationDate());
-    }
-
-    @Test
-    public void create_allDescMembersNull_returnDefaultCatalog() {
-        /* ARRANGE */
-        final var desc = getDescWithNullMembers();
-
-        /* ACT */
-        final var catalog = factory.create(desc);
-
-        /* ASSERT */
-        assertNotNull(catalog);
-        assertNotNull(catalog.getTitle());
-        assertNotNull(catalog.getDescription());
-        assertNotNull(catalog.getOfferedResources());
-        assertEquals(catalog.getOfferedResources().size(), 0);
-        assertNotNull(catalog.getRequestedResources());
-        assertEquals(catalog.getRequestedResources().size(), 0);
-
-        assertNull(catalog.getId());
-        assertNull(catalog.getCreationDate());
-        assertNull(catalog.getModificationDate());
-    }
-
-    @Test
-    public void update_allDescMembersNotNull_returnUpdatedCatalog() {
-        /* ARRANGE */
-        var catalog = factory.create(getValidDesc());
-        var idBefore = catalog.getId();
-        var creationDateBefore = catalog.getCreationDate();
-        var lastModificationDateBefore = catalog.getModificationDate();
-
-        var offeredResourcesBefore = ((ArrayList<OfferedResource>) catalog.getOfferedResources()).clone();
-        var requestedResourcesBefore = ((ArrayList<RequestedResource>) catalog.getRequestedResources()).clone();
-        var desc = getUpdatedValidDesc();
-
-        /* ACT */
-        factory.update(catalog, desc);
-
-        /* ASSERT */
-        assertNotNull(catalog);
-        assertEquals(desc.getTitle(), catalog.getTitle());
-        assertEquals(desc.getDescription(), catalog.getDescription());
-        assertNotNull(catalog.getOfferedResources());
-        assertEquals(offeredResourcesBefore, catalog.getOfferedResources());
-        assertNotNull(catalog.getRequestedResources());
-        assertEquals(requestedResourcesBefore, catalog.getRequestedResources());
-
-        assertEquals(idBefore, catalog.getId());
-        assertEquals(creationDateBefore, catalog.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                catalog.getModificationDate());
-    }
-
-    @Test
-    public void update_allDescMembersNull_returnDefaultCatalog() {
-        /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var catalog = factory.create(initialDesc);
-        var idBefore = catalog.getId();
-        var creationDateBefore = catalog.getCreationDate();
-        var lastModificationDateBefore = catalog.getModificationDate();
-
-        var offeredResourcesBefore = ((ArrayList<OfferedResource>) catalog.getOfferedResources()).clone();
-        var requestedResourcesBefore = ((ArrayList<RequestedResource>) catalog.getRequestedResources()).clone();
-        var desc = getDescWithNullMembers();
-
-        /* ACT */
-        factory.update(catalog, desc);
-
-        /* ASSERT */
-        assertNotNull(catalog);
-        assertNotNull(catalog.getTitle());
-        assertNotNull(catalog.getDescription());
-        assertNotEquals(initialDesc.getTitle(), catalog.getTitle());
-        assertNotEquals(initialDesc.getDescription(), catalog.getDescription());
-        assertNotNull(catalog.getOfferedResources());
-        assertEquals(offeredResourcesBefore, catalog.getOfferedResources());
-        assertNotNull(catalog.getRequestedResources());
-        assertEquals(requestedResourcesBefore, catalog.getRequestedResources());
-
-        assertEquals(idBefore, catalog.getId());
-        assertEquals(creationDateBefore, catalog.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                catalog.getModificationDate());
-    }
-
-    @Test
-    public void update_changeValidDesc_true() {
-        /* ARRANGE */
-        var catalog = factory.create(getValidDesc());
-
-        /* ACT && ASSERT */
-        assertTrue(factory.update(catalog, getUpdatedValidDesc()));
-    }
-
-    @Test
-    public void update_sameValidDesc_false() {
-        /* ARRANGE */
-        var catalog = factory.create(getValidDesc());
-
-        /* ACT && ASSERT */
-        assertFalse(factory.update(catalog, getValidDesc()));
-    }
-
-    @Test
-    public void update_nullCatalogValidDesc_throwsNullPointerException() {
-        /* ARRANGE */
-        var desc = getValidDesc();
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
-    }
-
-    @Test
-    public void update_nullCatalogNullDesc_throwsNullPointerException() {
+    public void create_validDesc_creationDateNull() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
+        /* ACT */
+        final var result = factory.create(new CatalogDesc());
+
+        /* ASSERT */
+        assertNull(result.getCreationDate());
     }
 
     @Test
-    public void update_validCatalogNullDesc_throwsNullPointerException() {
+    public void create_validDesc_modificationDateNull() {
         /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var catalog = factory.create(initialDesc);
+        // Nothing to arrange.
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(catalog, null));
+        /* ACT */
+        final var result = factory.create(new CatalogDesc());
+
+        /* ASSERT */
+        assertNull(result.getModificationDate());
     }
 
-    CatalogDesc getValidDesc() {
-        var desc = new CatalogDesc();
-        desc.setTitle("Default");
-        desc.setDescription("This is the default catalog containing all "
-                + "available resources.");
+    @Test
+    public void create_validDesc_idNull() {
+        /* ARRANGE */
+        // Nothing to arrange.
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(new CatalogDesc());
+
+        /* ASSERT */
+        assertNull(result.getId());
     }
 
-    CatalogDesc getUpdatedValidDesc() {
-        var desc = new CatalogDesc();
-        desc.setDescription("The new description.");
-        desc.setTitle("The new title.");
+    @Test
+    public void create_validDesc_offeredResourcesEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(new CatalogDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getOfferedResources().size());
     }
 
-    CatalogDesc getDescWithNullMembers() {
-        var desc = new CatalogDesc();
+    @Test
+    public void create_validDesc_requestedResourcesEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new CatalogDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getRequestedResources().size());
+    }
+
+    /**
+     * title.
+     */
+
+    @Test
+    public void create_nullTitle_defaultTitle() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
         desc.setTitle(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(CatalogFactory.DEFAULT_TITLE, result.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_setTitle() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setTitle("Random Title");
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getTitle(), catalog.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_returnTrue() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setTitle("Random Title");
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameTitle_returnFalse() {
+        /* ARRANGE */
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, new CatalogDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * desc.
+     */
+
+    @Test
+    public void create_nullDescription_defaultDescription() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
         desc.setDescription(null);
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(CatalogFactory.DEFAULT_DESCRIPTION, result.getDescription());
+    }
+
+    @Test
+    public void update_differentDescription_setDescription() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setDescription("Random Desc");
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getDescription(), catalog.getDescription());
+    }
+
+    @Test
+    public void update_differentDescription_returnTrue() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setDescription("Random Desc");
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameDescription_returnFalse() {
+        /* ARRANGE */
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, new CatalogDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * additional.
+     */
+
+    @Test
+    public void create_nullAdditional_defaultAdditional() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setAdditional(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(new HashMap<>(), result.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_setAdditional() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getAdditional(), catalog.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_returnTrue() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameAdditional_returnFalse() {
+        /* ARRANGE */
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT */
+        final var result = factory.update(catalog, new CatalogDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * update inputs.
+     */
+
+    @Test
+    public void update_nullCatalog_throwIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new CatalogDesc()));
+    }
+
+    @Test
+    public void update_nullDesc_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var catalog = factory.create(new CatalogDesc());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(catalog, null));
     }
 }

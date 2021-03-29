@@ -1,15 +1,35 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.net.URI;
+
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a resource.
  */
 @Component
-public class RequestedResourceFactory extends ResourceFactory<RequestedResource, RequestedResourceDesc> {
+public class RequestedResourceFactory
+        extends ResourceFactory<RequestedResource, RequestedResourceDesc> {
+
+    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
 
     @Override
     protected RequestedResource createInternal(final RequestedResourceDesc desc) {
         return new RequestedResource();
+    }
+
+    @Override
+    protected boolean updateInternal(
+            final RequestedResource resource, final RequestedResourceDesc desc) {
+        return updateRemoteId(resource, desc.getRemoteId());
+    }
+
+    private boolean updateRemoteId(final RequestedResource resource, final URI remoteId) {
+        final var newUri =
+                MetadataUtils.updateUri(resource.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
+        newUri.ifPresent(resource::setRemoteId);
+
+        return newUri.isPresent();
     }
 }

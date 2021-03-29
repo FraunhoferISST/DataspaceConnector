@@ -6,8 +6,11 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
+import lombok.Data;
+
 @Entity
 @Table
+@Data
 public final class RequestedResource extends Resource {
 
     /**

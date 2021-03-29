@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleFactory;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,164 +23,344 @@ public class ContractRuleFactoryTest {
     }
 
     @Test
-    public void create_nullDesc_throwNullPointerException() {
+    public void default_title_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", ContractRuleFactory.DEFAULT_TITLE);
+    }
+
+    @Test
+    public void default_remoteId_is_genesis() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create("genesis"), ContractRuleFactory.DEFAULT_REMOTE_ID);
+    }
+
+    @Test
+    public void default_rule_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals("", ContractRuleFactory.DEFAULT_RULE);
+    }
+
+    @Test
+    public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.create(null));
+        assertThrows(IllegalArgumentException.class, () -> factory.create(null));
     }
 
     @Test
-    public void create_allDescMembersNotNull_returnContractRule() {
-        /* ARRANGE */
-        final var desc = getValidDesc();
-
-        /* ACT */
-        final var rule = factory.create(desc);
-
-        /* ASSERT */
-        assertNotNull(rule);
-        assertEquals(desc.getTitle(), rule.getTitle());
-        assertEquals(desc.getValue(), rule.getValue());
-
-        assertNull(rule.getId());
-        assertNull(rule.getCreationDate());
-        assertNull(rule.getModificationDate());
-    }
-
-    @Test
-    public void create_allDescMembersNull_returnDefaultContractRule() {
-        /* ARRANGE */
-        final var desc = getDescWithNullMembers();
-
-        /* ACT */
-        final var rule = factory.create(desc);
-
-        /* ASSERT */
-        assertNotNull(rule);
-        assertNotNull(rule.getTitle());
-        assertNotNull(rule.getValue());
-
-        assertNull(rule.getId());
-        assertNull(rule.getCreationDate());
-        assertNull(rule.getModificationDate());
-    }
-
-    @Test
-    public void update_allDescMembersNotNull_returnUpdatedContractRule() {
-        /* ARRANGE */
-        var rule = factory.create(getValidDesc());
-        var idBefore = rule.getId();
-        var creationDateBefore = rule.getCreationDate();
-        var lastModificationDateBefore = rule.getModificationDate();
-        var desc = getUpdatedDesc();
-
-        /* ACT */
-        factory.update(rule, desc);
-
-        /* ASSERT */
-        assertNotNull(rule);
-        assertEquals(desc.getTitle(), rule.getTitle());
-        assertEquals(desc.getValue(), rule.getValue());
-
-        assertEquals(idBefore, rule.getId());
-        assertEquals(creationDateBefore, rule.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                rule.getModificationDate());
-    }
-
-    @Test
-    public void update_allDescMembersNull_returnDefaultContractRule() {
-        /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var rule = factory.create(initialDesc);
-        var idBefore = rule.getId();
-        var creationDateBefore = rule.getCreationDate();
-        var lastModificationDateBefore = rule.getModificationDate();
-        var desc = getDescWithNullMembers();
-
-        /* ACT */
-        factory.update(rule, desc);
-
-        /* ASSERT */
-        assertNotNull(rule);
-        assertNotNull(rule.getTitle());
-        assertNotNull(rule.getValue());
-
-        assertEquals(idBefore, rule.getId());
-        assertEquals(creationDateBefore, rule.getCreationDate());
-        assertEquals(lastModificationDateBefore,
-                rule.getModificationDate());
-    }
-
-    @Test
-    public void update_changeValidDesc_true() {
-        /* ARRANGE */
-        var rule = factory.create(getValidDesc());
-
-        /* ACT && ASSERT */
-        assertTrue(factory.update(rule, getUpdatedDesc()));
-    }
-
-    @Test
-    public void update_sameValidDesc_false() {
-        /* ARRANGE */
-        var rule = factory.create(getValidDesc());
-
-        /* ACT && ASSERT */
-        assertFalse(factory.update(rule, getValidDesc()));
-    }
-
-    @Test
-    public void update_nullResourceValidDesc_throwsNullPointerException() {
-        /* ARRANGE */
-        var desc = getValidDesc();
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, desc));
-    }
-
-    @Test
-    public void update_nullResourceNullDesc_throwsNullPointerException() {
+    public void create_validDesc_creationDateNull() {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(null, null));
+        /* ACT */
+        final var result = factory.create(new ContractRuleDesc());
+
+        /* ASSERT */
+        assertNull(result.getCreationDate());
     }
 
     @Test
-    public void update_validResourceNullDesc_throwsNullPointerException() {
+    public void create_validDesc_modificationDateNull() {
         /* ARRANGE */
-        var initialDesc = getValidDesc();
-        var rule = factory.create(initialDesc);
+        // Nothing to arrange.
 
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> factory.update(rule, null));
+        /* ACT */
+        final var result = factory.create(new ContractRuleDesc());
+
+        /* ASSERT */
+        assertNull(result.getModificationDate());
     }
 
-    ContractRuleDesc getValidDesc() {
-        var desc = new ContractRuleDesc();
-        desc.setTitle("Default");
-        desc.setValue("");
+    @Test
+    public void create_validDesc_idNull() {
+        /* ARRANGE */
+        // Nothing to arrange.
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(new ContractRuleDesc());
+
+        /* ASSERT */
+        assertNull(result.getId());
     }
 
-    ContractRuleDesc getUpdatedDesc() {
-        var desc = new ContractRuleDesc();
-        desc.setTitle("The new default.");
-        desc.setValue("none");
+    @Test
+    public void create_validDesc_contractsEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(new ContractRuleDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getContracts().size());
     }
 
-    ContractRuleDesc getDescWithNullMembers() {
-        var desc = new ContractRuleDesc();
+    /**
+     * remoteId.
+     */
+
+    @Test
+    public void create_nullRemoteId_defaultRemoteId() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setRemoteId(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractRuleFactory.DEFAULT_REMOTE_ID, result.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_setRemoteId() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setRemoteId(URI.create("uri"));
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getRemoteId(), contractRule.getRemoteId());
+    }
+
+    @Test
+    public void update_differentRemoteId_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setRemoteId(URI.create("uri"));
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameRemoteId_returnFalse() {
+        /* ARRANGE */
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, new ContractRuleDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * title.
+     */
+
+    @Test
+    public void create_nullTitle_defaultTitle() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
         desc.setTitle(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractRuleFactory.DEFAULT_TITLE, result.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_setTitle() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setTitle("Random Title");
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getTitle(), contractRule.getTitle());
+    }
+
+    @Test
+    public void update_differentTitle_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setTitle("Random Title");
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameTitle_returnFalse() {
+        /* ARRANGE */
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, new ContractRuleDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * rule.
+     */
+
+    @Test
+    public void create_nullRule_defaultRule() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
         desc.setValue(null);
 
-        return desc;
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ContractRuleFactory.DEFAULT_RULE, result.getValue());
+    }
+
+    @Test
+    public void update_differentRule_setRule() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setValue("Random Rule");
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getValue(), contractRule.getValue());
+    }
+
+    @Test
+    public void update_differentRule_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setValue("Random Rule");
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameRule_returnFalse() {
+        /* ARRANGE */
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, new ContractRuleDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * additional.
+     */
+
+    @Test
+    public void create_nullAdditional_defaultAdditional() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setAdditional(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(new HashMap<>(), result.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_setAdditional() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getAdditional(), contractRule.getAdditional());
+    }
+
+    @Test
+    public void update_differentAdditional_returnTrue() {
+        /* ARRANGE */
+        final var desc = new ContractRuleDesc();
+        desc.setAdditional(Map.of("Y", "X"));
+
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameAdditional_returnFalse() {
+        /* ARRANGE */
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT */
+        final var result = factory.update(contractRule, new ContractRuleDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+
+    /**
+     * update inputs.
+     */
+
+    @Test
+    public void update_nullContractRule_throwIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ContractRuleDesc()));
+    }
+
+    @Test
+    public void update_nullDesc_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var contractRule = factory.create(new ContractRuleDesc());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> factory.update(contractRule, null));
     }
 }
