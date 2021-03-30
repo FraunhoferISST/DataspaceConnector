@@ -9,6 +9,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an contract rule.
@@ -30,8 +31,8 @@ public class ContractRuleViewAssembler
         final var selfLink = linkTo(RuleController.class).slash(rule.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var contractLink = linkTo(RelationshipControllers.RulesToContracts.class)
-                                         .slash(rule.getId())
+        final var contractLink = linkTo(methodOn(RelationshipControllers.RulesToContracts.class)
+                                                .getResource(rule.getId(), null, null, null))
                                          .withRel("contracts");
         view.add(contractLink);
 
