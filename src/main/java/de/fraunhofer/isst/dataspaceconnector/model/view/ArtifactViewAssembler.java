@@ -35,13 +35,13 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
                 .withRel("data");
         view.add(dataLink);
 
-        final var repLink = linkTo(RelationshipControllers.ArtifactsToRepresentations.class)
-                .slash(artifact.getId())
+        final var repLink = linkTo(methodOn(RelationshipControllers.ArtifactsToRepresentations.class)
+                .getResource(artifact.getId(), null, null, null))
                 .withRel("representations");
         view.add(repLink);
 
-        final var agreementLink = linkTo(RelationshipControllers.ArtifactsToAgreements.class)
-                .slash(artifact.getId())
+        final var agreementLink = linkTo(methodOn(RelationshipControllers.ArtifactsToAgreements.class)
+                .getResource(artifact.getId(), null, null, null))
                 .withRel("agreements");
         view.add(agreementLink);
 
