@@ -107,7 +107,7 @@ public class MainController {
         model.add(linkTo(methodOn(RepresentationController.class)
                 .getAll(null, null, null)).withRel("representations"));
         model.add(linkTo(methodOn(OfferedResourceController.class)
-                .getAll(null, null, null)).withRel("resources"));
+                .getAll(null, null, null)).withRel("offers"));
         model.add(linkTo(methodOn(RuleController.class)
                 .getAll(null, null, null)).withRel("rules"));
 

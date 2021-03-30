@@ -49,7 +49,7 @@ public class RepresentationViewAssembler
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
             resourceLinker =
-                    linkTo(methodOn(RelationshipControllers.ContractsToOfferedResources.class)
+                    linkTo(methodOn(RelationshipControllers.RepresentationsToOfferedResources.class)
                                     .getResource(representation.getId(), null, null, null))
                             .withRel("offers");
         } else {

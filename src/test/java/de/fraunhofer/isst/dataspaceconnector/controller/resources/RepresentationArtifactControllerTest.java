@@ -96,6 +96,56 @@ class RepresentationArtifactControllerTest {
     }
 
     /**
+     * addResource.
+     */
+
+    @Test
+    public void addResources_nullOwnerId_throwIllegalArgumentException() {
+        /* ARRANGE */
+        Mockito.doThrow(IllegalArgumentException.class).when(linker).add(Mockito.isNull(), Mockito.any());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> controller.addResources(null, new ArrayList<>()));
+    }
+
+    @Test
+    public void addResources_nullList_throwIllegalArgumentException() {
+        /* ARRANGE */
+        Mockito.doThrow(IllegalArgumentException.class).when(linker).add(Mockito.any(), Mockito.isNull());
+
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> controller.addResources(UUID.randomUUID(), null));
+    }
+
+    @Test
+    public void addResources_unknownId_throwResourceNotFoundException() {
+        /* ARRANGE */
+        final UUID unknownUUid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+        Mockito.doThrow(ResourceNotFoundException.class).when(linker).add(Mockito.eq(unknownUUid), Mockito.any());
+
+        /* ACT && ASSERT */
+        assertThrows(ResourceNotFoundException.class, () -> controller.addResources(unknownUUid, new ArrayList<>()));
+    }
+
+//    @Test
+//    public void addResources_validInput_returnModifiedResource() {
+//        /* ARRANGE */
+//        final UUID knownUUID = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
+//        final var validIdList = new ArrayList<URI>();
+//        validIdList.add(URI.create("https://randompath/363730ec-dcea-45a0-9469-296b868e6a4b"));
+//        validIdList.add(URI.create("https://rando/path/acb249b6-7e51-4d50-a162-0bb71ecd9c2c"));
+//        validIdList.add(URI.create("https://6c0a6b4e-5713-4264-98c2-adab3a6b8782"));
+//
+//        Mockito.when(linker.get(knownUUID, Pageable.unpaged())).thenReturn(validIdList);
+//
+//        /* ACT */
+//        final var result = controller.addResources(knownUUID, validIdList);
+//
+//        /* ASSERT */
+//
+//    }
+
+    /**
      * Utilities
      */
     @SneakyThrows
