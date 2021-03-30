@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/resources/{id}/contracts")
+@RequestMapping("/api/offers/{id}/contracts")
 @Tag(name = "Resources", description = "Endpoints for linking contracts to resources")
 public class ResourceContracts
         extends BaseResourceChildController<AbstractResourceContractLinker<OfferedResource>, Contract, ContractView> {
