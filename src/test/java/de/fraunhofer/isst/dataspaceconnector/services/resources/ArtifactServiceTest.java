@@ -22,7 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.lang.reflect.Field;
-import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
@@ -304,7 +304,7 @@ class ArtifactServiceTest {
         when(artifactRepository.findById(remoteArtifact.getId()))
                 .thenReturn(Optional.of(remoteArtifact));
         when(httpService.sendHttpsGetRequest(url.toString(), queryInput))
-                .thenThrow(new MalformedURLException());
+                .thenThrow(new URISyntaxException("input", "reason"));
 
         /* ACT && ASSERT */
         assertThrows(RuntimeException.class, () -> service.getData(remoteArtifact.getId(), queryInput),
