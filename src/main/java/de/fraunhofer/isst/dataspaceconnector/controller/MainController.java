@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.AgreementController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractController;
@@ -110,6 +111,8 @@ public class MainController {
                 .getAll(null, null, null)).withRel("offers"));
         model.add(linkTo(methodOn(RuleController.class)
                 .getAll(null, null, null)).withRel("rules"));
+        model.add(linkTo(methodOn(AgreementController.class)
+                .getAll(null, null, null)).withRel("agreements"));
 
         return ResponseEntity.ok(model);
     }
