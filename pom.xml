@@ -103,7 +103,7 @@
 		<checkstyle.version>3.1.2</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
-		<dsm.version>2.2.0</dsm.version>
+		<dms.version>2.2.0</dms.version>
 		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.0.0</jxr.version>
