@@ -133,7 +133,7 @@ public final class MappingUtils {
         final var desc = new RepresentationDesc();
         desc.setAdditional(additional);
         desc.setRemoteId(id);
-        desc.setType(mediaType);
+        desc.setMediaType(mediaType);
         desc.setLanguage(language);
         desc.setStandard(standard);
 

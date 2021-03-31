@@ -121,7 +121,7 @@ public class MappingUtilsTest {
 
         /* ASSERT */
         assertEquals(representation.getId(), result.getDesc().getRemoteId());
-        assertEquals(representation.getMediaType().getFilenameExtension(), result.getDesc().getType());
+        assertEquals(representation.getMediaType().getFilenameExtension(), result.getDesc().getMediaType());
         assertEquals(representation.getLanguage().toString(), result.getDesc().getLanguage());
         assertEquals(representation.getRepresentationStandard().toString(), result.getDesc().getStandard());
 
