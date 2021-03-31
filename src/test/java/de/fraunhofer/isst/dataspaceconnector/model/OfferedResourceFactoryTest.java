@@ -88,6 +88,15 @@ public class OfferedResourceFactoryTest {
     }
 
     @Test
+    public void default_endpointDocumentation_is_empty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT && ASSERT */
+        assertEquals(URI.create(""), ResourceFactory.DEFAULT_ENDPOINT_DOCS);
+    }
+
+    @Test
     public void create_nullDesc_throwIllegalArgumentException() {
         /* ARRANGE */
         // Nothing to arrange.
@@ -499,7 +508,7 @@ public class OfferedResourceFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(ResourceFactory.DEFAULT_PUBLISHER, result.getLicence());
+        assertEquals(ResourceFactory.DEFAULT_LICENCE, result.getLicence());
     }
 
     @Test
@@ -544,7 +553,6 @@ public class OfferedResourceFactoryTest {
         assertFalse(result);
     }
 
-
     /**
      * sovereign.
      */
@@ -559,7 +567,7 @@ public class OfferedResourceFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(ResourceFactory.DEFAULT_PUBLISHER, result.getSovereign());
+        assertEquals(ResourceFactory.DEFAULT_SOVEREIGN, result.getSovereign());
     }
 
     @Test
@@ -604,6 +612,65 @@ public class OfferedResourceFactoryTest {
         assertFalse(result);
     }
 
+    /**
+     * endpointDocumentation.
+     */
+
+    @Test
+    public void create_nullEndpointDocumentation_defaultEndpointDocumentation() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setEndpointDocumentation(null);
+
+        /* ACT */
+        final var result = factory.create(desc);
+
+        /* ASSERT */
+        assertEquals(ResourceFactory.DEFAULT_ENDPOINT_DOCS, result.getEndpointDocumentation());
+    }
+
+    @Test
+    public void update_differentEndpointDocumentation_setEndpointDocumentation() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setEndpointDocumentation(URI.create("RandomEndpointDocumentation"));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        factory.update(resource, desc);
+
+        /* ASSERT */
+        assertEquals(desc.getEndpointDocumentation(), resource.getEndpointDocumentation());
+    }
+
+    @Test
+    public void update_differentEndpointDocumentation_returnTrue() {
+        /* ARRANGE */
+        final var desc = new OfferedResourceDesc();
+        desc.setEndpointDocumentation(URI.create("RandomEndpointDocumentation"));
+
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, desc);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
+
+    @Test
+    public void update_sameEndpointDocumentation_returnFalse() {
+        /* ARRANGE */
+        final var resource = factory.create(new OfferedResourceDesc());
+
+        /* ACT */
+        final var result = factory.update(resource, new OfferedResourceDesc());
+
+        /* ASSERT */
+        assertFalse(result);
+    }
+    
     /**
      * additional.
      */
@@ -668,7 +735,7 @@ public class OfferedResourceFactoryTest {
      */
 
     @Test
-    public void create_version_is_0() {
+    public void create_version_is_1() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -676,7 +743,7 @@ public class OfferedResourceFactoryTest {
         final var result = factory.create(new OfferedResourceDesc());
 
         /* ASSERT */
-        assertEquals(0, result.getVersion());
+        assertEquals(1, result.getVersion());
     }
 
     @Test
@@ -688,7 +755,7 @@ public class OfferedResourceFactoryTest {
         factory.update(resource, new OfferedResourceDesc());
 
         /* ASSERT */
-        assertEquals(0, resource.getVersion());
+        assertEquals(1, resource.getVersion());
     }
 
     @Test
@@ -703,7 +770,7 @@ public class OfferedResourceFactoryTest {
         factory.update(resource, new OfferedResourceDesc());
 
         /* ASSERT */
-        assertEquals(1, resource.getVersion());
+        assertEquals(2, resource.getVersion());
     }
 
     /**

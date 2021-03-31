@@ -262,7 +262,7 @@ public class RepresentationFactoryTest {
     public void create_nullMediaType_defaultMediaType() {
         /* ARRANGE */
         final var desc = new RepresentationDesc();
-        desc.setType(null);
+        desc.setMediaType(null);
 
         /* ACT */
         final var result = factory.create(desc);
@@ -275,7 +275,7 @@ public class RepresentationFactoryTest {
     public void update_differentMediaType_setMediaType() {
         /* ARRANGE */
         final var desc = new RepresentationDesc();
-        desc.setType("Random MediaType");
+        desc.setMediaType("Random MediaType");
 
         final var representation = factory.create(new RepresentationDesc());
 
@@ -283,14 +283,14 @@ public class RepresentationFactoryTest {
         factory.update(representation, desc);
 
         /* ASSERT */
-        assertEquals(desc.getType(), representation.getMediaType());
+        assertEquals(desc.getMediaType(), representation.getMediaType());
     }
 
     @Test
     public void update_differentMediaType_returnTrue() {
         /* ARRANGE */
         final var desc = new RepresentationDesc();
-        desc.setType("Random MediaType");
+        desc.setMediaType("Random MediaType");
 
         final var representation = factory.create(new RepresentationDesc());
 

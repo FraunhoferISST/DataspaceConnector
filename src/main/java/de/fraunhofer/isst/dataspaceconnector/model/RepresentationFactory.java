@@ -55,7 +55,7 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
 
         final var hasUpdatedRemoteId = this.updateRemoteId(representation, desc.getRemoteId());
         final var hasUpdatedTitle = this.updateTitle(representation, desc.getTitle());
-        final var hasUpdatedMediaType = this.updateMediaType(representation, desc.getType());
+        final var hasUpdatedMediaType = this.updateMediaType(representation, desc.getMediaType());
         final var hasUpdatedLanguage = this.updateLanguage(representation, desc.getLanguage());
         final var hasUpdatedStandard = this.updateStandard(representation, desc.getStandard());
         final var hasUpdatedAdditional =

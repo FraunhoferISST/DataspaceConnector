@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.net.URI;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -24,7 +24,7 @@ public class RepresentationDesc extends AbstractDescription<Representation> {
     /**
      * The media type expressed by this representation.
      */
-    private String type;
+    private String mediaType;
 
     /**
      * The language used by this representation.

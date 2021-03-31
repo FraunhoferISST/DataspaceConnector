@@ -125,10 +125,12 @@ public final class ViewService {
             final var sovereign = resource.getSovereign();
             final var title = resource.getTitle();
             final var version = resource.getVersion();
+            final var endpointDocs = resource.getEndpointDocumentation();
 
             final var uri = EndpointUtils.getSelfLink((OfferedResource) resource);
             final var endpoint = new ConnectorEndpointBuilder()
                     ._accessURL_(uri)
+                    ._endpointDocumentation_(Util.asList(endpointDocs))
                     .build();
 
             final var idsResource = new ResourceBuilder(uri)

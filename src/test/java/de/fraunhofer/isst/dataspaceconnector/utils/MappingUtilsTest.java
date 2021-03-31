@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -32,14 +40,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -70,6 +70,8 @@ public class MappingUtilsTest {
         assertEquals(resource.getStandardLicense(), result.getDesc().getLicence());
         assertEquals(resource.getLanguage().toString(), result.getDesc().getLanguage());
         assertEquals(resource.getTitle().toString(), result.getDesc().getTitle());
+        assertEquals(resource.getSovereign(), result.getDesc().getSovereign());
+        assertEquals(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0), result.getDesc().getEndpointDocumentation());
 
         final var additional = result.getDesc().getAdditional();
         assertEquals(resource.getAccrualPeriodicity().toRdf(), additional.get("ids:accrualPeriodicity"));
@@ -85,7 +87,6 @@ public class MappingUtilsTest {
         assertEquals(resource.getResourcePart().toString(), additional.get("ids:resourcePart"));
         assertEquals(resource.getSample().toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
-        assertEquals(resource.getSovereign().toString(), additional.get("ids:sovereign"));
         assertEquals(resource.getSpatialCoverage().toString(), additional.get("ids:spatialCoverage"));
         assertEquals(resource.getTemporalCoverage().toString(), additional.get("ids:temporalCoverage"));
         assertEquals(resource.getTemporalResolution().toString(), additional.get("ids:temporalResolution"));
@@ -121,7 +122,7 @@ public class MappingUtilsTest {
 
         /* ASSERT */
         assertEquals(representation.getId(), result.getDesc().getRemoteId());
-        assertEquals(representation.getMediaType().getFilenameExtension(), result.getDesc().getType());
+        assertEquals(representation.getMediaType().getFilenameExtension(), result.getDesc().getMediaType());
         assertEquals(representation.getLanguage().toString(), result.getDesc().getLanguage());
         assertEquals(representation.getRepresentationStandard().toString(), result.getDesc().getStandard());
 
@@ -259,6 +260,7 @@ public class MappingUtilsTest {
                 ._representation_(Util.asList(getRepresentation()))
                 ._resourceEndpoint_(Util.asList(new ConnectorEndpointBuilder(URI.create("https://w3id.org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._accessURL_(URI.create("http://connector-endpoint.com"))
+                        ._endpointDocumentation_(Util.asList(URI.create("http://connector-endpoint-docs.com")))
                         .build()))
                 ._sovereign_(URI.create("http://sovereign.com"))
                 ._standardLicense_(URI.create("http://license.com"))
@@ -306,6 +308,7 @@ public class MappingUtilsTest {
                 ._representation_(Util.asList(getRepresentation()))
                 ._resourceEndpoint_(Util.asList(new ConnectorEndpointBuilder(URI.create("https://w3id.org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._accessURL_(URI.create("http://connector-endpoint.com"))
+                        ._endpointDocumentation_(Util.asList(URI.create("http://connector-endpoint-docs.com")))
                         .build()))
                 ._sovereign_(URI.create("http://sovereign.com"))
                 ._standardLicense_(URI.create("http://license.com"))

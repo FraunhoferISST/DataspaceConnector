@@ -53,6 +53,15 @@ public class RequestedResourceView extends RepresentationModel<RequestedResource
      */
     private long version;
 
+    /**
+     * The owner of the resource.
+     */
+    private URI sovereign;
+
+    /**
+     * The endpoint of the resource.
+     */
+    private URI endpointDocumentation;
 
     private Map<String, String> additional;
 }
