@@ -92,6 +92,22 @@
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
+		<pitest.version>1.6.3</pitest.version>
+		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
+		<tidy.version>1.1.0</tidy.version>
+		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
+		<maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
+		<spotbugs.version>4.2.0</spotbugs.version>
+		<checkstyle.version>3.1.2</checkstyle.version>
+		<pmd.version>3.14.0</pmd.version>
+		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+		<dsm.version>2.2.0</dsm.version>
+		<linkcheck.version>1.2</linkcheck.version>
+		<taglist.version>2.4</taglist.version>
+		<jxr.version>3.0.0</jxr.version>
+		<jdepend.version>2.0</jdepend.version>
 
 		<!-- Licence -->
 		<licence_name>Apache License, Version 2.0</licence_name>
@@ -372,7 +388,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>${maven-javadoc-plugin.version}</version>
 				<configuration>
 					<show>private</show>
 					<author>true</author>
@@ -395,7 +411,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version>
+				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<systemPropertyVariables>
 						<propertyName>licence_type</propertyName>
@@ -408,12 +424,12 @@
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
-				<version>1.6.3</version>
+				<version>${pitest.version}</version>
 				<dependencies>
 					<dependency>
 						<groupId>org.pitest</groupId>
 						<artifactId>pitest-junit5-plugin</artifactId>
-						<version>0.12</version>
+						<version>${pitest-junit5-plugin.version}</version>
 					</dependency>
 				</dependencies>
 				<configuration>
@@ -450,17 +466,17 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tidy-maven-plugin</artifactId>
-				<version>1.1.0</version>
+				<version>${tidy.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.9.1</version>
+				<version>${maven-site-plugin.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>${maven-project-info-reports-plugin.version}</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -470,7 +486,7 @@
 			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.2.0</version>
+				<version>${spotbugs.version}</version>
 				<configuration>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
@@ -492,12 +508,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>${pmd.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.8.1</version>
+				<version>${versions-maven-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -511,32 +527,32 @@
 			<plugin>
 				<groupId>com.github.sevntu-checkstyle</groupId>
 				<artifactId>dsm-maven-plugin</artifactId>
-				<version>2.2.0</version>
+				<version>${dms.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-linkcheck-plugin</artifactId>
-				<version>1.2</version>
+				<version>${linkcheck.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-				<version>2.4</version>
+				<version>${taglist.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
-				<version>3.0.0</version>
+				<version>${jxr.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jdepend-maven-plugin</artifactId>
-				<version>2.0</version>
+				<version>${jdepend.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
-				<version>1.6.3</version>
+				<version>${pitest.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
