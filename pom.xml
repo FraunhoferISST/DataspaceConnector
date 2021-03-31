@@ -67,21 +67,33 @@
 	</issueManagement>
 
 	<properties>
+		<!-- General -->
 		<revision>5.0.0-SNAPSHOT</revision>
-		<ids-framework.version>4.0.7</ids-framework.version>
+		<email>info@dataspace-connector.de</email>
 
+		<!-- Build info -->
 		<java.version>11</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
-		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
-		<springframework.boot>2.4.3</springframework.boot>
-		<org.json.version>20190722</org.json.version>
+		<!-- Dependencies -->
+		<ids-framework.version>4.0.7</ids-framework.version>
+		<!-- <springframework.boot>2.4.3</springframework.boot> -->
+		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
+		<modelmapper.version>2.3.9</modelmapper.version>
+		<jackson.version>2.10.0.pr2</jackson.version>
+		<postgres.version>42.2.5</postgres.version>
+		<springdoc-ui.version>1.4.1</springdoc-ui.version>
+		<springdoc-security.version>1.4.1</springdoc-security.version>
+		<jsonld-java.version>0.13.0</jsonld-java.version>
+		<equalsverifier.version>3.5.5</equalsverifier.version>
 
-		<email>info@dataspace-connector.de</email>
+		<!-- Plugins -->
+		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
 
+		<!-- Licence -->
 		<licence_name>Apache License, Version 2.0</licence_name>
 		<licence_url>https://www.apache.org/licenses/LICENSE-2.0.txt</licence_url>
 		<licence_distribution>repo</licence_distribution>
@@ -137,9 +149,8 @@
 		<dependency>
 			<groupId>org.springframework.plugin</groupId>
 			<artifactId>spring-plugin-core</artifactId>
-			<version>2.0.0.RELEASE</version>
+			<version>${springframework.plugin}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -216,11 +227,13 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -229,12 +242,6 @@
 		</dependency>
 
 		<!--JSON-->
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>${org.json.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
@@ -251,7 +258,7 @@
 		<dependency>
 			<groupId>org.modelmapper</groupId>
 			<artifactId>modelmapper</artifactId>
-			<version>2.3.9</version>
+			<version>${modelmapper.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
@@ -264,39 +271,40 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.10.0.pr2</version>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.2.5</version>
+			<version>${postgres.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.4.1</version>
+			<version>${springdoc-ui.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
-			<version>1.4.1</version>
+			<version>${springdoc-security.version}</version>
 		</dependency>
 
 		<!-- https://github.com/jsonld-java/jsonld-java -->
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java</artifactId>
-			<version>0.13.0</version>
+			<version>${jsonld-java.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
-			<version>3.5.5</version>
+			<version>${equalsverifier.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

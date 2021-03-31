@@ -8,6 +8,7 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class AgreementViewAssembler implements RepresentationModelAssembler<Agreement, AgreementView> {
@@ -20,8 +21,8 @@ public class AgreementViewAssembler implements RepresentationModelAssembler<Agre
         final var selfLink = linkTo(AgreementController.class).slash(agreement.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var artifactLink = linkTo(RelationshipControllers.AgreementsToArtifacts.class)
-                .slash(agreement.getId())
+        final var artifactLink = linkTo(methodOn(RelationshipControllers.AgreementsToArtifacts.class)
+                .getResource(agreement.getId(), null, null, null))
                 .withRel("artifacts");
         view.add(artifactLink);
 

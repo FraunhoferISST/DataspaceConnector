@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -134,6 +135,8 @@ public class ContractFactoryTest {
     public void create_nullRemoteId_defaultRemoteId() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setRemoteId(null);
 
         /* ACT */
@@ -147,6 +150,8 @@ public class ContractFactoryTest {
     public void update_differentRemoteId_setRemoteId() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
 
         final var contract = factory.create(desc);
 
@@ -163,6 +168,8 @@ public class ContractFactoryTest {
     public void update_differentRemoteId_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setRemoteId(URI.create("uri"));
 
         final var contract = factory.create(desc);
@@ -180,6 +187,8 @@ public class ContractFactoryTest {
     public void update_sameRemoteId_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
 
         /* ACT */
@@ -197,6 +206,8 @@ public class ContractFactoryTest {
     public void create_nullConsumer_defaultConsumer() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setConsumer(null);
 
         /* ACT */
@@ -210,6 +221,8 @@ public class ContractFactoryTest {
     public void update_differentConsumer_setConsumer() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setConsumer(URI.create("uri"));
 
@@ -224,6 +237,8 @@ public class ContractFactoryTest {
     public void update_differentConsumer_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setConsumer(URI.create("uri"));
 
@@ -238,6 +253,8 @@ public class ContractFactoryTest {
     public void update_sameConsumer_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setConsumer(URI.create("consumer"));
         final var contract = factory.create(desc);
 
@@ -256,6 +273,8 @@ public class ContractFactoryTest {
     public void create_nullProvider_defaultProvider() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setProvider(null);
 
         /* ACT */
@@ -269,6 +288,8 @@ public class ContractFactoryTest {
     public void update_differentProvider_setProvider() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setProvider(URI.create("uri"));
 
@@ -284,6 +305,8 @@ public class ContractFactoryTest {
     public void update_differentProvider_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setProvider(URI.create("uri"));
 
@@ -298,6 +321,8 @@ public class ContractFactoryTest {
     public void update_sameProvider_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setProvider(URI.create("randomProvider"));
         final var contract = factory.create(desc);
 
@@ -316,6 +341,8 @@ public class ContractFactoryTest {
     public void create_nullTitle_defaultTitle() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setTitle(null);
 
         /* ACT */
@@ -329,6 +356,8 @@ public class ContractFactoryTest {
     public void update_differentTitle_setTitle() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setTitle("Random Title");
 
@@ -343,6 +372,8 @@ public class ContractFactoryTest {
     public void update_differentTitle_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setTitle("Random Title");
 
@@ -357,6 +388,8 @@ public class ContractFactoryTest {
     public void update_sameTitle_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setTitle("Random Title");
         final var contract = factory.create(desc);
 
@@ -443,6 +476,8 @@ public class ContractFactoryTest {
     public void create_nullAdditional_defaultAdditional() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         desc.setAdditional(null);
 
         /* ACT */
@@ -456,6 +491,8 @@ public class ContractFactoryTest {
     public void update_differentAdditional_setAdditional() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setAdditional(Map.of("Y", "X"));
 
@@ -470,6 +507,8 @@ public class ContractFactoryTest {
     public void update_differentAdditional_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
         desc.setAdditional(Map.of("Y", "X"));
 
@@ -484,6 +523,8 @@ public class ContractFactoryTest {
     public void update_sameAdditional_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
+        desc.setStart(new Date());
+        desc.setEnd(new Date());
         final var contract = factory.create(desc);
 
         /* ACT */
