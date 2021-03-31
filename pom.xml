@@ -76,7 +76,6 @@
 
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
 		<springframework.boot>2.4.3</springframework.boot>
-		<org.json.version>20190722</org.json.version>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
 
@@ -222,6 +221,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
+			<scope>optional</scope>
 		</dependency>
 
 		<dependency>
@@ -230,12 +230,6 @@
 		</dependency>
 
 		<!--JSON-->
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>${org.json.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
