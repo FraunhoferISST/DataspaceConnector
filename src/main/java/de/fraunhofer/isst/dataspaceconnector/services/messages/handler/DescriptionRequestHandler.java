@@ -124,7 +124,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 final var desc = new DescriptionResponseMessageDesc(messageId);
                 desc.setRecipient(issuerConnector);
                 final var header = descriptionService.buildMessage(desc);
-                final var payload = entityResolver.getEntityAsIdsObject(entity);
+                final var payload = entityResolver.getEntityAsRdfString(entity);
 
                 // Send ids response message.
                 return BodyResponse.create(header, payload);
@@ -157,7 +157,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var header = descriptionService.buildMessage(desc);
 
             // Send ids response message.
-            return BodyResponse.create(header, selfDescription);
+            return BodyResponse.create(header, selfDescription.toRdf());
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
             return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
                     messageId);
