@@ -58,6 +58,10 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
      */
     private URI sovereign;
 
+    /**
+     * The endpoint of the resource.
+     */
+    private URI endpointDocumentation;
 
     private Map<String, String> additional;
 }

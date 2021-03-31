@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.net.URI;
 import java.util.List;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -44,4 +44,9 @@ public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {
      * The owner of the resource.
      */
     private URI sovereign;
+
+    /**
+     * The endpoint of the resource.
+     */
+    private URI endpointDocumentation;
 }

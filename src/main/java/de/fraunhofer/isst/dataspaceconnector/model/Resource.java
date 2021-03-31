@@ -1,17 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.springframework.data.annotation.Version;
-
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import java.net.URI;
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import org.springframework.data.annotation.Version;
 
 /**
  * A resource describes offered or requested data.
@@ -62,6 +62,11 @@ public class Resource extends AbstractEntity {
      * The licence of the resource.
      */
     private URI licence;
+
+    /**
+     * The endpoint of the resource.
+     */
+    private URI endpointDocumentation;
 
     /**
      * The version of the resource.

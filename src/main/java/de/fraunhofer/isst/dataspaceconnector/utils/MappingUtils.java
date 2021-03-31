@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
@@ -16,14 +24,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
-
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public final class MappingUtils {
 
@@ -83,7 +83,6 @@ public final class MappingUtils {
         additional.put("ids:resourcePart", resourcePart.toString());
         additional.put("ids:sample", sample.toString());
         additional.put("ids:shapesGraph", shapesGraph.toString());
-        additional.put("ids:sovereign", sovereign.toString());
         additional.put("ids:spatialCoverage", spatialCoverage.toString());
         additional.put("ids:temporalCoverage", temporalCoverage.toString());
         additional.put("ids:temporalResolution", temporalResolution.toString());
@@ -100,6 +99,10 @@ public final class MappingUtils {
         desc.setLicence(standardLicense);
         desc.setLanguage(language.toString());
         desc.setTitle(title.toString());
+        desc.setSovereign(sovereign);
+        if(resourceEndpoint.size() > 0)
+            if(resourceEndpoint.get(0).getEndpointDocumentation() != null && resourceEndpoint.get(0).getEndpointDocumentation().size() > 0)
+            desc.setEndpointDocumentation(resourceEndpoint.get(0).getEndpointDocumentation().get(0));
 
         final var template = new ResourceTemplate<RequestedResourceDesc>();
         template.setDesc(desc);

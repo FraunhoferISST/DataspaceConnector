@@ -12,7 +12,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 
 public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc<T>>
         implements AbstractFactory<T, D> {
-
     static final String DEFAULT_TITLE = "";
     static final String DEFAULT_DESCRIPTION = "";
     static final List<String> DEFAULT_KEYWORDS = new ArrayList(List.of("DSC"));
@@ -20,6 +19,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     static final String DEFAULT_LANGUAGE = "";
     static final URI DEFAULT_LICENCE = URI.create("");
     static final URI DEFAULT_SOVEREIGN = URI.create("");
+    static final URI DEFAULT_ENDPOINT_DOCS = URI.create("");
 
     /**
      * Default constructor.
@@ -69,6 +69,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedLanguage = updateLanguage(resource, desc.getLanguage());
         final var hasUpdatedLicence = updateLicence(resource, desc.getLicence());
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
+        final var hasUpdatedEndpointDocs =
+                updateEndpointDocs(resource, desc.getEndpointDocumentation());
 
         final var hasChildUpdated = updateInternal(resource, desc);
 
@@ -76,7 +78,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                 || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
-                || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedAdditional;
+                || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs
+                || hasUpdatedAdditional;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -97,15 +100,16 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     }
 
     protected static boolean updateDescription(final Resource resource, final String description) {
-        final var newDesc = MetadataUtils.updateString(resource.getDescription(), description, DEFAULT_DESCRIPTION);
+        final var newDesc = MetadataUtils.updateString(
+                resource.getDescription(), description, DEFAULT_DESCRIPTION);
         newDesc.ifPresent(resource::setDescription);
 
         return newDesc.isPresent();
     }
 
     protected static boolean updateKeywords(final Resource resource, final List<String> keywords) {
-        final var newKeys = MetadataUtils.updateStringList(
-                resource.getKeywords(), keywords, DEFAULT_KEYWORDS);
+        final var newKeys =
+                MetadataUtils.updateStringList(resource.getKeywords(), keywords, DEFAULT_KEYWORDS);
         newKeys.ifPresent(resource::setKeywords);
 
         return newKeys.isPresent();
@@ -120,7 +124,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     }
 
     protected static boolean updateLanguage(final Resource resource, final String language) {
-        final var newLanguage = MetadataUtils.updateString(resource.getLanguage(), language, DEFAULT_LANGUAGE);
+        final var newLanguage =
+                MetadataUtils.updateString(resource.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(resource::setLanguage);
 
         return newLanguage.isPresent();
@@ -138,6 +143,14 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var newPublisher =
                 MetadataUtils.updateUri(resource.getSovereign(), sovereign, DEFAULT_SOVEREIGN);
         newPublisher.ifPresent(resource::setSovereign);
+
+        return newPublisher.isPresent();
+    }
+
+    protected static boolean updateEndpointDocs(final Resource resource, final URI endpointDocs) {
+        final var newPublisher = MetadataUtils.updateUri(
+                resource.getEndpointDocumentation(), endpointDocs, DEFAULT_ENDPOINT_DOCS);
+        newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
     }
