@@ -27,14 +27,14 @@ public class Agreement extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Indicates whether both parties have agreed.
-     */
-    private boolean confirmed;
-
-    /**
      * The agreement id on provider side.
      */
     private URI remoteId;
+
+    /**
+     * Indicates whether both parties have agreed.
+     */
+    private boolean confirmed;
 
     /**
      * The definition of the contract.
