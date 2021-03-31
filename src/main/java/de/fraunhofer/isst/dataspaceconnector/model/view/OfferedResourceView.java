@@ -53,6 +53,11 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
      */
     private long version;
 
+    /**
+     * The owner of the resource.
+     */
+    private URI sovereign;
+
 
     private Map<String, String> additional;
 }
