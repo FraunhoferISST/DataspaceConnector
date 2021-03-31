@@ -136,7 +136,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             }
 
             try {
-                checkContractConditions(transferContract, requestedArtifact);
+                checkContractConditions(transferContract, requestedArtifact, issuerConnector);
             } catch (ResourceNotFoundException | IllegalArgumentException exception) {
                 // Agreement could not be loaded or deserialized.
                 return exceptionService.handleMessageProcessingFailed(exception,
@@ -172,8 +172,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      *
      * @param transferContract  The id of the contract.
      * @param requestedArtifact The id of the artifact.
+     * @param issuerConnector   The issuer connector.
      */
-    private void checkContractConditions(final URI transferContract, final URI requestedArtifact)
+    private void checkContractConditions(final URI transferContract,
+                                         final URI requestedArtifact,
+                                         final URI issuerConnector)
             throws IllegalArgumentException, ResourceNotFoundException,
             PolicyRestrictionException, ContractException {
         final var agreement = entityResolver.getAgreementByUri(transferContract);
@@ -193,7 +196,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
         final var value = agreement.getValue();
         final var idsAgreement = deserializationService.getContractAgreement(value);
-        enforcementService.checkPolicyOnDataProvision(requestedArtifact, idsAgreement);
+        enforcementService.checkPolicyOnDataProvision(requestedArtifact, issuerConnector,
+                idsAgreement);
     }
 
     /**

@@ -112,7 +112,12 @@ public enum ErrorMessages {
     /**
      * Data has been accessed in an invalid time interval.
      */
-    DATA_ACCESS_INVALID_INTERVAL("Data access in invalid time interval.");
+    DATA_ACCESS_INVALID_INTERVAL("Data access in invalid time interval."),
+
+    /**
+     * Data has been accessed by an invalid consumer.
+     */
+    DATA_ACCESS_INVALID_CONSUMER("Data access by invalid consumer connector.");
 
     /**
      * Holds the enums string.

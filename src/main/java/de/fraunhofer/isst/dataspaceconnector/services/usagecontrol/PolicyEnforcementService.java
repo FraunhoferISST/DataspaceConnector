@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.util.Arrays;
 
 /**
  * This class implements automated policy check and usage control enforcement. Refers to the ids
@@ -65,26 +64,23 @@ public class PolicyEnforcementService {
     /**
      * Policy check on data provision on provider side.
      *
-     * @param requestedElement The requested element.
-     * @param agreement The ids contract agreement.
+     * @param target          The requested element.
+     * @param issuerConnector The issuer connector.
+     * @param agreement       The ids contract agreement.
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
-    public void checkPolicyOnDataProvision(final URI requestedElement,
-                                           final ContractAgreement agreement) throws PolicyRestrictionException {
+    public void checkPolicyOnDataProvision(final URI target,
+                                           final URI issuerConnector,
+                                           final ContractAgreement agreement)
+            throws PolicyRestrictionException {
         final var ignorePatterns = connectorConfig.isAllowUnsupported();
         // Ignore patterns if unknown patterns are allowed.
         if (!ignorePatterns) {
             switch (connectorConfig.getUcFramework()) {
-                case MY_DATA: // Empty on purpose. TODO Needs to be implemented.
+                case MY_DATA: // Empty on purpose. TODO To be implemented.
                 case INTERNAL:
                 default:
-                    final var allowedPatterns = Arrays.asList(
-                            PolicyPattern.PROVIDE_ACCESS,
-                            PolicyPattern.PROHIBIT_ACCESS,
-                            PolicyPattern.USAGE_DURING_INTERVAL,
-                            PolicyPattern.USAGE_UNTIL_DELETION,
-                            PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
-                    decisionService.checkForDataAccess(allowedPatterns, requestedElement, agreement);
+                    decisionService.checkForDataAccess(target, issuerConnector, agreement);
                     break;
             }
         }
@@ -101,18 +97,10 @@ public class PolicyEnforcementService {
         // Ignore patterns if unknown patterns are allowed.
         if (!ignorePatterns) {
             switch (connectorConfig.getUcFramework()) {
-                case MY_DATA: // Empty on purpose. TODO Needs to be implemented.
+                case MY_DATA: // Empty on purpose. TODO To be implemented.
                 case INTERNAL:
                 default:
-                    final var allowedPatterns = Arrays.asList(
-                            PolicyPattern.PROVIDE_ACCESS,
-                            PolicyPattern.USAGE_DURING_INTERVAL,
-                            PolicyPattern.USAGE_UNTIL_DELETION,
-                            PolicyPattern.DURATION_USAGE,
-                            PolicyPattern.USAGE_LOGGING,
-                            PolicyPattern.N_TIMES_USAGE,
-                            PolicyPattern.USAGE_NOTIFICATION);
-                    decisionService.checkForDataAccess(allowedPatterns, requestedElement);
+                    decisionService.checkForDataAccess(requestedElement);
                     break;
             }
         }
