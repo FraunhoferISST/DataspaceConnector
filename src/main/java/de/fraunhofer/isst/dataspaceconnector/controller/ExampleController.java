@@ -179,6 +179,9 @@ public class ExampleController {
             case USAGE_NOTIFICATION:
                 return new ResponseEntity<>(PatternUtils.buildUsageNotificationRule(),
                         HttpStatus.OK);
+            case CONNECTOR_RESTRICTED_USAGE:
+                return new ResponseEntity<>(PatternUtils.buildConnectorRestrictedUsage(),
+                        HttpStatus.OK);
             default:
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

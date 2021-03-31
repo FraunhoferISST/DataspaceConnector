@@ -188,4 +188,25 @@ public final class PatternUtils {
                         .build()))
                 .build();
     }
+
+    /**
+     * Build ids rule.
+     *
+     * @return The ids rule.
+     * @throws ConstraintViolationException If the object creation fails.
+     */
+    public static Rule buildConnectorRestrictedUsage() throws ConstraintViolationException {
+        return new PermissionBuilder()
+                ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
+                ._description_(Util.asList(new TypedLiteral("connector-restriction")))
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                        ._leftOperand_(LeftOperand.SYSTEM)
+                        ._operator_(BinaryOperator.SAME_AS)
+                        ._rightOperand_(
+                                new RdfResource("https://example.com",
+                                        URI.create("xsd:anyURI")))
+                        .build()))
+                .build();
+    }
 }

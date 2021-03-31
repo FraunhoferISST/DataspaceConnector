@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
@@ -51,10 +52,14 @@ public class PolicyInformationService {
                     }
                 } else {
                     final var leftOperand = constraints.get(0).getLeftOperand();
+                    final var operator = constraints.get(0).getOperator();
                     if (leftOperand == LeftOperand.COUNT) {
                         detectedPattern = PolicyPattern.N_TIMES_USAGE;
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
                         detectedPattern = PolicyPattern.DURATION_USAGE;
+                    } else if (leftOperand == LeftOperand.SYSTEM
+                            && operator == BinaryOperator.SAME_AS) {
+                        detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
                     } else {
                         detectedPattern = null;
                     }
