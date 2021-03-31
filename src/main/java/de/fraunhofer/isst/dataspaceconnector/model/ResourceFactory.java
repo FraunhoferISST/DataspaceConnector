@@ -42,8 +42,6 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         resource.setRepresentations(new ArrayList<>());
         resource.setContracts(new ArrayList<>());
         resource.setCatalogs(new ArrayList<>());
-        // Set to -1 the following update will increment it to 0
-        resource.setVersion(-1);
 
         update(resource, desc);
 

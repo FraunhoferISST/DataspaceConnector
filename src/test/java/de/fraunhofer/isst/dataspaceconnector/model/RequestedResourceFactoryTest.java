@@ -668,7 +668,7 @@ public class RequestedResourceFactoryTest {
      */
 
     @Test
-    public void create_version_is_0() {
+    public void create_version_is_1() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -676,7 +676,7 @@ public class RequestedResourceFactoryTest {
         final var result = factory.create(new RequestedResourceDesc());
 
         /* ASSERT */
-        assertEquals(0, result.getVersion());
+        assertEquals(1, result.getVersion());
     }
 
     @Test
@@ -688,7 +688,7 @@ public class RequestedResourceFactoryTest {
         factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
-        assertEquals(0, resource.getVersion());
+        assertEquals(1, resource.getVersion());
     }
 
     @Test
@@ -703,7 +703,7 @@ public class RequestedResourceFactoryTest {
         factory.update(resource, new RequestedResourceDesc());
 
         /* ASSERT */
-        assertEquals(1, resource.getVersion());
+        assertEquals(2, resource.getVersion());
     }
 
 
