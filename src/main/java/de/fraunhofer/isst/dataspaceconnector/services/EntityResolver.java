@@ -103,7 +103,7 @@ public class EntityResolver {
                     return artifactService.get(entityId);
                 case REPRESENTATIONS:
                     return representationService.get(entityId);
-                case RESOURCES:
+                case OFFERS:
                     return offerService.get(entityId);
                 case CATALOGS:
                     return catalogService.get(entityId);
@@ -129,27 +129,39 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public Object getEntityAsIdsObject(final AbstractEntity entity) throws InvalidResourceException {
-        if (entity instanceof Artifact) {
-            return viewService.create((Artifact) entity);
-        } else if (entity instanceof Resource) {
-            return viewService.create((Resource) entity);
-        } else if (entity instanceof Representation) {
-            return viewService.create((Representation) entity);
-        } else if (entity instanceof Catalog) {
-            return viewService.create((Catalog) entity);
-        } else if (entity instanceof Contract) {
-            return viewService.create((Contract) entity);
-        } else if (entity instanceof Agreement) {
-            final var agreement = (Agreement) entity;
-            return agreement.getValue();
-        } else if (entity instanceof ContractRule) {
-            final var rule = (ContractRule) entity;
-            return rule.getValue();
-        } else {
-            LOGGER.debug("Could not provide ids object. [entity=({})]", entity);
+    public String getEntityAsRdfString(final AbstractEntity entity) throws InvalidResourceException {
+        try {
+            if (entity instanceof Artifact) {
+                final var artifact = viewService.create((Artifact) entity);
+                return Objects.requireNonNull(artifact).toRdf();
+            } else if (entity instanceof Resource) {
+                final var resource = viewService.create((Resource) entity);
+                return Objects.requireNonNull(resource).toRdf();
+            } else if (entity instanceof Representation) {
+                final var representation = viewService.create((Representation) entity);
+                return Objects.requireNonNull(representation).toRdf();
+            } else if (entity instanceof Catalog) {
+                final var catalog = viewService.create((Catalog) entity);
+                return Objects.requireNonNull(catalog).toRdf();
+            } else if (entity instanceof Contract) {
+                final var catalog = viewService.create((Contract) entity);
+                return Objects.requireNonNull(catalog).toRdf();
+            } else if (entity instanceof Agreement) {
+                final var agreement = (Agreement) entity;
+                return agreement.getValue();
+            } else if (entity instanceof ContractRule) {
+                final var rule = (ContractRule) entity;
+                return rule.getValue();
+            }
+        } catch (Exception exception) {
+            // If we do not allow requesting an object type, respond with exception.
+            LOGGER.warn("Could not provide ids object. [entity=({})]", entity);
             throw new InvalidResourceException("No provided description for requested element.");
         }
+
+        // If we do not allow requesting an object type, respond with exception.
+        LOGGER.debug("Not a requestable ids object. [entity=({})]", entity);
+        throw new InvalidResourceException("No provided description for requested element.");
     }
 
     /**

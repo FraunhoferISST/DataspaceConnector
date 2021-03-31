@@ -8,9 +8,14 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
  */
 public enum BasePath {
     /**
-     * The resource endpoint's base path.
+     * The resource offer's endpoint's base path.
      */
-    RESOURCES("/api/resources"),
+    OFFERS("/api/offers"),
+
+    /**
+     * The resource request's endpoint's base path.
+     */
+    REQUESTS("/api/requests"),
 
     /**
      * The representation endpoint's base path.
