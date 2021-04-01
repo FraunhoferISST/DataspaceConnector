@@ -4,8 +4,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigInteger;
 import java.net.URI;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -45,7 +43,6 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -275,7 +272,7 @@ public class IdsUtilsTest {
     @Test
     public void getGregorianOf_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getGregorianOf(null));
+        assertThrows(NullPointerException.class, () -> IdsUtils.getGregorianOf((Date) null));
     }
 
     @Test
@@ -296,45 +293,6 @@ public class IdsUtilsTest {
 
         final var resultMilliseconds = (int) (result.getFractionalSecond().doubleValue() * 1000);
         assertEquals(calendar.get(Calendar.MILLISECOND), resultMilliseconds);
-    }
-
-    @Test
-    public void getDateOf_inputNull_throwNullPointerException() {
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getDateOf(null));
-    }
-
-    @Test
-    public void getDateOf_inputEmpty_throwParseException() {
-        /* ACT && ASSERT */
-        assertThrows(ParseException.class, () -> IdsUtils.getDateOf(""));
-    }
-
-    @Test
-    public void getDateOf_inputWrongFormat_throwParseException() {
-        /* ARRANGE */
-        final var dateAsString = "2021.03.26'T'10:43:12";
-
-        /* ACT && ASSERT */
-        assertThrows(ParseException.class, () -> IdsUtils.getDateOf(dateAsString));
-    }
-
-    @SneakyThrows
-    @Test
-    public void getDateOf_inputValid_returnDate() {
-        /* ARRANGE */
-        final var sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
-
-        //remove milliseconds from date as they are not present in the String format
-        final var dateWithoutMillis = DateUtils.truncate(date, Calendar.SECOND);
-        String dateAsString = sdf.format(dateWithoutMillis);
-
-        /* ACT */
-        var result = IdsUtils.getDateOf(dateAsString);
-
-        /* ASSERT */
-        assertEquals(dateWithoutMillis, result);
     }
 
     /**************************************************************************
