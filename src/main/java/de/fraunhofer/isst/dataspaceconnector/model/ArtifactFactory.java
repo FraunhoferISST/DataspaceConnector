@@ -40,6 +40,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
         final var artifact = new ArtifactImpl();
         artifact.setAgreements(new ArrayList<>());
+        artifact.setRepresentations(new ArrayList<>());
 
         update(artifact, desc);
 
