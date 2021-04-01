@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -37,9 +41,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.ArrayList;
 
 /**
  * This class provides endpoints exposing example resources and configurations.
@@ -104,7 +105,7 @@ public class ExampleController {
                         ._publicKey_(new PublicKeyBuilder()
                                 ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey()
                                 // .getAlgorithm() ?
-                                ._keyValue_(tokenProvider.provideDapsToken().getBytes())
+                                ._keyValue_(tokenProvider.provideDapsToken().getBytes(StandardCharsets.UTF_8))
                                 .build()
                         )
                         ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
