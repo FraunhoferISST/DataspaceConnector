@@ -14,7 +14,7 @@ import lombok.Setter;
 @Entity
 @Table
 @Getter
-@Setter( AccessLevel.PACKAGE)
+@Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 public final class RequestedResource extends Resource {
 

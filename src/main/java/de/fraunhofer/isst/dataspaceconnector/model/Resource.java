@@ -20,7 +20,7 @@ import org.springframework.data.annotation.Version;
 @Entity
 @Inheritance
 @Getter
-@Setter( AccessLevel.PACKAGE)
+@Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class Resource extends AbstractEntity {

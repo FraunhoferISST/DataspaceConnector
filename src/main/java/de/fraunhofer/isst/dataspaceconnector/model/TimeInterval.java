@@ -12,7 +12,7 @@ import lombok.Setter;
  * Inner class for a time interval format.
  */
 @Getter
-@Setter( AccessLevel.PUBLIC)
+@Setter(AccessLevel.PUBLIC)
 @EqualsAndHashCode
 @RequiredArgsConstructor
 public class TimeInterval {
