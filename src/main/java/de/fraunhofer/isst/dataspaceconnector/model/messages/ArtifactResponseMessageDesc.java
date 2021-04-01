@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model.messages;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.net.URI;
 
@@ -10,6 +11,7 @@ import java.net.URI;
  */
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ArtifactResponseMessageDesc extends MessageDesc {
 
     /**
