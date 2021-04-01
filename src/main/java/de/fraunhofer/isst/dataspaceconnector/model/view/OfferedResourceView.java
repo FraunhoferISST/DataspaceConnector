@@ -1,10 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
@@ -15,8 +16,17 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(collectionRelation = "resources", itemRelation = "resource")
 public class OfferedResourceView extends RepresentationModel<OfferedResourceView> {
 
-    private Date creationDate;
-    private Date modificationDate;
+    /**
+     * The creation date.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime creationDate;
+
+    /**
+     * The last modification date.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime modificationDate;
 
     /**
      * The title of the resource.

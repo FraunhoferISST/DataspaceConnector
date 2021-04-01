@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.Data;
+import java.time.ZonedDateTime;
 
-import java.util.Date;
+import lombok.Data;
 
 /**
  * Inner class for a time interval format.
@@ -13,10 +13,10 @@ public class TimeInterval {
     /**
      * The start date.
      */
-    private Date start;
+    private ZonedDateTime start;
 
     /**
      * The end date.
      */
-    private Date end;
+    private ZonedDateTime end;
 }

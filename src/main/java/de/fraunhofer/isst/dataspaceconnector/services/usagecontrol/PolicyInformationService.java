@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.LeftOperand;
@@ -11,9 +15,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Date;
 
 /**
  * This class provides access permission information for the {@link PolicyDecisionService}
@@ -88,8 +89,8 @@ public class PolicyInformationService {
      *
      * @return The date object.
      */
-    public Date getCurrentDate() {
-        return new Date();
+    public ZonedDateTime getCurrentDate() {
+        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     /**
@@ -98,7 +99,7 @@ public class PolicyInformationService {
      * @param target The target id.
      * @return The artifact's creation date.
      */
-    public Date getCreationDate(final URI target) {
+    public ZonedDateTime getCreationDate( final URI target) {
         final var resourceId = EndpointUtils.getUUIDFromPath(target);
         final var artifact = artifactService.get(resourceId);
 

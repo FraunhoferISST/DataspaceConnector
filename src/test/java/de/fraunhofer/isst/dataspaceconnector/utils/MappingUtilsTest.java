@@ -5,6 +5,9 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
@@ -42,10 +45,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingUtilsTest {
-
-    private final Date date = new Date(1616772571804L);
+    
+    private final ZonedDateTime date =
+            ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
 
     @Test
     public void fromIdsResource_inputNull_throwNullPointerException() {
@@ -199,8 +204,8 @@ public class MappingUtilsTest {
         assertEquals(contract.getId(), result.getDesc().getRemoteId());
         assertEquals(contract.getProvider(), result.getDesc().getProvider());
         assertEquals(contract.getConsumer(), result.getDesc().getConsumer());
-        assertEquals(date, result.getDesc().getStart());
-        assertEquals(date, result.getDesc().getEnd());
+        assertTrue(date.isEqual(result.getDesc().getStart()));
+        assertTrue(date.isEqual(result.getDesc().getEnd()));
 
         final var additional = result.getDesc().getAdditional();
         assertEquals("test", additional.get("test"));
@@ -437,7 +442,7 @@ public class MappingUtilsTest {
     @SneakyThrows
     private XMLGregorianCalendar getDateAsXMLGregorianCalendar() {
         GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
+        calendar.setTime(Date.from(date.toInstant()));
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 

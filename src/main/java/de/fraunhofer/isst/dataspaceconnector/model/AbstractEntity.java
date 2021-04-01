@@ -1,7 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.UUID;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -9,17 +17,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Base type for all entities.
@@ -48,7 +45,7 @@ public class AbstractEntity implements Serializable {
     @Column(name = "created_date", nullable = false, updatable = false)
     @CreatedDate
     @CreationTimestamp
-    private Date creationDate;
+    private ZonedDateTime creationDate;
 
     /**
      * The date of the last persistent modification.
@@ -56,18 +53,9 @@ public class AbstractEntity implements Serializable {
     @Column(name = "modified_date", nullable = false)
     @LastModifiedDate
     @UpdateTimestamp
-    private Date modificationDate;
-
-    @JsonAnySetter
-    public void set(final String key, final String value) {
-        if(additional == null)
-            additional = new HashMap<String, String>();
-
-        additional.put(key, value);
-    }
+    private ZonedDateTime modificationDate;
 
     @ElementCollection
     @Setter(AccessLevel.PACKAGE)
-    @JsonProperty
     private Map<String, String> additional;
 }

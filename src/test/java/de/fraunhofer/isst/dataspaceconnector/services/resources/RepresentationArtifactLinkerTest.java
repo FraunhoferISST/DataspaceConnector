@@ -1,5 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
@@ -15,13 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -641,14 +641,12 @@ public class RepresentationArtifactLinkerTest {
         final var creationDateField =
                 representation.getClass().getSuperclass().getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
-        creationDateField.set(representation,
-                new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+        creationDateField.set(representation, ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
 
         final var modificationDateField =
                 representation.getClass().getSuperclass().getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
-        modificationDateField.set(representation,
-                new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("14-Feb-2021 12:13:14"));
+        modificationDateField.set(representation, ZonedDateTime.parse("2021-02-14T12:13:14+01:00"));
 
         final var additionalField =
                 representation.getClass().getSuperclass().getDeclaredField("additional");

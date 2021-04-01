@@ -18,9 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.Duration;
 import java.net.URI;
 import java.text.ParseException;
+import java.time.Duration;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -205,7 +205,7 @@ public class PolicyDecisionService {
         }
 
         final var current = informationService.getCurrentDate();
-        if (!current.after(timeInterval.getStart()) || !current.before(timeInterval.getEnd())) {
+        if (!current.isAfter(timeInterval.getStart()) || !current.isBefore(timeInterval.getEnd())) {
             LOGGER.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
         }

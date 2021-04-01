@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -50,12 +50,12 @@ public class Contract extends AbstractEntity {
     /**
      * Contract start time and date.
      */
-    private Date start;
+    private ZonedDateTime start;
 
     /**
      * Contract end time and date.
      */
-    private Date end;
+    private ZonedDateTime end;
 
     /**
      * The rules used by this contract.

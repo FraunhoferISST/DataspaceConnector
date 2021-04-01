@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
@@ -12,8 +13,18 @@ import org.springframework.hateoas.server.core.Relation;
 @Setter
 @Relation(collectionRelation = "catalogs", itemRelation = "catalog")
 public class CatalogView extends RepresentationModel<CatalogView> {
-    private Date creationDate;
-    private Date modificationDate;
+    /**
+     * The creation date.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime creationDate;
+
+    /**
+     * The last modification date.
+     */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime modificationDate;
+
     private String title;
     private String description;
     private Map<String, String> additional;

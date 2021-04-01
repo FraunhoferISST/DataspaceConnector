@@ -1,14 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
@@ -26,7 +27,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 
 public final class MappingUtils {
-
     private MappingUtils() {
         // not used
     }
@@ -100,9 +100,7 @@ public final class MappingUtils {
         desc.setLanguage(language.toString());
         desc.setTitle(title.toString());
         desc.setSovereign(sovereign);
-        if(resourceEndpoint.size() > 0)
-            if(resourceEndpoint.get(0).getEndpointDocumentation() != null && resourceEndpoint.get(0).getEndpointDocumentation().size() > 0)
-            desc.setEndpointDocumentation(resourceEndpoint.get(0).getEndpointDocumentation().get(0));
+        getFirstEndpointDocumentation(resourceEndpoint).ifPresent(desc::setEndpointDocumentation);
 
         final var template = new ResourceTemplate<RequestedResourceDesc>();
         template.setDesc(desc);
@@ -116,7 +114,8 @@ public final class MappingUtils {
      * @param representation The ids representation.
      * @return The connector representation.
      */
-    public static RepresentationTemplate fromIdsRepresentation(final Representation representation) {
+    public static RepresentationTemplate fromIdsRepresentation(
+            final Representation representation) {
         final var created = representation.getCreated();
         final var id = representation.getId();
         final var language = representation.getLanguage().toString();
@@ -154,8 +153,8 @@ public final class MappingUtils {
      *                 automatically.
      * @return The artifact template.
      */
-    public static ArtifactTemplate fromIdsArtifact(final Artifact artifact,
-                                                   final boolean download) {
+    public static ArtifactTemplate fromIdsArtifact(
+            final Artifact artifact, final boolean download) {
         final var id = artifact.getId();
         final var byteSize = artifact.getByteSize();
         final var checksum = artifact.getCheckSum();
@@ -210,13 +209,13 @@ public final class MappingUtils {
 
         try {
             desc.setEnd(getDateOf(end.toXMLFormat()));
-        } catch (ParseException ignored) {
+        } catch (DateTimeParseException ignored) {
             // Default values don't need to be set here.
         }
 
         try {
             desc.setStart(getDateOf(start.toXMLFormat()));
-        } catch (ParseException ignored) {
+        } catch (DateTimeParseException ignored) {
             // Default values don't need to be set here.
         }
 
@@ -252,7 +251,8 @@ public final class MappingUtils {
      * @param properties A string object map.
      * @return A string string map.
      */
-    private static Map<String, String> propertiesToAdditional(final Map<String, Object> properties) {
+    private static Map<String, String> propertiesToAdditional(
+            final Map<String, Object> properties) {
         final var additional = new HashMap<String, String>();
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             additional.put(entry.getKey(), (String) entry.getValue());
@@ -262,16 +262,33 @@ public final class MappingUtils {
     }
 
     /**
-     * Converts a string to a date, if the string is formatted as returned by
-     * {@link XMLGregorianCalendar#toXMLFormat()}.
-     *
-     * @param calendar The XMLGregorianCalendar date as string.
-     * @return The calender object.
-     * @throws ParseException If parsing fails.
+     * Convert a string to a {@link ZonedDateTime}.
+     * @param calendar The time as string.
+     * @return The new ZonedDateTime object.
+     * @throws DateTimeParseException if the string could not be converted.
      */
-    public static Date getDateOf(final String calendar) throws ParseException {
-        final var sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
-        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
-        return sdf.parse(calendar);
+    public static ZonedDateTime getDateOf(final String calendar) {
+        return ZonedDateTime.parse(calendar);
+    }
+
+    /**
+     * Returns the first endpoint documentations of the first endpoint.
+     * @param endpoints The list of endpoints.
+     * @return The endpoint documentation.
+     */
+    public static Optional<URI> getFirstEndpointDocumentation(
+            final List<? extends ConnectorEndpoint> endpoints) {
+        Optional<URI> output = Optional.empty();
+
+        if (!endpoints.isEmpty()) {
+            final var first = endpoints.get(0);
+
+            if (first.getEndpointDocumentation() != null
+                    && !first.getEndpointDocumentation().isEmpty()) {
+                output = Optional.of(first.getEndpointDocumentation().get(0));
+            }
+        }
+
+        return output;
     }
 }

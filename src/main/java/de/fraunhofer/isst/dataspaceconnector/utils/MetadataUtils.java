@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,7 +34,8 @@ public final class MetadataUtils {
         return Optional.empty();
     }
 
-    public static Optional<Date> updateDate(final Date oldDate, final Date newDate, final Date defaultDate) {
+    public static Optional<ZonedDateTime> updateDate(final ZonedDateTime oldDate,
+            final ZonedDateTime newDate, final ZonedDateTime defaultDate) {
         final var newValue = newDate == null ? defaultDate : newDate;
         if (oldDate == null || !oldDate.equals(newValue)) {
             return Optional.of(newValue);
@@ -57,8 +58,7 @@ public final class MetadataUtils {
     }
 
     public static Optional<Map<String, String>> updateStringMap(final Map<String, String> oldMap,
-                                                                final Map<String, String> newMap,
-                                                                final Map<String, String> defaultMap) {
+            final Map<String, String> newMap, final Map<String, String> defaultMap) {
         // TODO Implement cleaning like in updateStringList
         final var newValues = newMap == null ? defaultMap : newMap;
         if (oldMap == null || !oldMap.equals(newValues)) {

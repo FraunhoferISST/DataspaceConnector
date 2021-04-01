@@ -1,5 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
@@ -13,18 +24,6 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.Duration;
-import java.net.URI;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public final class PolicyUtils {
 
@@ -187,7 +186,7 @@ public final class PolicyUtils {
     public static boolean checkRuleForDeletion(final Rule rule) throws ParseException {
         final var max = getDate(rule);
         if (max != null) {
-            return checkDate(new Date(), max);
+            return checkDate(ZonedDateTime.now(ZoneOffset.UTC), max);
         } else {
             return false;
         }
@@ -200,8 +199,8 @@ public final class PolicyUtils {
      * @param maxAccess the target date.
      * @return true, if the current date is later than the target date; false otherwise.
      */
-    public static boolean checkDate(final Date dateNow, final Date maxAccess) {
-        return !dateNow.after(maxAccess);
+    public static boolean checkDate(final ZonedDateTime dateNow, final ZonedDateTime maxAccess) {
+        return !dateNow.isAfter(maxAccess);
     }
 
     /**
@@ -258,11 +257,11 @@ public final class PolicyUtils {
             final var operator = constraint.getOperator();
             if (operator == BinaryOperator.AFTER) {
                 final var value = constraint.getRightOperand().getValue();
-                final var start = IdsUtils.getDateOf(value);
+                final var start = MappingUtils.getDateOf(value);
                 interval.setStart(start);
             } else if (operator == BinaryOperator.BEFORE) {
                 final var value = constraint.getRightOperand().getValue();
-                final var end = IdsUtils.getDateOf(value);
+                final var end = MappingUtils.getDateOf(value);
                 interval.setEnd(end);
             }
         }
@@ -287,11 +286,11 @@ public final class PolicyUtils {
      * @return the date or null.
      * @throws java.text.ParseException if the date cannot be parsed.
      */
-    public static Date getDate(final Rule rule) throws ParseException {
+    public static ZonedDateTime getDate(final Rule rule) throws ParseException {
         final var constraint = rule.getConstraint().get(0);
         final var date = constraint.getRightOperand().getValue();
 
-        return IdsUtils.getDateOf(date);
+        return MappingUtils.getDateOf(date);
     }
 
     /**
@@ -301,13 +300,13 @@ public final class PolicyUtils {
      * @return The duration or null.
      * @throws javax.xml.datatype.DatatypeConfigurationException If the duration cannot be parsed.
      */
-    public static Duration getDuration(final Rule rule) throws DatatypeConfigurationException {
+    public static java.time.Duration getDuration( final Rule rule) throws DatatypeConfigurationException {
         final var constraint = rule.getConstraint().get(0);
         final var type = constraint.getRightOperand().getType();
 
         if (type.equals("xsd:duration")) {
             final var duration = constraint.getRightOperand().getValue();
-            return DatatypeFactory.newInstance().newDuration(duration);
+            return java.time.Duration.parse(duration);
         } else {
             return null;
         }
@@ -320,17 +319,9 @@ public final class PolicyUtils {
      * @param duration The duration to add.
      * @return The new date.
      */
-    public static Date getCalculatedDate(final Date original, final Duration duration) {
-        final var cal = Calendar.getInstance();
-        cal.setTime(original);
-        cal.add(Calendar.SECOND, duration.getSeconds());
-        cal.add(Calendar.MINUTE, duration.getMinutes());
-        cal.add(Calendar.HOUR_OF_DAY, duration.getHours());
-        cal.add(Calendar.DAY_OF_MONTH, duration.getDays());
-        cal.add(Calendar.MONTH, duration.getMonths());
-        cal.add(Calendar.YEAR, duration.getYears());
-
-        return cal.getTime();
+    public static ZonedDateTime getCalculatedDate(
+            final ZonedDateTime original, final Duration duration) {
+        return original.plus(duration);
     }
 
     /**

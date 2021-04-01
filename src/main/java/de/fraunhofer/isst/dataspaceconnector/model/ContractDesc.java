@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -38,10 +38,10 @@ public class ContractDesc extends AbstractDescription<Contract> {
     /**
      * Contract start time and date.
      */
-    private Date start;
+    private ZonedDateTime start;
 
     /**
      * Contract end time and date.
      */
-    private Date end;
+    private ZonedDateTime end;
 }

@@ -3,10 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -208,7 +206,8 @@ public final class IdsUtils {
      * @param keywords List of typed literals.
      * @return List of strings.
      */
-    public static List<String> getKeywordsAsString(final ArrayList<? extends TypedLiteral> keywords) {
+    public static List<String> getKeywordsAsString(
+            final ArrayList<? extends TypedLiteral> keywords) {
         final var list = new ArrayList<String>();
         for (final var keyword : keywords) {
             list.add(keyword.getValue());
@@ -235,15 +234,20 @@ public final class IdsUtils {
     }
 
     /**
-     * Convert string to date.
+     * Converts a date to XMLGregorianCalendar format.
      *
-     * @param calendar The XMLGregorianCalendar date as string.
-     * @return The calender object.
-     * @throws ParseException If parsing fails.
+     * @param date the date object.
+     * @return the XMLGregorianCalendar object or null.
      */
-    public static Date getDateOf(final String calendar) throws ParseException {
-        final var sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
-        return sdf.parse(calendar);
+    public static XMLGregorianCalendar getGregorianOf(final ZonedDateTime date) {
+        final var calendar = new GregorianCalendar();
+        // TODO Check the timezone
+        calendar.setTime(Date.from(date.toInstant()));
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        } catch (DatatypeConfigurationException exception) {
+            // Rethrow but do not register in function header
+            throw new RuntimeException(exception);
+        }
     }
 }

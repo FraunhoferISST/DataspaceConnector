@@ -1,7 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,8 +136,8 @@ public class ContractFactoryTest {
     public void create_nullRemoteId_defaultRemoteId() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setRemoteId(null);
 
         /* ACT */
@@ -150,8 +151,8 @@ public class ContractFactoryTest {
     public void update_differentRemoteId_setRemoteId() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
 
         final var contract = factory.create(desc);
 
@@ -168,8 +169,8 @@ public class ContractFactoryTest {
     public void update_differentRemoteId_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setRemoteId(URI.create("uri"));
 
         final var contract = factory.create(desc);
@@ -187,8 +188,8 @@ public class ContractFactoryTest {
     public void update_sameRemoteId_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
 
         /* ACT */
@@ -206,8 +207,8 @@ public class ContractFactoryTest {
     public void create_nullConsumer_defaultConsumer() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setConsumer(null);
 
         /* ACT */
@@ -221,8 +222,8 @@ public class ContractFactoryTest {
     public void update_differentConsumer_setConsumer() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setConsumer(URI.create("uri"));
 
@@ -237,8 +238,8 @@ public class ContractFactoryTest {
     public void update_differentConsumer_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setConsumer(URI.create("uri"));
 
@@ -253,8 +254,8 @@ public class ContractFactoryTest {
     public void update_sameConsumer_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setConsumer(URI.create("consumer"));
         final var contract = factory.create(desc);
 
@@ -273,8 +274,8 @@ public class ContractFactoryTest {
     public void create_nullProvider_defaultProvider() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setProvider(null);
 
         /* ACT */
@@ -288,8 +289,8 @@ public class ContractFactoryTest {
     public void update_differentProvider_setProvider() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setProvider(URI.create("uri"));
 
@@ -305,8 +306,8 @@ public class ContractFactoryTest {
     public void update_differentProvider_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setProvider(URI.create("uri"));
 
@@ -321,8 +322,8 @@ public class ContractFactoryTest {
     public void update_sameProvider_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setProvider(URI.create("randomProvider"));
         final var contract = factory.create(desc);
 
@@ -341,8 +342,8 @@ public class ContractFactoryTest {
     public void create_nullTitle_defaultTitle() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setTitle(null);
 
         /* ACT */
@@ -356,8 +357,8 @@ public class ContractFactoryTest {
     public void update_differentTitle_setTitle() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setTitle("Random Title");
 
@@ -372,8 +373,8 @@ public class ContractFactoryTest {
     public void update_differentTitle_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setTitle("Random Title");
 
@@ -388,8 +389,8 @@ public class ContractFactoryTest {
     public void update_sameTitle_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setTitle("Random Title");
         final var contract = factory.create(desc);
 
@@ -410,7 +411,7 @@ public class ContractFactoryTest {
 //        final var desc = new ContractDesc();
 //        desc.setStart(null);
 //
-//        final var now = new Date();
+//        final var now = ZonedDateTime.now(ZoneOffset.UTC);
 //
 //        /* ACT */
 //        final var result = factory.create(desc);
@@ -423,7 +424,7 @@ public class ContractFactoryTest {
 //    public void update_differentStart_setStart() {
 //        /* ARRANGE */
 //        final var desc = new ContractDesc();
-//        desc.setStart(new Date());
+//        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
 //
 //        final var contract = factory.create(new ContractDesc());
 //
@@ -437,7 +438,7 @@ public class ContractFactoryTest {
 //    @Test
 //    public void update_differentStart_returnTrue() throws ParseException {
 //        /* ARRANGE */
-//        final var initialStartTime = new Date();
+//        final var initialStartTime = ZonedDateTime.now(ZoneOffset.UTC);
 //        final var initialEndTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("20-Feb-2021 10:10:10");
 //
 //        final var initDesc = new ContractDesc();
@@ -476,8 +477,8 @@ public class ContractFactoryTest {
     public void create_nullAdditional_defaultAdditional() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         desc.setAdditional(null);
 
         /* ACT */
@@ -491,8 +492,8 @@ public class ContractFactoryTest {
     public void update_differentAdditional_setAdditional() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setAdditional(Map.of("Y", "X"));
 
@@ -507,8 +508,8 @@ public class ContractFactoryTest {
     public void update_differentAdditional_returnTrue() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
         desc.setAdditional(Map.of("Y", "X"));
 
@@ -523,8 +524,8 @@ public class ContractFactoryTest {
     public void update_sameAdditional_returnFalse() {
         /* ARRANGE */
         final var desc = new ContractDesc();
-        desc.setStart(new Date());
-        desc.setEnd(new Date());
+        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
+        desc.setEnd(ZonedDateTime.now(ZoneOffset.UTC));
         final var contract = factory.create(desc);
 
         /* ACT */

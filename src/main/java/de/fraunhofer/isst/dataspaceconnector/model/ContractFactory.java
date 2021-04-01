@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,8 +104,8 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         return newTitle.isPresent();
     }
 
-    private boolean updateTime(final Contract contract, final Date start, final Date end) {
-        final var defaultTime = new Date();
+    private boolean updateTime( final Contract contract, final ZonedDateTime start, final ZonedDateTime end) {
+        final var defaultTime = ZonedDateTime.now(ZoneOffset.UTC);
         final var newStart = MetadataUtils.updateDate(contract.getStart(), start, defaultTime);
         final var newEnd = MetadataUtils.updateDate(contract.getEnd(), end, defaultTime);
 
@@ -112,7 +113,7 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         var realStart = newStart.orElseGet(contract::getStart);
         var realEnd = newEnd.orElseGet(contract::getEnd);
 
-        if (realStart.after(realEnd)) {
+        if (realStart.isAfter(realEnd)) {
             // Invalid state, fix up
             realStart = realEnd;
         }
