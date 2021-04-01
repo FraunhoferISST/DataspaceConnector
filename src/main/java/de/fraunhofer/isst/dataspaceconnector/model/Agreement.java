@@ -7,18 +7,20 @@ import java.net.URI;
 import java.util.List;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
  * A contract agreement is an agreement between two parties on access and usage behaviours.
  */
-@Data
 @Entity
 @Table
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Agreement extends AbstractEntity {
 
     /**

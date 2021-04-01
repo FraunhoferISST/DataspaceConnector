@@ -1,24 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 /**
  * A representation describes how data is presented.
  */
-@Data
 @Entity
 @Table
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Representation extends AbstractEntity {
 
     /**

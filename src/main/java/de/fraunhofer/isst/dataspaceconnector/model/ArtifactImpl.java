@@ -8,17 +8,20 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
  * Contains the data kept in an artifact.
  */
-@lombok.Data
 @Entity
 @Table
+@Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class ArtifactImpl extends Artifact {
     /**
      * Serial version uid.

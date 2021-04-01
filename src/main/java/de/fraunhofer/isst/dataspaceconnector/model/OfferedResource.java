@@ -5,8 +5,11 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+import lombok.EqualsAndHashCode;
+
 @Entity
 @Table
+@EqualsAndHashCode(callSuper = true)
 public final class OfferedResource extends Resource {
 
     /**

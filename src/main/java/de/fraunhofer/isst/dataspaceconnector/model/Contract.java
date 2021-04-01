@@ -8,18 +8,20 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
  * A contract documents access and usage behaviours.
  */
-@Data
 @Entity
 @Table
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Contract extends AbstractEntity {
 
     /**

@@ -108,6 +108,18 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertEquals(0, result.getAgreements().size());
     }
+
+    @Test
+    public void create_validDesc_representationsEmpty() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = factory.create(new ArtifactDesc());
+
+        /* ASSERT */
+        assertEquals(0, result.getRepresentations().size());
+    }
     
     /**
      * remoteId.

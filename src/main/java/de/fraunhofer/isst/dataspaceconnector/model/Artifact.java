@@ -1,26 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import java.net.URI;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 /**
  * An artifact stores and encapsulates data.
  */
-@Getter
-@RequiredArgsConstructor
 @Inheritance
 @Entity
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public abstract class Artifact extends AbstractEntity {
 
     /**

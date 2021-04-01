@@ -6,18 +6,20 @@ import javax.persistence.Table;
 import java.util.List;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
  * A catalog groups resources.
  */
-@Data
 @Entity
 @Table
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Catalog extends AbstractEntity {
     /**
      * Serial version uid.

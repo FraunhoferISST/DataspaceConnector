@@ -1,18 +1,21 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.net.URL;
 
-@lombok.Data
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table
-@EqualsAndHashCode(callSuper = false)
+@Getter
 @Setter(AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class RemoteData extends Data {
     private URL accessUrl;
     private String username;

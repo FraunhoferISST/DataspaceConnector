@@ -8,19 +8,21 @@ import java.net.URI;
 import java.util.List;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Version;
 
 /**
  * A resource describes offered or requested data.
  */
-@Data
 @Entity
 @Inheritance
-@EqualsAndHashCode(callSuper = false)
-@Setter(AccessLevel.PACKAGE)
+@Getter
+@Setter( AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class Resource extends AbstractEntity {
     /**
      * Serial version uid.

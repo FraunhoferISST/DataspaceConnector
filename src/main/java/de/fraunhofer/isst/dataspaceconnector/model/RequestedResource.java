@@ -6,11 +6,16 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table
-@Data
+@Getter
+@Setter( AccessLevel.PACKAGE)
+@EqualsAndHashCode(callSuper = true)
 public final class RequestedResource extends Resource {
 
     /**
@@ -35,4 +40,10 @@ public final class RequestedResource extends Resource {
      */
     @ManyToMany(mappedBy = "requestedResources")
     private List<Catalog> catalogs;
+
+    @Override
+    public void setCatalogs(final List<Catalog> catalogs) { this.catalogs = catalogs; }
+
+    @Override
+    public List<Catalog> getCatalogs() { return catalogs; }
 }

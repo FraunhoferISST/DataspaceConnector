@@ -2,12 +2,19 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.time.ZonedDateTime;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 /**
  * Inner class for a time interval format.
  */
-@Data
+@Getter
+@Setter( AccessLevel.PUBLIC)
+@EqualsAndHashCode
+@RequiredArgsConstructor
 public class TimeInterval {
 
     /**

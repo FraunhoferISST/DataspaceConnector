@@ -16,14 +16,4 @@ public class ArtifactTests {
 
         assertEquals(1, artifact.getNumAccessed());
     }
-
-    @Test
-    public void toStringTest() {
-        ArtifactDesc desc = new ArtifactDesc();
-        ArtifactFactory factory = new ArtifactFactory();
-        var artifact = factory.create(desc);
-
-        var className = ((Artifact)artifact).getClass().getSimpleName() + "()";
-        assertEquals(artifact.toString(), className);
-    }
 }
