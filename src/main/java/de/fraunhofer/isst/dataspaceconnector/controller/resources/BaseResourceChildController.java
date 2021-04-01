@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseEntityService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseUniDirectionalLinkerService;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseUniDirectionalLinkerService;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <S> The service type for handling the relations logic.
  */
 public class BaseResourceChildController<S extends BaseUniDirectionalLinkerService<?, ?, ?, ?>,
-        T extends AbstractEntity,V extends RepresentationModel<V>> {
+        T extends AbstractEntity, V extends RepresentationModel<V>> {
     /**
      * The linker between two resources.
      **/
@@ -61,8 +61,6 @@ public class BaseResourceChildController<S extends BaseUniDirectionalLinkerServi
      */
     protected BaseResourceChildController() {
         final var resolved = GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceChildController.class);
-        final var linkerServiceClass = resolved[0];
-        final var xxx = GenericTypeResolver.resolveTypeArguments(linkerServiceClass, BaseEntityService.class);
         resourceType = (Class<S>) resolved[2];
     }
 
@@ -107,6 +105,8 @@ public class BaseResourceChildController<S extends BaseUniDirectionalLinkerServi
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public HttpEntity<PagedModel<V>> addResources(@Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
+        Utils.requireNonNull(resources, ErrorMessages.LIST_NULL);
+
         linker.add(ownerId, toSet(resources));
         // Send back the list of children after modification.
         // See https://tools.ietf.org/html/rfc7231#section-4.3.3 and
