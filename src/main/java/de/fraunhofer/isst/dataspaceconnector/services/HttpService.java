@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Objects;
+
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import okhttp3.Response;
 import org.apache.commons.codec.binary.Base64;
@@ -12,14 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
@@ -137,7 +137,7 @@ public class HttpService {
                                                    String password, QueryInput queryInput) throws URISyntaxException, RuntimeException {
         final var auth = username + ":" + password;
         final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-        final var authHeader = "Basic " + new String(encodedAuth);
+        final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.ISO_8859_1);
 
         if (queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
