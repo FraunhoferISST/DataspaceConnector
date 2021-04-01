@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -31,7 +33,8 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
         final var selfLink = linkTo(ArtifactController.class).slash(artifact.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var dataLink = linkTo(methodOn(ArtifactController.class).getData(artifact.getId()))
+        final var dataLink = linkTo(methodOn(ArtifactController.class).getData(artifact.getId(),
+                Optional.empty(), Optional.empty(), Optional.empty()))
                 .withRel("data");
         view.add(dataLink);
 
