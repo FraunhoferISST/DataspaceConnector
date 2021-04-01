@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
+import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.SubscriberNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 /**
- *
+ * This class provides endpoints for subscribing and unsubscribe urls to a requested resource.
  */
 @RestController
 @RequestMapping("/admin/api/resources")
@@ -31,12 +34,13 @@ public class ResourceSubscriptionController {
     public ResourceSubscriptionController(SubscriberNotificationService subscriberNotificationService) {
         this.subscriberNotificationService = subscriberNotificationService;
     }
-    
+
     /**
+     * Subscribe a url to a requested resource.
      *
-     * @param id
-     * @param data
-     * @return
+     * @param id The resource uuid.
+     * @param data The url to a subscribers Rest endpoint.
+     * @return ResponseEntity.
      */
     @Operation(summary = "Subscribe an URL for a resource ID",
             description = "Subscribe an URL for a resource ID.")
@@ -55,12 +59,13 @@ public class ResourceSubscriptionController {
     
         return subscriberNotificationService.subscribeUrl(id, data);
     }
-    
+
     /**
+     * Unsubscribe a url from a requested resource.
      *
-     * @param id
-     * @param data
-     * @return
+     * @param id The resource uuid.
+     * @param data The url to a subscribers Rest endpoint.
+     * @return ResponseEntity.
      */
     @Operation(summary = "Delete an URL for a resource ID",
             description = "Delete an URL for a resource ID.")

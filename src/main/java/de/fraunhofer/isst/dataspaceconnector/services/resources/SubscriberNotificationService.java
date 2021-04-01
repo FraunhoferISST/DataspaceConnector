@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- *
+ * This class provides methods for handling subscriptions to a requested resource.
  */
 @Service
 public class SubscriberNotificationService {
@@ -38,9 +38,10 @@ public class SubscriberNotificationService {
     }
 
     /**
-     * @param uuid
-     * @param data
-     * @return
+     * Add a url to the subscribers of a given resource with uuid.
+     *
+     * @param uuid the uuid of the resource.
+     * @param data the url.
      */
     public ResponseEntity<String> subscribeUrl(UUID uuid, String data) {
         Optional<RequestedResource> requestedResource = null;
@@ -74,9 +75,10 @@ public class SubscriberNotificationService {
     }
 
     /**
-     * @param uuid
-     * @param data
-     * @return
+     * Removes a url from the subscribers of a given resource with uuid.
+     *
+     * @param uuid the uuid of the resource.
+     * @param data the url.
      */
     public ResponseEntity<String> deleteSubscribedUrl(UUID uuid, String data) {
         Optional<RequestedResource> requestedResource = null;
