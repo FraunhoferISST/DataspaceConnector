@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
@@ -17,12 +23,6 @@ import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Class providing util methods for message utility.
@@ -214,9 +214,12 @@ public final class MessageUtils {
      *
      * @param payload The message payload as stream.
      * @return The stream's content.
+     * @throws IllegalArgumentException if the payload is null.
      * @throws IOException If the stream could not be read.
      */
     public static String getStreamAsString(final MessagePayload payload) throws IOException {
+        Utils.requireNonNull(payload, ErrorMessages.MISSING_PAYLOAD);
+        Utils.requireNonNull(payload.getUnderlyingInputStream(), ErrorMessages.MISSING_PAYLOAD);
         return IOUtils.toString(payload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
     }
 
