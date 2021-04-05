@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -32,12 +38,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -278,7 +278,7 @@ public class PolicyManagementService {
             idsRuleList.add(idsRule);
         }
 
-        try { // TODO What about duties?
+        try { // TODO What about duties? What about .equals?
             PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules);
         } catch (ContractException exception) {
             LOGGER.debug("Rules do not match. [exception=({}), offer=({}), request=({})]",

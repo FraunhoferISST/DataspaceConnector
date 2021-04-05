@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -33,8 +35,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This @{@link ContractAgreementHandler} handles all incoming messages that have a
@@ -190,8 +190,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                                              final URI messageId) {
         try {
             // Build ids response message.
-            final var desc = new MessageProcessedNotificationMessageDesc(messageId);
-            desc.setRecipient(issuerConnector);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector, messageId);
             final var header = notificationService.buildMessage(desc);
 
             // Send ids response message.

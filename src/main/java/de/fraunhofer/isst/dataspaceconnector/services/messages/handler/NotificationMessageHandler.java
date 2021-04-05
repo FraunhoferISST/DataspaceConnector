@@ -71,8 +71,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
 
         try {
             // Build the ids response.
-            final var desc = new MessageProcessedNotificationMessageDesc(messageId);
-            desc.setRecipient(issuerConnector);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector , messageId);
             final var header = notificationService.buildMessage(desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException | ConstraintViolationException exception) {

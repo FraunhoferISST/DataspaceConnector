@@ -1,10 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model.messages;
 
+import java.net.URI;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
 
 /**
  * Class for all description request message parameters.
@@ -18,4 +18,9 @@ public class DescriptionResponseMessageDesc extends MessageDesc {
      * The ids of the correlation message.
      */
     private URI correlationMessage;
+
+    public DescriptionResponseMessageDesc(final URI recipient, final URI correlationMessage) {
+        super(recipient);
+        this.correlationMessage = correlationMessage;
+    }
 }

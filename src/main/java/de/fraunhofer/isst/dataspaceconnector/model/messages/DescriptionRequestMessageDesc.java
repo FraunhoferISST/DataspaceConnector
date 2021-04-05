@@ -10,7 +10,6 @@ import java.net.URI;
  * Class for all description request message parameters.
  */
 @Data
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DescriptionRequestMessageDesc extends MessageDesc {
 
@@ -18,4 +17,10 @@ public class DescriptionRequestMessageDesc extends MessageDesc {
      * The requested element of the message.
      */
     private URI requestedElement;
+
+    public DescriptionRequestMessageDesc(final URI recipient, final URI requestedElement) {
+        super(recipient);
+
+        this.requestedElement = requestedElement;
+    }
 }

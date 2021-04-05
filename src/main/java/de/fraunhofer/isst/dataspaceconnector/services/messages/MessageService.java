@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -39,12 +45,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -116,9 +116,7 @@ public class MessageService {
     public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
                                                              final URI elementId)
             throws MessageException {
-        final var desc = new DescriptionRequestMessageDesc(elementId);
-        desc.setRecipient(recipient);
-
+        final var desc = new DescriptionRequestMessageDesc(recipient, elementId);
         return descriptionRequestService.sendMessage(desc, "");
     }
 
@@ -149,9 +147,7 @@ public class MessageService {
         final var contractId = contractRequest.getId();
         final var contractRdf = IdsUtils.toRdf(contractRequest);
 
-        final var desc = new ContractRequestMessageDesc(contractId);
-        desc.setRecipient(recipient);
-
+        final var desc = new ContractRequestMessageDesc(recipient, contractId);
         return contractRequestService.sendMessage(desc, contractRdf);
     }
 
@@ -182,9 +178,7 @@ public class MessageService {
         final var contractId = agreement.getId();
         final var contractRdf = IdsUtils.toRdf(agreement);
 
-        final var desc = new ContractAgreementMessageDesc(contractId);
-        desc.setRecipient(recipient);
-
+        final var desc = new ContractAgreementMessageDesc(recipient, contractId);
         return contractAgreementService.sendMessage(desc, contractRdf);
     }
 

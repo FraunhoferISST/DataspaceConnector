@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
@@ -25,8 +27,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all incoming messages that have a
@@ -121,8 +121,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
             } else {
                 // If the element has been found, build the ids response message.
-                final var desc = new DescriptionResponseMessageDesc(messageId);
-                desc.setRecipient(issuerConnector);
+                final var desc = new DescriptionResponseMessageDesc(messageId, issuerConnector);
                 final var header = descriptionService.buildMessage(desc);
                 final var payload = entityResolver.getEntityAsRdfString(entity);
 
@@ -152,8 +151,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             final var selfDescription = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
-            final var desc = new DescriptionResponseMessageDesc(messageId);
-            desc.setRecipient(issuerConnector);
+            final var desc = new DescriptionResponseMessageDesc(messageId, issuerConnector);
             final var header = descriptionService.buildMessage(desc);
 
             // Send ids response message.

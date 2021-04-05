@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -35,12 +41,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -155,7 +155,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             }
 
             final var targetRuleMap = PolicyUtils.getTargetRuleMap(rules);
-            if (targetRuleMap.keySet().isEmpty()) {
+            if (targetRuleMap.containsKey(null)) {
                 // Return rejection message if the rules are missing targets.
                 return exceptionService.handleMissingTargetInRules(request, messageId,
                         issuerConnector);
@@ -261,8 +261,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
         try {
             // Build ids response message.
-            final var desc = new ContractAgreementMessageDesc(correlationMessage);
-            desc.setRecipient(issuerConnector);
+            final var desc = new ContractAgreementMessageDesc(issuerConnector, correlationMessage);
             final var header = agreementService.buildMessage(desc);
             LOGGER.info("Contract request accepted. Saved agreement: " + agreementId);
 
@@ -286,8 +285,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                            final URI correlationMessage) {
         try {
             // Build ids response message.
-            final var desc = new ContractRejectionMessageDesc(correlationMessage);
-            desc.setRecipient(issuerConnector);
+            final var desc = new ContractRejectionMessageDesc(issuerConnector, correlationMessage);
             final var header = (RejectionMessage) rejectionService.buildMessage(desc);
             final var payload = "Contract rejected.";
 

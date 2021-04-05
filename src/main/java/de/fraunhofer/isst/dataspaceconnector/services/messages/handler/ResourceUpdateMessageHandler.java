@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import java.io.IOException;
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
@@ -24,9 +27,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a
@@ -96,7 +96,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         final var issuerConnector = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
-        if (affectedResource == null || affectedResource.toString().equals("")) {
+        if (affectedResource == null || affectedResource.toString().isEmpty()) {
             // Without an affected resource, the message processing will be aborted.
             return exceptionService.handleMissingAffectedResource(affectedResource,
                     issuerConnector, messageId);
@@ -106,11 +106,11 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         try {
             // Try to read payload as string.
             payloadAsString = MessageUtils.getStreamAsString(payload);
-            if (payloadAsString.equals("")) {
+            if (payloadAsString.isEmpty()) {
                 return exceptionService.handleMissingPayload(affectedResource, issuerConnector,
                         messageId);
             }
-        } catch (IOException exception) {
+        } catch (IOException | IllegalArgumentException exception) {
             return exceptionService.handleMessagePayloadException(exception, messageId,
                     issuerConnector);
         }
@@ -187,8 +187,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                                              final URI messageId) {
         try {
             // Build ids response message.
-            final var desc = new MessageProcessedNotificationMessageDesc(messageId);
-            desc.setRecipient(issuerConnector);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector, messageId);
             final var header = notificationService.buildMessage(desc);
 
             // Send ids response message.
