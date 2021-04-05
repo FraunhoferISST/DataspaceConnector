@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -52,11 +53,13 @@ public class Contract extends AbstractEntity {
     /**
      * Contract start time and date.
      */
+    @Column(name = "contract_start")
     private ZonedDateTime start;
 
     /**
      * Contract end time and date.
      */
+    @Column(name = "contract_end")
     private ZonedDateTime end;
 
     /**
