@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -47,13 +48,17 @@ public final class PolicyUtils {
      */
     public static List<Rule> extractRulesFromContract(final Contract contract) {
         final var permissionList = contract.getPermission();
-        final var ruleList = new ArrayList<Rule>(permissionList);
+        final var ruleList = permissionList == null ? new ArrayList<Rule>() : new ArrayList<Rule>(permissionList);
 
         final var prohibitionList = contract.getProhibition();
-        ruleList.addAll(prohibitionList);
+        if (prohibitionList != null) {
+            ruleList.addAll(prohibitionList);
+        }
 
         final var obligationList = contract.getObligation();
-        ruleList.addAll(obligationList);
+        if (obligationList != null) {
+            ruleList.addAll(obligationList);
+        }
 
         return ruleList;
     }
@@ -133,13 +138,7 @@ public final class PolicyUtils {
     public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
             final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final URI issuerConnector) {
-        for (final var contract : contracts) {
-            final var consumer = contract.getConsumer();
-            if (!consumer.equals(issuerConnector)) {
-                contracts.remove(contract);
-            }
-        }
-        return contracts;
+        return contracts.parallelStream().filter(x -> x.getConsumer().equals(issuerConnector)).collect(Collectors.toList());
     }
 
     /**
@@ -454,6 +453,9 @@ public final class PolicyUtils {
      */
     private static void compareConstraints(final ArrayList<? extends Constraint> oldConstraints,
                                            final ArrayList<? extends Constraint> newConstraints) throws ContractException {
+        if(oldConstraints == null && newConstraints == null)
+            return;
+
         final var oldSize = oldConstraints.size();
         final var newSize = newConstraints.size();
 
@@ -485,6 +487,9 @@ public final class PolicyUtils {
      */
     private static void compareActions(final ArrayList<? extends Action> oldActions,
                                        final ArrayList<? extends Action> newActions) throws ContractException {
+        if(oldActions == null && newActions == null)
+            return;
+
         final var oldSize = oldActions.size();
         final var newSize = newActions.size();
 
