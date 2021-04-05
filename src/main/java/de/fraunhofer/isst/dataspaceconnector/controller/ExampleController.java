@@ -105,7 +105,7 @@ public class ExampleController {
                         ._publicKey_(new PublicKeyBuilder()
                                 ._keyType_(KeyType.RSA) //tokenProvider.providePublicKey()
                                 // .getAlgorithm() ?
-                                ._keyValue_(tokenProvider.provideDapsToken().getBytes(StandardCharsets.UTF_8))
+                                ._keyValue_(tokenProvider.provideDapsToken().getBytes(StandardCharsets.UTF_16))
                                 .build()
                         )
                         ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
