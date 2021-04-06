@@ -10,6 +10,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,6 +147,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
      * @return list of all artifacts referenced in the agreement
      */
     public List<Artifact> getAllByAgreement(final UUID agreementId) {
+        Utils.requireNonNull(agreementId, ErrorMessages.ENTITYID_NULL);
         return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
     }
 }
