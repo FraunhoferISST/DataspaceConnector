@@ -9,11 +9,9 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.BaseEntityRepository;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * The base service implements base logic for persistent entities.
@@ -46,7 +44,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @return The new entity.
      * @throws IllegalArgumentException if the desc is null.
      */
-    @Transactional
     public T create(final D desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -61,7 +58,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if the entity is unknown.
      */
-    @Transactional
     public T update(final UUID entityId, final D desc) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
@@ -82,7 +78,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @throws IllegalArgumentException if the passed id is null.
      * @throws ResourceNotFoundException if the entity is unknown.
      */
-    @Transactional(readOnly = true)
     public T get(final UUID entityId) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
 
@@ -102,7 +97,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @return The id list of all entities.
      * @throws IllegalArgumentException if the passed pageable is null.
      */
-    @Transactional(readOnly = true)
     public Page<T> getAll(final Pageable pageable) {
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
         return repository.findAll(pageable);
@@ -114,7 +108,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @return True if the entity exists.
      * @throws IllegalArgumentException if the passed id is null.
      */
-    @Transactional(readOnly = true)
     public boolean doesExist(final UUID entityId) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         return repository.findById(entityId).isPresent();
@@ -125,7 +118,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @param entityId The id of the entity.
      * @throws IllegalArgumentException if the passed id is null.
      */
-    @Transactional
     public void delete(final UUID entityId) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         repository.deleteById(entityId);
@@ -136,7 +128,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * @param entity The entity.
      * @return The persisted entity.
      */
-    @Transactional
     protected T persist(final T entity) {
         return repository.saveAndFlush(entity);
     }
