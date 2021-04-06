@@ -3,6 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.resources;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ContractRepository;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class ContractService extends BaseEntityService<Contract, ContractDesc> {
      * @return list of contracts applicable for the artifact
      */
     public List<Contract> getAllByArtifactId(final UUID artifactId) {
+        Utils.requireNonNull(artifactId, ErrorMessages.ENTITYID_NULL);
         return ((ContractRepository) getRepository()).findAllByArtifactId(artifactId);
     }
 

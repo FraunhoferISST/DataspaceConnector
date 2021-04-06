@@ -5,6 +5,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -47,6 +49,7 @@ public class EntityDependencyResolver {
      */
     public List<Contract> getContractOffersByArtifactId(final URI artifactId) {
         final var uuid = EndpointUtils.getUUIDFromPath(artifactId);
+        Utils.requireNonNull(artifactId, ErrorMessages.ENTITYID_NULL);
         return contractService.getAllByArtifactId(uuid);
     }
 
@@ -57,6 +60,7 @@ public class EntityDependencyResolver {
      * @return list of all rules in the contract
      */
     public List<ContractRule> getRulesByContractOffer(final Contract contract) {
+        Utils.requireNonNull(contract, ErrorMessages.ENTITY_NULL);
         return ruleService.getAllByContract(contract.getId());
     }
 
@@ -67,6 +71,7 @@ public class EntityDependencyResolver {
      * @return list of all artifacts referenced in the agreement
      */
     public List<Artifact> getArtifactsByAgreement(final Agreement agreement) {
+        Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
         return artifactService.getAllByAgreement(agreement.getId());
     }
 }
