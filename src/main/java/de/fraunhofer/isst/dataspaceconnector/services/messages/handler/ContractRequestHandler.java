@@ -266,7 +266,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             LOGGER.info("Contract request accepted. Saved agreement: " + agreementId);
 
             // Send ids response message.
-            return BodyResponse.create(header, agreement);
+            return BodyResponse.create(header, agreement.toRdf());
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
                 | RdfBuilderException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception,
