@@ -21,6 +21,6 @@ public interface ContractRepository extends BaseEntityRepository<Contract> {
     @Query("SELECT c from Contract c INNER JOIN OfferedResource o ON c MEMBER OF o.contracts "
             + "INNER JOIN Representation r ON r MEMBER OF o.representations "
             + "INNER JOIN Artifact a ON a MEMBER OF r.artifacts WHERE a.id = :artifactId")
-    List<Contract> findByArtifactId(UUID artifactId);
+    List<Contract> findAllByArtifactId(UUID artifactId);
 
 }
