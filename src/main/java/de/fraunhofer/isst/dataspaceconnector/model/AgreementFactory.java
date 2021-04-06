@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class AgreementFactory implements AbstractFactory<Agreement, AgreementDesc> {
 
-    static final String DEFAULT_TITLE = "";
     static final URI DEFAULT_REMOTE_ID = URI.create("");
+    static final String DEFAULT_VALUE = "";
 
     /**
      * Default constructor.
@@ -36,6 +37,8 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var agreement = new Agreement();
+        agreement.setArtifacts(new ArrayList<>());
+
         update(agreement, desc);
 
         return agreement;
@@ -54,10 +57,11 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var hasUpdatedRemoteId = this.updateRemoteId(agreement, desc.getRemoteId());
+        final var hasUpdatedConfirmed = this.updateHasConfirmed(agreement, desc.isConfirmed());
         final var hasUpdatedValue = this.updateValue(agreement, desc.getValue());
         final var hasUpdatedAdditional = this.updateAdditional(agreement, desc.getAdditional());
 
-        return hasUpdatedRemoteId || hasUpdatedValue || hasUpdatedAdditional;
+        return hasUpdatedRemoteId || hasUpdatedConfirmed || hasUpdatedValue || hasUpdatedAdditional;
     }
 
     private boolean updateRemoteId(final Agreement agreement, final URI remoteId) {
@@ -68,8 +72,17 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         return newUri.isPresent();
     }
 
+    private boolean updateHasConfirmed(final Agreement agreement, final boolean confirmed) {
+        if (agreement.isConfirmed() == confirmed) {
+            agreement.setConfirmed(confirmed);
+            return true;
+        }
+
+        return false;
+    }
+
     private boolean updateValue(final Agreement agreement, final String value) {
-        final var newValue = MetadataUtils.updateString(agreement.getValue(), value, DEFAULT_TITLE);
+        final var newValue = MetadataUtils.updateString(agreement.getValue(), value, DEFAULT_VALUE);
         newValue.ifPresent(agreement::setValue);
 
         return newValue.isPresent();
