@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
+import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import lombok.NonNull;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -134,5 +136,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
                     "Could not connect to data source. [exception=({})]", exception.getMessage());
             throw new RuntimeException("Could not connect to data source.", exception);
         }
+    }
+
+    /**
+     * Finds all artifacts referenced in a specific agreement.
+     *
+     * @param agreementId ID of the agreement
+     * @return list of all artifacts referenced in the agreement
+     */
+    public List<Artifact> getAllByAgreement(final UUID agreementId) {
+        return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
     }
 }

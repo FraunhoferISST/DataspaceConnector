@@ -22,7 +22,7 @@ public class ContractService extends BaseEntityService<Contract, ContractDesc> {
      * @param artifactId ID of the artifact
      * @return list of contracts applicable for the artifact
      */
-    public List<Contract> getByArtifactId(final UUID artifactId) {
+    public List<Contract> getAllByArtifactId(final UUID artifactId) {
         return ((ContractRepository) getRepository()).findAllByArtifactId(artifactId);
     }
 
