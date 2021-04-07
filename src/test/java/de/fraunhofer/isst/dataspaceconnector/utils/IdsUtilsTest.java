@@ -4,11 +4,14 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigInteger;
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -52,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdsUtilsTest {
 
-    Date date = new Date(1616772571804L);
+    ZonedDateTime date = ZonedDateTime.of(LocalDateTime.ofEpochSecond(1616772571804L, 0, ZoneOffset.UTC), ZoneId.of("Z"));
 
     @Test
     public void toRdf_inputNull_throwRdfBuilderException() {
@@ -209,9 +212,15 @@ public class IdsUtilsTest {
     }
 
     @Test
-    public void getKeywordsAsString_keywordsNull_throwNullPointerException() {
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getKeywordsAsString(null));
+    public void getKeywordsAsString_keywordsNull_returnEmptyList() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = IdsUtils.getKeywordsAsString(null);
+
+        /* ASSERT */
+        assertEquals(0, result.size());
     }
 
     @Test
@@ -272,7 +281,7 @@ public class IdsUtilsTest {
     @Test
     public void getGregorianOf_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getGregorianOf((Date) null));
+        assertThrows(NullPointerException.class, () -> IdsUtils.getGregorianOf((ZonedDateTime) null));
     }
 
     @Test
@@ -281,8 +290,7 @@ public class IdsUtilsTest {
         final var result = IdsUtils.getGregorianOf(date);
 
         /* ASSERT */
-        final var calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        final var calendar = GregorianCalendar.from(date);
 
         assertEquals(calendar.get(Calendar.YEAR), result.getYear());
         assertEquals(calendar.get(Calendar.MONTH) + 1, result.getMonth());
@@ -293,6 +301,15 @@ public class IdsUtilsTest {
 
         final var resultMilliseconds = (int) (result.getFractionalSecond().doubleValue() * 1000);
         assertEquals(calendar.get(Calendar.MILLISECOND), resultMilliseconds);
+    }
+
+    @Test
+    public void getGregorianOf_validDate_returnValidISO8601Time() {
+        /* ACT */
+        final var result = IdsUtils.getGregorianOf(date).toString();
+
+        /* ASSERT */
+        assertEquals("53203-06-26T12:10:04.000Z", result);
     }
 
     /**************************************************************************
@@ -415,8 +432,7 @@ public class IdsUtilsTest {
 
     @SneakyThrows
     private XMLGregorianCalendar getDateAsXMLGregorianCalendar() {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
+        GregorianCalendar calendar = GregorianCalendar.from(date);
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 

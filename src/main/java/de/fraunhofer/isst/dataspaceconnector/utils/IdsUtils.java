@@ -3,11 +3,13 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
@@ -202,15 +204,18 @@ public final class IdsUtils {
 
     /**
      * Get list of ids keywords as list of strings.
-     *
+     * If the passed list is null, an empty list is returned.
      * @param keywords List of typed literals.
      * @return List of strings.
      */
     public static List<String> getKeywordsAsString(
             final ArrayList<? extends TypedLiteral> keywords) {
+
         final var list = new ArrayList<String>();
-        for (final var keyword : keywords) {
-            list.add(keyword.getValue());
+        if (keywords != null) {
+            for (final var keyword : keywords) {
+                list.add(keyword.getValue());
+            }
         }
 
         return list;
@@ -222,27 +227,9 @@ public final class IdsUtils {
      * @param date the date object.
      * @return the XMLGregorianCalendar object or null.
      */
-    public static XMLGregorianCalendar getGregorianOf(final Date date) {
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-        } catch (DatatypeConfigurationException exception) {
-            // Rethrow but do not register in function header
-            throw new RuntimeException(exception);
-        }
-    }
-
-    /**
-     * Converts a date to XMLGregorianCalendar format.
-     *
-     * @param date the date object.
-     * @return the XMLGregorianCalendar object or null.
-     */
     public static XMLGregorianCalendar getGregorianOf(final ZonedDateTime date) {
-        final var calendar = new GregorianCalendar();
-        // TODO Check the timezone
-        calendar.setTime(Date.from(date.toInstant()));
+        final var calendar = GregorianCalendar.from(date);
+        calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.ofOffset("", ZoneOffset.UTC)));
         try {
             return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
         } catch (DatatypeConfigurationException exception) {

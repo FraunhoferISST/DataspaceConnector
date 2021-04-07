@@ -35,7 +35,6 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.TemporalEntityBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -49,9 +48,9 @@ public class MappingUtilsTest {
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
 
     @Test
-    public void fromIdsResource_inputNull_throwNullPointerException() {
+    public void fromIdsResource_inputNull_throwIllegalArgumentExceptionException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsResource(null));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsResource(null));
     }
 
     @Test
@@ -97,18 +96,9 @@ public class MappingUtilsTest {
     }
 
     @Test
-    public void fromIdsResource_keywordsNull_throwNullPointerException() {
-        /* ARRANGE */
-        final var resource = getResourceWithKeywordsNull();
-
+    public void fromIdsRepresentation_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsResource(resource));
-    }
-
-    @Test
-    public void fromIdsRepresentation_inputNull_throwNullPointerException() {
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsRepresentation(null));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsRepresentation(null));
     }
 
     @Test
@@ -133,18 +123,9 @@ public class MappingUtilsTest {
     }
 
     @Test
-    public void fromIdsRepresentation_representationMediaTypeNull_throwNullPointerException() {
-        /* ARRANGE */
-        final var representation = getRepresentationWithMediaTypeNull();
-
+    public void fromIdsArtifact_artifactNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsRepresentation(representation));
-    }
-
-    @Test
-    public void fromIdsArtifact_artifactNull_throwNullPointerException() {
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsArtifact(null, true));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsArtifact(null, true));
     }
 
     @Test
@@ -171,18 +152,9 @@ public class MappingUtilsTest {
     }
 
     @Test
-    public void fromIdsArtifact_artifactCreatedNull_throwNullPointerException() {
-        /* ARRANGE */
-        final var artifact = getArtifactWithCreationDateNull();
-
+    public void fromIdsContract_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsArtifact(artifact, true));
-    }
-
-    @Test
-    public void fromIdsContract_inputNull_throwNullPointerException() {
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsContract(null));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsContract(null));
     }
 
     @SneakyThrows
@@ -216,12 +188,6 @@ public class MappingUtilsTest {
     }
 
     @Test
-    public void fromIdsRule_inputNull_throwRdfBuilderException() {
-        /* ACT && ASSERT */
-        assertThrows(RdfBuilderException.class, () -> MappingUtils.fromIdsRule(null));
-    }
-
-    @Test
     public void fromIdsRule_validInput_returnRuleTemplate() {
         /* ARRANGE */
         final var rule = getRule();
@@ -233,15 +199,6 @@ public class MappingUtilsTest {
         assertEquals(rule.getId(), result.getDesc().getRemoteId());
         assertEquals(rule.getTitle().toString(), result.getDesc().getTitle());
         assertEquals(rule.toRdf(), result.getDesc().getValue());
-    }
-
-    @Test
-    public void fromIdsRule_ruleTitleNull_throwNullPointerException() {
-        /* ARRANGE */
-        final var rule = getRuleWithTitleNull();
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsRule(rule));
     }
 
     /**************************************************************************

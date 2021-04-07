@@ -3,10 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
@@ -26,6 +26,9 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTempl
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 
+/**
+ * Maps ids resources to internal resources.
+ */
 public final class MappingUtils {
     private MappingUtils() {
         // not used
@@ -33,21 +36,22 @@ public final class MappingUtils {
 
     /**
      * Map ids resource to connector resource.
-     *
      * @param resource The ids resource.
      * @return The connector resource.
+     * @throws IllegalArgumentException if the passed resource is null.
      */
     public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
-        final var accrualPeriodicity = resource.getAccrualPeriodicity();
-        final var assetRefinement = resource.getAssetRefinement();
+        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var periodicity = resource.getAccrualPeriodicity();
         final var contentPart = resource.getContentPart();
         final var contentStandard = resource.getContentStandard();
         final var contentType = resource.getContentType();
         final var created = resource.getCreated();
         final var customLicense = resource.getCustomLicense();
-        final var defaultRepresentation = resource.getDefaultRepresentation();
+        final var representation = resource.getDefaultRepresentation();
         final var description = resource.getDescription();
-        final var id = resource.getId();
+        final var resourceId = resource.getId();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
         final var modified = resource.getModified();
@@ -60,102 +64,175 @@ public final class MappingUtils {
         final var spatialCoverage = resource.getSpatialCoverage();
         final var standardLicense = resource.getStandardLicense();
         final var temporalCoverage = resource.getTemporalCoverage();
-        final var temporalResolution = resource.getTemporalResolution();
+        final var temporalRes = resource.getTemporalResolution();
         final var theme = resource.getTheme();
         final var title = resource.getTitle();
         final var variant = resource.getVariant();
         final var version = resource.getVersion();
 
         // Add additional properties to map.
-        final var properties = resource.getProperties();
-        final var additional = propertiesToAdditional(properties);
+        final var additional = propertiesToAdditional(resource.getProperties());
 
-        additional.put("ids:accrualPeriodicity", accrualPeriodicity.toRdf());
-        additional.put("ids:assetRefinement", assetRefinement.toRdf());
-        additional.put("ids:contentPart", contentPart.toString());
-        additional.put("ids:contentStandard", contentStandard.toString());
-        additional.put("ids:contentType", contentType.toRdf());
-        additional.put("ids:created", created.toXMLFormat());
-        additional.put("ids:customLicense", customLicense.toString());
-        additional.put("ids:defaultRepresentation", defaultRepresentation.toString());
-        additional.put("ids:modified", modified.toXMLFormat());
-        additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
-        additional.put("ids:resourcePart", resourcePart.toString());
-        additional.put("ids:sample", sample.toString());
-        additional.put("ids:shapesGraph", shapesGraph.toString());
-        additional.put("ids:spatialCoverage", spatialCoverage.toString());
-        additional.put("ids:temporalCoverage", temporalCoverage.toString());
-        additional.put("ids:temporalResolution", temporalResolution.toString());
-        additional.put("ids:theme", theme.toString());
-        additional.put("ids:variant", variant.toString());
-        additional.put("ids:version", version);
+        if (periodicity != null) {
+            additional.put("ids:accrualPeriodicity", periodicity.toRdf());
+        }
+
+        if (contentPart != null) {
+            additional.put("ids:contentPart", contentPart.toString());
+        }
+
+        if (contentStandard != null) {
+            additional.put("ids:contentStandard", contentStandard.toString());
+        }
+
+        if (contentType != null) {
+            additional.put("ids:contentType", contentType.toRdf());
+        }
+
+        if (created != null) {
+            additional.put("ids:created", created.toXMLFormat());
+        }
+
+        if (customLicense != null) {
+            additional.put("ids:customLicense", customLicense.toString());
+        }
+
+        if (representation != null) {
+            additional.put("ids:defaultRepresentation", representation.toString());
+        }
+
+        if (modified != null) {
+            additional.put("ids:modified", modified.toXMLFormat());
+        }
+
+        if (resourceEndpoint != null) {
+            additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+        }
+
+        if (resourcePart != null) {
+            additional.put("ids:resourcePart", resourcePart.toString());
+        }
+
+        if (sample != null) {
+            additional.put("ids:sample", sample.toString());
+        }
+
+        if (shapesGraph != null) {
+            additional.put("ids:shapesGraph", shapesGraph.toString());
+        }
+
+        if (spatialCoverage != null) {
+            additional.put("ids:spatialCoverage", spatialCoverage.toString());
+        }
+
+        if (temporalCoverage != null) {
+            additional.put("ids:temporalCoverage", temporalCoverage.toString());
+        }
+
+        if (temporalRes != null) {
+            additional.put("ids:temporalResolution", temporalRes.toString());
+        }
+
+        if (theme != null) {
+            additional.put("ids:theme", theme.toString());
+        }
+
+        if (variant != null) {
+            additional.put("ids:variant", variant.toString());
+        }
+
+        if (version != null) {
+            additional.put("ids:version", version);
+        }
 
         final var desc = new RequestedResourceDesc();
         desc.setAdditional(additional);
-        desc.setRemoteId(id);
+        desc.setRemoteId(resourceId);
         desc.setKeywords(keywords);
-        desc.setDescription(description.toString());
         desc.setPublisher(publisher);
         desc.setLicence(standardLicense);
-        desc.setLanguage(language.toString());
-        desc.setTitle(title.toString());
         desc.setSovereign(sovereign);
-        getFirstEndpointDocumentation(resourceEndpoint).ifPresent(desc::setEndpointDocumentation);
 
-        final var template = new ResourceTemplate<RequestedResourceDesc>();
-        template.setDesc(desc);
+        if (description != null) {
+            desc.setDescription(description.toString());
+        }
 
-        return template;
+        if (title != null) {
+            desc.setTitle(title.toString());
+        }
+
+        if (language != null) {
+            desc.setLanguage(language.toString());
+        }
+
+        if (resourceEndpoint != null) {
+            getFirstEndpointDocumentation(resourceEndpoint)
+                    .ifPresent(desc::setEndpointDocumentation);
+        }
+
+        return new ResourceTemplate<>(desc, null, null);
     }
 
     /**
      * Map ids representation to connector representation.
-     *
      * @param representation The ids representation.
      * @return The connector representation.
+     * @throws IllegalArgumentException if the passed representation is null.
      */
     public static RepresentationTemplate fromIdsRepresentation(
             final Representation representation) {
+        Utils.requireNonNull(representation, ErrorMessages.ENTITY_NULL);
+
         final var created = representation.getCreated();
-        final var id = representation.getId();
-        final var language = representation.getLanguage().toString();
-        final var mediaType = representation.getMediaType().getFilenameExtension();
+        final var representationId = representation.getId();
+        final var language = representation.getLanguage();
+        final var mediaType = representation.getMediaType();
         final var modified = representation.getModified();
         final var standard = String.valueOf(representation.getRepresentationStandard());
         final var shape = representation.getShapesGraph();
 
         // Add additional properties to map.
-        final var properties = representation.getProperties();
-        final var additional = propertiesToAdditional(properties);
+        final var additional = propertiesToAdditional(representation.getProperties());
 
-        additional.put("ids:created", created.toXMLFormat());
-        additional.put("ids:modified", modified.toXMLFormat());
-        additional.put("ids:shapesGraph", String.valueOf(shape));
+        if (created != null) {
+            additional.put("ids:created", created.toXMLFormat());
+        }
+        if (modified != null) {
+            additional.put("ids:modified", modified.toXMLFormat());
+        }
+
+        if (shape != null) {
+            additional.put("ids:shapesGraph", String.valueOf(shape));
+        }
 
         final var desc = new RepresentationDesc();
         desc.setAdditional(additional);
-        desc.setRemoteId(id);
-        desc.setMediaType(mediaType);
-        desc.setLanguage(language);
+        desc.setRemoteId(representationId);
         desc.setStandard(standard);
 
-        final var template = new RepresentationTemplate();
-        template.setDesc(desc);
+        if (language != null) {
+            desc.setLanguage(language.toString());
+        }
 
-        return template;
+        if (mediaType != null) {
+            desc.setMediaType(mediaType.getFilenameExtension());
+        }
+
+        return new RepresentationTemplate(desc, null);
     }
 
     /**
      * Build template from ids artifact.
-     *
      * @param artifact The ids artifact.
-     * @param download Indicated whether the artifact is going to be downloaded
-     *                 automatically.
+     * @param download Whether the artifact will be downloaded automatically.
      * @return The artifact template.
+     * @throws IllegalArgumentException if the passed artifact is null.
      */
     public static ArtifactTemplate fromIdsArtifact(
             final Artifact artifact, final boolean download) {
-        final var id = artifact.getId();
+        Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
+
+        final var artifactId = artifact.getId();
         final var byteSize = artifact.getByteSize();
         final var checksum = artifact.getCheckSum();
         final var created = artifact.getCreationDate();
@@ -163,49 +240,61 @@ public final class MappingUtils {
         final var filename = artifact.getFileName();
 
         // Add additional properties to map.
-        final var properties = artifact.getProperties();
-        final var additional = propertiesToAdditional(properties);
+        final var additional = propertiesToAdditional(artifact.getProperties());
 
-        additional.put("ids:byteSize", byteSize.toString());
-        additional.put("ids:checkSum", checksum);
-        additional.put("ids:creationDate", created.toXMLFormat());
-        additional.put("ids:duration", duration.toString());
+        if (byteSize != null) {
+            additional.put("ids:byteSize", byteSize.toString());
+        }
+
+        if (checksum != null) {
+            additional.put("ids:checkSum", checksum);
+        }
+
+        if (created != null) {
+            additional.put("ids:creationDate", created.toXMLFormat());
+        }
+
+        if (duration != null) {
+            additional.put("ids:duration", duration.toString());
+        }
 
         final var desc = new ArtifactDesc();
         desc.setAdditional(additional);
-        desc.setRemoteId(id);
+        desc.setRemoteId(artifactId);
         desc.setTitle(filename);
         desc.setAutomatedDownload(download);
 
-        final var template = new ArtifactTemplate();
-        template.setDesc(desc);
-
-        return template;
+        return new ArtifactTemplate(desc);
     }
 
     /**
      * Build template from ids contract.
-     *
      * @param contract The ids contract offer.
      * @return The contract template.
+     * @throws IllegalArgumentException if the passed contract is null.
      */
     public static ContractTemplate fromIdsContract(final Contract contract) {
+        Utils.requireNonNull(contract, ErrorMessages.ENTITY_NULL);
+
         final var consumer = contract.getConsumer();
         final var date = contract.getContractDate();
         final var end = contract.getContractEnd();
-        final var id = contract.getId();
+        final var contractId = contract.getId();
         final var provider = contract.getProvider();
         final var start = contract.getContractStart();
 
         // Add additional properties to map.
-        final var properties = contract.getProperties();
-        final var additional = propertiesToAdditional(properties);
+        final var additional = propertiesToAdditional(contract.getProperties());
+
+        if (date != null) {
+            additional.put("ids:contractDate", date.toXMLFormat());
+        }
 
         final var desc = new ContractDesc();
         desc.setAdditional(additional);
         desc.setConsumer(consumer);
         desc.setProvider(provider);
-        desc.setRemoteId(id);
+        desc.setRemoteId(contractId);
 
         try {
             desc.setEnd(getDateOf(end.toXMLFormat()));
@@ -219,43 +308,46 @@ public final class MappingUtils {
             // Default values don't need to be set here.
         }
 
-        final var template = new ContractTemplate();
-        template.setDesc(desc);
-
-        return template;
+        return new ContractTemplate(desc, null);
     }
 
     /**
      * Build template from ids rule.
-     *
      * @param rule The ids rule.
      * @return The rule template.
+     * @throws IllegalArgumentException if the rule is null.
+     * @throws RdfBuilderException      if the rule cannot be converted to string.
      */
-    public static RuleTemplate fromIdsRule(final Rule rule) throws RdfBuilderException {
-        final var value = IdsUtils.toRdf(rule);
+    public static RuleTemplate fromIdsRule(final Rule rule) {
+        Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);
 
+        final var value = IdsUtils.toRdf(rule);
         final var desc = new ContractRuleDesc();
         desc.setRemoteId(rule.getId());
-        desc.setTitle(rule.getTitle().toString());
         desc.setValue(value);
 
-        final var template = new RuleTemplate();
-        template.setDesc(desc);
+        if (rule.getTitle() != null) {
+            desc.setTitle(rule.getTitle().toString());
+        }
 
-        return template;
+        return new RuleTemplate(desc);
     }
 
     /**
      * Map ids property map to additional map for the internal data model.
-     *
+     * If the argument is null an empty map will be returned.
      * @param properties A string object map.
-     * @return A string string map.
+     * @return A map containing all properties that could be extracted.
      */
     private static Map<String, String> propertiesToAdditional(
             final Map<String, Object> properties) {
-        final var additional = new HashMap<String, String>();
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            additional.put(entry.getKey(), (String) entry.getValue());
+        final Map<String, String> additional = new ConcurrentHashMap<>();
+        if (properties != null) {
+            for (final Map.Entry<String, Object> entry : properties.entrySet()) {
+                if (entry.getValue() != null) {
+                    additional.put(entry.getKey(), entry.getValue().toString());
+                }
+            }
         }
 
         return additional;
@@ -276,7 +368,7 @@ public final class MappingUtils {
      * @param endpoints The list of endpoints.
      * @return The endpoint documentation.
      */
-    public static Optional<URI> getFirstEndpointDocumentation(
+    private static Optional<URI> getFirstEndpointDocumentation(
             final List<? extends ConnectorEndpoint> endpoints) {
         Optional<URI> output = Optional.empty();
 
@@ -284,7 +376,7 @@ public final class MappingUtils {
             final var first = endpoints.get(0);
 
             if (first.getEndpointDocumentation() != null
-                    && !first.getEndpointDocumentation().isEmpty()) {
+                && !first.getEndpointDocumentation().isEmpty()) {
                 output = Optional.of(first.getEndpointDocumentation().get(0));
             }
         }
