@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -19,15 +13,16 @@ import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.AgreementController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -38,6 +33,16 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +72,8 @@ public class PolicyManagementService {
      * Service for artifacts.
      */
     private final @NonNull ArtifactService artifactService;
+
+    private final @NonNull RelationshipServices.AgreementArtifactLinker linker;
 
     /**
      * Read and validate ids contract agreement from ids response message.
@@ -148,10 +155,12 @@ public class PolicyManagementService {
      * Build contract agreement from contract request. Sign all rules as assigner.
      *
      * @param request The contract request.
+     * @param id ID to use when creating the contract agreement.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
-    public ContractAgreement buildContractAgreement(final ContractRequest request) throws ConstraintViolationException {
+    private ContractAgreement buildContractAgreement(final ContractRequest request, final URI id)
+            throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
         final var ruleList = PolicyUtils.extractRulesFromContract(request);
@@ -175,7 +184,7 @@ public class PolicyManagementService {
         }
 
         // Return contract request.
-        return new ContractAgreementBuilder()
+        return new ContractAgreementBuilder(id)
                 ._consumer_(request.getId())
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._contractStart_(IDSUtils.getGregorianNow())
@@ -233,24 +242,40 @@ public class PolicyManagementService {
     }
 
     /**
-     * Save contract agreement to database with relation to targeted artifacts (provider side).
+     * Builds a contract agreement from a contract request and saves this agreement to the database
+     * with relation to the targeted artifacts (provider side).
      *
-     * @param contractAgreement The ids contract agreement.
+     * @param contractRequest The ids contract request.
      * @param confirmed         Indicates whether both parties have agreed.
      * @param targetList        List of artifacts.
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
-    public URI saveContractAgreement(final ContractAgreement contractAgreement,
-                                     final boolean confirmed,
-                                     final List<URI> targetList) throws PersistenceException {
+    public ContractAgreement buildAndSaveContractAgreement(final ContractRequest contractRequest,
+                                             final boolean confirmed,
+                                             final List<URI> targetList)
+            throws PersistenceException {
+        UUID agreementUuid = null;
         try {
-            // Iterate of all targets to add the corresponding artifacts to the agreement.
-            final var artifactList = new ArrayList<Artifact>();
+            // Get base URL of application and path to agreements API.
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            String path = AgreementController.class.getAnnotation(RequestMapping.class).value()[0];
+
+            // Persist empty agreement to generate UUID
+            agreementUuid = agreementService.create(new AgreementDesc()).getId();
+
+            // Construct ID of contract agreement (URI) using base URL, path and the UUID.
+            URI agreementId = URI.create(baseUrl + path + "/" + agreementUuid);
+
+            // Build the contract agreement using the constructed ID
+            ContractAgreement contractAgreement =
+                    buildContractAgreement(contractRequest, agreementId);
+
+            // Iterate over all targets to get the UUIDs of the corresponding artifacts.
+            final var artifactList = new ArrayList<UUID>();
             for (final var target : targetList) {
                 final var uuid = EndpointUtils.getUUIDFromPath(target);
-                final var artifact = artifactService.get(uuid);
-                artifactList.add(artifact);
+                artifactList.add(uuid);
             }
 
             final var rdf = IdsUtils.toRdf(contractAgreement);
@@ -258,13 +283,23 @@ public class PolicyManagementService {
             final var desc = new AgreementDesc();
             desc.setConfirmed(confirmed);
             desc.setValue(rdf);
-            desc.setArtifacts(artifactList);
 
-            // Save agreement to return its id.
-            final var agreement = agreementService.create(desc);
-            return EndpointUtils.getSelfLink(agreement);
+            // Update agreement in database using its previously set ID.
+            agreementService.update(EndpointUtils.getUUIDFromPath(contractAgreement.getId()), desc);
+
+            // Add artifacts to agreement using the linker.
+            linker.add(EndpointUtils.getUUIDFromPath(contractAgreement.getId()),
+                    new HashSet<>(artifactList));
+
+            return contractAgreement;
         } catch (Exception e) {
             LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
+
+            // if agreement cannot be saved, remove empty agreement from database
+            if (agreementUuid != null) {
+                agreementService.delete(agreementUuid);
+            }
+
             throw new PersistenceException("Could not store contract agreement.", e);
         }
     }
