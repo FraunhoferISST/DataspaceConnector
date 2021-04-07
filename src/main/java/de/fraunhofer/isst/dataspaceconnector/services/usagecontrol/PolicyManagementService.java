@@ -278,13 +278,11 @@ public class PolicyManagementService {
             idsRuleList.add(idsRule);
         }
 
-        try { // TODO What about duties? What about .equals?
-            PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules);
-        } catch (ContractException exception) {
-            LOGGER.debug("Rules do not match. [exception=({}), offer=({}), request=({})]",
-                    exception.getMessage(), idsRuleList, requestRules);
+        if (PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+            LOGGER.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList, requestRules);
             return false;
         }
+
         return true;
     }
 }

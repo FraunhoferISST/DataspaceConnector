@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
 
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
@@ -20,6 +20,7 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
@@ -364,55 +365,54 @@ public final class PolicyUtils {
             throw new ContractException(ErrorMessages.EMPTY_CONTRACT.toString());
         }
 
-        final var oldPermissions = oldContract.getPermission();
-        final var newPermissions = newContract.getPermission();
-        if (oldPermissions != null && newPermissions != null) {
-            compareDuties(oldPermissions, newPermissions);
-            compareRules(oldPermissions, oldPermissions);
+        if (!comparePermissions(oldContract.getPermission(), newContract.getPermission())) {
+            throw new ContractException("Different permissions");
         }
 
-        final var oldProhibitions = oldContract.getProhibition();
-        final var newProhibitions = newContract.getProhibition();
-        if (oldProhibitions != null && newProhibitions != null) {
-            compareRules(oldProhibitions, newProhibitions);
+        if (!compareProhibitions(oldContract.getProhibition(), newContract.getProhibition())) {
+            throw new ContractException("Different prohibitions.");
         }
 
-        final var oldObligations = oldContract.getObligation();
-        final var newObligations = newContract.getObligation();
-        if (oldObligations != null && newObligations != null) {
-            compareRules(oldObligations, newObligations);
+        if (!compareObligations(oldContract.getObligation(), newContract.getObligation())) {
+            throw new ContractException("Different obligations.");
         }
+    }
+
+    /**
+     * Compare two contract agreements to each other.
+     * @param consumer The consumer agreement.
+     * @param provider The provider agreement.
+     * @throws ContractException If both objects do not match.
+     */
+    public static boolean compareContractAgreements(final ContractAgreement consumer,
+                                                    final ContractAgreement provider) {
+        return consumer.getId().equals(provider.getId())
+               && comparePermissions(consumer.getPermission(), provider.getPermission())
+               && compareProhibitions(consumer.getProhibition(), provider.getProhibition())
+               && compareObligations(consumer.getObligation(), provider.getObligation());
+    }
+
+    private static boolean comparePermissions(final ArrayList<? extends Permission> lList, final ArrayList<? extends Permission> rList) {
+        return compareDuties(lList, rList) && compareRules(lList, rList);
+    }
+
+    private static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList, final ArrayList<? extends Prohibition> rList) {
+        return compareRules(lList, rList);
+    }
+
+    private static boolean compareObligations(final ArrayList<? extends Duty> lList, final ArrayList<? extends Duty> rList) {
+        return compareRules(lList, rList);
     }
 
     /**
      * Compares the content of two permissions lists.
      *
-     * @param oldRules List of rules from original contract.
-     * @param newRules List of rules from the contract that should be compared.
-     * @throws ContractException If a mismatch has been detected.
+     * @param lList List of rules from original contract.
+     * @param rList List of rules from the contract that should be compared.
      */
-    public static void compareDuties(final ArrayList<? extends Permission> oldRules,
-                                     final ArrayList<? extends Permission> newRules) throws ContractException {
-        final var oldSize = oldRules.size();
-        final var newSize = newRules.size();
-
-        if (oldSize != newSize) {
-            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldRules, newRules);
-            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-        }
-
-        for (int i = 0; i < oldSize; i++) {
-            final var oldRule = oldRules.get(i);
-            final var newRule = newRules.get(i);
-
-            final var oldPostDuties = oldRule.getPostDuty();
-            final var newPostDuties = newRule.getPostDuty();
-            compareRules(oldPostDuties, newPostDuties);
-
-            final var oldPreDuties = oldRule.getPreDuty();
-            final var newPreDuties = newRule.getPreDuty();
-            compareRules(oldPreDuties, newPreDuties);
-        }
+    private static boolean compareDuties(final ArrayList<? extends Permission> lList,
+                                        final ArrayList<? extends Permission> rList) {
+        return compareList(lList, rList, PolicyUtils::compareDuties);
     }
 
     /**
@@ -420,107 +420,107 @@ public final class PolicyUtils {
      *
      * @param oldRules List of rules from original contract.
      * @param newRules List of rules from the contract that should be compared.
-     * @throws ContractException If a mismatch has been detected.
+     * @return true if both rules are the same.
      */
-    public static void compareRules(final ArrayList<? extends Rule> oldRules,
-                                    final ArrayList<? extends Rule> newRules) throws ContractException {
-        if(oldRules == null && newRules == null)
-            return;
-
-        final var oldSize = oldRules.size();
-        final var newSize = newRules.size();
-
-        if (oldSize != newSize) {
-            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldRules, newRules);
-            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-        }
-
-        for (int i = 0; i < oldSize; i++) {
-            final var oldRule = oldRules.get(i);
-            final var newRule = newRules.get(i);
-
-            final var oldConstraints = oldRule.getConstraint();
-            final var newConstraints = newRule.getConstraint();
-            compareConstraints(oldConstraints, newConstraints);
-
-            final var oldAction = oldRule.getAction();
-            final var newAction = newRule.getAction();
-            if(compareActions(oldAction, newAction)) {
-                LOGGER.debug("Action mismatch. [oldActions=({}), newActions=({})]", oldAction, newAction);
-                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-            }
-        }
+    public static boolean compareRules(final ArrayList<? extends Rule> oldRules,
+                                       final ArrayList<? extends Rule> newRules) {
+        return compareList(oldRules, newRules, PolicyUtils::compareRule);
     }
 
     /**
      * Compares the content of two constraint lists.
      *
-     * @param oldConstraints List of rules from original contract.
-     * @param newConstraints List of rules from the contract that should be compared.
+     * @param lList List of rules from original contract.
+     * @param rList List of rules from the contract that should be compared.
      */
-    private static void compareConstraints(final ArrayList<? extends AbstractConstraint> oldConstraints,
-                                           final ArrayList<? extends AbstractConstraint> newConstraints) {
-        if(oldConstraints == null && newConstraints == null)
-            return;
-
-        final var oldSize = oldConstraints.size();
-        final var newSize = newConstraints.size();
-
-        if (oldSize != newSize) {
-            LOGGER.debug("Size mismatch. [oldConstraints=({}), newConstraints=({})]",
-                    oldConstraints, newConstraints);
-            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-        }
-
-        for (int j = 0; j < oldSize; j++) {
-            final var oldConstraint = oldConstraints.get(j);
-            final var newConstraint = newConstraints.get(j);
-            final var oldConstraintAsRdf = oldConstraint.toRdf();
-            final var newConstraintAsRdf = newConstraint.toRdf();
-            if (!oldConstraintAsRdf.equals(newConstraintAsRdf)) {
-                LOGGER.debug("Invalid constraint. [oldConstraint=({}), newConstraint=({})]",
-                        oldConstraint, newConstraint);
-                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-            }
-        }
+    private static boolean compareConstraints(
+            final ArrayList<? extends AbstractConstraint> lList,
+            final ArrayList<? extends AbstractConstraint> rList) {
+        return compareList(lList, rList, PolicyUtils::compareConstrain);
     }
 
     /**
      * Compares the content of two actions lists.
      *
-     * @param oldActions List of rules from original contract.
-     * @param newActions List of rules from the contract that should be compared.
+     * @param lList List of rules from original contract.
+     * @param rList List of rules from the contract that should be compared.
      * @return true if the actions are the same.
      */
-    private static boolean compareActions(final ArrayList<? extends Action> oldActions,
-            final ArrayList<? extends Action> newActions) {
+    private static boolean compareActions(final ArrayList<? extends Action> lList,
+            final ArrayList<? extends Action> rList) {
+        return compareList(lList, rList, PolicyUtils::compareAction);
+    }
+
+    private static <T extends Permission> boolean compareDuties(final T lObj, final T rObj) {
+        return compareRules(lObj.getPreDuty(), rObj.getPreDuty())
+               && compareRules(lObj.getPostDuty(), rObj.getPostDuty());
+    }
+
+    private static <T extends Rule> boolean compareRule(final T lObj, final T rObj) {
+        return compareActions(lObj.getAction(), rObj.getAction())
+               && compareConstraints(lObj.getConstraint(), rObj.getConstraint());
+    }
+
+    private static <T extends AbstractConstraint> boolean compareConstrain(final T lObj, final T rObj) {
+        return lObj.toRdf().equals(rObj.toRdf());
+    }
+
+    private static <T extends Action> boolean compareAction(final T lObj, final T rObj) {
+        return lObj.equals(rObj);
+    }
+
+    private static <T> boolean compareList(final List<? extends T> lList, final List<? extends T> rList,
+                                           final BiFunction<T, T, Boolean> compare) {
         var isSame = true;
 
-        if (oldActions == null && newActions != null) {
+        if (isOnlyOneNull(lList, rList)) {
             isSame = false;
-        } else if (oldActions != null && newActions == null) {
-            isSame = false;
-        } else if (oldActions != null && newActions != null) {
-            final var oldSize = oldActions.parallelStream().collect(Collectors.toSet());
-            final var newSize = newActions.parallelStream().collect(Collectors.toSet());
-            isSame = oldSize.equals(newSize);
+        } else if (lList != null /* && rList != null*/) {
+            final var lSet = makeUnique(lList, compare);
+            final var rSet = makeUnique(rList, compare);
+
+            if (lSet.size() == rSet.size()) {
+                for (final var lObj : lSet) {
+                    var found = false;
+                    for (final var rObj : rSet) {
+                        if (compare.apply(lObj, rObj)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        // At least one element is different
+                        isSame = false;
+                        break;
+                    }
+                }
+            } else {
+                // Two unique sets with different length must have different elements
+                isSame = false;
+            }
         }
 
         return isSame;
     }
 
-    /**
-     * Compare two contract agreements to each other.
-     *
-     * @param consumer The consumer agreement.
-     * @param provider The provider agreement.
-     * @throws ContractException If both objects do not match.
-     */
-    public static void compareContractAgreements(final ContractAgreement consumer,
-                                                 final ContractAgreement provider) throws ContractException {
-        if (!consumer.equals(provider)) {
-            LOGGER.debug("Invalid agreement. [consumer=({}), provider=({})]", consumer, provider);
-            throw new ContractException("Contract Agreement does not match the cached one.");
+    private static <T> List<? extends T> makeUnique(final List<? extends T> list,
+                                                    final BiFunction<T, T, Boolean> compare) {
+        final var output = new ArrayList<>(list);
+        for (int x = 0; x < output.size(); x++) {
+            final var obj = output.get(x);
+            for (int y = x + 1; y < output.size(); y++) {
+                if (compare.apply(obj, output.get(y))) {
+                    output.remove(y);
+                    --y;
+                }
+            }
         }
+
+        return output;
+    }
+
+    private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
+        return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
     }
 }

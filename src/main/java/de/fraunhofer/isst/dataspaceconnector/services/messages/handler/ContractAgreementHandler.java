@@ -138,7 +138,10 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                     .getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
-            PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement);
+            if(!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
+                return exceptionService.handleContractException(new ContractException("Not the same contract."), payloadAsString,
+                                                                issuerConnector, messageId);
+            }
 
             // Update contract agreement to confirmed.
             updateService.updateAgreementToConfirmed(storedAgreement);
