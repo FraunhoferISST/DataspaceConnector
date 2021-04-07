@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -41,6 +42,7 @@ public class Agreement extends AbstractEntity {
     /**
      * The definition of the contract.
      **/
+    @Column(length = 2048)
     private String value;
 
     /**
