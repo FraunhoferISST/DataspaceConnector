@@ -81,7 +81,7 @@ public class MainController {
     public ResponseEntity<Object> getPrivateSelfDescription() {
         try {
             final var connector = connectorService.getConnectorWithOfferedResources();
-            return new ResponseEntity<>(connector, HttpStatus.OK);
+            return new ResponseEntity<>(connector.toRdf(), HttpStatus.OK);
         } catch (Exception exception) {
             // Connector could not be loaded or deserialized.
             return ControllerUtils.respondConnectorNotLoaded(exception);
