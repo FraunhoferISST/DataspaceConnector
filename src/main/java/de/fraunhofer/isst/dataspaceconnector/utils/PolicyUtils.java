@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
-import de.fraunhofer.iais.eis.Constraint;
+import de.fraunhofer.iais.eis.ConstraintImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Duty;
@@ -138,7 +139,8 @@ public final class PolicyUtils {
     public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
             final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final URI issuerConnector) {
-        return contracts.parallelStream().filter(x -> x.getConsumer().equals(issuerConnector)).collect(Collectors.toList());
+        return contracts;
+        // return contracts.parallelStream().filter(x -> x.getConsumer().equals(issuerConnector)).collect(Collectors.toList());
     }
 
     /**
@@ -210,7 +212,7 @@ public final class PolicyUtils {
      */
     public static String getEndpoint(final Rule rule) throws NullPointerException {
         final var constraint = rule.getConstraint().get(0);
-        return constraint.getRightOperand().getValue();
+        return ((ConstraintImpl) constraint).getRightOperand().getValue();
     }
 
     /**
@@ -221,8 +223,8 @@ public final class PolicyUtils {
      */
     public static Integer getMaxAccess(final Rule rule) throws NumberFormatException {
         final var constraint = rule.getConstraint().get(0);
-        final var value = constraint.getRightOperand().getValue();
-        final var operator = constraint.getOperator();
+        final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
+        final var operator = ((ConstraintImpl) constraint).getOperator();
 
         int number;
         try {
@@ -253,13 +255,13 @@ public final class PolicyUtils {
         final var interval = new TimeInterval();
 
         for (var constraint : rule.getConstraint()) {
-            final var operator = constraint.getOperator();
+            final var operator = ((ConstraintImpl) constraint).getOperator();
             if (operator == BinaryOperator.AFTER) {
-                final var value = constraint.getRightOperand().getValue();
+                final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
                 final var start = MappingUtils.getDateOf(value);
                 interval.setStart(start);
             } else if (operator == BinaryOperator.BEFORE) {
-                final var value = constraint.getRightOperand().getValue();
+                final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
                 final var end = MappingUtils.getDateOf(value);
                 interval.setEnd(end);
             }
@@ -275,7 +277,7 @@ public final class PolicyUtils {
      */
     public static URI getPipEndpoint(final Rule rule) {
         final var constraint = rule.getConstraint().get(0);
-        return constraint.getPipEndpoint();
+        return ((ConstraintImpl) constraint).getPipEndpoint();
     }
 
     /**
@@ -287,7 +289,7 @@ public final class PolicyUtils {
      */
     public static ZonedDateTime getDate(final Rule rule) throws ParseException {
         final var constraint = rule.getConstraint().get(0);
-        final var date = constraint.getRightOperand().getValue();
+        final var date = ((ConstraintImpl) constraint).getRightOperand().getValue();
 
         return MappingUtils.getDateOf(date);
     }
@@ -301,10 +303,10 @@ public final class PolicyUtils {
      */
     public static java.time.Duration getDuration( final Rule rule) throws DatatypeConfigurationException {
         final var constraint = rule.getConstraint().get(0);
-        final var type = constraint.getRightOperand().getType();
+        final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
         if (type.equals("xsd:duration")) {
-            final var duration = constraint.getRightOperand().getValue();
+            final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
             return java.time.Duration.parse(duration);
         } else {
             return null;
@@ -422,6 +424,9 @@ public final class PolicyUtils {
      */
     public static void compareRules(final ArrayList<? extends Rule> oldRules,
                                     final ArrayList<? extends Rule> newRules) throws ContractException {
+        if(oldRules == null && newRules == null)
+            return;
+
         final var oldSize = oldRules.size();
         final var newSize = newRules.size();
 
@@ -440,7 +445,10 @@ public final class PolicyUtils {
 
             final var oldAction = oldRule.getAction();
             final var newAction = newRule.getAction();
-            compareActions(oldAction, newAction);
+            if(compareActions(oldAction, newAction)) {
+                LOGGER.debug("Action mismatch. [oldActions=({}), newActions=({})]", oldAction, newAction);
+                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+            }
         }
     }
 
@@ -449,10 +457,9 @@ public final class PolicyUtils {
      *
      * @param oldConstraints List of rules from original contract.
      * @param newConstraints List of rules from the contract that should be compared.
-     * @throws ContractException If a mismatch has been detected.
      */
-    private static void compareConstraints(final ArrayList<? extends Constraint> oldConstraints,
-                                           final ArrayList<? extends Constraint> newConstraints) throws ContractException {
+    private static void compareConstraints(final ArrayList<? extends AbstractConstraint> oldConstraints,
+                                           final ArrayList<? extends AbstractConstraint> newConstraints) {
         if(oldConstraints == null && newConstraints == null)
             return;
 
@@ -483,30 +490,23 @@ public final class PolicyUtils {
      *
      * @param oldActions List of rules from original contract.
      * @param newActions List of rules from the contract that should be compared.
-     * @throws ContractException If a mismatch has been detected.
+     * @return true if the actions are the same.
      */
-    private static void compareActions(final ArrayList<? extends Action> oldActions,
-                                       final ArrayList<? extends Action> newActions) throws ContractException {
-        if(oldActions == null && newActions == null)
-            return;
+    private static boolean compareActions(final ArrayList<? extends Action> oldActions,
+            final ArrayList<? extends Action> newActions) {
+        var isSame = true;
 
-        final var oldSize = oldActions.size();
-        final var newSize = newActions.size();
-
-        if (oldSize != newSize) {
-            LOGGER.debug("Size mismatch. [oldRules=({}), newRules=({})]", oldActions, newActions);
-            throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
+        if (oldActions == null && newActions != null) {
+            isSame = false;
+        } else if (oldActions != null && newActions == null) {
+            isSame = false;
+        } else if (oldActions != null && newActions != null) {
+            final var oldSize = oldActions.parallelStream().collect(Collectors.toSet());
+            final var newSize = newActions.parallelStream().collect(Collectors.toSet());
+            isSame = oldSize.equals(newSize);
         }
 
-        for (int j = 0; j < oldSize; j++) {
-            final var oldAction = oldActions.get(j).toRdf();
-            final var newAction = newActions.get(j).toRdf();
-            if (!oldAction.equals(newAction)) {
-                LOGGER.debug("Invalid action. [oldAction=({}), newAction=({})]", oldAction,
-                        newAction);
-                throw new ContractException(ErrorMessages.CONTRACT_MISMATCH.toString());
-            }
-        }
+        return isSame;
     }
 
     /**
