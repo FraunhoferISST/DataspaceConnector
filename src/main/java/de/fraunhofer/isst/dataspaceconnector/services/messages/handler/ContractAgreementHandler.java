@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -9,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -35,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This @{@link ContractAgreementHandler} handles all incoming messages that have a
@@ -173,7 +174,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
             final var desc = new LogMessageDesc();
             desc.setRecipient(recipient);
             logService.sendMessage(desc, rdf);
-        } catch (MessageBuilderException | RdfBuilderException exception) {
+        } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
             LOGGER.warn("Failed to send contract agreement to clearing house. [exception=({})]",
                     exception.getMessage());
         }
