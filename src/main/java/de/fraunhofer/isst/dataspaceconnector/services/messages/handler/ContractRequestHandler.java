@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -41,6 +35,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -250,10 +250,10 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         ContractAgreement agreement = null;
         URI agreementId;
         try {
-            // Turn the accepted contract request into a contract agreement.
-            agreement = managementService.buildContractAgreement(request);
-            // Save agreement to database.
-            agreementId = managementService.saveContractAgreement(agreement, false, targetList);
+            // Turn the accepted contract request into a contract agreement and persist it.
+            agreement = managementService
+                    .buildAndSaveContractAgreement(request, false, targetList);
+            agreementId = agreement.getId();
         } catch (ConstraintViolationException | PersistenceException exception) {
             return exceptionService.handleAgreementPersistenceException(exception, agreement,
                     issuerConnector, correlationMessage);
