@@ -130,7 +130,17 @@
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
+					<artifactId>java</artifactId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
+			<artifactId>java</artifactId>
+			<version>4.0.4</version>
 		</dependency>
 
 		<dependency>
@@ -331,6 +341,11 @@
 			<name>isst-public</name>
 			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
 		</repository>
+		<repository>
+			<id>snapshots</id>
+			<name>maven-snapshots</name>
+			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -520,7 +535,7 @@
 										<limit>
 											<counter>COMPLEXITY</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.60</minimum>
+											<minimum>0.40</minimum>
 										</limit>
 									</limits>
 								</rule>

@@ -6,6 +6,7 @@ import java.time.ZonedDateTime;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConstraintImpl;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
@@ -52,8 +53,8 @@ public class PolicyInformationService {
                         detectedPattern = PolicyPattern.USAGE_DURING_INTERVAL;
                     }
                 } else {
-                    final var leftOperand = constraints.get(0).getLeftOperand();
-                    final var operator = constraints.get(0).getOperator();
+                    final var leftOperand = ((ConstraintImpl) constraints.get(0)).getLeftOperand();
+                    final var operator = ((ConstraintImpl) constraints.get(0)).getOperator();
                     if (leftOperand == LeftOperand.COUNT) {
                         detectedPattern = PolicyPattern.N_TIMES_USAGE;
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
@@ -99,7 +100,7 @@ public class PolicyInformationService {
      * @param target The target id.
      * @return The artifact's creation date.
      */
-    public ZonedDateTime getCreationDate( final URI target) {
+    public ZonedDateTime getCreationDate(final URI target) {
         final var resourceId = EndpointUtils.getUUIDFromPath(target);
         final var artifact = artifactService.get(resourceId);
 

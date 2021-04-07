@@ -14,9 +14,7 @@ import java.util.GregorianCalendar;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
-import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
-import de.fraunhofer.iais.eis.ConstraintBuilder;
 import de.fraunhofer.iais.eis.ContentType;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
@@ -27,7 +25,6 @@ import de.fraunhofer.iais.eis.Frequency;
 import de.fraunhofer.iais.eis.GeoPointBuilder;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.Representation;
@@ -36,7 +33,6 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.TemporalEntityBuilder;
-import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
@@ -80,7 +76,6 @@ public class MappingUtilsTest {
 
         final var additional = result.getDesc().getAdditional();
         assertEquals(resource.getAccrualPeriodicity().toRdf(), additional.get("ids:accrualPeriodicity"));
-        assertEquals(resource.getAssetRefinement().toRdf(), additional.get("ids:assetRefinement"));
         assertEquals(resource.getContentPart().toString(), additional.get("ids:contentPart"));
         assertEquals(resource.getContentStandard().toString(), additional.get("ids:contentStandard"));
         assertEquals(resource.getContentType().toRdf(), additional.get("ids:contentType"));
@@ -272,11 +267,6 @@ public class MappingUtilsTest {
                 ._title_(Util.asList(new TypedLiteral("title", "EN")))
                 ._version_("1.0")
                 ._accrualPeriodicity_(Frequency.DAILY)
-                ._assetRefinement_(new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.LTEQ)
-                        ._rightOperand_(new RdfResource("3"))
-                        .build())
                 ._contentPart_(Util.asList(new ResourceBuilder().build()))
                 ._contentStandard_(URI.create("http://standard.com"))
                 ._contentType_(ContentType.SCHEMA_DEFINITION)
@@ -320,11 +310,6 @@ public class MappingUtilsTest {
                 ._title_(Util.asList(new TypedLiteral("title", "EN")))
                 ._version_("1.0")
                 ._accrualPeriodicity_(Frequency.DAILY)
-                ._assetRefinement_(new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.LTEQ)
-                        ._rightOperand_(new RdfResource("3"))
-                        .build())
                 ._contentPart_(Util.asList(new ResourceBuilder().build()))
                 ._contentStandard_(URI.create("http://standard.com"))
                 ._contentType_(ContentType.SCHEMA_DEFINITION)
