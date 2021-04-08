@@ -142,4 +142,13 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     public DeserializationService getDeserializer() {
         return deserializationService;
     }
+
+    /**
+     * Getter for the logger so that it can be used by subclasses.
+     *
+     * @return The logger
+     */
+    protected Logger getLogger() {
+        return LOGGER;
+    }
 }

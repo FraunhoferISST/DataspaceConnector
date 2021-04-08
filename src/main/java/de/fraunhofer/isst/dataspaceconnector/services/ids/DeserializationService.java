@@ -6,6 +6,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
+import de.fraunhofer.iais.eis.NotificationMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
@@ -85,7 +86,8 @@ public class DeserializationService {
     }
 
     /**
-     * Returns the ids header of a http multipart response.
+     * Returns the ids header of an http multipart response if the header is of type
+     * ResponseMessage.
      *
      * @param response A ids response message.
      * @return The response message.
@@ -94,6 +96,23 @@ public class DeserializationService {
     public ResponseMessage getResponseMessage(final String response) throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
+        } catch (IOException e) {
+            LOGGER.warn("Could not deserialize response message. [exception=({})]", e.getMessage());
+            throw new IllegalArgumentException("Could not deserialize response message.", e);
+        }
+    }
+
+    /**
+     * Returns the ids header of an http multipart response if the header is of type
+     * NotificationMessage.
+     *
+     * @param response A ids response message.
+     * @return The notification message.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public NotificationMessage getNotificationMessage(final String response) throws IllegalArgumentException {
+        try {
+            return serializerProvider.getSerializer().deserialize(response, NotificationMessage.class);
         } catch (IOException e) {
             LOGGER.warn("Could not deserialize response message. [exception=({})]", e.getMessage());
             throw new IllegalArgumentException("Could not deserialize response message.", e);
