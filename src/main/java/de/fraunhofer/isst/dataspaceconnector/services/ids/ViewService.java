@@ -29,10 +29,16 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
@@ -40,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
@@ -62,12 +69,34 @@ public final class ViewService {
      * @return The ids catalog.
      */
     public ResourceCatalog create(final Catalog catalog) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return create(catalog, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct ResourceCatalog: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids catalog from database contract and its children using the specified base URL for
+     * creating the IDs, as scheme, host and port are missing when no request context is available.
+     *
+     * @param catalog The catalog.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids catalog.
+     */
+    private ResourceCatalog create(final Catalog catalog, final String baseUrl) {
         // Build children.
         final var resources = CompletableFuture.supplyAsync(
-                () -> batchCreateResource(catalog.getOfferedResources()));
+                () -> batchCreateResource(catalog.getOfferedResources(), baseUrl));
 
         try {
-            final var uri = EndpointUtils.getSelfLink(catalog);
+
+            final var uri = getAbsoluteSelfLink(catalog, baseUrl);
+
             final var idsCatalog = new ResourceCatalogBuilder(uri)
                     ._offeredResource_((ArrayList<? extends Resource>) resources.get())
                     .build();
@@ -89,11 +118,13 @@ public final class ViewService {
      * Create list of ids resources.
      *
      * @param resources List of database resources.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids resources.
      */
-    public List<Resource> batchCreateResource(final Collection<OfferedResource> resources) {
+    public List<Resource> batchCreateResource(final Collection<OfferedResource> resources,
+                                              final String baseUrl) {
         return resources.parallelStream()
-                .map(this::create)
+                .map(r -> this.create(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -105,11 +136,34 @@ public final class ViewService {
      * @return The ids resource.
      */
     public Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return create(resource, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Resource: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids resource from database resource and its children using the specified base URL for
+     * creating the IDs, as scheme, host and port are missing when no request context is available.
+     *
+     * TODO Extend data model.
+     *
+     * @param resource The resource.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids resource.
+     */
+    private Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource,
+                            final String baseUrl) {
         // Build children.
         final var contracts = CompletableFuture.supplyAsync(
-                () -> batchCreateContract(resource.getContracts()));
+                () -> batchCreateContract(resource.getContracts(), baseUrl));
         final var representations = CompletableFuture.supplyAsync(
-                () -> batchCreateRepresentation(resource.getRepresentations()));
+                () -> batchCreateRepresentation(resource.getRepresentations(), baseUrl));
 
         try {
             // Prepare resource attributes.
@@ -127,7 +181,8 @@ public final class ViewService {
             final var version = resource.getVersion();
             final var endpointDocs = resource.getEndpointDocumentation();
 
-            final var uri = EndpointUtils.getSelfLink((OfferedResource) resource);
+            final var uri = getAbsoluteSelfLink((OfferedResource) resource, baseUrl);
+
             final var endpoint = new ConnectorEndpointBuilder()
                     ._accessURL_(uri)
                     ._endpointDocumentation_(Util.asList(endpointDocs))
@@ -175,13 +230,14 @@ public final class ViewService {
      * Create list of ids representations.
      *
      * @param representations List of database representations.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids representations.
      */
     public List<Representation> batchCreateRepresentation(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Representation>
-                    representations) {
+                    representations, final String baseUrl) {
         return representations.parallelStream()
-                .map(this::create)
+                .map(r -> this.create(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -192,20 +248,46 @@ public final class ViewService {
      * @param representation The representation.
      * @return The ids representation.
      */
-    public Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation representation) {
+    public Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation
+                                         representation) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return create(representation, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Representation: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids representation from database representation and its children using the specified
+     * base URL for creating the IDs, as scheme, host and port are missing when no request context
+     * is available.
+     *
+     * @param representation The representation.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids representation.
+     */
+    private Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation
+                                          representation, final String baseUrl) {
         // Build children.
         final var artifacts = CompletableFuture.supplyAsync(
-                () -> batchCreateArtifact(representation.getArtifacts()));
+                () -> batchCreateArtifact(representation.getArtifacts(), baseUrl));
 
         try {
             // Prepare representation attributes.
-            final var modified = IdsUtils.getGregorianOf(representation.getModificationDate());
-            final var created = IdsUtils.getGregorianOf(representation.getCreationDate());
+            final var modified = IdsUtils.getGregorianOf(representation
+                    .getModificationDate());
+            final var created = IdsUtils.getGregorianOf(representation
+                    .getCreationDate());
             final var language = IdsUtils.getLanguage(representation.getLanguage());
             final var mediaType = representation.getMediaType();
             final var standard = representation.getStandard();
 
-            final var uri = EndpointUtils.getSelfLink(representation);
+            final var uri = getAbsoluteSelfLink(representation, baseUrl);
+
             final var idsRepresentation = new RepresentationBuilder(uri)
                     ._created_(created)
                     ._instance_((ArrayList<? extends Artifact>) artifacts.get())
@@ -232,12 +314,14 @@ public final class ViewService {
      * Create list of ids artifacts.
      *
      * @param artifacts List of database artifacts.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids artifacts.
      */
     public List<Artifact> batchCreateArtifact(
-            final Collection<de.fraunhofer.isst.dataspaceconnector.model.Artifact> artifacts) {
+            final Collection<de.fraunhofer.isst.dataspaceconnector.model.Artifact> artifacts,
+            final String baseUrl) {
         return artifacts.parallelStream()
-                .map(this::create)
+                .map(a -> this.create(a, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -250,11 +334,34 @@ public final class ViewService {
      */
     public Artifact create(final de.fraunhofer.isst.dataspaceconnector.model.Artifact artifact) {
         try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return create(artifact, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Artifact: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids artifact from database artifact and its children using the specified base URL for
+     * creating the IDs, as scheme, host and port are missing when no request context is available.
+     *
+     * @param artifact The artifact.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids artifact.
+     */
+    private Artifact create(final de.fraunhofer.isst.dataspaceconnector.model.Artifact artifact,
+                            final String baseUrl) {
+        try {
             // Prepare artifact attributes.
-            final var created = IdsUtils.getGregorianOf(artifact.getCreationDate());
+            final var created = IdsUtils.getGregorianOf(artifact
+                    .getCreationDate());
             final var title = artifact.getTitle();
 
-            final var uri = EndpointUtils.getSelfLink(artifact);
+            final var uri = getAbsoluteSelfLink(artifact, baseUrl);
+
             final var idsArtifact = new ArtifactBuilder(uri)
                     ._byteSize_(BigInteger.ONE) // TODO get the real file size (how?)
                     ._creationDate_(created)
@@ -278,12 +385,14 @@ public final class ViewService {
      * Create list of ids contract offers.
      *
      * @param contracts List of database contract offers.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids contract offers.
      */
     public List<ContractOffer> batchCreateContract(
-            final Collection<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts) {
+            final Collection<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
+            final String baseUrl) {
         return contracts.parallelStream()
-                .map(this::create)
+                .map(c -> this.create(c, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -292,17 +401,39 @@ public final class ViewService {
      * Build ids contract from database contract and its children.
      *
      * @param contract The contract offer.
-     * @return THe contract offer.
+     * @return The contract offer.
      */
-    public ContractOffer create(final de.fraunhofer.isst.dataspaceconnector.model.Contract contract) {
+    public ContractOffer create(final de.fraunhofer.isst.dataspaceconnector.model.Contract
+                                        contract) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return create(contract, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct ContractOffer: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids contract from database contract and its children using the specified base URL for
+     * creating the IDs, as scheme, host and port are missing when no request context is available.
+     *
+     * @param contract The contract offer.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The contract offer.
+     */
+    private ContractOffer create(final de.fraunhofer.isst.dataspaceconnector.model.Contract
+                                         contract, final String baseUrl) {
         // Build children.
         final var rules = contract.getRules();
         final var permissions =
-                CompletableFuture.supplyAsync(() -> batchCreatePermission(rules));
+                CompletableFuture.supplyAsync(() -> batchCreatePermission(rules, baseUrl));
         final var prohibitions =
-                CompletableFuture.supplyAsync(() -> batchCreateProhibition(rules));
+                CompletableFuture.supplyAsync(() -> batchCreateProhibition(rules, baseUrl));
         final var obligations =
-                CompletableFuture.supplyAsync(() -> batchCreateObligation(rules));
+                CompletableFuture.supplyAsync(() -> batchCreateObligation(rules, baseUrl));
 
         try {
             // Prepare contract attributes.
@@ -311,7 +442,8 @@ public final class ViewService {
             final var consumer = contract.getConsumer();
             final var provider = contract.getProvider();
 
-            final var uri = EndpointUtils.getSelfLink(contract);
+            final var uri = getAbsoluteSelfLink(contract, baseUrl);
+
             final var idsContract = new ContractOfferBuilder(uri)
                     ._permission_((ArrayList<? extends Permission>) permissions.get())
                     ._prohibition_((ArrayList<? extends Prohibition>) prohibitions.get())
@@ -340,11 +472,12 @@ public final class ViewService {
      * Create list of ids obligations.
      *
      * @param rules List of database rules.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids obligations.
      */
-    private List<Duty> batchCreateObligation(final List<ContractRule> rules) {
+    private List<Duty> batchCreateObligation(final List<ContractRule> rules, final String baseUrl) {
         return rules.parallelStream()
-                .map(this::createObligation)
+                .map(r -> this.createObligation(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -353,11 +486,13 @@ public final class ViewService {
      * Create list of ids prohibitions.
      *
      * @param rules List of database rules.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids prohibitions.
      */
-    private List<Prohibition> batchCreateProhibition(final List<ContractRule> rules) {
+    private List<Prohibition> batchCreateProhibition(final List<ContractRule> rules,
+                                                     final String baseUrl) {
         return rules.parallelStream()
-                .map(this::createProhibition)
+                .map(r -> this.createProhibition(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -366,11 +501,13 @@ public final class ViewService {
      * Create list of ids permissions.
      *
      * @param rules List of database rules.
+     * @param baseUrl The application's base URL to use for the self links.
      * @return List of ids permissions.
      */
-    private List<Permission> batchCreatePermission(final List<ContractRule> rules) {
+    private List<Permission> batchCreatePermission(final List<ContractRule> rules,
+                                                   final String baseUrl) {
         return rules.parallelStream()
-                .map(this::createPermission)
+                .map(r -> this.createPermission(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -381,12 +518,34 @@ public final class ViewService {
      * @param rule The rule.
      * @return The ids obligation.
      */
-    private Duty createObligation(final ContractRule rule) {
+    public Duty createObligation(final ContractRule rule) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return createObligation(rule, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Duty: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids obligation from database rule using the specified base URL for creating the IDs,
+     * as scheme, host and port are missing when no request context is available.
+     *
+     * @param rule The rule.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids obligation.
+     */
+    private Duty createObligation(final ContractRule rule, final String baseUrl) {
         try {
             final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Duty) {
                 final var obligation = (Duty) idsRule;
-                final var uri = EndpointUtils.getSelfLink(rule);
+
+                final var uri = getAbsoluteSelfLink(rule, baseUrl);
+
                 return new DutyBuilder(uri)
                         ._action_(obligation.getAction())
                         ._assignee_(obligation.getAssignee())
@@ -410,12 +569,34 @@ public final class ViewService {
      * @param rule The rule.
      * @return The ids prohibition.
      */
-    private Prohibition createProhibition(final ContractRule rule) {
+    public Prohibition createProhibition(final ContractRule rule) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return createProhibition(rule, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Prohibition: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids prohibition from database rule using the specified base URL for creating the IDs,
+     * as scheme, host and port are missing when no request context is available.
+     *
+     * @param rule The rule.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids prohibition.
+     */
+    private Prohibition createProhibition(final ContractRule rule, final String baseUrl) {
         try {
             final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Prohibition) {
                 final var prohibition = (Prohibition) idsRule;
-                final var uri = EndpointUtils.getSelfLink(rule);
+
+                final var uri = getAbsoluteSelfLink(rule, baseUrl);
+
                 return new ProhibitionBuilder(uri)
                         ._action_(prohibition.getAction())
                         ._assignee_(prohibition.getAssignee())
@@ -439,12 +620,34 @@ public final class ViewService {
      * @param rule The rule.
      * @return The ids permission.
      */
-    private Permission createPermission(final ContractRule rule) {
+    public Permission createPermission(final ContractRule rule) {
+        try {
+            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            return createPermission(rule, baseUrl);
+        } catch (IllegalStateException exception) {
+            LOGGER.error("Failed to construct Permission: no request context present to "
+                    + "construct self links.");
+            throw new IllegalStateException("No request context present for constructing valid "
+                    + "self links", exception);
+        }
+    }
+
+    /**
+     * Build ids permission from database rule using the specified base URL for creating the IDs,
+     * as scheme, host and port are missing when no request context is available.
+     *
+     * @param rule The rule.
+     * @param baseUrl The application's base URL to use for the self links.
+     * @return The ids permission.
+     */
+    private Permission createPermission(final ContractRule rule, final String baseUrl) {
         try {
             final var idsRule = deserializationService.getRule(rule.getValue());
             if (idsRule instanceof Permission) {
                 final var permission = (Permission) idsRule;
-                final var uri = EndpointUtils.getSelfLink(rule);
+
+                final var uri = getAbsoluteSelfLink(rule, baseUrl);
+
                 return new PermissionBuilder(uri)
                         ._action_(permission.getAction())
                         ._assignee_(permission.getAssignee())
@@ -462,5 +665,45 @@ public final class ViewService {
             LOGGER.warn("Failed to build rule. [exception=({})]", exception.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Returns the self link to an entity as an absolute URI. As the self link returned by Spring
+     * can be either absolute or relative, this method adds the application's base URL to the link
+     * if it is relative.
+     *
+     * @param entity The entity.
+     * @param baseUrl The application's base URL to use for the self link.
+     * @return The self link to the entity as an absolute URI.
+     */
+    private URI getAbsoluteSelfLink(final AbstractEntity entity, final String baseUrl) {
+        URI uri;
+        if (entity instanceof Catalog) {
+            uri = EndpointUtils.getSelfLink((Catalog) entity);
+        } else if (entity instanceof OfferedResource) {
+            uri = EndpointUtils.getSelfLink((OfferedResource) entity);
+        } else if (entity instanceof RequestedResource) {
+            uri = EndpointUtils.getSelfLink((RequestedResource) entity);
+        } else if (entity instanceof de.fraunhofer.isst.dataspaceconnector.model.Representation) {
+            uri = EndpointUtils.getSelfLink(
+                    (de.fraunhofer.isst.dataspaceconnector.model.Representation) entity);
+        } else if (entity instanceof de.fraunhofer.isst.dataspaceconnector.model.Artifact) {
+            uri = EndpointUtils.getSelfLink(
+                    (de.fraunhofer.isst.dataspaceconnector.model.Artifact) entity);
+        } else if (entity instanceof Contract) {
+            uri = EndpointUtils.getSelfLink((Contract) entity);
+        } else if (entity instanceof ContractRule) {
+            uri = EndpointUtils.getSelfLink((ContractRule) entity);
+        } else if (entity instanceof Agreement) {
+            uri = EndpointUtils.getSelfLink((Agreement) entity);
+        } else {
+            throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
+        }
+
+        if (uri.toString().startsWith("/")) {
+            uri = URI.create(baseUrl + uri);
+        }
+
+        return uri;
     }
 }
