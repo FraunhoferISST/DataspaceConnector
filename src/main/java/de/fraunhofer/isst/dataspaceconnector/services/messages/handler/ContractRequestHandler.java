@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -35,12 +41,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -186,11 +186,16 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                             issuerConnector);
                 }
 
-                final var valid = areRulesValid(validContracts, targetRuleMap, target);
+                var valid = false;
+                try {
+                    valid = areRulesValid(validContracts, targetRuleMap, target);
+                } catch (IllegalArgumentException exception) {
+                    return exceptionService.handleMalformedRules(exception, payload, issuerConnector, messageId);
+                }
+
                 if (!valid) {
                     return rejectContract(issuerConnector, messageId);
                 }
-
                 targetList.add(target);
             }
 
@@ -198,7 +203,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         } catch (IllegalArgumentException exception) {
             return exceptionService.handleIllegalArgumentException(exception, payload,
                     issuerConnector, messageId);
-        } catch (Exception exception) {
+        } catch (Exception exception ) {
             // NOTE: Should not be reached. TODO Add further exception handling if necessary.
             return exceptionService.handleMessageProcessingFailed(exception, payload,
                     issuerConnector, messageId);

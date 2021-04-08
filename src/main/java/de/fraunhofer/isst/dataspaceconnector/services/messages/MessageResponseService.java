@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -16,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
 
 /**
  * This class handles message responses.
@@ -501,5 +501,19 @@ public class MessageResponseService {
                 "Affected resource does not match the resource id.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
+    }
+
+
+    public MessageResponse handleMalformedRules(final IllegalArgumentException exception,
+                                                final String payload,
+                                                final URI issuerConnector,
+                                                final URI messageId) {
+        LOGGER.debug("Could not parse message payload. [exception=({}), payload=({}), issuer=({}), "
+                     + "messageId=({})]", exception.getMessage(), payload, issuerConnector,
+                     messageId);
+        return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
+                                               "Invalid rules in message payload.",
+                                               connectorService.getConnectorId(),
+                                               connectorService.getOutboundModelVersion());
     }
 }

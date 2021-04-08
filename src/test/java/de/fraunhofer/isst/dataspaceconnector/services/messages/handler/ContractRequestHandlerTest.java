@@ -1,5 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -30,17 +41,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -308,6 +308,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
 
         final var desc = new ContractDesc();
+        desc.setConsumer(URI.create("https://someConsumer"));
         final var contract = new ContractFactory().create(desc);
 
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
@@ -332,7 +333,7 @@ class ContractRequestHandlerTest {
                                                           .build()))
                         .build();
 
-        final var payload = new Serializer().serialize(message);
+        final var payload = new Serializer().serialize(message).replace("idsc:USE", "idsc:DONTNOW");
         final var messageId = URI.create("https://someUri");
         final var issuerConnector = URI.create("https://localhost:8080");
 
@@ -341,6 +342,7 @@ class ContractRequestHandlerTest {
         final var contract = new ContractFactory().create(desc);
 
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
+        Mockito.doThrow(IllegalArgumentException.class).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
 
         /* ACT */
         final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
