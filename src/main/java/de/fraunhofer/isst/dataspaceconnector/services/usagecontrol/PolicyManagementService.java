@@ -313,7 +313,7 @@ public class PolicyManagementService {
             idsRuleList.add(idsRule);
         }
 
-        if (PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+        if (!PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
             LOGGER.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList, requestRules);
             return false;
         }
