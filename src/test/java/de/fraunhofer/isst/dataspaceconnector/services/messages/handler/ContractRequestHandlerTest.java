@@ -1,17 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
@@ -32,11 +24,23 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagem
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -411,12 +415,20 @@ class ContractRequestHandlerTest {
 
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
-        Mockito.doReturn(URI.create("validuri")).when(managementService).saveContractAgreement(Mockito.any(), Mockito.eq(false), Mockito.eq(Arrays.asList(artifactId)));
+        Mockito.doReturn(getContractAgreement()).when(managementService)
+                .buildAndSaveContractAgreement(Mockito.any(), Mockito.eq(false), Mockito.eq(Arrays.asList(artifactId)));
 
         /* ACT */
         final var result = (BodyResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertTrue(result.getHeader() instanceof ContractAgreementMessage);
+    }
+
+    private ContractAgreement getContractAgreement() {
+        return new ContractAgreementBuilder(URI.create("http://localhost:8080/api/agreements/" + UUID.randomUUID()))
+                ._contractStart_(IDSUtils.getGregorianNow())
+                ._contractEnd_(IDSUtils.getGregorianNow())
+                .build();
     }
 }
