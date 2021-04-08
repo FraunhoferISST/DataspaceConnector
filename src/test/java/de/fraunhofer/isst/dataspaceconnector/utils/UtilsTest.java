@@ -2,6 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
@@ -62,7 +64,35 @@ class UtilsTest {
         /* ASSERT */
         assertEquals(5, value);
     }
-    
+
+    /**************************************************************************
+     * toStream.
+     *************************************************************************/
+
+    @Test
+    public void toStream_null_returnEmptyStream() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT */
+        final var result = Utils.toStream(null);
+
+        /* ASSERT */
+        assertEquals(Stream.empty().collect(Collectors.toList()), result.collect(Collectors.toList()));
+    }
+
+    @Test
+    public void toStream_validCollection_returnStream() {
+        /* ARRANGE */
+        final var list = List.of(1, 2, 3);
+
+        /* ACT */
+        final var result = Utils.toStream(list);
+
+        /* ASSERT */
+        assertEquals(list, result.collect(Collectors.toList()));
+    }
+
     /**************************************************************************
     * toPage.
     *************************************************************************/

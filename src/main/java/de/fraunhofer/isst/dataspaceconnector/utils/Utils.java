@@ -1,7 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,6 +38,17 @@ public final class Utils {
         }
 
         return obj;
+    }
+
+    /**
+     * Convert a collection to may be null safely to a stream.
+     * @param collection The collection. May be null.
+     * @param <T> The type of the elements in the collection.
+     * @return The stream over the elements of the collection.
+     */
+    public static <T> Stream<T> toStream(final Collection<T> collection) {
+        return Optional.ofNullable(collection).map(Collection::parallelStream)
+                       .orElseGet(Stream::empty);
     }
 
     /**
