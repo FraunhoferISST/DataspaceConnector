@@ -357,6 +357,7 @@
 					<include>conf/**/*.*</include>
 					<include>log4j2.xml</include>
 					<include>application.properties</include>
+					<include>banner.txt</include>
 				</includes>
 				<excludes>
 					<!-- The key files are binary files, which the filtering destroys. -->
