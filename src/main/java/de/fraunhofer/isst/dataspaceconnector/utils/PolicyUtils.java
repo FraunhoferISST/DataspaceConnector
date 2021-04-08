@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
@@ -140,8 +141,11 @@ public final class PolicyUtils {
     public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
             final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final URI issuerConnector) {
-        return contracts;
-        // return contracts.parallelStream().filter(x -> x.getConsumer().equals(issuerConnector)).collect(Collectors.toList());
+        return contracts.parallelStream()
+                        .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
+                                                                                 .toString()
+                                                                                 .isBlank())
+                        .collect(Collectors.toList());
     }
 
     /**
