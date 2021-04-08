@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.UUID;
 import javax.validation.Valid;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +34,8 @@ public class ArtifactController extends BaseResourceController<Artifact, Artifac
      * Returns data from the local database or a remote data source. In case of a remote data
      * source, all headers and query parameters included in this request will be used for the
      * request to the backend.
+     *
+     * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
      *
      * @param artifactId ID of the artifact
      * @param params all request parameters
@@ -64,6 +64,8 @@ public class ArtifactController extends BaseResourceController<Artifact, Artifac
      * Returns data from the local database or a remote data source. In case of a remote data
      * source, the headers, query parameters and path variables from the request body will be
      * used when fetching the data.
+     *
+     * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
      *
      * @param artifactId ID of the artifact
      * @param queryInput query input containing headers, query parameters and path variables
