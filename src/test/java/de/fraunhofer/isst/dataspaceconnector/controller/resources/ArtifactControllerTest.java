@@ -1,7 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
@@ -12,9 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,7 +42,7 @@ class ArtifactControllerTest {
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> controller.getData(null,
-                Optional.empty(), Optional.empty(), Optional.empty()));
+                new QueryInput()));
     }
 
     @Test
@@ -54,7 +54,7 @@ class ArtifactControllerTest {
 
         /* ACT */
         assertThrows(ResourceNotFoundException.class, () -> controller.getData(unknownUuid,
-                Optional.empty(), Optional.empty(), Optional.empty()));
+                new QueryInput()));
     }
 
     @Test
@@ -65,8 +65,7 @@ class ArtifactControllerTest {
         Mockito.when(service.getData(Mockito.eq(knownUuid), Mockito.any())).thenReturn(expected);
 
         /* ACT */
-        final var result = controller.getData(knownUuid,
-                Optional.empty(), Optional.empty(), Optional.empty());
+        final var result = controller.getData(knownUuid, new QueryInput());
 
         /* ASSERT */
         assertEquals(expected, result.getBody());
@@ -80,8 +79,7 @@ class ArtifactControllerTest {
         Mockito.when(service.getData(Mockito.eq(knownUuid), Mockito.any())).thenReturn(expected);
 
         /* ACT */
-        final var result = controller.getData(knownUuid,
-                Optional.empty(), Optional.empty(), Optional.empty());
+        final var result = controller.getData(knownUuid, new QueryInput());
 
         /* ASSERT */
         assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());

@@ -1,13 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import java.util.Map;
+import java.util.UUID;
+import javax.validation.Valid;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidationUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,14 +19,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/artifacts")
@@ -32,47 +33,50 @@ public class ArtifactController extends BaseResourceController<Artifact, Artifac
         ArtifactService> {
 
     /**
-     * Return the data from the database or a remote data source. In case of a remote HTTP data
-     * source, the given headers, query parameters and path variables will be used for the request.
-     * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
+     * Returns data from the local database or a remote data source. In case of a remote data
+     * source, all headers and query parameters included in this request will be used for the
+     * request to the backend.
      *
-     * @param artifactId The artifact id.
-     * @param headers JSON representation of a map containing additional headers for the backend call.
-     * @param params JSON representation of a map containing query parameters for the backend call.
-     * @param pathVariables JSON representation of a map containing path variables for the backend call.
-     * @return The data object.
+     * @param artifactId ID of the artifact
+     * @param params all request parameters
+     * @param headers all request headers
+     * @return the data object
      */
     @GetMapping("{id}/data")
     @Operation(summary = "Get data by artifact id with query input")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
-                                            @RequestParam("headers") final Optional<String> headers,
-                                            @RequestParam("params") final Optional<String> params,
-                                            @RequestParam("pathVariables") final Optional<String> pathVariables) {
+                                          @RequestParam final Map<String, String> params,
+                                          @RequestHeader final Map<String, String> headers) {
         final var artifactService = this.getService();
 
+        headers.remove("authorization");
+        headers.remove("host");
+
         final var queryInput = new QueryInput();
-        final var objectMapper = new ObjectMapper();
-        final var typeReference = new TypeReference<HashMap<String, String>>() { };
-        try {
-            if (headers.isPresent()) {
-                final var headersMap = objectMapper
-                        .readValue(headers.get(), typeReference);
-                queryInput.setHeaders(headersMap);
-            }
-            if (params.isPresent()) {
-                final var paramsMap = objectMapper
-                        .readValue(params.get(), typeReference);
-                queryInput.setParams(paramsMap);
-            }
-            if (pathVariables.isPresent()) {
-                final var pathVariablesMap = objectMapper
-                        .readValue(pathVariables.get(), typeReference);
-                queryInput.setPathVariables(pathVariablesMap);
-            }
-        } catch (JsonProcessingException exception) {
-            return new ResponseEntity<>("Invalid input.", HttpStatus.BAD_REQUEST);
-        }
+        queryInput.setParams(params);
+        queryInput.setHeaders(headers);
+
+        return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
+    }
+
+    /**
+     * Returns data from the local database or a remote data source. In case of a remote data
+     * source, the headers, query parameters and path variables from the request body will be
+     * used when fetching the data.
+     *
+     * @param artifactId ID of the artifact
+     * @param queryInput query input containing headers, query parameters and path variables
+     * @return the data object
+     */
+    @PostMapping("{id}/data")
+    @Operation(summary = "Get data by artifact id with query input")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
+                                          @RequestBody(required = false) QueryInput queryInput) {
+        final var artifactService = this.getService();
+
+        ValidationUtils.validateQueryInput(queryInput);
 
         return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
     }
