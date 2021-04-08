@@ -16,7 +16,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class AgreementFactory implements AbstractFactory<Agreement, AgreementDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("");
+    /**
+     * The default remote id.
+     */
+    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+
+    /**
+     * The default value.
+     */
     static final String DEFAULT_VALUE = "";
 
     /**
@@ -28,9 +35,9 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
 
     /**
      * Create a new contract.
-     *
      * @param desc The description of the new contract.
      * @return The new contract.
+     * @throws IllegalArgumentException if the description is null.
      */
     @Override
     public Agreement create(final AgreementDesc desc) {
@@ -46,10 +53,10 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
 
     /**
      * Update a contract.
-     *
      * @param agreement The contract to be updated.
-     * @param desc     The new contract description.
+     * @param desc      The new contract description.
      * @return True if the contract has been modified.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
      */
     @Override
     public boolean update(final Agreement agreement, final AgreementDesc desc) {
@@ -73,7 +80,7 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
     }
 
     private boolean updateHasConfirmed(final Agreement agreement, final boolean confirmed) {
-        if (agreement.isConfirmed() == confirmed) {
+        if (agreement.isConfirmed() != confirmed) {
             agreement.setConfirmed(confirmed);
             return true;
         }
