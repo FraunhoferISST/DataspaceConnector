@@ -3,12 +3,11 @@ package de.fraunhofer.isst.dataspaceconnector.model.view;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -34,7 +33,7 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
         view.add(selfLink);
 
         final var dataLink = linkTo(methodOn(ArtifactController.class).getData(artifact.getId(),
-                Optional.empty(), Optional.empty(), Optional.empty()))
+                new QueryInput()))
                 .withRel("data");
         view.add(dataLink);
 
