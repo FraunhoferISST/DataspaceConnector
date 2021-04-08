@@ -1,9 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.HashMap;
 
 @Schema(
         name = "QueryInput",
@@ -24,7 +25,19 @@ import java.util.HashMap;
 @Data
 public class QueryInput {
 
-    HashMap<String, String> headers = new HashMap<>();
-    HashMap<String, String> params = new HashMap<>();
-    HashMap<String, String> pathVariables = new HashMap<>();
+    /**
+     * Headers to use for querying a backend.
+     */
+    private Map<String, String> headers = new ConcurrentHashMap<>();
+
+    /**
+     * Params to use for querying a backend.
+     */
+    private Map<String, String> params = new ConcurrentHashMap<>();
+
+    /**
+     * Path variables to use for querying a backend.
+     */
+    private Map<String, String> pathVariables = new ConcurrentHashMap<>();
+
 }
