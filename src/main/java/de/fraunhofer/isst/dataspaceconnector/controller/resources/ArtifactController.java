@@ -9,7 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.ValidationUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.ValidationUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
