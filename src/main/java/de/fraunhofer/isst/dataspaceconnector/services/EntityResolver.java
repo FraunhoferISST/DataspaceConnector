@@ -1,7 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
@@ -29,9 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -153,6 +154,9 @@ public class EntityResolver {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
             }
+        } catch (SelfLinkCreationException exception) {
+            LOGGER.warn("Could not provide ids object. [entity=({})]", entity);
+            throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
             LOGGER.warn("Could not provide ids object. [entity=({})]", entity);

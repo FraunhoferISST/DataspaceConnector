@@ -29,6 +29,7 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
@@ -73,10 +74,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return create(catalog, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct ResourceCatalog: no request context present to "
+            LOGGER.warn("Failed to construct ResourceCatalog: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -140,10 +140,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return create(resource, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Resource: no request context present to "
+            LOGGER.warn("Failed to construct Resource: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -254,10 +253,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return create(representation, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Representation: no request context present to "
+            LOGGER.warn("Failed to construct Representation: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -337,10 +335,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return create(artifact, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Artifact: no request context present to "
+            LOGGER.warn("Failed to construct Artifact: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -409,10 +406,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return create(contract, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct ContractOffer: no request context present to "
+            LOGGER.warn("Failed to construct ContractOffer: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -523,10 +519,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return createObligation(rule, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Duty: no request context present to "
+            LOGGER.warn("Failed to construct Duty: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -574,10 +569,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return createProhibition(rule, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Prohibition: no request context present to "
+            LOGGER.warn("Failed to construct Prohibition: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 
@@ -625,10 +619,9 @@ public final class ViewService {
             String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
             return createPermission(rule, baseUrl);
         } catch (IllegalStateException exception) {
-            LOGGER.error("Failed to construct Permission: no request context present to "
+            LOGGER.warn("Failed to construct Permission: no request context present to "
                     + "construct self links.");
-            throw new IllegalStateException("No request context present for constructing valid "
-                    + "self links", exception);
+            throw new SelfLinkCreationException(ErrorMessages.NO_REQUEST_CONTEXT, exception);
         }
     }
 

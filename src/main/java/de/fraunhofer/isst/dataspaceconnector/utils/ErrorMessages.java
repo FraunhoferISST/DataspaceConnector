@@ -117,7 +117,12 @@ public enum ErrorMessages {
     /**
      * Data has been accessed by an invalid consumer.
      */
-    DATA_ACCESS_INVALID_CONSUMER("Data access by invalid consumer connector.");
+    DATA_ACCESS_INVALID_CONSUMER("Data access by invalid consumer connector."),
+
+    /**
+     * Application's base URL was retrieved without request context present.
+     */
+    NO_REQUEST_CONTEXT("No request context present for extracting base URL.");
 
     /**
      * Holds the enums string.
