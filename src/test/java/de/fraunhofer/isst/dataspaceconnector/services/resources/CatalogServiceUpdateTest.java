@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.CatalogRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,14 +31,16 @@ public class CatalogServiceUpdateTest {
     Catalog newCatalog;
     Catalog updatedCatalog;
 
+    UUID validId = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
+
     @Autowired
     @InjectMocks
     private CatalogService service;
 
     @BeforeEach
     public void init() {
-        newCatalog = getCatalogFromValidDesc(getValidDesc().getStaticId(), getNewCatalog(getValidDesc()));
-        updatedCatalog = getCatalogFromValidDesc(getUpdatedValidDesc().getStaticId(), getNewCatalog(getUpdatedValidDesc()));
+        newCatalog = getCatalogFromValidDesc(validId, getNewCatalog(getValidDesc()));
+        updatedCatalog = getCatalogFromValidDesc(validId, getNewCatalog(getUpdatedValidDesc()));
 
         Mockito.when(repository.saveAndFlush(Mockito.eq(newCatalog))).thenReturn(newCatalog);
         Mockito.when(repository.saveAndFlush(Mockito.eq(updatedCatalog))).thenReturn(updatedCatalog);
@@ -48,7 +50,7 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_sameDesc_returnSameCatalog() {
         /* ARRANGE */
-        final var before = getCatalogFromValidDesc(getValidDesc().getStaticId(), getNewCatalog(getValidDesc()));
+        final var before = getCatalogFromValidDesc(validId, getNewCatalog(getValidDesc()));
 
         /* ACT */
         final var after = service.update(newCatalog.getId(), getValidDesc());
@@ -60,10 +62,10 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_updateDesc_returnUpdatedCatalog() {
         /* ARRANGE */
-        final var shouldLookLike = getCatalogFromValidDesc(getUpdatedValidDesc().getStaticId(), getNewCatalog(getUpdatedValidDesc()));
+        final var shouldLookLike = getCatalogFromValidDesc(validId, getNewCatalog(getUpdatedValidDesc()));
 
         /* ACT */
-        final var after = service.update(getValidDesc().getStaticId(), getUpdatedValidDesc());
+        final var after = service.update(validId, getUpdatedValidDesc());
 
         /* ASSERT */
         assertEquals(after, shouldLookLike);
@@ -72,7 +74,7 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_sameDesc_notUpdatedDbCatalog() {
         /* ARRANGE */
-        service.update(getValidDesc().getStaticId(), getValidDesc());
+        service.update(validId, getValidDesc());
 
         /* ACT */
         Mockito.verify(repository, Mockito.never()).saveAndFlush(Mockito.any());
@@ -81,7 +83,7 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_updatedDesc_UpdatedDbCatalog() {
         /* ARRANGE */
-        service.update(getValidDesc().getStaticId(), getUpdatedValidDesc());
+        service.update(validId, getUpdatedValidDesc());
 
         /* ACT */
         Mockito.verify(repository, Mockito.atLeastOnce()).saveAndFlush(Mockito.eq(updatedCatalog));
@@ -91,7 +93,6 @@ public class CatalogServiceUpdateTest {
         var desc = new CatalogDesc();
         desc.setDescription("The new description.");
         desc.setTitle("The new title.");
-        desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return desc;
     }
@@ -100,7 +101,6 @@ public class CatalogServiceUpdateTest {
         var desc = new CatalogDesc();
         desc.setDescription("Something different.");
         desc.setTitle("The new title.");
-        desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return desc;
     }
@@ -109,8 +109,11 @@ public class CatalogServiceUpdateTest {
         return factory.create(desc);
     }
 
+    @SneakyThrows
     private Catalog getCatalogFromValidDesc( final UUID id, final Catalog catalog ) {
-        catalog.setId(id);
+        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(catalog, id);
 
         return catalog;
     }

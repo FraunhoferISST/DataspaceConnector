@@ -2,11 +2,9 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -15,12 +13,6 @@ import lombok.Data;
  */
 @Data
 public class AbstractDescription<T> {
-    /**
-     * The static id assigned to public endpoints.
-     */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private UUID staticId;
-
     /**
      * The overflow for all elements that cannot be mapped.
      */

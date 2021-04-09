@@ -1,11 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogFactory;
 import de.fraunhofer.isst.dataspaceconnector.repositories.CatalogRepository;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,11 +25,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -90,9 +89,13 @@ class CatalogServiceTest {
         return toPage(catalogList, invocation.getArgument(0));
     }
 
+    @SneakyThrows
     private Catalog saveAndFlushMock( final InvocationOnMock invocation ) {
         final var obj = (Catalog) invocation.getArgument(0);
-        obj.setId(UUID.randomUUID());
+        final var idField = obj.getClass().getSuperclass().getDeclaredField("id");
+        idField.setAccessible(true);
+        idField.set(obj, UUID.randomUUID());
+
         catalogList.add(obj);
         return obj;
     }
@@ -168,6 +171,7 @@ class CatalogServiceTest {
     @Test
     public void update_nullId_throwIllegalArgumentException() {
         /* ARRANGE */
+        // Nothing to arrange here.
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> service.update(null, catalogOneDesc));
@@ -189,6 +193,7 @@ class CatalogServiceTest {
     @Test
     public void get_nullId_throwIllegalArgumentException() {
         /* ARRANGE */
+        // Nothing to arrange here.
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> service.get(null));
@@ -233,6 +238,7 @@ class CatalogServiceTest {
     @Test
     public void doesExist_null_throwIllegalArgumentException() {
         /* ARRANGE */
+        // Nothing to arrange here.
 
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> service.doesExist(null));
@@ -323,7 +329,6 @@ class CatalogServiceTest {
     private CatalogDesc getCatalogOneDesc() {
         var desc = new CatalogDesc();
         desc.setTitle("The new title.");
-        desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return desc;
     }
@@ -331,7 +336,6 @@ class CatalogServiceTest {
     private CatalogDesc getCatalogTwoDesc() {
         var desc = new CatalogDesc();
         desc.setTitle("The different title.");
-        desc.setStaticId(UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
 
         return desc;
     }
@@ -346,7 +350,7 @@ class CatalogServiceTest {
 
         final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(catalog, desc.getStaticId());
+        idField.set(catalog, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         final var titleField = catalog.getClass().getDeclaredField("title");
         titleField.setAccessible(true);
@@ -365,7 +369,7 @@ class CatalogServiceTest {
 
         final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
-        idField.set(catalog, desc.getStaticId());
+        idField.set(catalog, UUID.fromString("afb43170-b8d4-4872-b923-3490de99a53b"));
 
         final var titleField = catalog.getClass().getDeclaredField("title");
         titleField.setAccessible(true);

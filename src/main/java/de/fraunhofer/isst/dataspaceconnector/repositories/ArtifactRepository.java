@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 import java.util.UUID;
+
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * The repository containing all objects of type {@link Artifact}.
  */
-public interface ArtifactRepository extends BaseEntityRepository<Artifact> {
+public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
 
     /**
      * Finds all artifacts of a specific resource.
@@ -30,5 +30,4 @@ public interface ArtifactRepository extends BaseEntityRepository<Artifact> {
     @Query("SELECT a FROM Artifact a INNER JOIN Agreement ag ON a MEMBER OF ag.artifacts "
             + "WHERE ag.id = :agreementId")
     List<Artifact> findAllByAgreement(UUID agreementId);
-
 }

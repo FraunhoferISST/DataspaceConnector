@@ -1,9 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
@@ -17,6 +18,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,10 +30,10 @@ import org.springframework.stereotype.Service;
 /**
  * Builds and links entities from templates.
  * @param <T> The resource type.
- * @param <D>  The resource description type.
+ * @param <D> The resource description type.
  */
 @RequiredArgsConstructor
-public class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
+public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
     /**
      * The class level logger.
      */
@@ -85,61 +88,47 @@ public class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
      * Build a resource and dependencies from a template.
      * @param template The resource template.
      * @return The new resource.
+     * @throws IllegalArgumentException if the passed template is null.
      */
     public T build(final ResourceTemplate<D> template) {
-        final var representationIds = new HashSet<UUID>();
-        for (final var representation : template.getRepresentations()) {
-            representationIds.add(this.build(representation).getId());
-        }
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
-        final var contractIds = new HashSet<UUID>();
-        for (final var contract : template.getContracts()) {
-            contractIds.add(this.build(contract));
-        }
+        final var representationIds =
+                Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
+                     .collect(Collectors.toSet());
+        final var contractIds = Utils.toStream(template.getContracts()).map(x -> build(x).getId())
+                                     .collect(Collectors.toSet());
+        final var resource = buildResource(template);
 
-        T resource;
-        final var desc = template.getDesc();
-        if (template.getDesc().getStaticId() == null) {
-            resource = resourceService.create(desc);
-        } else {
-            if (resourceService.doesExist(desc.getStaticId())) {
-                resource = resourceService.update(desc.getStaticId(), desc);
-            } else {
-                resource = resourceService.create(desc);
-            }
-        }
-
-        try {
-            resourceRepresentationLinker.replace(resource.getId(), representationIds);
-            resourceContractLinker.replace(resource.getId(), contractIds);
-        } catch (Exception exception) {
-            LOGGER.debug("Failed to build resource. [exception=({})]", exception.getMessage());
-        }
+        resourceRepresentationLinker.replace(resource.getId(), representationIds);
+        resourceContractLinker.replace(resource.getId(), contractIds);
 
         return resource;
     }
+
+    protected abstract T buildResource(ResourceTemplate<D> template);
 
     /**
      * Build a representation and dependencies from template.
      * @param template The representation template.
      * @return The new representation.
+     * @throws IllegalArgumentException if the passed template is null.
      */
     public Representation build(final RepresentationTemplate template) {
-        final var artifactIds = new HashSet<UUID>();
-        for (final var artifact : template.getArtifacts()) {
-            artifactIds.add(this.build(artifact).getId());
-        }
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
+        final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
+                                     .collect(Collectors.toSet());
         Representation representation;
-        if (template.getDesc().getStaticId() == null) {
-            representation = representationService.create(template.getDesc());
-        } else {
-            if (representationService.doesExist(template.getDesc().getStaticId())) {
-                representation = representationService.update(
-                        template.getDesc().getStaticId(), template.getDesc());
+        if (template.getOldRemoteId() != null) {
+            final var repId = representationService.identifyByRemoteId(template.getOldRemoteId());
+            if (repId.isPresent()) {
+                representation = representationService.update(repId.get(), template.getDesc());
             } else {
-                representation = representationService.create(template.getDesc());
+                throw new ResourceNotFoundException("");
             }
+        } else {
+            representation = representationService.create(template.getDesc());
         }
 
         representationArtifactLinker.replace(representation.getId(), artifactIds);
@@ -151,37 +140,59 @@ public class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
      * Build a contract and dependencies from a template.
      * @param template The contract template.
      * @return The new contract.
+     * @throws IllegalArgumentException if the passed template is null.
      */
-    public UUID build(final ContractTemplate template) {
-        final var ruleIds = new HashSet<UUID>();
-        for (final var rule : template.getRules()) {
-            ruleIds.add(this.build(rule).getId());
-        }
+    public Contract build(final ContractTemplate template) {
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
-        final var contractId = contractService.create(template.getDesc()).getId();
-        contractRuleLinker.add(contractId, ruleIds);
+        final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
+                                 .collect(Collectors.toSet());
+        final var contract = contractService.create(template.getDesc());
+        contractRuleLinker.replace(contract.getId(), ruleIds);
 
-        return contractId;
+        return contract;
     }
 
     /**
      * Build an artifact and dependencies from a template.
      * @param template The artifact template.
      * @return The new artifact.
+     * @throws IllegalArgumentException if the passed template is null.
      */
     public Artifact build(final ArtifactTemplate template) {
-        return artifactService.create(template.getDesc());
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+
+        Artifact artifact;
+        if (template.getOldRemoteId() != null) {
+            final var contractId = artifactService.identifyByRemoteId(template.getOldRemoteId());
+            if (contractId.isPresent()) {
+                artifact = artifactService.update(contractId.get(), template.getDesc());
+            } else {
+                throw new ResourceNotFoundException("");
+            }
+        } else {
+            artifact = artifactService.create(template.getDesc());
+        }
+
+        return artifact;
     }
 
     /**
      * Build a rule and dependencies from a template.
      * @param template The rule template.
      * @return The new rule.
+     * @throws IllegalArgumentException if the passed template is null.
      */
     public ContractRule build(final RuleTemplate template) {
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
         return ruleService.create(template.getDesc());
     }
+
+    protected ResourceService<T, D> getResourceService() {
+        return resourceService;
+    }
 }
+
 
 /**
  * Template builder for offered resources.
@@ -191,15 +202,15 @@ final class TemplateBuilderOfferedResource
         extends TemplateBuilder<OfferedResource, OfferedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService The resource service.
+     * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker The resource-contract service.
-     * @param representationService The representation service.
+     * @param resourceContractLinker       The resource-contract service.
+     * @param representationService        The representation service.
      * @param representationArtifactLinker The representation-artifact service.
-     * @param contractService The contract service.
-     * @param contractRuleLinker The contract-rule service.
-     * @param artifactService The artifact service.
-     * @param ruleService The rule service.
+     * @param contractService              The contract service.
+     * @param contractRuleLinker           The contract-rule service.
+     * @param artifactService              The artifact service.
+     * @param ruleService                  The rule service.
      */
     @Autowired
     TemplateBuilderOfferedResource(
@@ -212,10 +223,16 @@ final class TemplateBuilderOfferedResource
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-                representationService, representationArtifactLinker, contractService,
-                contractRuleLinker, artifactService, ruleService);
+              representationService, representationArtifactLinker, contractService,
+              contractRuleLinker, artifactService, ruleService);
+    }
+
+    @Override
+    protected OfferedResource buildResource(final ResourceTemplate<OfferedResourceDesc> template) {
+        return getResourceService().create(template.getDesc());
     }
 }
+
 
 /**
  * Template builder for requested resources.
@@ -225,15 +242,15 @@ final class TemplateBuilderRequestedResource
         extends TemplateBuilder<RequestedResource, RequestedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService The resource service.
+     * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker The resource-contract service.
-     * @param representationService The representation service.
+     * @param resourceContractLinker       The resource-contract service.
+     * @param representationService        The representation service.
      * @param representationArtifactLinker The representation-artifact service.
-     * @param contractService The contract service.
-     * @param contractRuleLinker The contract-rule service.
-     * @param artifactService The artifact service.
-     * @param ruleService The rule service.
+     * @param contractService              The contract service.
+     * @param contractRuleLinker           The contract-rule service.
+     * @param artifactService              The artifact service.
+     * @param ruleService                  The rule service.
      */
     @Autowired
     TemplateBuilderRequestedResource(
@@ -246,7 +263,38 @@ final class TemplateBuilderRequestedResource
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-                representationService, representationArtifactLinker, contractService,
-                contractRuleLinker, artifactService, ruleService);
+              representationService, representationArtifactLinker, contractService,
+              contractRuleLinker, artifactService, ruleService);
+    }
+
+    @Override
+    protected RequestedResource buildResource(final ResourceTemplate<RequestedResourceDesc> template) {
+        final var resourceService = getResourceService();
+
+        RequestedResource resource;
+        if (resourceService instanceof RemoteResolver && template.getOldRemoteId() != null) {
+            final var resourceId = ((RemoteResolver) resourceService)
+                    .identifyByRemoteId(template.getOldRemoteId());
+            if (resourceId.isPresent()) {
+                if(template.getOldRemoteId().equals(template.getDesc().getRemoteId())) {
+                    resource = resourceService.update(resourceId.get(), template.getDesc());
+                } else {
+                    final var doesExist = ((RemoteResolver) resourceService)
+                            .identifyByRemoteId(template.getDesc().getRemoteId()).isPresent();
+                    if(doesExist) {
+                        throw new IllegalStateException();
+                    } else {
+                        resource = resourceService.update(resourceId.get(), template.getDesc());
+                    }
+                }
+
+            } else {
+                throw new ResourceNotFoundException("");
+            }
+        } else {
+            resource = resourceService.create(template.getDesc());
+        }
+
+        return resource;
     }
 }

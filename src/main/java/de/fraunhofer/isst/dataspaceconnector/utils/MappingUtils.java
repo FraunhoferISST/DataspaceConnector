@@ -170,7 +170,7 @@ public final class MappingUtils {
                     .ifPresent(desc::setEndpointDocumentation);
         }
 
-        return new ResourceTemplate<>(desc, null, null);
+        return new ResourceTemplate<>(null, desc, null, null);
     }
 
     /**
@@ -218,7 +218,7 @@ public final class MappingUtils {
             desc.setMediaType(mediaType.getFilenameExtension());
         }
 
-        return new RepresentationTemplate(desc, null);
+        return new RepresentationTemplate(null, desc, null);
     }
 
     /**
@@ -308,7 +308,7 @@ public final class MappingUtils {
             // Default values don't need to be set here.
         }
 
-        return new ContractTemplate(desc, null);
+        return new ContractTemplate(null, desc, null);
     }
 
     /**

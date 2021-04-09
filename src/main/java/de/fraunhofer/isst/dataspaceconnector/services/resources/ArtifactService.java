@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
@@ -18,15 +24,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.UUID;
-
 /**
  * Handles the basic logic for artifacts.
  */
 @Service
-public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
+public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
     /**
      * Class level logger.
      */
@@ -149,5 +151,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> {
     public List<Artifact> getAllByAgreement(final UUID agreementId) {
         Utils.requireNonNull(agreementId, ErrorMessages.ENTITYID_NULL);
         return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
+    }
+
+    @Override
+    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
+        final var repo = (ArtifactRepository) getRepository();
+        return repo.identifyByRemoteId(remoteId);
     }
 }

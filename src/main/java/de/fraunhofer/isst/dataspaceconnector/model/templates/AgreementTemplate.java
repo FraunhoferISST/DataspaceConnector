@@ -1,13 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.model.templates;
 
-import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.net.URI;
 
-@Data
+import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AgreementTemplate {
-    private AgreementDesc desc;
+    private URI oldRemoteId;
+    private @NonNull AgreementDesc desc;
 }

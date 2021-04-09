@@ -35,7 +35,7 @@ public class AbstractEntity implements Serializable {
      */
     @Id
     @GeneratedValue
-    @Setter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PACKAGE)
     @Column(name = "id", unique = true, nullable = false)
     private UUID id;
 

@@ -42,10 +42,8 @@ class CatalogControllerTest {
 
     private CatalogDesc desc = getDesc();
     private CatalogDesc updatedDescOne = getUpdatedDesc();
-    private CatalogDesc updateDescOneChangedId = getUpdatedDescChangedId();
     private Catalog catalogOne = getCatalogOne();
     private Catalog updatedCatalogOne = getUpdatedCatalogOne();
-    private Catalog updatedCatalogOneChangedID = getUpdatedCatalogOneChangedId();
     private boolean doesCatalogOneExist = true;
     final UUID unknownUUid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
@@ -64,9 +62,6 @@ class CatalogControllerTest {
         Mockito.when(catalogService.update(
                              Mockito.eq(catalogOne.getId()), Mockito.eq(updatedDescOne)))
                 .thenReturn(updatedCatalogOne);
-        Mockito.when(catalogService.update(
-                             Mockito.eq(catalogOne.getId()), Mockito.eq(updateDescOneChangedId)))
-                .thenReturn(updatedCatalogOneChangedID);
 
         Mockito.when(catalogService.update(Mockito.isNull(), Mockito.eq(new CatalogDesc())))
                 .thenThrow(IllegalArgumentException.class);
@@ -284,43 +279,6 @@ class CatalogControllerTest {
         Mockito.verify(catalogService).update(catalogOne.getId(), updatedDescOne);
     }
 
-    @Test
-    public void update_changeLocation_hasStatusCode201() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT */
-        final var result = controller.update(catalogOne.getId(), updateDescOneChangedId);
-
-        /* ASSERT */
-        assertEquals(HttpStatus.CREATED.value(), result.getStatusCodeValue());
-    }
-
-    @Test
-    public void update_changeLocation_hasLocationHeader() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT */
-        final var result = controller.update(catalogOne.getId(), updateDescOneChangedId);
-
-        /* ASSERT */
-        assertTrue(result.getHeaders().containsKey("Location"));
-    }
-
-    @Test
-    public void update_changeLocation_returnMovedAndUpdatedCatalog() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT */
-        final var result = controller.update(catalogOne.getId(), updateDescOneChangedId);
-
-        /* ASSERT */
-        final var expected = assembler.toModel(updatedCatalogOneChangedID);
-        assertEquals(expected, result.getBody());
-    }
-
     /**
      * delete
      */
@@ -391,13 +349,6 @@ class CatalogControllerTest {
         return desc;
     }
 
-    private CatalogDesc getUpdatedDescChangedId() {
-        final var desc = getUpdatedDesc();
-        desc.setStaticId(UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9"));
-
-        return desc;
-    }
-
     @SneakyThrows
     private Catalog getCatalogOne() {
         final var desc = getDesc();
@@ -448,33 +399,6 @@ class CatalogControllerTest {
         final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
-
-        return catalog;
-    }
-
-    @SneakyThrows
-    private Catalog getUpdatedCatalogOneChangedId() {
-        final var desc = getUpdatedDescChangedId();
-        final var constructor = Catalog.class.getConstructor();
-        constructor.setAccessible(true);
-
-        final var catalog = constructor.newInstance();
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, desc.getTitle());
-
-        final var descriptionField = catalog.getClass().getDeclaredField("description");
-        descriptionField.setAccessible(true);
-        descriptionField.set(catalog, desc.getDescription());
-
-        final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
-        offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, desc.getStaticId());
 
         return catalog;
     }
