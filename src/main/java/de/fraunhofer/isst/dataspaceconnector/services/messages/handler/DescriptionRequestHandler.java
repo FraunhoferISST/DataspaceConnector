@@ -8,6 +8,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
@@ -134,6 +135,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
             return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
                     messageId);
+        } catch (SelfLinkCreationException exception) {
+            return exceptionService.handleSelfLinkCreationException(exception, requestedElement);
         }
     }
 

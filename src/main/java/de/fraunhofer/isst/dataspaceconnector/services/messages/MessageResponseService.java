@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
@@ -515,5 +516,24 @@ public class MessageResponseService {
                                                "Invalid rules in message payload.",
                                                connectorService.getConnectorId(),
                                                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Handle exception when creating self links for the requested element and its children.
+     *
+     * @param exception Exception that was thrown when the self links could not be created.
+     * @param requestedElement The requested element that could not be constructed.
+     * @return A message response.
+     */
+    public MessageResponse handleSelfLinkCreationException(final SelfLinkCreationException
+                                                                   exception,
+                                                           final URI requestedElement) {
+        LOGGER.debug("Could not construct self links for requested element and its children. "
+                        + "[exception=({}), requestedElement=({})]",
+                exception.getMessage(), requestedElement);
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                "Internal error when constructing requested element.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
     }
 }
