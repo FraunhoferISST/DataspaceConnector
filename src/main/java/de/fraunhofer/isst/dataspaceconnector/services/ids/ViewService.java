@@ -41,6 +41,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -123,7 +124,7 @@ public final class ViewService {
      */
     public List<Resource> batchCreateResource(final Collection<OfferedResource> resources,
                                               final String baseUrl) {
-        return resources.parallelStream()
+        return Utils.toStream(resources)
                 .map(r -> this.create(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -235,7 +236,7 @@ public final class ViewService {
     public List<Representation> batchCreateRepresentation(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Representation>
                     representations, final String baseUrl) {
-        return representations.parallelStream()
+        return Utils.toStream(representations)
                 .map(r -> this.create(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -318,7 +319,7 @@ public final class ViewService {
     public List<Artifact> batchCreateArtifact(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Artifact> artifacts,
             final String baseUrl) {
-        return artifacts.parallelStream()
+        return Utils.toStream(artifacts)
                 .map(a -> this.create(a, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -388,7 +389,7 @@ public final class ViewService {
     public List<ContractOffer> batchCreateContract(
             final Collection<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final String baseUrl) {
-        return contracts.parallelStream()
+        return Utils.toStream(contracts)
                 .map(c -> this.create(c, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -472,7 +473,7 @@ public final class ViewService {
      * @return List of ids obligations.
      */
     private List<Duty> batchCreateObligation(final List<ContractRule> rules, final String baseUrl) {
-        return rules.parallelStream()
+        return Utils.toStream(rules)
                 .map(r -> this.createObligation(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -487,7 +488,7 @@ public final class ViewService {
      */
     private List<Prohibition> batchCreateProhibition(final List<ContractRule> rules,
                                                      final String baseUrl) {
-        return rules.parallelStream()
+        return Utils.toStream(rules)
                 .map(r -> this.createProhibition(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -502,7 +503,7 @@ public final class ViewService {
      */
     private List<Permission> batchCreatePermission(final List<ContractRule> rules,
                                                    final String baseUrl) {
-        return rules.parallelStream()
+        return Utils.toStream(rules)
                 .map(r -> this.createPermission(r, baseUrl))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

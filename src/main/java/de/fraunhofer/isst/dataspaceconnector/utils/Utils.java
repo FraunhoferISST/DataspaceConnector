@@ -41,13 +41,14 @@ public final class Utils {
     }
 
     /**
-     * Convert a collection to may be null safely to a stream.
+     * Convert a collection that may be null safely to a stream.
+     * If the collection is null an empty stream will be produced.
      * @param collection The collection. May be null.
      * @param <T> The type of the elements in the collection.
      * @return The stream over the elements of the collection.
      */
     public static <T> Stream<T> toStream(final Collection<T> collection) {
-        return Optional.ofNullable(collection).map(Collection::parallelStream)
+        return Optional.ofNullable(collection).map(Collection::stream)
                        .orElseGet(Stream::empty);
     }
 
