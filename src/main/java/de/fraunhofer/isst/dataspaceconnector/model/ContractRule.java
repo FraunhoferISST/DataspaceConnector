@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
@@ -42,7 +42,7 @@ public class ContractRule extends AbstractEntity {
     /**
      * The definition of the rule.
      **/
-    @Column(length = 1024)
+    @Lob
     private String value;
 
     /**

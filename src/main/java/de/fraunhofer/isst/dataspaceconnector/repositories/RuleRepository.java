@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.repositories;
 
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +10,7 @@ import java.util.UUID;
 /**
  * The repository containing all objects of type {@link ContractRule}.
  */
+@Repository
 public interface RuleRepository extends BaseEntityRepository<ContractRule> {
 
     /**

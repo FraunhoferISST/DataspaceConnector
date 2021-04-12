@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.UUID;
 
@@ -28,6 +28,6 @@ public class ResourceContract {
     private UUID id;
 
     @JsonProperty("contract")
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String contract;
 }

@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import lombok.AccessLevel;
@@ -16,5 +17,6 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @Setter(AccessLevel.PACKAGE)
 public class LocalData extends Data {
+    @Lob
     private String value;
 }
