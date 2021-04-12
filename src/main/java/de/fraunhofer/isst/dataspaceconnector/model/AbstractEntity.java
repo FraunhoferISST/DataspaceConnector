@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -37,6 +38,7 @@ public class AbstractEntity implements Serializable {
     @GeneratedValue
     @Setter(AccessLevel.PACKAGE)
     @Column(name = "id", unique = true, nullable = false)
+    @EqualsAndHashCode.Exclude
     private UUID id;
 
     /**
