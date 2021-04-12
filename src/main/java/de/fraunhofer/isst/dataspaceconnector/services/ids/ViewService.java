@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.Artifact;
@@ -91,15 +90,14 @@ public final class ViewService {
      */
     private ResourceCatalog create(final Catalog catalog, final String baseUrl) {
         // Build children.
-        final var resources = CompletableFuture.supplyAsync(
-                () -> batchCreateResource(catalog.getOfferedResources(), baseUrl));
+        final var resources = batchCreateResource(catalog.getOfferedResources(), baseUrl);
 
         try {
 
             final var uri = getAbsoluteSelfLink(catalog, baseUrl);
 
             final var idsCatalog = new ResourceCatalogBuilder(uri)
-                    ._offeredResource_((ArrayList<? extends Resource>) resources.get())
+                    ._offeredResource_((ArrayList<? extends Resource>) resources)
                     .build();
 
             // Add additional attributes as property map.
@@ -160,10 +158,8 @@ public final class ViewService {
     private Resource create(final de.fraunhofer.isst.dataspaceconnector.model.Resource resource,
                             final String baseUrl) {
         // Build children.
-        final var contracts = CompletableFuture.supplyAsync(
-                () -> batchCreateContract(resource.getContracts(), baseUrl));
-        final var representations = CompletableFuture.supplyAsync(
-                () -> batchCreateRepresentation(resource.getRepresentations(), baseUrl));
+        final var contracts = batchCreateContract(resource.getContracts(), baseUrl);
+        final var representations = batchCreateRepresentation(resource.getRepresentations(), baseUrl);
 
         try {
             // Prepare resource attributes.
@@ -192,14 +188,14 @@ public final class ViewService {
 //                    ._accrualPeriodicity_()
 //                    ._assetRefinement_()
 //                    ._contentType_()
-                    ._contractOffer_((ArrayList<? extends ContractOffer>) contracts.get())
+                    ._contractOffer_((ArrayList<? extends ContractOffer>) contracts)
                     ._created_(IdsUtils.getGregorianOf(created))
                     ._description_(Util.asList(new TypedLiteral(description, language)))
                     ._language_(Util.asList(idsLanguage))
                     ._keyword_((ArrayList<? extends TypedLiteral>) keywords)
                     ._modified_(IdsUtils.getGregorianOf(modified))
                     ._publisher_(publisher)
-                    ._representation_((ArrayList<? extends Representation>) representations.get())
+                    ._representation_((ArrayList<? extends Representation>) representations)
                     ._resourceEndpoint_(Util.asList(endpoint))
                     ._sovereign_(sovereign)
 //                    ._spatialCoverage_()
@@ -272,8 +268,7 @@ public final class ViewService {
     private Representation create(final de.fraunhofer.isst.dataspaceconnector.model.Representation
                                           representation, final String baseUrl) {
         // Build children.
-        final var artifacts = CompletableFuture.supplyAsync(
-                () -> batchCreateArtifact(representation.getArtifacts(), baseUrl));
+        final var artifacts = batchCreateArtifact(representation.getArtifacts(), baseUrl);
 
         try {
             // Prepare representation attributes.
@@ -289,7 +284,7 @@ public final class ViewService {
 
             final var idsRepresentation = new RepresentationBuilder(uri)
                     ._created_(created)
-                    ._instance_((ArrayList<? extends Artifact>) artifacts.get())
+                    ._instance_((ArrayList<? extends Artifact>) artifacts)
                     ._language_(language)
                     ._mediaType_(new IANAMediaTypeBuilder()._filenameExtension_(mediaType).build())
                     ._modified_(modified)
@@ -425,12 +420,9 @@ public final class ViewService {
                                          contract, final String baseUrl) {
         // Build children.
         final var rules = contract.getRules();
-        final var permissions =
-                CompletableFuture.supplyAsync(() -> batchCreatePermission(rules, baseUrl));
-        final var prohibitions =
-                CompletableFuture.supplyAsync(() -> batchCreateProhibition(rules, baseUrl));
-        final var obligations =
-                CompletableFuture.supplyAsync(() -> batchCreateObligation(rules, baseUrl));
+        final var permissions = batchCreatePermission(rules, baseUrl);
+        final var prohibitions = batchCreateProhibition(rules, baseUrl);
+        final var obligations = batchCreateObligation(rules, baseUrl);
 
         try {
             // Prepare contract attributes.
@@ -442,9 +434,9 @@ public final class ViewService {
             final var uri = getAbsoluteSelfLink(contract, baseUrl);
 
             final var idsContract = new ContractOfferBuilder(uri)
-                    ._permission_((ArrayList<? extends Permission>) permissions.get())
-                    ._prohibition_((ArrayList<? extends Prohibition>) prohibitions.get())
-                    ._obligation_((ArrayList<? extends Duty>) obligations.get())
+                    ._permission_((ArrayList<? extends Permission>) permissions)
+                    ._prohibition_((ArrayList<? extends Prohibition>) prohibitions)
+                    ._obligation_((ArrayList<? extends Duty>) obligations)
                     ._contractStart_(IdsUtils.getGregorianOf(contractStart))
                     ._contractDate_(IDSUtils.getGregorianNow())
                     ._consumer_(consumer)
