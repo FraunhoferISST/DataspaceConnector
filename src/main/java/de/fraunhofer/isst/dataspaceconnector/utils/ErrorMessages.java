@@ -40,6 +40,11 @@ public enum ErrorMessages {
     LIST_NULL("The passed list may not be null."),
 
     /**
+     * The passed uri may note be null.
+     */
+    URI_NULL("The passed uri may not be null"),
+
+    /**
      * One of the contracts is empty.
      */
     EMPTY_CONTRACT("Empty contracts cannot be compared."),

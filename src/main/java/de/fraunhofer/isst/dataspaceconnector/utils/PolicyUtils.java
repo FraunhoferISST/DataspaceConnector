@@ -137,10 +137,14 @@ public final class PolicyUtils {
      * @param issuerConnector The requesting consumer.
      * @param contracts       List of contracts.
      * @return Cleaned list of contracts.
+     * @throws IllegalArgumentException if any of the arguments is null.
      */
     public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
             final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final URI issuerConnector) {
+        Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);
+        Utils.requireNonNull(issuerConnector, ErrorMessages.URI_NULL);
+
         return contracts.parallelStream()
                         .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
                                                                                  .toString()
