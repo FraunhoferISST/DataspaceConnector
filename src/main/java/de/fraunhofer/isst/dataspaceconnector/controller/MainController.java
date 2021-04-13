@@ -51,7 +51,7 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping({"/", ""})
+    @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -72,7 +72,7 @@ public class MainController {
      *
      * @return Self-description or error response.
      */
-    @GetMapping("/api/connector")
+    @GetMapping(value = "/api/connector", produces = "application/ld+json")
     @Operation(summary = "Private IDS self-description")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),

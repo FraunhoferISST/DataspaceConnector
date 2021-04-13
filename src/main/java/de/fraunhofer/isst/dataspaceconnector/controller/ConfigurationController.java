@@ -80,7 +80,7 @@ public class ConfigurationController {
      *
      * @return The configuration object or an error.
      */
-    @GetMapping("/configuration")
+    @GetMapping(value = "/configuration", produces = "application/ld+json")
     @Operation(summary = "Get current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
