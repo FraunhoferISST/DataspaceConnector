@@ -49,5 +49,6 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
     /**
      * Indicates whether the artifact should be downloaded automatically
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean automatedDownload = ArtifactFactory.DEFAULT_AUTO_DOWNLOAD;
 }
