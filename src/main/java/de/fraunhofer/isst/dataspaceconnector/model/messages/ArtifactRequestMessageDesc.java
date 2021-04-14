@@ -1,16 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.model.messages;
 
-import java.net.URI;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.net.URI;
 
 /**
  * Class for all artifact request message parameters.
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class ArtifactRequestMessageDesc extends MessageDesc {
 
