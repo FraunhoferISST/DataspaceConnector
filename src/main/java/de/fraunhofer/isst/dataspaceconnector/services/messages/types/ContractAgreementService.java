@@ -10,6 +10,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMes
 import de.fraunhofer.isst.dataspaceconnector.services.messages.AbstractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,9 +23,14 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 @Service
 public final class ContractAgreementService extends AbstractMessageService<ContractAgreementMessageDesc> {
 
+    /**
+     * @throws IllegalArgumentException If desc is null.
+     */
     @Override
     public Message buildMessage(final ContractAgreementMessageDesc desc)
             throws ConstraintViolationException {
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
         final var connectorId = getConnectorService().getConnectorId();
         final var modelVersion = getConnectorService().getOutboundModelVersion();
         final var token = getConnectorService().getCurrentDat();
