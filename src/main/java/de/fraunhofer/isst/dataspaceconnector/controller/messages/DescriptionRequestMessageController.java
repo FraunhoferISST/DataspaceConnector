@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
+import java.net.URI;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
@@ -22,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 /**
  * Controller for sending description request messages.
@@ -85,7 +85,7 @@ public class DescriptionRequestMessageController {
                 // Get payload as component.
                 final var component =
                         deserializationService.getInfrastructureComponent(payload);
-                return new ResponseEntity<>(component, HttpStatus.OK);
+                return new ResponseEntity<>(component.toRdf(), HttpStatus.OK);
             }
         } catch (MessageException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
