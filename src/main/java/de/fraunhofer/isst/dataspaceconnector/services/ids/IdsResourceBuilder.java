@@ -11,10 +11,16 @@ import de.fraunhofer.isst.dataspaceconnector.model.Resource;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+/**
+ * Converts DSC Resources to Infomodel Resources.
+ * @param <T> The resource type.
+ */
+@Component
 @RequiredArgsConstructor
-public class IdsOfferedResourceBuilder
-        extends AbstractIdsBuilder<Resource, de.fraunhofer.iais.eis.Resource> {
+public final class IdsResourceBuilder<T extends Resource>
+        extends AbstractIdsBuilder<T, de.fraunhofer.iais.eis.Resource> {
 
     private final @NonNull IdsRepresentationBuilder repBuilder;
     private final @NonNull IdsContractBuilder       contractBuilder;

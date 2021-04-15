@@ -16,14 +16,31 @@ import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+/**
+ * Converts DSC Contracts to Infomodel ContractOffers.
+ */
+@Component
 @RequiredArgsConstructor
-class IdsContractBuilder
-        extends AbstractIdsBuilder<Contract, ContractOffer> {
+public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, ContractOffer> {
 
-    private final @NonNull IdsPermissionBuilder   permBuilder;
-    private final @NonNull IdsProhibitionBuilder  prohBuilder;
-    private final @NonNull IdsDutyBuilder         dutyBuilder;
+    /**
+     * The builder for Infomodel Permission rules.
+     */
+    private final @NonNull IdsPermissionBuilder  permBuilder;
+    /**
+     * The builder for Infomodel Prohibition rules.
+     */
+    private final @NonNull IdsProhibitionBuilder prohBuilder;
+    /**
+     * The builder for Infomodel Duty rules.
+     */
+    private final @NonNull IdsDutyBuilder        dutyBuilder;
+
+    /**
+     * The service for deserializing strings to Infomodel rules.
+     */
     private final @NonNull DeserializationService deserializer;
 
     @Override

@@ -8,11 +8,19 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+/**
+ * Converts DSC Representations to Infomodel Representations.
+ */
+@Component
 @RequiredArgsConstructor
-class IdsRepresentationBuilder
+public final class IdsRepresentationBuilder
         extends AbstractIdsBuilder<Representation, de.fraunhofer.iais.eis.Representation> {
 
+    /**
+     * The builder for Infomodel Artifacts.
+     */
     private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     @Override

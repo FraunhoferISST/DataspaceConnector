@@ -7,23 +7,26 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The base class for constructing an Infomodel Rule from a DSC Rule.
+ * @param <T> The Infomodel rule type.
+ */
 @RequiredArgsConstructor
-class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractRule, T> {
+public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractRule, T> {
 
+    /**
+     * The service for deserializing strings to Infomodel rules.
+     */
     private final @NonNull DeserializationService deserializer;
 
+    /**
+     * The type of the rule to be build. Needed for the deserializer.
+     */
     private final @NonNull Class<T> ruleType;
 
-    //    IdsRuleBuilder(@NonNull DeserializationService deserializationService) {
-    //        this.deserializationService = deserializationService;
-    //        final var resolved = GenericTypeResolver.resolveTypeArguments(getClass(),
-    //        IdsRuleBuilder.class);
-    //        ruleType = (Class<T>) resolved[1];
-    //    }
-
     @Override
-    protected T createInternal(final ContractRule rule, final URI baseUri, final int currentDepth,
-                               final int maxDepth) {
+    protected final T createInternal(final ContractRule rule, final URI baseUri,
+                                     final int currentDepth, final int maxDepth) {
         final var idsRule = deserializer.getRule(rule.getValue());
         final var selfLink = getAbsoluteSelfLink(rule, baseUri);
         var newRule = rule.getValue();

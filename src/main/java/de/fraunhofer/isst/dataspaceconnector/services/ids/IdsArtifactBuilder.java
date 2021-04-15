@@ -7,10 +7,15 @@ import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-
+/**
+ * Converts DSC Artifacts to Infomodel Artifacts.
+ */
+@Component
 @NoArgsConstructor
-public class IdsArtifactBuilder extends AbstractIdsBuilder<Artifact, de.fraunhofer.iais.eis.Artifact> {
+public final class IdsArtifactBuilder
+        extends AbstractIdsBuilder<Artifact, de.fraunhofer.iais.eis.Artifact> {
 
     @Override
     protected de.fraunhofer.iais.eis.Artifact createInternal(final Artifact artifact,

@@ -6,6 +6,7 @@ import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogControl
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.OfferedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RequestedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
@@ -16,8 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +34,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
 @RequiredArgsConstructor
 public class MainController {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
     /**
      * Service for ids connector management.
@@ -99,20 +93,22 @@ public class MainController {
         final var model = new RepresentationModel();
 
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
+        model.add(linkTo(methodOn(AgreementController.class)
+                .getAll(null, null, null)).withRel("agreements"));
         model.add(linkTo(methodOn(ArtifactController.class)
                 .getAll(null, null, null)).withRel("artifacts"));
         model.add(linkTo(methodOn(CatalogController.class)
                 .getAll(null, null, null)).withRel("catalogs"));
         model.add(linkTo(methodOn(ContractController.class)
                 .getAll(null, null, null)).withRel("contracts"));
-        model.add(linkTo(methodOn(RepresentationController.class)
-                .getAll(null, null, null)).withRel("representations"));
         model.add(linkTo(methodOn(OfferedResourceController.class)
                 .getAll(null, null, null)).withRel("offers"));
+        model.add(linkTo(methodOn(RepresentationController.class)
+                .getAll(null, null, null)).withRel("representations"));
+        model.add(linkTo(methodOn(RequestedResourceController.class)
+                .getAll(null, null, null)).withRel("requests"));
         model.add(linkTo(methodOn(RuleController.class)
                 .getAll(null, null, null)).withRel("rules"));
-        model.add(linkTo(methodOn(AgreementController.class)
-                .getAll(null, null, null)).withRel("agreements"));
 
         return ResponseEntity.ok(model);
     }
