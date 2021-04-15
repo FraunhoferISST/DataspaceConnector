@@ -3,19 +3,23 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import org.junit.jupiter.api.Test;
@@ -31,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DescriptionRequestHandlerTest {
 
     @SpyBean
-    MessageResponseService exceptionService;
+    ConnectorService connectorService;
 
     @MockBean
     EntityResolver resolver;
@@ -42,6 +46,15 @@ class DescriptionRequestHandlerTest {
     @Test
     public void handleMessage_validSelfDescriptionMsg_returnSelfDescription() throws DatatypeConfigurationException {
         /* ARRANGE */
+        final var connector = new BaseConnectorBuilder()
+                ._resourceCatalog_(new ArrayList<>())
+                ._outboundModelVersion_("4.0.0")
+                ._inboundModelVersion_(Util.asList("4.0.0"))
+                ._maintainer_(URI.create("https://someMaintainer"))
+                ._curator_(URI.create("https://someCurator"))
+                ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                .build();
+
         final var calendar = new GregorianCalendar();
         calendar.setTime(new Date());
         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
@@ -53,6 +66,8 @@ class DescriptionRequestHandlerTest {
                 ._modelVersion_("4.0.0")
                 ._issued_(xmlCalendar)
                 .build();
+
+        Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 
         /* ACT */
         final var result = (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);

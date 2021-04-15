@@ -16,8 +16,12 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import de.fraunhofer.isst.dataspaceconnector.model.Resource;
-import de.fraunhofer.isst.dataspaceconnector.services.ids.ViewService;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsArtifactBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsCatalogBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsContractBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsRepresentationBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsResourceBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -81,7 +85,17 @@ public class EntityResolver {
     /**
      * Service for building ids objects.
      */
-    private final @NonNull ViewService viewService;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
+
+    private final @NonNull IdsResourceBuilder<OfferedResource> offeredResourceBuilder;
+
+    private final @NonNull IdsResourceBuilder<RequestedResource> requestedResourceBuilder;
+
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
+
+    private final @NonNull IdsRepresentationBuilder representationBuilder;
+
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * Return any connector entity by its id.
@@ -130,22 +144,26 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public String getEntityAsRdfString(final AbstractEntity entity) throws InvalidResourceException {
+    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity) throws InvalidResourceException {
+        // NOTE Maybe the builder class could be found without the ugly if array?
         try {
             if (entity instanceof Artifact) {
-                final var artifact = viewService.create((Artifact) entity);
+                final var artifact = artifactBuilder.create((Artifact) entity);
                 return Objects.requireNonNull(artifact).toRdf();
-            } else if (entity instanceof Resource) {
-                final var resource = viewService.create((Resource) entity);
+            } else if (entity instanceof OfferedResource) {
+                final var resource = offeredResourceBuilder.create((OfferedResource) entity);
+                return Objects.requireNonNull(resource).toRdf();
+            } else if (entity instanceof RequestedResource) {
+                final var resource = requestedResourceBuilder.create((RequestedResource) entity);
                 return Objects.requireNonNull(resource).toRdf();
             } else if (entity instanceof Representation) {
-                final var representation = viewService.create((Representation) entity);
+                final var representation = representationBuilder.create((Representation) entity);
                 return Objects.requireNonNull(representation).toRdf();
             } else if (entity instanceof Catalog) {
-                final var catalog = viewService.create((Catalog) entity);
+                final var catalog = catalogBuilder.create((Catalog) entity);
                 return Objects.requireNonNull(catalog).toRdf();
             } else if (entity instanceof Contract) {
-                final var catalog = viewService.create((Contract) entity);
+                final var catalog = contractBuilder.create((Contract) entity);
                 return Objects.requireNonNull(catalog).toRdf();
             } else if (entity instanceof Agreement) {
                 final var agreement = (Agreement) entity;

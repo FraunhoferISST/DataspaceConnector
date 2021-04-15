@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
@@ -21,12 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +55,9 @@ public class ConnectorService {
     /**
      * Service for ids views.
      */
-    private final @NonNull ViewService viewService;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
+
+    private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     /**
      * Service for offered resources.
@@ -159,7 +161,7 @@ public class ConnectorService {
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
-                .map(viewService::create)
+                .map(x -> catalogBuilder.create(x, 0))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -176,6 +178,6 @@ public class ConnectorService {
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))
                 .findAny();
 
-        return resource.map(viewService::create).orElse(null);
+        return resource.map(resourceBuilder::create).orElse(null);
     }
 }

@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for artifacts.
@@ -89,6 +90,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
      * @param queryInput The query for the backend.
      * @return The artifacts data.
      */
+    @Transactional
     public Object getData(final UUID artifactId, final QueryInput queryInput) {
         final var artifact = get(artifactId);
         final var data = ((ArtifactImpl) artifact).getData();

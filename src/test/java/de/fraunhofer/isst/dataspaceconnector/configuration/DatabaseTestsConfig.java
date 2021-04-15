@@ -1,6 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.configuration;
 
-import de.fraunhofer.isst.dataspaceconnector.services.ids.ViewService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +14,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = {"de.fraunhofer.isst.dataspaceconnector.repositories",
         "de.fraunhofer.isst.dataspaceconnector.model"},
         excludeFilters = {
-                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = ViewService.class)})
+                @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)})
 public class DatabaseTestsConfig {
 }
