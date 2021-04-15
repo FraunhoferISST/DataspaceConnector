@@ -1,18 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -28,6 +15,19 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public final class PolicyUtils {
 
@@ -51,7 +51,8 @@ public final class PolicyUtils {
      */
     public static List<Rule> extractRulesFromContract(final Contract contract) {
         final var permissionList = contract.getPermission();
-        final var ruleList = permissionList == null ? new ArrayList<Rule>() : new ArrayList<Rule>(permissionList);
+        final var ruleList = permissionList == null ? new ArrayList<Rule>() :
+                new ArrayList<Rule>(permissionList);
 
         final var prohibitionList = contract.getProhibition();
         if (prohibitionList != null) {
@@ -146,10 +147,10 @@ public final class PolicyUtils {
         Utils.requireNonNull(issuerConnector, ErrorMessages.URI_NULL);
 
         return contracts.parallelStream()
-                        .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
-                                                                                 .toString()
-                                                                                 .isBlank())
-                        .collect(Collectors.toList());
+                .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
+                        .toString()
+                        .isBlank())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -310,7 +311,7 @@ public final class PolicyUtils {
      * @return The duration or null.
      * @throws javax.xml.datatype.DatatypeConfigurationException If the duration cannot be parsed.
      */
-    public static java.time.Duration getDuration( final Rule rule) throws DatatypeConfigurationException {
+    public static java.time.Duration getDuration(final Rule rule) throws DatatypeConfigurationException {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
@@ -388,6 +389,7 @@ public final class PolicyUtils {
 
     /**
      * Compare two contract agreements to each other.
+     *
      * @param consumer The consumer agreement.
      * @param provider The provider agreement.
      * @throws ContractException If both objects do not match.
@@ -395,20 +397,44 @@ public final class PolicyUtils {
     public static boolean compareContractAgreements(final ContractAgreement consumer,
                                                     final ContractAgreement provider) {
         return consumer.getId().equals(provider.getId())
-               && comparePermissions(consumer.getPermission(), provider.getPermission())
-               && compareProhibitions(consumer.getProhibition(), provider.getProhibition())
-               && compareObligations(consumer.getObligation(), provider.getObligation());
+                && comparePermissions(consumer.getPermission(), provider.getPermission())
+                && compareProhibitions(consumer.getProhibition(), provider.getProhibition())
+                && compareObligations(consumer.getObligation(), provider.getObligation());
     }
 
-    private static boolean comparePermissions(final ArrayList<? extends Permission> lList, final ArrayList<? extends Permission> rList) {
+    /**
+     * Compare two permission lists to each other.
+     *
+     * @param lList One list.
+     * @param rList The other list.
+     * @return True, if the lists are equal, false if not.
+     */
+    private static boolean comparePermissions(final ArrayList<? extends Permission> lList,
+                                              final ArrayList<? extends Permission> rList) {
         return compareDuties(lList, rList) && compareRules(lList, rList);
     }
 
-    private static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList, final ArrayList<? extends Prohibition> rList) {
+    /**
+     * Compare two prohibition lists to each other.
+     *
+     * @param lList One list.
+     * @param rList The other list.
+     * @return True, if the lists are equal, false if not.
+     */
+    private static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
+                                               final ArrayList<? extends Prohibition> rList) {
         return compareRules(lList, rList);
     }
 
-    private static boolean compareObligations(final ArrayList<? extends Duty> lList, final ArrayList<? extends Duty> rList) {
+    /**
+     * Compare two obligation lists to each other.
+     *
+     * @param lList One list.
+     * @param rList The other list.
+     * @return True, if the lists are equal, false if not.
+     */
+    private static boolean compareObligations(final ArrayList<? extends Duty> lList,
+                                              final ArrayList<? extends Duty> rList) {
         return compareRules(lList, rList);
     }
 
@@ -419,7 +445,7 @@ public final class PolicyUtils {
      * @param rList List of rules from the contract that should be compared.
      */
     private static boolean compareDuties(final ArrayList<? extends Permission> lList,
-                                        final ArrayList<? extends Permission> rList) {
+                                         final ArrayList<? extends Permission> rList) {
         return compareList(lList, rList, PolicyUtils::compareDuties);
     }
 
@@ -444,7 +470,7 @@ public final class PolicyUtils {
     private static boolean compareConstraints(
             final ArrayList<? extends AbstractConstraint> lList,
             final ArrayList<? extends AbstractConstraint> rList) {
-        return compareList(lList, rList, PolicyUtils::compareConstrain);
+        return compareList(lList, rList, PolicyUtils::compareConstraint);
     }
 
     /**
@@ -455,21 +481,22 @@ public final class PolicyUtils {
      * @return true if the actions are the same.
      */
     private static boolean compareActions(final ArrayList<? extends Action> lList,
-            final ArrayList<? extends Action> rList) {
+                                          final ArrayList<? extends Action> rList) {
         return compareList(lList, rList, PolicyUtils::compareAction);
     }
 
     private static <T extends Permission> boolean compareDuties(final T lObj, final T rObj) {
         return compareRules(lObj.getPreDuty(), rObj.getPreDuty())
-               && compareRules(lObj.getPostDuty(), rObj.getPostDuty());
+                && compareRules(lObj.getPostDuty(), rObj.getPostDuty());
     }
 
     private static <T extends Rule> boolean compareRule(final T lObj, final T rObj) {
         return compareActions(lObj.getAction(), rObj.getAction())
-               && compareConstraints(lObj.getConstraint(), rObj.getConstraint());
+                && compareConstraints(lObj.getConstraint(), rObj.getConstraint());
     }
 
-    private static <T extends AbstractConstraint> boolean compareConstrain(final T lObj, final T rObj) {
+    private static <T extends AbstractConstraint> boolean compareConstraint(final T lObj,
+                                                                            final T rObj) {
         return lObj.toRdf().equals(rObj.toRdf());
     }
 
@@ -477,7 +504,8 @@ public final class PolicyUtils {
         return lObj.equals(rObj);
     }
 
-    private static <T> boolean compareList(final List<? extends T> lList, final List<? extends T> rList,
+    private static <T> boolean compareList(final List<? extends T> lList,
+                                           final List<? extends T> rList,
                                            final BiFunction<T, T, Boolean> compare) {
         var isSame = true;
 
