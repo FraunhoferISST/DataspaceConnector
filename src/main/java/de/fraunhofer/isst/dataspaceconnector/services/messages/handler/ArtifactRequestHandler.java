@@ -50,7 +50,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Class level logger.
      */
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestHandler.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
     /**
      * Service for message processing.
