@@ -27,9 +27,8 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondIdsMessageFailed(final Exception exception) {
         if (log.isDebugEnabled()) {
             log.debug("Ids message handling failed. [exception=({})]", exception.getMessage(),
-                      exception);
+                    exception);
         }
-
         return new ResponseEntity<>("Ids message handling failed. " + exception.getMessage(),
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -42,10 +41,9 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondReceivedInvalidResponse(final Exception exception) {
         if (log.isDebugEnabled()) {
-            log.debug("Received invalid ids response. [exception=({})]", exception.getMessage(),
-                      exception);
+            log.debug("Received invalid ids response. [exception=({})]",
+                    exception.getMessage(), exception);
         }
-
         return new ResponseEntity<>("Failed to read the ids response message.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -56,13 +54,11 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> respondConfigurationUpdateError(
-            final Exception exception) {
+    public static ResponseEntity<Object> respondConfigurationUpdateError(final Exception exception) {
         if (log.isDebugEnabled()) {
             log.debug("Failed to update the configuration. [exception=({})]",
-                      exception.getMessage(), exception);
+                    exception.getMessage(), exception);
         }
-
         return new ResponseEntity<>("Failed to update configuration.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -75,10 +71,9 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondDeserializationError(final Exception exception) {
         if (log.isWarnEnabled()) {
-            log.warn("Failed to deserialize the object. [exception=({})]", exception.getMessage(),
-                     exception);
+            log.warn("Failed to deserialize the object. [exception=({})]",
+                    exception.getMessage(), exception);
         }
-
         return new ResponseEntity<>("Failed to update.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -91,7 +86,6 @@ public final class ControllerUtils {
         if (log.isInfoEnabled()) {
             log.info("No configuration could be found.");
         }
-
         return new ResponseEntity<>("No configuration found.", HttpStatus.NOT_FOUND);
     }
 
@@ -105,7 +99,6 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("The resource does not exist. [resourceId=({})]", resourceId);
         }
-
         return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
     }
 
@@ -119,7 +112,6 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("Resource not loaded. [resourceId=({})]", resourceId);
         }
-
         return new ResponseEntity<>("Could not load resource.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -134,7 +126,6 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("Failed to identify policy pattern.", exception);
         }
-
         return new ResponseEntity<>("Could not identify pattern", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -146,10 +137,9 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondInvalidInput(final Exception exception) {
         if (log.isWarnEnabled()) {
-            log.warn("Failed to deserialize the input. [exception=({})]", exception.getMessage(),
-                     exception);
+            log.warn("Failed to deserialize the input. [exception=({})]",
+                    exception.getMessage(), exception);
         }
-
         return new ResponseEntity<>("Invalid input. " + exception.getMessage(),
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -160,13 +150,11 @@ public final class ControllerUtils {
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
-    public static ResponseEntity<Object> respondFailedToBuildContractRequest(
-            final Exception exception) {
+    public static ResponseEntity<Object> respondFailedToBuildContractRequest(final Exception exception) {
         if (log.isWarnEnabled()) {
-            log.warn("Failed to build contract request. [exception=({})]", exception.getMessage(),
-                     exception);
+            log.warn("Failed to build contract request. [exception=({})]",
+                    exception.getMessage(), exception);
         }
-
         return new ResponseEntity<>("Failed to build contract request.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -180,9 +168,8 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondConnectorNotLoaded(final Exception exception) {
         if (log.isWarnEnabled()) {
             log.warn("Connector could not be loaded. [exception=({})]", exception.getMessage(),
-                     exception);
+                    exception);
         }
-
         return new ResponseEntity<>("Connector could not be loaded.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -196,9 +183,8 @@ public final class ControllerUtils {
     public static ResponseEntity<Object> respondGlobalException(final Exception exception) {
         if (log.isWarnEnabled()) {
             log.warn("Something else went wrong. [exception=({})]", exception.getMessage(),
-                     exception);
+                    exception);
         }
-
         return new ResponseEntity<>("Something else went wrong.",
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -211,9 +197,9 @@ public final class ControllerUtils {
      */
     public static ResponseEntity<Object> respondFailedToStoreEntity(final Exception exception) {
         if (log.isWarnEnabled()) {
-            log.warn("Failed to store entity. [exception=({})]", exception.getMessage(), exception);
+            log.warn("Failed to store entity. [exception=({})]", exception.getMessage(),
+                    exception);
         }
-
         return new ResponseEntity<>("Failed to store entity. " + exception.getMessage(),
                                     HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -223,12 +209,10 @@ public final class ControllerUtils {
      * @param response The response map.
      * @return ResponseEntity with status code 417.
      */
-    public static ResponseEntity<Object> respondWithMessageContent(
-            final Map<String, Object> response) {
+    public static ResponseEntity<Object> respondWithMessageContent(final Map<String, Object> response) {
         if (log.isWarnEnabled()) {
             log.warn("Expectation failed. [response=({})]", response);
         }
-
         return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
 }
