@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
+import java.io.IOException;
+
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -16,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 /**
  * Service class for ids object deserialization.
@@ -127,12 +127,29 @@ public class DeserializationService {
      * @throws IllegalArgumentException If deserialization fails.
      */
     public Rule getRule(final String policy) throws IllegalArgumentException {
+        return getRule(policy, Rule.class);
+    }
+
+    public <T extends Rule> T getRule(final String policy, final Class<T> tClass)
+            throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(policy, Rule.class);
+            return serializerProvider.getSerializer().deserialize(policy, tClass);
         } catch (IOException exception) {
             LOGGER.warn("Could not deserialize rule. [exception=({})]", exception.getMessage());
             throw new IllegalArgumentException("Could not deserialize rule.", exception);
         }
+    }
+
+    public <T extends Rule> boolean isRuleType(final String policy, final Class<T> tClass) {
+        var isType = false;
+        try {
+            serializerProvider.getSerializer().deserialize(policy, tClass);
+            isType = true;
+        } catch (IOException ignore) {
+            // Intentionally empty
+        }
+
+        return isType;
     }
 
     /**

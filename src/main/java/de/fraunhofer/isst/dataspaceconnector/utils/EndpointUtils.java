@@ -1,7 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
+import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
@@ -23,10 +28,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.BasePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.NoSuchElementException;
-import java.util.UUID;
 
 public final class EndpointUtils {
 
@@ -131,6 +132,30 @@ public final class EndpointUtils {
             LOGGER.debug("Could not retrieve uuid from path. [exception=({})]", e.getMessage());
             return null;
         }
+    }
+
+    // NOTE This function is a helper function for hiding the problem that the self link is always
+    // received through the concrete assembler.
+    public static <T extends AbstractEntity> URI getSelfLink(final T entity) {
+        if (entity instanceof Catalog) {
+            return getSelfLink((Catalog) entity);
+        } else if (entity instanceof OfferedResource) {
+            return getSelfLink((OfferedResource) entity);
+        } else if (entity instanceof RequestedResource) {
+            return getSelfLink((RequestedResource) entity);
+        } else if (entity instanceof Representation) {
+            return getSelfLink((Representation) entity);
+        } else if (entity instanceof Artifact) {
+            return getSelfLink((Artifact) entity);
+        } else if (entity instanceof Contract) {
+            return getSelfLink((Contract) entity);
+        } else if (entity instanceof ContractRule) {
+            return getSelfLink((ContractRule) entity);
+        } else if (entity instanceof Agreement) {
+            return getSelfLink((Agreement) entity);
+        }
+
+        throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
     }
 
     /**
