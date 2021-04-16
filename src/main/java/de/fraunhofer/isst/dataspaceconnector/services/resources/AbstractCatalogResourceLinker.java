@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @param <T> The resource type.
  */
 public abstract class AbstractCatalogResourceLinker<T extends Resource>
-        extends BaseUniDirectionalLinkerService<Catalog, T, CatalogService, ResourceService<T, ?>> {
+        extends OwningRelationService<Catalog, T, CatalogService, ResourceService<T, ?>> {
     /**
      * Default constructor.
      */

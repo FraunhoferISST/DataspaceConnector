@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseUniDirectionalLinkerService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @param <S> The service type for handling the relations logic.
  */
-public class BaseResourceChildController<S extends BaseUniDirectionalLinkerService<?, ?, ?, ?>,
+public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
         T extends AbstractEntity, V extends RepresentationModel<V>> {
     /**
      * The linker between two resources.

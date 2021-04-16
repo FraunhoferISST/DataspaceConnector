@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
  */
 @NoArgsConstructor
 public abstract class AbstractResourceRepresentationLinker<T extends Resource>
-        extends BaseUniDirectionalLinkerService<T, Representation, ResourceService<T, ?>,
-                RepresentationService> {
+        extends OwningRelationService<T, Representation, ResourceService<T, ?>,
+                        RepresentationService> {
     /**
      * Get the list of representations owned by the resource.
      * @param owner The owner of the representations.
