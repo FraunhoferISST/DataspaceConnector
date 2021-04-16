@@ -1,11 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
@@ -22,9 +20,19 @@ import org.springframework.data.domain.Pageable;
  * @param <T> The service type for the parent resource.
  * @param <X> The service type for the child resource.
  */
-public abstract class BaseUniDirectionalLinkerService<
-        K extends AbstractEntity, W extends AbstractEntity, T extends BaseEntityService<K, ?>, X
-                extends BaseEntityService<W, ?>> {
+public abstract class AbstractRelationService<K extends AbstractEntity, W extends AbstractEntity,
+        T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>>
+        implements RelationService<K, W, T, X> {
+
+    /*
+        NOTE: Pretty much all functions will throw an ResourceNotFoundException but they are not
+        added to the function signature. The basic idea here was, that a request to an missing
+        entity can only come from an user and in most cases will be handled by an
+        ResourceNotFoundExceptionHandler. By handling the exception this way the calling controller
+        does not need to known (and thus not care for the case) how an invalid request should be
+        handled.
+     */
+
     /**
      * The service for the entity whose relations are modified.
      **/
@@ -38,13 +46,6 @@ public abstract class BaseUniDirectionalLinkerService<
     private X manyService;
 
     /**
-     * Default constructor.
-     */
-    protected BaseUniDirectionalLinkerService() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Get all children of an entity.
      * @param ownerId The id of the entity whose children should be received.
      * @param pageable The {@link Pageable} object for getting only a page of objects.
@@ -52,81 +53,13 @@ public abstract class BaseUniDirectionalLinkerService<
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if the ownerId entity does not exists.
      */
+    @Override
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
 
         final var owner = oneService.get(ownerId);
         return getInternal(owner, pageable);
-    }
-
-    /**
-     * Add a list of children to an entity. The children must exist.
-     * @param ownerId  The id of the entity that the children should be added to.
-     * @param entities The children to be added.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
-     */
-    public void add(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
-
-        if (entities.isEmpty()) {
-            // Prevent read call to database for the owner.
-            return;
-        }
-
-        throwIfEntityDoesNotExist(entities);
-
-        final var owner = oneService.get(ownerId);
-
-        addInternal(owner, entities);
-
-        oneService.persist(owner);
-    }
-
-    /**
-     * Remove a list of children from an entity.
-     * @param ownerId  The id of the entity that the children should be removed from.
-     * @param entities The children to be removed.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
-     */
-    public void remove(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
-
-        if (entities.isEmpty()) {
-            // Prevent read call to database for the owner.
-            return;
-        }
-
-        throwIfEntityDoesNotExist(entities);
-
-        final var owner = oneService.get(ownerId);
-
-        removeInternal(owner, entities);
-
-        oneService.persist(owner);
-    }
-
-    /**
-     * Replace the children of an entity.
-     * @param ownerId  The id of the entity whose children should be replaced.
-     * @param entities The new children for the entity.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
-     */
-    public void replace(final UUID ownerId, final Set<UUID> entities) {
-        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
-        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
-        throwIfEntityDoesNotExist(entities);
-
-        final var owner = oneService.get(ownerId);
-
-        replaceInternal(owner, entities);
-
-        oneService.persist(owner);
     }
 
     /**
@@ -148,46 +81,61 @@ public abstract class BaseUniDirectionalLinkerService<
     }
 
     /**
-     * Adds children to an entity.
-     * @param owner    The entity that the children should be assigned to.
-     * @param entities The children added to the entity.
+     * Add a list of children to an entity. The children must exist.
+     * @param ownerId  The id of the entity that the children should be added to.
+     * @param entities The children to be added.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
-    protected void addInternal(final K owner, final Set<UUID> entities) {
-        final var existingEntities = getInternal(owner);
-        final var existingIds =
-                existingEntities.parallelStream().map(W::getId).collect(Collectors.toSet());
-        final var copySet = new HashSet<>(entities);
-        copySet.removeAll(existingIds);
+    public void add(final UUID ownerId, final Set<UUID> entities) {
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
 
-        for (final var entityId : copySet) {
-            final var entity = manyService.get(entityId);
-            existingEntities.add(entity);
+        if (entities.isEmpty()) {
+            // Prevent read call to database for the owner.
+            return;
         }
+
+        throwIfEntityDoesNotExist(entities);
+
+        addInternal(ownerId, entities);
     }
 
     /**
-     * Remove children from an entity.
-     *
-     * @param owner    The entity that the children should be removed from.
+     * Remove a list of children from an entity.
+     * @param ownerId  The id of the entity that the children should be removed from.
      * @param entities The children to be removed.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
-    protected void removeInternal(final K owner, final Set<UUID> entities) {
-        final var existingEntities = getInternal(owner);
+    public void remove(final UUID ownerId, final Set<UUID> entities) {
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
 
-        for (final var entityId : entities) {
-            existingEntities.removeIf(x -> x.getId().equals(entityId));
+        if (entities.isEmpty()) {
+            // Prevent read call to database for the owner.
+            return;
         }
+
+        throwIfEntityDoesNotExist(entities);
+
+        removeInternal(ownerId, entities);
     }
+
 
     /**
      * Replace the children of an entity.
-     *
-     * @param owner    The entity whose children should be replaced.
-     * @param entities The new children.
+     * @param ownerId  The id of the entity whose children should be replaced.
+     * @param entities The new children for the entity.
+     * @throws IllegalArgumentException if any of the passed arguments is null.
+     * @throws ResourceNotFoundException if any of the entities does not exists.
      */
-    protected void replaceInternal(final K owner, final Set<UUID> entities) {
-        getInternal(owner).clear();
-        addInternal(owner, entities);
+    public void replace(final UUID ownerId, final Set<UUID> entities) {
+        Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
+        Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
+        throwIfEntityDoesNotExist(entities);
+
+       replaceInternal(ownerId, entities);
     }
 
     /**
@@ -216,5 +164,17 @@ public abstract class BaseUniDirectionalLinkerService<
         }
 
         return true;
+    }
+
+    protected abstract void addInternal(UUID ownerId, Set<UUID> entities);
+    protected abstract void removeInternal(UUID ownerId, Set<UUID> entities);
+    protected abstract void replaceInternal(UUID ownerId, Set<UUID> entities);
+
+    protected final T getOneService() {
+        return oneService;
+    }
+
+    protected final X getManyService() {
+        return manyService;
     }
 }

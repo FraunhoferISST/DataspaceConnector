@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
  */
 @NoArgsConstructor
 public abstract class AbstractResourceContractLinker<T extends Resource>
-        extends BaseUniDirectionalLinkerService<T, Contract, ResourceService<T, ?>,
-                ContractService> {
+        extends OwningRelationService<T, Contract, ResourceService<T, ?>,
+                        ContractService> {
     /**
      * Get the list of contracts owned by the resource.
      * @param owner The owner of the contracts.

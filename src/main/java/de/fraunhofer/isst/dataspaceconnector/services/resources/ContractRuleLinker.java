@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class ContractRuleLinker extends BaseUniDirectionalLinkerService<Contract, ContractRule,
+public class ContractRuleLinker extends OwningRelationService<Contract, ContractRule,
         ContractService, RuleService> {
     /**
      * Get the list of rules owned by the contract.

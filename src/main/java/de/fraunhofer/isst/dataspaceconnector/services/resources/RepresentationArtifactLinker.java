@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class RepresentationArtifactLinker extends BaseUniDirectionalLinkerService<Representation,
+public class RepresentationArtifactLinker extends OwningRelationService<Representation,
         Artifact, RepresentationService, ArtifactService> {
     /**
      * Get the list of artifacts owned by the representation.
