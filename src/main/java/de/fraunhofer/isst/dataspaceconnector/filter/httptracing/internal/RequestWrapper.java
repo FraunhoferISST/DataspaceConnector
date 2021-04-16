@@ -6,8 +6,7 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Use this class to wrap incoming HTTP requests too read the message payload multiple times.
@@ -22,8 +21,9 @@ public class RequestWrapper extends HttpServletRequestWrapper {
      *
      * @param request The request to be wrapped
      */
-    public RequestWrapper(HttpServletRequest request) {
+    public RequestWrapper(HttpServletRequest request) throws IOException {
         super(request);
+        getRequestBody();
     }
 
     /**
@@ -56,11 +56,17 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         return new CustomServletInputStream(getRequestBody());
     }
 
+    @Override
+    public BufferedReader getReader() throws IOException{
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(this.requestBody);
+        return new BufferedReader(new InputStreamReader(byteArrayInputStream));
+    }
+
     private static class CustomServletInputStream extends ServletInputStream {
         private final ByteArrayInputStream buffer;
 
         public CustomServletInputStream(byte[] contents) {
-            this.buffer = new ByteArrayInputStream(contents);
+            buffer = new ByteArrayInputStream(contents);
         }
 
         @Override

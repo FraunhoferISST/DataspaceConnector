@@ -17,11 +17,13 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 /**
  * Use this class to log all incoming and outgoing http traffic.
  */
 @Component
-@Order(1)
+@Order(HIGHEST_PRECEDENCE)
 public class HttpTraceFilter extends OncePerRequestFilter {
     /**
      * The trace id.
@@ -61,6 +63,7 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(requestWrapper, responseWrapper);
+            //filterChain.doFilter(request, response);
         } finally {
             afterRequest(responseWrapper);
             responseWrapper.copyBodyToResponse();
