@@ -50,7 +50,7 @@ public class PolicyEnforcementService {
         try {
             if (connectorConfig.getUcFramework() == UsageControlFramework.INTERNAL) {
                 if (log.isInfoEnabled()) {
-                    log.info("Scanning agreements for data deletion...");
+                    log.info("Scanning agreements...");
                 }
                 decisionService.scanAgreements();
             }
