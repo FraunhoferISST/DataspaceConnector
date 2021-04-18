@@ -1,14 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.io.IOException;
-
 import de.fraunhofer.iais.eis.ConfigurationModel;
-import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
-import de.fraunhofer.iais.eis.NotificationMessage;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
@@ -18,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 /**
  * Service class for ids object deserialization.
@@ -89,7 +87,7 @@ public class DeserializationService {
      * Returns the ids header of an http multipart response if the header is of type
      * ResponseMessage.
      *
-     * @param response A ids response message.
+     * @param response An ids response message.
      * @return The response message.
      * @throws IllegalArgumentException If deserialization fails.
      */
@@ -97,25 +95,25 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize response message. [exception=({})]", e.getMessage());
+            LOGGER.warn("Could not deserialize response message. [exception=({})]",
+                    e.getMessage(), e);
             throw new IllegalArgumentException("Could not deserialize response message.", e);
         }
     }
 
     /**
-     * Returns the ids header of an http multipart response if the header is of type
-     * NotificationMessage.
+     * Deserialize string to ids message.
      *
-     * @param response A ids response message.
-     * @return The notification message.
+     * @param response An ids message.
+     * @return The message.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public NotificationMessage getNotificationMessage(final String response) throws IllegalArgumentException {
+    public Message getMessage(final String response) throws IllegalArgumentException {
         try {
-            return serializerProvider.getSerializer().deserialize(response, NotificationMessage.class);
+            return serializerProvider.getSerializer().deserialize(response, Message.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize response message. [exception=({})]", e.getMessage());
-            throw new IllegalArgumentException("Could not deserialize response message.", e);
+            LOGGER.warn("Could not deserialize message. [exception=({})]", e.getMessage(), e);
+            throw new IllegalArgumentException("Could not deserialize message.", e);
         }
     }
 
@@ -130,6 +128,15 @@ public class DeserializationService {
         return getRule(policy, Rule.class);
     }
 
+    /**
+     * Deserialize string to ids object of type rule.
+     *
+     * @param policy The policy string.
+     * @param tClass The Infomodel class.
+     * @param <T>    The class type.
+     * @return An ids object of type rule.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
     public <T extends Rule> T getRule(final String policy, final Class<T> tClass)
             throws IllegalArgumentException {
         try {
@@ -140,6 +147,14 @@ public class DeserializationService {
         }
     }
 
+    /**
+     * Check if a string is of type ids rule.
+     *
+     * @param policy The policy string.
+     * @param tClass The Infomodel class.
+     * @param <T>    The class type.
+     * @return False if the matching fails, true if not.
+     */
     public <T extends Rule> boolean isRuleType(final String policy, final Class<T> tClass) {
         var isType = false;
         try {
@@ -150,22 +165,6 @@ public class DeserializationService {
         }
 
         return isType;
-    }
-
-    /**
-     * Deserialize string to ids contract.
-     *
-     * @param contract The contract string.
-     * @return The ids contract.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public Contract getContract(final String contract) throws IllegalArgumentException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, Contract.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize contract. [exception=({})]", exception.getMessage());
-            throw new IllegalArgumentException("Could not deserialize contract.", exception);
-        }
     }
 
     /**
@@ -198,22 +197,6 @@ public class DeserializationService {
         } catch (IOException e) {
             LOGGER.warn("Could not deserialize request. [exception=({})]", e.getMessage());
             throw new IllegalArgumentException("Could not deserialize contract request.", e);
-        }
-    }
-
-    /**
-     * Deserialize string to ids contract offer.
-     *
-     * @param contract The contract string.
-     * @return The ids contract offer.
-     * @throws IllegalArgumentException If deserialization fails.
-     */
-    public ContractOffer getContractOffer(final String contract) throws IllegalArgumentException {
-        try {
-            return serializerProvider.getSerializer().deserialize(contract, ContractOffer.class);
-        } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize offer. [exception=({})]", exception.getMessage());
-            throw new IllegalArgumentException("Could not deserialize contract offer.", exception);
         }
     }
 }
