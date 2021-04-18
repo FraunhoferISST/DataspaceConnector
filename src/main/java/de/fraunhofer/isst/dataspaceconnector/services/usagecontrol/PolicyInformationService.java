@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintImpl;
@@ -16,6 +12,10 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This class provides access permission information for the {@link PolicyDecisionService}
@@ -53,8 +53,9 @@ public class PolicyInformationService {
                         detectedPattern = PolicyPattern.USAGE_DURING_INTERVAL;
                     }
                 } else {
-                    final var leftOperand = ((ConstraintImpl) constraints.get(0)).getLeftOperand();
-                    final var operator = ((ConstraintImpl) constraints.get(0)).getOperator();
+                    final var firstConstraint = (ConstraintImpl) constraints.get(0);
+                    final var leftOperand = firstConstraint.getLeftOperand();
+                    final var operator = firstConstraint.getOperator();
                     if (leftOperand == LeftOperand.COUNT) {
                         detectedPattern = PolicyPattern.N_TIMES_USAGE;
                     } else if (leftOperand == LeftOperand.ELAPSED_TIME) {

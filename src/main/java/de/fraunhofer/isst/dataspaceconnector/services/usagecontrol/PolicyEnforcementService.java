@@ -7,14 +7,14 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.text.ParseException;
+import java.util.Arrays;
 
 /**
  * This class implements automated policy check and usage control enforcement. Refers to the ids
@@ -23,12 +23,8 @@ import java.text.ParseException;
 @Service
 @EnableScheduling
 @RequiredArgsConstructor
+@Log4j2
 public class PolicyEnforcementService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyEnforcementService.class);
 
     /**
      * Service for configuring policy settings.
@@ -53,11 +49,15 @@ public class PolicyEnforcementService {
     public void schedule() {
         try {
             if (connectorConfig.getUcFramework() == UsageControlFramework.INTERNAL) {
-                LOGGER.info("Scan resources...");
+                if (log.isInfoEnabled()) {
+                    log.info("Scanning agreements for data deletion...");
+                }
                 decisionService.scanAgreements();
             }
-        } catch (IllegalArgumentException | ParseException | ResourceNotFoundException exception) {
-            LOGGER.warn("Failed to check policy. [exception=({})]", exception.getMessage());
+        } catch (IllegalArgumentException | ParseException | ResourceNotFoundException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to check policy. [exception=({})]", e.getMessage());
+            }
         }
     }
 
@@ -73,34 +73,42 @@ public class PolicyEnforcementService {
                                            final URI issuerConnector,
                                            final ContractAgreement agreement)
             throws PolicyRestrictionException {
-        final var ignorePatterns = connectorConfig.isAllowUnsupported();
-        // Ignore patterns if unknown patterns are allowed.
-        if (!ignorePatterns) {
-            switch (connectorConfig.getUcFramework()) {
-                case MY_DATA: // Empty on purpose. TODO To be implemented.
-                case INTERNAL:
-                default:
-                    decisionService.checkForDataAccess(target, issuerConnector, agreement);
-                    break;
-            }
+        switch (connectorConfig.getUcFramework()) {
+            case MY_DATA: // Empty on purpose. TODO Behaviour to be defined and implemented.
+            case INTERNAL:
+            default:
+                final var patternsToCheck = Arrays.asList(
+                        PolicyPattern.PROVIDE_ACCESS,
+                        PolicyPattern.PROHIBIT_ACCESS,
+                        PolicyPattern.USAGE_DURING_INTERVAL,
+                        PolicyPattern.USAGE_UNTIL_DELETION,
+                        PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
+                decisionService.checkForDataAccess(patternsToCheck, target, issuerConnector, agreement);
+                break;
         }
     }
 
     /**
-     * Policy check on data access on consumer side.
+     * Policy check on data access on consumer side. Ignore if unknown patterns are allowed.
      *
-     * @param requestedElement The requested element.
+     * @param target The requested element.
      * @throws PolicyRestrictionException If a policy restriction has been detected.
      */
-    public void checkPolicyOnDataAccess(final URI requestedElement) throws PolicyRestrictionException {
-        final var ignorePatterns = connectorConfig.isAllowUnsupported();
-        // Ignore patterns if unknown patterns are allowed.
-        if (!ignorePatterns) {
+    public void checkPolicyOnDataAccess(final URI target) throws PolicyRestrictionException {
+        if (!connectorConfig.isAllowUnsupported()) {
             switch (connectorConfig.getUcFramework()) {
-                case MY_DATA: // Empty on purpose. TODO To be implemented.
+                case MY_DATA: // Empty on purpose. TODO Behaviour to be defined and implemented.
                 case INTERNAL:
                 default:
-                    decisionService.checkForDataAccess(requestedElement);
+                    final var patternsToCheck = Arrays.asList(
+                            PolicyPattern.PROVIDE_ACCESS,
+                            PolicyPattern.USAGE_DURING_INTERVAL,
+                            PolicyPattern.USAGE_UNTIL_DELETION,
+                            PolicyPattern.DURATION_USAGE,
+                            PolicyPattern.USAGE_LOGGING,
+                            PolicyPattern.N_TIMES_USAGE,
+                            PolicyPattern.USAGE_NOTIFICATION);
+                    decisionService.checkForDataAccess(patternsToCheck, target);
                     break;
             }
         }

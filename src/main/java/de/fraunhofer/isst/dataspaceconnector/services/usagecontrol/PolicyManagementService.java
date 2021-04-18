@@ -31,8 +31,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -47,12 +46,8 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PolicyManagementService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyManagementService.class);
 
     /**
      * Service for current connector configuration.
@@ -74,6 +69,9 @@ public class PolicyManagementService {
      */
     private final @NonNull ArtifactService artifactService;
 
+    /**
+     * Service for linking agreements and artifacts.
+     */
     private final @NonNull RelationshipServices.AgreementArtifactLinker linker;
 
     /**
@@ -156,7 +154,7 @@ public class PolicyManagementService {
      * Build contract agreement from contract request. Sign all rules as assigner.
      *
      * @param request The contract request.
-     * @param id ID to use when creating the contract agreement.
+     * @param id      ID to use when creating the contract agreement.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
@@ -237,7 +235,9 @@ public class PolicyManagementService {
             final var agreement = agreementService.create(desc);
             return SelfLinkHelper.getSelfLink(agreement);
         } catch (Exception e) {
-            LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not store contract agreement. [exception=({})]", e.getMessage(), e);
+            }
             throw new PersistenceException("Could not store contract agreement.", e);
         }
     }
@@ -247,14 +247,14 @@ public class PolicyManagementService {
      * with relation to the targeted artifacts (provider side).
      *
      * @param contractRequest The ids contract request.
-     * @param confirmed         Indicates whether both parties have agreed.
-     * @param targetList        List of artifacts.
+     * @param confirmed       Indicates whether both parties have agreed.
+     * @param targetList      List of artifacts.
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
     public ContractAgreement buildAndSaveContractAgreement(final ContractRequest contractRequest,
-                                             final boolean confirmed,
-                                             final List<URI> targetList)
+                                                           final boolean confirmed,
+                                                           final List<URI> targetList)
             throws PersistenceException {
         UUID agreementUuid = null;
         try {
@@ -294,7 +294,9 @@ public class PolicyManagementService {
 
             return contractAgreement;
         } catch (Exception e) {
-            LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not store contract agreement. [exception=({})]", e.getMessage(), e);
+            }
 
             // if agreement cannot be saved, remove empty agreement from database
             if (agreementUuid != null) {
@@ -305,6 +307,13 @@ public class PolicyManagementService {
         }
     }
 
+    /**
+     * Compare rule list of a contract offer to the rule list of a contract request.
+     *
+     * @param offerRules   List of ids rules.
+     * @param requestRules List of ids rules.
+     * @return True if the lists are equal, false if not.
+     */
     public boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
                                                 final List<Rule> requestRules) {
         final var idsRuleList = new ArrayList<Rule>();
@@ -315,7 +324,10 @@ public class PolicyManagementService {
         }
 
         if (!PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
-            LOGGER.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList, requestRules);
+            if (log.isDebugEnabled()) {
+                log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
+                        requestRules);
+            }
             return false;
         }
 

@@ -12,8 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +20,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
+import java.util.List;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -29,12 +29,8 @@ import java.time.Duration;
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PolicyDecisionService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyDecisionService.class);
 
     /**
      * Policy execution point.
@@ -88,10 +84,11 @@ public class PolicyDecisionService {
     /**
      * Checks the contract content for data access (on consumer side).
      *
-     * @param target The requested element.
+     * @param patterns List of patterns that should be enforced.
+     * @param target   The requested element.
      * @throws UnsupportedPatternException If no suitable pattern could be found.
      */
-    public void checkForDataAccess(final URI target) {
+    public void checkForDataAccess(final List<PolicyPattern> patterns, final URI target) {
         // Get the contract agreement's rules for the target.
         final var agreements = managementService.getContractAgreementsByTarget(target);
         for (final var agreement : agreements) {
@@ -100,7 +97,34 @@ public class PolicyDecisionService {
             // Check the policy of each rule.
             for (final var rule : rules) {
                 final var pattern = informationService.getPatternByRule(rule);
-                validatePolicy(pattern, rule, target);
+                // Enforce only a set of patterns.
+                if (patterns.contains(pattern)) {
+                    validatePolicy(pattern, rule, target, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks the contract content for data access (on provider side).
+     *
+     * @param patterns        List of patterns that should be enforced.
+     * @param target          The requested element.
+     * @param issuerConnector The issuer connector.
+     * @param agreement       The ids contract agreement.
+     * @throws PolicyRestrictionException If a policy restriction has been detected.
+     */
+    public void checkForDataAccess(final List<PolicyPattern> patterns,
+                                   final URI target, final URI issuerConnector,
+                                   final ContractAgreement agreement) throws PolicyRestrictionException {
+        final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
+
+        // Check the policy of each rule.
+        for (final var rule : rules) {
+            final var pattern = informationService.getPatternByRule(rule);
+            // Enforce only a set of patterns.
+            if (patterns.contains(pattern)) {
+                validatePolicy(pattern, rule, target, issuerConnector);
             }
         }
     }
@@ -108,13 +132,14 @@ public class PolicyDecisionService {
     /**
      * Validates the data access for a given rule.
      *
-     * @param pattern         The recognized policy pattern.
-     * @param rule            The ids rule.
-     * @param target          The requested/accessed element.
+     * @param pattern The recognized policy pattern.
+     * @param rule    The ids rule.
+     * @param target  The requested/accessed element.
+     * @param issuerConnector The issuer connector.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
-    private void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target)
-            throws PolicyRestrictionException {
+    private void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
+                                final URI issuerConnector) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -134,57 +159,16 @@ public class PolicyDecisionService {
             case USAGE_NOTIFICATION:
                 executionService.reportDataAccess(rule, target);
                 break;
-            default:
-                LOGGER.debug("No pattern detected. [target=({})]", target);
-                throw new PolicyRestrictionException("Policy restriction detected.");
-        }
-    }
-
-    /**
-     * Checks the contract content for data access (on provider side).
-     *
-     * @param target          The requested element.
-     * @param issuerConnector The issuer connector.
-     * @param agreement       The ids contract agreement.
-     * @throws PolicyRestrictionException If a policy restriction has been detected.
-     */
-    public void checkForDataAccess(final URI target, final URI issuerConnector,
-                                   final ContractAgreement agreement) throws PolicyRestrictionException {
-        final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
-
-        // Check the policy of each rule.
-        for (final var rule : rules) {
-            final var pattern = informationService.getPatternByRule(rule);
-            validatePolicy(pattern, rule, target, issuerConnector);
-        }
-    }
-
-    /**
-     * Validates the data access for a given rule.
-     *
-     * @param pattern         The recognized policy pattern.
-     * @param rule            The ids rule.
-     * @param target          The requested/accessed element.
-     * @param issuerConnector The issuer connector.
-     * @throws PolicyRestrictionException If a policy restriction was detected.
-     */
-    private void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                               final URI issuerConnector)
-            throws PolicyRestrictionException {
-        switch (pattern) {
-            case PROVIDE_ACCESS:
-                break;
-            case USAGE_DURING_INTERVAL:
-            case USAGE_UNTIL_DELETION:
-                validateInterval(rule);
-                break;
             case CONNECTOR_RESTRICTED_USAGE:
                 validateIssuerConnector(rule, issuerConnector);
                 break;
             case PROHIBIT_ACCESS:
+                throw new PolicyRestrictionException(ErrorMessages.NOT_ALLOWED);
             default:
-                LOGGER.debug("No pattern detected. [target=({})]", target);
-                throw new PolicyRestrictionException("Policy restriction detected.");
+                if (log.isDebugEnabled()) {
+                    log.debug("No pattern detected. [target=({})]", target);
+                }
+                throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
     }
 
@@ -199,15 +183,19 @@ public class PolicyDecisionService {
         TimeInterval timeInterval;
         try {
             timeInterval = PolicyUtils.getTimeInterval(rule);
-        } catch (ParseException exception) {
-            LOGGER.warn("Could not read time interval. [exception=({})]", exception.getMessage());
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(), exception);
+        } catch (ParseException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not read time interval. [exception=({})]", e.getMessage());
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
         final var current = informationService.getCurrentDate();
         if (!current.isAfter(timeInterval.getStart()) || !current.isBefore(timeInterval.getEnd())) {
-            LOGGER.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
+            if (log.isWarnEnabled()) {
+                log.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
     }
 
@@ -225,24 +213,29 @@ public class PolicyDecisionService {
         final Duration duration;
         try {
             duration = PolicyUtils.getDuration(rule);
-        } catch (DatatypeConfigurationException exception) {
-            LOGGER.warn("Could not read duration. [exception=({}), target=({})]",
-                    exception.getMessage(), target);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString(),
-                    exception);
+        } catch (DatatypeConfigurationException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not read duration. [target=({}), exception=({})]",
+                        target, e.getMessage(), e);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
         if (duration == null) {
-            LOGGER.warn("Duration is null. [target=({})]", target);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
+            if (log.isWarnEnabled()) {
+                log.warn("Duration is null. [target=({})]", target);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
 
         final var maxTime = PolicyUtils.getCalculatedDate(created, duration);
         final var validDate = PolicyUtils.checkDate(informationService.getCurrentDate(), maxTime);
 
         if (!validDate) {
-            LOGGER.debug("Invalid date time. [target=({})]", target);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL.toString());
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid date time. [target=({})]", target);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
     }
 
@@ -261,8 +254,10 @@ public class PolicyDecisionService {
 
         final var accessed = informationService.getAccessNumber(target);
         if (accessed >= max) {
-            LOGGER.debug("Access number reached. [target=({})]", target);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_NUMBER_REACHED.toString());
+            if (log.isDebugEnabled()) {
+                log.debug("Access number reached. [target=({})]", target);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_NUMBER_REACHED);
         }
     }
 
@@ -278,8 +273,10 @@ public class PolicyDecisionService {
         final var allowedConsumer = PolicyUtils.getEndpoint(rule);
         final var allowedConsumerAsUri = URI.create(allowedConsumer);
         if (!allowedConsumerAsUri.equals(issuerConnector)) {
-            LOGGER.debug("Invalid consumer connector. [issuer=({})]", issuerConnector);
-            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER.toString());
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid consumer connector. [issuer=({})]", issuerConnector);
+            }
+            throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_CONSUMER);
         }
     }
 }

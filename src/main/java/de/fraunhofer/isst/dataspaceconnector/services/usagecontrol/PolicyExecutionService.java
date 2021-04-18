@@ -15,8 +15,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -29,12 +28,8 @@ import java.util.Map;
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PolicyExecutionService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyExecutionService.class);
 
     /**
      * Service for configuring policy settings.
@@ -72,7 +67,9 @@ public class PolicyExecutionService {
 
         // Update data for artifact.
         updateService.updateDataOfArtifact(entityId, "");
-        LOGGER.info("Deleted data from artifact. [target=({})]", target);
+        if (log.isInfoEnabled()) {
+            log.info("Deleted data from artifact. [target=({})]", target);
+        }
     }
 
     /**
@@ -83,19 +80,23 @@ public class PolicyExecutionService {
      */
     public void logDataAccess(final URI element) throws PolicyExecutionException {
         final var url = connectorConfig.getClearingHouse();
-        final var log = buildLog(element);
+        final var logMessage = buildLog(element).toString();
 
         try {
             final var desc = new LogMessageDesc();
             desc.setRecipient(url);
-            final var response = logMessageService.sendMessage(desc, log.toString());
+            final var response = logMessageService.sendMessage(desc, logMessage);
 
             if (response == null) {
-                LOGGER.debug("No response received.");
+                if (log.isDebugEnabled()) {
+                    log.debug("No response received.");
+                }
                 throw new PolicyExecutionException("Log message has no valid response.");
             }
-        } catch (MessageException exception) {
-            LOGGER.debug("Unsuccessful logging. [exception=({})]", exception.getMessage());
+        } catch (MessageException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unsuccessful logging. [exception=({})]", e.getMessage(), e);
+            }
             throw new PolicyExecutionException("Log message could not be sent.");
         }
     }
@@ -109,21 +110,25 @@ public class PolicyExecutionService {
      */
     public void reportDataAccess(final Rule rule, final URI element) throws PolicyExecutionException {
         final var recipient = PolicyUtils.getEndpoint(rule);
-        final var log = buildLog(element);
+        final var logMessage = buildLog(element).toString();
 
         Map<String, String> response;
         try {
             final var desc = new NotificationMessageDesc();
             desc.setRecipient(URI.create(recipient));
-            response = notificationService.sendMessage(desc, log.toString());
-        } catch (MessageException exception) {
-            LOGGER.debug("Notification message not sent. [exception=({})]", exception.getMessage());
-            throw new PolicyExecutionException("Notification was not successful.");
-        }
+            response = notificationService.sendMessage(desc, logMessage);
 
-        if (response == null) {
-            LOGGER.debug("No response received. [response=({})]", response);
-            throw new PolicyExecutionException("Notification has no valid response.");
+            if (response == null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("No response received. [response=({})]", response);
+                }
+                throw new PolicyExecutionException("Notification has no valid response.");
+            }
+        } catch (MessageException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Notification message not sent. [exception=({})]", e.getMessage(), e);
+            }
+            throw new PolicyExecutionException("Notification was not successful.");
         }
     }
 
