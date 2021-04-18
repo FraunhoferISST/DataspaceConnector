@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -21,6 +21,7 @@ public final class ControllerUtils {
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that an error occurred
      * in the ids communication.
+     *
      * @param exception Exception that was thrown during communication.
      * @return ResponseEntity with status code 500.
      */
@@ -30,12 +31,13 @@ public final class ControllerUtils {
                     exception);
         }
         return new ResponseEntity<>("Ids message handling failed. " + exception.getMessage(),
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that an error occurred
      * in the ids communication.
+     *
      * @param exception Exception that was thrown during communication.
      * @return ResponseEntity with status code 500.
      */
@@ -45,12 +47,13 @@ public final class ControllerUtils {
                     exception.getMessage(), exception);
         }
         return new ResponseEntity<>("Failed to read the ids response message.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the configuration
      * could not be updated.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -60,12 +63,13 @@ public final class ControllerUtils {
                     exception.getMessage(), exception);
         }
         return new ResponseEntity<>("Failed to update configuration.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that an input could
      * not be deserialized.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -80,6 +84,7 @@ public final class ControllerUtils {
     /**
      * Creates a ResponseEntity with status code 404 and a message indicating that the no
      * configuration could be found.
+     *
      * @return ResponseEntity with status code 404.
      */
     public static ResponseEntity<Object> respondConfigurationNotFound() {
@@ -92,6 +97,7 @@ public final class ControllerUtils {
     /**
      * Creates a ResponseEntity with status code 404 and a message indicating that a resource could
      * not be found.
+     *
      * @param resourceId ID for that no match was found.
      * @return ResponseEntity with status code 404.
      */
@@ -105,6 +111,7 @@ public final class ControllerUtils {
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that a resource could
      * not be loaded.
+     *
      * @param resourceId ID of the resource.
      * @return ResponseEntity with status code 500.
      */
@@ -112,13 +119,13 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("Resource not loaded. [resourceId=({})]", resourceId);
         }
-        return new ResponseEntity<>("Could not load resource.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Could not load resource.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that no predefined
      * policy pattern has been recognized.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -132,6 +139,7 @@ public final class ControllerUtils {
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the input was
      * invalid.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -141,12 +149,13 @@ public final class ControllerUtils {
                     exception.getMessage(), exception);
         }
         return new ResponseEntity<>("Invalid input. " + exception.getMessage(),
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the contract
      * request could not be built.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -156,12 +165,13 @@ public final class ControllerUtils {
                     exception.getMessage(), exception);
         }
         return new ResponseEntity<>("Failed to build contract request.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that the connector
      * could not be loaded or deserialized.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -171,12 +181,13 @@ public final class ControllerUtils {
                     exception);
         }
         return new ResponseEntity<>("Connector could not be loaded.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that something went
      * wrong. Note: Should never be thrown.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -186,12 +197,13 @@ public final class ControllerUtils {
                     exception);
         }
         return new ResponseEntity<>("Something else went wrong.",
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Creates a ResponseEntity with status code 500 and a message indicating that saving an entity
      * has failed.
+     *
      * @param exception The exception that was thrown.
      * @return ResponseEntity with status code 500.
      */
@@ -201,11 +213,12 @@ public final class ControllerUtils {
                     exception);
         }
         return new ResponseEntity<>("Failed to store entity. " + exception.getMessage(),
-                                    HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
      * Show response message that was not expected.
+     *
      * @param response The response map.
      * @return ResponseEntity with status code 417.
      */
