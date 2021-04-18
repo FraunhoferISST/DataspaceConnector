@@ -13,8 +13,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
@@ -29,12 +28,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+@Log4j2
 public final class PolicyUtils {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyUtils.class);
 
     /**
      * Constructor without params.
@@ -51,8 +46,8 @@ public final class PolicyUtils {
      */
     public static List<Rule> extractRulesFromContract(final Contract contract) {
         final var permissionList = contract.getPermission();
-        final var ruleList = permissionList == null ? new ArrayList<Rule>() :
-                new ArrayList<Rule>(permissionList);
+        final var ruleList = permissionList == null ? new ArrayList<Rule>()
+                : new ArrayList<Rule>(permissionList);
 
         final var prohibitionList = contract.getProhibition();
         if (prohibitionList != null) {
@@ -240,7 +235,10 @@ public final class PolicyUtils {
         try {
             number = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            LOGGER.debug("Failed to parse value to integer. [exception=({})]", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to parse value to integer. [exception=({})]",
+                        e.getMessage(), e);
+            }
             number = 1;
         }
 

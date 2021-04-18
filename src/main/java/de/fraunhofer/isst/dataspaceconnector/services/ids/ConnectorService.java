@@ -9,7 +9,6 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.handler.ContractRequestHandler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
@@ -17,8 +16,7 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateExcepti
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -28,14 +26,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ConnectorService {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestHandler.class);
 
     /**
      * The current connector configuration.
@@ -150,9 +144,11 @@ public class ConnectorService {
 
             // Handled at a higher level.
             configContainer.updateConfiguration(configModel);
-        } catch (ConstraintViolationException exception) {
-            LOGGER.warn("Failed to retrieve connector. [exception=({})]", exception.getMessage());
-            throw new ConfigurationUpdateException("Failed to retrieve connector.", exception);
+        } catch (ConstraintViolationException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to retrieve connector. [exception=({})]", e.getMessage(), e);
+            }
+            throw new ConfigurationUpdateException("Failed to retrieve connector.", e);
         }
     }
 

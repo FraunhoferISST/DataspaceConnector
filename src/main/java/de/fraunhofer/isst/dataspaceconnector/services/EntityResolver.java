@@ -29,22 +29,17 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.Objects;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class EntityResolver {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityResolver.class);
 
     /**
      * Service for artifacts.
@@ -141,8 +136,10 @@ public class EntityResolver {
                     return null;
             }
         } catch (Exception exception) {
-            LOGGER.debug("Resource not found. [exception=({}), elementId=({})]",
-                    exception.getMessage(), elementId);
+            if (log.isDebugEnabled()) {
+                log.debug("Resource not found. [exception=({}), elementId=({})]",
+                        exception.getMessage(), elementId, exception);
+            }
             throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
         }
     }
@@ -179,16 +176,24 @@ public class EntityResolver {
                 return rule.getValue();
             }
         } catch (SelfLinkCreationException exception) {
-            LOGGER.warn("Could not provide ids object. [entity=({})]", entity);
+            if (log.isWarnEnabled()) {
+                log.warn("Could not provide ids object. [entity=({}), exception=({})]",
+                        entity, exception.getMessage(), exception);
+            }
             throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
-            LOGGER.warn("Could not provide ids object. [entity=({})]", entity);
+            if (log.isWarnEnabled()) {
+                log.warn("Could not provide ids object. [entity=({}), exception=({})]",
+                        entity, exception.getMessage(), exception);
+            }
             throw new InvalidResourceException("No provided description for requested element.");
         }
 
         // If we do not allow requesting an object type, respond with exception.
-        LOGGER.debug("Not a requestable ids object. [entity=({})]", entity);
+        if (log.isDebugEnabled()) {
+            log.debug("Not a requestable ids object. [entity=({})]", entity);
+        }
         throw new InvalidResourceException("No provided description for requested element.");
     }
 
@@ -223,7 +228,9 @@ public class EntityResolver {
         }
 
         // Should not be reached.
-        LOGGER.warn("Found no artifact with [remoteId=({})]", id);
+        if (log.isWarnEnabled()) {
+            log.warn("Found no artifact with [remoteId=({})]", id);
+        }
         throw new ResourceNotFoundException("Found no artifact with this remote id: " + id);
     }
 

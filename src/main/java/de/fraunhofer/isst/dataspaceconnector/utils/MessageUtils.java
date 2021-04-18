@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.DescriptionRequestMessage;
 import de.fraunhofer.iais.eis.Message;
@@ -19,20 +13,21 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class providing util methods for message utility.
  */
+@Log4j2
 public final class MessageUtils {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageUtils.class);
 
     /**
      * Class constructor without params.
@@ -169,9 +164,11 @@ public final class MessageUtils {
             throws MessageBuilderException {
         try {
             return InfomodelMessageBuilder.messageWithString(header, payload);
-        } catch (IOException exception) {
-            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be built.", exception);
+        } catch (IOException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Message could not be built. [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageBuilderException("Message could not be built.", e);
         }
     }
 

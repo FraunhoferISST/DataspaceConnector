@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDCreationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
 
 /**
  * This class offers support functions for working with UUIDs.
@@ -25,10 +25,10 @@ public final class UUIDUtils {
      * @param input a string which maybe contains UUIDs.
      * @return the list of found UUIDs.
      */
-    public static List<String> findUuids( String input) {
+    public static List<String> findUuids(final String input) {
         final var pairRegex = Pattern
-                .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit" +
-                        "}{12}");
+                .compile("\\p{XDigit}{8}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit}{4}-\\p{XDigit"
+                        + "}{12}");
         final var matcher = pairRegex.matcher(input);
 
         // Extract all UUIDs
@@ -48,7 +48,7 @@ public final class UUIDUtils {
      * @return the extracted UUID.
      * @throws UUIDFormatException if the URI does not contain a parsable UUID.
      */
-    public static UUID uuidFromUri( URI uri) throws UUIDFormatException {
+    public static UUID uuidFromUri(final URI uri) throws UUIDFormatException {
         try {
             return uuidFromUri(uri, -1);
         } catch (IndexOutOfBoundsException exception) {
@@ -67,7 +67,7 @@ public final class UUIDUtils {
      * @throws UUIDFormatException       if the URI does not contain a parsable UUID.
      * @throws IndexOutOfBoundsException if no UUID can be found at the given index.
      */
-    public static UUID uuidFromUri( URI uri, int index) throws UUIDFormatException,
+    public static UUID uuidFromUri(final URI uri, final int index) throws UUIDFormatException,
             IndexOutOfBoundsException {
         // Find all uuids in the uri
         final var uuids = findUuids(uri.toString());
@@ -81,8 +81,8 @@ public final class UUIDUtils {
         } catch (IllegalArgumentException exception) {
             // This exception should never be thrown since the pattern matcher (in splitUuids)
             // found the uuid.
-            throw new UUIDFormatException("Could not convert string to uuid. This indicates a " +
-                    "problem with the uuid pattern.", exception);
+            throw new UUIDFormatException("Could not convert string to uuid. This indicates a "
+                    + "problem with the uuid pattern.", exception);
         }
     }
 
@@ -93,9 +93,11 @@ public final class UUIDUtils {
      * @return generated UUID
      * @throws UUIDCreationException if no unique UUID could be generated
      */
-    public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc)
+    @SuppressWarnings("checkstyle:MagicNumber")
+    public static UUID createUUID(final Function<UUID, Boolean> doesUuidExistFunc)
             throws UUIDCreationException {
-        return createUUID(doesUuidExistFunc, 32);
+        final var maxNumTries = 32;
+        return createUUID(doesUuidExistFunc, maxNumTries);
     }
 
     /**
@@ -106,7 +108,8 @@ public final class UUIDUtils {
      * @return generated UUID
      * @throws UUIDCreationException if no unique UUID could be generated
      */
-    public static UUID createUUID(Function<UUID, Boolean> doesUuidExistFunc, long maxNumTries)
+    public static UUID createUUID(final Function<UUID, Boolean> doesUuidExistFunc,
+                                  final long maxNumTries)
             throws IllegalArgumentException, UUIDCreationException {
         if (maxNumTries == 0) {
             throw new IllegalArgumentException("The maximum number of tries must be at least 1.");
@@ -125,7 +128,7 @@ public final class UUIDUtils {
             numTries++;
         }
 
-        throw new UUIDCreationException("Could not create a new uuid. No unused uuid could be " +
-                "found.");
+        throw new UUIDCreationException("Could not create a new uuid. No unused uuid could be "
+                + "found.");
     }
 }

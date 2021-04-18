@@ -1,16 +1,16 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * This utility class contains general purpose functions.
@@ -26,11 +26,12 @@ public final class Utils {
 
     /**
      * Check if an object is not null.
-     * @param obj The object to check.
+     *
+     * @param obj     The object to check.
      * @param message The error message transmitted when the object is null.
-     * @param <T> The type of the passed object.
-     * @throws IllegalArgumentException if the passed object is null.
+     * @param <T>     The type of the passed object.
      * @return The passed object.
+     * @throws IllegalArgumentException if the passed object is null.
      */
     public static <T> T requireNonNull(final T obj, final ErrorMessages message) {
         if (obj == null) {
@@ -43,20 +44,21 @@ public final class Utils {
     /**
      * Convert a collection that may be null safely to a stream.
      * If the collection is null an empty stream will be produced.
+     *
      * @param collection The collection. May be null.
-     * @param <T> The type of the elements in the collection.
+     * @param <T>        The type of the elements in the collection.
      * @return The stream over the elements of the collection.
      */
     public static <T> Stream<T> toStream(final Collection<T> collection) {
-        return Optional.ofNullable(collection).map(Collection::stream)
-                       .orElseGet(Stream::empty);
+        return Optional.ofNullable(collection).stream().flatMap(Collection::stream);
     }
 
     /**
      * Get a page from a list.
-     * @param list The list the page  should be contructed from.
+     *
+     * @param list     The list the page  should be constructed from.
      * @param pageable The page information.
-     * @param <T> The type of the list elements.
+     * @param <T>      The type of the list elements.
      * @return The new page.
      */
     public static <T> Page<T> toPage(final List<T> list, final Pageable pageable) {
@@ -93,33 +95,48 @@ public final class Utils {
         }
     }
 
-    public static Sort toSort( final String sort) {
-        //TODO Implement with Regex
-        if(sort == null)
+    public static Sort toSort(final String sort) {
+        // TODO Implement with Regex
+        if (sort == null) {
             return Sort.unsorted();
+        }
 
         final var comma = sort.indexOf(",");
-        if(comma == -1)
+        if (comma == -1) {
             return Sort.by(sort);
+        }
 
         try {
             final var dirString = sort.substring(comma + 1, sort.length()).toUpperCase();
             final var dir = Sort.Direction.valueOf(dirString);
             final var property = sort.substring(0, comma);
             return Sort.by(dir, property);
-        }catch(Exception e) {
+        } catch (Exception e) {
             return Sort.unsorted();
         }
     }
 
-    public static PageRequest toPageRequest(final Integer page, final Integer size, final String sort) {
+    public static PageRequest toPageRequest(final Integer page, final Integer size,
+                                            final String sort) {
         final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
-        final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
+        final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
+                : DEFAULT_PAGE_SIZE;
 
         return PageRequest.of(pageIndex, sizeValue, Utils.toSort(sort));
     }
 
+    /**
+     * Default page size.
+     */
     public static final int DEFAULT_PAGE_SIZE = 30;
+
+    /**
+     * Max page size.
+     */
     public static final int MAX_PAGE_SIZE = 100;
+
+    /**
+     * Default first page.
+     */
     public static final int DEFAULT_FIRST_PAGE = 0;
 }

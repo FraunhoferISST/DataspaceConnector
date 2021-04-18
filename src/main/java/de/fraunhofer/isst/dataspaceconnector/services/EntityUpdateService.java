@@ -14,21 +14,16 @@ import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class EntityUpdateService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityUpdateService.class);
 
     /**
      * Service for requested resources.
@@ -91,7 +86,9 @@ public class EntityUpdateService {
 
                 final var update = requestService.update(entityId, desc);
                 final var uri = SelfLinkHelper.getSelfLink(update);
-                LOGGER.info("Updated resource: " + uri);
+                if (log.isDebugEnabled()) {
+                    log.debug("Updated resource: " + uri);
+                }
             }
         }
     }
@@ -115,7 +112,9 @@ public class EntityUpdateService {
 
                 final var update = representationService.update(entityId, desc);
                 final var uri = SelfLinkHelper.getSelfLink(update);
-                LOGGER.info("Updated representation: " + uri);
+                if (log.isDebugEnabled()) {
+                    log.debug("Updated representation: " + uri);
+                }
             }
         }
     }
@@ -140,7 +139,9 @@ public class EntityUpdateService {
 
                 final var update = artifactService.update(entityId, desc);
                 final var uri = SelfLinkHelper.getSelfLink(update);
-                LOGGER.info("Updated artifact: " + uri);
+                if (log.isDebugEnabled()) {
+                    log.debug("Updated artifact: " + uri);
+                }
             }
         }
     }
