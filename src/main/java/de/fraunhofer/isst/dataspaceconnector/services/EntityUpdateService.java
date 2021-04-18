@@ -10,8 +10,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -90,7 +90,7 @@ public class EntityUpdateService {
                 final var desc = template.getDesc();
 
                 final var update = requestService.update(entityId, desc);
-                final var uri = EndpointUtils.getSelfLink(update);
+                final var uri = SelfLinkHelper.getSelfLink(update);
                 LOGGER.info("Updated resource: " + uri);
             }
         }
@@ -114,7 +114,7 @@ public class EntityUpdateService {
                 final var desc = template.getDesc();
 
                 final var update = representationService.update(entityId, desc);
-                final var uri = EndpointUtils.getSelfLink(update);
+                final var uri = SelfLinkHelper.getSelfLink(update);
                 LOGGER.info("Updated representation: " + uri);
             }
         }
@@ -139,7 +139,7 @@ public class EntityUpdateService {
                 final var desc = template.getDesc();
 
                 final var update = artifactService.update(entityId, desc);
-                final var uri = EndpointUtils.getSelfLink(update);
+                final var uri = SelfLinkHelper.getSelfLink(update);
                 LOGGER.info("Updated artifact: " + uri);
             }
         }

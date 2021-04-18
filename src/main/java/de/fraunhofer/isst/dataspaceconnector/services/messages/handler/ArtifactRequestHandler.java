@@ -20,8 +20,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyEnforcementService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -212,7 +212,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                             final URI requestedArtifact)
             throws ResourceNotFoundException {
         for (final var artifact : artifacts) {
-            final var endpoint = EndpointUtils.getSelfLink(artifact);
+            final var endpoint = SelfLinkHelper.getSelfLink(artifact);
             if (endpoint.equals(requestedArtifact)) {
                 return true;
             }

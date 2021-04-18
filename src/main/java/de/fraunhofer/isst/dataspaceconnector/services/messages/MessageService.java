@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -35,9 +29,9 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgr
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import lombok.NonNull;
@@ -45,6 +39,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -299,7 +299,7 @@ public class MessageService {
 
             // Save all entities.
             final var requestedResource = templateBuilder.build(resourceTemplate);
-            return EndpointUtils.getSelfLink(requestedResource);
+            return SelfLinkHelper.getSelfLink(requestedResource);
         } catch (Exception e) {
             LOGGER.warn("Could not store resource. [exception=({})]", e.getMessage());
             throw new PersistenceException("Could not store resource.", e);
@@ -323,7 +323,7 @@ public class MessageService {
         updateService.updateDataOfArtifact(artifact, data);
         LOGGER.info("Updated data from artifact. [target=({})]", artifactId);
 
-        return EndpointUtils.getSelfLink(artifact);
+        return SelfLinkHelper.getSelfLink(artifact);
     }
 
     /**

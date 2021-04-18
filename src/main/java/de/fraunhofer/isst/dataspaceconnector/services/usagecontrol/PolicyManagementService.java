@@ -27,6 +27,7 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -234,7 +235,7 @@ public class PolicyManagementService {
 
             // Save agreement to return its id.
             final var agreement = agreementService.create(desc);
-            return EndpointUtils.getSelfLink(agreement);
+            return SelfLinkHelper.getSelfLink(agreement);
         } catch (Exception e) {
             LOGGER.warn("Could not store contract agreement. [exception=({})]", e.getMessage());
             throw new PersistenceException("Could not store contract agreement.", e);
