@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+
 /**
  * Thrown if a policy restriction has been detected.
  */
@@ -20,8 +22,8 @@ public class PolicyRestrictionException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public PolicyRestrictionException(final String msg) {
-        super(msg);
+    public PolicyRestrictionException(final ErrorMessages msg) {
+        super(msg.toString());
     }
 
     /**
@@ -30,7 +32,7 @@ public class PolicyRestrictionException extends RuntimeException {
      * @param msg   The detail message.
      * @param cause The cause.
      */
-    public PolicyRestrictionException(final String msg, final Throwable cause) {
-        super(msg, cause);
+    public PolicyRestrictionException(final ErrorMessages msg, final Throwable cause) {
+        super(msg.toString(), cause);
     }
 }
