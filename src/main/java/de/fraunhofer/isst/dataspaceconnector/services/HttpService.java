@@ -1,5 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import okhttp3.Response;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -8,42 +22,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
 
-import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import okhttp3.Response;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
 /**
  * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
  */
 @Service
-public class HttpService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
-
-    private final de.fraunhofer.isst.ids.framework.communication.http.HttpService httpService;
+@RequiredArgsConstructor
+public class HttpService { // TODO clean up code
 
     /**
-     * Constructor for HttpUtils.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * Class level logger.
      */
-    @Autowired
-    public HttpService(final de.fraunhofer.isst.ids.framework.communication.http.HttpService httpService) throws IllegalArgumentException {
-        if (httpService == null) {
-            throw new IllegalArgumentException("The HttpService cannot be null.");
-        }
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
 
-        this.httpService = httpService;
-    }
+    /**
+     * Service for building and sending http requests.
+     */
+    private final @NonNull de.fraunhofer.isst.ids.framework.communication.http.HttpService httpService;
 
     /**
      * Sends a GET request to an external HTTP endpoint
