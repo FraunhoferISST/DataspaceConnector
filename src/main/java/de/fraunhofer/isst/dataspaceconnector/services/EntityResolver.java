@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
-import java.net.URI;
-import java.util.Objects;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
@@ -16,7 +13,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsArtifactBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsCatalogBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.IdsContractBuilder;
@@ -37,6 +33,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -87,14 +86,24 @@ public class EntityResolver {
      */
     private final @NonNull IdsCatalogBuilder catalogBuilder;
 
-    private final @NonNull IdsResourceBuilder<OfferedResource> offeredResourceBuilder;
+    /**
+     * Service for building ids resource.
+     */
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
-    private final @NonNull IdsResourceBuilder<RequestedResource> requestedResourceBuilder;
-
+    /**
+     * Service for building ids artifact.
+     */
     private final @NonNull IdsArtifactBuilder artifactBuilder;
 
+    /**
+     * Service for building ids representation.
+     */
     private final @NonNull IdsRepresentationBuilder representationBuilder;
 
+    /**
+     * Service for building ids contract.
+     */
     private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
@@ -151,10 +160,7 @@ public class EntityResolver {
                 final var artifact = artifactBuilder.create((Artifact) entity);
                 return Objects.requireNonNull(artifact).toRdf();
             } else if (entity instanceof OfferedResource) {
-                final var resource = offeredResourceBuilder.create((OfferedResource) entity);
-                return Objects.requireNonNull(resource).toRdf();
-            } else if (entity instanceof RequestedResource) {
-                final var resource = requestedResourceBuilder.create((RequestedResource) entity);
+                final var resource = offerBuilder.create((OfferedResource) entity);
                 return Objects.requireNonNull(resource).toRdf();
             } else if (entity instanceof Representation) {
                 final var representation = representationBuilder.create((Representation) entity);
