@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
 import java.util.UUID;
 
 @Service
@@ -84,7 +83,7 @@ public class EntityUpdateService {
         final var resources = requestService.getAll(Pageable.unpaged());
         for (final var entity : resources) {
             final var entityId = entity.getId();
-            final var remoteId = URI.create(""); // TODO entity.getRemoteId();
+            final var remoteId = entity.getRemoteId();
             if (remoteId.equals(resourceId)) {
                 final var template =
                         MappingUtils.fromIdsResource(resource);
