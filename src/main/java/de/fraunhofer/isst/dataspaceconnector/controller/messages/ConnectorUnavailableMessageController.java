@@ -44,6 +44,7 @@ public class ConnectorUnavailableMessageController {
 
     /**
      * Sending an ids connector unavailable message with the current connector as payload.
+     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.

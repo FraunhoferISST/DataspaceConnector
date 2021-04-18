@@ -119,7 +119,8 @@ public class ContractRequestMessageController {
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
-            valid = messageService.validateContractAgreementResponseMessage(response); // TODO link artifacts and agreement
+            valid = messageService.validateContractAgreementResponseMessage(response); // TODO
+            // link artifacts and agreement
             if (!valid) {
                 // If the response is not a notification message, show the response.
                 final var content = messageService.getContent(response);
@@ -168,7 +169,7 @@ public class ContractRequestMessageController {
                     // Read and process the response message.
                     try {
                         final var artifactId = messageService.saveData(response, artifact);
-                        dataLocations.add(artifactId);
+                        dataLocations.add(artifactId); // TODO Add /data
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         LOGGER.warn("Could not save data for artifact with id" + artifact
                                 + ". [exception=({})]", exception.getMessage());
@@ -188,6 +189,8 @@ public class ContractRequestMessageController {
             return ControllerUtils.respondReceivedInvalidResponse(e);
         }
 
+        // Return response entity containing the locations of the contract agreement, the
+        // downloaded resources, and the downloaded data.
         return new ResponseEntity<>(new HashMap<String, List<URI>>() {{
             put("agreement", agreementLocations);
             put("resources", resourceLocations);

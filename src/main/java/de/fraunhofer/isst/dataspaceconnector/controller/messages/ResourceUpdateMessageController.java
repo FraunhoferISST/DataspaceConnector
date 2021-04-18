@@ -44,6 +44,7 @@ public class ResourceUpdateMessageController {
 
     /**
      * Sending an ids resource update message with a resource as payload.
+     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.

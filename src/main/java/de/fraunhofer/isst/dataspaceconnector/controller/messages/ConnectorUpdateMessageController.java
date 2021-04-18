@@ -44,6 +44,7 @@ public class ConnectorUpdateMessageController {
 
     /**
      * Sending an ids connector update message with the current connector as payload.
+     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.
@@ -69,7 +70,6 @@ public class ConnectorUpdateMessageController {
             final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             // final var multipart = MessageUtils.responseToMap(responseToString);
-            // TODO Validate response and return OK or other.
 
             return new ResponseEntity<>(responseToString, HttpStatus.OK);
         } catch (ConfigurationUpdateException exception) {

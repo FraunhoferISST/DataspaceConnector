@@ -44,6 +44,7 @@ public class ResourceUnavailableMessageController {
 
     /**
      * Sending an ids resource unavailable message with a resource as payload.
+     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.

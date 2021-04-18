@@ -39,6 +39,7 @@ public class QueryMessageController {
 
     /**
      * Sending an ids query message with a query message as payload.
+     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @param query     The query statement.
