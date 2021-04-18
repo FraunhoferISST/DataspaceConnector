@@ -127,7 +127,17 @@ public enum ErrorMessages {
     /**
      * Application's base URL was retrieved without request context present.
      */
-    NO_REQUEST_CONTEXT("No request context present for extracting base URL.");
+    NO_REQUEST_CONTEXT("No request context present for extracting base URL."),
+
+    /**
+     * Due to a prohibit access pattern, accessing the data is not allowed.
+     */
+    NOT_ALLOWED("Access is not allowed."),
+
+    /**
+     * A policy restriction has been detected.
+     */
+    POLICY_RESTRICTION("Policy restriction detected.");
 
 
     /**
