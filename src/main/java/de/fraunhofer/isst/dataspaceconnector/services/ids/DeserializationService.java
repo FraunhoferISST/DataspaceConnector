@@ -11,8 +11,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,14 +19,10 @@ import java.io.IOException;
 /**
  * Service class for ids object deserialization.
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class DeserializationService {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeserializationService.class);
 
     /**
      * Service for ids serializations.
@@ -45,7 +40,9 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(config, ConfigurationModel.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize config model. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize config model. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize input.", e);
         }
     }
@@ -62,7 +59,9 @@ public class DeserializationService {
             return serializerProvider.getSerializer().deserialize(component,
                     InfrastructureComponent.class);
         } catch (IOException e) {
-            LOGGER.debug("Could not deserialize component. [exception=({})]", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Could not deserialize component. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize input.", e);
         }
     }
@@ -78,7 +77,9 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(resource, Resource.class);
         } catch (IOException e) {
-            LOGGER.debug("Could not deserialize resource. [exception=({})]", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize input.", e);
         }
     }
@@ -95,8 +96,10 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize response message. [exception=({})]",
-                    e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize response message. [exception=({})]",
+                        e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize response message.", e);
         }
     }
@@ -112,7 +115,9 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(response, Message.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize message. [exception=({})]", e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize message. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize message.", e);
         }
     }
@@ -142,7 +147,9 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(policy, tClass);
         } catch (IOException exception) {
-            LOGGER.warn("Could not deserialize rule. [exception=({})]", exception.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize rule. [exception=({})]", exception.getMessage());
+            }
             throw new IllegalArgumentException("Could not deserialize rule.", exception);
         }
     }
@@ -179,7 +186,9 @@ public class DeserializationService {
             return serializerProvider.getSerializer().deserialize(contract,
                     ContractAgreement.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize agreement. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize agreement. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize contract agreement.", e);
         }
     }
@@ -195,7 +204,9 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(contract, ContractRequest.class);
         } catch (IOException e) {
-            LOGGER.warn("Could not deserialize request. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize request. [exception=({})]", e.getMessage(), e);
+            }
             throw new IllegalArgumentException("Could not deserialize contract request.", e);
         }
     }
