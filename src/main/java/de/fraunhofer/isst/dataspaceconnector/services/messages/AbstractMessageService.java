@@ -128,11 +128,15 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
             final var allowedType = getResponseMessageType();
             return messageType.equals(allowedType);
         } catch (MessageResponseException | IllegalArgumentException e) {
-            log.debug("Failed to read response header. [exception=({})]", e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to read response header. [exception=({})]", e.getMessage(), e);
+            }
             throw new MessageResponseException(ErrorMessages.MALFORMED_HEADER.toString(), e);
         } catch (Exception e) {
             // NOTE: Should not be reached.
-            log.warn("Something else went wrong. [exception=({})]", e.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Something else went wrong. [exception=({})]", e.getMessage());
+            }
             throw new MessageResponseException(ErrorMessages.INVALID_RESPONSE.toString(), e);
         }
     }
