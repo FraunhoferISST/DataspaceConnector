@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.Duty;
@@ -18,28 +14,34 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
- * Converts DSC Contracts to Infomodel ContractOffers.
+ * Converts DSC contracts to ids contract offers.
  */
 @Component
 @RequiredArgsConstructor
 public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, ContractOffer> {
 
     /**
-     * The builder for Infomodel Permission rules.
+     * The builder for ids permission.
      */
-    private final @NonNull IdsPermissionBuilder  permBuilder;
-    /**
-     * The builder for Infomodel Prohibition rules.
-     */
-    private final @NonNull IdsProhibitionBuilder prohBuilder;
-    /**
-     * The builder for Infomodel Duty rules.
-     */
-    private final @NonNull IdsDutyBuilder        dutyBuilder;
+    private final @NonNull IdsPermissionBuilder permBuilder;
 
     /**
-     * The service for deserializing strings to Infomodel rules.
+     * The builder for ids prohibition.
+     */
+    private final @NonNull IdsProhibitionBuilder prohBuilder;
+
+    /**
+     * The builder for ids duty.
+     */
+    private final @NonNull IdsDutyBuilder dutyBuilder;
+
+    /**
+     * The service for deserializing strings to ids rules.
      */
     private final @NonNull DeserializationService deserializer;
 
@@ -49,23 +51,23 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
         // Build children.
         final var permissions =
                 create(permBuilder, onlyPermissions(contract.getRules()), baseUri,
-                       currentDepth, maxDepth);
+                        currentDepth, maxDepth);
         final var prohibitions =
                 create(prohBuilder, onlyProhibitions(contract.getRules()), baseUri,
-                       currentDepth, maxDepth);
+                        currentDepth, maxDepth);
         final var duties =
                 create(dutyBuilder, onlyDuties(contract.getRules()), baseUri, currentDepth,
-                       maxDepth);
+                        maxDepth);
 
         // Prepare contract attributes.
-        final var contractStart = IdsUtils.getGregorianOf(contract.getStart());
-        final var contractEnd = IdsUtils.getGregorianOf(contract.getEnd());
+        final var start = IdsUtils.getGregorianOf(contract.getStart());
+        final var end = IdsUtils.getGregorianOf(contract.getEnd());
         final var consumer = contract.getConsumer();
         final var provider = contract.getProvider();
 
         final var builder = new ContractOfferBuilder(getAbsoluteSelfLink(contract, baseUri))
-                ._contractStart_(contractStart)
-                ._contractEnd_(contractEnd)
+                ._contractStart_(start)
+                ._contractEnd_(end)
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._consumer_(consumer)
                 ._provider_(provider);

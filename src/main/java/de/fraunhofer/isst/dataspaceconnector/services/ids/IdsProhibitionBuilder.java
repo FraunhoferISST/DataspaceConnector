@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC Rule to Infomodel Prohibition rule.
+ * Converts DSC rule to ids prohibition.
  */
 @Component
 public class IdsProhibitionBuilder extends IdsRuleBuilder<Prohibition> {

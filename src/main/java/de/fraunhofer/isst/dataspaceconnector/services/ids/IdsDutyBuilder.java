@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC Rule to Infomodel Duty rule.
+ * Converts DSC rule to ids duty.
  */
 @Component
 public class IdsDutyBuilder extends IdsRuleBuilder<Duty> {

@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
@@ -10,8 +8,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 /**
- * Converts DSC Representations to Infomodel Representations.
+ * Converts DSC representation to ids representation.
  */
 @Component
 @RequiredArgsConstructor
@@ -31,17 +31,17 @@ public final class IdsRepresentationBuilder
         // Build children.
         final var artifacts =
                 create(artifactBuilder, representation.getArtifacts(), baseUri, currentDepth,
-                       maxDepth);
+                        maxDepth);
 
         // Prepare representation attributes.
         final var modified = IdsUtils.getGregorianOf(representation
-                                                             .getModificationDate());
+                .getModificationDate());
         final var created = IdsUtils.getGregorianOf(representation
-                                                            .getCreationDate());
+                .getCreationDate());
         final var language = IdsUtils.getLanguage(representation.getLanguage());
         final var mediaType =
                 new IANAMediaTypeBuilder()._filenameExtension_(representation.getMediaType())
-                                          .build();
+                        .build();
         final var standard = URI.create(representation.getStandard());
 
         final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation, baseUri))

@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
@@ -10,13 +8,18 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 /**
- * Converts DSC Artifacts to Infomodel Artifacts.
+ * Converts DSC artifacts to ids artifacts.
  */
 @Component
 @RequiredArgsConstructor
 public class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, ResourceCatalog> {
 
+    /**
+     * The builder for ids resource (from offered resource).
+     */
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     @Override
@@ -24,8 +27,7 @@ public class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, ResourceCatal
                                              final int currentDepth, final int maxDepth) {
         // Build children.
         final var resources = create(resourceBuilder,
-                                     catalog.getOfferedResources(), baseUri, currentDepth,
-                                     maxDepth);
+                catalog.getOfferedResources(), baseUri, currentDepth, maxDepth);
         final var builder = new ResourceCatalogBuilder(getAbsoluteSelfLink(catalog, baseUri));
         resources.ifPresent(builder::_offeredResource_);
 

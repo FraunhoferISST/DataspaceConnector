@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
- * Converts DSC Rule to Infomodel Permission rule.
+ * Converts DSC rule to ids permission.
  */
 @Component
 public class IdsPermissionBuilder extends IdsRuleBuilder<Permission> {
