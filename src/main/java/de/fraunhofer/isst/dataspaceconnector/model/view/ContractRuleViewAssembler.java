@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.RulesToContracts;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -31,7 +31,7 @@ public class ContractRuleViewAssembler
         final var selfLink = linkTo(RuleController.class).slash(rule.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var contractLink = linkTo(methodOn(RelationshipControllers.RulesToContracts.class)
+        final var contractLink = linkTo(methodOn(RulesToContracts.class)
                                                 .getResource(rule.getId(), null, null, null))
                                          .withRel("contracts");
         view.add(contractLink);

@@ -1,8 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractRules;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.ContractController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
@@ -37,7 +36,7 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         view.add(selfLink);
 
         final var rulesLink = linkTo(
-                methodOn(ContractRules.class).getResource(contract.getId(), null, null, null))
+                methodOn(RelationControllers.ContractsToRules.class).getResource(contract.getId(), null, null, null))
                                       .withRel("rules");
         view.add(rulesLink);
 
@@ -46,19 +45,19 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
             resourceLinker =
-                    linkTo(methodOn(RelationshipControllers.ContractsToOfferedResources.class)
+                    linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
                                     .getResource(contract.getId(), null, null, null))
                             .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
-                        linkTo(methodOn(RelationshipControllers.ContractsToOfferedResources.class)
+                        linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
                                         .getResource(contract.getId(), null, null, null))
                                 .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
-                        linkTo(methodOn(RelationshipControllers.ContractsToRequestedResources.class)
+                        linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
                                         .getResource(contract.getId(), null, null, null))
                                 .withRel("requests");
             } else {

@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogOfferedResources;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.CatalogsToOfferedResources;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.CatalogController;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,7 +30,7 @@ public class CatalogViewAssembler implements RepresentationModelAssembler<Catalo
         final var selfLink = linkTo(CatalogController.class).slash(catalog.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var offeredResLink = linkTo(methodOn(CatalogOfferedResources.class)
+        final var offeredResLink = linkTo(methodOn(CatalogsToOfferedResources.class)
                                                   .getResource(catalog.getId(), null, null, null))
                                            .withRel("offers");
         view.add(offeredResLink);

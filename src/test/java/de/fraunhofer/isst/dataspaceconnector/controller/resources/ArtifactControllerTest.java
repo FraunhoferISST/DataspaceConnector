@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ArtifactController.class})
+@SpringBootTest(classes = {ResourceControllers.ArtifactController.class})
 class ArtifactControllerTest {
     @MockBean
     ArtifactService service;
@@ -32,7 +32,7 @@ class ArtifactControllerTest {
 
     @Autowired
     @InjectMocks
-    ArtifactController controller;
+    ResourceControllers.ArtifactController controller;
 
     @Test
     public void getData_null_throwIllegalArgumentException() {

@@ -1,25 +1,27 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.ContractView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationView;
 import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceView;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractRuleLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationArtifactLinker;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,7 +35,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-public final class RelationshipControllers {
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
+public final class RelationControllers {
 
     @RestController
     @RequestMapping("/api/rules/{id}/contracts")
@@ -142,4 +149,36 @@ public final class RelationshipControllers {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
     }
+
+    @RestController
+    @RequestMapping("/api/representations/{id}/artifacts")
+    @Tag(name = "Representations", description = "Endpoints for linking artifacts to representations")
+    public static class RepresentationsToArtifacts
+            extends BaseResourceChildController<RepresentationArtifactLinker, Artifact, ArtifactView> { }
+
+    @RestController
+    @RequestMapping("/api/contracts/{id}/rules")
+    @Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
+    public static class ContractsToRules extends BaseResourceChildController<ContractRuleLinker, ContractRule, ContractRuleView> {
+    }
+
+    @RestController
+    @RequestMapping("/api/catalogs/{id}/offers")
+    @Tag(name = "Catalogs", description = "Endpoints for linking offered resources to catalogs")
+    public static class CatalogsToOfferedResources extends BaseResourceChildController<AbstractCatalogResourceLinker<OfferedResource>, OfferedResource, OfferedResourceView> {
+    }
+
+    @RestController
+    @RequestMapping("/api/offers/{id}/contracts")
+    @Tag(name = "Resources", description = "Endpoints for linking contracts to resources")
+    public static class OfferedResourcesToContracts
+            extends BaseResourceChildController<AbstractResourceContractLinker<OfferedResource>, Contract, ContractView> {
+    }
+
+    @RestController
+    @RequestMapping("/api/offers/{id}/representations")
+    @Tag(name = "Resources", description = "Endpoints for linking representations to resources")
+    public static class OfferedResourcesToRepresentations
+            extends BaseResourceChildController<AbstractResourceRepresentationLinker<OfferedResource>,
+                    Representation, RepresentationView> { }
 }

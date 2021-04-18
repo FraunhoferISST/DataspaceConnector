@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest(classes = {RequestedResourceController.class})
+@SpringBootTest(classes = {ResourceControllers.RequestedResourceController.class})
 class RequestedResourceControllerTest {
     @MockBean
     private ResourceService<RequestedResource, RequestedResourceDesc> service;
@@ -29,7 +29,7 @@ class RequestedResourceControllerTest {
 
     @Autowired
     @InjectMocks
-    private RequestedResourceController controller;
+    private ResourceControllers.RequestedResourceController controller;
 
     @Test
     public void create_null_returnMethodNotAllowed() {

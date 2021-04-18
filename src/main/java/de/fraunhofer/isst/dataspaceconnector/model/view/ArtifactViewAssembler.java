@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.ArtifactController;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import lombok.NoArgsConstructor;
@@ -37,12 +37,12 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
                 .withRel("data");
         view.add(dataLink);
 
-        final var repLink = linkTo(methodOn(RelationshipControllers.ArtifactsToRepresentations.class)
+        final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
                 .getResource(artifact.getId(), null, null, null))
                 .withRel("representations");
         view.add(repLink);
 
-        final var agreementLink = linkTo(methodOn(RelationshipControllers.ArtifactsToAgreements.class)
+        final var agreementLink = linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
                 .getResource(artifact.getId(), null, null, null))
                 .withRel("agreements");
         view.add(agreementLink);

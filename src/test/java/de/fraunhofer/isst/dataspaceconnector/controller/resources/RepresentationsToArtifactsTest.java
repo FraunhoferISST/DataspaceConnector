@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {RepresentationArtifactController.class})
-class RepresentationArtifactControllerTest {
+@SpringBootTest(classes = {RelationControllers.RepresentationsToArtifacts.class})
+class RepresentationsToArtifactsTest {
 
     @MockBean
     RepresentationArtifactLinker linker;
@@ -44,7 +44,7 @@ class RepresentationArtifactControllerTest {
 
     @Autowired
     @InjectMocks
-    private RepresentationArtifactController controller;
+    private RelationControllers.RepresentationsToArtifacts controller;
 
     private Representation representation = getRepresentation("Owner");
     private List<Artifact> artifacts = new ArrayList<>();

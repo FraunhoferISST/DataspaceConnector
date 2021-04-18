@@ -27,7 +27,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.SneakyThrows;
 
-@SpringBootTest(classes = {CatalogController.class})
+@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
 class CatalogControllerTest_getAll {
     @MockBean
     private CatalogService service;
@@ -42,7 +42,7 @@ class CatalogControllerTest_getAll {
 
     @Autowired
     // private MockMvc mockMvc;
-    private CatalogController controller;
+    private ResourceControllers.CatalogController controller;
 
     /**
      * Setup

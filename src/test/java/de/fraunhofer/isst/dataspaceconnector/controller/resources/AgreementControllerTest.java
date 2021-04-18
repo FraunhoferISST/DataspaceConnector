@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementViewAssembler;
@@ -15,10 +13,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest(classes = {AgreementController.class})
+@SpringBootTest(classes = {ResourceControllers.AgreementController.class})
 class AgreementControllerTest {
     @MockBean
     private AgreementService service;
@@ -31,7 +31,7 @@ class AgreementControllerTest {
 
     @Autowired
     @InjectMocks
-    private AgreementController controller;
+    private ResourceControllers.AgreementController controller;
 
     /**
      * create.

@@ -1,8 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationArtifactController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
@@ -39,7 +38,7 @@ public class RepresentationViewAssembler
         view.add(selfLink);
 
         final var artifactsLink =
-                linkTo(methodOn(RepresentationArtifactController.class)
+                linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
                                 .getResource(representation.getId(), null, null, null))
                         .withRel("artifacts");
         view.add(artifactsLink);
@@ -49,19 +48,19 @@ public class RepresentationViewAssembler
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
             resourceLinker =
-                    linkTo(methodOn(RelationshipControllers.RepresentationsToOfferedResources.class)
+                    linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
                                     .getResource(representation.getId(), null, null, null))
                             .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker = linkTo(
-                        methodOn(RelationshipControllers.RepresentationsToOfferedResources.class)
+                        methodOn(RelationControllers.RepresentationsToOfferedResources.class)
                                 .getResource(representation.getId(), null, null, null))
                                          .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker = linkTo(
-                        methodOn(RelationshipControllers.RepresentationsToRequestedResources.class)
+                        methodOn(RelationControllers.RepresentationsToRequestedResources.class)
                                 .getResource(representation.getId(), null, null, null))
                                          .withRel("requests");
             } else {

@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.AgreementController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.AgreementsToArtifacts;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.AgreementController;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -21,7 +21,7 @@ public class AgreementViewAssembler implements RepresentationModelAssembler<Agre
         final var selfLink = linkTo(AgreementController.class).slash(agreement.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var artifactLink = linkTo(methodOn(RelationshipControllers.AgreementsToArtifacts.class)
+        final var artifactLink = linkTo(methodOn(AgreementsToArtifacts.class)
                 .getResource(agreement.getId(), null, null, null))
                 .withRel("artifacts");
         view.add(artifactLink);

@@ -1,9 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model.view;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.OfferedResourceController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationshipControllers;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceContracts;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceRepresentations;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.OfferedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -35,17 +33,17 @@ public class OfferedResourceViewAssembler
         view.add(selfLink);
 
         final var contractsLink = linkTo(
-                methodOn(ResourceContracts.class).getResource(resource.getId(), null, null, null))
+                methodOn(RelationControllers.OfferedResourcesToContracts.class).getResource(resource.getId(), null, null, null))
                                           .withRel("contracts");
         view.add(contractsLink);
 
-        final var repLink = linkTo(methodOn(ResourceRepresentations.class)
+        final var repLink = linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
                                            .getResource(resource.getId(), null, null, null))
                                     .withRel("representations");
         view.add(repLink);
 
         final var catalogLink =
-                linkTo(methodOn(RelationshipControllers.OfferedResourcesToCatalogs.class)
+                linkTo(methodOn(RelationControllers.OfferedResourcesToCatalogs.class)
                                 .getResource(resource.getId(), null, null, null))
                         .withRel("catalogs");
         view.add(catalogLink);

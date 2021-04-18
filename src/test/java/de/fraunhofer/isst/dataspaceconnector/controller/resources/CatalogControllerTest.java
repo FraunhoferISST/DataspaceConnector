@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {CatalogController.class})
+@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
 class CatalogControllerTest {
     @MockBean
     private CatalogService catalogService;
@@ -38,7 +38,7 @@ class CatalogControllerTest {
     private PagedResourcesAssembler<Catalog> pagedAssembler;
 
     @Autowired
-    private CatalogController controller;
+    private ResourceControllers.CatalogController controller;
 
     private CatalogDesc desc = getDesc();
     private CatalogDesc updatedDescOne = getUpdatedDesc();

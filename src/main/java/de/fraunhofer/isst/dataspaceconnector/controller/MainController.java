@@ -1,13 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.AgreementController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ArtifactController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.CatalogController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ContractController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.OfferedResourceController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RepresentationController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RequestedResourceController;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RuleController;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -93,21 +86,21 @@ public class MainController {
         final var model = new RepresentationModel();
 
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
-        model.add(linkTo(methodOn(AgreementController.class)
+        model.add(linkTo(methodOn(ResourceControllers.AgreementController.class)
                 .getAll(null, null, null)).withRel("agreements"));
-        model.add(linkTo(methodOn(ArtifactController.class)
+        model.add(linkTo(methodOn(ResourceControllers.ArtifactController.class)
                 .getAll(null, null, null)).withRel("artifacts"));
-        model.add(linkTo(methodOn(CatalogController.class)
+        model.add(linkTo(methodOn(ResourceControllers.CatalogController.class)
                 .getAll(null, null, null)).withRel("catalogs"));
-        model.add(linkTo(methodOn(ContractController.class)
+        model.add(linkTo(methodOn(ResourceControllers.ContractController.class)
                 .getAll(null, null, null)).withRel("contracts"));
-        model.add(linkTo(methodOn(OfferedResourceController.class)
+        model.add(linkTo(methodOn(ResourceControllers.OfferedResourceController.class)
                 .getAll(null, null, null)).withRel("offers"));
-        model.add(linkTo(methodOn(RepresentationController.class)
+        model.add(linkTo(methodOn(ResourceControllers.RepresentationController.class)
                 .getAll(null, null, null)).withRel("representations"));
-        model.add(linkTo(methodOn(RequestedResourceController.class)
+        model.add(linkTo(methodOn(ResourceControllers.RequestedResourceController.class)
                 .getAll(null, null, null)).withRel("requests"));
-        model.add(linkTo(methodOn(RuleController.class)
+        model.add(linkTo(methodOn(ResourceControllers.RuleController.class)
                 .getAll(null, null, null)).withRel("rules"));
 
         return ResponseEntity.ok(model);

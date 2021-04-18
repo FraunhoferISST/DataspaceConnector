@@ -1,8 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.BaseEntityService;
@@ -28,10 +26,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+
+import javax.validation.Valid;
+import java.util.UUID;
 
 /**
- * Offers REST-Api endpoints for resource handling.
+ * Offers REST-Api endpoints for REST resource handling.
  *
  * @param <T> The type of the resource.
  * @param <D> The type of the resource description expected to be passed with REST calls.
