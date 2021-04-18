@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -16,21 +14,18 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
 
 /**
  * This class handles message responses.
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MessageResponseService {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(MessageResponseService.class);
 
     /**
      * Service for the current connector configuration.
@@ -44,8 +39,10 @@ public class MessageResponseService {
      * @return A message response.
      */
     public MessageResponse handleMessageEmptyException(final MessageEmptyException exception) {
-        LOGGER.debug("Cannot respond when there is no request. [exception=({})]",
-                exception.getMessage());
+        if (log.isDebugEnabled()) {
+            log.debug("Cannot respond when there is no request. [exception=({})]",
+                    exception.getMessage(), exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 exception.getMessage(), connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
@@ -60,8 +57,10 @@ public class MessageResponseService {
      */
     public MessageResponse handleInfoModelNotSupportedException(
             final VersionNotSupportedException exception, final String version) {
-        LOGGER.debug("Information Model version of requesting connector is not supported. "
-                + "[version=({}), exception=({})]", version, exception.getMessage());
+        if (log.isDebugEnabled()) {
+            log.debug("Information Model version of requesting connector is not supported. "
+                    + "[version=({}), exception=({})]", version, exception.getMessage(), exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.VERSION_NOT_SUPPORTED,
                 exception.getMessage(), connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
@@ -78,8 +77,11 @@ public class MessageResponseService {
     public MessageResponse handleResponseMessageBuilderException(final Exception exception,
                                                                  final URI issuerConnector,
                                                                  final URI messageId) {
-        LOGGER.warn("Failed to convert ids object to string. [exception=({}), issuer=({}), "
-                + "messageId=({})]", exception.getMessage(), issuerConnector, messageId);
+        if (log.isWarnEnabled()) {
+            log.warn("Failed to convert ids object to string. [exception=({}), "
+                            + "issuer=({}), messageId=({})]", exception.getMessage(),
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
                 connectorService.getConnectorId(),
@@ -101,9 +103,11 @@ public class MessageResponseService {
                                                             final URI transferContract,
                                                             final URI issuerConnector,
                                                             final URI messageId) {
-        LOGGER.debug("Policy restriction detected. [exception=({}), artifact=({}), contract=({}), "
-                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
-                transferContract, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Policy restriction detected. [exception=({}), artifact=({}), "
+                            + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
+                    requestedArtifact, transferContract, issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                 "Policy restriction detected." + exception.getMessage(),
                 connectorService.getConnectorId(),
@@ -123,8 +127,11 @@ public class MessageResponseService {
                                                           final String payload,
                                                           final URI issuerConnector,
                                                           final URI messageId) {
-        LOGGER.debug("Could not parse message payload. [exception=({}), payload=({}), issuer=({}), "
-                + "messageId=({})]", exception.getMessage(), payload, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Could not parse message payload. [exception=({}), payload=({}), "
+                            + "issuer=({}), messageId=({})]", exception.getMessage(), payload,
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Internal server error.", connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
@@ -143,9 +150,11 @@ public class MessageResponseService {
                                                            final URI requestedElement,
                                                            final URI issuerConnector,
                                                            final URI messageId) {
-        LOGGER.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), "
-                        + "messageId=({})]", exception.getMessage(), requestedElement,
-                issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Element not found. [exception=({}), resourceId=({}), issuer=({}), "
+                            + "messageId=({})]", exception.getMessage(), requestedElement,
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
                 connectorService.getConnectorId(),
@@ -163,8 +172,11 @@ public class MessageResponseService {
     public MessageResponse handleMessagePayloadException(final Exception exception,
                                                          final URI messageId,
                                                          final URI issuerConnector) {
-        LOGGER.debug("Failed to read payload. [exception=({}), messageId=({}), issuer=({})]",
-                exception.getMessage(), messageId, issuerConnector);
+        if (log.isDebugEnabled()) {
+            log.debug("Failed to read payload. [exception=({}), messageId=({}), "
+                            + "issuer=({})]", exception.getMessage(), messageId, issuerConnector,
+                    exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 exception.getMessage(),
                 connectorService.getConnectorId(),
@@ -182,8 +194,10 @@ public class MessageResponseService {
     public MessageResponse handleMissingRules(final ContractRequest request,
                                               final URI messageId,
                                               final URI issuerConnector) {
-        LOGGER.debug("No rules found. [request=({}), messageId=({}), issuer=({})]",
-                request, messageId, issuerConnector);
+        if (log.isDebugEnabled()) {
+            log.debug("No rules found. [request=({}), messageId=({}), issuer=({})]",
+                    request, messageId, issuerConnector);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing rules in contract request.",
                 connectorService.getConnectorId(),
@@ -201,8 +215,10 @@ public class MessageResponseService {
     public MessageResponse handleMissingTargetInRules(final ContractRequest request,
                                                       final URI messageId,
                                                       final URI issuerConnector) {
-        LOGGER.debug("No targets found. [request=({}), messageId=({}), issuer=({})]",
-                request, messageId, issuerConnector);
+        if (log.isDebugEnabled()) {
+            log.debug("No targets found. [request=({}), messageId=({}), issuer=({})]",
+                    request, messageId, issuerConnector);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing targets in rules of contract request.",
                 connectorService.getConnectorId(),
@@ -220,8 +236,10 @@ public class MessageResponseService {
     public MessageResponse handleMissingContractOffers(final ContractRequest request,
                                                        final URI messageId,
                                                        final URI issuerConnector) {
-        LOGGER.debug("No contract offers found. [request=({}), messageId=({}), issuer=({})]",
-                request, messageId, issuerConnector);
+        if (log.isDebugEnabled()) {
+            log.debug("No contract offers found. [request=({}), messageId=({}), "
+                    + "issuer=({})]", request, messageId, issuerConnector);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
                 "Could not find any matching contract offers for your request.",
                 connectorService.getConnectorId(),
@@ -241,9 +259,11 @@ public class MessageResponseService {
                                                          final String payload,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.warn("Could not process request message. [exception=({}), payload=({}), issuer="
-                        + "({}), messageId=({})]", exception.getMessage(), payload, issuerConnector,
-                messageId);
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process request message. [exception=({}), payload=({}), "
+                            + "issuer=({}), messageId=({})]", exception.getMessage(), payload,
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not process request message. " + exception.getMessage(),
@@ -266,9 +286,11 @@ public class MessageResponseService {
                                                          final URI transferContract,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.warn("Could not process request message. [exception=({}), artifact=({}), "
-                        + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
-                requestedArtifact, transferContract, issuerConnector, messageId);
+        if (log.isWarnEnabled()) {
+            log.warn("Could not process request message. [exception=({}), artifact=({}), "
+                            + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
+                    requestedArtifact, transferContract, issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not process request message. " + exception.getMessage(),
@@ -289,9 +311,11 @@ public class MessageResponseService {
                                                    final String payload,
                                                    final URI issuerConnector,
                                                    final URI messageId) {
-        LOGGER.debug("Invalid contract agreement request. [exception=({}), payload=({}), "
-                        + "issuer=({}), messageId=({})]", exception, payload, issuerConnector,
-                messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Invalid contract agreement request. [exception=({}), payload=({}), "
+                            + "issuer=({}), messageId=({})]", exception, payload, issuerConnector,
+                    messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "This agreement does not match the one handled out before.",
@@ -312,9 +336,11 @@ public class MessageResponseService {
                                                                final ContractAgreement agreement,
                                                                final URI issuerConnector,
                                                                final URI messageId) {
-        LOGGER.warn("Could not store contract agreement. [exception=({}), agreement=({}), issuer="
-                        + "({}), messageId=({})]", exception.getMessage(), agreement,
-                issuerConnector, messageId);
+        if (log.isWarnEnabled()) {
+            log.warn("Could not store contract agreement. [exception=({}), "
+                            + "agreement=({}), issuer=({}), messageId=({})]",
+                    exception.getMessage(), agreement, issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not store contract agreement.",
@@ -335,9 +361,11 @@ public class MessageResponseService {
                                                          final URI transferContract,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.debug("Missing transfer contract. [artifact=({}), contract=({}), issuer=({}), "
-                        + "messageId=({})]", requestedArtifact, transferContract, issuerConnector,
-                messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Missing transfer contract. [artifact=({}), contract=({}), "
+                            + "issuer=({}), messageId=({})]", requestedArtifact, transferContract,
+                    issuerConnector, messageId);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Missing transfer contract.",
@@ -360,9 +388,11 @@ public class MessageResponseService {
                                                          final URI transferContract,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.debug("Invalid transfer contract. [exception=({}), artifact=({}), contract=({}), "
-                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
-                transferContract, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Invalid transfer contract. [exception=({}), artifact=({}), "
+                            + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
+                    requestedArtifact, transferContract, issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Invalid transfer contract for requested artifact.",
@@ -383,9 +413,11 @@ public class MessageResponseService {
                                                           final URI transferContract,
                                                           final URI issuerConnector,
                                                           final URI messageId) {
-        LOGGER.debug("Missing requested artifact. [artifact=({}), contract=({}), issuer=({}), "
-                        + "messageId=({})]", requestedArtifact, transferContract, issuerConnector,
-                messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Missing requested artifact. [artifact=({}), contract=({}), "
+                            + "issuer=({}), messageId=({})]", requestedArtifact, transferContract,
+                    issuerConnector, messageId);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Missing requested artifact.",
@@ -408,9 +440,11 @@ public class MessageResponseService {
                                                    final URI transferContract,
                                                    final URI issuerConnector,
                                                    final URI messageId) {
-        LOGGER.debug("Invalid query input. [exception=({}), artifact=({}), contract=({}), "
-                        + "issuer=({}), messageId=({})]", exception.getMessage(), requestedArtifact,
-                transferContract, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Invalid query input. [exception=({}), artifact=({}), contract=({}), "
+                            + "issuer=({}), messageId=({})]", exception.getMessage(),
+                    requestedArtifact, transferContract, issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Invalid query input.",
@@ -431,9 +465,11 @@ public class MessageResponseService {
                                                       final URI requestedArtifact,
                                                       final URI issuerConnector,
                                                       final URI messageId) {
-        LOGGER.warn("Failed to load data. [exception=({}), artifact=({}), issuer=({}), "
-                        + "messageId=({})]", exception.getMessage(), requestedArtifact,
-                issuerConnector, messageId);
+        if (log.isWarnEnabled()) {
+            log.warn("Failed to load data. [exception=({}), artifact=({}), issuer=({}), "
+                            + "messageId=({})]", exception.getMessage(), requestedArtifact,
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not retrieve data.",
@@ -452,8 +488,10 @@ public class MessageResponseService {
     public MessageResponse handleMissingAffectedResource(final URI affectedResource,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.debug("Missing affected resource. [resource=({}), issuer=({}), messageId=({})]",
-                affectedResource, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Missing affected resource. [resource=({}), issuer=({}), "
+                    + "messageId=({})]", affectedResource, issuerConnector, messageId);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Missing affected resource.",
@@ -472,8 +510,10 @@ public class MessageResponseService {
     public MessageResponse handleMissingPayload(final URI affectedResource,
                                                 final URI issuerConnector,
                                                 final URI messageId) {
-        LOGGER.debug("Missing resource in payload. [resource=({}), issuer=({}), messageId=({})]",
-                affectedResource, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Missing resource in payload. [resource=({}), issuer=({}), "
+                    + "messageId=({})]", affectedResource, issuerConnector, messageId);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Missing resource in payload.",
@@ -494,9 +534,11 @@ public class MessageResponseService {
                                                          final URI affectedResource,
                                                          final URI issuerConnector,
                                                          final URI messageId) {
-        LOGGER.debug("Affected resource does not match the resource id. [resource=({}), "
-                        + "affectedResource=({}), issuer=({}), messageId=({})]", resourceId,
-                affectedResource, issuerConnector, messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Affected resource does not match the resource id. [resource=({}), "
+                            + "affectedResource=({}), issuer=({}), messageId=({})]", resourceId,
+                    affectedResource, issuerConnector, messageId);
+        }
         return ErrorResponse.withDefaultHeader(
                 RejectionReason.BAD_PARAMETERS,
                 "Affected resource does not match the resource id.",
@@ -504,33 +546,45 @@ public class MessageResponseService {
                 connectorService.getOutboundModelVersion());
     }
 
-
+    /**
+     * Handle malformed rules in contract request.
+     *
+     * @param exception       Exception that was thrown while checking the contract rules.
+     * @param payload         The message's payload.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
+     * @return A message response.
+     */
     public MessageResponse handleMalformedRules(final IllegalArgumentException exception,
                                                 final String payload,
                                                 final URI issuerConnector,
                                                 final URI messageId) {
-        LOGGER.debug("Could not parse message payload. [exception=({}), payload=({}), issuer=({}), "
-                     + "messageId=({})]", exception.getMessage(), payload, issuerConnector,
-                     messageId);
+        if (log.isDebugEnabled()) {
+            log.debug("Could not parse message payload. [exception=({}), payload=({}), "
+                            + "issuer=({}), messageId=({})]", exception.getMessage(), payload,
+                    issuerConnector, messageId, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
-                                               "Invalid rules in message payload.",
-                                               connectorService.getConnectorId(),
-                                               connectorService.getOutboundModelVersion());
+                "Invalid rules in message payload.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
     }
 
     /**
      * Handle exception when creating self links for the requested element and its children.
      *
-     * @param exception Exception that was thrown when the self links could not be created.
+     * @param exception        Exception that was thrown when the self links could not be created.
      * @param requestedElement The requested element that could not be constructed.
      * @return A message response.
      */
     public MessageResponse handleSelfLinkCreationException(final SelfLinkCreationException
                                                                    exception,
                                                            final URI requestedElement) {
-        LOGGER.debug("Could not construct self links for requested element and its children. "
-                        + "[exception=({}), requestedElement=({})]",
-                exception.getMessage(), requestedElement);
+        if (log.isDebugEnabled()) {
+            log.debug("Could not construct self links for requested element and its "
+                            + "children. [exception=({}), requestedElement=({})]",
+                    exception.getMessage(), requestedElement, exception);
+        }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Internal error when constructing requested element.",
                 connectorService.getConnectorId(),

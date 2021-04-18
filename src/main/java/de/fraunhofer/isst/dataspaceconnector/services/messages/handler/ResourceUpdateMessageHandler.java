@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
@@ -24,9 +21,11 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a
@@ -36,14 +35,10 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
+@Log4j2
 @RequiredArgsConstructor
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ResourceUpdateMessageHandler.class);
 
     /**
      * Service for the message exception handling.
@@ -164,7 +159,9 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         } catch (Exception exception) {
             // As the message has been received, respond with message processed notification
             // message, although saving the resource failed.
-            LOGGER.warn("Updating entities failed. [resource=({})]", idsResource);
+            if (log.isWarnEnabled()) {
+                log.warn("Updating entities failed. [resource=({})]", idsResource);
+            }
             final var statement = "Message received but resource not updated.";
             return respondToMessage(statement, issuerConnector, messageId);
         }

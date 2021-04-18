@@ -31,8 +31,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -44,14 +43,10 @@ import java.net.URI;
  * {@link ContractAgreementMessageImpl} JsonTypeName annotation.
  */
 @Component
-@SupportedMessageType(ContractAgreementMessageImpl.class)
+@Log4j2
 @RequiredArgsConstructor
+@SupportedMessageType(ContractAgreementMessageImpl.class)
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractAgreementHandler.class);
 
     /**
      * Service for message processing.
@@ -139,9 +134,10 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                     .getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
-            if(!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
-                return exceptionService.handleContractException(new ContractException("Not the same contract."), payloadAsString,
-                                                                issuerConnector, messageId);
+            if (!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
+                return exceptionService.handleContractException(
+                        new ContractException("Not the same contract."), payloadAsString,
+                        issuerConnector, messageId);
             }
 
             // Update contract agreement to confirmed.
@@ -178,8 +174,10 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
             desc.setRecipient(recipient);
             logService.sendMessage(desc, rdf);
         } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
-            LOGGER.warn("Failed to send contract agreement to clearing house. [exception=({})]",
-                    exception.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send contract agreement to clearing house. [exception=({})]",
+                        exception.getMessage(), exception);
+            }
         }
     }
 

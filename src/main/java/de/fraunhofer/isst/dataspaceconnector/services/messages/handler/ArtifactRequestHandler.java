@@ -29,8 +29,6 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -46,11 +44,6 @@ import java.util.List;
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
 @RequiredArgsConstructor
 public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
 
     /**
      * Service for message processing.

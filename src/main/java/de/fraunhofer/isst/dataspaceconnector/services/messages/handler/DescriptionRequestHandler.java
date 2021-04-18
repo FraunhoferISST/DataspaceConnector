@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
@@ -25,9 +23,9 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all incoming messages that have a
@@ -39,11 +37,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
 public class DescriptionRequestHandler implements MessageHandler<DescriptionRequestMessageImpl> {
-
-    /**
-     * Class level logger.
-     */
-    public static final Logger LOGGER = LoggerFactory.getLogger(DescriptionRequestHandler.class);
 
     /**
      * Service for handling response messages.
