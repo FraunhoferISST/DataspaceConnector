@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view;
+package de.fraunhofer.isst.dataspaceconnector.view;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -13,8 +13,8 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "rules", itemRelation = "rule")
-public class ContractRuleView extends RepresentationModel<ContractRuleView> {
+@Relation(collectionRelation = "contract", itemRelation = "contract")
+public class ContractView  extends RepresentationModel<ContractView> {
     /**
      * The creation date.
      */
@@ -27,7 +27,11 @@ public class ContractRuleView extends RepresentationModel<ContractRuleView> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
-    private String title;
-    private String value;
+    private String        title;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime start;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private ZonedDateTime end;
     private Map<String, String> additional;
 }

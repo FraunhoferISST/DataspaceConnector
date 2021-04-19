@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
 import de.fraunhofer.isst.dataspaceconnector.model.CatalogDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

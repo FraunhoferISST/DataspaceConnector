@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.SneakyThrows;

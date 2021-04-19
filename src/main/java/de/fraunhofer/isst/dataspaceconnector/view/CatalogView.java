@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view;
+package de.fraunhofer.isst.dataspaceconnector.view;
 
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -13,8 +13,8 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "representations", itemRelation = "representation")
-public class RepresentationView extends RepresentationModel<RepresentationView> {
+@Relation(collectionRelation = "catalogs", itemRelation = "catalog")
+public class CatalogView extends RepresentationModel<CatalogView> {
     /**
      * The creation date.
      */
@@ -28,7 +28,6 @@ public class RepresentationView extends RepresentationModel<RepresentationView> 
     private ZonedDateTime modificationDate;
 
     private String title;
-    private String mediaType;
-    private String language;
+    private String description;
     private Map<String, String> additional;
 }
