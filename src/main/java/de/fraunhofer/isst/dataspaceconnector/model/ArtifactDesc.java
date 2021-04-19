@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import java.net.URI;
-import java.net.URL;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.net.URL;
 
 /**
  * A description of an artifact.
@@ -47,8 +47,7 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
     private String value;
 
     /**
-     * Indicates whether the artifact should be downloaded automatically
+     * Indicates whether the artifact should be downloaded automatically.
      */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private boolean automatedDownload = ArtifactFactory.DEFAULT_AUTO_DOWNLOAD;
 }
