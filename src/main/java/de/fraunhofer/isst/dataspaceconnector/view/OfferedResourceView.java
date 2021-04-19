@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view;
+package de.fraunhofer.isst.dataspaceconnector.view;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -15,8 +15,8 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "requested", itemRelation = "resource")
-public class RequestedResourceView extends RepresentationModel<RequestedResourceView> {
+@Relation(collectionRelation = "resources", itemRelation = "resource")
+public class OfferedResourceView extends RepresentationModel<OfferedResourceView> {
 
     /**
      * The creation date.

@@ -17,14 +17,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.CatalogView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ContractRuleView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ContractView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.OfferedResourceView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RepresentationView;
-import de.fraunhofer.isst.dataspaceconnector.model.view.RequestedResourceView;
+import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
+import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.view.ContractRuleView;
+import de.fraunhofer.isst.dataspaceconnector.view.ContractView;
+import de.fraunhofer.isst.dataspaceconnector.view.OfferedResourceView;
+import de.fraunhofer.isst.dataspaceconnector.view.RepresentationView;
+import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -134,8 +134,6 @@ public final class ResourceControllers {
          * source, all headers and query parameters included in this request will be used for the
          * request to the backend.
          *
-         * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
-         *
          * @param artifactId Artifact id.
          * @param params All request parameters.
          * @param headers All request headers.
@@ -164,8 +162,6 @@ public final class ResourceControllers {
          * source, the headers, query parameters and path variables from the request body will be
          * used when fetching the data.
          *
-         * TODO User should be able to manually trigger artifact request (no mandatory boolean, but optional true)
-         *
          * @param artifactId Artifact id.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
@@ -181,25 +177,5 @@ public final class ResourceControllers {
 
             return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
         }
-
-        // TODO no fixed input maps, generic input translated to query input map
-        // TODO Update boolean to manually trigger artifact requests, that are sent despite local data
-        // TODO query input can be used for direct backend calls or for backend calls on provider side
-//        @GetMapping("{id}/data")
-//        @Operation(summary = "Get data by artifact id with query input")
-//        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-//        public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
-//                                              @RequestParam(value = "download", required = false) final boolean download) {
-//            final var artifactService = this.getService();
-//
-//            headers.remove("authorization");
-//            headers.remove("host");
-//
-//            final var queryInput = new QueryInput();
-//            queryInput.setParams(params);
-//            queryInput.setHeaders(headers);
-//
-//            return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
-//        }
     }
 }

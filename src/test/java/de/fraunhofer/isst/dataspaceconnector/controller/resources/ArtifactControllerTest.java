@@ -5,7 +5,7 @@ import java.util.UUID;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import de.fraunhofer.isst.dataspaceconnector.model.view.ArtifactViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.ArtifactViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

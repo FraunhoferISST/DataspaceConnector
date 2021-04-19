@@ -2,7 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.view.AgreementViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.AgreementViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

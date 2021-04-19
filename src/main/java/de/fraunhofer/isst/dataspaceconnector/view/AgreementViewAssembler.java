@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model.view;
+package de.fraunhofer.isst.dataspaceconnector.view;
 
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.AgreementsToArtifacts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.AgreementController;
