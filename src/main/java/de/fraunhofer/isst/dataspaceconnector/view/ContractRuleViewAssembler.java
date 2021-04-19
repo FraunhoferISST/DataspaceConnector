@@ -1,15 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.RulesToContracts;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an contract rule.
@@ -17,7 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 @NoArgsConstructor
 public class ContractRuleViewAssembler
-        implements RepresentationModelAssembler<ContractRule, ContractRuleView> {
+        implements RepresentationModelAssembler<ContractRule, ContractRuleView>, SelfLinking {
     /**
      * Construct the ContractRuleView from a ContractRule.
      * @param rule The contract rule.
@@ -27,15 +31,18 @@ public class ContractRuleViewAssembler
     public ContractRuleView toModel(final ContractRule rule) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(rule, ContractRuleView.class);
+        view.add(getSelfLink(rule.getId()));
 
-        final var selfLink = linkTo(RuleController.class).slash(rule.getId()).withSelfRel();
-        view.add(selfLink);
-
-        final var contractLink = linkTo(methodOn(RulesToContracts.class)
-                                                .getResource(rule.getId(), null, null, null))
-                                         .withRel("contracts");
+        final var contractLink =
+                linkTo(methodOn(RulesToContracts.class).getResource(rule.getId(), null, null, null))
+                        .withRel("contracts");
         view.add(contractLink);
 
         return view;
+    }
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, RuleController.class);
     }
 }

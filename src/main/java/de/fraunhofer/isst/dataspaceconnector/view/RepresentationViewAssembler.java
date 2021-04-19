@@ -1,5 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RepresentationController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -8,13 +18,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an representation.
@@ -22,7 +25,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
 @Component
 @NoArgsConstructor
 public class RepresentationViewAssembler
-        implements RepresentationModelAssembler<Representation, RepresentationView> {
+        implements RepresentationModelAssembler<Representation, RepresentationView>, SelfLinking {
     /**
      * Construct the RepresentationView from an Representation.
      * @param representation The representation.
@@ -32,6 +35,7 @@ public class RepresentationViewAssembler
     public RepresentationView toModel(final Representation representation) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(representation, RepresentationView.class);
+        view.add(getSelfLink(representation.getId()));
 
         final var selfLink =
                 linkTo(RepresentationController.class).slash(representation.getId()).withSelfRel();
@@ -54,10 +58,10 @@ public class RepresentationViewAssembler
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
-                resourceLinker = linkTo(
-                        methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                .getResource(representation.getId(), null, null, null))
-                                         .withRel("offers");
+                resourceLinker =
+                        linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
+                                        .getResource(representation.getId(), null, null, null))
+                                .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker = linkTo(
                         methodOn(RelationControllers.RepresentationsToRequestedResources.class)
@@ -71,5 +75,10 @@ public class RepresentationViewAssembler
         view.add(resourceLinker);
 
         return view;
+    }
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, RepresentationController.class);
     }
 }

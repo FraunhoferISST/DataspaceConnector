@@ -13,20 +13,33 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
 import de.fraunhofer.isst.dataspaceconnector.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ContractRuleViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ContractViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.OfferedResourceViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.RepresentationViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceViewAssembler;
+import de.fraunhofer.isst.dataspaceconnector.view.SelfLinking;
 
 import java.net.URI;
 import java.util.NoSuchElementException;
+
+import org.springframework.hateoas.RepresentationModel;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
  */
 public final class SelfLinkHelper {
+
+    static final CatalogViewAssembler catalogAssembler = new CatalogViewAssembler();
+    static final OfferedResourceViewAssembler offeredResourceAssembler = new OfferedResourceViewAssembler();
+    static final RequestedResourceViewAssembler requestedResourceAssembler = new RequestedResourceViewAssembler();
+    static final RepresentationViewAssembler representationAssembler = new RepresentationViewAssembler();
+    static final ArtifactViewAssembler artifactAssembler = new ArtifactViewAssembler();
+    static final ContractViewAssembler contractAssembler = new ContractViewAssembler();
+    static final ContractRuleViewAssembler ruleAssembler = new ContractRuleViewAssembler();
+    static final AgreementViewAssembler agreementAssembler = new AgreementViewAssembler();
 
     /**
      * Default constructor.
@@ -65,6 +78,15 @@ public final class SelfLinkHelper {
         throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
     }
 
+    public static <T extends AbstractEntity, S extends SelfLinking> URI getSelfLink(
+            final T entity, final S describer) throws ResourceNotFoundException {
+        try {
+            return describer.getSelfLink(entity.getId()).toUri();
+        } catch (IllegalStateException exception) {
+            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
+        }
+    }
+
     /**
      * Get self-link of catalog.
      *
@@ -73,12 +95,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Catalog catalog) throws ResourceNotFoundException {
-        try {
-            final var view = new CatalogViewAssembler().toModel(catalog);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(catalog, catalogAssembler);
     }
 
     /**
@@ -89,12 +106,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final OfferedResource resource) throws ResourceNotFoundException {
-        try {
-            final var view = new OfferedResourceViewAssembler().toModel(resource);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(resource, offeredResourceAssembler);
     }
 
     /**
@@ -105,12 +117,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final RequestedResource resource) throws ResourceNotFoundException {
-        try {
-            final var view = new RequestedResourceViewAssembler().toModel(resource);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(resource, requestedResourceAssembler);
     }
 
     /**
@@ -121,12 +128,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Representation representation) throws ResourceNotFoundException {
-        try {
-            final var view = new RepresentationViewAssembler().toModel(representation);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(representation, representationAssembler);
     }
 
     /**
@@ -137,12 +139,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Artifact artifact) throws ResourceNotFoundException {
-        try {
-            final var view = new ArtifactViewAssembler().toModel(artifact);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(artifact, artifactAssembler);
     }
 
     /**
@@ -153,12 +150,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Contract contract) throws ResourceNotFoundException {
-        try {
-            final var view = new ContractViewAssembler().toModel(contract);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(contract, contractAssembler);
     }
 
     /**
@@ -169,12 +161,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
-        try {
-            final var view = new ContractRuleViewAssembler().toModel(rule);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(rule, ruleAssembler);
     }
 
     /**
@@ -185,11 +172,6 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
-        try {
-            final var view = new AgreementViewAssembler().toModel(agreement);
-            return view.getLink("self").get().toUri();
-        } catch (NoSuchElementException | IllegalStateException exception) {
-            throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString(), exception);
-        }
+        return getSelfLink(agreement, agreementAssembler);
     }
 }
