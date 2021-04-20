@@ -32,8 +32,8 @@ public class ContractRuleViewAssembler
         view.add(selfLink);
 
         final var contractLink = linkTo(methodOn(RulesToContracts.class)
-                                                .getResource(rule.getId(), null, null, null))
-                                         .withRel("contracts");
+                .getResource(rule.getId(), null, null, null))
+                .withRel("contracts");
         view.add(contractLink);
 
         return view;

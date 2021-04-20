@@ -32,8 +32,8 @@ public class ArtifactViewAssembler implements RepresentationModelAssembler<Artif
         final var selfLink = linkTo(ArtifactController.class).slash(artifact.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var dataLink = linkTo(methodOn(ArtifactController.class).getData(artifact.getId(),
-                new QueryInput()))
+        final var dataLink = linkTo(methodOn(ArtifactController.class)
+                .getData(artifact.getId(), new QueryInput()))
                 .withRel("data");
         view.add(dataLink);
 

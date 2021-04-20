@@ -24,6 +24,7 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
 public class ContractViewAssembler implements RepresentationModelAssembler<Contract, ContractView> {
     /**
      * Construct the ContractView from a Contract.
+     *
      * @param contract The contract.
      * @return The new view.
      */
@@ -35,31 +36,30 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         final var selfLink = linkTo(ContractController.class).slash(contract.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var rulesLink = linkTo(
-                methodOn(RelationControllers.ContractsToRules.class).getResource(contract.getId(), null, null, null))
-                                      .withRel("rules");
+        final var rulesLink = linkTo(methodOn(RelationControllers.ContractsToRules.class)
+                .getResource(contract.getId(), null, null, null))
+                .withRel("rules");
         view.add(rulesLink);
 
         final var resourceType = contract.getResources();
         Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
-            resourceLinker =
-                    linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
-                                    .getResource(contract.getId(), null, null, null))
-                            .withRel("offers");
+            resourceLinker = linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
+                    .getResource(contract.getId(), null, null, null))
+                    .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
-                                        .getResource(contract.getId(), null, null, null))
-                                .withRel("offers");
+                        .getResource(contract.getId(), null, null, null))
+                        .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
-                                        .getResource(contract.getId(), null, null, null))
-                                .withRel("requests");
+                        .getResource(contract.getId(), null, null, null))
+                        .withRel("requests");
             } else {
                 throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
             }

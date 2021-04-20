@@ -20,6 +20,7 @@ public class RequestedResourceViewAssembler
         implements RepresentationModelAssembler<RequestedResource, RequestedResourceView> {
     /**
      * Construct the RequestedResourceView from a RequestedResource.
+     *
      * @param resource The resource.
      * @return The new view.
      */
@@ -32,21 +33,22 @@ public class RequestedResourceViewAssembler
                 linkTo(RequestedResourceController.class).slash(resource.getId()).withSelfRel();
         view.add(selfLink);
 
-        final var contractsLink = linkTo(
-                methodOn(RelationControllers.OfferedResourcesToContracts.class).getResource(resource.getId(), null, null, null))
-                                          .withRel("contracts");
+        final var contractsLink =
+                linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
+                .getResource(resource.getId(), null, null, null))
+                .withRel("contracts");
         view.add(contractsLink);
 
         final var representationLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
-                                .getResource(resource.getId(), null, null, null))
-                        .withRel("representations");
+                .getResource(resource.getId(), null, null, null))
+                .withRel("representations");
         view.add(representationLink);
 
         final var catalogLink =
                 linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
-                                .getResource(resource.getId(), null, null, null))
-                        .withRel("catalogs");
+                .getResource(resource.getId(), null, null, null))
+                .withRel("catalogs");
         view.add(catalogLink);
 
         return view;
