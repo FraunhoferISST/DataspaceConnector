@@ -272,10 +272,11 @@ public class MessageService {
      * @param response     The response message map.
      * @param artifactList List of requested artifacts.
      * @param download     Indicated whether the artifact is going to be downloaded automatically.
+     * @param remoteUrl    The provider's url for receiving artifact request messages.
      * @return The persisted resource.
      */
-    public URI saveResource(final Map<String, String> response, final List<URI> artifactList,
-                            final boolean download)
+    public URI saveMetadata(final Map<String, String> response, final List<URI> artifactList,
+                            final boolean download, final URI remoteUrl)
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
@@ -287,7 +288,8 @@ public class MessageService {
 //            final var contractTemplateList =
 //                    TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
-                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download);
+                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download,
+                            remoteUrl);
 
 //            resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);
@@ -322,7 +324,8 @@ public class MessageService {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }
 
-        return SelfLinkHelper.getSelfLink(artifact);
+        // Return access url of the artifact's data.
+        return URI.create(SelfLinkHelper.getSelfLink(artifact) + "/data");
     }
 
     /**

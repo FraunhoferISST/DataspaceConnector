@@ -1,13 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
@@ -26,6 +18,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTempl
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Maps ids resources to internal resources.
  */
@@ -36,6 +36,7 @@ public final class MappingUtils {
 
     /**
      * Map ids resource to connector resource.
+     *
      * @param resource The ids resource.
      * @return The connector resource.
      * @throws IllegalArgumentException if the passed resource is null.
@@ -175,6 +176,7 @@ public final class MappingUtils {
 
     /**
      * Map ids representation to connector representation.
+     *
      * @param representation The ids representation.
      * @return The connector representation.
      * @throws IllegalArgumentException if the passed representation is null.
@@ -223,13 +225,15 @@ public final class MappingUtils {
 
     /**
      * Build template from ids artifact.
-     * @param artifact The ids artifact.
-     * @param download Whether the artifact will be downloaded automatically.
+     *
+     * @param artifact  The ids artifact.
+     * @param download  Whether the artifact will be downloaded automatically.
+     * @param remoteUrl The provider's url for receiving artifact request messages.
      * @return The artifact template.
      * @throws IllegalArgumentException if the passed artifact is null.
      */
-    public static ArtifactTemplate fromIdsArtifact(
-            final Artifact artifact, final boolean download) {
+    public static ArtifactTemplate fromIdsArtifact(final Artifact artifact,
+                                                   final boolean download, final URI remoteUrl) {
         Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
 
         final var artifactId = artifact.getId();
@@ -263,12 +267,14 @@ public final class MappingUtils {
         desc.setRemoteId(artifactId);
         desc.setTitle(filename);
         desc.setAutomatedDownload(download);
+        desc.setRemoteAddress(remoteUrl);
 
         return new ArtifactTemplate(desc);
     }
 
     /**
      * Build template from ids contract.
+     *
      * @param contract The ids contract offer.
      * @return The contract template.
      * @throws IllegalArgumentException if the passed contract is null.
@@ -313,6 +319,7 @@ public final class MappingUtils {
 
     /**
      * Build template from ids rule.
+     *
      * @param rule The ids rule.
      * @return The rule template.
      * @throws IllegalArgumentException if the rule is null.
@@ -336,6 +343,7 @@ public final class MappingUtils {
     /**
      * Map ids property map to additional map for the internal data model.
      * If the argument is null an empty map will be returned.
+     *
      * @param properties A string object map.
      * @return A map containing all properties that could be extracted.
      */
@@ -355,6 +363,7 @@ public final class MappingUtils {
 
     /**
      * Convert a string to a {@link ZonedDateTime}.
+     *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
      * @throws DateTimeParseException if the string could not be converted.
@@ -365,6 +374,7 @@ public final class MappingUtils {
 
     /**
      * Returns the first endpoint documentations of the first endpoint.
+     *
      * @param endpoints The list of endpoints.
      * @return The endpoint documentation.
      */
@@ -376,7 +386,7 @@ public final class MappingUtils {
             final var first = endpoints.get(0);
 
             if (first.getEndpointDocumentation() != null
-                && !first.getEndpointDocumentation().isEmpty()) {
+                    && !first.getEndpointDocumentation().isEmpty()) {
                 output = Optional.of(first.getEndpointDocumentation().get(0));
             }
         }

@@ -38,11 +38,13 @@ public final class TemplateUtils {
      * @param requestedArtifacts List of requested artifacts (remote id).
      * @param download           Indicated whether the artifact is going to be downloaded
      *                           automatically.
+     * @param accessUrl          The access url to fetch the data.
      * @return List of representation templates.
      */
     public static List<RepresentationTemplate> getRepresentationTemplates(final Resource resource,
                                                                           final List<URI> requestedArtifacts,
-                                                                          final boolean download) {
+                                                                          final boolean download,
+                                                                          final URI accessUrl) {
         final var list = new ArrayList<RepresentationTemplate>();
 
         // Iterate over all representations.
@@ -50,7 +52,7 @@ public final class TemplateUtils {
         for (final var representation : representationList) {
             final var representationTemplate = MappingUtils.fromIdsRepresentation(representation);
             final var artifactTemplateList = getArtifactTemplates(representation,
-                    requestedArtifacts, download);
+                    requestedArtifacts, download, accessUrl);
 
             // Representation is only saved if it contains requested artifacts.
             if (!artifactTemplateList.isEmpty()) {
@@ -69,11 +71,13 @@ public final class TemplateUtils {
      * @param requestedArtifacts List of requested artifacts (remote ids).
      * @param download           Indicated whether the artifact is going to be downloaded
      *                           automatically.
+     * @param remoteUrl          The provider's url for receiving artifact request messages.
      * @return List of artifact templates.
      */
     public static List<ArtifactTemplate> getArtifactTemplates(final Representation representation,
                                                               final List<URI> requestedArtifacts,
-                                                              final boolean download) {
+                                                              final boolean download,
+                                                              final URI remoteUrl) {
         final var list = new ArrayList<ArtifactTemplate>();
 
         // Iterate over all artifacts.
@@ -84,7 +88,7 @@ public final class TemplateUtils {
             // Artifact is only saved if it has been requested.
             if (requestedArtifacts.contains(id)) {
                 final var artifactTemplate =
-                        MappingUtils.fromIdsArtifact((Artifact) artifact, download);
+                        MappingUtils.fromIdsArtifact((Artifact) artifact, download, remoteUrl);
                 list.add(artifactTemplate);
             }
         }

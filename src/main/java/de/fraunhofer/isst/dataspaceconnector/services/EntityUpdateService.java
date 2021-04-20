@@ -18,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -50,8 +51,7 @@ public class EntityUpdateService {
         final var desc = new ArtifactDesc();
         desc.setValue(data);
 
-        final var artifactId = artifact.getId();
-        artifactService.update(artifactId, desc);
+        artifactService.update(artifact.getId(), desc);
     }
 
     /**
@@ -123,8 +123,9 @@ public class EntityUpdateService {
      * Update database artifact that is known to the consumer.
      *
      * @param artifact The ids artifact.
+     * @return True if the artifact's data should be downloaded, false if not.
      */
-    public void updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
+    public Optional<Artifact> updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
         final var artifactId = artifact.getId();
 
         final var artifacts = artifactService.getAll(Pageable.unpaged());
@@ -133,8 +134,9 @@ public class EntityUpdateService {
             final var remoteId = entity.getRemoteId();
             if (remoteId.equals(artifactId)) {
                 final var automatedDownload = entity.isAutomatedDownload();
+                final var remoteUrl = entity.getRemoteAddress();
                 final var template =
-                        MappingUtils.fromIdsArtifact(artifact, automatedDownload);
+                        MappingUtils.fromIdsArtifact(artifact, automatedDownload, remoteUrl);
                 final var desc = template.getDesc();
 
                 final var update = artifactService.update(entityId, desc);
@@ -142,8 +144,12 @@ public class EntityUpdateService {
                 if (log.isDebugEnabled()) {
                     log.debug("Updated artifact: " + uri);
                 }
+
+                return Optional.of(entity);
             }
         }
+
+        return Optional.empty();
     }
 
     /**

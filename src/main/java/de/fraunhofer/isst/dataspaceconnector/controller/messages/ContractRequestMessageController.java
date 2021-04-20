@@ -18,8 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,16 +36,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 public class ContractRequestMessageController {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyManagementService.class);
 
     /**
      * Service for policy management.
@@ -97,6 +92,7 @@ public class ContractRequestMessageController {
         final var dataLocations = new ArrayList<URI>();
 
         Map<String, String> response;
+        URI uri;
         try {
             // Validate input for contract request.
             PolicyUtils.validateRuleTarget(ruleList);
@@ -124,9 +120,11 @@ public class ContractRequestMessageController {
             }
 
             // Save contract agreement to database. TODO link artifacts and agreement
-            final var id = managementService.saveContractAgreement(agreement, true);
-            agreementLocations.add(id);
-            LOGGER.debug("Policy negotiation success. Saved agreement: " + id);
+            uri = managementService.saveContractAgreement(agreement, true);
+            agreementLocations.add(uri);
+            if (log.isDebugEnabled()) {
+                log.debug("Policy negotiation success. Saved agreement: " + uri);
+            }
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.
@@ -140,9 +138,8 @@ public class ContractRequestMessageController {
                 }
 
                 // Read and process the response message. Save resource to database.
-                final var resourceId = messageService.saveResource(response, artifactList,
-                        download);
-                resourceLocations.add(resourceId);
+                uri = messageService.saveMetadata(response, artifactList, download, recipient);
+                resourceLocations.add(uri);
             }
 
             // ARTIFACT REQUESTS -------------------------------------------------------------------
@@ -156,18 +153,24 @@ public class ContractRequestMessageController {
                             transferContract);
                     if (!messageService.validateArtifactResponseMessage(response)) {
                         // If the response is not an artifact response message, show the response.
+                        // Ignore when data could not be downloaded, because the artifact request
+                        // can be triggered later again.
                         final var content = messageService.getContent(response);
-                        return ControllerUtils.respondWithMessageContent(content);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Data could not be loaded: \n" + content);
+                        }
                     }
 
                     // Read and process the response message.
                     try {
-                        final var artifactId = messageService.saveData(response, artifact);
-                        dataLocations.add(artifactId); // TODO Add /data
+                        uri = messageService.saveData(response, artifact);
+                        dataLocations.add(uri);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
-                        LOGGER.warn("Could not save data for artifact with id" + artifact
-                                + ". [exception=({})]", exception.getMessage());
                         // Ignore that the data saving failed. Another try can take place later.
+                        if (log.isWarnEnabled()) {
+                            log.warn("Could not save data for artifact with id" + artifact
+                                    + ". [exception=({})]", exception.getMessage());
+                        }
                     }
                 }
             }

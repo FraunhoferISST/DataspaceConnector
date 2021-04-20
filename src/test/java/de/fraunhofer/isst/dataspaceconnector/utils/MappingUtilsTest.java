@@ -1,16 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -38,12 +27,23 @@ import de.fraunhofer.iais.eis.util.Util;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingUtilsTest {
-    
+
     private final ZonedDateTime date =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
 
@@ -124,8 +124,11 @@ public class MappingUtilsTest {
 
     @Test
     public void fromIdsArtifact_artifactNull_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var remoteAddress = URI.create("https://someURL");
+
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsArtifact(null, true));
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsArtifact(null, true, remoteAddress));
     }
 
     @Test
@@ -134,9 +137,10 @@ public class MappingUtilsTest {
         final var artifact = getArtifact();
         artifact.setProperty("test", "test");
         final var download = true;
+        final var remoteAddress = URI.create("https://someURL");
 
         /* ACT */
-        final var result = MappingUtils.fromIdsArtifact(artifact, download);
+        final var result = MappingUtils.fromIdsArtifact(artifact, download, remoteAddress);
 
         /* ASSERT */
         assertEquals(artifact.getId(), result.getDesc().getRemoteId());
