@@ -97,7 +97,6 @@ public class ContractRequestMessageController {
         final var dataLocations = new ArrayList<URI>();
 
         Map<String, String> response;
-        boolean valid;
         try {
             // Validate input for contract request.
             PolicyUtils.validateRuleTarget(ruleList);
@@ -106,8 +105,7 @@ public class ContractRequestMessageController {
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
             response = messageService.sendContractRequestMessage(recipient, request);
-            valid = messageService.validateContractRequestResponseMessage(response);
-            if (!valid) {
+            if (!messageService.validateContractRequestResponseMessage(response)) {
                 // If the response is not a contract agreement message, show the response.
                 final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
@@ -119,15 +117,13 @@ public class ContractRequestMessageController {
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
-            valid = messageService.validateContractAgreementResponseMessage(response); // TODO
-            // link artifacts and agreement
-            if (!valid) {
+            if (!messageService.validateContractAgreementResponseMessage(response)) {
                 // If the response is not a notification message, show the response.
                 final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
-            // Save contract agreement to database.
+            // Save contract agreement to database. TODO link artifacts and agreement
             final var id = managementService.saveContractAgreement(agreement, true);
             agreementLocations.add(id);
             LOGGER.debug("Policy negotiation success. Saved agreement: " + id);
@@ -137,8 +133,7 @@ public class ContractRequestMessageController {
             for (final var resource : resourceList) {
                 // Send and validate description request/response message.
                 response = messageService.sendDescriptionRequestMessage(recipient, resource);
-                valid = messageService.validateDescriptionResponseMessage(response);
-                if (!valid) {
+                if (!messageService.validateDescriptionResponseMessage(response)) {
                     // If the response is not a description response message, show the response.
                     final var content = messageService.getContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
@@ -159,8 +154,7 @@ public class ContractRequestMessageController {
                     final var transferContract = agreement.getId();
                     response = messageService.sendArtifactRequestMessage(recipient, artifact,
                             transferContract);
-                    valid = messageService.validateArtifactResponseMessage(response);
-                    if (!valid) {
+                    if (!messageService.validateArtifactResponseMessage(response)) {
                         // If the response is not an artifact response message, show the response.
                         final var content = messageService.getContent(response);
                         return ControllerUtils.respondWithMessageContent(content);
