@@ -1,17 +1,25 @@
 package de.fraunhofer.isst.dataspaceconnector.model.templates;
 
-import java.net.URI;
-
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.net.URI;
+
 @Getter
 @NoArgsConstructor
 @RequiredArgsConstructor
 public class ArtifactTemplate {
-    private          URI          oldRemoteId;
+
+    /**
+     * Old remote id.
+     */
+    private URI oldRemoteId;
+
+    /**
+     * Artifact parameters.
+     */
     private @NonNull ArtifactDesc desc;
 }

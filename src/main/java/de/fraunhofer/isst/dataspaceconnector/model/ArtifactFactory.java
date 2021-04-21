@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
-import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 public final class ArtifactFactory implements AbstractFactory<Artifact, ArtifactDesc> {
 
     static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+    static final URI DEFAULT_REMOTE_ADDRESS = URI.create("genesis");
     static final String DEFAULT_TITLE = "";
     static final boolean DEFAULT_AUTO_DOWNLOAD = false;
 
@@ -60,17 +61,25 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var hasUpdatedRemoteId = updateRemoteId(artifact, desc.getRemoteId());
+        final var hasUpdatedRemoteAddress = updateRemoteAddress(artifact, desc.getRemoteAddress());
         final var hasUpdatedTitle = updateTitle(artifact, desc.getTitle());
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
 
-        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional;
+        return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
         final var newUri = MetadataUtils.updateUri(artifact.getRemoteId(), remoteId, DEFAULT_REMOTE_ID);
         newUri.ifPresent(artifact::setRemoteId);
+
+        return newUri.isPresent();
+    }
+
+    private boolean updateRemoteAddress(final Artifact artifact, final URI remoteAddress) {
+        final var newUri = MetadataUtils.updateUri(artifact.getRemoteAddress(), remoteAddress, DEFAULT_REMOTE_ADDRESS);
+        newUri.ifPresent(artifact::setRemoteAddress);
 
         return newUri.isPresent();
     }

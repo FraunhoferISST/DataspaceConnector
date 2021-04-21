@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
@@ -18,8 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,16 +37,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 public class ContractRequestMessageController {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(PolicyManagementService.class);
 
     /**
      * Service for policy management.
@@ -59,11 +55,16 @@ public class ContractRequestMessageController {
     private final @NonNull MessageService messageService;
 
     /**
+     * Service for updating database entities.
+     */
+    private final @NonNull EntityUpdateService updateService;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient    The recipient.
-     * @param resourceList List of requested resources by IDs.
-     * @param artifactList List of requested artifacts by IDs.
+     * @param resources List of requested resources by IDs.
+     * @param artifacts List of requested artifacts by IDs.
      * @param download     Download data directly after successful contract and description request.
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
@@ -82,9 +83,9 @@ public class ContractRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "List of ids resource that should be requested.")
-            @RequestParam(value = "resourceIds") final List<URI> resourceList,
+            @RequestParam(value = "resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
-            @RequestParam(value = "artifactIds") final List<URI> artifactList,
+            @RequestParam(value = "artifactIds") final List<URI> artifacts,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
 //                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
@@ -97,7 +98,7 @@ public class ContractRequestMessageController {
         final var dataLocations = new ArrayList<URI>();
 
         Map<String, String> response;
-        boolean valid;
+        URI uri;
         try {
             // Validate input for contract request.
             PolicyUtils.validateRuleTarget(ruleList);
@@ -106,8 +107,7 @@ public class ContractRequestMessageController {
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
             response = messageService.sendContractRequestMessage(recipient, request);
-            valid = messageService.validateContractRequestResponseMessage(response);
-            if (!valid) {
+            if (!messageService.validateContractRequestResponseMessage(response)) {
                 // If the response is not a contract agreement message, show the response.
                 final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
@@ -119,61 +119,71 @@ public class ContractRequestMessageController {
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
-            valid = messageService.validateContractAgreementResponseMessage(response); // TODO
-            // link artifacts and agreement
-            if (!valid) {
+            if (!messageService.validateContractAgreementResponseMessage(response)) {
                 // If the response is not a notification message, show the response.
                 final var content = messageService.getContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
             // Save contract agreement to database.
-            final var id = managementService.saveContractAgreement(agreement, true);
-            agreementLocations.add(id);
-            LOGGER.debug("Policy negotiation success. Saved agreement: " + id);
+            final var agreementId = managementService.saveContractAgreement(agreement, true);
+            agreementLocations.add(agreementId);
+            if (log.isDebugEnabled()) {
+                log.debug("Policy negotiation success. Saved agreement: " + agreementId);
+            }
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.
-            for (final var resource : resourceList) {
+            for (final var resource : resources) {
                 // Send and validate description request/response message.
                 response = messageService.sendDescriptionRequestMessage(recipient, resource);
-                valid = messageService.validateDescriptionResponseMessage(response);
-                if (!valid) {
+                if (!messageService.validateDescriptionResponseMessage(response)) {
                     // If the response is not a description response message, show the response.
                     final var content = messageService.getContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
-                // Read and process the response message. Save resource to database.
-                final var resourceId = messageService.saveResource(response, artifactList,
-                        download);
-                resourceLocations.add(resourceId);
+                // Read and process the response message. Save resource, recipient, and agreement
+                // id to database.
+                // TODO Check if a resource with remoteId is already stored on consumer side, if yes, do NOT create a new resource, but update it and all children
+                // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
+                uri = messageService.saveMetadata(response, artifacts, download, recipient);
+                resourceLocations.add(uri);
             }
+
+            updateService.linkArtifactToAgreement(artifacts, agreementId);
 
             // ARTIFACT REQUESTS -------------------------------------------------------------------
             // Download data depending on user input.
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
-                for (final var artifact : artifactList) {
+                for (final var artifact : artifacts) {
+
+
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
                     response = messageService.sendArtifactRequestMessage(recipient, artifact,
                             transferContract);
-                    valid = messageService.validateArtifactResponseMessage(response);
-                    if (!valid) {
+                    if (!messageService.validateArtifactResponseMessage(response)) {
                         // If the response is not an artifact response message, show the response.
+                        // Ignore when data could not be downloaded, because the artifact request
+                        // can be triggered later again.
                         final var content = messageService.getContent(response);
-                        return ControllerUtils.respondWithMessageContent(content);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Data could not be loaded: \n" + content);
+                        }
                     }
 
                     // Read and process the response message.
                     try {
-                        final var artifactId = messageService.saveData(response, artifact);
-                        dataLocations.add(artifactId); // TODO Add /data
+                        uri = messageService.saveData(response, artifact);
+                        dataLocations.add(uri);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
-                        LOGGER.warn("Could not save data for artifact with id" + artifact
-                                + ". [exception=({})]", exception.getMessage());
                         // Ignore that the data saving failed. Another try can take place later.
+                        if (log.isWarnEnabled()) {
+                            log.warn("Could not save data for artifact with id" + artifact
+                                    + ". [exception=({})]", exception.getMessage());
+                        }
                     }
                 }
             }

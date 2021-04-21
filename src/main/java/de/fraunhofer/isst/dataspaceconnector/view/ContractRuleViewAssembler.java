@@ -33,9 +33,9 @@ public class ContractRuleViewAssembler
         final var view = modelMapper.map(rule, ContractRuleView.class);
         view.add(getSelfLink(rule.getId()));
 
-        final var contractLink =
-                linkTo(methodOn(RulesToContracts.class).getResource(rule.getId(), null, null, null))
-                        .withRel("contracts");
+        final var contractLink = linkTo(methodOn(RulesToContracts.class)
+                .getResource(rule.getId(), null, null, null))
+                .withRel("contracts");
         view.add(contractLink);
 
         return view;

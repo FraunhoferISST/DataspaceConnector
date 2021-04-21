@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.util.stream.Collectors;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
@@ -26,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 /**
  * Builds and links entities from templates.
@@ -276,12 +276,12 @@ final class TemplateBuilderRequestedResource
             final var resourceId = ((RemoteResolver) resourceService)
                     .identifyByRemoteId(template.getOldRemoteId());
             if (resourceId.isPresent()) {
-                if(template.getOldRemoteId().equals(template.getDesc().getRemoteId())) {
+                if (template.getOldRemoteId().equals(template.getDesc().getRemoteId())) {
                     resource = resourceService.update(resourceId.get(), template.getDesc());
                 } else {
                     final var doesExist = ((RemoteResolver) resourceService)
                             .identifyByRemoteId(template.getDesc().getRemoteId()).isPresent();
-                    if(doesExist) {
+                    if (doesExist) {
                         throw new IllegalStateException();
                     } else {
                         resource = resourceService.update(resourceId.get(), template.getDesc());

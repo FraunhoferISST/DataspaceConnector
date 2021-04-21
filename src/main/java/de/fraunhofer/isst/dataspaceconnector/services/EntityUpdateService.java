@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Representation;
@@ -7,9 +12,9 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
-import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,40 +26,30 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EntityUpdateService {
 
-    private final @NonNull RequestedResourceUpdateService requestedResourceUpdater;
+    /**
+     * Updates a requested resource by using an infomodel resource.
+     */
+    private final @NonNull RequestedResourceUpdater requestedResourceUpdater;
 
-    private final @NonNull RepresentationUpdateService representationUpdateService;
+    /**
+     * Updates a representation by using an infomodel representations.
+     */
+    private final @NonNull RepresentationUpdater representationUpdater;
 
-    private final @NonNull ArtifactUpdateService artifactUpdateService;
+    /**
+     * Updates an artifact by using an infomodel artifacts.
+     */
+    private final @NonNull ArtifactUpdater artifactUpdater;
 
-    private final @NonNull ArtifactService artifactService;
-
+    /**
+     * Service for agreements.
+     */
     private final @NonNull AgreementService agreementService;
 
     /**
-     * Update value of artifact.
-     * @param artifact The artifact.
-     * @param data     The data string.
+     * Service for linking artifacts to agreement.
      */
-    public void updateDataOfArtifact(final Artifact artifact, final String data) {
-        final var desc = new ArtifactDesc();
-        desc.setValue(data);
-
-        final var artifactId = artifact.getId();
-        artifactService.update(artifactId, desc);
-    }
-
-    /**
-     * Update value of artifact by artifact id.
-     * @param artifactId The artifact id.
-     * @param data       The data string.
-     */
-    public void updateDataOfArtifact(final UUID artifactId, final String data) {
-        final var desc = new ArtifactDesc();
-        desc.setValue(data);
-
-        artifactService.update(artifactId, desc);
-    }
+    private final @NonNull RelationshipServices.AgreementArtifactLinker agreementArtifactLinker;
 
     /**
      * Update database resource.
@@ -78,7 +73,7 @@ public class EntityUpdateService {
      */
     public void updateRepresentation(final Representation representation) {
         try {
-            final var updated = representationUpdateService.update(representation);
+            final var updated = representationUpdater.update(representation);
             log.debug("Updated representation. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
@@ -93,17 +88,21 @@ public class EntityUpdateService {
     /**
      * Update database artifact that is known to the consumer.
      * @param artifact The ids artifact.
+     * @return True if the artifact's data should be downloaded, false if not.
      */
-    public void updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
+    public Optional<Artifact> updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
         try {
-            final var updated = artifactUpdateService.update(artifact);
+            final var updated = artifactUpdater.update(artifact);
             log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+            return Optional.of(updated);
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to update artifact. The resource could not be found. [uri=({})]",
                           artifact.getId());
             }
         }
+
+        return Optional.empty();
     }
 
     /**
@@ -123,5 +122,17 @@ public class EntityUpdateService {
 
             return false;
         }
+    }
+
+    // TODO link agreement to artifacts.
+    public final void linkArtifactToAgreement(final List<URI> artifactIds, final URI agreementId) {
+        final var artifacts = new ArrayList<UUID>();
+        for (final var uri : artifactIds) {
+            final var uuid = EndpointUtils.getUUIDFromPath(uri);
+            artifacts.add(uuid);
+        }
+
+        final var agreementUuid = EndpointUtils.getUUIDFromPath(agreementId);
+        agreementArtifactLinker.add(agreementUuid, (Set<UUID>) artifacts);
     }
 }

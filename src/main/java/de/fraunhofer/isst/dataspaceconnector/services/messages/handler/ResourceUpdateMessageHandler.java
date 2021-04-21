@@ -151,9 +151,16 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
                 final var idsArtifacts = representation.getInstance();
                 for (final var artifact : idsArtifacts) {
-                    updateService.updateArtifact((Artifact) artifact);
+                    final var newArtifact = updateService.updateArtifact((Artifact) artifact);
 
-                    // TODO Send artifact request if boolean is true.
+                    // Send artifact request if automatedDownload is true.
+//                    final var response = messageService.sendArtifactRequestMessage(recipient, artifact,
+//                            transferContract);
+//                    if (!messageService.validateArtifactResponseMessage(response)) {
+//                        // If the response is not an artifact response message, show the response.
+//                        final var content = messageService.getContent(response);
+//                        return ControllerUtils.respondWithMessageContent(content);
+//                    }
                 }
             }
         } catch (Exception exception) {

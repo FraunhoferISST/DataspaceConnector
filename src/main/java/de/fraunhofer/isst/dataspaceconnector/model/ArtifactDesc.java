@@ -22,6 +22,12 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
     private URI remoteId;
 
     /**
+     * The provider's address for artifact request messages.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private URI remoteAddress;
+
+    /**
      * The title of the artifact.
      */
     private String title;

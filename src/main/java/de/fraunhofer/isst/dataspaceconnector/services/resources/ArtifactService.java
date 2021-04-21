@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -16,11 +17,11 @@ import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Handles the basic logic for artifacts.
  */
+@Log4j2
 @Service
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
-    /**
-     * Class level logger.
-     */
-    static final Logger LOGGER = LoggerFactory.getLogger(ArtifactService.class);
 
     /**
      * Repository for storing data.
@@ -46,15 +44,23 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     private final @NonNull HttpService httpService;
 
     /**
+     * Service for message processing.
+     */
+    private final @NonNull MessageService messageService;
+
+    /**
      * Constructor for ArtifactService.
      *
-     * @param dataRepository the data repository
-     * @param httpService the HTTP service for fetching remote data
+     * @param dataRepository The data repository.
+     * @param httpService    The HTTP service for fetching remote data.
+     * @param messageService Service for processing ids messages.
      */
     @Autowired
-    public ArtifactService(final DataRepository dataRepository, final HttpService httpService) {
+    public ArtifactService(final DataRepository dataRepository, final HttpService httpService,
+                           final MessageService messageService) {
         this.dataRepository = dataRepository;
         this.httpService = httpService;
+        this.messageService = messageService;
     }
 
     /**
@@ -93,6 +99,28 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     @Transactional
     public Object getData(final UUID artifactId, final QueryInput queryInput) {
         final var artifact = get(artifactId);
+
+        // If the user triggers the download manually, an artifact request message is sent. This
+        // input has the highest priority.
+
+        // 1. User Input, if true, send ids message, if false not.
+        // 2. User input null --> Artifact isAutomatedDownload check. If true bla.... usw.
+        // 3
+
+        // The value of the stored artifact is checked. If the boolean is set to true, an artifact
+        // request message is sent.
+        if (artifact.isAutomatedDownload()) {
+            final var remoteAddress = artifact.getRemoteAddress();
+
+//            final var response = messageService.sendArtifactRequestMessage(remoteAddress, artifact, transferContract);
+//
+//                    if (!messageService.validateArtifactResponseMessage(response)) {
+//                        // If the response is not an artifact response message, show the response.
+//                        final var content = messageService.getContent(response);
+//                        return ControllerUtils.respondWithMessageContent(content);
+//                    }
+        }
+
         final var data = ((ArtifactImpl) artifact).getData();
 
         Object rawData;
@@ -125,7 +153,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     /**
      * Get remote data.
      *
-     * @param data The data container.
+     * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
      */
@@ -138,8 +166,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
                 return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
         } catch (URISyntaxException exception) {
-            LOGGER.warn(
-                    "Could not connect to data source. [exception=({})]", exception.getMessage());
+            if (log.isWarnEnabled()) {
+                log.warn("Could not connect to data source. [exception=({})]",
+                        exception.getMessage(), exception);
+            }
             throw new RuntimeException("Could not connect to data source.", exception);
         }
     }
@@ -159,5 +189,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     public Optional<UUID> identifyByRemoteId(final URI remoteId) {
         final var repo = (ArtifactRepository) getRepository();
         return repo.identifyByRemoteId(remoteId);
+    }
+
+    public void setData(final UUID id, final InputStream data) {
+        // TODO Implement
     }
 }

@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -20,14 +28,13 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactRequestMessa
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -38,12 +45,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @Service
@@ -86,19 +87,14 @@ public class MessageService {
     private final @NonNull ConnectorService connectorService;
 
     /**
-     * Service for resolving database entities.
-     */
-    private final @NonNull EntityResolver entityResolver;
-
-    /**
      * Service for reading or writing JSON objects.
      */
     private final @NonNull ObjectMapper objectMapper;
 
     /**
-     * Service for updating database entities from ids object.
+     * Service for updating artifact data.
      */
-    private final @NonNull EntityUpdateService updateService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Build and send a description request message.
@@ -272,10 +268,11 @@ public class MessageService {
      * @param response     The response message map.
      * @param artifactList List of requested artifacts.
      * @param download     Indicated whether the artifact is going to be downloaded automatically.
+     * @param remoteUrl    The provider's url for receiving artifact request messages.
      * @return The persisted resource.
      */
-    public URI saveResource(final Map<String, String> response, final List<URI> artifactList,
-                            final boolean download)
+    public URI saveMetadata(final Map<String, String> response, final List<URI> artifactList,
+                            final boolean download, final URI remoteUrl)
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
@@ -284,10 +281,10 @@ public class MessageService {
         try {
             final var resourceTemplate =
                     TemplateUtils.getResourceTemplate(resource);
-//            final var contractTemplateList =
-//                    TemplateUtils.getContractTemplates(resource);
+//            final var contractTemplateList = TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
-                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download);
+                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download,
+                            remoteUrl);
 
 //            resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);
@@ -307,22 +304,24 @@ public class MessageService {
      * Save data and return the uri of the respective artifact.
      *
      * @param response   The response message.
-     * @param artifactId The artifact id.
+     * @param remoteId The artifact id.
      * @return The artifact uri.
      * @throws MessageResponseException  If the message response could not be processed.
      * @throws ResourceNotFoundException If the artifact could not be found.
      */
-    public URI saveData(final Map<String, String> response, final URI artifactId)
+    public URI saveData(final Map<String, String> response, final URI remoteId)
             throws MessageResponseException, ResourceNotFoundException {
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
-        final var artifact = entityResolver.getArtifactByRemoteId(artifactId);
+        final var artifactId = artifactService.identifyByRemoteId(remoteId);
+        final var artifact = artifactService.get(artifactId.get());
 
-        updateService.updateDataOfArtifact(artifact, data);
+        artifactService.setData(artifact.getId(), new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }
 
-        return SelfLinkHelper.getSelfLink(artifact);
+        // Return access url of the artifact's data.
+        return URI.create(SelfLinkHelper.getSelfLink(artifact) + "/data");
     }
 
     /**

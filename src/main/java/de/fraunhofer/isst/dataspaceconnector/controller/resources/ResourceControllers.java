@@ -17,14 +17,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
-import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
-import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
-import de.fraunhofer.isst.dataspaceconnector.view.ContractRuleView;
-import de.fraunhofer.isst.dataspaceconnector.view.ContractView;
-import de.fraunhofer.isst.dataspaceconnector.view.OfferedResourceView;
-import de.fraunhofer.isst.dataspaceconnector.view.RepresentationView;
-import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -33,6 +25,14 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ValidationUtils;
+import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
+import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
+import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
+import de.fraunhofer.isst.dataspaceconnector.view.ContractRuleView;
+import de.fraunhofer.isst.dataspaceconnector.view.ContractView;
+import de.fraunhofer.isst.dataspaceconnector.view.OfferedResourceView;
+import de.fraunhofer.isst.dataspaceconnector.view.RepresentationView;
+import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 import java.util.UUID;
@@ -58,38 +59,45 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/catalogs")
     @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
-    public static class CatalogController extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
+    public static class CatalogController extends BaseResourceController<Catalog, CatalogDesc,
+            CatalogView, CatalogService> {
     }
 
     @RestController
     @RequestMapping("/api/rules")
     @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
-    public static class RuleController extends BaseResourceController<ContractRule, ContractRuleDesc, ContractRuleView, RuleService> {
+    public static class RuleController extends BaseResourceController<ContractRule,
+            ContractRuleDesc, ContractRuleView, RuleService> {
     }
 
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
-    public static class RepresentationController
-            extends BaseResourceController<Representation, RepresentationDesc, RepresentationView, RepresentationService> {
+    public static class RepresentationController extends BaseResourceController<Representation,
+            RepresentationDesc, RepresentationView, RepresentationService> {
     }
 
     @RestController
     @RequestMapping("/api/contracts")
     @Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
-    public static class ContractController extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
+    public static class ContractController extends BaseResourceController<Contract, ContractDesc,
+            ContractView, ContractService> {
     }
 
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
-    public static class OfferedResourceController extends BaseResourceController<OfferedResource, OfferedResourceDesc, OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
+    public static class OfferedResourceController extends BaseResourceController<OfferedResource,
+            OfferedResourceDesc, OfferedResourceView, ResourceService<OfferedResource,
+            OfferedResourceDesc>> {
     }
 
     @RestController
     @RequestMapping("/api/requests")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
-    public static class RequestedResourceController extends BaseResourceController<RequestedResource, RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource, RequestedResourceDesc>> {
+    public static class RequestedResourceController extends BaseResourceController<RequestedResource,
+            RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource,
+            RequestedResourceDesc>> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
@@ -97,10 +105,12 @@ public final class ResourceControllers {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
     }
+
     @RestController
     @RequestMapping("/api/agreements")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc, AgreementView, AgreementService> {
+    public static class AgreementController extends BaseResourceController<Agreement,
+            AgreementDesc, AgreementView, AgreementService> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
@@ -111,7 +121,8 @@ public final class ResourceControllers {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public ResponseEntity<Object> update(@Valid final UUID resourceId, final AgreementDesc desc) {
+        public ResponseEntity<Object> update(@Valid final UUID resourceId,
+                                             final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
@@ -126,7 +137,8 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/artifacts")
     @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
-    public static class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView,
+    public static class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc,
+            ArtifactView,
             ArtifactService> {
 
         /**
@@ -135,17 +147,20 @@ public final class ResourceControllers {
          * request to the backend.
          *
          * @param artifactId Artifact id.
-         * @param params All request parameters.
-         * @param headers All request headers.
+         * @param params     All request parameters.
+         * @param headers    All request headers.
          * @return The data object.
          */
-        @GetMapping("{id}/data")
+        @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
+                                              @RequestParam(required = false) final Boolean download,
                                               @RequestParam final Map<String, String> params,
-                                              @RequestHeader final Map<String, String> headers) {
-            final var artifactService = this.getService();
+                                              @RequestHeader final Map<String, String> headers,
+                                              final HttpServletRequest request) {
+            final var optionalPath = request.getRequestURI()
+                    .split(request.getContextPath() + "/data/")[1];
 
             headers.remove("authorization");
             headers.remove("host");
@@ -153,7 +168,10 @@ public final class ResourceControllers {
             final var queryInput = new QueryInput();
             queryInput.setParams(params);
             queryInput.setHeaders(headers);
+            queryInput.setOptional(optionalPath);
 
+            final var artifactService = this.getService();
+            // TODO Forward download boolean
             return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
         }
 

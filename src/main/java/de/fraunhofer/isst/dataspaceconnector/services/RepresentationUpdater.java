@@ -6,11 +6,11 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class RepresentationUpdateService
+public class RepresentationUpdater
         implements InfomodelUpdater<Representation,
                 de.fraunhofer.isst.dataspaceconnector.model.Representation> {
 

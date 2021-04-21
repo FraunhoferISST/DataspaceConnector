@@ -28,6 +28,7 @@ public class RepresentationViewAssembler
         implements RepresentationModelAssembler<Representation, RepresentationView>, SelfLinking {
     /**
      * Construct the RepresentationView from an Representation.
+     *
      * @param representation The representation.
      * @return The new view.
      */
@@ -43,30 +44,28 @@ public class RepresentationViewAssembler
 
         final var artifactsLink =
                 linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
-                                .getResource(representation.getId(), null, null, null))
-                        .withRel("artifacts");
+                .getResource(representation.getId(), null, null, null))
+                .withRel("artifacts");
         view.add(artifactsLink);
 
         final var resourceType = representation.getResources();
         Link resourceLinker;
         if (resourceType.isEmpty()) {
             // No elements found, default to offered resources
-            resourceLinker =
-                    linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                    .getResource(representation.getId(), null, null, null))
-                            .withRel("offers");
+            resourceLinker = linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
+                    .getResource(representation.getId(), null, null, null))
+                    .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
-                resourceLinker =
-                        linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                        .getResource(representation.getId(), null, null, null))
-                                .withRel("offers");
+                resourceLinker = linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
+                        .getResource(representation.getId(), null, null, null))
+                        .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
-                resourceLinker = linkTo(
-                        methodOn(RelationControllers.RepresentationsToRequestedResources.class)
-                                .getResource(representation.getId(), null, null, null))
-                                         .withRel("requests");
+                resourceLinker =
+                        linkTo(methodOn(RelationControllers.RepresentationsToRequestedResources.class)
+                        .getResource(representation.getId(), null, null, null))
+                        .withRel("requests");
             } else {
                 throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
             }

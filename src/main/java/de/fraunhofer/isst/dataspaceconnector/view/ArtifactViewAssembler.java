@@ -35,9 +35,9 @@ public class ArtifactViewAssembler
         final var view = modelMapper.map(artifact, ArtifactView.class);
         view.add(getSelfLink(artifact.getId()));
 
-        final var dataLink = linkTo(
-                methodOn(ArtifactController.class).getData(artifact.getId(), new QueryInput()))
-                                     .withRel("data");
+        final var dataLink = linkTo(methodOn(ArtifactController.class)
+                .getData(artifact.getId(), new QueryInput()))
+                .withRel("data");
         view.add(dataLink);
 
         final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)

@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
@@ -7,21 +12,16 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyExecutionException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Executes policy conditions. Refers to the ids policy enforcement point (PEP).
@@ -52,9 +52,9 @@ public class PolicyExecutionService {
     private final @NonNull LogMessageService logMessageService;
 
     /**
-     * Service for updating database entities from ids object.
+     * Service for updating artifacts.
      */
-    private final @NonNull EntityUpdateService updateService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Delete data by artifact id.
@@ -66,7 +66,7 @@ public class PolicyExecutionService {
         final var entityId = EndpointUtils.getUUIDFromPath(target);
 
         // Update data for artifact.
-        updateService.updateDataOfArtifact(entityId, "");
+        artifactService.setData(entityId, null);
         if (log.isInfoEnabled()) {
             log.info("Deleted data from artifact. [target=({})]", target);
         }

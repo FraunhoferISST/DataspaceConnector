@@ -6,11 +6,11 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RequestedResourc
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class RequestedResourceUpdateService implements InfomodelUpdater<de.fraunhofer.iais.eis.Resource, RequestedResource> {
+public class RequestedResourceUpdater implements InfomodelUpdater<de.fraunhofer.iais.eis.Resource, RequestedResource> {
 
     /**
      * Service for requested resources.

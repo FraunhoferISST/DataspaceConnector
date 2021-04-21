@@ -259,18 +259,17 @@ public class PolicyManagementService {
         UUID agreementUuid = null;
         try {
             // Get base URL of application and path to agreements API.
-            String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-            String path = AgreementController.class.getAnnotation(RequestMapping.class).value()[0];
+            final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+            final var path = AgreementController.class.getAnnotation(RequestMapping.class).value()[0];
 
-            // Persist empty agreement to generate UUID
+            // Persist empty agreement to generate UUID.
             agreementUuid = agreementService.create(new AgreementDesc()).getId();
 
             // Construct ID of contract agreement (URI) using base URL, path and the UUID.
-            URI agreementId = URI.create(baseUrl + path + "/" + agreementUuid);
+            final var agreementId = URI.create(baseUrl + path + "/" + agreementUuid);
 
             // Build the contract agreement using the constructed ID
-            ContractAgreement contractAgreement =
-                    buildContractAgreement(contractRequest, agreementId);
+            final var agreement = buildContractAgreement(contractRequest, agreementId);
 
             // Iterate over all targets to get the UUIDs of the corresponding artifacts.
             final var artifactList = new ArrayList<UUID>();
@@ -279,20 +278,19 @@ public class PolicyManagementService {
                 artifactList.add(uuid);
             }
 
-            final var rdf = IdsUtils.toRdf(contractAgreement);
+            final var rdf = IdsUtils.toRdf(agreement);
 
             final var desc = new AgreementDesc();
             desc.setConfirmed(confirmed);
             desc.setValue(rdf);
 
-            // Update agreement in database using its previously set ID.
-            agreementService.update(EndpointUtils.getUUIDFromPath(contractAgreement.getId()), desc);
+            // Update agreement in database using its previously set id.
+            agreementService.update(EndpointUtils.getUUIDFromPath(agreement.getId()), desc);
 
             // Add artifacts to agreement using the linker.
-            linker.add(EndpointUtils.getUUIDFromPath(contractAgreement.getId()),
-                    new HashSet<>(artifactList));
+            linker.add(EndpointUtils.getUUIDFromPath(agreement.getId()), new HashSet<>(artifactList));
 
-            return contractAgreement;
+            return agreement;
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store contract agreement. [exception=({})]", e.getMessage(), e);

@@ -34,8 +34,8 @@ public class CatalogViewAssembler
         view.add(getSelfLink(catalog.getId()));
 
         final var offeredResLink = linkTo(methodOn(CatalogsToOfferedResources.class)
-                                                  .getResource(catalog.getId(), null, null, null))
-                                           .withRel("offers");
+                .getResource(catalog.getId(), null, null, null))
+                .withRel("offers");
         view.add(offeredResLink);
 
         return view;
