@@ -7,6 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
@@ -54,11 +55,16 @@ public class ContractRequestMessageController {
     private final @NonNull MessageService messageService;
 
     /**
+     * Service for updating database entities.
+     */
+    private final @NonNull EntityUpdateService updateService;
+
+    /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
      * @param recipient    The recipient.
-     * @param resourceList List of requested resources by IDs.
-     * @param artifactList List of requested artifacts by IDs.
+     * @param resources List of requested resources by IDs.
+     * @param artifacts List of requested artifacts by IDs.
      * @param download     Download data directly after successful contract and description request.
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
@@ -77,9 +83,9 @@ public class ContractRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "List of ids resource that should be requested.")
-            @RequestParam(value = "resourceIds") final List<URI> resourceList,
+            @RequestParam(value = "resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
-            @RequestParam(value = "artifactIds") final List<URI> artifactList,
+            @RequestParam(value = "artifactIds") final List<URI> artifacts,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
 //                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
@@ -119,16 +125,16 @@ public class ContractRequestMessageController {
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
-            // Save contract agreement to database. TODO link artifacts and agreement
-            uri = managementService.saveContractAgreement(agreement, true);
-            agreementLocations.add(uri);
+            // Save contract agreement to database.
+            final var agreementId = managementService.saveContractAgreement(agreement, true);
+            agreementLocations.add(agreementId);
             if (log.isDebugEnabled()) {
-                log.debug("Policy negotiation success. Saved agreement: " + uri);
+                log.debug("Policy negotiation success. Saved agreement: " + agreementId);
             }
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
             // Iterate over list of resource ids to send description request messages for each.
-            for (final var resource : resourceList) {
+            for (final var resource : resources) {
                 // Send and validate description request/response message.
                 response = messageService.sendDescriptionRequestMessage(recipient, resource);
                 if (!messageService.validateDescriptionResponseMessage(response)) {
@@ -137,16 +143,23 @@ public class ContractRequestMessageController {
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
-                // Read and process the response message. Save resource to database.
-                uri = messageService.saveMetadata(response, artifactList, download, recipient);
+                // Read and process the response message. Save resource, recipient, and agreement
+                // id to database.
+                // TODO Check if a resource with remoteId is already stored on consumer side, if yes, do NOT create a new resource, but update it and all children
+                // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
+                uri = messageService.saveMetadata(response, artifacts, download, recipient);
                 resourceLocations.add(uri);
             }
+
+            updateService.linkArtifactToAgreement(artifacts, agreementId);
 
             // ARTIFACT REQUESTS -------------------------------------------------------------------
             // Download data depending on user input.
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
-                for (final var artifact : artifactList) {
+                for (final var artifact : artifacts) {
+
+
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
                     response = messageService.sendArtifactRequestMessage(recipient, artifact,

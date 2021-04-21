@@ -7,9 +7,12 @@ import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
@@ -18,7 +21,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Log4j2
@@ -40,6 +47,16 @@ public class EntityUpdateService {
      * Service for artifacts.
      */
     private final @NonNull ArtifactService artifactService;
+
+    /**
+     * Service for agreements.
+     */
+    private final @NonNull AgreementService agreementService;
+
+    /**
+     * Service for linking artifacts to agreement.
+     */
+    private final @NonNull RelationshipServices.AgreementArtifactLinker agreementArtifactLinker;
 
     /**
      * Update value of artifact.
@@ -159,5 +176,20 @@ public class EntityUpdateService {
      */
     public void updateAgreementToConfirmed(final Agreement agreement) {
         // TODO Get desc + update agreement to confirmed = true
+    }
+
+    // TODO link agreement to artifacts.
+    public void linkArtifactToAgreement(final List<URI> artifactIds, final URI agreementId) {
+        final var artifacts = new ArrayList<UUID>();
+        for (final var uri : artifactIds) {
+            final var uuid = EndpointUtils.getUUIDFromPath(uri);
+            artifacts.add(uuid);
+        }
+
+
+        final var agreementUuid = EndpointUtils.getUUIDFromPath(agreementId);
+
+        agreementArtifactLinker.add(agreementUuid, (Set<UUID>) artifacts);
+
     }
 }
