@@ -17,7 +17,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
@@ -44,23 +43,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     private final @NonNull HttpService httpService;
 
     /**
-     * Service for message processing.
-     */
-    private final @NonNull MessageService messageService;
-
-    /**
      * Constructor for ArtifactService.
      *
      * @param dataRepository The data repository.
      * @param httpService    The HTTP service for fetching remote data.
-     * @param messageService Service for processing ids messages.
      */
     @Autowired
-    public ArtifactService(final DataRepository dataRepository, final HttpService httpService,
-                           final MessageService messageService) {
+    public ArtifactService(final DataRepository dataRepository, final HttpService httpService) {
         this.dataRepository = dataRepository;
         this.httpService = httpService;
-        this.messageService = messageService;
     }
 
     /**
