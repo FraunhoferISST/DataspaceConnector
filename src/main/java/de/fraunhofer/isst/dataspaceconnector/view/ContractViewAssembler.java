@@ -1,5 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.ContractController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -8,20 +18,14 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for a contracts.
  */
 @Component
 @NoArgsConstructor
-public class ContractViewAssembler implements RepresentationModelAssembler<Contract, ContractView> {
+public class ContractViewAssembler
+        implements RepresentationModelAssembler<Contract, ContractView>, SelfLinking {
     /**
      * Construct the ContractView from a Contract.
      *
@@ -32,9 +36,7 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
     public ContractView toModel(final Contract contract) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(contract, ContractView.class);
-
-        final var selfLink = linkTo(ContractController.class).slash(contract.getId()).withSelfRel();
-        view.add(selfLink);
+        view.add(getSelfLink(contract.getId()));
 
         final var rulesLink = linkTo(methodOn(RelationControllers.ContractsToRules.class)
                 .getResource(contract.getId(), null, null, null))
@@ -68,5 +70,10 @@ public class ContractViewAssembler implements RepresentationModelAssembler<Contr
         view.add(resourceLinker);
 
         return view;
+    }
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, ContractController.class);
     }
 }

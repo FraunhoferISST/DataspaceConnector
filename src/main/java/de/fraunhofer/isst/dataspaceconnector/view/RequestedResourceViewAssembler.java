@@ -1,15 +1,19 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RequestedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for a requested resource.
@@ -17,7 +21,8 @@ import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.met
 @Component
 @NoArgsConstructor
 public class RequestedResourceViewAssembler
-        implements RepresentationModelAssembler<RequestedResource, RequestedResourceView> {
+        implements RepresentationModelAssembler<RequestedResource, RequestedResourceView>,
+                   SelfLinking {
     /**
      * Construct the RequestedResourceView from a RequestedResource.
      *
@@ -28,13 +33,9 @@ public class RequestedResourceViewAssembler
     public RequestedResourceView toModel(final RequestedResource resource) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(resource, RequestedResourceView.class);
+        view.add(getSelfLink(resource.getId()));
 
-        final var selfLink =
-                linkTo(RequestedResourceController.class).slash(resource.getId()).withSelfRel();
-        view.add(selfLink);
-
-        final var contractsLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
+        final var contractsLink = linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
                 .getResource(resource.getId(), null, null, null))
                 .withRel("contracts");
         view.add(contractsLink);
@@ -52,5 +53,10 @@ public class RequestedResourceViewAssembler
         view.add(catalogLink);
 
         return view;
+    }
+
+    @Override
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId, RequestedResourceController.class);
     }
 }
