@@ -141,7 +141,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
             }
 
             // Update contract agreement to confirmed.
-            updateService.updateAgreementToConfirmed(storedAgreement);
+            updateService.confirmAgreement(storedAgreement);
 
             // Send contract to clearing house.
             sendAgreementToClearingHouse(agreement);

@@ -22,23 +22,3 @@ import org.springframework.stereotype.Service;
 @NoArgsConstructor
 public class ResourceService<T extends Resource, D extends ResourceDesc<T>>
         extends BaseEntityService<T, D> { }
-
-/**
- * Handles the basic logic for offered resources.
- */
-@Service
-@NoArgsConstructor
-class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> { }
-
-/**
- * Handles the basic logic for requested resources.
- */
-@Service
-@NoArgsConstructor
-class RequestedResourceService extends ResourceService<RequestedResource, RequestedResourceDesc> implements RemoteResolver{
-    @Override
-    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        final var repo = (RequestedResourcesRepository) getRepository();
-        return repo.identifyByRemoteId(remoteId);
-    }
-}

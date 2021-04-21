@@ -1,48 +1,38 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.utils.MappingUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class EntityUpdateService {
 
-    /**
-     * Service for requested resources.
-     */
-    private final @NonNull ResourceService<RequestedResource, RequestedResourceDesc> requestService;
+    private final @NonNull RequestedResourceUpdateService requestedResourceUpdater;
 
-    /**
-     * Service for representations.
-     */
-    private final @NonNull RepresentationService representationService;
+    private final @NonNull RepresentationUpdateService representationUpdateService;
 
-    /**
-     * Service for artifacts.
-     */
+    private final @NonNull ArtifactUpdateService artifactUpdateService;
+
     private final @NonNull ArtifactService artifactService;
+
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Update value of artifact.
-     *
      * @param artifact The artifact.
      * @param data     The data string.
      */
@@ -56,7 +46,6 @@ public class EntityUpdateService {
 
     /**
      * Update value of artifact by artifact id.
-     *
      * @param artifactId The artifact id.
      * @param data       The data string.
      */
@@ -69,89 +58,70 @@ public class EntityUpdateService {
 
     /**
      * Update database resource.
-     *
      * @param resource The ids resource.
      */
     public void updateResource(final Resource resource) {
-        final var resourceId = resource.getId();
-
-        final var resources = requestService.getAll(Pageable.unpaged());
-        for (final var entity : resources) {
-            final var entityId = entity.getId();
-            final var remoteId = entity.getRemoteId();
-            if (remoteId.equals(resourceId)) {
-                final var template =
-                        MappingUtils.fromIdsResource(resource);
-                final var desc = template.getDesc();
-
-                final var update = requestService.update(entityId, desc);
-                final var uri = SelfLinkHelper.getSelfLink(update);
-                if (log.isDebugEnabled()) {
-                    log.debug("Updated resource: " + uri);
-                }
+        try {
+            final var updated = requestedResourceUpdater.update(resource);
+            log.debug("Updated resource. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+        } catch (ResourceNotFoundException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to update resource. The resource could not be found. [uri=({})]",
+                          resource.getId());
             }
         }
     }
 
     /**
      * Update database representation that is known to the consumer.
-     *
      * @param representation The ids representation.
      */
     public void updateRepresentation(final Representation representation) {
-        final var representationId = representation.getId();
-
-        final var representations = representationService.getAll(Pageable.unpaged());
-        for (final var entity : representations) {
-            final var entityId = entity.getId();
-            final var remoteId = entity.getRemoteId();
-            if (remoteId.equals(representationId)) {
-                final var template =
-                        MappingUtils.fromIdsRepresentation(representation);
-                final var desc = template.getDesc();
-
-                final var update = representationService.update(entityId, desc);
-                final var uri = SelfLinkHelper.getSelfLink(update);
-                if (log.isDebugEnabled()) {
-                    log.debug("Updated representation: " + uri);
-                }
+        try {
+            final var updated = representationUpdateService.update(representation);
+            log.debug("Updated representation. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+        } catch (ResourceNotFoundException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Failed to update representation. The resource could not be found. [uri="
+                        + "({})]",
+                        representation.getId());
             }
         }
     }
 
     /**
      * Update database artifact that is known to the consumer.
-     *
      * @param artifact The ids artifact.
      */
     public void updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
-        final var artifactId = artifact.getId();
-
-        final var artifacts = artifactService.getAll(Pageable.unpaged());
-        for (final var entity : artifacts) {
-            final var entityId = entity.getId();
-            final var remoteId = entity.getRemoteId();
-            if (remoteId.equals(artifactId)) {
-                final var automatedDownload = entity.isAutomatedDownload();
-                final var template =
-                        MappingUtils.fromIdsArtifact(artifact, automatedDownload);
-                final var desc = template.getDesc();
-
-                final var update = artifactService.update(entityId, desc);
-                final var uri = SelfLinkHelper.getSelfLink(update);
-                if (log.isDebugEnabled()) {
-                    log.debug("Updated artifact: " + uri);
-                }
+        try {
+            final var updated = artifactUpdateService.update(artifact);
+            log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+        } catch (ResourceNotFoundException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to update artifact. The resource could not be found. [uri=({})]",
+                          artifact.getId());
             }
         }
     }
 
     /**
      * Set confirmed boolean to true.
-     *
      * @param agreement The database agreement.
+     * @return true if the agreement has been confirmed.
      */
-    public void updateAgreementToConfirmed(final Agreement agreement) {
-        // TODO Get desc + update agreement to confirmed = true
+    public boolean confirmAgreement(final Agreement agreement) {
+        try {
+            return agreementService.confirmAgreement(agreement);
+        } catch (ResourceNotFoundException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "Failed to confirm agreement. The resource could not be found. [uri=({})]",
+                        agreement.getId());
+            }
+
+            return false;
+        }
     }
 }
