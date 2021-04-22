@@ -10,7 +10,9 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BlockingArtifactReceiver implements ArtifactRetriever {
 
     @Autowired
