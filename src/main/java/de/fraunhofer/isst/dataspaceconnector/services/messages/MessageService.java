@@ -315,7 +315,7 @@ public class MessageService {
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
         final var artifact = artifactService.get(artifactId.get());
 
-        artifactService.setData(artifact.getId(), new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+        artifactService.setData(artifact.getId(), new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_16)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }

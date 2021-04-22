@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
@@ -17,6 +22,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.BlockingArtifactReceiver;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -38,6 +44,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,11 +55,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Map;
-import java.util.UUID;
 
 public final class ResourceControllers {
 
@@ -141,6 +143,12 @@ public final class ResourceControllers {
             ArtifactView,
             ArtifactService> {
 
+        @Autowired
+        BlockingArtifactReceiver dataReceiver;
+
+        @Autowired
+        AgreementService agreementService;
+
         /**
          * Returns data from the local database or a remote data source. In case of a remote data
          * source, all headers and query parameters included in this request will be used for the
@@ -171,8 +179,11 @@ public final class ResourceControllers {
             queryInput.setOptional(optionalPath);
 
             final var artifactService = this.getService();
-            // TODO Forward download boolean
-            return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
+            for (final var agreement : artifactService.get(artifactId).getAgreements()) {
+                return ResponseEntity.ok(artifactService.getData(dataReceiver, artifactId, agreement.getRemoteId(), queryInput, true));
+            }
+
+            return ResponseEntity.ok("");
         }
 
         /**

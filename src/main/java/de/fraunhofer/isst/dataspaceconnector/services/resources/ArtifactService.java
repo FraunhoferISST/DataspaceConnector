@@ -16,6 +16,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
+import de.fraunhofer.isst.dataspaceconnector.services.ArtifactRetriever;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
@@ -91,12 +92,58 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     public Object getData(final UUID artifactId, final QueryInput queryInput) {
         final var artifact = get(artifactId);
 
+        /* General:
+             artifactId -> getData -> return data
+             artifactId && recipient && transferContract -> IdsArtifactRequest
+
+           Case 1 OfferedResource (only):
+             - artifactId && LocalData == any
+               getData -> Internal DB(load) -> return data
+             - artifactId && RemoteData == any
+               getData -> HttpService(load) -> return data
+           Case 2 RequestedResource (only):
+               ! autoDownload (UserInput) > artifact.autoDownload
+               ---
+               - artifactId && autoDownload:=false && LocalData == null && artifact.autoDownload == any
+                    getData -> IdsArtifactRequest -> Internal DB (store) -> Internal DB (read) -> return data
+               - artifactId && autoDownload:=false && LocalData != null && artifact.autoDownload == any
+                    getData -> Internal DB (read) -> return data
+               - artifactId && autoDownload:=true && LocalData == any && artifact.autoDownload == any
+                    getData -> IdsArtifactRequest -> InternalDB(store) -> Internal DB(read) -> return data
+               ---
+               - artifactId && autoDownload:=false && RemoteData == null && artifact.autoDownload == any
+                   getData -> IdsArtifactRequest -> HttpService (store) -> HttpService(load) -> return data
+               - artifactId && autoDownload:=false && RemoteData != null && artifact.autoDownload == any
+                   getData -> HttpService(load) -> return data
+               - artifactId && autoDownload:=true && RemoteData == any && artifact.autoDownload == any
+                   getData -> IdsArtifactRequest -> HttpService(store) -> HttpService(load) -> return data
+               ---
+               - artifactId && LocalData == null && artifact.autoDownload == false
+               (?)    getData -> return data (nothing)
+               - artifactId && LocalData != null && artifact.autoDownload == false
+                   getData -> Internal DB (load) -> return data
+               - artifactId && LocalData == any && artifact.autoDownload == true
+                   getData -> IdsArtifactRequest -> InternalDB(store) -> InternalDB(load) -> return data
+               ---
+               - artifactId && RemoteData == null && artifact.autoDownload = false
+               (?)    getData -> return data (nothing)
+               - artifactId && RemoteData != null && artifact.autoDownload = false
+                    getData -> HttpService(load) -> return data
+               - artifactId && RemoteData != null && artifact.autoDownload = true
+                    getData -> HttpService(store) -> HttpService(load) -> return data
+
+            Case 3 Mixed Resources aka. Rehosting of RequestedResources:
+                ! RequestedResource > OfferedResource
+                - See Case 2
+         */
+
+
         // If the user triggers the download manually, an artifact request message is sent. This
         // input has the highest priority.
 
         // 1. User Input, if true, send ids message, if false not.
         // 2. User input null --> Artifact isAutomatedDownload check. If true bla.... usw.
-        // 3
+        // 3. User
 
         // The value of the stored artifact is checked. If the boolean is set to true, an artifact
         // request message is sent.
@@ -127,6 +174,44 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         persist(artifact);
 
         return rawData;
+    }
+
+    public Object getData(final ArtifactRetriever dataRetriever, final UUID artifactId, final URI transferContract, final QueryInput queryInput, final boolean forceDownload) {
+        final var artifact = get(artifactId);
+        final var shouldDownload = shouldDownload(artifact, forceDownload);
+        if (shouldDownload) {
+            /*
+                NOTE: Make this not blocking.
+             */
+            final var dataStream = dataRetriever.retrieve(artifactId, artifact.getRemoteAddress(), transferContract);
+            setData(artifactId, dataStream);
+        }
+
+        return getData(artifactId, queryInput);
+    }
+
+//    public Object getData(final URI artifactRemoteId, final UUID transferContract, final QueryInput queryInput, final boolean forceDownload) {
+//        final var artifactId = identifyByRemoteId(artifactRemoteId);
+//        return getData(artifactId.get(), transferContract, queryInput, forceDownload);
+//    }
+
+    private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
+        if(forceDownload == null) {
+            /*
+                NOTE: Add checks if the data is still up to date. This will remove unnecessary
+                downloads.
+             */
+            return isDataPresent() || artifact.isAutomatedDownload();
+        } else {
+            return forceDownload;
+        }
+    }
+
+    private boolean isDataPresent() {
+        /*
+            NOTE: Check if the data has been downloaded atleast once.
+         */
+        return false;
     }
 
     /**
@@ -182,7 +267,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         return repo.identifyByRemoteId(remoteId);
     }
 
-    public void setData(final UUID id, final InputStream data) {
-        // TODO Implement
+    public void setData(final UUID artifactId, final InputStream data) {
     }
 }
