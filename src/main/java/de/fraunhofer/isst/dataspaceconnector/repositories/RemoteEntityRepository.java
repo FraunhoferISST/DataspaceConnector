@@ -10,6 +10,10 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface RemoteEntityRepository<T extends AbstractEntity> extends BaseEntityRepository<T> {
-    @Query("SELECT a FROM #{#entityName} a WHERE a.remoteId = :remoteId")
+    /*
+        NOTE: Maybe return the complete object? Depends on the general usage and the bandwidth needed
+        for the Object
+     */
+    @Query("SELECT a.id FROM #{#entityName} a WHERE a.remoteId = :remoteId")
     Optional<UUID> identifyByRemoteId(URI remoteId);
 }
