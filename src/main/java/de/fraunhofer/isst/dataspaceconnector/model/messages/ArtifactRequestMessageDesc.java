@@ -25,4 +25,19 @@ public class ArtifactRequestMessageDesc extends MessageDesc {
      * The transfer contract of the message.
      */
     private URI transferContract;
+
+    /**
+     * All args constructor.
+     *
+     * @param recipient         The recipient.
+     * @param requestedArtifact The requested artifact.
+     * @param transferContract  The transfer contract.
+     */
+    public ArtifactRequestMessageDesc(final URI recipient, final URI requestedArtifact,
+                                      final URI transferContract) {
+        super(recipient);
+
+        this.requestedArtifact = requestedArtifact;
+        this.transferContract = transferContract;
+    }
 }
