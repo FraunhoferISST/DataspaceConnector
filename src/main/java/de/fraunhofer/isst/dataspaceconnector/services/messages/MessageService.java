@@ -1,13 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -36,15 +28,25 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractReq
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -129,12 +131,15 @@ public class MessageService {
      * @param recipient       The recipient.
      * @param contractRequest The contract request.
      * @return The response map.
-     * @throws MessageException    If message handling failed.
-     * @throws RdfBuilderException If the contract request rdf string could not be built.
+     * @throws MessageException         If message handling failed.
+     * @throws RdfBuilderException      If the contract request rdf string could not be built.
+     * @throws IllegalArgumentException If contract request is null.
      */
     public Map<String, String> sendContractRequestMessage(final URI recipient,
                                                           final ContractRequest contractRequest)
             throws MessageException, RdfBuilderException {
+        Utils.requireNonNull(contractRequest, ErrorMessages.ENTITY_NULL);
+
         final var contractId = contractRequest.getId();
         final var contractRdf = IdsUtils.toRdf(contractRequest);
 
@@ -160,12 +165,15 @@ public class MessageService {
      * @param recipient The recipient.
      * @param agreement The contract agreement.
      * @return The response map.
-     * @throws MessageException    If message handling failed.
-     * @throws RdfBuilderException If the contract agreement rdf string could not be built.
+     * @throws MessageException         If message handling failed.
+     * @throws RdfBuilderException      If the contract agreement rdf string could not be built.
+     * @throws IllegalArgumentException If contract agreement is null.
      */
     public Map<String, String> sendContractAgreementMessage(final URI recipient,
                                                             final ContractAgreement agreement)
             throws MessageException, ConstraintViolationException {
+        Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
+
         final var contractId = agreement.getId();
         final var contractRdf = IdsUtils.toRdf(agreement);
 
@@ -198,9 +206,7 @@ public class MessageService {
                                                           final URI elementId,
                                                           final URI agreementId)
             throws MessageException {
-        final var desc = new ArtifactRequestMessageDesc(elementId, agreementId);
-        desc.setRecipient(recipient);
-
+        final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
         return artifactRequestService.sendMessage(desc, "");
     }
 
@@ -303,7 +309,7 @@ public class MessageService {
     /**
      * Save data and return the uri of the respective artifact.
      *
-     * @param response   The response message.
+     * @param response The response message.
      * @param remoteId The artifact id.
      * @return The artifact uri.
      * @throws MessageResponseException  If the message response could not be processed.
