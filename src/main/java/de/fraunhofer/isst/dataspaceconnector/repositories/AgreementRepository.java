@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface AgreementRepository extends BaseEntityRepository<Agreement> {
     @Modifying
-    @Query("update Agreement a set a.confirmed = ?1 where a.id = :entityId")
+    @Query("update Agreement a set a.confirmed = true where a.id = :entityId")
     int confirmAgreement(UUID entityId);
 }
