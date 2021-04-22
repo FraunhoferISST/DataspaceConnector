@@ -22,12 +22,22 @@ public enum ErrorMessages {
     /**
      * The passed pageable parameter may not be null.
      */
-    PAGEABLE_NULL("The pageable parameter may not be null"),
+    PAGEABLE_NULL("The pageable parameter may not be null."),
 
     /**
      * The passed set of entities may not be null.
      */
-    ENTITYSET_NULL("The set of entities may not be null"),
+    ENTITYSET_NULL("The set of entities may not be null."),
+
+    /**
+     * The exception parameter may not be null.
+     */
+    EXCEPTION_NULL("The exception parameter may not be null."),
+
+    /**
+     * Missing IDS version.
+     */
+    VERSION_NULL("The version must be set."),
 
     /**
      * Rule is missing a target parameter.

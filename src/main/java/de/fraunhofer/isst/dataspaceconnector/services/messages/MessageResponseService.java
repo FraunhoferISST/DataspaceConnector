@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -10,20 +12,20 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionExcepti
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
-
-import java.net.URI;
+import org.springframework.stereotype.Component;
 
 /**
  * This class handles message responses.
  */
 @Log4j2
-@Service
+@Component
 @RequiredArgsConstructor
 public class MessageResponseService {
 
@@ -37,12 +39,16 @@ public class MessageResponseService {
      *
      * @param exception Exception that was thrown when checking if the message is null.
      * @return A message response.
+     * @throws IllegalArgumentException if exception is null.
      */
     public MessageResponse handleMessageEmptyException(final MessageEmptyException exception) {
+        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+
         if (log.isDebugEnabled()) {
             log.debug("Cannot respond when there is no request. [exception=({})]",
                     exception.getMessage(), exception);
         }
+
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 exception.getMessage(), connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
@@ -54,9 +60,12 @@ public class MessageResponseService {
      * @param exception Exception that was thrown when checking the Information Model version.
      * @param version   Information Model version of incoming message.
      * @return A message response.
+     * @throws IllegalArgumentException if exception is null.
      */
     public MessageResponse handleInfoModelNotSupportedException(
             final VersionNotSupportedException exception, final String version) {
+        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+
         if (log.isDebugEnabled()) {
             log.debug("Information Model version of requesting connector is not supported. "
                     + "[version=({}), exception=({})]", version, exception.getMessage(), exception);
@@ -73,10 +82,13 @@ public class MessageResponseService {
      * @param issuerConnector The issuer connector extracted from the incoming message.
      * @param messageId       The id of the incoming message.
      * @return A message response.
+     * @throws IllegalArgumentException if exception is null.
      */
     public MessageResponse handleResponseMessageBuilderException(final Exception exception,
                                                                  final URI issuerConnector,
                                                                  final URI messageId) {
+        Utils.requireNonNull(exception, ErrorMessages.EXCEPTION_NULL);
+
         if (log.isWarnEnabled()) {
             log.warn("Failed to convert ids object to string. [exception=({}), "
                             + "issuer=({}), messageId=({})]", exception.getMessage(),
