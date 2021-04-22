@@ -1,8 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import java.net.URI;
-import java.util.HashMap;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
@@ -21,6 +18,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -63,7 +63,7 @@ public class MessageServiceTest {
     MessageService service;
 
     @Test
-    public void sendDescriptionRequestMessage_validSelfDescriptionInput_returnValidResponse() {
+    public void sendDescriptionRequestMessage_withoutRequestedElement_returnValidResponse() {
         /* ARRANGE */
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var desc = new DescriptionRequestMessageDesc(recipient, null);
@@ -76,6 +76,26 @@ public class MessageServiceTest {
 
         /* ACT */
         final var result = service.sendDescriptionRequestMessage(recipient, null);
+
+        /* ARRANGE */
+        assertEquals(response, result);
+    }
+
+    @Test
+    public void sendDescriptionRequestMessage_validRequestedElement_returnValidResponse() {
+        /* ARRANGE */
+        final var recipient = URI.create("https://localhost:8080/api/ids/data");
+        final var element = URI.create("https://requestedElement");
+        final var desc = new DescriptionRequestMessageDesc(recipient, element);
+
+        final var response = new HashMap<String, String>();
+        response.put("header", "some header values");
+        response.put("body", "some body values");
+
+        Mockito.when(descService.sendMessage(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
+
+        /* ACT */
+        final var result = service.sendDescriptionRequestMessage(recipient, element);
 
         /* ARRANGE */
         assertEquals(response, result);
