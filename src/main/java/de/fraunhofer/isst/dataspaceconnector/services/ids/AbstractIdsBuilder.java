@@ -29,7 +29,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
     /**
      * The default depth the builder will follow dependencies.
      */
-    public static final int DEFAULT_DEPTH = 5;
+    public static final int DEFAULT_DEPTH = -1;
 
     /**
      * The max depth when searching for the setProperty Method in Infomodel objects.
