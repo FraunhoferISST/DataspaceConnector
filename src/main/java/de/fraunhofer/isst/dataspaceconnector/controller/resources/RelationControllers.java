@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
@@ -8,6 +13,12 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceContractLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractRuleLinker;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
@@ -16,12 +27,6 @@ import de.fraunhofer.isst.dataspaceconnector.view.ContractView;
 import de.fraunhofer.isst.dataspaceconnector.view.OfferedResourceView;
 import de.fraunhofer.isst.dataspaceconnector.view.RepresentationView;
 import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceView;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceContractLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractRuleLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationArtifactLinker;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -34,11 +39,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 public final class RelationControllers {
 
@@ -93,7 +93,7 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/artifacts/{id}/agreements")
     @Tag(name = "Artifacts", description = "Endpoints for linking artifacts to agreements")
-    public static class ArtifactsToAgreements extends BaseResourceChildController<RelationshipServices.AgreementArtifactLinker, Agreement, AgreementView> {
+    public static class ArtifactsToAgreements extends BaseResourceChildController<RelationshipServices.ArtifactAgreementLinker, Agreement, AgreementView> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
@@ -123,7 +123,7 @@ public final class RelationControllers {
     @RestController
     @RequestMapping("/api/agreements/{id}/artifacts")
     @Tag(name = "Agreements", description = "Endpoints for linking agreements to artifacts")
-    public static class AgreementsToArtifacts extends BaseResourceChildController<RelationshipServices.ArtifactAgreementLinker, Artifact, ArtifactView> {
+    public static class AgreementsToArtifacts extends BaseResourceChildController<RelationshipServices.AgreementArtifactLinker, Artifact, ArtifactView> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
