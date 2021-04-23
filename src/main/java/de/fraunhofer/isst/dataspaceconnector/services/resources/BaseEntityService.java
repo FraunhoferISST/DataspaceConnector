@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
@@ -10,8 +12,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.UUID;
 
 /**
  * The base service implements base logic for persistent entities.
@@ -85,7 +85,7 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
 
         if (entity.isEmpty()) {
             // Handle with global exception handler
-            throw new ResourceNotFoundException(entityId.toString());
+            throw new ResourceNotFoundException(this.getClass().getSimpleName() + ": " + entityId);
         }
 
         return entity.get();
