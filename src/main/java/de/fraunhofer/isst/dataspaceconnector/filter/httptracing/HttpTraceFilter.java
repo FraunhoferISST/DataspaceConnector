@@ -63,7 +63,6 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
         try {
             filterChain.doFilter(requestWrapper, responseWrapper);
-            //filterChain.doFilter(request, response);
         } finally {
             afterRequest(responseWrapper);
             responseWrapper.copyBodyToResponse();
