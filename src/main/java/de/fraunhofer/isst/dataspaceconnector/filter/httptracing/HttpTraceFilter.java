@@ -23,7 +23,7 @@ import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
  * Use this class to log all incoming and outgoing http traffic.
  */
 @Component
-@Order(HIGHEST_PRECEDENCE)
+@Order(1)
 public class HttpTraceFilter extends OncePerRequestFilter {
     /**
      * The trace id.
