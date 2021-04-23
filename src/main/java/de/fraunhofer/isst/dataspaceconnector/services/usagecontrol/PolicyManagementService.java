@@ -220,7 +220,7 @@ public class PolicyManagementService {
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
-    public URI saveContractAgreement(final ContractAgreement contractAgreement,
+    public UUID saveContractAgreement(final ContractAgreement contractAgreement,
                                      final boolean confirmed) throws PersistenceException {
         try {
             final var agreementId = contractAgreement.getId();
@@ -232,8 +232,7 @@ public class PolicyManagementService {
             desc.setValue(rdf);
 
             // Save agreement to return its id.
-            final var agreement = agreementService.create(desc);
-            return SelfLinkHelper.getSelfLink(agreement);
+            return agreementService.create(desc).getId();
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store contract agreement. [exception=({})]", e.getMessage(), e);

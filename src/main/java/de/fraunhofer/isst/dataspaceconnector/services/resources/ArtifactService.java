@@ -1,8 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,7 +21,9 @@ import de.fraunhofer.isst.dataspaceconnector.services.ArtifactRetriever;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
      * Service for http communication.
      **/
     private final @NonNull HttpService httpService;
+
+
+    @Autowired
+    private ArtifactRetriever retriever;
 
     /**
      * Constructor for ArtifactService.
@@ -92,6 +99,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     public Object getData(final UUID artifactId, final QueryInput queryInput) {
         final var artifact = get(artifactId);
 
+        for(final var agreement : artifact.getAgreements()) {
+            try {
+                return getData(artifactId, new RetrievalInformation(agreement.getRemoteId(), queryInput));
+            } catch(Exception exception) {
+                // TODO Some log message
+                // Do nothing if the data could not be pulled, just try the next one.
+            }
+        }
+
         /* General:
              artifactId -> getData -> return data
              artifactId && recipient && transferContract -> IdsArtifactRequest
@@ -137,29 +153,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
                 - See Case 2
          */
 
+        return getDataFromInternalDB((ArtifactImpl) artifact, queryInput);
+    }
 
-        // If the user triggers the download manually, an artifact request message is sent. This
-        // input has the highest priority.
-
-        // 1. User Input, if true, send ids message, if false not.
-        // 2. User input null --> Artifact isAutomatedDownload check. If true bla.... usw.
-        // 3. User
-
-        // The value of the stored artifact is checked. If the boolean is set to true, an artifact
-        // request message is sent.
-        if (artifact.isAutomatedDownload()) {
-            final var remoteAddress = artifact.getRemoteAddress();
-
-//            final var response = messageService.sendArtifactRequestMessage(remoteAddress, artifact, transferContract);
-//
-//                    if (!messageService.validateArtifactResponseMessage(response)) {
-//                        // If the response is not an artifact response message, show the response.
-//                        final var content = messageService.getContent(response);
-//                        return ControllerUtils.respondWithMessageContent(content);
-//                    }
-        }
-
-        final var data = ((ArtifactImpl) artifact).getData();
+    private Object getDataFromInternalDB(final ArtifactImpl artifact, final QueryInput queryInput) {
+        final var data = artifact.getData();
 
         Object rawData;
         if (data instanceof LocalData) {
@@ -176,18 +174,34 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         return rawData;
     }
 
-    public Object getData(final ArtifactRetriever dataRetriever, final UUID artifactId, final URI transferContract, final QueryInput queryInput, final boolean forceDownload) {
+    @Transactional
+    public Object getData(final UUID artifactId, final RetrievalInformation information) {
         final var artifact = get(artifactId);
-        final var shouldDownload = shouldDownload(artifact, forceDownload);
+        final var shouldDownload = shouldDownload(artifact, information.forceDownload);
         if (shouldDownload) {
             /*
                 NOTE: Make this not blocking.
              */
-            final var dataStream = dataRetriever.retrieve(artifactId, artifact.getRemoteAddress(), transferContract);
-            setData(artifactId, dataStream);
+            // TODO add query to retriever
+            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(), information.transferContract);
+            try {
+                setData(artifactId, new String(dataStream.readAllBytes(), StandardCharsets.UTF_16));
+            } catch (IOException exception) {
+                // TODO Failed to set data.
+                // Do not proceed with getData, getData increments the access counter
+                return null;
+            }
         }
 
-        return getData(artifactId, queryInput);
+        return getDataFromInternalDB((ArtifactImpl) artifact, null);
+    }
+
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    public static class RetrievalInformation {
+        @NonNull URI transferContract;
+        Boolean forceDownload;
+        final QueryInput queryInput;
     }
 
 //    public Object getData(final URI artifactRemoteId, final UUID transferContract, final QueryInput queryInput, final boolean forceDownload) {
@@ -209,7 +223,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     private boolean isDataPresent() {
         /*
-            NOTE: Check if the data has been downloaded atleast once.
+            NOTE: Check if the data has been downloaded at least once.
          */
         return false;
     }
@@ -267,6 +281,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         return repo.identifyByRemoteId(remoteId);
     }
 
-    public void setData(final UUID artifactId, final InputStream data) {
+    @Transactional
+    public void setData(final UUID artifactId, final String data) {
+        final var localData = ((ArtifactImpl) get(artifactId)).getData();
+        if (localData instanceof LocalData) {
+            // TODO: Check if the data needs to be sanitized before passing it to JPA.
+            // TODO: This probably is some form of duplication with the code in persist
+            dataRepository.setLocalData(localData.getId(), data);
+        } else {
+            throw new RuntimeException("Not implemented");
+        }
     }
 }

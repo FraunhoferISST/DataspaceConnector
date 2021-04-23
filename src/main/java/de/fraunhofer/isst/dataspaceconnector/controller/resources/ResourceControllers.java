@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
 
@@ -164,26 +165,23 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
                                               @RequestParam(required = false) final Boolean download,
+                                              @RequestParam(required = false) final URI transferContract,
                                               @RequestParam final Map<String, String> params,
                                               @RequestHeader final Map<String, String> headers,
                                               final HttpServletRequest request) {
-            final var optionalPath = request.getRequestURI()
-                    .split(request.getContextPath() + "/data/")[1];
-
             headers.remove("authorization");
             headers.remove("host");
 
             final var queryInput = new QueryInput();
             queryInput.setParams(params);
             queryInput.setHeaders(headers);
-            queryInput.setOptional(optionalPath);
+            queryInput.setOptional(request.getRequestURI().substring((request.getContextPath() + "/data").length()));
 
-            final var artifactService = this.getService();
-            for (final var agreement : artifactService.get(artifactId).getAgreements()) {
-                return ResponseEntity.ok(artifactService.getData(dataReceiver, artifactId, agreement.getRemoteId(), queryInput, true));
-            }
+            final var data = (transferContract == null)
+                    ? getService().getData(artifactId, queryInput)
+                    : getService().getData(artifactId, new ArtifactService.RetrievalInformation(transferContract, download, queryInput));
 
-            return ResponseEntity.ok("");
+            return ResponseEntity.ok(data);
         }
 
         /**
@@ -200,11 +198,8 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
                                               @RequestBody(required = false) QueryInput queryInput) {
-            final var artifactService = this.getService();
-
             ValidationUtils.validateQueryInput(queryInput);
-
-            return ResponseEntity.ok(artifactService.getData(artifactId, queryInput));
+            return ResponseEntity.ok(getService().getData(artifactId, queryInput));
         }
     }
 }

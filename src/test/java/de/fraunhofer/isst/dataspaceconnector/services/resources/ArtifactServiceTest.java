@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,12 +26,6 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.lang.reflect.Field;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -193,7 +188,7 @@ class ArtifactServiceTest {
                 .thenThrow(new ResourceNotFoundException("not found"));
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> service.getData(unknownUuid, null));
+        assertThrows(ResourceNotFoundException.class, () -> service.getData(unknownUuid, (QueryInput) null));
     }
 
     @Test
@@ -206,7 +201,7 @@ class ArtifactServiceTest {
         when(dataRepository.getOne(any())).thenReturn(getLocalData());
 
         /* ACT */
-        final var data = service.getData(localArtifact.getId(), null);
+        final var data = service.getData(localArtifact.getId(), (QueryInput) null);
 
         /* ASSERT */
         assertEquals(getLocalData().getValue(), (String) data);
@@ -225,7 +220,7 @@ class ArtifactServiceTest {
         final var before = localArtifact.getNumAccessed();
 
         /* ACT */
-        service.getData(localArtifact.getId(), null);
+        service.getData(localArtifact.getId(), (QueryInput) null);
 
         /* ASSERT */
         Field numAccessedField = Artifact.class.getDeclaredField("numAccessed");
@@ -251,7 +246,7 @@ class ArtifactServiceTest {
                 .thenReturn(remoteData);
 
         /* ACT */
-        final var data = service.getData(remoteArtifact.getId(), null);
+        final var data = service.getData(remoteArtifact.getId(), (QueryInput)  null);
 
         /* ASSERT */
         assertEquals(remoteData, data);
@@ -270,7 +265,7 @@ class ArtifactServiceTest {
         when(httpService.sendHttpsGetRequest(url.toString(), null)).thenReturn(remoteData);
 
         /* ACT */
-        final var data = service.getData(remoteArtifact.getId(), null);
+        final var data = service.getData(remoteArtifact.getId(),(QueryInput)  null);
 
         /* ASSERT */
         assertEquals(remoteData, data);
@@ -350,7 +345,7 @@ class ArtifactServiceTest {
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
-                () -> service.getData(unknownArtifact.getId(), null));
+                () -> service.getData(unknownArtifact.getId(), (QueryInput) null));
     }
 
     /**************************************************************************

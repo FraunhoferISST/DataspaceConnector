@@ -14,7 +14,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import lombok.NonNull;
@@ -126,9 +125,8 @@ public class EntityUpdateService {
     }
 
     // TODO link agreement to artifacts.
-    public final void linkArtifactToAgreement(final List<URI> artifactIds, final URI agreementId) {
-        final var agreementUuid = EndpointUtils.getUUIDFromPath(agreementId);
-        agreementArtifactLinker.add(agreementUuid, toSet(artifactIds));
+    public final void linkArtifactToAgreement(final List<URI> artifactIds, final UUID agreementId) {
+        agreementArtifactLinker.add(agreementId, toSet(artifactIds));
     }
 
     private static Set<UUID> toSet(final List<URI> uris) {

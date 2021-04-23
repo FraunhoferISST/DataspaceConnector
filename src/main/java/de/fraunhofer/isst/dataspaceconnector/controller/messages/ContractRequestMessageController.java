@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
@@ -9,9 +15,11 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
+import de.fraunhofer.isst.dataspaceconnector.view.AgreementViewAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,13 +38,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @RestController
@@ -59,6 +61,10 @@ public class ContractRequestMessageController {
      */
     private final @NonNull EntityUpdateService updateService;
 
+
+    private final @NonNull AgreementViewAssembler agreementAssembler;
+    private final @NonNull AgreementService agreementService;
+
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
      *
@@ -69,7 +75,7 @@ public class ContractRequestMessageController {
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping("/contract")
+    @PostMapping(value = "/contract")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -93,9 +99,7 @@ public class ContractRequestMessageController {
             @RequestParam(value = "download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
-        final var agreementLocations = new ArrayList<URI>();
-        final var resourceLocations = new ArrayList<URI>();
-        final var dataLocations = new ArrayList<URI>();
+        UUID agreementId;
 
         Map<String, String> response;
         URI uri;
@@ -126,8 +130,7 @@ public class ContractRequestMessageController {
             }
 
             // Save contract agreement to database.
-            final var agreementId = managementService.saveContractAgreement(agreement, true);
-            agreementLocations.add(agreementId);
+            agreementId = managementService.saveContractAgreement(agreement, true);
             if (log.isDebugEnabled()) {
                 log.debug("Policy negotiation success. Saved agreement: " + agreementId);
             }
@@ -148,7 +151,6 @@ public class ContractRequestMessageController {
                 // TODO Check if a resource with remoteId is already stored on consumer side, if yes, do NOT create a new resource, but update it and all children
                 // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
                 uri = messageService.saveMetadata(response, artifacts, download, recipient);
-                resourceLocations.add(uri);
             }
 
             updateService.linkArtifactToAgreement(artifacts, agreementId);
@@ -177,7 +179,6 @@ public class ContractRequestMessageController {
                     // Read and process the response message.
                     try {
                         uri = messageService.saveData(response, artifact);
-                        dataLocations.add(uri);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
@@ -201,10 +202,12 @@ public class ContractRequestMessageController {
 
         // Return response entity containing the locations of the contract agreement, the
         // downloaded resources, and the downloaded data.
-        return new ResponseEntity<>(new HashMap<String, List<URI>>() {{
-            put("agreement", agreementLocations);
-            put("resources", resourceLocations);
-            put("data", dataLocations);
-        }}, HttpStatus.CREATED);
+
+        final var entity = agreementAssembler.toModel(agreementService.get(agreementId));
+
+        final var headers = new HttpHeaders();
+        headers.setLocation(entity.getLink("self").get().toUri());
+
+        return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
 }

@@ -37,7 +37,7 @@ class ArtifactControllerTest {
     @Test
     public void getData_null_throwIllegalArgumentException() {
         /* ARRANGE */
-        Mockito.when(service.getData(Mockito.isNull(), Mockito.any()))
+        Mockito.when(service.getData(Mockito.isNull(), (QueryInput) Mockito.any()))
                 .thenThrow(IllegalArgumentException.class);
 
         /* ACT && ASSERT */
@@ -49,7 +49,7 @@ class ArtifactControllerTest {
     public void getData_unknownId_throwResourceNotFoundException() {
         /* ARRANGE */
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-        Mockito.when(service.getData(Mockito.eq(unknownUuid), Mockito.any()))
+        Mockito.when(service.getData(Mockito.eq(unknownUuid), (QueryInput) Mockito.any()))
                 .thenThrow(ResourceNotFoundException.class);
 
         /* ACT */
@@ -62,7 +62,7 @@ class ArtifactControllerTest {
         /* ARRANGE */
         final var expected = "TEST";
         final var knownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-        Mockito.when(service.getData(Mockito.eq(knownUuid), Mockito.any())).thenReturn(expected);
+        Mockito.when(service.getData(Mockito.eq(knownUuid), (QueryInput) Mockito.any())).thenReturn(expected);
 
         /* ACT */
         final var result = controller.getData(knownUuid, new QueryInput());
@@ -76,7 +76,7 @@ class ArtifactControllerTest {
         /* ARRANGE */
         final var expected = "TEST";
         final var knownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-        Mockito.when(service.getData(Mockito.eq(knownUuid), Mockito.any())).thenReturn(expected);
+        Mockito.when(service.getData(Mockito.eq(knownUuid), (QueryInput) Mockito.any())).thenReturn(expected);
 
         /* ACT */
         final var result = controller.getData(knownUuid, new QueryInput());

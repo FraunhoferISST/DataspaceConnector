@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -39,14 +45,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @Service
@@ -207,6 +205,7 @@ public class MessageService {
                                                           final URI agreementId)
             throws MessageException {
         final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
+        // TODO set payload to null?
         return artifactRequestService.sendMessage(desc, "");
     }
 
@@ -321,7 +320,7 @@ public class MessageService {
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
         final var artifact = artifactService.get(artifactId.get());
 
-        artifactService.setData(artifact.getId(), new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_16)));
+        artifactService.setData(artifact.getId(), data);
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }
