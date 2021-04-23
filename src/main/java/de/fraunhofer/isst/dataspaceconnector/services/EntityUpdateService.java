@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
@@ -16,6 +16,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -126,13 +127,12 @@ public class EntityUpdateService {
 
     // TODO link agreement to artifacts.
     public final void linkArtifactToAgreement(final List<URI> artifactIds, final URI agreementId) {
-        final var artifacts = new ArrayList<UUID>();
-        for (final var uri : artifactIds) {
-            final var uuid = EndpointUtils.getUUIDFromPath(uri);
-            artifacts.add(uuid);
-        }
-
         final var agreementUuid = EndpointUtils.getUUIDFromPath(agreementId);
-        agreementArtifactLinker.add(agreementUuid, (Set<UUID>) artifacts);
+        agreementArtifactLinker.add(agreementUuid, toSet(artifactIds));
+    }
+
+    private static Set<UUID> toSet(final List<URI> uris) {
+        // NOTE Yes this is duplicate from the Resource Controller
+        return uris.parallelStream().map(UUIDUtils::uuidFromUri).collect(Collectors.toSet());
     }
 }
