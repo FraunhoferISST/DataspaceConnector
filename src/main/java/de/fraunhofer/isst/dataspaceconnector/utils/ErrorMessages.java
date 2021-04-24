@@ -10,6 +10,11 @@ public enum ErrorMessages {
     DESC_NULL("The description parameter may not be null."),
 
     /**
+     * The passed message may not be null.
+     */
+    MESSAGE_NULL("The message may not be null."),
+
+    /**
      * The passed entity id may not be null.
      */
     ENTITYID_NULL("The entity id may not be null."),

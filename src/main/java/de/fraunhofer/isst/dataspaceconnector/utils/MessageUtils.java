@@ -9,7 +9,6 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -41,8 +40,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The id of the requested element.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractRequestedElement(final DescriptionRequestMessage message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getRequestedElement();
     }
 
@@ -51,8 +52,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The id of the requested artifact.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractRequestedArtifact(final ArtifactRequestMessage message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getRequestedArtifact();
     }
 
@@ -61,8 +64,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The id of the transfer contract.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractTransferContract(final ArtifactRequestMessage message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getTransferContract();
     }
 
@@ -71,8 +76,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The id of the affected resource.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractAffectedResource(final ResourceUpdateMessage message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getAffectedResource();
     }
 
@@ -81,8 +88,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The issuer connector of an ids message.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractIssuerConnector(final Message message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getIssuerConnector();
     }
 
@@ -91,8 +100,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The ids of an ids message.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static URI extractMessageId(final Message message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getId();
     }
 
@@ -101,8 +112,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The ids of an ids message.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static String extractModelVersion(final Message message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getModelVersion();
     }
 
@@ -111,8 +124,10 @@ public final class MessageUtils {
      *
      * @param message The ids message.
      * @return The rejection reason.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static RejectionReason extractRejectionReason(final RejectionMessage message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
         return message.getRejectionReason();
     }
 
@@ -177,16 +192,11 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids header.
-     * @throws MessageResponseException If the map contains no header property.
+     * @throws IllegalArgumentException If the message is null.
      */
-    public static String extractHeaderFromMultipartMessage(final Map<String, String> message)
-            throws MessageResponseException {
-        try {
-            return message.get("header");
-        } catch (Exception exception) {
-            throw new MessageResponseException(ErrorMessages.MALFORMED_HEADER.toString(),
-                    exception);
-        }
+    public static String extractHeaderFromMultipartMessage(final Map<String, String> message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        return message.get("header");
     }
 
     /**
@@ -194,16 +204,11 @@ public final class MessageUtils {
      *
      * @param message The ids response message as map.
      * @return The ids payload.
-     * @throws MessageResponseException If the map contains no payload property.
+     * @throws IllegalArgumentException If the message is null.
      */
-    public static String extractPayloadFromMultipartMessage(final Map<String, String> message)
-            throws MessageResponseException {
-        try {
-            return message.get("payload");
-        } catch (Exception exception) {
-            throw new MessageResponseException(ErrorMessages.MALFORMED_PAYLOAD.toString(),
-                    exception);
-        }
+    public static String extractPayloadFromMultipartMessage(final Map<String, String> message) {
+        Utils.requireNonNull(message, ErrorMessages.MESSAGE_NULL);
+        return message.get("payload");
     }
 
     /**
@@ -212,7 +217,7 @@ public final class MessageUtils {
      * @param payload The message payload as stream.
      * @return The stream's content.
      * @throws IllegalArgumentException if the payload is null.
-     * @throws IOException If the stream could not be read.
+     * @throws IOException              If the stream could not be read.
      */
     public static String getStreamAsString(final MessagePayload payload) throws IOException {
         Utils.requireNonNull(payload, ErrorMessages.MISSING_PAYLOAD);
