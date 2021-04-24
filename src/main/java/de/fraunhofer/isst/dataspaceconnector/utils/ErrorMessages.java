@@ -15,6 +15,11 @@ public enum ErrorMessages {
     MESSAGE_NULL("The message may not be null."),
 
     /**
+     * The passed contract may not be null.
+     */
+    CONTRACT_NULL("The contract may not be null."),
+
+    /**
      * The passed entity id may not be null.
      */
     ENTITYID_NULL("The entity id may not be null."),

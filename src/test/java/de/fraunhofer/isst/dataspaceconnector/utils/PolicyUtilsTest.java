@@ -1,12 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.DutyBuilder;
+import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.Util;
@@ -14,12 +14,228 @@ import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PolicyUtilsTest {
+
+    @Test
+    public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
+        /* ARRANGE */
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.extractRulesFromContract(contract);
+
+        /* ASSERT */
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void extractRulesFromContract_contractWithThreeRules_returnRuleList() {
+        /* ARRANGE */
+        final var permission = (Permission) getRuleThree();
+        final var prohibition = (Prohibition) getRuleTwo();
+        final var obligation = (Duty) getRuleOne();
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.extractRulesFromContract(contract);
+
+        /* ASSERT */
+        assertEquals(3, result.size());
+        assertTrue(result.contains(permission));
+        assertTrue(result.contains(prohibition));
+        assertTrue(result.contains(obligation));
+    }
+
+    @Test
+    public void extractRulesFromContract_contractWithTwoProhibitions_returnRuleList() {
+        /* ARRANGE */
+        final var permission = (Permission) getRuleThree();
+        final var prohibition = (Prohibition) getRuleTwo();
+        final var obligation = (Duty) getRuleOne();
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition, prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.extractRulesFromContract(contract);
+
+        /* ASSERT */
+        assertEquals(4, result.size());
+        assertTrue(result.contains(permission));
+        assertTrue(result.contains(prohibition));
+        assertTrue(result.contains(obligation));
+    }
+
+    @Test
+    public void extractRulesFromContract_null_throwIllegalArgumentException() {
+        /* ARRANGE */
+        // Nothing to arrange here.
+
+        /* ACT & ASSERT */
+        assertThrows(IllegalArgumentException.class,
+                () -> PolicyUtils.extractRulesFromContract(null));
+    }
+
+    @Test
+    public void getRulesForTargetId_matchingTargetIdForOneRule_returnRuleList() {
+        /* ARRANGE */
+        final var target = URI.create("https://target");
+        final var permission = getPermissionWithTarget(target);
+        final var prohibition = getProhibitionWithTarget(null);
+        final var obligation = getDutyWithTarget(null);
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.getRulesForTargetId(contract, target);
+
+        /* ASSERT */
+        assertEquals(1, result.size());
+        assertTrue(result.contains(permission));
+    }
+
+    @Test
+    public void getRulesForTargetId_matchingTargetIdForMultipleRules_returnRuleList() {
+        /* ARRANGE */
+        final var target = URI.create("https://target");
+        final var permission = getPermissionWithTarget(target);
+        final var prohibition = getProhibitionWithTarget(null);
+        final var prohibition2 = getProhibitionWithTarget(target);
+        final var obligation = getDutyWithTarget(target);
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition, prohibition2))
+                ._obligation_(Util.asList(obligation))
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.getRulesForTargetId(contract, target);
+
+        /* ASSERT */
+        assertEquals(3, result.size());
+        assertTrue(result.contains(permission));
+        assertTrue(result.contains(prohibition2));
+        assertTrue(result.contains(obligation));
+    }
+
+    @Test
+    public void getRulesForTargetId_noMatchingTargetId_returnRuleList() {
+        /* ARRANGE */
+        final var target = URI.create("https://target");
+        final var permission = getPermissionWithTarget(null);
+        final var prohibition = getProhibitionWithTarget(null);
+        final var obligation = getDutyWithTarget(null);
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
+
+        /* ACT */
+        final var result = PolicyUtils.getRulesForTargetId(contract, target);
+
+        /* ASSERT */
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void getRulesForTargetId_emptyContract_throwIllegalArgumentException() {
+        /* ARRANGE */
+        final var target = URI.create("https://target");
+
+        /* ACT & ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> PolicyUtils.getRulesForTargetId(null,
+                target));
+    }
+
+    @Test
+    public void getTargetRuleMap_listWithValidRulesAndTargets_returnMap() {
+        /* ARRANGE */
+        final var target_1 = URI.create("https://target1");
+        final var target_2 = URI.create("https://target2");
+        final var target_3 = URI.create("https://target3");
+        final var permission = getPermissionWithTarget(target_1);
+        final var prohibition = getProhibitionWithTarget(target_2);
+        final var obligation = getDutyWithTarget(target_3);
+        final var list = List.of(permission, prohibition, obligation);
+
+        /* ACT */
+        final var result = PolicyUtils.getTargetRuleMap(list);
+
+        /* ASSERT */
+        assertEquals(3, result.keySet().size());
+        assertEquals(3, result.entrySet().size());
+        assertTrue(result.containsKey(target_1));
+        assertTrue(result.containsKey(target_2));
+        assertTrue(result.containsKey(target_3));
+        assertTrue(result.get(target_1).contains(permission));
+        assertTrue(result.get(target_2).contains(prohibition));
+        assertTrue(result.get(target_3).contains(obligation));
+    }
+
+    @Test
+    public void getTargetRuleMap_listWithMultipleRulesForOneTarget_returnMap() {
+        /* ARRANGE */
+        final var target_1 = URI.create("https://target1");
+        final var target_2 = URI.create("https://target2");
+        final var permission = getPermissionWithTarget(target_1);
+        final var prohibition = getProhibitionWithTarget(target_2);
+        final var obligation = getDutyWithTarget(target_2);
+        final var list = List.of(permission, prohibition, obligation);
+
+        /* ACT */
+        final var result = PolicyUtils.getTargetRuleMap(list);
+
+        /* ASSERT */
+        assertEquals(2, result.keySet().size());
+        assertEquals(2, result.entrySet().size());
+        assertTrue(result.containsKey(target_1));
+        assertTrue(result.containsKey(target_2));
+        assertTrue(result.get(target_1).contains(permission));
+        assertTrue(result.get(target_2).contains(prohibition));
+        assertTrue(result.get(target_2).contains(obligation));
+        assertEquals(2, result.get(target_2).size());
+    }
+
+    @Test
+    public void getTargetRuleMap_listWithRulesWithoutTargets_returnMap() {
+        /* ARRANGE */
+        final var permission = (Permission) getRuleThree();
+        final var prohibition = (Prohibition) getRuleTwo();
+        final var obligation = (Duty) getRuleOne();
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition, prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
+    }
 
     @Test
     public void compareRules_null_returnTrue() {
@@ -42,19 +258,22 @@ class PolicyUtilsTest {
     @Test
     public void compareRules_sameList_returnTrue() {
         /* ACT && ASSERT */
-        assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo()), Util.asList(getRuleOne(), getRuleTwo())));
+        assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo()),
+                Util.asList(getRuleOne(), getRuleTwo())));
     }
 
     @Test
     public void compareRules_sameSets_returnTrue() {
         /* ACT && ASSERT */
-        assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(), getRuleOne()), Util.asList(getRuleOne(), getRuleTwo())));
+        assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(), getRuleOne())
+                , Util.asList(getRuleOne(), getRuleTwo())));
     }
 
     @Test
     public void compareRules_differentSets_returnFalse() {
         /* ACT && ASSERT */
-        assertFalse(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(), getRuleOne()), Util.asList(getRuleOne(), getRuleThree())));
+        assertFalse(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(),
+                getRuleOne()), Util.asList(getRuleOne(), getRuleThree())));
     }
 
     /**
@@ -92,7 +311,8 @@ class PolicyUtilsTest {
         final var issuer = URI.create("https://someOtherConsumer");
 
         /* ACT && ASSERT*/
-        assertThrows(IllegalArgumentException.class, () -> PolicyUtils.removeContractsWithInvalidConsumer(null, issuer));
+        assertThrows(IllegalArgumentException.class,
+                () -> PolicyUtils.removeContractsWithInvalidConsumer(null, issuer));
     }
 
     @Test
@@ -101,7 +321,8 @@ class PolicyUtilsTest {
         final var list = List.of(getContractWithConsumer(), getContractWithoutConsumer());
 
         /* ACT && ASSERT*/
-        assertThrows(IllegalArgumentException.class, () -> PolicyUtils.removeContractsWithInvalidConsumer(list, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> PolicyUtils.removeContractsWithInvalidConsumer(list, null));
     }
 
     @Test
@@ -110,7 +331,8 @@ class PolicyUtilsTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT*/
-        assertThrows(IllegalArgumentException.class, () -> PolicyUtils.removeContractsWithInvalidConsumer(null, null));
+        assertThrows(IllegalArgumentException.class,
+                () -> PolicyUtils.removeContractsWithInvalidConsumer(null, null));
     }
 
     /**
@@ -147,6 +369,27 @@ class PolicyUtilsTest {
         return Action.LOG;
     }
 
+    private Prohibition getProhibitionWithTarget(final URI target) {
+        return new ProhibitionBuilder()
+                ._action_(Util.asList(getActionsTwo()))
+                ._target_(target)
+                .build();
+    }
+
+    private Permission getPermissionWithTarget(final URI target) {
+        return new PermissionBuilder()
+                ._action_(Util.asList(getActionThree()))
+                ._target_(target)
+                .build();
+    }
+
+    private Duty getDutyWithTarget(final URI target) {
+        return new DutyBuilder()
+                ._action_(Util.asList(getActionOne()))
+                ._target_(target)
+                .build();
+    }
+
     @SneakyThrows
     private Contract getContractWithoutConsumer() {
         final var constructor = Contract.class.getConstructor();
@@ -164,7 +407,6 @@ class PolicyUtilsTest {
 
         return contract;
     }
-
 
     @SneakyThrows
     private Contract getContractWithConsumer() {
