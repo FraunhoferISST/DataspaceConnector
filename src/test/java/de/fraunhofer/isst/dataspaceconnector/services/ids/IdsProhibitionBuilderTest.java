@@ -99,7 +99,7 @@ public class IdsProhibitionBuilderTest {
     }
 
     @Test
-    public void create_ruleJsonWithMissingAction_throwIllegalArgumentException() {
+    public void create_ruleJsonWithMissingAction_returnRuleWithMissingAction() {
         /* ARRANGE */
         final var rule = getContractRule(getRuleWithMissingAction());
 
