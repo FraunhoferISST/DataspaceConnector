@@ -1,12 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.filter.httptracing;
 
-import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,13 +10,20 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
+import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 /**
  * Use this class to log all incoming and outgoing http traffic.
  */
 @Component
 @Order(1)
+@ConditionalOnProperty(name = "httptrace.enabled")
 public class HttpTraceFilter extends OncePerRequestFilter {
     /**
      * The trace id.
