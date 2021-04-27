@@ -1,10 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
@@ -13,10 +18,6 @@ import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts DSC contracts to ids contract offers.
@@ -47,7 +48,8 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
 
     @Override
     protected ContractOffer createInternal(final Contract contract, final URI baseUri,
-                                           final int currentDepth, final int maxDepth) {
+                                           final int currentDepth, final int maxDepth)
+            throws ConstraintViolationException {
         // Build children.
         final var permissions =
                 create(permBuilder, onlyPermissions(contract.getRules()), baseUri,

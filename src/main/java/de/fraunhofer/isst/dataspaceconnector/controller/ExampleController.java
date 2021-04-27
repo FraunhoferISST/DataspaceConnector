@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -41,6 +37,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 /**
  * This class provides endpoints exposing example resources and configurations.
@@ -181,7 +181,7 @@ public class ExampleController {
                 return new ResponseEntity<>(PatternUtils.buildUsageNotificationRule(),
                         HttpStatus.OK);
             case CONNECTOR_RESTRICTED_USAGE:
-                return new ResponseEntity<>(PatternUtils.buildConnectorRestrictedUsage(),
+                return new ResponseEntity<>(PatternUtils.buildConnectorRestrictedUsageRule(),
                         HttpStatus.OK);
             default:
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

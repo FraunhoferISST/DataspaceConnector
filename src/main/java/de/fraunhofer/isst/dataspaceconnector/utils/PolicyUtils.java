@@ -43,8 +43,10 @@ public final class PolicyUtils {
      *
      * @param contract The ids contract.
      * @return A list of ids rules.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static List<Rule> extractRulesFromContract(final Contract contract) {
+        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
         final var permissionList = contract.getPermission();
         final var ruleList = permissionList == null ? new ArrayList<Rule>()
                 : new ArrayList<Rule>(permissionList);
@@ -69,10 +71,13 @@ public final class PolicyUtils {
      * @param contract The contract.
      * @param element  The requested element.
      * @return List of ids rules.
+     * @throws IllegalArgumentException If the message is null.
      */
     public static List<? extends Rule> getRulesForTargetId(final Contract contract,
                                                            final URI element) {
+        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
         final var rules = new ArrayList<Rule>();
+
         for (final var permission : contract.getPermission()) {
             final var target = permission.getTarget();
             if (element == target) {

@@ -1,7 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.util.ArrayList;
+
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.Resource;
@@ -9,9 +13,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.ArrayList;
 
 /**
  * Converts DSC resource to ids resource.
@@ -37,7 +38,8 @@ public final class IdsResourceBuilder<T extends Resource>
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
                                                              final URI baseUri,
                                                              final int currentDepth,
-                                                             final int maxDepth) {
+                                                             final int maxDepth)
+            throws ConstraintViolationException {
         // Build children.
         final var representations =
                 create(repBuilder, resource.getRepresentations(), baseUri, currentDepth,

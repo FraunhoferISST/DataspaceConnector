@@ -105,7 +105,8 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("The resource does not exist. [resourceId=({})]", resourceId);
         }
-        return new ResponseEntity<>("Resource not found.", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(String.format("Resource %s not found.", resourceId),
+                HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -119,7 +120,8 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("Resource not loaded. [resourceId=({})]", resourceId);
         }
-        return new ResponseEntity<>("Could not load resource.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(String.format("Could not load resource %s.", resourceId),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -133,7 +135,7 @@ public final class ControllerUtils {
         if (log.isDebugEnabled()) {
             log.debug("Failed to identify policy pattern.", exception);
         }
-        return new ResponseEntity<>("Could not identify pattern", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Could not identify pattern.", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     /**
