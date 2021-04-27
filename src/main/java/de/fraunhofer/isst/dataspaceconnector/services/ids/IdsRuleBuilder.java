@@ -3,6 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.services.ids;
 import java.net.URI;
 
 import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
 
     @Override
     protected final T createInternal(final ContractRule rule, final URI baseUri,
-                                     final int currentDepth, final int maxDepth) {
+                                     final int currentDepth, final int maxDepth)
+            throws ConstraintViolationException {
         final var idsRule = deserializer.getRule(rule.getValue());
         final var selfLink = getAbsoluteSelfLink(rule, baseUri);
         var newRule = rule.getValue();

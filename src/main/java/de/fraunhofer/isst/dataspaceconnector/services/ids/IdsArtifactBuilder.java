@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.net.URI;
 
 import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.NoArgsConstructor;
@@ -21,7 +22,8 @@ public final class IdsArtifactBuilder
     protected de.fraunhofer.iais.eis.Artifact createInternal(final Artifact artifact,
                                                              final URI baseUri,
                                                              final int currentDepth,
-                                                             final int maxDepth) {
+                                                             final int maxDepth)
+            throws ConstraintViolationException {
         // Prepare artifact attributes.
         final var created = IdsUtils.getGregorianOf(artifact
                                                             .getCreationDate());

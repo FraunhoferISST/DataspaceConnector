@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
@@ -42,7 +43,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @param entity The entity to be converted.
      * @return The Infomodel object.
      */
-    public X create(final T entity) {
+    public X create(final T entity) throws ConstraintViolationException {
         return create(entity, DEFAULT_DEPTH);
     }
 
@@ -53,12 +54,12 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *                 negative number to follow all dependencies.
      * @return The Infomodel object.
      */
-    public X create(final T entity, final int maxDepth) {
+    public X create(final T entity, final int maxDepth) throws ConstraintViolationException {
         return create(entity, getBaseUri(), 0, maxDepth);
     }
 
     private X create(final T entity, final URI baseUri, final int currentDepth,
-                     final int maxDepth) {
+                     final int maxDepth) throws ConstraintViolationException {
         final var resource = createInternal(entity, baseUri, currentDepth, maxDepth);
         return addAdditionals(resource, entity.getAdditional());
     }
@@ -72,7 +73,8 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @param maxDepth     The max depth to the original call.
      * @return The Infomodel object.
      */
-    protected abstract X createInternal(T entity, URI baseUri, int currentDepth, int maxDepth);
+    protected abstract X createInternal(T entity, URI baseUri, int currentDepth, int maxDepth)
+            throws ConstraintViolationException;
 
     private URI getBaseUri() {
         return URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
@@ -118,7 +120,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      */
     protected <V extends AbstractEntity, W> Optional<ArrayList<W>> create(
             final AbstractIdsBuilder<V, W> builder, final List<V> entityList, final URI baseUri,
-            final int currentDepth, final int maxDepth) {
+            final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;
 
         return !shouldGenerate(nextDepth, maxDepth) ? Optional.empty()
