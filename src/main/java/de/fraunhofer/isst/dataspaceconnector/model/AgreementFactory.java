@@ -19,7 +19,7 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
     /**
      * The default remote id.
      */
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
 
     /**
      * The default value.

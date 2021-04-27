@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
@@ -19,12 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -172,6 +172,7 @@ public class ConnectorService {
      * @return The ids resource.
      */
     public Resource getOfferedResourceById(final URI resourceId) {
+        // TODO The filter not working
         final var resource = offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
                 .filter(x -> x.getId().toString().contains(resourceId.toString()))

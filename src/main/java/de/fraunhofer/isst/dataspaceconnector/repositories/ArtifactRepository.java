@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.repositories;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,4 +31,12 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     @Query("SELECT a FROM Artifact a INNER JOIN Agreement ag ON a MEMBER OF ag.artifacts "
             + "WHERE ag.id = :agreementId")
     List<Artifact> findAllByAgreement(UUID agreementId);
+
+    @Query("SELECT ag.remoteId "
+            + "FROM Artifact a, Agreement ag "
+            + "WHERE a.id = :artifactId "
+            + "AND a.remoteId <> '67656e65736973' "
+            + "AND ag.remoteId <> '67656e65736973' "
+            + "AND ag MEMBER OF a.agreements")
+    List<URI> findRequestedResourceAgreementRemoteIds(UUID artifactId);
 }

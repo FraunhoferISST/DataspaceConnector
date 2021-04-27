@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
@@ -13,14 +19,9 @@ import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.util.List;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -40,7 +41,8 @@ public class PolicyDecisionService {
     /**
      * Policy management point.
      */
-    private final @NonNull PolicyManagementService managementService;
+    @Autowired
+    private final PolicyManagementService managementService;
 
     /**
      * Policy information point.

@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
+import de.fraunhofer.isst.dataspaceconnector.model.AgreementFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
+import de.fraunhofer.isst.dataspaceconnector.model.Data;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
@@ -19,6 +22,8 @@ import de.fraunhofer.isst.dataspaceconnector.repositories.ArtifactRepository;
 import de.fraunhofer.isst.dataspaceconnector.repositories.DataRepository;
 import de.fraunhofer.isst.dataspaceconnector.services.ArtifactRetriever;
 import de.fraunhofer.isst.dataspaceconnector.services.HttpService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifier;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationResult;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.AllArgsConstructor;
@@ -34,7 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Log4j2
 @Service
-public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
+public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
+        implements RemoteResolver {
 
     /**
      * Repository for storing data.
@@ -46,13 +52,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
      **/
     private final @NonNull HttpService httpService;
 
-
-    @Autowired
-    private ArtifactRetriever retriever;
-
     /**
      * Constructor for ArtifactService.
-     *
      * @param dataRepository The data repository.
      * @param httpService    The HTTP service for fetching remote data.
      */
@@ -64,7 +65,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     /**
      * Persist the artifact and its data.
-     *
      * @param artifact The artifact to persists.
      * @return The persisted artifact.
      */
@@ -90,70 +90,28 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     /**
      * Get the artifacts data.
-     *
      * @param artifactId The id of the artifact.
      * @param queryInput The query for the backend.
      * @return The artifacts data.
      */
     @Transactional
-    public Object getData(final UUID artifactId, final QueryInput queryInput) {
-        final var artifact = get(artifactId);
-
-        for(final var agreement : artifact.getAgreements()) {
+    public Object getData(final PolicyVerifier<URI> accessVerifier, final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
+        final var agreements = ((ArtifactRepository) getRepository())
+                .findRequestedResourceAgreementRemoteIds(
+                        artifactId);
+        for (final var agRemoteId : agreements) {
+            if(agRemoteId.equals(AgreementFactory.DEFAULT_REMOTE_ID))
+                continue;
             try {
-                return getData(artifactId, new RetrievalInformation(agreement.getRemoteId(), queryInput));
-            } catch(Exception exception) {
-                // TODO Some log message
-                // Do nothing if the data could not be pulled, just try the next one.
+                return getData(accessVerifier, retriever, artifactId,
+                               new RetrievalInformation(agRemoteId, queryInput));
+            } catch(PolicyRestrictionException ignore) {
+
             }
         }
 
-        /* General:
-             artifactId -> getData -> return data
-             artifactId && recipient && transferContract -> IdsArtifactRequest
-
-           Case 1 OfferedResource (only):
-             - artifactId && LocalData == any
-               getData -> Internal DB(load) -> return data
-             - artifactId && RemoteData == any
-               getData -> HttpService(load) -> return data
-           Case 2 RequestedResource (only):
-               ! autoDownload (UserInput) > artifact.autoDownload
-               ---
-               - artifactId && autoDownload:=false && LocalData == null && artifact.autoDownload == any
-                    getData -> IdsArtifactRequest -> Internal DB (store) -> Internal DB (read) -> return data
-               - artifactId && autoDownload:=false && LocalData != null && artifact.autoDownload == any
-                    getData -> Internal DB (read) -> return data
-               - artifactId && autoDownload:=true && LocalData == any && artifact.autoDownload == any
-                    getData -> IdsArtifactRequest -> InternalDB(store) -> Internal DB(read) -> return data
-               ---
-               - artifactId && autoDownload:=false && RemoteData == null && artifact.autoDownload == any
-                   getData -> IdsArtifactRequest -> HttpService (store) -> HttpService(load) -> return data
-               - artifactId && autoDownload:=false && RemoteData != null && artifact.autoDownload == any
-                   getData -> HttpService(load) -> return data
-               - artifactId && autoDownload:=true && RemoteData == any && artifact.autoDownload == any
-                   getData -> IdsArtifactRequest -> HttpService(store) -> HttpService(load) -> return data
-               ---
-               - artifactId && LocalData == null && artifact.autoDownload == false
-               (?)    getData -> return data (nothing)
-               - artifactId && LocalData != null && artifact.autoDownload == false
-                   getData -> Internal DB (load) -> return data
-               - artifactId && LocalData == any && artifact.autoDownload == true
-                   getData -> IdsArtifactRequest -> InternalDB(store) -> InternalDB(load) -> return data
-               ---
-               - artifactId && RemoteData == null && artifact.autoDownload = false
-               (?)    getData -> return data (nothing)
-               - artifactId && RemoteData != null && artifact.autoDownload = false
-                    getData -> HttpService(load) -> return data
-               - artifactId && RemoteData != null && artifact.autoDownload = true
-                    getData -> HttpService(store) -> HttpService(load) -> return data
-
-            Case 3 Mixed Resources aka. Rehosting of RequestedResources:
-                ! RequestedResource > OfferedResource
-                - See Case 2
-         */
-
-        return getDataFromInternalDB((ArtifactImpl) artifact, queryInput);
+        // The artifact is not assigned to any requested resources. It must be offered if it exists.
+        return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
     }
 
     private Object getDataFromInternalDB(final ArtifactImpl artifact, final QueryInput queryInput) {
@@ -175,20 +133,34 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
     }
 
     @Transactional
-    public Object getData(final UUID artifactId, final RetrievalInformation information) {
+    public Object getData(final PolicyVerifier<URI> accessVerifier,
+                          final ArtifactRetriever retriever, final UUID artifactId, final RetrievalInformation information) throws
+            PolicyRestrictionException {
         final var artifact = get(artifactId);
+
+        if(accessVerifier.verify(artifact.getRemoteId()) == VerificationResult.DENIED) {
+            log.info("Access denied.");
+            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        }
+
         final var shouldDownload = shouldDownload(artifact, information.forceDownload);
         if (shouldDownload) {
             /*
                 NOTE: Make this not blocking.
              */
             // TODO add query to retriever
-            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(), information.transferContract);
+            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
+                                                      information.transferContract);
             try {
-                setData(artifactId, new String(dataStream.readAllBytes(), StandardCharsets.UTF_16));
+                final var blob = new String(dataStream.readAllBytes(), StandardCharsets.UTF_16);
+                setData(artifactId, blob);
+                artifact.incrementAccessCounter();
+                persist(artifact);
+                return blob;
             } catch (IOException exception) {
                 // TODO Failed to set data.
                 // Do not proceed with getData, getData increments the access counter
+                log.info("Failed to pull data.");
                 return null;
             }
         }
@@ -204,24 +176,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         final QueryInput queryInput;
     }
 
-//    public Object getData(final URI artifactRemoteId, final UUID transferContract, final QueryInput queryInput, final boolean forceDownload) {
-//        final var artifactId = identifyByRemoteId(artifactRemoteId);
-//        return getData(artifactId.get(), transferContract, queryInput, forceDownload);
-//    }
-
     private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
-        if(forceDownload == null) {
+        if (forceDownload == null) {
             /*
                 NOTE: Add checks if the data is still up to date. This will remove unnecessary
                 downloads.
              */
-            return isDataPresent() || artifact.isAutomatedDownload();
+            return !isDataPresent(((ArtifactImpl) artifact).getData()) || artifact.isAutomatedDownload();
         } else {
             return forceDownload;
         }
     }
 
-    private boolean isDataPresent() {
+    private boolean isDataPresent(final Data data) {
         /*
             NOTE: Check if the data has been downloaded at least once.
          */
@@ -230,7 +197,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     /**
      * Get local data.
-     *
      * @param data The data container.
      * @return The stored data.
      */
@@ -242,7 +208,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     /**
      * Get remote data.
-     *
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
@@ -251,14 +216,15 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
         try {
             if (data.getUsername() != null || data.getPassword() != null) {
                 return httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
-                        data.getUsername(), data.getPassword(), queryInput);
+                                                                    data.getUsername(),
+                                                                    data.getPassword(), queryInput);
             } else {
                 return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
         } catch (URISyntaxException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
-                        exception.getMessage(), exception);
+                         exception.getMessage(), exception);
             }
             throw new RuntimeException("Could not connect to data source.", exception);
         }
@@ -266,7 +232,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> i
 
     /**
      * Finds all artifacts referenced in a specific agreement.
-     *
      * @param agreementId ID of the agreement
      * @return list of all artifacts referenced in the agreement
      */

@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
@@ -25,6 +28,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.SimpleArtifactDataGetter;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
@@ -32,9 +36,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Objects;
 
 @Log4j2
 @Service
@@ -45,6 +46,8 @@ public class EntityResolver {
      * Service for artifacts.
      */
     private final @NonNull ArtifactService artifactService;
+
+    private final @NonNull SimpleArtifactDataGetter dataGetter;
 
     /**
      * Service for representations.
@@ -207,7 +210,7 @@ public class EntityResolver {
     public Object getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
 
-        return artifactService.getData(endpoint, queryInput);
+        return dataGetter.getData(artifactService, endpoint, queryInput);
     }
 
     /**

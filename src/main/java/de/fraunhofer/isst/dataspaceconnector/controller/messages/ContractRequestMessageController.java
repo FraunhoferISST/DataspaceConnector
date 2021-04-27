@@ -102,7 +102,6 @@ public class ContractRequestMessageController {
         UUID agreementId;
 
         Map<String, String> response;
-        URI uri;
         try {
             // Validate input for contract request.
             PolicyUtils.validateRuleTarget(ruleList);
@@ -150,7 +149,7 @@ public class ContractRequestMessageController {
                 // id to database.
                 // TODO Check if a resource with remoteId is already stored on consumer side, if yes, do NOT create a new resource, but update it and all children
                 // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
-                uri = messageService.saveMetadata(response, artifacts, download, recipient);
+                messageService.saveMetadata(response, artifacts, download, recipient);
             }
 
             updateService.linkArtifactToAgreement(artifacts, agreementId);
@@ -178,7 +177,7 @@ public class ContractRequestMessageController {
 
                     // Read and process the response message.
                     try {
-                        uri = messageService.saveData(response, artifact);
+                        messageService.saveData(response, artifact);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {

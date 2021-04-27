@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
-import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -17,8 +17,8 @@ import java.util.Map;
 @Component
 public final class ArtifactFactory implements AbstractFactory<Artifact, ArtifactDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-    static final URI DEFAULT_REMOTE_ADDRESS = URI.create("genesis");
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+    public static final URI DEFAULT_REMOTE_ADDRESS = URI.create("genesis");
     static final String DEFAULT_TITLE = "";
     static final boolean DEFAULT_AUTO_DOWNLOAD = false;
 

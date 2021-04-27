@@ -24,7 +24,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     @Override
     public InputStream retrieve(final UUID artifactId, final URI recipient, final URI transferContract) {
         final var artifact = artifactService.get(artifactId);
-        final var response = messageService.sendArtifactRequestMessage(recipient, artifact.getRemoteAddress(), transferContract);
+        final var response = messageService.sendArtifactRequestMessage(recipient, artifact.getRemoteId(), transferContract);
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
         return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_16));
     }

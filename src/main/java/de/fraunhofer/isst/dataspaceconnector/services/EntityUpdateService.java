@@ -13,12 +13,15 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -50,6 +53,9 @@ public class EntityUpdateService {
      * Service for linking artifacts to agreement.
      */
     private final @NonNull RelationshipServices.AgreementArtifactLinker agreementArtifactLinker;
+
+    @Autowired
+    ArtifactService artifactService;
 
     /**
      * Update database resource.
@@ -126,7 +132,8 @@ public class EntityUpdateService {
 
     // TODO link agreement to artifacts.
     public final void linkArtifactToAgreement(final List<URI> artifactIds, final UUID agreementId) {
-        agreementArtifactLinker.add(agreementId, toSet(artifactIds));
+        final var localArtifacts = Utils.toStream(artifactIds).map(x -> artifactService.identifyByRemoteId(x).get()).collect(Collectors.toSet());
+        agreementArtifactLinker.add(agreementId, localArtifacts);
     }
 
     private static Set<UUID> toSet(final List<URI> uris) {
