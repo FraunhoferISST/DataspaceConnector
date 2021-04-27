@@ -17,6 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
+
 /**
  * Use this class to log all incoming and outgoing http traffic.
  */
