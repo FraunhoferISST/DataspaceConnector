@@ -2,7 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,7 +27,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.BlockingArtifactReceiver;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
@@ -31,6 +34,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.SimpleArtifactDataGetter;
 import de.fraunhofer.isst.dataspaceconnector.utils.ValidationUtils;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
@@ -45,17 +49,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 public final class ResourceControllers {
 
@@ -145,10 +153,10 @@ public final class ResourceControllers {
             ArtifactService> {
 
         @Autowired
-        BlockingArtifactReceiver dataReceiver;
+        ArtifactService artifactService;
 
         @Autowired
-        AgreementService agreementService;
+        SimpleArtifactDataGetter dataReceiver;
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data
@@ -163,7 +171,7 @@ public final class ResourceControllers {
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
+        public ResponseEntity<StreamingResponseBody> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
                                               @RequestParam(required = false) final Boolean download,
                                               @RequestParam(required = false) final URI transferContract,
                                               @RequestParam final Map<String, String> params,
@@ -178,10 +186,27 @@ public final class ResourceControllers {
             queryInput.setOptional(request.getRequestURI().substring((request.getContextPath() + "/data").length()));
 
             final var data = (transferContract == null)
-                    ? getService().getData(artifactId, queryInput)
-                    : getService().getData(artifactId, new ArtifactService.RetrievalInformation(transferContract, download, queryInput));
+                    ? dataReceiver.getData(artifactService, artifactId, queryInput)
+                    : dataReceiver.getData(artifactService, artifactId, new ArtifactService.RetrievalInformation(transferContract, download, queryInput));
 
-            return ResponseEntity.ok(data);
+            StreamingResponseBody body = outputStream -> {
+                var byteAos = new ByteArrayOutputStream();
+                byteAos.write(data.toString().getBytes(StandardCharsets.UTF_16));
+
+                var inputStream = new ByteArrayInputStream(byteAos.toByteArray());
+
+                int numBytesToWrite;
+                var buffer = new byte[2048];
+                while((numBytesToWrite = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                    outputStream.write(buffer, 0, numBytesToWrite);
+                }
+
+                inputStream.close();
+            };
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.TEXT_PLAIN)
+                    .body(body);
         }
 
         /**
@@ -199,7 +224,20 @@ public final class ResourceControllers {
         public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
                                               @RequestBody(required = false) QueryInput queryInput) {
             ValidationUtils.validateQueryInput(queryInput);
-            return ResponseEntity.ok(getService().getData(artifactId, queryInput));
+            return ResponseEntity.ok(dataReceiver.getData(artifactService, artifactId, queryInput));
+        }
+
+        @PutMapping("{id}/data")
+        public ResponseEntity<Object> putData(final HttpServletRequest request) {
+
+            try {
+                final var data = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_16);
+                System.out.println(data);
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+
+            return ResponseEntity.ok("");
         }
     }
 }
