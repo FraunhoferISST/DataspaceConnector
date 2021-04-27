@@ -158,7 +158,7 @@ public class IdsResourceBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnContractWithoutRepresentationsAndContracts() {
+    public void create_maxDepth0_returnResourceWithoutRepresentationsAndContracts() {
         /* ARRANGE */
         final var resource = getOfferedResource();
 
@@ -185,7 +185,7 @@ public class IdsResourceBuilderTest {
     }
 
     @Test
-    public void create_maxDepth1_returnContractWithoutArtifactsAndRules() {
+    public void create_maxDepth1_returnResourceWithoutArtifactsAndRules() {
         /* ARRANGE */
         final var resource = getOfferedResource();
 
