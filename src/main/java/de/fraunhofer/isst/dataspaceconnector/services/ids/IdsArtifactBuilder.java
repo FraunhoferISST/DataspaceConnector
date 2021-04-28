@@ -29,7 +29,8 @@ public final class IdsArtifactBuilder
                                                             .getCreationDate());
 
         return new ArtifactBuilder(getAbsoluteSelfLink(artifact, baseUri))
-                ._byteSize_(BigInteger.ONE) // TODO get the real file size (how?)
+                ._byteSize_(BigInteger.valueOf(artifact.getByteSize()))
+                ._checkSum_(BigInteger.valueOf(artifact.getCheckSum()).toString())
                 ._creationDate_(created)
                 ._fileName_(artifact.getTitle())
                 .build();

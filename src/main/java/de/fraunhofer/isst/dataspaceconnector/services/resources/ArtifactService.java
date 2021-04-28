@@ -102,9 +102,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier, final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
-        final var agreements = ((ArtifactRepository) getRepository())
-                .findRequestedResourceAgreementRemoteIds(
-                        artifactId);
+        final var agreements = ((ArtifactRepository) getRepository()).findRequestedResourceAgreementRemoteIds(artifactId);
         for (final var agRemoteId : agreements) {
             if(agRemoteId.equals(AgreementFactory.DEFAULT_REMOTE_ID))
                 continue;

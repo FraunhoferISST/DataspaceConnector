@@ -1,11 +1,28 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
@@ -32,6 +49,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.SimpleArtifactDataGetter;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.SimpleDataAccessVerifier;
 import de.fraunhofer.isst.dataspaceconnector.utils.ValidationUtils;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
@@ -46,69 +64,49 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 public final class ResourceControllers {
-
     @RestController
     @RequestMapping("/api/catalogs")
     @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
-    public static class CatalogController extends BaseResourceController<Catalog, CatalogDesc,
-            CatalogView, CatalogService> {
-    }
+    public static class CatalogController
+            extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {}
 
     @RestController
     @RequestMapping("/api/rules")
     @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
     public static class RuleController extends BaseResourceController<ContractRule,
-            ContractRuleDesc, ContractRuleView, RuleService> {
-    }
+            ContractRuleDesc, ContractRuleView, RuleService> {}
 
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
     public static class RepresentationController extends BaseResourceController<Representation,
-            RepresentationDesc, RepresentationView, RepresentationService> {
-    }
+            RepresentationDesc, RepresentationView, RepresentationService> {}
 
     @RestController
     @RequestMapping("/api/contracts")
     @Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
-    public static class ContractController extends BaseResourceController<Contract, ContractDesc,
-            ContractView, ContractService> {
-    }
+    public static class ContractController
+            extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {}
 
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
-    public static class OfferedResourceController extends BaseResourceController<OfferedResource,
-            OfferedResourceDesc, OfferedResourceView, ResourceService<OfferedResource,
-            OfferedResourceDesc>> {
-    }
+    public static class OfferedResourceController
+            extends BaseResourceController<OfferedResource, OfferedResourceDesc,
+                    OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {}
 
     @RestController
     @RequestMapping("/api/requests")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
-    public static class RequestedResourceController extends BaseResourceController<RequestedResource,
-            RequestedResourceDesc, RequestedResourceView, ResourceService<RequestedResource,
-            RequestedResourceDesc>> {
+    public static class RequestedResourceController
+            extends BaseResourceController<RequestedResource, RequestedResourceDesc,
+                    RequestedResourceView,
+                    ResourceService<RequestedResource, RequestedResourceDesc>> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
         public ResponseEntity<RequestedResourceView> create(final RequestedResourceDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
@@ -117,26 +115,26 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/agreements")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    public static class AgreementController extends BaseResourceController<Agreement,
-            AgreementDesc, AgreementView, AgreementService> {
+    public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
+            AgreementView, AgreementService> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
         public ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public ResponseEntity<Object> update(@Valid final UUID resourceId,
-                                             final AgreementDesc desc) {
+        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
+        public ResponseEntity<Object> update(
+                @Valid final UUID resourceId, final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
         public ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
@@ -145,15 +143,16 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/artifacts")
     @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
-    public static class ArtifactController extends BaseResourceController<Artifact, ArtifactDesc,
-            ArtifactView,
-            ArtifactService> {
-
+    public static class ArtifactController
+            extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
         @Autowired
         ArtifactService artifactService;
 
         @Autowired
         SimpleArtifactDataGetter dataReceiver;
+
+        @Autowired
+        SimpleDataAccessVerifier dataAccessVerifier;
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data
@@ -167,29 +166,34 @@ public final class ResourceControllers {
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<StreamingResponseBody> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
-                                              @RequestParam(required = false) final Boolean download,
-                                              @RequestParam(required = false) final URI transferContract,
-                                              @RequestParam final Map<String, String> params,
-                                              @RequestHeader final Map<String, String> headers,
-                                              final HttpServletRequest request) {
+        @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+        public ResponseEntity<StreamingResponseBody> getData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestParam(required = false) final Boolean download,
+                @RequestParam(required = false) final URI transferContract,
+                @RequestParam final Map<String, String> params,
+                @RequestHeader final Map<String, String> headers,
+                final HttpServletRequest request) {
             headers.remove("authorization");
             headers.remove("host");
 
             final var queryInput = new QueryInput();
             queryInput.setParams(params);
             queryInput.setHeaders(headers);
-            queryInput.setOptional(request.getRequestURI().substring((request.getContextPath() + "/data").length()));
+            queryInput.setOptional(request.getRequestURI().substring(
+                    (request.getContextPath() + "/data").length()));
 
             final var data = (transferContract == null)
-                    ? dataReceiver.getData(artifactService, artifactId, queryInput)
-                    : dataReceiver.getData(artifactService, artifactId, new ArtifactService.RetrievalInformation(transferContract, download, queryInput));
+                    ? dataReceiver.getData(
+                            artifactService, dataAccessVerifier, artifactId, queryInput)
+                    : dataReceiver.getData(artifactService, dataAccessVerifier, artifactId,
+                            new ArtifactService.RetrievalInformation(
+                                    transferContract, download, queryInput));
 
             StreamingResponseBody body = outputStream -> {
                 int numBytesToWrite;
-                var buffer = new byte[2048];
-                while((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
+                var buffer = new byte[1024];
+                while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
                     outputStream.write(buffer, 0, numBytesToWrite);
                 }
 
@@ -200,9 +204,9 @@ public final class ResourceControllers {
             outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
 
             return ResponseEntity.ok()
-                                 .headers(outputHeader)
-                                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                                 .body(body);
+                    .headers(outputHeader)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(body);
         }
 
         /**
@@ -216,16 +220,19 @@ public final class ResourceControllers {
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<Object> getData(@Valid @PathVariable(name = "id") final UUID artifactId,
-                                              @RequestBody(required = false) QueryInput queryInput) {
+        @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+        public ResponseEntity<Object> getData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestBody(required = false) QueryInput queryInput) {
             ValidationUtils.validateQueryInput(queryInput);
-            return ResponseEntity.ok(dataReceiver.getData(artifactService, artifactId, queryInput));
+            return ResponseEntity.ok(dataReceiver.getData(
+                    artifactService, dataAccessVerifier, artifactId, queryInput));
         }
 
         @PutMapping(value = "{id}/data", consumes = "*/*")
-        public ResponseEntity<Object> putData(@Valid @PathVariable(name = "id") final UUID artifactId, final @RequestBody
-                byte[] inputStream) {
+        public ResponseEntity<Object> putData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                final @RequestBody byte[] inputStream) {
             try {
                 artifactService.setData(artifactId, new ByteArrayInputStream(inputStream));
             } catch (Exception exception) {

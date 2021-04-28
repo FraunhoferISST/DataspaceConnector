@@ -30,6 +30,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.SimpleArtifactDataGetter;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.AlwaysAllowAccessVerifier;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
@@ -104,6 +105,8 @@ public class EntityResolver {
      * Service for building ids contract.
      */
     private final @NonNull IdsContractBuilder contractBuilder;
+
+    private final @NonNull AlwaysAllowAccessVerifier allowAccessVerifier;
 
     /**
      * Return any connector entity by its id.
@@ -202,7 +205,7 @@ public class EntityResolver {
     }
 
     /**
-     * Return artifact by uri.
+     * Return artifact by uri. This will skip the access control.
      *
      * @param requestedArtifact The artifact uri.
      * @param queryInput        Http query for data request.
@@ -210,8 +213,7 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-
-        return dataGetter.getData(artifactService, endpoint, queryInput);
+        return dataGetter.getData(artifactService, allowAccessVerifier, endpoint, queryInput);
     }
 
     /**
