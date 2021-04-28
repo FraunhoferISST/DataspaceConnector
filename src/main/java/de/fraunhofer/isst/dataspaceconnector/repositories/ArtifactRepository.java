@@ -38,8 +38,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     @Query("SELECT ag.remoteId "
             + "FROM Artifact a, Agreement ag "
             + "WHERE a.id = :artifactId "
-            + "AND a.remoteId <> '67656e65736973' "
-            + "AND ag.remoteId <> '67656e65736973' "
+            + "AND ag.remoteId <> 'aced00057372000c6a6176612e6e65742e555249ac01782e439e49ab0300014c0006737472696e677400124c6a6176612f6c616e672f537472696e673b787074000767656e6573697378' "
             + "AND ag MEMBER OF a.agreements")
     List<URI> findRequestedResourceAgreementRemoteIds(UUID artifactId);
 

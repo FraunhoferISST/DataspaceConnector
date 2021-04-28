@@ -9,13 +9,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
-import de.fraunhofer.isst.dataspaceconnector.model.AgreementFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
-import de.fraunhofer.isst.dataspaceconnector.model.Data;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
@@ -86,8 +85,8 @@ public class ArtifactService
             }
 
             if (tmp.getData() instanceof LocalData) {
-                ((ArtifactFactory) getFactory())
-                        .updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+                ( (ArtifactFactory) getFactory() )
+                        .updateByteSize(artifact, ( (LocalData) tmp.getData() ).getValue());
             }
         }
 
@@ -102,16 +101,37 @@ public class ArtifactService
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier,
-            final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
+                               final ArtifactRetriever retriever, final UUID artifactId,
+                               final QueryInput queryInput) {
         final var agreements = ((ArtifactRepository) getRepository())
-                                       .findRequestedResourceAgreementRemoteIds(artifactId);
+                .findRequestedResourceAgreementRemoteIds(artifactId);
         for (final var agRemoteId : agreements) {
-            if (agRemoteId.equals(AgreementFactory.DEFAULT_REMOTE_ID)) continue;
             try {
                 return getData(accessVerifier, retriever, artifactId,
-                        new RetrievalInformation(agRemoteId, queryInput));
+                               new RetrievalInformation(agRemoteId, queryInput));
             } catch (PolicyRestrictionException ignore) {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "Tried to access artifact data by trying an agreement. [artifactId="
+                            + "({}), agreementId=({})]",
+                            artifactId, agRemoteId);
+                }
             }
+        }
+
+        if(agreements.size() > 0) {
+            /*
+                NOTE: Not sure how the query for the rehosting of resources should look like.
+                Limit it with this. If the artifact has any agreements not created by this
+                connector. Do not proceed.
+             */
+            if (log.isDebugEnabled()) {
+                log.debug(
+                        "The requested resource is not owned by this connector. Access forbidden. [artifactId=({})]",
+                        artifactId);
+            }
+
+            throw new ResourceNotFoundException(artifactId.toString());
         }
 
         // The artifact is not assigned to any requested resources. It must be offered if it exists.
@@ -139,8 +159,9 @@ public class ArtifactService
 
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier,
-            final ArtifactRetriever retriever, final UUID artifactId,
-            final RetrievalInformation information) throws PolicyRestrictionException {
+                               final ArtifactRetriever retriever, final UUID artifactId,
+                               final RetrievalInformation information)
+            throws PolicyRestrictionException {
         final var artifact = get(artifactId);
 
         if (accessVerifier.verify(artifact.getRemoteId()) == VerificationResult.DENIED) {
@@ -153,8 +174,9 @@ public class ArtifactService
             /*
                 NOTE: Make this not blocking.
              */
-            final var dataStream = retriever.retrieve(
-                    artifactId, artifact.getRemoteAddress(), information.transferContract, information.queryInput);
+            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
+                                                      information.transferContract,
+                                                      information.queryInput);
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);
@@ -179,18 +201,17 @@ public class ArtifactService
                 NOTE: Add checks if the data is still up to date. This will remove unnecessary
                 downloads.
              */
-            return !isDataPresent(((ArtifactImpl) artifact).getData())
-                    || artifact.isAutomatedDownload();
+            return !isDataPresent(artifact) || artifact.isAutomatedDownload();
         } else {
             return forceDownload;
         }
     }
 
-    private boolean isDataPresent(final Data data) {
+    private boolean isDataPresent(final Artifact artifact) {
         /*
             NOTE: Check if the data has been downloaded at least once.
          */
-        return false;
+        return artifact.getByteSize() > 0;
     }
 
     /**
@@ -214,7 +235,9 @@ public class ArtifactService
             if (data.getUsername() != null || data.getPassword() != null) {
                 backendData =
                         httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
-                                data.getUsername(), data.getPassword(), queryInput);
+                                                                     data.getUsername(),
+                                                                     data.getPassword(),
+                                                                     queryInput);
             } else {
                 backendData =
                         httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
@@ -224,7 +247,7 @@ public class ArtifactService
         } catch (URISyntaxException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
-                        exception.getMessage(), exception);
+                         exception.getMessage(), exception);
             }
             throw new RuntimeException("Could not connect to data source.", exception);
         }
@@ -237,7 +260,7 @@ public class ArtifactService
      */
     public List<Artifact> getAllByAgreement(final UUID agreementId) {
         Utils.requireNonNull(agreementId, ErrorMessages.ENTITYID_NULL);
-        return ((ArtifactRepository) getRepository()).findAllByAgreement(agreementId);
+        return ( (ArtifactRepository) getRepository() ).findAllByAgreement(agreementId);
     }
 
     @Override
@@ -249,7 +272,7 @@ public class ArtifactService
     @Transactional
     public InputStream setData(final UUID artifactId, final InputStream data) {
         var artifact = get(artifactId);
-        final var localData = ((ArtifactImpl) artifact).getData();
+        final var localData = ( (ArtifactImpl) artifact ).getData();
         if (localData instanceof LocalData) {
             try {
                 /**
@@ -260,8 +283,8 @@ public class ArtifactService
                 final var bytes = data.readAllBytes();
                 data.close();
                 dataRepository.setLocalData(localData.getId(), bytes);
-                if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
-                    ((ArtifactRepository) getRepository())
+                if (( (ArtifactFactory) getFactory() ).updateByteSize(artifact, bytes)) {
+                    ( (ArtifactRepository) getRepository() )
                             .setArtifactData(
                                     artifactId, artifact.getCheckSum(), artifact.getByteSize());
                 }
