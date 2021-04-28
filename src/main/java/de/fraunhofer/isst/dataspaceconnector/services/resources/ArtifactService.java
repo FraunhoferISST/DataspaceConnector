@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,6 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactImpl;
 import de.fraunhofer.isst.dataspaceconnector.model.Data;
 import de.fraunhofer.isst.dataspaceconnector.model.LocalData;
@@ -30,6 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jose4j.base64url.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +85,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                     dataRepository.saveAndFlush(tmp.getData());
                 }
             }
+
+            if(tmp.getData() instanceof LocalData) {
+                ((ArtifactFactory) getFactory()).updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+            }
         }
 
         return super.persist(tmp);
@@ -95,7 +101,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The artifacts data.
      */
     @Transactional
-    public Object getData(final PolicyVerifier<URI> accessVerifier, final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
+    public InputStream getData(final PolicyVerifier<URI> accessVerifier, final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
         final var agreements = ((ArtifactRepository) getRepository())
                 .findRequestedResourceAgreementRemoteIds(
                         artifactId);
@@ -114,10 +120,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
     }
 
-    private Object getDataFromInternalDB(final ArtifactImpl artifact, final QueryInput queryInput) {
+    private InputStream getDataFromInternalDB(final ArtifactImpl artifact, final QueryInput queryInput) {
         final var data = artifact.getData();
 
-        Object rawData;
+        InputStream rawData;
         if (data instanceof LocalData) {
             rawData = getData((LocalData) data);
         } else if (data instanceof RemoteData) {
@@ -133,7 +139,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     }
 
     @Transactional
-    public Object getData(final PolicyVerifier<URI> accessVerifier,
+    public InputStream getData(final PolicyVerifier<URI> accessVerifier,
                           final ArtifactRetriever retriever, final UUID artifactId, final RetrievalInformation information) throws
             PolicyRestrictionException {
         final var artifact = get(artifactId);
@@ -151,18 +157,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             // TODO add query to retriever
             final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
                                                       information.transferContract);
-            try {
-                final var blob = new String(dataStream.readAllBytes(), StandardCharsets.UTF_16);
-                setData(artifactId, blob);
-                artifact.incrementAccessCounter();
-                persist(artifact);
-                return blob;
-            } catch (IOException exception) {
-                // TODO Failed to set data.
-                // Do not proceed with getData, getData increments the access counter
-                log.info("Failed to pull data.");
-                return null;
-            }
+            final var persistedData = setData(artifactId, dataStream);
+            artifact.incrementAccessCounter();
+            persist(artifact);
+            return persistedData;
         }
 
         return getDataFromInternalDB((ArtifactImpl) artifact, null);
@@ -200,10 +198,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param data The data container.
      * @return The stored data.
      */
-    private Object getData(final LocalData data) {
-        // TODO send artifact request if no data is available or the user input says "update".
-        // TODO If data belongs to a requested artifact, check contract conditions.
-        return data.getValue();
+    private InputStream getData(final LocalData data) {
+        return toInputStream(data.getValue());
     }
 
     /**
@@ -212,15 +208,18 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput The query for the backend.
      * @return The stored data.
      */
-    private Object getData(final RemoteData data, final QueryInput queryInput) {
+    private InputStream getData(final RemoteData data, final QueryInput queryInput) {
         try {
+            String backendData;
             if (data.getUsername() != null || data.getPassword() != null) {
-                return httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
+                backendData = httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
                                                                     data.getUsername(),
                                                                     data.getPassword(), queryInput);
             } else {
-                return httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
+                backendData = httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
+
+            return toInputStream(Base64.decode(backendData));
         } catch (URISyntaxException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
@@ -246,15 +245,48 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return repo.identifyByRemoteId(remoteId);
     }
 
+//    @Transactional
+//    public void setData(final UUID artifactId, final String data) {
+//        try {
+//            var byteAos = new ByteArrayOutputStream();
+//            byteAos.write(Base64.decode(data));
+//            var inputStream = new ByteArrayInputStream(byteAos.toByteArray());
+//            setData(artifactId, inputStream);
+//            byteAos.close();
+//        }catch(Exception e) {
+//        }
+//    }
+
     @Transactional
-    public void setData(final UUID artifactId, final String data) {
-        final var localData = ((ArtifactImpl) get(artifactId)).getData();
+    public InputStream setData(final UUID artifactId, final InputStream data) {
+        var artifact = get(artifactId);
+        final var localData = ((ArtifactImpl) artifact).getData();
         if (localData instanceof LocalData) {
             // TODO: Check if the data needs to be sanitized before passing it to JPA.
             // TODO: This probably is some form of duplication with the code in persist
-            dataRepository.setLocalData(localData.getId(), data);
+            try {
+                /**
+                 * The service or the factories need to implement some form of patching. But since this
+                 * is the only place where a single value is updated its enough to use a query for this.
+                 */
+                final var bytes = data.readAllBytes();
+                data.close();
+                dataRepository.setLocalData(localData.getId(), bytes);
+                if(((ArtifactFactory)getFactory()).updateByteSize(artifact, bytes)) {
+                   ((ArtifactRepository)getRepository()).setArtifactData(artifactId, artifact.getCheckSum(), artifact.getByteSize());
+                }
+
+                return new ByteArrayInputStream(bytes);
+            }catch(Exception e){
+                throw new RuntimeException("Not implemented");
+            }
         } else {
             throw new RuntimeException("Not implemented");
         }
     }
+
+    private InputStream toInputStream(final byte[] data) {
+        return new ByteArrayInputStream(data);
+    }
+
 }

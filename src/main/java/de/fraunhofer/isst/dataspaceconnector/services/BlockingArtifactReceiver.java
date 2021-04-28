@@ -3,12 +3,12 @@ package de.fraunhofer.isst.dataspaceconnector.services;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import org.jose4j.base64url.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +26,6 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
         final var artifact = artifactService.get(artifactId);
         final var response = messageService.sendArtifactRequestMessage(recipient, artifact.getRemoteId(), transferContract);
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
-        return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_16));
+        return new ByteArrayInputStream(Base64.decode(data));
     }
 }

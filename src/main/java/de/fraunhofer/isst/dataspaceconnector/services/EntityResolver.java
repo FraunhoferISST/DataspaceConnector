@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Objects;
 
@@ -207,7 +208,7 @@ public class EntityResolver {
      * @param queryInput        Http query for data request.
      * @return Artifact from database.
      */
-    public Object getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
+    public InputStream getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
 
         return dataGetter.getData(artifactService, endpoint, queryInput);

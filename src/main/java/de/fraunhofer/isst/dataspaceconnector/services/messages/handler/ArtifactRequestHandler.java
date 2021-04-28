@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
@@ -29,10 +33,8 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * This @{@link ArtifactRequestHandler} handles all incoming messages that have a
@@ -235,8 +237,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             final var header = artifactService.buildMessage(desc);
 
             // Send ids response message.
-            return BodyResponse.create(header, data);
-        } catch (MessageBuilderException | ConstraintViolationException exception) {
+            return BodyResponse.create(header, Base64.encode(data.readAllBytes()));
+        } catch (MessageBuilderException | ConstraintViolationException | IOException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception,
                     issuerConnector, messageId);
         }

@@ -140,4 +140,6 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
     protected BaseEntityRepository<T> getRepository() {
         return repository;
     }
+
+    protected AbstractFactory<T, D> getFactory() { return factory; }
 }

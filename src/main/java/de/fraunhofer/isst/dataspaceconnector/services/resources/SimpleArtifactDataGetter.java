@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.io.InputStream;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
@@ -18,12 +19,11 @@ public class SimpleArtifactDataGetter {
     SimpleDataAccessVerifier accessVerifier;
 
     @SneakyThrows
-    public Object getData(final ArtifactService service, final UUID artifactId, final QueryInput queryInput) {
-        final var data = service.getData(accessVerifier, dataReceiver, artifactId, queryInput);
-        return data;
+    public InputStream getData(final ArtifactService service, final UUID artifactId, final QueryInput queryInput) {
+        return service.getData(accessVerifier, dataReceiver, artifactId, queryInput);
     }
 
-    public Object getData(final ArtifactService service, final UUID artifactId, final ArtifactService.RetrievalInformation information) {
+    public InputStream getData(final ArtifactService service, final UUID artifactId, final ArtifactService.RetrievalInformation information) {
         return service.getData(accessVerifier, dataReceiver, artifactId, information);
     }
 }

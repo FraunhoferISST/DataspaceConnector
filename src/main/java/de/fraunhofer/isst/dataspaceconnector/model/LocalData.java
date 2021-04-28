@@ -18,5 +18,5 @@ import lombok.Setter;
 @Setter(AccessLevel.PACKAGE)
 public class LocalData extends Data {
     @Lob
-    private String value;
+    private byte[] value;
 }

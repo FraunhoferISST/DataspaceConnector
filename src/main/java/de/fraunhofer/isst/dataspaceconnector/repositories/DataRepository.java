@@ -8,10 +8,12 @@ import de.fraunhofer.isst.dataspaceconnector.model.RemoteData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link Data}.
  */
+@Repository
 public interface DataRepository extends JpaRepository<Data, Long> {
 
     /**
@@ -30,5 +32,5 @@ public interface DataRepository extends JpaRepository<Data, Long> {
 
     @Modifying
     @Query("update LocalData a set a.value = :data where a.id = :entityId")
-    void setLocalData(Long entityId, String data);
+    void setLocalData(Long entityId, byte[] data);
 }

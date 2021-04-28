@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,7 +67,7 @@ public class PolicyExecutionService {
         final var entityId = EndpointUtils.getUUIDFromPath(target);
 
         // Update data for artifact.
-        artifactService.setData(entityId, null);
+        artifactService.setData(entityId, InputStream.nullInputStream());
         if (log.isInfoEnabled()) {
             log.info("Deleted data from artifact. [target=({})]", target);
         }

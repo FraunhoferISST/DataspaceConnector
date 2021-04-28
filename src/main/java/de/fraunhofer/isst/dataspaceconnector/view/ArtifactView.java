@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import java.time.ZonedDateTime;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.time.ZonedDateTime;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -36,6 +36,16 @@ public class ArtifactView  extends RepresentationModel<ArtifactView> {
      * Number of data accesses.
      */
     private Long numAccessed;
+
+    /**
+     * The byte size of the artifact.
+     */
+    private long byteSize;
+
+    /**
+     * The CRC32C CheckSum of the artifact.
+     */
+    private long checkSum;
 
     /**
      * Additional properties.

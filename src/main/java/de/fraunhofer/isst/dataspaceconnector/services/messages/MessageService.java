@@ -1,6 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -316,11 +318,11 @@ public class MessageService {
      */
     public URI saveData(final Map<String, String> response, final URI remoteId)
             throws MessageResponseException, ResourceNotFoundException {
-        final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
         final var artifact = artifactService.get(artifactId.get());
 
-        artifactService.setData(artifact.getId(), data);
+        artifactService.setData(artifact.getId(), new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }

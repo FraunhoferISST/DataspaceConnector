@@ -3,10 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,8 +46,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -190,23 +187,22 @@ public final class ResourceControllers {
                     : dataReceiver.getData(artifactService, artifactId, new ArtifactService.RetrievalInformation(transferContract, download, queryInput));
 
             StreamingResponseBody body = outputStream -> {
-                var byteAos = new ByteArrayOutputStream();
-                byteAos.write(data.toString().getBytes(StandardCharsets.UTF_16));
-
-                var inputStream = new ByteArrayInputStream(byteAos.toByteArray());
-
                 int numBytesToWrite;
                 var buffer = new byte[2048];
-                while((numBytesToWrite = inputStream.read(buffer, 0, buffer.length)) != -1) {
+                while((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
                     outputStream.write(buffer, 0, numBytesToWrite);
                 }
 
-                inputStream.close();
+                data.close();
             };
 
+            final var outputHeader = new HttpHeaders();
+            outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
+
             return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body(body);
+                                 .headers(outputHeader)
+                                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                 .body(body);
         }
 
         /**
@@ -227,13 +223,12 @@ public final class ResourceControllers {
             return ResponseEntity.ok(dataReceiver.getData(artifactService, artifactId, queryInput));
         }
 
-        @PutMapping("{id}/data")
-        public ResponseEntity<Object> putData(final HttpServletRequest request) {
-
+        @PutMapping(value = "{id}/data", consumes = "*/*")
+        public ResponseEntity<Object> putData(@Valid @PathVariable(name = "id") final UUID artifactId, final @RequestBody
+                byte[] inputStream) {
             try {
-                final var data = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_16);
-                System.out.println(data);
-            } catch (IOException exception) {
+                artifactService.setData(artifactId, new ByteArrayInputStream(inputStream));
+            } catch (Exception exception) {
                 exception.printStackTrace();
             }
 

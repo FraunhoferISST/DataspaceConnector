@@ -5,10 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.CRC32C;
 
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
 
 /**
@@ -126,16 +128,19 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
         final var newData = new LocalData();
-        newData.setValue(value == null ? "" : value);
+        final var data = Base64.decode(value);
+        newData.setValue(value == null ? null : data);
 
         final var oldData = artifact.getData();
         if (oldData instanceof LocalData) {
             if (!oldData.equals(newData)) {
                 artifact.setData(newData);
+                updateByteSize(artifact, data);
                 return true;
             }
         } else {
             artifact.setData(newData);
+            updateByteSize(artifact, data);
             return true;
         }
 
@@ -161,5 +166,32 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         }
 
         return false;
+    }
+
+    public boolean updateByteSize(final Artifact artifact, byte[] bytes) {
+        var hasChanged = false;
+        final var checkSum = calculateChecksum(bytes);
+
+        if(bytes != null && artifact.getByteSize() != bytes.length) {
+            artifact.setByteSize(bytes.length);
+            hasChanged = true;
+        }
+
+        if(artifact.getCheckSum() != checkSum) {
+            artifact.setCheckSum(checkSum);
+            hasChanged = true;
+        }
+
+        return hasChanged;
+    }
+
+    private long calculateChecksum(final byte[] bytes) {
+        if(bytes == null) {
+            return 0;
+        }
+
+        final var checksum = new CRC32C();
+        checksum.update(bytes, 0, bytes.length);
+        return checksum.getValue();
     }
 }

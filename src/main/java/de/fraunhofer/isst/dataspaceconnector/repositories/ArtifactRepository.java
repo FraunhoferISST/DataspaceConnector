@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link Artifact}.
  */
+@Repository
 public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
 
     /**
@@ -39,4 +42,8 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "AND ag.remoteId <> '67656e65736973' "
             + "AND ag MEMBER OF a.agreements")
     List<URI> findRequestedResourceAgreementRemoteIds(UUID artifactId);
+
+    @Modifying
+    @Query("update Artifact a set a.checkSum=:checkSum, a.byteSize=:size where a.id = :artifactId")
+    void setArtifactData(UUID artifactId, long checkSum, long size);
 }
