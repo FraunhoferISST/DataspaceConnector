@@ -211,7 +211,7 @@ public class ArtifactService
         /*
             NOTE: Check if the data has been downloaded at least once.
          */
-        return artifact.getByteSize() > 0;
+        return false;
     }
 
     /**
