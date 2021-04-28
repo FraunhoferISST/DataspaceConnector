@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
         if (log.isErrorEnabled()) {
             log.error("An unhandled exception has been caught. [exception=({})]",
-                     exception.getMessage(), exception);
+                     exception != null ? exception.getMessage() : "Passed null as exception", exception);
         }
 
         final var headers = new HttpHeaders();
