@@ -3,9 +3,11 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jose4j.base64url.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -472,7 +474,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertEquals("", ((LocalData)((ArtifactImpl)result).getData()).getValue());
+        assertNull(((LocalData)((ArtifactImpl)result).getData()).getValue());
     }
 
     @Test
@@ -487,7 +489,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertEquals(desc.getValue(), ((LocalData)((ArtifactImpl)artifact).getData()).getValue());
+        assertTrue(Arrays.equals(Base64.decode(desc.getValue()), ((LocalData)((ArtifactImpl)artifact).getData()).getValue()));
     }
 
     @Test
