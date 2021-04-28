@@ -1,10 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import org.jose4j.base64url.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -36,6 +31,10 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jose4j.base64url.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for artifacts.
@@ -154,9 +153,8 @@ public class ArtifactService
             /*
                 NOTE: Make this not blocking.
              */
-            // TODO add query to retriever
             final var dataStream = retriever.retrieve(
-                    artifactId, artifact.getRemoteAddress(), information.transferContract);
+                    artifactId, artifact.getRemoteAddress(), information.transferContract, information.queryInput);
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);

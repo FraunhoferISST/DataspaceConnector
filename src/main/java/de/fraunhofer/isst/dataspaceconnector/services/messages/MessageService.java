@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -206,9 +207,29 @@ public class MessageService {
                                                           final URI elementId,
                                                           final URI agreementId)
             throws MessageException {
+        return sendArtifactRequestMessage(recipient, elementId, agreementId, null);
+    }
+
+    public Map<String, String> sendArtifactRequestMessage(final URI recipient,
+                                                          final URI elementId,
+                                                          final URI agreementId,
+                                                          final QueryInput queryInput)
+            throws MessageException {
         final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
-        // TODO set payload to null?
-        return artifactRequestService.sendMessage(desc, "");
+
+        String payload = "";
+        if(queryInput != null) {
+            try {
+                payload = objectMapper.writeValueAsString(queryInput);
+            } catch (JsonProcessingException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to parse query. Loading everything. [exception=({})]",
+                              e.getMessage(), e);
+                }
+            }
+        }
+
+        return artifactRequestService.sendMessage(desc, payload);
     }
 
     /**
