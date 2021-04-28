@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import org.jose4j.base64url.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -31,19 +36,14 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.jose4j.base64url.Base64;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for artifacts.
  */
 @Log4j2
 @Service
-public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
-        implements RemoteResolver {
-
+public class ArtifactService
+        extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
     /**
      * Repository for storing data.
      **/
@@ -86,8 +86,9 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 }
             }
 
-            if(tmp.getData() instanceof LocalData) {
-                ((ArtifactFactory) getFactory()).updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
+            if (tmp.getData() instanceof LocalData) {
+                ((ArtifactFactory) getFactory())
+                        .updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             }
         }
 
@@ -101,16 +102,16 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @return The artifacts data.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<URI> accessVerifier, final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
-        final var agreements = ((ArtifactRepository) getRepository()).findRequestedResourceAgreementRemoteIds(artifactId);
+    public InputStream getData(final PolicyVerifier<URI> accessVerifier,
+            final ArtifactRetriever retriever, final UUID artifactId, final QueryInput queryInput) {
+        final var agreements = ((ArtifactRepository) getRepository())
+                                       .findRequestedResourceAgreementRemoteIds(artifactId);
         for (final var agRemoteId : agreements) {
-            if(agRemoteId.equals(AgreementFactory.DEFAULT_REMOTE_ID))
-                continue;
+            if (agRemoteId.equals(AgreementFactory.DEFAULT_REMOTE_ID)) continue;
             try {
                 return getData(accessVerifier, retriever, artifactId,
-                               new RetrievalInformation(agRemoteId, queryInput));
-            } catch(PolicyRestrictionException ignore) {
-
+                        new RetrievalInformation(agRemoteId, queryInput));
+            } catch (PolicyRestrictionException ignore) {
             }
         }
 
@@ -118,7 +119,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return getDataFromInternalDB((ArtifactImpl) get(artifactId), queryInput);
     }
 
-    private InputStream getDataFromInternalDB(final ArtifactImpl artifact, final QueryInput queryInput) {
+    private InputStream getDataFromInternalDB(
+            final ArtifactImpl artifact, final QueryInput queryInput) {
         final var data = artifact.getData();
 
         InputStream rawData;
@@ -138,11 +140,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier,
-                          final ArtifactRetriever retriever, final UUID artifactId, final RetrievalInformation information) throws
-            PolicyRestrictionException {
+            final ArtifactRetriever retriever, final UUID artifactId,
+            final RetrievalInformation information) throws PolicyRestrictionException {
         final var artifact = get(artifactId);
 
-        if(accessVerifier.verify(artifact.getRemoteId()) == VerificationResult.DENIED) {
+        if (accessVerifier.verify(artifact.getRemoteId()) == VerificationResult.DENIED) {
             log.info("Access denied.");
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
@@ -153,8 +155,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 NOTE: Make this not blocking.
              */
             // TODO add query to retriever
-            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
-                                                      information.transferContract);
+            final var dataStream = retriever.retrieve(
+                    artifactId, artifact.getRemoteAddress(), information.transferContract);
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);
@@ -167,7 +169,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     @RequiredArgsConstructor
     @AllArgsConstructor
     public static class RetrievalInformation {
-        @NonNull URI transferContract;
+        @NonNull
+        URI transferContract;
         Boolean forceDownload;
         final QueryInput queryInput;
     }
@@ -178,7 +181,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 NOTE: Add checks if the data is still up to date. This will remove unnecessary
                 downloads.
              */
-            return !isDataPresent(((ArtifactImpl) artifact).getData()) || artifact.isAutomatedDownload();
+            return !isDataPresent(((ArtifactImpl) artifact).getData())
+                    || artifact.isAutomatedDownload();
         } else {
             return forceDownload;
         }
@@ -210,18 +214,19 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         try {
             String backendData;
             if (data.getUsername() != null || data.getPassword() != null) {
-                backendData = httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
-                                                                    data.getUsername(),
-                                                                    data.getPassword(), queryInput);
+                backendData =
+                        httpService.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
+                                data.getUsername(), data.getPassword(), queryInput);
             } else {
-                backendData = httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
+                backendData =
+                        httpService.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
             }
 
             return toInputStream(Base64.decode(backendData));
         } catch (URISyntaxException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
-                         exception.getMessage(), exception);
+                        exception.getMessage(), exception);
             }
             throw new RuntimeException("Could not connect to data source.", exception);
         }
@@ -243,39 +248,28 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         return repo.identifyByRemoteId(remoteId);
     }
 
-//    @Transactional
-//    public void setData(final UUID artifactId, final String data) {
-//        try {
-//            var byteAos = new ByteArrayOutputStream();
-//            byteAos.write(Base64.decode(data));
-//            var inputStream = new ByteArrayInputStream(byteAos.toByteArray());
-//            setData(artifactId, inputStream);
-//            byteAos.close();
-//        }catch(Exception e) {
-//        }
-//    }
-
     @Transactional
     public InputStream setData(final UUID artifactId, final InputStream data) {
         var artifact = get(artifactId);
         final var localData = ((ArtifactImpl) artifact).getData();
         if (localData instanceof LocalData) {
-            // TODO: Check if the data needs to be sanitized before passing it to JPA.
-            // TODO: This probably is some form of duplication with the code in persist
             try {
                 /**
-                 * The service or the factories need to implement some form of patching. But since this
-                 * is the only place where a single value is updated its enough to use a query for this.
+                 * The service or the factories need to implement some form of patching. But since
+                 * this is the only place where a single value is updated its enough to use a query
+                 * for this.
                  */
                 final var bytes = data.readAllBytes();
                 data.close();
                 dataRepository.setLocalData(localData.getId(), bytes);
-                if(((ArtifactFactory)getFactory()).updateByteSize(artifact, bytes)) {
-                   ((ArtifactRepository)getRepository()).setArtifactData(artifactId, artifact.getCheckSum(), artifact.getByteSize());
+                if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
+                    ((ArtifactRepository) getRepository())
+                            .setArtifactData(
+                                    artifactId, artifact.getCheckSum(), artifact.getByteSize());
                 }
 
                 return new ByteArrayInputStream(bytes);
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("Not implemented");
             }
         } else {
@@ -286,5 +280,4 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     private InputStream toInputStream(final byte[] data) {
         return new ByteArrayInputStream(data);
     }
-
 }
