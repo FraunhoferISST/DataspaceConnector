@@ -14,9 +14,8 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
-import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
@@ -59,7 +58,7 @@ public class ConnectorService {
     /**
      * Service for offered resources.
      */
-    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offeredResourceService;
+    private final @NonNull OfferedResourceService offeredResourceService;
 
     /**
      * Get a local copy of the current connector and extract its id.
