@@ -1,15 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.stereotype.Component;
-
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.ContractController;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -18,6 +8,15 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for a contracts.
@@ -55,13 +54,13 @@ public class ContractViewAssembler
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
-                        .getResource(contract.getId(), null, null, null))
-                        .withRel("offers");
+                                .getResource(contract.getId(), null, null, null))
+                                .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
-                        .getResource(contract.getId(), null, null, null))
-                        .withRel("requests");
+                                .getResource(contract.getId(), null, null, null))
+                                .withRel("requests");
             } else {
                 throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
             }
