@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.0.0-SNAPSHOT]
+## [5.0.0-SNAPSHOT] - 2021-04-29
 
 ### Added
 - Partially support of HATEOAS.
