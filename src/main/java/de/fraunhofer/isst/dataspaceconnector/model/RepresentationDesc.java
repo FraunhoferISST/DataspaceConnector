@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Describes a representation. Use this for creating or updating a representation.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class RepresentationDesc extends AbstractDescription<Representation> {
@@ -32,8 +35,8 @@ public class RepresentationDesc extends AbstractDescription<Representation> {
     private String language;
 
     /**
-     * "Standard followed at representation level, i.e. it governs the serialization of an abstract
-     * content like RDF/XML."
+     * "Standard followed at representation level, i.e. it governs
+     * the serialization of an abstract content like RDF/XML."
      */
     private String standard;
 }

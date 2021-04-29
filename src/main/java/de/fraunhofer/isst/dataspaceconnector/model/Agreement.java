@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * A contract agreement is an agreement between two parties on access and usage behaviours.
+ * A contract agreement is an agreement between two parties on access
+ * and usage behaviours.
  */
 @Entity
 @Table

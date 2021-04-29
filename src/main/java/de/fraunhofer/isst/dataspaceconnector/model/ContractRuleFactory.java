@@ -16,9 +16,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContractRuleFactory implements AbstractFactory<ContractRule, ContractRuleDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-    static final String DEFAULT_TITLE = "";
-    static final String DEFAULT_RULE = "";
+    /**
+     * The default remote id assigned to all contract rules.
+     */
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+
+    /**
+     * The default title assigned to all contract rules.
+     */
+    public static final String DEFAULT_TITLE = "";
+
+    /**
+     * The default rule assigned to all contract rules.
+     */
+    public static final String DEFAULT_RULE = "";
 
     /**
      * Default constructor.
@@ -74,7 +85,8 @@ public class ContractRuleFactory implements AbstractFactory<ContractRule, Contra
     }
 
     private boolean updateTitle(final ContractRule contractRule, final String title) {
-        final var newTitle = MetadataUtils.updateString(contractRule.getTitle(), title, DEFAULT_TITLE);
+        final var newTitle =
+                MetadataUtils.updateString(contractRule.getTitle(), title, DEFAULT_TITLE);
         newTitle.ifPresent(contractRule::setTitle);
 
         return newTitle.isPresent();

@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Bundles information needed for accessing remote backends.
+ */
 @Entity
 @Table
 @Getter
@@ -17,7 +20,18 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class RemoteData extends Data {
+    /**
+     * Access url of the backend.
+     */
     private URL accessUrl;
+
+    /**
+     * The username for accessing the backend.
+     */
     private String username;
+
+    /**
+     * The password for accessing the backend.
+     */
     private String password;
 }

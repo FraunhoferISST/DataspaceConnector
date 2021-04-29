@@ -18,10 +18,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class ContractFactory implements AbstractFactory<Contract, ContractDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-    static final URI DEFAULT_CONSUMER = URI.create("");
-    static final URI DEFAULT_PROVIDER = URI.create("");
-    static final String DEFAULT_TITLE = "";
+    /**
+     * Default remote id assigned to all contracts.
+     */
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+
+    /**
+     * Default consumer assigned to all contracts.
+     */
+    public static final URI DEFAULT_CONSUMER = URI.create("");
+
+    /**
+     * Default provider assigned to all contracts.
+     */
+    public static final URI DEFAULT_PROVIDER = URI.create("");
+
+    /**
+     * Default title assigned to all contracts.
+     */
+    public static final String DEFAULT_TITLE = "";
 
     /**
      * Default constructor.
@@ -70,7 +85,7 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         final var hasUpdatedTime = this.updateTime(contract, contract.getStart(), desc.getEnd());
 
         return hasUpdatedRemoteId || hasUpdatedConsumer || hasUpdatedProvider || hasUpdatedTitle
-                || hasUpdatedTime || hasUpdatedAdditional;
+               || hasUpdatedTime || hasUpdatedAdditional;
     }
 
     private boolean updateRemoteId(final Contract contract, final URI remoteId) {
@@ -104,7 +119,8 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         return newTitle.isPresent();
     }
 
-    private boolean updateTime( final Contract contract, final ZonedDateTime start, final ZonedDateTime end) {
+    private boolean updateTime(final Contract contract, final ZonedDateTime start,
+                               final ZonedDateTime end) {
         final var defaultTime = ZonedDateTime.now(ZoneOffset.UTC);
         final var newStart = MetadataUtils.updateDate(contract.getStart(), start, defaultTime);
         final var newEnd = MetadataUtils.updateDate(contract.getEnd(), end, defaultTime);
@@ -119,7 +135,8 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
         }
 
         // Reiterate the operation
-        final var finalStartValue = MetadataUtils.updateDate(contract.getStart(), realStart, defaultTime);
+        final var finalStartValue =
+                MetadataUtils.updateDate(contract.getStart(), realStart, defaultTime);
         final var finalEndValue = MetadataUtils.updateDate(contract.getEnd(), realEnd, defaultTime);
 
         finalStartValue.ifPresent(contract::setStart);

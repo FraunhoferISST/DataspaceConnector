@@ -57,6 +57,10 @@ public class AbstractEntity implements Serializable {
     @UpdateTimestamp
     private ZonedDateTime modificationDate;
 
+    /**
+     * Contains all additional fields that may have been defined but
+     * could not be mapped.
+     */
     @ElementCollection
     @Setter(AccessLevel.PACKAGE)
     private Map<String, String> additional;

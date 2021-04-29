@@ -16,11 +16,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class RepresentationFactory implements AbstractFactory<Representation, RepresentationDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-    static final String DEFAULT_TITLE = "";
-    static final String DEFAULT_LANGUAGE = "EN";
-    static final String DEFAULT_MEDIA_TYPE = "";
-    static final String DEFAULT_STANDARD = "";
+    /**
+     * The default remote id assigned to all representations.
+     */
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+
+    /**
+     * The default title assigned to all representations;
+     */
+    public static final String DEFAULT_TITLE = "";
+
+    /**
+     * The default language assigned to all representations.
+     */
+    public static final String DEFAULT_LANGUAGE = "EN";
+
+    /**
+     * The default media type assigned to all representations.
+     */
+    public static final String DEFAULT_MEDIA_TYPE = "";
+
+    /**
+     * The default standard assigned to all representations.
+     */
+    public static final String DEFAULT_STANDARD = "";
 
     /**
      * Create a new representation.
@@ -62,7 +81,7 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
                 this.updateAdditional(representation, desc.getAdditional());
 
         return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedLanguage || hasUpdatedMediaType
-                || hasUpdatedStandard || hasUpdatedAdditional;
+               || hasUpdatedStandard || hasUpdatedAdditional;
     }
 
     private boolean updateRemoteId(final Representation representation, final URI remoteId) {
@@ -74,7 +93,8 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
     }
 
     private boolean updateTitle(final Representation representation, final String title) {
-        final var newTitle = MetadataUtils.updateString(representation.getTitle(), title, DEFAULT_TITLE);
+        final var newTitle =
+                MetadataUtils.updateString(representation.getTitle(), title, DEFAULT_TITLE);
         newTitle.ifPresent(representation::setTitle);
 
         return newTitle.isPresent();
@@ -82,7 +102,8 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
 
     private boolean updateLanguage(final Representation representation, final String language) {
         final var newLanguage =
-                MetadataUtils.updateString(representation.getLanguage(), language, DEFAULT_LANGUAGE);
+                MetadataUtils
+                        .updateString(representation.getLanguage(), language, DEFAULT_LANGUAGE);
         newLanguage.ifPresent(representation::setLanguage);
 
         return newLanguage.isPresent();
@@ -90,7 +111,8 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
 
     private boolean updateMediaType(final Representation representation, final String mediaType) {
         final var newMediaType =
-                MetadataUtils.updateString(representation.getMediaType(), mediaType, DEFAULT_MEDIA_TYPE);
+                MetadataUtils
+                        .updateString(representation.getMediaType(), mediaType, DEFAULT_MEDIA_TYPE);
         newMediaType.ifPresent(representation::setMediaType);
 
         return newMediaType.isPresent();
@@ -98,7 +120,8 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
 
     private boolean updateStandard(final Representation representation, final String standard) {
         final var newAdditional =
-                MetadataUtils.updateString(representation.getStandard(), standard, DEFAULT_STANDARD);
+                MetadataUtils
+                        .updateString(representation.getStandard(), standard, DEFAULT_STANDARD);
         newAdditional.ifPresent(representation::setStandard);
 
         return newAdditional.isPresent();

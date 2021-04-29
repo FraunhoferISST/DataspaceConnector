@@ -1,26 +1,29 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+/**
+ * Query for a backend.
+ */
 @Schema(
         name = "QueryInput",
         description = "Query parameters, headers and path variables as maps",
         oneOf = QueryInput.class,
         example = "{\n"
-                + "  \"headers\": {\n"
-                + "    \"key\": \"value\"\n"
-                + "  },\n"
-                + "  \"params\": {\n"
-                + "    \"key\": \"value\"\n"
-                + "  },\n"
-                + "  \"pathVariables\": {\n"
-                + "    \"key\": \"value\"\n"
-                + "  }\n"
-                + "}"
+                  + "  \"headers\": {\n"
+                  + "    \"key\": \"value\"\n"
+                  + "  },\n"
+                  + "  \"params\": {\n"
+                  + "    \"key\": \"value\"\n"
+                  + "  },\n"
+                  + "  \"pathVariables\": {\n"
+                  + "    \"key\": \"value\"\n"
+                  + "  }\n"
+                  + "}"
 )
 @Data
 public class QueryInput {

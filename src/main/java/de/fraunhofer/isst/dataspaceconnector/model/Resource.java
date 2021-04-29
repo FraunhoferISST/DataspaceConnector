@@ -7,6 +7,7 @@ import javax.persistence.ManyToMany;
 import java.net.URI;
 import java.util.List;
 
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceException;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -88,7 +89,27 @@ public class Resource extends AbstractEntity {
     @ManyToMany
     private List<Contract> contracts;
 
-    public void setCatalogs(final List<Catalog> catalogs) { }
+    /**
+     * Set the catalogs used by this resource.
+     * @param catalogList The catalog list.
+     */
+    public void setCatalogs(final List<Catalog> catalogList) {
+        /*
+            NOTE: Offered and Requested Resource override this function.
+         */
+        throw new ResourceException("Not implemented");
+    }
 
-    public List<Catalog> getCatalogs() { return null; }
+    /**
+     * Get the list of catalogs used by this resource.
+     * @return The list of catalogs used by this resource.
+     */
+    public List<Catalog> getCatalogs() {
+        /*
+            NOTE: Offered and Requested Resource override this function
+            so that null should never be returned. Return null here so
+            that a missing override crashes really load.
+         */
+        return null;
+    }
 }

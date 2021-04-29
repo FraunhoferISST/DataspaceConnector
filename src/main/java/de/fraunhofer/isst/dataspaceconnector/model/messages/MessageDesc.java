@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Base class for all messages descriptions.
+ */
 @Data
 @EqualsAndHashCode
 @AllArgsConstructor

@@ -11,6 +11,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Describes resource requested by this connector.
+ */
 @Entity
 @Table
 @Getter
@@ -41,9 +44,15 @@ public final class RequestedResource extends Resource {
     @ManyToMany(mappedBy = "requestedResources")
     private List<Catalog> catalogs;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setCatalogs(final List<Catalog> catalogs) { this.catalogs = catalogs; }
+    public void setCatalogs(final List<Catalog> catalogList) { this.catalogs = catalogList; }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Catalog> getCatalogs() { return catalogs; }
 }

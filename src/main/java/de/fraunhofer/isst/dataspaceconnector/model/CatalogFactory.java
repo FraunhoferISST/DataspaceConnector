@@ -15,8 +15,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
 
-    static final String DEFAULT_TITLE       = "";
-    static final String DEFAULT_DESCRIPTION = "";
+    /**
+     * Default title assigned to all catalogs.
+     */
+    public static final String DEFAULT_TITLE = "";
+
+    /**
+     * Default description assigned to all catalogs.
+     */
+    public static final String DEFAULT_DESCRIPTION = "";
 
     /**
      * Default constructor.
@@ -47,7 +54,7 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     /**
      * Update a catalog.
      * @param catalog The catalog to be updated.
-     * @param desc The new catalog description.
+     * @param desc    The new catalog description.
      * @return True if the catalog has been modified.
      * @throws IllegalArgumentException if any of the parameters is null.
      */
@@ -72,7 +79,8 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
 
     private boolean updateDescription(final Catalog catalog, final String description) {
         final var newDescription =
-                MetadataUtils.updateString(catalog.getDescription(), description, DEFAULT_DESCRIPTION);
+                MetadataUtils
+                        .updateString(catalog.getDescription(), description, DEFAULT_DESCRIPTION);
         newDescription.ifPresent(catalog::setDescription);
 
         return newDescription.isPresent();

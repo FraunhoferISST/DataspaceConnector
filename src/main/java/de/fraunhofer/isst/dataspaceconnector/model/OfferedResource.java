@@ -7,6 +7,9 @@ import java.util.List;
 
 import lombok.EqualsAndHashCode;
 
+/**
+ * Describes resources offered by this connector.
+ */
 @Entity
 @Table
 @EqualsAndHashCode(callSuper = true)
@@ -30,9 +33,15 @@ public final class OfferedResource extends Resource {
     @ManyToMany(mappedBy = "offeredResources")
     private List<Catalog> catalogs;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setCatalogs(final List<Catalog> catalogs) { this.catalogs = catalogs; }
+    public void setCatalogs(final List<Catalog> catalogList) { this.catalogs = catalogList; }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Catalog> getCatalogs() { return catalogs; }
 }

@@ -6,6 +6,10 @@ import java.util.List;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Base class for describing resources.
+ * @param <T> The type of the resource.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {

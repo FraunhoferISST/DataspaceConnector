@@ -12,6 +12,9 @@ import lombok.Setter;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Describes a contract and all its dependencies.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -12,7 +12,10 @@ import org.springframework.stereotype.Component;
 public class RequestedResourceFactory
         extends ResourceFactory<RequestedResource, RequestedResourceDesc> {
 
-    static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
+    /**
+     * The default remote id assigned to all requested resources.
+     */
+    public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
 
     @Override
     protected RequestedResource createInternal(final RequestedResourceDesc desc) {

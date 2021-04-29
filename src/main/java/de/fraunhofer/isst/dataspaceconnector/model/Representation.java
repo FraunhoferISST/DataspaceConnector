@@ -49,8 +49,8 @@ public class Representation extends AbstractEntity {
     private String language;
 
     /**
-     * "Standard followed at representation level, i.e. it governs the serialization of an abstract
-     * content like RDF/XML."
+     * "Standard followed at representation level, i.e. it governs
+     * the serialization of an abstract content like RDF/XML."
      */
     private String standard;
 
@@ -60,6 +60,9 @@ public class Representation extends AbstractEntity {
     @ManyToMany
     private List<Artifact> artifacts;
 
+    /**
+     * The resources associated with this representation.
+     */
     @ManyToMany(mappedBy = "representations")
     private List<Resource> resources;
 }
