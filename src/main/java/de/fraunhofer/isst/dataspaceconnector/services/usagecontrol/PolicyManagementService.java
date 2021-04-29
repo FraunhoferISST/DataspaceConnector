@@ -27,7 +27,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -84,8 +83,8 @@ public class PolicyManagementService {
      * @throws IllegalArgumentException If deserialization fails.
      * @throws ContractException        If the contract's content is invalid.
      */
-    public ContractAgreement readAndValidateAgreementFromResponse(final Map<String, String> response,
-                                                                  final ContractRequest request)
+    public ContractAgreement readAndValidateAgreementFromResponse(
+            final Map<String, String> response, final ContractRequest request)
             throws MessageResponseException, IllegalArgumentException, ContractException {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var agreement = deserializationService.getContractAgreement(payload);
@@ -205,7 +204,8 @@ public class PolicyManagementService {
      * @throws ContractException If the content does not match the original request.
      */
     private ContractAgreement validateContractAgreement(final ContractRequest request,
-                                                        final ContractAgreement agreement) throws ContractException {
+                                                        final ContractAgreement agreement)
+            throws ContractException {
         PolicyUtils.validateRuleAssigner(agreement);
         PolicyUtils.validateRuleContent(request, agreement);
 
@@ -221,7 +221,7 @@ public class PolicyManagementService {
      * @throws PersistenceException If the contract agreement could not be saved.
      */
     public UUID saveContractAgreement(final ContractAgreement contractAgreement,
-                                     final boolean confirmed) throws PersistenceException {
+                                      final boolean confirmed) throws PersistenceException {
         try {
             final var agreementId = contractAgreement.getId();
             final var rdf = IdsUtils.toRdf(contractAgreement);
@@ -259,7 +259,8 @@ public class PolicyManagementService {
         try {
             // Get base URL of application and path to agreements API.
             final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-            final var path = AgreementController.class.getAnnotation(RequestMapping.class).value()[0];
+            final var path =
+                    AgreementController.class.getAnnotation(RequestMapping.class).value()[0];
 
             // Persist empty agreement to generate UUID.
             agreementUuid = agreementService.create(new AgreementDesc()).getId();
@@ -287,7 +288,8 @@ public class PolicyManagementService {
             agreementService.update(EndpointUtils.getUUIDFromPath(agreement.getId()), desc);
 
             // Add artifacts to agreement using the linker.
-            linker.add(EndpointUtils.getUUIDFromPath(agreement.getId()), new HashSet<>(artifactList));
+            linker.add(EndpointUtils.getUUIDFromPath(agreement.getId()),
+                    new HashSet<>(artifactList));
 
             return agreement;
         } catch (Exception e) {

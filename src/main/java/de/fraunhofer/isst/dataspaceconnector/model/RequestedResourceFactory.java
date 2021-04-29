@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import java.net.URI;
-
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * Creates and updates a resource.
  */
 @Component
-public class RequestedResourceFactory
+public final class RequestedResourceFactory
         extends ResourceFactory<RequestedResource, RequestedResourceDesc> {
 
     /**

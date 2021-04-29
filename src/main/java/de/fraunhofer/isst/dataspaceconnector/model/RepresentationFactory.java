@@ -1,14 +1,14 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates and updates a representation.
@@ -22,7 +22,7 @@ public class RepresentationFactory implements AbstractFactory<Representation, Re
     public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
 
     /**
-     * The default title assigned to all representations;
+     * The default title assigned to all representations.
      */
     public static final String DEFAULT_TITLE = "";
 

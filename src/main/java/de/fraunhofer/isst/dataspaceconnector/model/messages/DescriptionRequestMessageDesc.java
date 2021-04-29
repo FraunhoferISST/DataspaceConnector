@@ -22,12 +22,12 @@ public class DescriptionRequestMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient        The recipient.
-     * @param requestedElement The requested element.
+     * @param recipient The recipient.
+     * @param element   The requested element.
      */
-    public DescriptionRequestMessageDesc(final URI recipient, final URI requestedElement) {
+    public DescriptionRequestMessageDesc(final URI recipient, final URI element) {
         super(recipient);
 
-        this.requestedElement = requestedElement;
+        this.requestedElement = element;
     }
 }

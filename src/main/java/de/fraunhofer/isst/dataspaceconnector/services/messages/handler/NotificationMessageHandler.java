@@ -66,17 +66,16 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
         try {
             // Build the ids response.
-            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector , messageId);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
             final var header = notificationService.buildMessage(desc);
             return BodyResponse.create(header, "Message received.");
-        } catch (IllegalStateException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, messageId);
+        } catch (IllegalStateException | ConstraintViolationException e) {
+            return exceptionService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

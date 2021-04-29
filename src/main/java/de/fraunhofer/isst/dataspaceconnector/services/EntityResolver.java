@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Objects;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
@@ -36,6 +32,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Objects;
 
 @Log4j2
 @Service
@@ -158,10 +158,12 @@ public class EntityResolver {
     /**
      * Translate a connector entity to an ids rdf string.
      *
+     * @param <T>    Type of the entity.
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity) throws InvalidResourceException {
+    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity)
+            throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
         try {
             if (entity instanceof Artifact) {
@@ -215,7 +217,8 @@ public class EntityResolver {
      * @param queryInput        Http query for data request.
      * @return Artifact from database.
      */
-    public InputStream getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
+    public InputStream getDataByArtifactId(final URI requestedArtifact,
+                                           final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }

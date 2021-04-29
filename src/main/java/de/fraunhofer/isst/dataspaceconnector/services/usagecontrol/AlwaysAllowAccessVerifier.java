@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlwaysAllowAccessVerifier implements PolicyVerifier<URI> {
     @Override
-    public VerificationResult verify(final URI target) {
+    public VerificationResult verify(final URI input) {
         return VerificationResult.ALLOWED;
     }
 }

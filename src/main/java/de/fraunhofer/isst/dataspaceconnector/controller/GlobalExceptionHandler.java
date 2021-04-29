@@ -10,9 +10,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 
+/**
+ * Controller for global handling of runtime exceptions.
+ */
 @Log4j2
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public final class GlobalExceptionHandler {
+    /**
+     * Handle runtime exceptions with response code 500.
+     *
+     * @param exception The thrown exception.
+     * @return Response entity with code 500.
+     */
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
         if (log.isErrorEnabled()) {

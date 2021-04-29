@@ -16,43 +16,37 @@ public enum PolicyPattern {
     PROHIBIT_ACCESS("PROHIBIT_ACCESS"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/NTimesUsageTemplates/N_TIMES_USAGE_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Use the data not more than N times.
      */
     N_TIMES_USAGE("N_TIMES_USAGE"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/DURATION_USAGE_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Restrict the data usage to a specific time duration.
      */
     DURATION_USAGE("DURATION_USAGE"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_DURING_INTERVAL_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Restrict the data usage to a specific time interval.
      */
     USAGE_DURING_INTERVAL("USAGE_DURING_INTERVAL"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/TimeRestrictedUsageTemplates/USAGE_UNTIL_DELETION_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Use data and delete it at a specific date time.
      */
     USAGE_UNTIL_DELETION("USAGE_UNTIL_DELETION"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageLoggingTemplates/USAGE_LOGGING_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Log the data usage information.
      */
     USAGE_LOGGING("USAGE_LOGGING"),
 
     /**
-     * See
-     * <a href="https://github.com/International-Data-Spaces-Association/InformationModel/blob/master/examples/contracts-and-usage-policy/templates/UsageNotificationTemplates/USAGE_NOTIFICATION_OFFER_TEMPLATE.jsonld">this example.</a>
+     * Notify a party or a specific group of users when the data is used.
      */
     USAGE_NOTIFICATION("USAGE_NOTIFICATION"),
 
     /**
-     * See
+     * Restrict the data usage to specific connectors.
      */
     CONNECTOR_RESTRICTED_USAGE("CONNECTOR_RESTRICTED_USAGE");
 

@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
@@ -22,6 +16,12 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.util.List;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -118,7 +118,8 @@ public class PolicyDecisionService {
      */
     public void checkForDataAccess(final List<PolicyPattern> patterns,
                                    final URI target, final URI issuerConnector,
-                                   final ContractAgreement agreement) throws PolicyRestrictionException {
+                                   final ContractAgreement agreement)
+            throws PolicyRestrictionException {
         final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
 
         // Check the policy of each rule.
@@ -134,9 +135,9 @@ public class PolicyDecisionService {
     /**
      * Validates the data access for a given rule.
      *
-     * @param pattern The recognized policy pattern.
-     * @param rule    The ids rule.
-     * @param target  The requested/accessed element.
+     * @param pattern         The recognized policy pattern.
+     * @param rule            The ids rule.
+     * @param target          The requested/accessed element.
      * @param issuerConnector The issuer connector.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
@@ -209,7 +210,8 @@ public class PolicyDecisionService {
      * @throws PolicyRestrictionException If the policy could not be read or a restriction is
      *                                    detected.
      */
-    private void validateDuration(final Rule rule, final URI target) throws PolicyRestrictionException {
+    private void validateDuration(final Rule rule, final URI target)
+            throws PolicyRestrictionException {
         final var created = informationService.getCreationDate(target);
 
         final Duration duration;

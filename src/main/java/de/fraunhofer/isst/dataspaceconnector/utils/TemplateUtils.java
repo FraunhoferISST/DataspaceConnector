@@ -16,6 +16,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides methods for building entity templates.
+ */
 @Log4j2
 public final class TemplateUtils {
 
@@ -29,7 +32,8 @@ public final class TemplateUtils {
      * @param resource The ids resource.
      * @return The resource template.
      */
-    public static ResourceTemplate<RequestedResourceDesc> getResourceTemplate(final Resource resource) {
+    public static ResourceTemplate<RequestedResourceDesc> getResourceTemplate(
+            final Resource resource) {
         return MappingUtils.fromIdsResource(resource);
     }
 
@@ -51,7 +55,8 @@ public final class TemplateUtils {
         // Iterate over all representations.
         final var representationList = resource.getRepresentation();
         try {
-            for (final var representation : Utils.requireNonNull(representationList, ErrorMessages.LIST_NULL)) {
+            for (final var representation : Utils.requireNonNull(representationList,
+                    ErrorMessages.LIST_NULL)) {
                 final var template = MappingUtils.fromIdsRepresentation(representation);
                 final var artifactTemplates = getArtifactTemplates(representation,
                         artifacts, download, accessUrl);

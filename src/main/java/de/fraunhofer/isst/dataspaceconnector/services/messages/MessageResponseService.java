@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -20,6 +18,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This class handles message responses.
@@ -110,11 +110,9 @@ public class MessageResponseService {
      * @param messageId         The id of the incoming message.
      * @return A message response.
      */
-    public MessageResponse handlePolicyRestrictionException(final PolicyRestrictionException exception,
-                                                            final URI requestedArtifact,
-                                                            final URI transferContract,
-                                                            final URI issuerConnector,
-                                                            final URI messageId) {
+    public MessageResponse handlePolicyRestrictionException(
+            final PolicyRestrictionException exception, final URI requestedArtifact,
+            final URI transferContract, final URI issuerConnector, final URI messageId) {
         if (log.isDebugEnabled()) {
             log.debug("Policy restriction detected. [exception=({}), artifact=({}), "
                             + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),

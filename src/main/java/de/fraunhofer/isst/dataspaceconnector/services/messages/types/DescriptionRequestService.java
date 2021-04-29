@@ -17,7 +17,8 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids description request messages.
  */
 @Service
-public final class DescriptionRequestService extends AbstractMessageService<DescriptionRequestMessageDesc> {
+public final class DescriptionRequestService
+        extends AbstractMessageService<DescriptionRequestMessageDesc> {
 
     /**
      * @throws IllegalArgumentException If desc is null.

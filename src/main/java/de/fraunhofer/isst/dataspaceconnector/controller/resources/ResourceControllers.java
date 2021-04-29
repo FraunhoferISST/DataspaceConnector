@@ -1,12 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
@@ -65,24 +58,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/catalogs")
     @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
     public static class CatalogController
-            extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> { }
+            extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
+    }
 
     @RestController
     @RequestMapping("/api/rules")
     @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
     public static class RuleController extends BaseResourceController<ContractRule,
-            ContractRuleDesc, ContractRuleView, RuleService> { }
+            ContractRuleDesc, ContractRuleView, RuleService> {
+    }
 
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
     public static class RepresentationController extends BaseResourceController<Representation,
-            RepresentationDesc, RepresentationView, RepresentationService> { }
+            RepresentationDesc, RepresentationView, RepresentationService> {
+    }
 
     @RestController
     @RequestMapping("/api/contracts")
@@ -96,18 +99,19 @@ public final class ResourceControllers {
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
-                    OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> { }
+            OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
+    }
 
     @RestController
     @RequestMapping("/api/requests")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
-                    RequestedResourceView,
-                    ResourceService<RequestedResource, RequestedResourceDesc>> {
+            RequestedResourceView,
+            ResourceService<RequestedResource, RequestedResourceDesc>> {
         @Override
         @Hidden
-        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
@@ -121,14 +125,14 @@ public final class ResourceControllers {
             AgreementView, AgreementService> {
         @Override
         @Hidden
-        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Object> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
@@ -136,7 +140,7 @@ public final class ResourceControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
@@ -146,7 +150,7 @@ public final class ResourceControllers {
     @RequestMapping("/api/artifacts")
     @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
     @RequiredArgsConstructor
-    public static final class ArtifactController
+    public static class ArtifactController
             extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
 
         /**
@@ -169,17 +173,17 @@ public final class ResourceControllers {
          * source, all headers and query parameters included in this request will be used for the
          * request to the backend.
          *
-         * @param artifactId Artifact id.
-         * @param download If the data should be forcefully downloaded.
+         * @param artifactId   Artifact id.
+         * @param download     If the data should be forcefully downloaded.
          * @param agreementUri The agreement which should be used for access control.
-         * @param params     All request parameters.
-         * @param headers    All request headers.
-         * @param request The current http request.
+         * @param params       All request parameters.
+         * @param headers      All request headers.
+         * @param request      The current http request.
          * @return The data object.
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
@@ -205,8 +209,8 @@ public final class ResourceControllers {
             final var data = (agreementUri == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                                          new RetrievalInformation(agreementUri, download,
-                                                                   queryInput));
+                    new RetrievalInformation(agreementUri, download,
+                            queryInput));
 
             StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
@@ -239,18 +243,19 @@ public final class ResourceControllers {
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<Object> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput) {
             ValidationUtils.validateQueryInput(queryInput);
             return ResponseEntity.ok(artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                                                         queryInput));
+                    queryInput));
         }
 
         /**
          * Replace the data of an artifact.
-         * @param artifactId The artifact whose data should be replaced.
+         *
+         * @param artifactId  The artifact whose data should be replaced.
          * @param inputStream The new data.
          * @return Http Status ok.
          */

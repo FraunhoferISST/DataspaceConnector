@@ -151,16 +151,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
                 final var idsArtifacts = representation.getInstance();
                 for (final var artifact : idsArtifacts) {
-                    final var newArtifact = updateService.updateArtifact((Artifact) artifact);
-
-                    // Send artifact request if automatedDownload is true.
-//                    final var response = messageService.sendArtifactRequestMessage(recipient, artifact,
-//                            transferContract);
-//                    if (!messageService.validateArtifactResponseMessage(response)) {
-//                        // If the response is not an artifact response message, show the response.
-//                        final var content = messageService.getContent(response);
-//                        return ControllerUtils.respondWithMessageContent(content);
-//                    }
+                    updateService.updateArtifact((Artifact) artifact);
                 }
             }
         } catch (Exception exception) {
@@ -191,7 +182,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                                              final URI messageId) {
         try {
             // Build ids response message.
-            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector, messageId);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector,
+                    messageId);
             final var header = notificationService.buildMessage(desc);
 
             // Send ids response message.

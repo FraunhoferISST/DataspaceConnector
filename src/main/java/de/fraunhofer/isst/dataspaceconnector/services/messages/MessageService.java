@@ -1,12 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -39,7 +32,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -48,6 +40,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -82,7 +81,7 @@ public class MessageService {
     /**
      * Template builder.
      */
-    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> templateBuilder;
+    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
 
     /**
      * Service for current connector configuration.
@@ -107,9 +106,8 @@ public class MessageService {
      * @return The response map.
      * @throws MessageException If message handling failed.
      */
-    public Map<String, String> sendDescriptionRequestMessage(final URI recipient,
-                                                             final URI elementId)
-            throws MessageException {
+    public Map<String, String> sendDescriptionRequestMessage(
+            final URI recipient, final URI elementId) throws MessageException {
         final var desc = new DescriptionRequestMessageDesc(recipient, elementId);
         return descriptionRequestService.sendMessage(desc, "");
     }
@@ -210,21 +208,29 @@ public class MessageService {
         return sendArtifactRequestMessage(recipient, elementId, agreementId, null);
     }
 
-    public Map<String, String> sendArtifactRequestMessage(final URI recipient,
-                                                          final URI elementId,
-                                                          final URI agreementId,
-                                                          final QueryInput queryInput)
-            throws MessageException {
+    /**
+     * Send artifact request message.
+     *
+     * @param recipient   The recipient.
+     * @param elementId   The requested artifact.
+     * @param agreementId The transfer contract.
+     * @param queryInput  The query input.
+     * @return The response map.
+     * @throws MessageException If message handling failed.
+     */
+    public Map<String, String> sendArtifactRequestMessage(
+            final URI recipient, final URI elementId, final URI agreementId,
+            final QueryInput queryInput) throws MessageException {
         final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
 
         String payload = "";
-        if(queryInput != null) {
+        if (queryInput != null) {
             try {
                 payload = objectMapper.writeValueAsString(queryInput);
             } catch (JsonProcessingException e) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Failed to parse query. Loading everything. [exception=({})]",
-                              e.getMessage(), e);
+                    log.debug("Failed to parse query. Loading everything. "
+                            + "[exception=({})]", e.getMessage(), e);
                 }
             }
         }
@@ -297,10 +303,9 @@ public class MessageService {
      * @param artifactList List of requested artifacts.
      * @param download     Indicated whether the artifact is going to be downloaded automatically.
      * @param remoteUrl    The provider's url for receiving artifact request messages.
-     * @return The persisted resource.
      */
-    public URI saveMetadata(final Map<String, String> response, final List<URI> artifactList,
-                            final boolean download, final URI remoteUrl)
+    public void saveMetadata(final Map<String, String> response, final List<URI> artifactList,
+                             final boolean download, final URI remoteUrl)
             throws PersistenceException, MessageResponseException, IllegalArgumentException {
         // Exceptions handled at a higher level.
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
@@ -309,17 +314,14 @@ public class MessageService {
         try {
             final var resourceTemplate =
                     TemplateUtils.getResourceTemplate(resource);
-//            final var contractTemplateList = TemplateUtils.getContractTemplates(resource);
             final var representationTemplateList =
                     TemplateUtils.getRepresentationTemplates(resource, artifactList, download,
                             remoteUrl);
 
-//            resourceTemplate.setContracts(contractTemplateList);
             resourceTemplate.setRepresentations(representationTemplateList);
 
             // Save all entities.
-            final var requestedResource = templateBuilder.build(resourceTemplate);
-            return SelfLinkHelper.getSelfLink(requestedResource);
+            tempBuilder.build(resourceTemplate);
         } catch (Exception e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);
@@ -333,23 +335,20 @@ public class MessageService {
      *
      * @param response The response message.
      * @param remoteId The artifact id.
-     * @return The artifact uri.
      * @throws MessageResponseException  If the message response could not be processed.
      * @throws ResourceNotFoundException If the artifact could not be found.
      */
-    public URI saveData(final Map<String, String> response, final URI remoteId)
+    public void saveData(final Map<String, String> response, final URI remoteId)
             throws MessageResponseException, ResourceNotFoundException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
         final var artifact = artifactService.get(artifactId.get());
 
-        artifactService.setData(artifact.getId(), new ByteArrayInputStream(Base64.decode(base64Data)));
+        artifactService.setData(artifact.getId(),
+                new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
             log.debug("Updated data from artifact. [target=({})]", artifactId);
         }
-
-        // Return access url of the artifact's data.
-        return URI.create(SelfLinkHelper.getSelfLink(artifact) + "/data");
     }
 
     /**

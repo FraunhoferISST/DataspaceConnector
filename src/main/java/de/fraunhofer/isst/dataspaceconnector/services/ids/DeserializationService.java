@@ -36,7 +36,8 @@ public class DeserializationService {
      * @return The ids configuration model.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public ConfigurationModel getConfigurationModel(final String config) throws IllegalArgumentException {
+    public ConfigurationModel getConfigurationModel(final String config)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(config, ConfigurationModel.class);
         } catch (IOException e) {
@@ -54,7 +55,8 @@ public class DeserializationService {
      * @return The ids object.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public InfrastructureComponent getInfrastructureComponent(final String component) throws IllegalArgumentException {
+    public InfrastructureComponent getInfrastructureComponent(final String component)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(component,
                     InfrastructureComponent.class);
@@ -92,7 +94,8 @@ public class DeserializationService {
      * @return The response message.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public ResponseMessage getResponseMessage(final String response) throws IllegalArgumentException {
+    public ResponseMessage getResponseMessage(final String response)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(response, ResponseMessage.class);
         } catch (IOException e) {
@@ -181,7 +184,8 @@ public class DeserializationService {
      * @return The ids contract agreement.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public ContractAgreement getContractAgreement(final String contract) throws IllegalArgumentException {
+    public ContractAgreement getContractAgreement(final String contract)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(contract,
                     ContractAgreement.class);
@@ -200,7 +204,8 @@ public class DeserializationService {
      * @return The ids contract request.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public ContractRequest getContractRequest(final String contract) throws IllegalArgumentException {
+    public ContractRequest getContractRequest(final String contract)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(contract, ContractRequest.class);
         } catch (IOException e) {

@@ -9,8 +9,11 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service for managing representations.
+ */
 @Service
-public class RepresentationService extends BaseEntityService<Representation,
+public final class RepresentationService extends BaseEntityService<Representation,
         RepresentationDesc> implements RemoteResolver {
 
     @Override

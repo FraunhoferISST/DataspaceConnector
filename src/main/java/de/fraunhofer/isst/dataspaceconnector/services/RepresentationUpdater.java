@@ -8,19 +8,25 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Updates a dsc representation based on a provided ids representation.
+ */
 @Component
 @RequiredArgsConstructor
-public class RepresentationUpdater
-        implements InfomodelUpdater<Representation,
-                de.fraunhofer.isst.dataspaceconnector.model.Representation> {
+public final class RepresentationUpdater implements InfomodelUpdater<Representation,
+        de.fraunhofer.isst.dataspaceconnector.model.Representation> {
 
     /**
      * Service for representations.
      */
     private final @NonNull RepresentationService representationService;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public de.fraunhofer.isst.dataspaceconnector.model.Representation update(final Representation entity) throws ResourceNotFoundException {
+    public de.fraunhofer.isst.dataspaceconnector.model.Representation update(
+            final Representation entity) throws ResourceNotFoundException {
         final var entityId = representationService.identifyByRemoteId(entity.getId());
         if (entityId.isEmpty()) {
             throw new ResourceNotFoundException(entity.getId().toString());

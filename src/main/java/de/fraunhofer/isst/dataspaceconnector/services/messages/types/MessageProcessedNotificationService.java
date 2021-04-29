@@ -16,7 +16,8 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids message processed notification messages.
  */
 @Service
-public final class MessageProcessedNotificationService extends AbstractMessageService<MessageProcessedNotificationMessageDesc> {
+public final class MessageProcessedNotificationService
+        extends AbstractMessageService<MessageProcessedNotificationMessageDesc> {
 
     /**
      * @throws IllegalArgumentException If desc is null.

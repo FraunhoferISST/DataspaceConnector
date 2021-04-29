@@ -1,15 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
-
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Describes resource requested by this connector.
@@ -48,11 +48,15 @@ public final class RequestedResource extends Resource {
      * {@inheritDoc}
      */
     @Override
-    public void setCatalogs(final List<Catalog> catalogList) { this.catalogs = catalogList; }
+    public void setCatalogs(final List<Catalog> catalogList) {
+        this.catalogs = catalogList;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Catalog> getCatalogs() { return catalogs; }
+    public List<Catalog> getCatalogs() {
+        return catalogs;
+    }
 }

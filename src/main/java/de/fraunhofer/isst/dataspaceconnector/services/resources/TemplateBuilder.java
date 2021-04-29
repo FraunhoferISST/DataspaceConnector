@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 /**
  * Builds and links entities from templates.
+ *
  * @param <T> The resource type.
  * @param <D> The resource description type.
  */
@@ -80,6 +81,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a resource and dependencies from a template.
+     *
      * @param template The resource template.
      * @return The new resource.
      * @throws IllegalArgumentException if the passed template is null.
@@ -89,9 +91,9 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
         final var representationIds =
                 Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
-                     .collect(Collectors.toSet());
+                        .collect(Collectors.toSet());
         final var contractIds = Utils.toStream(template.getContracts()).map(x -> build(x).getId())
-                                     .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         final var resource = buildResource(template);
 
         resourceRepresentationLinker.replace(resource.getId(), representationIds);
@@ -104,6 +106,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a representation and dependencies from template.
+     *
      * @param template The representation template.
      * @return The new representation.
      * @throws IllegalArgumentException if the passed template is null.
@@ -112,7 +115,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
-                                     .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         Representation representation;
         if (template.getOldRemoteId() != null) {
             final var repId = representationService.identifyByRemoteId(template.getOldRemoteId());
@@ -132,6 +135,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a contract and dependencies from a template.
+     *
      * @param template The contract template.
      * @return The new contract.
      * @throws IllegalArgumentException if the passed template is null.
@@ -140,7 +144,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
-                                 .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         final var contract = contractService.create(template.getDesc());
         contractRuleLinker.replace(contract.getId(), ruleIds);
 
@@ -149,6 +153,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build an artifact and dependencies from a template.
+     *
      * @param template The artifact template.
      * @return The new artifact.
      * @throws IllegalArgumentException if the passed template is null.
@@ -173,6 +178,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a rule and dependencies from a template.
+     *
      * @param template The rule template.
      * @return The new rule.
      * @throws IllegalArgumentException if the passed template is null.
@@ -182,6 +188,11 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         return ruleService.create(template.getDesc());
     }
 
+    /**
+     * Return the resource service for subclasses.
+     *
+     * @return The resource service.
+     */
     protected ResourceService<T, D> getResourceService() {
         return resourceService;
     }
@@ -196,6 +207,7 @@ final class TemplateBuilderOfferedResource
         extends TemplateBuilder<OfferedResource, OfferedResourceDesc> {
     /**
      * Default constructor.
+     *
      * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
      * @param resourceContractLinker       The resource-contract service.
@@ -206,6 +218,7 @@ final class TemplateBuilderOfferedResource
      * @param artifactService              The artifact service.
      * @param ruleService                  The rule service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
@@ -217,8 +230,8 @@ final class TemplateBuilderOfferedResource
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationService, representationArtifactLinker, contractService,
-              contractRuleLinker, artifactService, ruleService);
+                representationService, representationArtifactLinker, contractService,
+                contractRuleLinker, artifactService, ruleService);
     }
 
     @Override
@@ -236,6 +249,7 @@ final class TemplateBuilderRequestedResource
         extends TemplateBuilder<RequestedResource, RequestedResourceDesc> {
     /**
      * Default constructor.
+     *
      * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
      * @param resourceContractLinker       The resource-contract service.
@@ -246,6 +260,7 @@ final class TemplateBuilderRequestedResource
      * @param artifactService              The artifact service.
      * @param ruleService                  The rule service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
@@ -257,12 +272,13 @@ final class TemplateBuilderRequestedResource
             final ContractService contractService, final ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationService, representationArtifactLinker, contractService,
-              contractRuleLinker, artifactService, ruleService);
+                representationService, representationArtifactLinker, contractService,
+                contractRuleLinker, artifactService, ruleService);
     }
 
     @Override
-    protected RequestedResource buildResource(final ResourceTemplate<RequestedResourceDesc> template) {
+    protected RequestedResource buildResource(
+            final ResourceTemplate<RequestedResourceDesc> template) {
         final var resourceService = getResourceService();
 
         RequestedResource resource;

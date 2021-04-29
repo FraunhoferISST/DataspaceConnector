@@ -1,10 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
@@ -13,8 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+
 /**
  * Creates a parent-children relationship between two types of resources.
+ *
  * @param <K> The type of the parent resource.
  * @param <W> The type of the child resource.
  * @param <T> The service type for the parent resource.
@@ -46,12 +47,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
     private X manyService;
 
     /**
-     * Get all children of an entity.
-     * @param ownerId The id of the entity whose children should be received.
-     * @param pageable The {@link Pageable} object for getting only a page of objects.
-     * @return The ids of the children.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if the ownerId entity does not exists.
+     * {@inheritDoc}
      */
     @Override
     public Page<W> get(final UUID ownerId, final Pageable pageable) {
@@ -64,6 +60,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
 
     /**
      * Receives the list of children assigned to the entity.
+     *
      * @param owner The entity whose children should be received.
      * @return The children assigned to the entity.
      */
@@ -71,7 +68,8 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
 
     /**
      * Receives a page of children assigned to the entity.
-     * @param owner The entity whose children should be received.
+     *
+     * @param owner    The entity whose children should be received.
      * @param pageable The children assigned to the entity.
      * @return The page of the children entities.
      */
@@ -81,11 +79,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
     }
 
     /**
-     * Add a list of children to an entity. The children must exist.
-     * @param ownerId  The id of the entity that the children should be added to.
-     * @param entities The children to be added.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * {@inheritDoc}
      */
     @Override
     public void add(final UUID ownerId, final Set<UUID> entities) {
@@ -103,11 +97,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
     }
 
     /**
-     * Remove a list of children from an entity.
-     * @param ownerId  The id of the entity that the children should be removed from.
-     * @param entities The children to be removed.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * {@inheritDoc}
      */
     @Override
     public void remove(final UUID ownerId, final Set<UUID> entities) {
@@ -124,13 +114,8 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
         removeInternal(ownerId, entities);
     }
 
-
     /**
-     * Replace the children of an entity.
-     * @param ownerId  The id of the entity whose children should be replaced.
-     * @param entities The new children for the entity.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * {@inheritDoc}
      */
     @Override
     public void replace(final UUID ownerId, final Set<UUID> entities) {
@@ -138,11 +123,12 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
         throwIfEntityDoesNotExist(entities);
 
-       replaceInternal(ownerId, entities);
+        replaceInternal(ownerId, entities);
     }
 
     /**
      * Check if all entities in a set are known to the children's service.
+     *
      * @param entities The set of entities to be checked.
      * @throws ResourceNotFoundException if any of the entities is unknown.
      */
@@ -154,7 +140,8 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
 
     /**
      * Check if all entities in a set are known.
-     * @param entities The set of entities to be checked.
+     *
+     * @param entities         The set of entities to be checked.
      * @param doesElementExist The function that evaluates if an entity does exist.
      * @return true if all entities are known.
      */
@@ -170,7 +157,9 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
     }
 
     protected abstract void addInternal(UUID ownerId, Set<UUID> entities);
+
     protected abstract void removeInternal(UUID ownerId, Set<UUID> entities);
+
     protected abstract void replaceInternal(UUID ownerId, Set<UUID> entities);
 
     protected final T getOneService() {

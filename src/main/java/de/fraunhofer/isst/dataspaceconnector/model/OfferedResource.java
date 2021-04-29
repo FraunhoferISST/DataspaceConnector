@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.util.List;
-
-import lombok.EqualsAndHashCode;
 
 /**
  * Describes resources offered by this connector.
@@ -37,11 +37,15 @@ public final class OfferedResource extends Resource {
      * {@inheritDoc}
      */
     @Override
-    public void setCatalogs(final List<Catalog> catalogList) { this.catalogs = catalogList; }
+    public void setCatalogs(final List<Catalog> catalogList) {
+        this.catalogs = catalogList;
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Catalog> getCatalogs() { return catalogs; }
+    public List<Catalog> getCatalogs() {
+        return catalogs;
+    }
 }

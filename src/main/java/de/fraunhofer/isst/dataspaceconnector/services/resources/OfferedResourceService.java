@@ -10,4 +10,5 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {}
+public class OfferedResourceService extends ResourceService<OfferedResource, OfferedResourceDesc> {
+}

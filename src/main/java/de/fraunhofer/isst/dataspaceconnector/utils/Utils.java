@@ -84,6 +84,7 @@ public final class Utils {
     /**
      * Check if a parameter is empty.
      *
+     * @param <T>   Type of input parameter.
      * @param param The parameter.
      * @return True if it is empty, false if not.
      */
@@ -95,6 +96,12 @@ public final class Utils {
         }
     }
 
+    /**
+     * DO NOT USE.
+     *
+     * @param sort Sorting instructions within user input.
+     * @return Java object of input value.
+     */
     public static Sort toSort(final String sort) {
         // TODO Implement with Regex
         if (sort == null) {
@@ -116,6 +123,14 @@ public final class Utils {
         }
     }
 
+    /**
+     * Creates a page request based on page, size, and sort inputs.
+     *
+     * @param page The page index.
+     * @param size The page size.
+     * @param sort The sorting of page.
+     * @return The page request.
+     */
     public static PageRequest toPageRequest(final Integer page, final Integer size,
                                             final String sort) {
         final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;

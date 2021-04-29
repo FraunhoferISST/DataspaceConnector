@@ -98,9 +98,9 @@ public final class MetadataUtils {
      * @param defaultMap Default values.
      * @return Optional with the new value or without a value.
      */
-    public static Optional<Map<String, String>> updateStringMap(final Map<String, String> oldMap,
-                                                                final Map<String, String> newMap,
-                                                                final Map<String, String> defaultMap) {
+    public static Optional<Map<String, String>> updateStringMap(
+            final Map<String, String> oldMap, final Map<String, String> newMap,
+            final Map<String, String> defaultMap) {
         // TODO Implement cleaning like in updateStringList
         final var newValues = newMap == null ? defaultMap : newMap;
         if (oldMap == null || !oldMap.equals(newValues)) {

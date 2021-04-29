@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.ids;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -11,12 +9,14 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 /**
  * Converts DSC artifacts to ids artifacts.
  */
 @Component
 @RequiredArgsConstructor
-public class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, ResourceCatalog> {
+public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, ResourceCatalog> {
 
     /**
      * The builder for ids resource (from offered resource).

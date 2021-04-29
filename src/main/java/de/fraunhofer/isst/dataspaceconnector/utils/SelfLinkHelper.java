@@ -13,7 +13,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactViewAssembler;
-import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
 import de.fraunhofer.isst.dataspaceconnector.view.CatalogViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ContractRuleViewAssembler;
 import de.fraunhofer.isst.dataspaceconnector.view.ContractViewAssembler;
@@ -23,23 +22,54 @@ import de.fraunhofer.isst.dataspaceconnector.view.RequestedResourceViewAssembler
 import de.fraunhofer.isst.dataspaceconnector.view.SelfLinking;
 
 import java.net.URI;
-import java.util.NoSuchElementException;
-
-import org.springframework.hateoas.RepresentationModel;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.
  */
 public final class SelfLinkHelper {
 
-    static final CatalogViewAssembler catalogAssembler = new CatalogViewAssembler();
-    static final OfferedResourceViewAssembler offeredResourceAssembler = new OfferedResourceViewAssembler();
-    static final RequestedResourceViewAssembler requestedResourceAssembler = new RequestedResourceViewAssembler();
-    static final RepresentationViewAssembler representationAssembler = new RepresentationViewAssembler();
-    static final ArtifactViewAssembler artifactAssembler = new ArtifactViewAssembler();
-    static final ContractViewAssembler contractAssembler = new ContractViewAssembler();
-    static final ContractRuleViewAssembler ruleAssembler = new ContractRuleViewAssembler();
-    static final AgreementViewAssembler agreementAssembler = new AgreementViewAssembler();
+    /**
+     * View assembler for catalogs.
+     */
+    static final CatalogViewAssembler CATALOG_ASSEMBLER = new CatalogViewAssembler();
+
+    /**
+     * View assembler for offered resources.
+     */
+    static final OfferedResourceViewAssembler OFFERED_RESOURCE_ASSEMBLER
+            = new OfferedResourceViewAssembler();
+
+    /**
+     * View assembler for requested resources.
+     */
+    static final RequestedResourceViewAssembler REQUESTED_RESOURCE_ASSEMBLER
+            = new RequestedResourceViewAssembler();
+
+    /**
+     * View assembler for representations.
+     */
+    static final RepresentationViewAssembler REPRESENTATION_ASSEMBLER
+            = new RepresentationViewAssembler();
+
+    /**
+     * View assembler for artifacts.
+     */
+    static final ArtifactViewAssembler ARTIFACT_ASSEMBLER = new ArtifactViewAssembler();
+
+    /**
+     * View assembler for contracts.
+     */
+    static final ContractViewAssembler CONTRACT_ASSEMBLER = new ContractViewAssembler();
+
+    /**
+     * View assembler for contract rules.
+     */
+    static final ContractRuleViewAssembler RULE_ASSEMBLER = new ContractRuleViewAssembler();
+
+    /**
+     * View assembler for contract agreements.
+     */
+    static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
 
     /**
      * Default constructor.
@@ -78,6 +108,16 @@ public final class SelfLinkHelper {
         throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
     }
 
+    /**
+     * Get self-link from abstract entity.
+     *
+     * @param entity    The entity.
+     * @param describer The entity view assembler.
+     * @param <T>       The type of the entity.
+     * @param <S>       The type of the assembler.
+     * @return The abstract entity and its self-link.
+     * @throws ResourceNotFoundException If the entity could not be found.
+     */
     public static <T extends AbstractEntity, S extends SelfLinking> URI getSelfLink(
             final T entity, final S describer) throws ResourceNotFoundException {
         try {
@@ -95,7 +135,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Catalog catalog) throws ResourceNotFoundException {
-        return getSelfLink(catalog, catalogAssembler);
+        return getSelfLink(catalog, CATALOG_ASSEMBLER);
     }
 
     /**
@@ -106,7 +146,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final OfferedResource resource) throws ResourceNotFoundException {
-        return getSelfLink(resource, offeredResourceAssembler);
+        return getSelfLink(resource, OFFERED_RESOURCE_ASSEMBLER);
     }
 
     /**
@@ -116,8 +156,9 @@ public final class SelfLinkHelper {
      * @return The self-link of the requested resource.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final RequestedResource resource) throws ResourceNotFoundException {
-        return getSelfLink(resource, requestedResourceAssembler);
+    public static URI getSelfLink(final RequestedResource resource)
+            throws ResourceNotFoundException {
+        return getSelfLink(resource, REQUESTED_RESOURCE_ASSEMBLER);
     }
 
     /**
@@ -127,8 +168,9 @@ public final class SelfLinkHelper {
      * @return The self-link of the representation.
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
-    public static URI getSelfLink(final Representation representation) throws ResourceNotFoundException {
-        return getSelfLink(representation, representationAssembler);
+    public static URI getSelfLink(final Representation representation)
+            throws ResourceNotFoundException {
+        return getSelfLink(representation, REPRESENTATION_ASSEMBLER);
     }
 
     /**
@@ -139,7 +181,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Artifact artifact) throws ResourceNotFoundException {
-        return getSelfLink(artifact, artifactAssembler);
+        return getSelfLink(artifact, ARTIFACT_ASSEMBLER);
     }
 
     /**
@@ -150,7 +192,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Contract contract) throws ResourceNotFoundException {
-        return getSelfLink(contract, contractAssembler);
+        return getSelfLink(contract, CONTRACT_ASSEMBLER);
     }
 
     /**
@@ -161,7 +203,7 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final ContractRule rule) throws ResourceNotFoundException {
-        return getSelfLink(rule, ruleAssembler);
+        return getSelfLink(rule, RULE_ASSEMBLER);
     }
 
     /**
@@ -172,6 +214,6 @@ public final class SelfLinkHelper {
      * @throws ResourceNotFoundException If the resource could not be loaded.
      */
     public static URI getSelfLink(final Agreement agreement) throws ResourceNotFoundException {
-        return getSelfLink(agreement, agreementAssembler);
+        return getSelfLink(agreement, AGREEMENT_ASSEMBLER);
     }
 }

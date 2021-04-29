@@ -25,7 +25,7 @@ public class UnreachableLineException extends RuntimeException {
      *
      * @param msg The detail message.
      */
-    public UnreachableLineException( final ErrorMessages msg) {
+    public UnreachableLineException(final ErrorMessages msg) {
         super(msg.toString());
     }
 }

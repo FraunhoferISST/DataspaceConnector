@@ -22,12 +22,12 @@ public class ContractRequestMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient        The recipient.
-     * @param transferContract The transfer contract.
+     * @param recipient The recipient.
+     * @param contract  The transfer contract.
      */
-    public ContractRequestMessageDesc(final URI recipient, final URI transferContract) {
+    public ContractRequestMessageDesc(final URI recipient, final URI contract) {
         super(recipient);
 
-        this.transferContract = transferContract;
+        this.transferContract = contract;
     }
 }

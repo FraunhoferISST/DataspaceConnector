@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.text.ParseException;
-import java.util.Arrays;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.config.UsageControlFramework;
@@ -12,10 +8,13 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.text.ParseException;
+import java.util.Arrays;
 
 /**
  * This class implements automated policy check and usage control enforcement. Refers to the ids
@@ -38,13 +37,14 @@ public class PolicyEnforcementService {
     private final @NonNull PolicyDecisionService decisionService;
 
     /**
+     * Service for verifying data access.
+     */
+    private final @NonNull SimpleDataAccessVerifier dataAccessVerifier;
+
+    /**
      * The delay of the scheduler.
      */
     private static final int FIXED_DELAY = 60_000;
-
-    @Autowired
-    private SimpleDataAccessVerifier dataAccessVerifier;
-
 
     /**
      * Periodically (every minute) calls {@link PolicyDecisionService#scanAgreements()}.
@@ -87,7 +87,8 @@ public class PolicyEnforcementService {
                         PolicyPattern.USAGE_DURING_INTERVAL,
                         PolicyPattern.USAGE_UNTIL_DELETION,
                         PolicyPattern.CONNECTOR_RESTRICTED_USAGE);
-                decisionService.checkForDataAccess(patternsToCheck, target, issuerConnector, agreement);
+                decisionService.checkForDataAccess(patternsToCheck, target, issuerConnector,
+                        agreement);
                 break;
         }
     }

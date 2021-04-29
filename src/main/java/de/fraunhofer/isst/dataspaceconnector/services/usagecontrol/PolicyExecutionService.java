@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
@@ -23,6 +17,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Executes policy conditions. Refers to the ids policy enforcement point (PEP).
@@ -109,7 +109,8 @@ public class PolicyExecutionService {
      * @param element The accessed element.
      * @throws PolicyExecutionException If the notification has not been successful.
      */
-    public void reportDataAccess(final Rule rule, final URI element) throws PolicyExecutionException {
+    public void reportDataAccess(final Rule rule, final URI element)
+            throws PolicyExecutionException {
         final var recipient = PolicyUtils.getEndpoint(rule);
         final var logMessage = buildLog(element).toString();
 
@@ -127,7 +128,7 @@ public class PolicyExecutionService {
             }
         } catch (MessageException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Notification message not sent. [exception=({})]", e.getMessage(), e);
+                log.debug("Notification not sent. [exception=({})]", e.getMessage(), e);
             }
             throw new PolicyExecutionException("Notification was not successful.");
         }

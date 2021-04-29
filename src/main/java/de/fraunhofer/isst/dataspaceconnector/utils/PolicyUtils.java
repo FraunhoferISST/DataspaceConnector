@@ -140,7 +140,8 @@ public final class PolicyUtils {
      * @return Cleaned list of contracts.
      * @throws IllegalArgumentException if any of the arguments is null.
      */
-    public static List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
+    public static
+    List<de.fraunhofer.isst.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
             final List<de.fraunhofer.isst.dataspaceconnector.model.Contract> contracts,
             final URI issuerConnector) {
         Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);
@@ -175,7 +176,8 @@ public final class PolicyUtils {
      * @return True if resource should be deleted, false if not.
      * @throws ParseException If the policy could not be checked.
      */
-    public static boolean checkDutiesForDeletion(final ArrayList<? extends Duty> duties) throws ParseException {
+    public static boolean checkDutiesForDeletion(final ArrayList<? extends Duty> duties)
+            throws ParseException {
         for (final var duty : duties) {
             for (final var action : duty.getAction()) {
                 if (action == Action.DELETE) {
@@ -314,7 +316,8 @@ public final class PolicyUtils {
      * @return The duration or null.
      * @throws javax.xml.datatype.DatatypeConfigurationException If the duration cannot be parsed.
      */
-    public static java.time.Duration getDuration(final Rule rule) throws DatatypeConfigurationException {
+    public static java.time.Duration getDuration(final Rule rule)
+            throws DatatypeConfigurationException {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
@@ -344,7 +347,8 @@ public final class PolicyUtils {
      * @param ruleList The ids rule list.
      * @throws InvalidInputException If a target is missing.
      */
-    public static void validateRuleTarget(final List<? extends Rule> ruleList) throws InvalidInputException {
+    public static void validateRuleTarget(final List<? extends Rule> ruleList)
+            throws InvalidInputException {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
             if (target == null || target.toString().equals("")) {
@@ -359,7 +363,8 @@ public final class PolicyUtils {
      * @param agreement The contract agreement.
      * @throws ContractException If the assigner is not as expected.
      */
-    public static void validateRuleAssigner(final ContractAgreement agreement) throws ContractException {
+    public static void validateRuleAssigner(final ContractAgreement agreement)
+            throws ContractException {
         // TODO implement later
         // NOTE: Recipient url might not be the connector id.
     }
@@ -395,6 +400,7 @@ public final class PolicyUtils {
      *
      * @param consumer The consumer agreement.
      * @param provider The provider agreement.
+     * @return True if both agreements are equal.
      * @throws ContractException If both objects do not match.
      */
     public static boolean compareContractAgreements(final ContractAgreement consumer,
@@ -442,10 +448,11 @@ public final class PolicyUtils {
     }
 
     /**
-     * Compares the content of two permissions lists.
+     * Compare the content of two permissions lists.
      *
      * @param lList List of rules from original contract.
      * @param rList List of rules from the contract that should be compared.
+     * @return true if both rules are the same.
      */
     private static boolean compareDuties(final ArrayList<? extends Permission> lList,
                                          final ArrayList<? extends Permission> rList) {
@@ -453,7 +460,7 @@ public final class PolicyUtils {
     }
 
     /**
-     * Compares the content of two rule lists.
+     * Compare the content of two rule lists.
      *
      * @param oldRules List of rules from original contract.
      * @param newRules List of rules from the contract that should be compared.
@@ -469,6 +476,7 @@ public final class PolicyUtils {
      *
      * @param lList List of rules from original contract.
      * @param rList List of rules from the contract that should be compared.
+     * @return true if both rules are the same.
      */
     private static boolean compareConstraints(
             final ArrayList<? extends AbstractConstraint> lList,

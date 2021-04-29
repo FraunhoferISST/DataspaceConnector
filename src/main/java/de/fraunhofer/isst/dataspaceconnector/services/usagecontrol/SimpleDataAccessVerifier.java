@@ -1,18 +1,18 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.util.Arrays;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.Arrays;
+
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class SimpleDataAccessVerifier implements PolicyVerifier<URI> {
+public final class SimpleDataAccessVerifier implements PolicyVerifier<URI> {
 
     /**
      * The policy execution point.
@@ -27,24 +27,29 @@ public class SimpleDataAccessVerifier implements PolicyVerifier<URI> {
      */
     public void checkPolicyOnDataAccess(final URI target) throws PolicyRestrictionException {
         final var patternsToCheck = Arrays.asList(
-                            PolicyPattern.PROVIDE_ACCESS,
-                            PolicyPattern.USAGE_DURING_INTERVAL,
-                            PolicyPattern.USAGE_UNTIL_DELETION,
-                            PolicyPattern.DURATION_USAGE,
-                            PolicyPattern.USAGE_LOGGING,
-                            PolicyPattern.N_TIMES_USAGE,
-                            PolicyPattern.USAGE_NOTIFICATION);
+                PolicyPattern.PROVIDE_ACCESS,
+                PolicyPattern.USAGE_DURING_INTERVAL,
+                PolicyPattern.USAGE_UNTIL_DELETION,
+                PolicyPattern.DURATION_USAGE,
+                PolicyPattern.USAGE_LOGGING,
+                PolicyPattern.N_TIMES_USAGE,
+                PolicyPattern.USAGE_NOTIFICATION);
 
         decisionService.checkForDataAccess(patternsToCheck, target);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public VerificationResult verify(final URI target) {
+    public VerificationResult verify(final URI input) {
         try {
-            this.checkPolicyOnDataAccess(target);
+            this.checkPolicyOnDataAccess(input);
             return VerificationResult.ALLOWED;
         } catch (PolicyRestrictionException exception) {
-            log.info("Data access denied. [target=({})]", target);
+            if (log.isDebugEnabled()) {
+                log.debug("Data access denied. [input=({})]", input, exception);
+            }
             return VerificationResult.DENIED;
         }
     }

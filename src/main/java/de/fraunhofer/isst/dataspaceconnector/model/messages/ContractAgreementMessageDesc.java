@@ -22,11 +22,11 @@ public class ContractAgreementMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient          The recipient.
-     * @param correlationMessage The correlation message.
+     * @param recipient The recipient.
+     * @param message   The correlation message.
      */
-    public ContractAgreementMessageDesc(final URI recipient, final URI correlationMessage) {
+    public ContractAgreementMessageDesc(final URI recipient, final URI message) {
         super(recipient);
-        this.correlationMessage = correlationMessage;
+        this.correlationMessage = message;
     }
 }
