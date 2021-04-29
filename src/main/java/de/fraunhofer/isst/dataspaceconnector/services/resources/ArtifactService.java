@@ -1,5 +1,13 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -25,20 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 /**
  * Handles the basic logic for artifacts.
  */
 @Log4j2
 @Service
-public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
+public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
+        implements RemoteResolver {
     /**
      * Repository for storing data.
      **/

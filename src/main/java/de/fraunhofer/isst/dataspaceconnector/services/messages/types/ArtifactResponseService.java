@@ -16,7 +16,8 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids artifact response messages.
  */
 @Service
-public final class ArtifactResponseService extends AbstractMessageService<ArtifactResponseMessageDesc> {
+public final class ArtifactResponseService
+        extends AbstractMessageService<ArtifactResponseMessageDesc> {
 
     /**
      * @throws IllegalArgumentException If desc is null.
