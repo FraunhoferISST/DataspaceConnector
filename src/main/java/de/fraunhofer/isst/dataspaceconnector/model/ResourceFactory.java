@@ -41,7 +41,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     /**
      * The default language assigned to all resources.
      */
-    public static final String DEFAULT_LANGUAGE = "EN";
+    public static final String DEFAULT_LANGUAGE = "";
 
     /**
      * The default licence assigned to all resources.
