@@ -107,7 +107,8 @@ public class ConfigurationController {
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
     @ResponseBody
-    public ResponseEntity<Object> setNegotiationStatus(@RequestParam("status") final boolean status) {
+    public ResponseEntity<Object> setNegotiationStatus(
+            @RequestParam("status") final boolean status) {
         connectorConfig.setPolicyNegotiation(status);
         if (connectorConfig.isPolicyNegotiation()) {
             return new ResponseEntity<>("Contract Negotiation is activated.", HttpStatus.OK);

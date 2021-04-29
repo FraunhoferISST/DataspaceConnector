@@ -118,7 +118,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<PagedModel<V>> addResources(@Valid @PathVariable(name = "id") final UUID ownerId,
+    public HttpEntity<PagedModel<V>> addResources(
+            @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         Utils.requireNonNull(resources, ErrorMessages.LIST_NULL);
 

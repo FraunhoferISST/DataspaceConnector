@@ -1,5 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -34,12 +40,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -185,7 +185,8 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                 try {
                     valid = areRulesValid(validContracts, targetRuleMap, target);
                 } catch (IllegalArgumentException exception) {
-                    return exceptionService.handleMalformedRules(exception, payload, issuerConnector, messageId);
+                    return exceptionService
+                            .handleMalformedRules(exception, payload, issuerConnector, messageId);
                 }
 
                 if (!valid) {
@@ -198,7 +199,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         } catch (IllegalArgumentException exception) {
             return exceptionService.handleIllegalArgumentException(exception, payload,
                     issuerConnector, messageId);
-        } catch (Exception exception ) {
+        } catch (Exception exception) {
             // NOTE: Should not be reached. TODO Add further exception handling if necessary.
             return exceptionService.handleMessageProcessingFailed(exception, payload,
                     issuerConnector, messageId);

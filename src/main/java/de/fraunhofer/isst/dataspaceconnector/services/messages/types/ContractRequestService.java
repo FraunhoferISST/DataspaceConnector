@@ -17,7 +17,8 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * Message service for ids contract request messages.
  */
 @Service
-public final class ContractRequestService extends AbstractMessageService<ContractRequestMessageDesc> {
+public final class ContractRequestService
+        extends AbstractMessageService<ContractRequestMessageDesc> {
 
     /**
      * @throws IllegalArgumentException If desc is null.
