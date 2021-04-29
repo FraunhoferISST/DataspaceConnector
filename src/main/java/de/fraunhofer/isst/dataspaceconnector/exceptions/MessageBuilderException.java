@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.exceptions;
 
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
-
 /**
  * Thrown to indicate that the message could not be build.
  */
