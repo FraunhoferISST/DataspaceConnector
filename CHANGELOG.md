@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [4.3.1] - 2021-04-15
+
+### Changed
+- Set builder image to JDK 11.
+
 ## [4.3.0] - 2021-03-24
 
 ### Added 
