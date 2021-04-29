@@ -48,7 +48,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,32 +70,33 @@ public final class ResourceControllers {
     @RequestMapping("/api/catalogs")
     @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
     public static class CatalogController
-            extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {}
+            extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> { }
 
     @RestController
     @RequestMapping("/api/rules")
     @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
     public static class RuleController extends BaseResourceController<ContractRule,
-            ContractRuleDesc, ContractRuleView, RuleService> {}
+            ContractRuleDesc, ContractRuleView, RuleService> { }
 
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
     public static class RepresentationController extends BaseResourceController<Representation,
-            RepresentationDesc, RepresentationView, RepresentationService> {}
+            RepresentationDesc, RepresentationView, RepresentationService> { }
 
     @RestController
     @RequestMapping("/api/contracts")
     @Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
     public static class ContractController
-            extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {}
+            extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
+    }
 
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
-                    OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {}
+                    OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> { }
 
     @RestController
     @RequestMapping("/api/requests")
@@ -106,7 +108,8 @@ public final class ResourceControllers {
         @Override
         @Hidden
         @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
-        public ResponseEntity<RequestedResourceView> create(final RequestedResourceDesc desc) {
+        public final ResponseEntity<RequestedResourceView> create(
+                final RequestedResourceDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
     }
@@ -119,22 +122,22 @@ public final class ResourceControllers {
         @Override
         @Hidden
         @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
-        public ResponseEntity<AgreementView> create(final AgreementDesc desc) {
+        public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Override
         @Hidden
         @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
-        public ResponseEntity<Object> update(
-                @Valid final UUID resourceId, final AgreementDesc desc) {
+        public final ResponseEntity<Object> update(@Valid final UUID resourceId,
+                                                   final AgreementDesc desc) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         @Override
         @Hidden
         @ApiResponses(value = { @ApiResponse(responseCode = "405", description = "Not allowed") })
-        public ResponseEntity<Void> delete(@Valid final UUID resourceId) {
+        public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
         }
     }
@@ -142,16 +145,24 @@ public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/artifacts")
     @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
-    public static class ArtifactController
+    @RequiredArgsConstructor
+    public static final class ArtifactController
             extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
-        @Autowired
-        ArtifactService artifactSvc;
 
-        @Autowired
-        BlockingArtifactReceiver dataReceiver;
+        /**
+         * The service managing artifacts.
+         */
+        private final @NonNull ArtifactService artifactSvc;
 
-        @Autowired
-        SimpleDataAccessVerifier accessVerifier;
+        /**
+         * The receiver for getting data from a remote source.
+         */
+        private final @NonNull BlockingArtifactReceiver dataReceiver;
+
+        /**
+         * The verifier for the data access.
+         */
+        private final @NonNull SimpleDataAccessVerifier accessVerifier;
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data
@@ -159,8 +170,11 @@ public final class ResourceControllers {
          * request to the backend.
          *
          * @param artifactId Artifact id.
+         * @param download If the data should be forcefully downloaded.
+         * @param agreementUri The agreement which should be used for access control.
          * @param params     All request parameters.
          * @param headers    All request headers.
+         * @param request The current http request.
          * @return The data object.
          */
         @GetMapping("{id}/data/**")
@@ -186,18 +200,18 @@ public final class ResourceControllers {
                 If no agreement information has been passed the connector needs to check if the
                 data access is restricted by the usage control.
              */
-            /*
-                TODO: Check what happens when this connector is the provider and one of its provided
-                agreements is passed.
-             */
+            // TODO: Check what happens when this connector is the provider and one of its provided
+            //  agreements is passed.
             final var data = (agreementUri == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                                          new RetrievalInformation(agreementUri, download, queryInput));
+                                          new RetrievalInformation(agreementUri, download,
+                                                                   queryInput));
 
             StreamingResponseBody body = outputStream -> {
+                final int blockSize = 1024;
                 int numBytesToWrite;
-                var buffer = new byte[1024];
+                var buffer = new byte[blockSize];
                 while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
                     outputStream.write(buffer, 0, numBytesToWrite);
                 }
@@ -228,23 +242,24 @@ public final class ResourceControllers {
         @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
         public ResponseEntity<Object> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) QueryInput queryInput) {
+                @RequestBody(required = false) final QueryInput queryInput) {
             ValidationUtils.validateQueryInput(queryInput);
             return ResponseEntity.ok(artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                                                          queryInput));
         }
 
+        /**
+         * Replace the data of an artifact.
+         * @param artifactId The artifact whose data should be replaced.
+         * @param inputStream The new data.
+         * @return Http Status ok.
+         */
         @PutMapping(value = "{id}/data", consumes = "*/*")
-        public ResponseEntity<Object> putData(
+        public ResponseEntity<Void> putData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                final @RequestBody byte[] inputStream) {
-            try {
-                artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
-
-            return ResponseEntity.ok("");
+                @RequestBody final byte[] inputStream) {
+            artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
+            return new ResponseEntity<>(HttpStatus.OK);
         }
     }
 }
