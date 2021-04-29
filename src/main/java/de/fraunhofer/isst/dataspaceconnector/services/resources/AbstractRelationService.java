@@ -87,6 +87,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Override
     public void add(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
@@ -108,6 +109,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Override
     public void remove(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
@@ -130,6 +132,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
      * @throws IllegalArgumentException if any of the passed arguments is null.
      * @throws ResourceNotFoundException if any of the entities does not exists.
      */
+    @Override
     public void replace(final UUID ownerId, final Set<UUID> entities) {
         Utils.requireNonNull(ownerId, ErrorMessages.ENTITYID_NULL);
         Utils.requireNonNull(entities, ErrorMessages.ENTITYSET_NULL);
