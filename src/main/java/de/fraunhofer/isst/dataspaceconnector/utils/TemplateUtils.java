@@ -10,11 +10,13 @@ import de.fraunhofer.isst.dataspaceconnector.model.templates.ContractTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RepresentationTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.ResourceTemplate;
 import de.fraunhofer.isst.dataspaceconnector.model.templates.RuleTemplate;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public final class TemplateUtils {
 
     private TemplateUtils() {
@@ -48,15 +50,22 @@ public final class TemplateUtils {
 
         // Iterate over all representations.
         final var representationList = resource.getRepresentation();
-        for (final var representation : representationList) {
-            final var template = MappingUtils.fromIdsRepresentation(representation);
-            final var artifactTemplates = getArtifactTemplates(representation,
-                    artifacts, download, accessUrl);
+        try {
+            for (final var representation : Utils.requireNonNull(representationList, ErrorMessages.LIST_NULL)) {
+                final var template = MappingUtils.fromIdsRepresentation(representation);
+                final var artifactTemplates = getArtifactTemplates(representation,
+                        artifacts, download, accessUrl);
 
-            // Representation is only saved if it contains requested artifacts.
-            if (!artifactTemplates.isEmpty()) {
-                template.setArtifacts(artifactTemplates);
-                list.add(template);
+                // Representation is only saved if it contains requested artifacts.
+                if (!artifactTemplates.isEmpty()) {
+                    template.setArtifacts(artifactTemplates);
+                    list.add(template);
+                }
+            }
+        } catch (IllegalArgumentException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Resource %s does not contain any representations.",
+                        resource.getId()));
             }
         }
 
@@ -80,14 +89,22 @@ public final class TemplateUtils {
 
         // Iterate over all artifacts.
         final var artifactList = representation.getInstance();
-        for (final var artifact : artifactList) {
-            final var id = artifact.getId();
 
-            // Artifact is only saved if it has been requested.
-            if (requestedArtifacts.contains(id)) {
-                final var template = MappingUtils.fromIdsArtifact((Artifact) artifact,
-                        download, remoteUrl);
-                list.add(template);
+        try {
+            for (final var artifact : Utils.requireNonNull(artifactList, ErrorMessages.LIST_NULL)) {
+                final var id = artifact.getId();
+
+                // Artifact is only saved if it has been requested.
+                if (requestedArtifacts.contains(id)) {
+                    final var template = MappingUtils.fromIdsArtifact((Artifact) artifact,
+                            download, remoteUrl);
+                    list.add(template);
+                }
+            }
+        } catch (IllegalArgumentException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Representation %s does not contain any artifacts.",
+                        representation.getId()));
             }
         }
 
@@ -96,11 +113,12 @@ public final class TemplateUtils {
 
     /**
      * Build a list of contract templates from ids resource.
+     * NOTE: Keep method for later usage.
      *
      * @param resource The ids resource.
      * @return List of contract templates.
      */
-    public static List<ContractTemplate> getContractTemplates(final Resource resource) {
+    private static List<ContractTemplate> getContractTemplates(final Resource resource) {
         final var list = new ArrayList<ContractTemplate>();
 
         // Iterate over all contract offers.
@@ -121,7 +139,7 @@ public final class TemplateUtils {
      * @param contract The ids contract.
      * @return List of rule templates.
      */
-    public static List<RuleTemplate> getRuleTemplates(final Contract contract) {
+    private static List<RuleTemplate> getRuleTemplates(final Contract contract) {
         final var list = new ArrayList<RuleTemplate>();
         final var rules = PolicyUtils.extractRulesFromContract(contract);
 
