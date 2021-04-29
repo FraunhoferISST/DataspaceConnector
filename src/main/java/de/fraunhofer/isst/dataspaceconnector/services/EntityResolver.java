@@ -35,7 +35,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -219,30 +218,6 @@ public class EntityResolver {
     public InputStream getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
-    }
-
-    /**
-     * Get artifact by remote id.
-     *
-     * @param id The remote id (at provider side).
-     * @return The artifact of the database.
-     * @throws ResourceNotFoundException If the resource could not be found.
-     */
-    public Artifact getArtifactByRemoteId(final URI id) throws ResourceNotFoundException {
-        final var artifacts = artifactService.getAll(Pageable.unpaged());
-
-        for (final var artifact : artifacts) {
-            final var remoteId = artifact.getRemoteId();
-            if (remoteId.equals(id)) {
-                return artifact;
-            }
-        }
-
-        // Should not be reached.
-        if (log.isWarnEnabled()) {
-            log.warn("Found no artifact with [remoteId=({})]", id);
-        }
-        throw new ResourceNotFoundException("Found no artifact with this remote id: " + id);
     }
 
     /**
