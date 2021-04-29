@@ -15,10 +15,18 @@ All notable changes to this project will be documented in this file.
 - Add possibility to disable http tracer in `application.properties`.
 - Add possibility to restrict depth of returned IDS information on `DescriptionRequest`.
   * Change IDS self-description to returning only a list of catalogs instead of their whole content.
+  * Add possibility to send `DescriptionRequestMessages` for other elements than resources.
 - Add remote IDs to each object for tracking origin.
 - Support multiple policy patterns in one contract.
 - Add Unit tests and integration tests.
 - Add quality checks and project reports to `pom.xml`: execute with `mvn verify site`.
+- Improve contract negotiation and usage control.
+  * Add contract agreement validation in `ContractAgreementHandler`.
+  * Note pre-defined providers for contract offers in `ContractRequestHandler`.
+  * Use contract agreements for policy enforcement.
+  * Handle out contract agreements for multiple artifacts (targets) within one negotiation sequence.
+  * Restrict agreement processing to confirmed agreements.
+  * Add relation between artifacts and agreements.
 
 ### Changed
 - Support of IDS Infomodel v4.0.4 (direct import in `pom.xml`).
@@ -46,13 +54,6 @@ All notable changes to this project will be documented in this file.
   * Process bytes instead of strings. 
   * Remove limit for data in internal database.
   * Establish connection via `ArtifactRequestMessage` for always pulling recent data.
-- Improve contract negotiation and usage control.
-  * Add contract agreement validation in `ContractAgreementHandler`.
-  * Note pre-defined providers for contract offers in `ContractRequestHandler`.
-  * Use contract agreements for policy enforcement.
-  * Handle out contract agreements for multiple artifacts (targets) within one negotiation sequence.
-  * Restrict agreement processing to confirmed agreements.
-  * Add relation between artifacts and agreements.
 
 ### Fixed
 - Fix of buffer overflow in http tracer.
