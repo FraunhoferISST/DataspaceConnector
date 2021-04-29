@@ -18,100 +18,126 @@ public final class RelationshipServices {
     @Service
     @NoArgsConstructor
     public static class RuleContractLinker extends NonOwningRelationService<ContractRule, Contract,
-                    RuleService, ContractService> {
+            RuleService, ContractService> {
 
         @Override
-        protected List<Contract> getInternal(final ContractRule owner) {
+        protected final List<Contract> getInternal(final ContractRule owner) {
             return owner.getContracts();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class ArtifactRepresentationLinker extends NonOwningRelationService<Artifact, Representation, ArtifactService, RepresentationService> {
+    public static class ArtifactRepresentationLinker
+            extends NonOwningRelationService<Artifact, Representation, ArtifactService,
+            RepresentationService> {
 
         @Override
-        protected List<Representation> getInternal(final Artifact owner) {
+        protected final List<Representation> getInternal(final Artifact owner) {
             return owner.getRepresentations();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class RepresentationOfferedResourceLinker extends NonOwningRelationService<Representation, OfferedResource, RepresentationService, OfferedResourceService> {
+    public static class RepresentationOfferedResourceLinker
+            extends NonOwningRelationService<Representation, OfferedResource,
+            RepresentationService, OfferedResourceService> {
 
         @Override
-        protected List<OfferedResource> getInternal(final Representation owner) {
+        protected final List<OfferedResource> getInternal(final Representation owner) {
             return (List<OfferedResource>) (List<?>) owner.getResources();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class RepresentationRequestedResourceLinker extends NonOwningRelationService<Representation, RequestedResource, RepresentationService, RequestedResourceService> {
+    public static class RepresentationRequestedResourceLinker
+            extends NonOwningRelationService<Representation, RequestedResource,
+            RepresentationService, RequestedResourceService> {
 
         @Override
-        protected List<RequestedResource> getInternal(final Representation owner) {
+        protected final List<RequestedResource> getInternal(final Representation owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class OfferedResourceCatalogLinker extends NonOwningRelationService<OfferedResource, Catalog, OfferedResourceService, CatalogService> {
+    public static class OfferedResourceCatalogLinker
+            extends NonOwningRelationService<OfferedResource, Catalog, OfferedResourceService,
+            CatalogService> {
 
         @Override
-        protected List<Catalog> getInternal(final OfferedResource owner) {
+        protected final List<Catalog> getInternal(final OfferedResource owner) {
             return owner.getCatalogs();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class RequestedResourceCatalogLinker extends NonOwningRelationService<RequestedResource, Catalog, RequestedResourceService, CatalogService> {
+    public static class RequestedResourceCatalogLinker
+            extends NonOwningRelationService<RequestedResource, Catalog, RequestedResourceService,
+            CatalogService> {
 
         @Override
-        protected List<Catalog> getInternal(final RequestedResource owner) {
+        protected final List<Catalog> getInternal(final RequestedResource owner) {
             return owner.getCatalogs();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class ContractOfferedResourceLinker extends NonOwningRelationService<Contract, OfferedResource, ContractService, OfferedResourceService> {
+    public static class ContractOfferedResourceLinker
+            extends NonOwningRelationService<Contract, OfferedResource, ContractService,
+            OfferedResourceService> {
 
         @Override
-        protected List<OfferedResource> getInternal(final Contract owner) {
+        protected final List<OfferedResource> getInternal(final Contract owner) {
             return (List<OfferedResource>) (List<?>) owner.getResources();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class ContractRequestedResourceLinker extends NonOwningRelationService<Contract, RequestedResource, ContractService, RequestedResourceService> {
+    public static class ContractRequestedResourceLinker
+            extends NonOwningRelationService<Contract, RequestedResource, ContractService,
+            RequestedResourceService> {
 
         @Override
-        protected List<RequestedResource> getInternal(final Contract owner) {
+        protected final List<RequestedResource> getInternal(final Contract owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class AgreementArtifactLinker extends OwningRelationService<Agreement, Artifact, AgreementService, ArtifactService> {
+    public static class AgreementArtifactLinker
+            extends OwningRelationService<Agreement, Artifact, AgreementService, ArtifactService> {
 
         @Override
-        protected List<Artifact> getInternal(final Agreement owner) {
+        protected final List<Artifact> getInternal(final Agreement owner) {
             return owner.getArtifacts();
         }
     }
 
+
     @Service
     @NoArgsConstructor
-    public static class ArtifactAgreementLinker extends NonOwningRelationService<Artifact, Agreement, ArtifactService, AgreementService> {
+    public static class ArtifactAgreementLinker
+            extends NonOwningRelationService<Artifact, Agreement, ArtifactService,
+            AgreementService> {
 
         @Override
-        protected List<Agreement> getInternal(final Artifact owner) {
+        protected final List<Agreement> getInternal(final Artifact owner) {
             return owner.getAgreements();
         }
     }
