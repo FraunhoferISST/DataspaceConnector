@@ -8,12 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * The repository containing all objects of type {@link
- * de.fraunhofer.isst.dataspaceconnector.model.Agreement}.
+ * The repository containing all objects of type {@link Agreement}.
  */
 @Repository
 public interface AgreementRepository extends BaseEntityRepository<Agreement> {
+
+    /**
+     * Set the status of an agreement to confirmed.
+     * @param entityId The id of the agreement.
+     */
     @Modifying
     @Query("update Agreement a set a.confirmed = true where a.id = :entityId")
-    int confirmAgreement(UUID entityId);
+    void confirmAgreement(UUID entityId);
 }
