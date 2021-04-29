@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
+import java.io.IOException;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
@@ -16,11 +19,9 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-import java.util.Map;
-
 /**
  * Abstract class for building, sending, and processing ids messages.
+ * @param <D> The type of the message description.
  */
 @Log4j2
 public abstract class AbstractMessageService<D extends MessageDesc> {
@@ -67,7 +68,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
-    public Map<String, String> sendMessage(final D desc, final String payload) throws MessageException {
+    public Map<String, String> sendMessage(final D desc, final String payload)
+            throws MessageException {
         try {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
@@ -82,25 +84,25 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         } catch (MessageBuilderException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to build ids request message. [exception=({})]",
-                        e.getMessage(), e);
+                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
         } catch (MessageResponseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to read ids response message. [exception=({})]",
-                        e.getMessage(), e);
+                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE.toString(), e);
         } catch (ConstraintViolationException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Ids message could not be built. [exception=({})]",
-                        e.getMessage(), e);
+                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.HEADER_BUILD_FAILED.toString(), e);
         } catch (ClaimsException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid DAT in incoming message. [exception=({})]",
-                        e.getMessage(), e);
+                          e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
         } catch (FileUploadException | IOException e) {
@@ -118,7 +120,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return True if the response type is as expected.
      * @throws MessageResponseException If the response could not be read.
      */
-    public boolean isValidResponseType(final Map<String, String> message) throws MessageResponseException {
+    public boolean isValidResponseType(final Map<String, String> message)
+            throws MessageResponseException {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
