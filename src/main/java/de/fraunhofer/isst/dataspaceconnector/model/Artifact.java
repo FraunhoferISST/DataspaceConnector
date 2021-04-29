@@ -49,7 +49,7 @@ public abstract class Artifact extends AbstractEntity {
     private long numAccessed;
 
     /**
-     * Indicates whether the artifact should be downloaded automatically
+     * Indicates whether the artifact should be downloaded automatically.
      */
     private boolean automatedDownload;
 
@@ -77,7 +77,7 @@ public abstract class Artifact extends AbstractEntity {
     private List<Representation> representations;
 
     /**
-     * The agreements that refer to this artifact
+     * The agreements that refer to this artifact.
      */
     @ManyToMany(mappedBy = "artifacts")
     private List<Agreement> agreements;
