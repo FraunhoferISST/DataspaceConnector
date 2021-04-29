@@ -141,5 +141,9 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
         return repository;
     }
 
+    /**
+     * Returns the factory so it can be accessed in subclasses.
+     * @return the factory
+     */
     protected AbstractFactory<T, D> getFactory() { return factory; }
 }

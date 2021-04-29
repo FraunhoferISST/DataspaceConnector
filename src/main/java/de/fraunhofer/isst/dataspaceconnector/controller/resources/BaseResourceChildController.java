@@ -1,5 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationService;
@@ -28,17 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 /**
  * Offers REST-Api Endpoints for modifying relations between REST resources.
  *
  * @param <S> The service type for handling the relations logic.
+ * @param <T> The type of the entity operated on.
+ * @param <V> The type of the view model produces.
  */
 public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
         T extends AbstractEntity, V extends RepresentationModel<V>> {
@@ -48,19 +50,29 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @Autowired
     private S linker;
 
+    /**
+     * The assembler for converting entites to views.
+     */
     @Autowired
     private RepresentationModelAssembler<T, V> assembler;
 
+    /**
+     * The assembler for creating list of views.
+     */
     @Autowired
     private PagedResourcesAssembler<T> pagedResourcesAssembler;
 
+    /**
+     * The type of the service.
+     */
     private final Class<S> resourceType;
 
     /**
      * Default constructor.
      */
     protected BaseResourceChildController() {
-        final var resolved = GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceChildController.class);
+        final var resolved = GenericTypeResolver
+                .resolveTypeArguments(getClass(), BaseResourceChildController.class);
         resourceType = (Class<S>) resolved[2];
     }
 
@@ -68,6 +80,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * Get all resources of the same type linked to the passed resource.
      * Endpoint for GET requests.
      * @param ownerId The id of the owning resource.
+     * @param page The page index.
+     * @param size The page size.
+     * @param sort The sorting applied to the page.
      * @return The children of the resource.
      * @throws IllegalArgumentException if the ownerId is null.
      * @throws ResourceNotFoundException if the ownerId is not known.
