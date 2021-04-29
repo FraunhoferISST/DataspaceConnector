@@ -1,8 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.AgreementsToArtifacts;
+import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.AgreementController;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -10,9 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers.AgreementsToArtifacts;
-import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.AgreementController;
-import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class AgreementViewAssembler
@@ -24,8 +23,8 @@ public class AgreementViewAssembler
         view.add(getSelfLink(agreement.getId()));
 
         final var artifactLink = linkTo(methodOn(AgreementsToArtifacts.class)
-                                                .getResource(agreement.getId(), null, null, null))
-                                         .withRel("artifacts");
+                .getResource(agreement.getId(), null, null, null))
+                .withRel("artifacts");
         view.add(artifactLink);
 
         return view;
