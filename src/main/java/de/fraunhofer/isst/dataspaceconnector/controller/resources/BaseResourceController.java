@@ -1,5 +1,8 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractDescription;
 import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
@@ -27,14 +30,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.UUID;
-
 /**
  * Offers REST-Api endpoints for REST resource handling.
  *
  * @param <T> The type of the resource.
  * @param <D> The type of the resource description expected to be passed with REST calls.
+ * @param <V> The type of the view produces by this controller.
  * @param <S> The underlying service for handling the resource logic.
  */
 public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
@@ -46,12 +47,21 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @Autowired
     private S service;
 
+    /**
+     * The assembler for creating a view from an entity.
+     */
     @Autowired
     private RepresentationModelAssembler<T, V> assembler;
 
+    /**
+     * The assembler for creating list of views.
+     */
     @Autowired
     private PagedResourcesAssembler<T> pagedResourcesAssembler;
 
+    /**
+     * The type of the entity used for creating empty pages.
+     */
     private final Class<T> resourceType;
 
     /**
@@ -85,6 +95,9 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     /**
      * Get a list of all resources endpoints of this type.
      * Endpoint for GET requests.
+     * @param page The page index.
+     * @param size The page size.
+     * @param sort The sorting applied to the page.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
