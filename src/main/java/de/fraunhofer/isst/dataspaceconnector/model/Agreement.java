@@ -40,6 +40,11 @@ public class Agreement extends AbstractEntity {
     private boolean confirmed;
 
     /**
+     * Signal that this agreement expired and may not be used anymore.
+     */
+    private boolean archived;
+
+    /**
      * The definition of the contract.
      **/
     @Lob

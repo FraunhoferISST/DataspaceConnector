@@ -29,7 +29,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.SimpleArtifactDataGetter;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.AlwaysAllowAccessVerifier;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
@@ -48,8 +47,6 @@ public class EntityResolver {
      * Service for artifacts.
      */
     private final @NonNull ArtifactService artifactService;
-
-    private final @NonNull SimpleArtifactDataGetter dataGetter;
 
     /**
      * Service for representations.
@@ -106,7 +103,15 @@ public class EntityResolver {
      */
     private final @NonNull IdsContractBuilder contractBuilder;
 
+    /**
+     * Skips the data access verification.
+     */
     private final @NonNull AlwaysAllowAccessVerifier allowAccessVerifier;
+
+    /**
+     * Performs a artifact requests.
+     */
+    private final @NonNull BlockingArtifactReceiver artifactReceiver;
 
     /**
      * Return any connector entity by its id.
@@ -213,7 +218,7 @@ public class EntityResolver {
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact, final QueryInput queryInput) {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
-        return dataGetter.getData(artifactService, allowAccessVerifier, endpoint, queryInput);
+        return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }
 
     /**

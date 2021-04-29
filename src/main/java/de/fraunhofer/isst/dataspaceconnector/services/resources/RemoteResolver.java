@@ -4,6 +4,14 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Resolves an remote address to an local entity.
+ */
 public interface RemoteResolver {
-    Optional<UUID> identifyByRemoteId(final URI remoteId);
+    /**
+     * Search for an local entity by its remote id.
+     * @param remoteId The remote id.
+     * @return The local entity id.
+     */
+    Optional<UUID> identifyByRemoteId(URI remoteId);
 }

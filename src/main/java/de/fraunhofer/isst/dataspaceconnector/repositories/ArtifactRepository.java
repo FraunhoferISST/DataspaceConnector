@@ -39,8 +39,9 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "FROM Artifact a, Agreement ag "
             + "WHERE a.id = :artifactId "
             + "AND ag.remoteId <> 'aced00057372000c6a6176612e6e65742e555249ac01782e439e49ab0300014c0006737472696e677400124c6a6176612f6c616e672f537472696e673b787074000767656e6573697378' "
+            + "AND ag.archived = false "
             + "AND ag MEMBER OF a.agreements")
-    List<URI> findRequestedResourceAgreementRemoteIds(UUID artifactId);
+    List<URI> findRemoteOriginAgreements(UUID artifactId);
 
     @Modifying
     @Query("update Artifact a set a.checkSum=:checkSum, a.byteSize=:size where a.id = :artifactId")
