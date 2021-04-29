@@ -13,11 +13,6 @@ public class PolicyRestrictionException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Constructor without params.
-     */
-    public PolicyRestrictionException() { }
-
-    /**
      * Construct a PolicyRestrictionException with the specified detail message and cause.
      *
      * @param msg The detail message.
