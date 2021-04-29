@@ -1,13 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -33,13 +25,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 /**
  * Handles the basic logic for artifacts.
  */
 @Log4j2
 @Service
-public class ArtifactService
-        extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
+public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc> implements RemoteResolver {
     /**
      * Repository for storing data.
      **/
@@ -52,6 +51,7 @@ public class ArtifactService
 
     /**
      * Constructor for ArtifactService.
+     *
      * @param dataRepository The data repository.
      * @param httpService    The HTTP service for fetching remote data.
      */
@@ -64,6 +64,7 @@ public class ArtifactService
 
     /**
      * Persist the artifact and its data.
+     *
      * @param artifact The artifact to persists.
      * @return The persisted artifact.
      */
@@ -95,14 +96,15 @@ public class ArtifactService
     /**
      * Get the artifacts data. If agreements for this resource exist, all of them will be tried for
      * data access.
+     *
      * @param accessVerifier Checks if the data access should be allowed.
-     * @param retriever Retrieves the data from an external source.
-     * @param artifactId The id of the artifact.
-     * @param queryInput The query for the backend.
+     * @param retriever      Retrieves the data from an external source.
+     * @param artifactId     The id of the artifact.
+     * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException if the artifact does not exist.
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier,
@@ -132,7 +134,7 @@ public class ArtifactService
                     if (log.isDebugEnabled()) {
                         log.debug("Tried to access artifact data by trying an agreement. "
                                         + "[artifactId=({}), agreementId=({})]",
-                                  artifactId, agRemoteId);
+                                artifactId, agRemoteId);
                     }
 
                     policyException = exception;
@@ -142,7 +144,7 @@ public class ArtifactService
             // All attempts on accessing data failed. Deny access with the last rejection reason.
             if (log.isDebugEnabled()) {
                 log.debug("The requested resource is not owned by this connector."
-                          + " Access forbidden. [artifactId=({})]", artifactId);
+                        + " Access forbidden. [artifactId=({})]", artifactId);
             }
 
             throw policyException;
@@ -155,14 +157,15 @@ public class ArtifactService
     /**
      * Get data restricted by a contract. If the data is not available an artifact requests will
      * pull the data.
+     *
      * @param accessVerifier Checks if the data access should be allowed.
-     * @param retriever Retrieves the data from an external source.
-     * @param artifactId The id of the artifact.
-     * @param information Information for pulling the data from a remote source.
+     * @param retriever      Retrieves the data from an external source.
+     * @param artifactId     The id of the artifact.
+     * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException if the artifact does not exist.
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<URI> accessVerifier,
@@ -189,8 +192,8 @@ public class ArtifactService
                 NOTE: Make this not blocking.
              */
             final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
-                                                      information.getTransferContract(),
-                                                      information.getQueryInput());
+                    information.getTransferContract(),
+                    information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
             persist(artifact);
@@ -203,7 +206,8 @@ public class ArtifactService
 
     /**
      * Get the data from the internal database. No policy enforcement is performed here!
-     * @param artifact The artifact which data should be returned.
+     *
+     * @param artifact   The artifact which data should be returned.
      * @param queryInput The query for the data backend. May be null.
      * @return The artifact's data.
      */
@@ -228,10 +232,8 @@ public class ArtifactService
 
     private boolean shouldDownload(final Artifact artifact, final Boolean forceDownload) {
         if (forceDownload == null) {
-            /*
-                TODO: Add checks if the data is still up to date. This will remove unnecessary
-                downloads.
-             */
+            // TODO: Add checks if the data is still up to date. This will remove unnecessary
+            //  downloads.
             return !isDataPresent() || artifact.isAutomatedDownload();
         } else {
             return forceDownload;
@@ -245,6 +247,7 @@ public class ArtifactService
 
     /**
      * Get local data.
+     *
      * @param data The data container.
      * @return The stored data.
      */
@@ -254,6 +257,7 @@ public class ArtifactService
 
     /**
      * Get remote data.
+     *
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
@@ -264,9 +268,9 @@ public class ArtifactService
             if (data.getUsername() != null || data.getPassword() != null) {
                 backendData =
                         httpSvc.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
-                                                                 data.getUsername(),
-                                                                 data.getPassword(),
-                                                                 queryInput);
+                                data.getUsername(),
+                                data.getPassword(),
+                                queryInput);
             } else {
                 backendData =
                         httpSvc.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
@@ -276,7 +280,7 @@ public class ArtifactService
         } catch (URISyntaxException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
-                         exception.getMessage(), exception);
+                        exception.getMessage(), exception);
             }
             throw new RuntimeException("Could not connect to data source.", exception);
         }
@@ -284,6 +288,7 @@ public class ArtifactService
 
     /**
      * Finds all artifacts referenced in a specific agreement.
+     *
      * @param agreementId ID of the agreement
      * @return list of all artifacts referenced in the agreement
      */
@@ -303,8 +308,9 @@ public class ArtifactService
 
     /**
      * Update an artifacts underlying data.
+     *
      * @param artifactId The artifact which should be updated.
-     * @param data The new data.
+     * @param data       The new data.
      * @return The data stored in the artifact.
      */
     @Transactional
@@ -325,18 +331,19 @@ public class ArtifactService
                 dataRepo.setLocalData(localData.getId(), bytes);
                 if (((ArtifactFactory) getFactory()).updateByteSize(artifact, bytes)) {
                     ((ArtifactRepository) getRepository()).setArtifactData(artifactId,
-                                                                           artifact.getCheckSum(),
-                                                                           artifact.getByteSize());
+                            artifact.getCheckSum(),
+                            artifact.getByteSize());
                 }
 
                 return new ByteArrayInputStream(bytes);
             } catch (Exception e) {
                 if (log.isErrorEnabled()) {
                     log.error("Failed to store data. [artifactId=({}), exception=({})]",
-                              artifactId, e.getMessage(), e);
+                            artifactId, e.getMessage(), e);
                 }
 
-                // TODO This needs to be an expected exception. At the moment this should be fine if the internal db in not reachable there will be a lot more problems.
+                // TODO This needs to be an expected exception. At the moment this should be fine
+                //  if the internal db in not reachable there will be a lot more problems.
                 // throw new IOException("Failed to store data");
                 throw new RuntimeException("Failed to store data.");
             }
