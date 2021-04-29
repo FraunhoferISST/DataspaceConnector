@@ -49,14 +49,14 @@ public final class ValidationUtils {
         for (Map.Entry<String, String> entry : map.entrySet()) {
 
             // Check if key of the map entry is null, empty or blank
-            if (entry.getKey() == null || entry.getKey().trim().isEmpty()) {
+            if (entry.getKey() == null || entry.getKey().isBlank()) {
                 throw new IllegalArgumentException("Map key in query input should not be "
                         + "null, blank or empty (key:" + entry.getKey()
                         + ", value: " + entry.getValue() + ").");
             }
 
             // Check if value of the map entry is null, empty or blank
-            if (entry.getValue() == null || entry.getValue().trim().isEmpty()) {
+            if (entry.getValue() == null || entry.getValue().isBlank()) {
                 throw new IllegalArgumentException("Map value in query input should not be "
                         + "null, blank or empty (key:" + entry.getKey()
                         + ", value: " + entry.getValue() + ").");
