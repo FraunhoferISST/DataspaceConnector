@@ -20,8 +20,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +32,6 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
-    /**
-     * The class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateBuilder.class);
 
     /**
      * The service for resources.

@@ -1,6 +1,72 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [5.0.0-SNAPSHOT]
+
+### Added
+- Partially support of HATEOAS.
+- Add pagination for REST calls on resources.
+- Integration and configuration of Jaeger for using open telemetry.
+- Set default application name to `Dataspace Connector` in `application.properties`.
+- Add custom spring banner.
+- Add separate controller methods for each IDS message type.
+- Add global exception handlers for `ResourceNotFoundException`, `JsonProcessingException`, and any
+  `RuntimeException`.
+- Add possibility to disable http tracer in `application.properties`.
+- Add possibility to restrict depth of returned IDS information on `DescriptionRequest`.
+  * Change IDS self-description to returning only a list of catalogs instead of their whole content.
+  * Add possibility to send `DescriptionRequestMessages` for other elements than resources.
+- Add remote IDs to each object for tracking origin.
+- Support multiple policy patterns in one contract.
+- Add Unit tests and integration tests.
+- Add quality checks and project reports to `pom.xml`: execute with `mvn verify site`.
+- Improve contract negotiation and usage control.
+  * Add contract agreement validation in `ContractAgreementHandler`.
+  * Note pre-defined providers for contract offers in `ContractRequestHandler`.
+  * Use contract agreements for policy enforcement.
+  * Handle out contract agreements for multiple artifacts (targets) within one negotiation sequence.
+  * Restrict agreement processing to confirmed agreements.
+  * Add relation between artifacts and agreements.
+
+### Changed
+- Support of IDS Infomodel v4.0.4 (direct import in `pom.xml`).
+- Change IDS Framework version to v4.0.7.
+- Http tracer is limited to 10000 characters per log line.
+- Log file creation is disabled by default.
+- Move Swagger UI to `/api/docs`.
+- Change response type from string to object.
+- Use correct response codes as defined by RFC 7231.
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and agreements.
+  * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
+  * Separate `ResourceContract` into `Contract` and `Rule`.
+  * Handle data in own database entity. 
+  * Separate management of resources and its relations.
+  * Define clear interfaces between data model and the IDS Infomodel objects. 
+  * Add IDS object builder classes.  
+  * Move remote information from `BackendSource` to `Artifact`.
+- Strict implementation of model view controller pattern for data management.
+  * Controller methods for resources and representations.
+  * Provide strict access control to backend. Information can only be read and changed by services.
+  * Strict state validation for entities via factory classes.
+- Change IDS messaging sequence: Start with `ContractRequestMessage` for automated 
+  `DescriptionRequestMessage` and `ArtifactRequestMessage`.
+- Improve data transfer.
+  * Process bytes instead of strings. 
+  * Remove limit for data in internal database.
+  * Establish connection via `ArtifactRequestMessage` for always pulling recent data.
+
+### Fixed
+- Fix of buffer overflow in http tracer.
+- Make message handler stateless.
+
+### Removed
+- All classes.
+
+### Security
+- Prevent leaking of technology stack in case of errors/exceptions.
+- Http tracer sanitizes inputs to prevent CRLF injections.
+- mass bindings
+
 ## [4.3.0] - 2021-03-24
 
 ### Added 

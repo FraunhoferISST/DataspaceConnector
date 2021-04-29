@@ -51,6 +51,7 @@ public class HttpService { // TODO clean up code
      */
     public String sendHttpGetRequest(String address, QueryInput queryInput) throws
             RuntimeException, URISyntaxException {
+        // TODO Process optional string
         if(queryInput != null) {
             address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
             address = addQueryParamsToURL(address, queryInput.getParams());
