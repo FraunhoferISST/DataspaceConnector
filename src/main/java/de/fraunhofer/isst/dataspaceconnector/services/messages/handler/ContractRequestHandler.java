@@ -1,38 +1,45 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.*;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
-import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.NegotiationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ContractMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.LogMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRejectionService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -41,240 +48,256 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
  * {@link de.fraunhofer.iais.eis.ContractRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
+@Log4j2
 @SupportedMessageType(ContractRequestMessageImpl.class)
+@RequiredArgsConstructor
 public class ContractRequestHandler implements MessageHandler<ContractRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ContractRequestHandler.class);
-
-    private final ConfigurationContainer configurationContainer;
-    private final NegotiationService negotiationService;
-    private final PolicyHandler policyHandler;
-    private final ContractMessageService messageService;
-    private final DapsTokenProvider tokenProvider;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
-    private final LogMessageService logMessageService;
-    private RequestMessage requestMessage;
+    /**
+     * Service for message processing.
+     */
+    private final @NonNull MessageService messageService;
 
     /**
-     * Constructor for NotificationMessageHandler.
-     *
-     * @param configurationContainer The container with the configuration
-     * @param negotiationService The service with the negotation
-     * @param policyHandler The service for policy negotation
-     * @param messageService The service for sending messages
-     * @param logMessageService The service for logging
-     * @param tokenProvider The provider for token
-     * @throws IllegalArgumentException if one of the parameters is null.
+     * Service for the message exception handling.
      */
-    @Autowired
-    public ContractRequestHandler(ConfigurationContainer configurationContainer,
-                                  NegotiationService negotiationService, PolicyHandler policyHandler,
-                                  ContractMessageService messageService,
-                                  LogMessageService logMessageService, DapsTokenProvider tokenProvider)
-            throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+    private final @NonNull MessageResponseService exceptionService;
 
-        if (negotiationService == null)
-            throw new IllegalArgumentException("The NegotiationService cannot be null.");
+    /**
+     * Service for ids contract rejection messages.
+     */
+    private final @NonNull ContractRejectionService rejectionService;
 
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+    /**
+     * Service for ids contract agreement messages.
+     */
+    private final @NonNull ContractAgreementService agreementService;
 
-        if (messageService == null)
-            throw new IllegalArgumentException("The ContractRequestService cannot be null.");
+    /**
+     * Service for resolving elements and its parents/children.
+     */
+    private final @NonNull EntityDependencyResolver dependencyResolver;
 
-        if (logMessageService == null)
-            throw new IllegalArgumentException("The LogMessageService cannot be null.");
+    /**
+     * Service for policy management.
+     */
+    private final @NonNull PolicyManagementService managementService;
 
-        if (tokenProvider == null)
-            throw new IllegalArgumentException("The TokenProvider cannot be null.");
-
-        this.configurationContainer = configurationContainer;
-        this.negotiationService = negotiationService;
-        this.policyHandler = policyHandler;
-        this.messageService = messageService;
-        this.logMessageService = logMessageService;
-        this.tokenProvider = tokenProvider;
-    }
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
-     * @param requestMessage The received contract request message.
-     * @param messagePayload The message's content.
+     * @param message The ids request message as header.
+     * @param payload The request message payload.
      * @return The response message.
-     * @throws RuntimeException if the response body failed to be build.
      */
     @Override
-    public MessageResponse handleMessage(ContractRequestMessageImpl requestMessage,
-                                         MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        } else {
-            this.requestMessage = requestMessage;
+    public MessageResponse handleMessage(final ContractRequestMessageImpl message,
+                                         final MessagePayload payload) {
+        // Validate incoming message.
+        try {
+            messageService.validateIncomingRequestMessage(message);
+        } catch (MessageEmptyException exception) {
+            return exceptionService.handleMessageEmptyException(exception);
+        } catch (VersionNotSupportedException exception) {
+            return exceptionService.handleInfoModelNotSupportedException(exception,
+                    message.getModelVersion());
         }
 
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.VERSION_NOT_SUPPORTED,
-                    "Information model version not supported.",
-                    connector.getId(), connector.getOutboundModelVersion());
-        }
+        // Read relevant parameters for message processing.
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
 
         // Read message payload as string.
-        String payload;
+        String payloadAsString;
         try {
-            payload = IOUtils
-                    .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
-            // If request is empty, return rejection message.
-            if (payload.equals("")) {
-                LOGGER.debug("Contract is missing [id=({}), payload=({})]",
-                        requestMessage.getId(), payload);
-                return ErrorResponse
-                        .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                                "Missing contract request.",
-                                connector.getId(), connector.getOutboundModelVersion());
-            }
-        } catch (IOException e) {
-            LOGGER.debug("Cannot read payload. [id=({}), payload=({})]",
-                    requestMessage.getId(), messagePayload);
-            return ErrorResponse
-                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                            "Malformed payload.",
-                            connector.getId(), connector.getOutboundModelVersion());
+            payloadAsString = MessageUtils.getPayloadAsString(payload);
+        } catch (MessageRequestException exception) {
+            return exceptionService.handleMessagePayloadException(exception, messageId,
+                    issuerConnector);
         }
 
-        try {
-            // Check the contract content.
-            return checkContractRequest(payload);
-        } catch (RuntimeException exception) {
-            LOGGER.warn("Failed to check the contract request. [exception=({})]",
-                    exception.getMessage());
-            // Something went wrong (e.g invalid config), try to fix it at a higher level.
-            throw new RuntimeException("Failed to construct a resource description.", exception);
-        }
+        // Check the contract's content.
+        return checkContractRequest(payloadAsString, messageId, issuerConnector);
     }
 
     /**
      * Checks if the contract request content by the consumer complies with the contract offer by
      * the provider.
      *
-     * @param payload The message payload containing a contract request.
+     * @param payload         The message payload containing a contract request.
+     * @param messageId       The message id of the incoming message.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
      * @return A message response to the requesting connector.
      */
-    public MessageResponse checkContractRequest(String payload) throws RuntimeException {
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
-
+    public MessageResponse checkContractRequest(final String payload,
+                                                final URI messageId,
+                                                final URI issuerConnector) throws RuntimeException {
         try {
             // Deserialize string to contract object.
-            final var contractRequest = (ContractRequest) policyHandler.validateContract(payload);
+            final var request = deserializationService.getContractRequest(payload);
 
-            // Get artifact id from contract request.
-            URI artifactId = messageService.getArtifactIdFromContract(contractRequest);
-            // Load contract offer from metadata.
-            ContractOffer contractOffer = getContractOfferByArtifact(artifactId);
-
-            // Check if the contract request has the same content as the stored contract offer.
-            if (negotiationService.compareContracts(contractRequest, contractOffer)) {
-                return acceptContract(contractRequest);
-            } else {
-                // If differences have been detected.
-                return rejectContract();
+            // Get all rules of the contract request.
+            final var rules = PolicyUtils.extractRulesFromContract(request);
+            if (rules.isEmpty()) {
+                // Return rejection message if the contract request is missing rules.
+                return exceptionService.handleMissingRules(request, messageId, issuerConnector);
             }
-        } catch (UUIDFormatException | RequestFormatException exception) {
-            LOGGER.debug(
-                    "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
-                    requestMessage.getId(), requestMessage.getTransferContract(),
-                    exception.getMessage());
-            return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                    "No valid resource id found.",
-                    connector.getId(),
-                    connector.getOutboundModelVersion());
-        } catch (ResourceNotFoundException exception) {
-            // The resource could be not be found.
-            LOGGER.debug("The artifact could not be found. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-            return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                    "Artifact not found.", connector.getId(),
-                    connector.getOutboundModelVersion());
-        } catch (MessageBuilderException exception) {
-            LOGGER.warn("Response could not be constructed. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                    "Response could not be constructed.",
-                    connector.getId(), connector.getOutboundModelVersion());
-        } catch (RuntimeException exception) {
-            LOGGER.warn("Could not process contract request. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.BAD_PARAMETERS,
-                    "Malformed contract request.",
-                    connector.getId(), connector.getOutboundModelVersion());
+
+            final var targetRuleMap = PolicyUtils.getTargetRuleMap(rules);
+            if (targetRuleMap.containsKey(null)) {
+                // Return rejection message if the rules are missing targets.
+                return exceptionService.handleMissingTargetInRules(request, messageId,
+                        issuerConnector);
+            }
+
+            final var targetList = new ArrayList<URI>();
+            // Retrieve matching contract offers to compare the content.
+            for (final var target : targetRuleMap.keySet()) {
+                final List<Contract> contracts;
+                try {
+                    contracts = dependencyResolver.getContractOffersByArtifactId(target);
+                } catch (ResourceNotFoundException exception) {
+                    return exceptionService.handleResourceNotFoundException(exception, target,
+                            issuerConnector, messageId);
+                }
+
+                // Abort negotiation if no contract offer could be found.
+                if (contracts.isEmpty()) {
+                    return exceptionService.handleMissingContractOffers(request, messageId,
+                            issuerConnector);
+                }
+
+                // Abort negotiation if no contract offer for the issuer connector could be found.
+                final var validContracts =
+                        PolicyUtils.removeContractsWithInvalidConsumer(contracts, issuerConnector);
+                if (validContracts.isEmpty()) {
+                    return exceptionService.handleMissingContractOffers(request, messageId,
+                            issuerConnector);
+                }
+
+                var valid = false;
+                try {
+                    valid = areRulesValid(validContracts, targetRuleMap, target);
+                } catch (IllegalArgumentException exception) {
+                    return exceptionService
+                            .handleMalformedRules(exception, payload, issuerConnector, messageId);
+                }
+
+                if (!valid) {
+                    return rejectContract(issuerConnector, messageId);
+                }
+                targetList.add(target);
+            }
+
+            return acceptContract(request, issuerConnector, messageId, targetList);
+        } catch (IllegalArgumentException exception) {
+            return exceptionService.handleIllegalArgumentException(exception, payload,
+                    issuerConnector, messageId);
+        } catch (Exception exception) {
+            // NOTE: Should not be reached. TODO Add further exception handling if necessary.
+            return exceptionService.handleMessageProcessingFailed(exception, payload,
+                    issuerConnector, messageId);
         }
     }
 
     /**
-     * Gets the contract offer by artifact id.
+     * Compare content of rule offer and request with each other.
      *
-     * @param artifactId The artifact's id
-     * @return The resource's contract offer.
+     * @param contractOffers The contract offer.
+     * @param map            The target contract map.
+     * @param target         The target value.
+     * @return True if everything is fine, false in case of mismatch.
      */
-    private ContractOffer getContractOfferByArtifact(URI artifactId) throws ResourceNotFoundException {
-        UUID uuid = UUIDUtils.uuidFromUri(artifactId);
-        final var resource = messageService.findResourceFromArtifactId(uuid);
-        if (resource == null)
-            throw new ResourceNotFoundException("Artifact not known.");
-        return resource.getContractOffer().get(0);
+    private boolean areRulesValid(final List<Contract> contractOffers,
+                                  final Map<URI, List<Rule>> map,
+                                  final URI target) {
+        boolean valid = false;
+        for (final var contract : contractOffers) {
+            // Get rule list from contract offer.
+            final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
+            // Get rule list from contract request.
+            final var values = map.get(target);
+
+            // Compare rules
+            if (managementService.compareRulesOfOfferToRequest(ruleList, values)) {
+                valid = true;
+                break;
+            }
+        }
+
+        return valid;
     }
 
     /**
-     * Accept contract by building a {@link ContractAgreement} and sending it as payload with a
-     * {@link ContractAgreementMessage}.
+     * Accept contract by building a contract agreement and sending it as payload within a
+     * contract agreement message.
      *
-     * @param contractRequest The contract request object from the data consumer.
+     * @param request            The contract request object from the data consumer.
+     * @param issuerConnector    The issuer connector id.
+     * @param correlationMessage The correlation message id.
+     * @param targetList         List of requested targets.
      * @return The message response to the requesting connector.
      */
-    private MessageResponse acceptContract(ContractRequest contractRequest)
-            throws UUIDFormatException, MessageException {
+    private MessageResponse acceptContract(final ContractRequest request,
+                                           final URI issuerConnector,
+                                           final URI correlationMessage,
+                                           final List<URI> targetList) {
+        ContractAgreement agreement = null;
+        URI agreementId;
+        try {
+            // Turn the accepted contract request into a contract agreement and persist it.
+            agreement = managementService
+                    .buildAndSaveContractAgreement(request, false, targetList);
+            agreementId = agreement.getId();
+        } catch (ConstraintViolationException | PersistenceException exception) {
+            return exceptionService.handleAgreementPersistenceException(exception, agreement,
+                    issuerConnector, correlationMessage);
+        }
 
-        messageService.setResponseParameters(
-                requestMessage.getIssuerConnector(), requestMessage.getId(), null);
-        // Turn the accepted contract request into a contract agreement.
-        final var contractAgreement = messageService.buildContractAgreement(contractRequest);
+        try {
+            // Build ids response message.
+            final var desc = new ContractAgreementMessageDesc(issuerConnector, correlationMessage);
+            final var header = agreementService.buildMessage(desc);
+            if (log.isDebugEnabled()) {
+                log.debug("Contract request accepted. Saved agreement: " + agreementId);
+            }
 
-        // Send response to the data consumer.
-        return BodyResponse.create(messageService.buildResponseHeader(), contractAgreement.toRdf());
+            // Send ids response message.
+            return BodyResponse.create(header, agreement.toRdf());
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
+                | RdfBuilderException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, correlationMessage);
+        }
     }
 
     /**
      * Builds a contract rejection message with a rejection reason.
      *
+     * @param issuerConnector    The issuer connector.
+     * @param correlationMessage The correlation message id.
      * @return A contract rejection message.
      */
-    private MessageResponse rejectContract() {
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+    private MessageResponse rejectContract(final URI issuerConnector,
+                                           final URI correlationMessage) {
+        try {
+            // Build ids response message.
+            final var desc = new ContractRejectionMessageDesc(issuerConnector, correlationMessage);
+            final var header = (RejectionMessage) rejectionService.buildMessage(desc);
+            final var payload = "Contract rejected.";
 
-        return ErrorResponse.create(new ContractRejectionMessageBuilder()
-                ._securityToken_(tokenProvider.getDAT())
-                ._correlationMessage_(requestMessage.getId())
-                ._issued_(getGregorianNow())
-                ._issuerConnector_(connector.getId())
-                ._modelVersion_(connector.getOutboundModelVersion())
-                ._senderAgent_(connector.getId())
-                ._recipientConnector_(Util.asList(requestMessage.getIssuerConnector()))
-                ._rejectionReason_(RejectionReason.BAD_PARAMETERS)
-                ._contractRejectionReason_(new TypedLiteral("Contract not accepted.", "en"))
-                .build(), "Contract rejected.");
+            // Send ids response message.
+            return ErrorResponse.create(header, payload);
+        } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
+                | RdfBuilderException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, correlationMessage);
+        }
     }
 }

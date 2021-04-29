@@ -1,376 +1,246 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fraunhofer.iais.eis.ArtifactRequestMessage;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.config.PolicyConfiguration;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RequestFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UUIDFormatException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractAgreementNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.contract.ContractException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.InvalidResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceContract;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ArtifactMessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractAgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyHandler;
+import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyEnforcementService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
-
 /**
- * This @{@link ArtifactRequestHandler} handles all
- * incoming messages that have a {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part
- * one in the multipart message. This header must have the correct '@type' reference as defined in
- * the {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
+ * This @{@link ArtifactRequestHandler} handles all incoming messages that have a
+ * {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part one in the multipart message.
+ * This header must have the correct '@type' reference as defined in the
+ * {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
+@RequiredArgsConstructor
 public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ArtifactRequestHandler.class);
-
-    private final ResourceService resourceService;
-    private final PolicyHandler policyHandler;
-    private final ArtifactMessageService messageService;
-    private final ContractAgreementService contractAgreementService;
-    private final ConfigurationContainer configurationContainer;
-    private final ObjectMapper objectMapper;
-    private final PolicyConfiguration policyConfiguration;
+    /**
+     * Service for message processing.
+     */
+    private final @NonNull MessageService messageService;
 
     /**
-     * Constructor for ArtifactMessageHandler.
-     *
-     * @param offeredResourceService The service for offered resources
-     * @param policyHandler The service for policies
-     * @param messageService The service for sending messages
-     * @param contractAgreementService The service for agreed contracts
-     * @param configurationContainer The container containing the configuration
-     * @param policyConfiguration The configuration service containing policy configurations
-     * @throws IllegalArgumentException if one of the passed parameters is null
+     * Service for the message exception handling.
      */
-    @Autowired
-    public ArtifactRequestHandler(OfferedResourceServiceImpl offeredResourceService,
-                                  PolicyHandler policyHandler,
-                                  ArtifactMessageService messageService,
-                                  ContractAgreementService contractAgreementService,
-                                  ConfigurationContainer configurationContainer,
-                                  PolicyConfiguration policyConfiguration)
-        throws IllegalArgumentException {
-        if (offeredResourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceService cannot be null.");
+    private final @NonNull MessageResponseService exceptionService;
 
-        if (policyHandler == null)
-            throw new IllegalArgumentException("The PolicyHandler cannot be null.");
+    /**
+     * Service for resolving entities.
+     */
+    private final @NonNull EntityResolver entityResolver;
 
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+    /**
+     * Service for resolving elements and its parents/children.
+     */
+    private final @NonNull EntityDependencyResolver dependencyResolver;
 
-        if (messageService == null)
-            throw new IllegalArgumentException("The ArtifactMessageService cannot be null.");
+    /**
+     * Service for connector usage control configurations.
+     */
+    private final @NonNull ConnectorConfiguration connectorConfig;
 
-        if (contractAgreementService == null)
-            throw new IllegalArgumentException("The ContractAgreementService cannot be null.");
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
-        if (policyConfiguration == null)
-            throw new IllegalArgumentException("The PolicyConfiguration cannot be null.");
+    /**
+     * Service for policy enforcement.
+     */
+    private final @NonNull PolicyEnforcementService enforcementService;
 
-        this.resourceService = offeredResourceService;
-        this.policyHandler = policyHandler;
-        this.messageService = messageService;
-        this.contractAgreementService = contractAgreementService;
-        this.configurationContainer = configurationContainer;
-        this.objectMapper = new ObjectMapper();
-        this.policyConfiguration = policyConfiguration;
-    }
+    /**
+     * Service for handling response messages.
+     */
+    private final @NonNull ArtifactResponseService artifactService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
-     * @param requestMessage The request message
-     * @param messagePayload The message payload
-     * @return The response message
-     * @throws RuntimeException if the response body failed to be build.
+     * @param message The request message.
+     * @param payload The message payload.
+     * @return The response message.
+     * @throws RuntimeException If the response body failed to be build.
      */
     @Override
-    // NOTE: Make runtime exception more concrete and add ConnectorConfigurationException, ResourceTypeException
-    public MessageResponse handleMessage(ArtifactRequestMessageImpl requestMessage,
-        MessagePayload messagePayload) throws RuntimeException {
-        if (requestMessage == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
-
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.versionSupported(requestMessage.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.VERSION_NOT_SUPPORTED,
-                "Information model version not supported.",
-                connector.getId(), connector.getOutboundModelVersion());
-        }
-
+    public MessageResponse handleMessage(final ArtifactRequestMessageImpl message,
+                                         final MessagePayload payload) throws RuntimeException {
+        // Validate incoming message.
         try {
-            // Find artifact and matching resource.
-            final var artifactId = extractArtifactIdFromRequest(requestMessage);
-            final var requestedResource = messageService.findResourceFromArtifactId(artifactId);
+            messageService.validateIncomingRequestMessage(message);
+        } catch (MessageEmptyException exception) {
+            return exceptionService.handleMessageEmptyException(exception);
+        } catch (VersionNotSupportedException exception) {
+            return exceptionService.handleInfoModelNotSupportedException(exception,
+                    message.getModelVersion());
+        }
 
-            if (requestedResource == null) {
-                // The resource was not found, reject and inform the requester.
-                LOGGER.debug("Resource could not be found. [id=({}), artifactId=({})]",
-                    requestMessage.getId(), artifactId);
+        // Read relevant parameters for message processing.
+        final var requestedArtifact = MessageUtils.extractRequestedArtifact(message);
+        final var transferContract = MessageUtils.extractTransferContract(message);
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
 
-                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                    "An artifact with the given uuid is not known to the "
-                        + "connector.",
-                    connector.getId(), connector.getOutboundModelVersion());
-            }
+        if (requestedArtifact == null || requestedArtifact.toString().equals("")) {
+            // Without a requested artifact, the message processing will be aborted.
+            return exceptionService.handleMissingRequestedArtifact(requestedArtifact,
+                    transferContract, issuerConnector, messageId);
+        }
 
-            // Check if the transferred contract matches the requested artifact.
-            if (!checkTransferContract(requestMessage.getTransferContract(),
-                requestMessage.getRequestedArtifact())) {
-                LOGGER.debug("Contract agreement could not be found. [id=({}), contractId=({})]",
-                    requestMessage.getId(), requestMessage.getTransferContract());
-
-                return ErrorResponse.withDefaultHeader(
-                    RejectionReason.BAD_PARAMETERS,
-                    "Missing transfer contract or wrong contract.",
-                    connector.getId(), connector.getOutboundModelVersion());
+        // Check agreement only if contract negotiation is turned on.
+        final var negotiation = connectorConfig.isPolicyNegotiation();
+        if (negotiation) {
+            if (transferContract == null || transferContract.toString().equals("")) {
+                // Without a transfer contract, the message processing will be aborted.
+                return exceptionService.handleMissingTransferContract(requestedArtifact,
+                        transferContract, issuerConnector, messageId);
             }
 
             try {
-                // Find the requested resource and its metadata.
-                final var resourceId = UUIDUtils.uuidFromUri(requestedResource.getId());
-                final var resourceMetadata = resourceService.getMetadata(resourceId);
-
-                try {
-                    // Check if the policy allows data access. TODO: Change to contract agreement. (later)
-                    if (policyHandler.onDataProvision(resourceMetadata.getPolicy(), requestMessage.getIssuerConnector())) {
-                        String data;
-
-                        try {
-                            final var query = getQueryInput(messagePayload);
-                            // Get the data from source.
-                            data = resourceService
-                                    .getDataByRepresentation(resourceId, artifactId, query);
-                        } catch (ResourceNotFoundException exception) {
-                            LOGGER.debug("Resource could not be found. "
-                                    + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
-                                exception.getMessage());
-                            return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                                "Resource not found.", connector.getId(),
-                                connector.getOutboundModelVersion());
-                        } catch (InvalidResourceException exception) {
-                            LOGGER.debug("Resource is not in a valid format. "
-                                    + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
-                                exception.getMessage());
-                            return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                                "Something went wrong.", connector.getId(),
-                                connector.getOutboundModelVersion());
-                        } catch (ResourceException exception) {
-                            LOGGER.warn("Resource could not be received. "
-                                    + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                                requestMessage.getId(), resourceId, artifactId,
-                                exception.getMessage());
-                            return ErrorResponse
-                                .withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                                    "Something went wrong.", connector.getId(),
-                                    connector.getOutboundModelVersion());
-                        } catch (IllegalArgumentException exception) {
-                            LOGGER.warn("Failed to fetch resource data. [id=({}), " +
-                                            "resourceId=({}), artifactId=({}), exception=({})]",
-                                    requestMessage.getId(), resourceId, artifactId,
-                                    exception.getMessage());
-                            return ErrorResponse
-                                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                                            "Invalid query input.",
-                                            connector.getId(),
-                                            connector.getOutboundModelVersion());
-                        }
-
-                        // Build artifact response.
-                        messageService.setResponseParameters(
-                            requestMessage.getIssuerConnector(),
-                            requestMessage.getTransferContract(),
-                            requestMessage.getId());
-
-                        return BodyResponse.create(messageService.buildResponseHeader(), data);
-                    } else {
-                        // The conditions for reading this resource have not been met.
-                        LOGGER.debug("Request policy restriction detected for request."
-                                + "[id=({}), pattern=({})]",
-                            requestMessage.getId(),
-                            policyHandler.getPattern(resourceMetadata.getPolicy()));
-                        return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
-                            "Policy restriction detected: You are not authorized to receive this data.",
-                            connector.getId(),
-                            connector.getOutboundModelVersion());
-                    }
-                } catch (ConstraintViolationException | MessageException exception) {
-                    // The response could not be constructed.
-                    throw new RuntimeException("Failed to construct the response message.",
-                        exception);
-                } catch (IllegalArgumentException exception) {
-                    LOGGER.warn("Could not deserialize contract. "
-                            + "[id=({}), resourceId=({}), artifactId=({}), exception=({})]",
-                        requestMessage.getId(), resourceId, artifactId, exception.getMessage());
-                    return ErrorResponse.withDefaultHeader(
-                        RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                        "Policy check failed.",
-                        connector.getId(), connector.getOutboundModelVersion());
-                }
-            } catch (UUIDFormatException exception) {
-                // The resource from the database is not identified via uuids.
-                LOGGER.debug(
-                    "The resource is not valid. The uuid is not valid. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                    "Resource not found.", connector.getId(),
-                    connector.getOutboundModelVersion());
-            } catch (ResourceNotFoundException exception) {
-                // The resource could be not be found.
-                LOGGER.debug("The resource could not be found. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                    "Resource not found.", connector.getId(),
-                    connector.getOutboundModelVersion());
-            } catch (InvalidResourceException exception) {
-                // The resource could be not be found.
-                LOGGER.debug("The resource is not valid. [id=({}), exception=({})]",
-                    requestMessage.getId(), exception.getMessage());
-                return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
-                    "Resource not found.", connector.getId(),
-                    connector.getOutboundModelVersion());
+                checkContractConditions(transferContract, requestedArtifact, issuerConnector);
+            } catch (ResourceNotFoundException | IllegalArgumentException exception) {
+                // Agreement could not be loaded or deserialized.
+                return exceptionService.handleMessageProcessingFailed(exception,
+                        requestedArtifact, transferContract, issuerConnector, messageId);
+            } catch (PolicyRestrictionException exception) {
+                // Conditions not fulfilled.
+                return exceptionService.handlePolicyRestrictionException(exception,
+                        requestedArtifact, transferContract, issuerConnector, messageId);
+            } catch (ContractException exception) {
+                // Invalid transfer contract.
+                return exceptionService.handleInvalidTransferContract(exception, requestedArtifact,
+                        transferContract, issuerConnector, messageId);
             }
-        } catch (UUIDFormatException | RequestFormatException exception) {
-            // No resource uuid could be found in the request, reject the message.
-            LOGGER.debug(
-                "Artifact has no valid uuid. [id=({}), artifactUri=({}), exception=({})]",
-                requestMessage.getId(), requestMessage.getRequestedArtifact(),
-                exception.getMessage());
-            return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                "No valid resource id found.",
-                connector.getId(),
-                connector.getOutboundModelVersion());
-        } catch (ContractAgreementNotFoundException exception) {
-            LOGGER.warn("Could not load contract from database. "
-                    + "[id=({}), contractId=({}),exception=({})]",
-                requestMessage.getId(), requestMessage.getTransferContract(), exception.getMessage());
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
-                "Invalid transfer contract id.",
-                connector.getId(), connector.getOutboundModelVersion());
-        } catch (ContractException exception) {
-            LOGGER.warn("Could not deserialize contract. "
-                    + "[id=({}), contractId=({}), exception=({})]",
-                requestMessage.getId(), requestMessage.getTransferContract(), exception.getMessage());
-            return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Something went wrong.",
-                connector.getId(), connector.getOutboundModelVersion());
         }
-    }
 
-    /**
-     * Read query parameters from message payload.
-     *
-     * @return the query input.
-     */
-    private QueryInput getQueryInput(MessagePayload messagePayload) {
+        // Either without contract negotiation or if all conditions are fulfilled, data is returned.
         try {
-            return objectMapper.readValue(IOUtils.toString(
-                    messagePayload.getUnderlyingInputStream(),
-                    StandardCharsets.UTF_8), QueryInput.class);
+            // Process query input.
+            final var queryInput = messageService.getQueryInputFromPayload(payload);
+            return returnData(requestedArtifact, issuerConnector, messageId, queryInput);
+        } catch (InvalidInputException exception) {
+            return exceptionService.handleInvalidQueryInput(exception, requestedArtifact,
+                    transferContract, issuerConnector, messageId);
         } catch (Exception exception) {
-            LOGGER.debug("Could not map payload to query input. [exception=({})]", exception.getMessage());
-            return null;
+            // Failed to retrieve data. TODO Add further exception handling if necessary.
+            return exceptionService.handleFailedToRetrieveData(exception, requestedArtifact,
+                    issuerConnector, messageId);
         }
     }
 
     /**
-     * Extract the artifact id.
+     * Check if the transfer contract is valid and the conditions are fulfilled.
      *
-     * @param requestMessage The artifact request message
-     * @return The artifact id
-     * @throws RequestFormatException if uuid could not be extracted.
+     * @param transferContract  The id of the contract.
+     * @param requestedArtifact The id of the artifact.
+     * @param issuerConnector   The issuer connector.
      */
-    private UUID extractArtifactIdFromRequest(ArtifactRequestMessage requestMessage)
-        throws RequestFormatException {
-        try {
-            return UUIDUtils.uuidFromUri(requestMessage.getRequestedArtifact());
-        } catch (UUIDFormatException exception) {
-            throw new RequestFormatException(
-                "The uuid could not extracted from request" + requestMessage.getId(),
-                exception);
+    private void checkContractConditions(final URI transferContract,
+                                         final URI requestedArtifact,
+                                         final URI issuerConnector)
+            throws IllegalArgumentException, ResourceNotFoundException,
+            PolicyRestrictionException, ContractException {
+        final var agreement = entityResolver.getAgreementByUri(transferContract);
+        final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
+
+        final var valid = isValidTransferContract(artifacts, requestedArtifact);
+        if (!valid) {
+            // If the requested artifact does not match the agreement, send rejection message.
+            throw new ContractException("Transfer contract does not match the requested artifact.");
         }
+
+        // TODO Negotiation has to be finished to make the agreement valid.
+//        final var confirmed = agreement.getConfirmed();
+//        if (!confirmed) {
+//            return ...
+//        }
+
+        final var value = agreement.getValue();
+        final var idsAgreement = deserializationService.getContractAgreement(value);
+        enforcementService.checkPolicyOnDataProvision(requestedArtifact, issuerConnector,
+                idsAgreement);
     }
 
     /**
-     * Check if the transfer contract is not null and valid.
+     * Check if the transfer contract matches the requested artifact.
      *
-     * @param contractId The id of the contract
-     * @param artifactId The id of the artifact
-     * @return True if everything's fine.
+     * @param artifacts         List of artifacts.
+     * @param requestedArtifact Id of the requested artifact.
+     * @return True if the requested artifact matches the transfer contract's artifacts.
+     * @throws ResourceNotFoundException If a resource could not be found.
      */
-    private boolean checkTransferContract(URI contractId, URI artifactId) throws ContractException {
-        final var policyNegotiation = policyConfiguration.isPolicyNegotiation();
-
-        if (policyNegotiation) {
-            if (contractId == null) {
-                return false;
-            } else {
-                String contractToString;
-                try {
-                    UUID uuid = UUIDUtils.uuidFromUri(contractId);
-                    // Get contract agreement from database.
-                    ResourceContract contract = contractAgreementService.getContract(uuid);
-                    // Get contract from database entry.
-                    contractToString = contract.getContract();
-                } catch (Exception e) {
-                    throw new ContractAgreementNotFoundException("Contract could not be loaded "
-                        + "from database.");
-                }
-
-                Contract agreement;
-                try {
-                    agreement = policyHandler.validateContract(contractToString);
-                } catch (RequestFormatException exception) {
-                    throw new ContractException("Could not deserialize contract.");
-                }
-
-                URI extractedId = messageService.getArtifactIdFromContract(agreement);
-                return extractedId.equals(artifactId);
+    private boolean isValidTransferContract(final List<Artifact> artifacts,
+                                            final URI requestedArtifact)
+            throws ResourceNotFoundException {
+        for (final var artifact : artifacts) {
+            final var endpoint = SelfLinkHelper.getSelfLink(artifact);
+            if (endpoint.equals(requestedArtifact)) {
+                return true;
             }
-        } else {
-            return true;
+        }
+
+        // If the requested artifact could not be found in the transfer contract (agreement).
+        return false;
+    }
+
+    /**
+     * Get data by requested artifact and return within an artifact response message.
+     *
+     * @param requestedArtifact The requested artifact.
+     * @param issuerConnector   The issuer connector.
+     * @param messageId         The message id.
+     * @param queryInput        The query input.
+     * @return A message response.
+     */
+    private MessageResponse returnData(final URI requestedArtifact, final URI issuerConnector,
+                                       final URI messageId, final QueryInput queryInput) {
+        try {
+            final var data = entityResolver.getDataByArtifactId(requestedArtifact, queryInput);
+
+            // Build ids response message.
+            final var desc = new ArtifactResponseMessageDesc(messageId, issuerConnector);
+            desc.setRecipient(issuerConnector);
+            final var header = artifactService.buildMessage(desc);
+
+            // Send ids response message.
+            return BodyResponse.create(header, Base64.encode(data.readAllBytes()));
+        } catch (MessageBuilderException | ConstraintViolationException | IOException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, messageId);
         }
     }
 }

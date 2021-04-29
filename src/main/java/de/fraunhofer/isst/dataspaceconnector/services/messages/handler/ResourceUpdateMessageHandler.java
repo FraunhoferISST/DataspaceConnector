@@ -1,148 +1,196 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.resource.ResourceException;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.implementation.ResourceUpdateMessageService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 
 /**
- * This @{@link ResourceUpdateMessageHandler} handles
- * all incoming messages that have a {@link de.fraunhofer.iais.eis.ResourceUpdateMessageImpl} as
- * part one in the multipart message. This header must have the correct '@type' reference as defined
- * in the {@link ResourceUpdateMessageImpl} JsonTypeName annotation.
+ * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a
+ * {@link de.fraunhofer.iais.eis.ResourceUpdateMessageImpl} as part one in the multipart message.
+ * This header must have the correct '@type' reference as defined in the
+ * {@link ResourceUpdateMessageImpl} JsonTypeName annotation.
  */
+
 @Component
+@Log4j2
+@RequiredArgsConstructor
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(ResourceUpdateMessageHandler.class);
-
-    private final ResourceUpdateMessageService messageService;
-    private final ConfigurationContainer configurationContainer;
-    private final SerializerProvider serializerProvider;
+    /**
+     * Service for the message exception handling.
+     */
+    private final @NonNull MessageResponseService exceptionService;
 
     /**
-     * Constructor for ResourceUpdateMessageHandler.
-     *
-     * @param configurationContainer The container with the configuration
-     * @param resourceUpdateMessageService The service responsible for resourceUpdateMessages
-     * @throws IllegalArgumentException if one of the parameters is null.
+     * Service for message processing.
      */
-    @Autowired
-    public ResourceUpdateMessageHandler(ConfigurationContainer configurationContainer,
-                                        ResourceUpdateMessageService resourceUpdateMessageService,
-                                        SerializerProvider serializerProvider)
-            throws IllegalArgumentException {
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+    private final @NonNull MessageService messageService;
 
-        if (resourceUpdateMessageService == null)
-            throw new IllegalArgumentException("The ResourceUpdateMessageService cannot be null.");
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+    /**
+     * Service for updating database entities from ids object.
+     */
+    private final @NonNull EntityUpdateService updateService;
 
-        this.configurationContainer = configurationContainer;
-        this.messageService = resourceUpdateMessageService;
-        this.serializerProvider = serializerProvider;
+    /**
+     * Service for handling response messages.
+     */
+    private final @NonNull MessageProcessedNotificationService notificationService;
 
+    /**
+     * This message implements the logic that is needed to handle the message. As it just returns
+     * the input as string the messagePayload-InputStream is converted to a String.
+     *
+     * @param message The ids request message as header.
+     * @param payload The notification message payload.
+     * @return The response message.
+     */
+    @Override
+    public MessageResponse handleMessage(final ResourceUpdateMessageImpl message,
+                                         final MessagePayload payload) throws RuntimeException {
+        // Validate incoming message.
+        try {
+            messageService.validateIncomingRequestMessage(message);
+        } catch (MessageEmptyException exception) {
+            return exceptionService.handleMessageEmptyException(exception);
+        } catch (VersionNotSupportedException exception) {
+            return exceptionService.handleInfoModelNotSupportedException(exception,
+                    message.getModelVersion());
+        }
+
+        // Read relevant parameters for message processing.
+        final var affectedResource = MessageUtils.extractAffectedResource(message);
+        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var messageId = MessageUtils.extractMessageId(message);
+
+        if (affectedResource == null || affectedResource.toString().isEmpty()) {
+            // Without an affected resource, the message processing will be aborted.
+            return exceptionService.handleMissingAffectedResource(affectedResource,
+                    issuerConnector, messageId);
+        }
+
+        String payloadAsString;
+        try {
+            // Try to read payload as string.
+            payloadAsString = MessageUtils.getStreamAsString(payload);
+            if (payloadAsString.isEmpty()) {
+                return exceptionService.handleMissingPayload(affectedResource, issuerConnector,
+                        messageId);
+            }
+        } catch (IOException | IllegalArgumentException exception) {
+            return exceptionService.handleMessagePayloadException(exception, messageId,
+                    issuerConnector);
+        }
+
+        return updateResource(payloadAsString, affectedResource, issuerConnector, messageId);
     }
 
     /**
-     * This method handles the resource update upon receiving a ResourceUpdateMessage
+     * Update resource in internal database.
      *
-     * @param message        The received ResourceUpdateMessage message.
-     * @param messagePayload The ResourceUpdateMessage messages content.
-     * @return The response message.
-     * @throws RuntimeException if the response body failed to be build.
+     * @param payload          The payload as string.
+     * @param affectedResource The affected resource.
+     * @param issuerConnector  The issuer connector.
+     * @param messageId        The message id.
+     * @return A message response.
      */
-    @Override
-    public MessageResponse handleMessage(ResourceUpdateMessageImpl message,
-                                         MessagePayload messagePayload) throws RuntimeException {
-        if (message == null) {
-            LOGGER.warn("Cannot respond when there is no request.");
-            throw new IllegalArgumentException("The requestMessage cannot be null.");
-        }
-
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
-
-        // Check if version is supported.
-        if (!messageService.versionSupported(message.getModelVersion())) {
-            LOGGER.debug("Information Model version of requesting connector is not supported.");
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.VERSION_NOT_SUPPORTED,
-                    "Information model version not supported.",
-                    connector.getId(), connector.getOutboundModelVersion());
-        }
-
-        // Extract and deserialize resource
-        Resource resource;
+    private MessageResponse updateResource(final String payload,
+                                           final URI affectedResource,
+                                           final URI issuerConnector,
+                                           final URI messageId) {
+        // Get ids resource from payload.
+        Resource idsResource;
         try {
-            String payload = IOUtils
-                    .toString(messagePayload.getUnderlyingInputStream(), StandardCharsets.UTF_8);
-            // If request is empty, return rejection message.
-            if (payload.equals("")) {
-                LOGGER.debug("Payload is missing [id=({}), payload=({})]", message.getId(), payload);
-                return ErrorResponse
-                        .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                                "Missing resource.",
-                                connector.getId(), connector.getOutboundModelVersion());
+            idsResource = deserializationService.getResource(payload);
+            final var resourceId = idsResource.getId();
+
+            // Check if the resource id and affected resource id match.
+            if (!resourceId.equals(affectedResource)) {
+                return exceptionService.handleInvalidAffectedResource(resourceId,
+                        affectedResource, issuerConnector, messageId);
             }
-            resource = serializerProvider.getSerializer().deserialize(payload, Resource.class);
-        } catch (IOException exception) {
-            LOGGER.debug("Cannot read payload. [id=({}), payload=({})]",
-                    message.getId(), messagePayload);
-            return ErrorResponse
-                    .withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                            "Malformed payload.",
-                            connector.getId(), connector.getOutboundModelVersion());
+        } catch (IllegalArgumentException exception) {
+            return exceptionService.handleIllegalArgumentException(exception, payload,
+                    issuerConnector, messageId);
         }
 
-        boolean successfulUpdate = false;
+        // Update requested resource with received information.
         try {
-            successfulUpdate = messageService.updateResource(resource);
-        } catch (ResourceException exception) {
-            LOGGER.warn("Unable to update data or metadata. [exception=({})]", exception.getMessage());
-        } catch (MessageException exception) {
-            LOGGER.warn("Unable to receive new data. [exception=({})]", exception.getMessage());
+            updateService.updateResource(idsResource);
+            final var idsRepresentations = idsResource.getRepresentation();
+            for (final var representation : idsRepresentations) {
+                updateService.updateRepresentation(representation);
+
+                final var idsArtifacts = representation.getInstance();
+                for (final var artifact : idsArtifacts) {
+                    updateService.updateArtifact((Artifact) artifact);
+                }
+            }
+        } catch (Exception exception) {
+            // As the message has been received, respond with message processed notification
+            // message, although saving the resource failed.
+            if (log.isWarnEnabled()) {
+                log.warn("Updating entities failed. [resource=({})]", idsResource);
+            }
+            final var statement = "Message received but resource not updated.";
+            return respondToMessage(statement, issuerConnector, messageId);
         }
 
+        // If everything has been saved.
+        final var statement = "Message received and resource updated.";
+        return respondToMessage(statement, issuerConnector, messageId);
+    }
+
+    /**
+     * Build and send response message.
+     *
+     * @param message         The message indicating whether resource could be updated or not.
+     * @param issuerConnector The issuer connector.
+     * @param messageId       The message id.
+     * @return A message response.
+     */
+    private MessageResponse respondToMessage(final String message,
+                                             final URI issuerConnector,
+                                             final URI messageId) {
         try {
-            // Build response header.
-            messageService.setResponseParameters(message.getIssuerConnector(), message.getId());
-            if (successfulUpdate)
-                return BodyResponse.create(messageService.buildResponseHeader(),
-                        "Message received and resource updated.");
-            else
-                return BodyResponse.create(messageService.buildResponseHeader(),
-                        "Message received but resource not updated.");
-        } catch (ConstraintViolationException | MessageException exception) {
-            // The response could not be constructed.
-            LOGGER.warn("Unable to build response message. [exception=({})]", exception.getMessage());
-            return ErrorResponse.withDefaultHeader(
-                    RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                    "Response could not be constructed.",
-                    connector.getId(), connector.getOutboundModelVersion());
+            // Build ids response message.
+            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector,
+                    messageId);
+            final var header = notificationService.buildMessage(desc);
+
+            // Send ids response message.
+            return BodyResponse.create(header, message);
+        } catch (MessageBuilderException | ConstraintViolationException exception) {
+            return exceptionService.handleResponseMessageBuilderException(exception,
+                    issuerConnector, messageId);
         }
     }
 }

@@ -1,380 +1,379 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
-import de.fraunhofer.iais.eis.*;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ConnectorConfigurationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageBuilderException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageNotSentException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.message.MessageResponseException;
-import de.fraunhofer.isst.dataspaceconnector.model.BackendSource;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceMetadata;
-import de.fraunhofer.isst.dataspaceconnector.model.ResourceRepresentation;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceServiceImpl;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
-import de.fraunhofer.isst.dataspaceconnector.services.utils.UUIDUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
-import okhttp3.MultipartBody;
-import org.apache.commons.fileupload.FileUploadException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
+import de.fraunhofer.isst.dataspaceconnector.model.RequestedResourceDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.TemplateBuilder;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.TemplateUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Abstract class for building and sending IDS messages.
- */
+@Log4j2
 @Service
-public abstract class MessageService {
-
-    private final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
-
-    private final IDSHttpService idsHttpService;
-    private final ResourceService resourceService;
-    private final SerializerProvider serializerProvider;
-    private final ConfigurationContainer configurationContainer;
+@RequiredArgsConstructor
+public class MessageService {
 
     /**
-     * Constructor for MessageService.
-     *
-     * @throws IllegalArgumentException if any of the parameters is null.
+     * Service for description request messages.
      */
-    @Autowired
-    public MessageService(IDSHttpService idsHttpService,
-        SerializerProvider serializerProvider, OfferedResourceServiceImpl resourceService,
-        ConfigurationContainer configurationContainer) throws IllegalArgumentException {
-        if (idsHttpService == null)
-            throw new IllegalArgumentException("The IDSHttpService cannot be null.");
+    private final @NonNull DescriptionRequestService descriptionRequestService;
 
-        if (resourceService == null)
-            throw new IllegalArgumentException("The OfferedResourceServiceImpl cannot be null.");
+    /**
+     * Service for contract request messages.
+     */
+    private final @NonNull ContractRequestService contractRequestService;
 
-        if (serializerProvider == null)
-            throw new IllegalArgumentException("The SerializerProvider cannot be null.");
+    /**
+     * Service for contract agreement messages.
+     */
+    private final @NonNull ContractAgreementService contractAgreementService;
 
-        if (configurationContainer == null)
-            throw new IllegalArgumentException("The ConfigurationContainer cannot be null.");
+    /**
+     * Service for artifact request messages.
+     */
+    private final @NonNull ArtifactRequestService artifactRequestService;
 
-        this.idsHttpService = idsHttpService;
-        this.resourceService = resourceService;
-        this.serializerProvider = serializerProvider;
-        this.configurationContainer = configurationContainer;
+    /**
+     * Service for deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
+
+    /**
+     * Template builder.
+     */
+    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+
+    /**
+     * Service for current connector configuration.
+     */
+    private final @NonNull ConnectorService connectorService;
+
+    /**
+     * Service for reading or writing JSON objects.
+     */
+    private final @NonNull ObjectMapper objectMapper;
+
+    /**
+     * Service for updating artifact data.
+     */
+    private final @NonNull ArtifactService artifactService;
+
+    /**
+     * Build and send a description request message.
+     *
+     * @param recipient The recipient.
+     * @param elementId The requested element.
+     * @return The response map.
+     * @throws MessageException If message handling failed.
+     */
+    public Map<String, String> sendDescriptionRequestMessage(
+            final URI recipient, final URI elementId) throws MessageException {
+        final var desc = new DescriptionRequestMessageDesc(recipient, elementId);
+        return descriptionRequestService.sendMessage(desc, "");
     }
 
     /**
-     * Build an IDS message as request header.
+     * Check if the response message is of type description response.
      *
-     * @return the message.
-     * @throws MessageBuilderException if the message could not be created.
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
      */
-    public abstract Message buildRequestHeader() throws MessageBuilderException;
-
-    /**
-     * Build an IDS message as response header.
-     *
-     * @return the message.
-     * @throws MessageBuilderException if the message could not be created.
-     */
-    public abstract Message buildResponseHeader() throws MessageBuilderException;
-
-    /**
-     * Returns the recipient.
-     * @return the recipient.
-     */
-    public abstract URI getRecipient();
-
-    /**
-     * Returns the serializer provider.
-     * @return the serializer provider.
-     */
-    public SerializerProvider getSerializerProvider() {
-        return serializerProvider;
+    public boolean validateDescriptionResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return descriptionRequestService.isValidResponseType(response);
     }
 
     /**
-     * Sends an IDS request message with header and payload using the IDS Framework.
+     * Build and send a description request message.
      *
-     * @param payload the message payload.
-     * @return the HTTP response.
-     * @throws MessageException if a header could not be built or the message could not be sent.
+     * @param recipient       The recipient.
+     * @param contractRequest The contract request.
+     * @return The response map.
+     * @throws MessageException         If message handling failed.
+     * @throws RdfBuilderException      If the contract request rdf string could not be built.
+     * @throws IllegalArgumentException If contract request is null.
      */
-    public Map<String, String> sendRequestMessage(String payload) throws MessageException {
-        Message message;
-        try {
-            message = buildRequestHeader();
-        } catch (MessageBuilderException exception) {
-            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be built.", exception);
-        }
+    public Map<String, String> sendContractRequestMessage(final URI recipient,
+                                                          final ContractRequest contractRequest)
+            throws MessageException, RdfBuilderException {
+        Utils.requireNonNull(contractRequest, ErrorMessages.ENTITY_NULL);
 
-        try {
-            MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
-            return idsHttpService.sendAndCheckDat(body, getRecipient());
-        } catch (ClaimsException exception) {
-            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
-            throw new MessageResponseException("Invalid DAT in incoming message.", exception);
-        } catch (FileUploadException | IOException exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageNotSentException("Message could not be sent.", exception);
-        }
+        final var contractId = contractRequest.getId();
+        final var contractRdf = IdsUtils.toRdf(contractRequest);
+
+        final var desc = new ContractRequestMessageDesc(recipient, contractId);
+        return contractRequestService.sendMessage(desc, contractRdf);
     }
 
     /**
-     * Sends an IDS response message with header and payload using the IDS Framework.
+     * Check if the response message is of type contract agreement.
      *
-     * @param payload the message payload.
-     * @return the HTTP response.
-     * @throws MessageException if a header could not be built or the message could not be sent.
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
      */
-    public Map<String, String> sendResponseMessage(String payload) throws MessageException {
-        Message message;
-        try {
-            message = buildResponseHeader();
-        } catch (MessageBuilderException exception) {
-            LOGGER.warn("Message could not be built. [exception=({})]", exception.getMessage());
-            throw new MessageBuilderException("Message could not be built.", exception);
-        }
-
-        try {
-            MultipartBody body = InfomodelMessageBuilder.messageWithString(message, payload);
-            return idsHttpService.sendAndCheckDat(body, getRecipient());
-        } catch (ClaimsException exception) {
-            LOGGER.warn("Invalid DAT in incoming message. [exception=({})]", exception.getMessage());
-            throw new MessageResponseException("Unexpected message answer.", exception);
-        } catch (FileUploadException | IOException exception) {
-            LOGGER.warn("Message could not be sent. [exception=({})]", exception.getMessage());
-            throw new MessageNotSentException("Message could not be sent.", exception);
-        }
+    public boolean validateContractRequestResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return contractRequestService.isValidResponseType(response);
     }
 
     /**
-     * Checks if the outbound model version of the requesting connector is listed in the inbound model versions.
+     * Build and send a contract agreement message.
      *
-     * @param versionString the outbound model version of the requesting connector.
-     * @return true, if the outbound model version of the requsting connector is supported; false otherwise
-     * @throws ConnectorConfigurationException if no connector configuration was found
+     * @param recipient The recipient.
+     * @param agreement The contract agreement.
+     * @return The response map.
+     * @throws MessageException         If message handling failed.
+     * @throws RdfBuilderException      If the contract agreement rdf string could not be built.
+     * @throws IllegalArgumentException If contract agreement is null.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public boolean versionSupported(String versionString) throws ConnectorConfigurationException {
-        // Get a local copy of the current connector.
-        var connector = configurationContainer.getConnector();
+    public Map<String, String> sendContractAgreementMessage(final URI recipient,
+                                                            final ContractAgreement agreement)
+            throws MessageException, ConstraintViolationException {
+        Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
 
-        for (var version : connector.getInboundModelVersion()) {
-            if (version.equals(versionString)) {
-                return true;
-            }
-        }
-        return false;
+        final var contractId = agreement.getId();
+        final var contractRdf = IdsUtils.toRdf(agreement);
+
+        final var desc = new ContractAgreementMessageDesc(recipient, contractId);
+        return contractAgreementService.sendMessage(desc, contractRdf);
     }
 
     /**
-     * Finds resource by a given artifact ID.
+     * Check if the response message is of type message processed notification.
      *
-     * @param artifactId ID of the artifact
-     * @return the resource
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
      */
-    public Resource findResourceFromArtifactId(UUID artifactId) {
-        for (var resource : resourceService.getResources()) {
-            for (var representation : resource.getRepresentation()) {
-                final var representationId = UUIDUtils.uuidFromUri(representation.getId());
+    public boolean validateContractAgreementResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return contractAgreementService.isValidResponseType(response);
+    }
 
-                if (representationId.equals(artifactId)) {
-                    return resource;
+    /**
+     * Build and send an artifact request message.
+     *
+     * @param recipient   The recipient.
+     * @param elementId   The requested artifact.
+     * @param agreementId The transfer contract.
+     * @return The response map.
+     * @throws MessageException If message handling failed.
+     */
+    public Map<String, String> sendArtifactRequestMessage(final URI recipient,
+                                                          final URI elementId,
+                                                          final URI agreementId)
+            throws MessageException {
+        return sendArtifactRequestMessage(recipient, elementId, agreementId, null);
+    }
+
+    /**
+     * Send artifact request message.
+     *
+     * @param recipient   The recipient.
+     * @param elementId   The requested artifact.
+     * @param agreementId The transfer contract.
+     * @param queryInput  The query input.
+     * @return The response map.
+     * @throws MessageException If message handling failed.
+     */
+    public Map<String, String> sendArtifactRequestMessage(
+            final URI recipient, final URI elementId, final URI agreementId,
+            final QueryInput queryInput) throws MessageException {
+        final var desc = new ArtifactRequestMessageDesc(recipient, elementId, agreementId);
+
+        String payload = "";
+        if (queryInput != null) {
+            try {
+                payload = objectMapper.writeValueAsString(queryInput);
+            } catch (JsonProcessingException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Failed to parse query. Loading everything. "
+                            + "[exception=({})]", e.getMessage(), e);
                 }
             }
         }
-        return null;
+
+        return artifactRequestService.sendMessage(desc, payload);
     }
 
     /**
-     * Extracts the artifact ID from contract request.
+     * Check if the response message is of type artifact response.
      *
-     * @param request the contract
-     * @return The artifact ID.
+     * @param response The response as map.
+     * @return True if the response type is as expected.
+     * @throws MessageResponseException If the response could not be read.
      */
-    public URI getArtifactIdFromContract(Contract request) {
-        final var obligations = request.getObligation();
-        final var permissions = request.getPermission();
-        final var prohibitions = request.getProhibition();
-
-        if (obligations != null && !obligations.isEmpty())
-            return obligations.get(0).getTarget();
-
-        if (permissions != null && !permissions.isEmpty())
-            return permissions.get(0).getTarget();
-
-        if (prohibitions != null && !prohibitions.isEmpty())
-            return prohibitions.get(0).getTarget();
-
-        return null;
+    public boolean validateArtifactResponseMessage(final Map<String, String> response)
+            throws MessageResponseException {
+        return artifactRequestService.isValidResponseType(response);
     }
 
     /**
-     * Maps a received Infomodel resource to the internal metadata model.
+     * The ids message.
      *
-     * @param resource The resource
-     * @return the metadata object.
+     * @param message The message that should be validated.
+     * @throws MessageEmptyException        If the message is empty.
+     * @throws VersionNotSupportedException If the message version is not supported.
      */
-    protected ResourceMetadata deserializeMetadata(Resource resource) {
-        var metadata = new ResourceMetadata();
+    public void validateIncomingRequestMessage(final Message message)
+            throws MessageEmptyException, VersionNotSupportedException {
+        MessageUtils.checkForEmptyMessage(message);
 
-        if (resource.getKeyword() != null) {
-            List<String> keywords = new ArrayList<>();
-            for (var t : resource.getKeyword()) {
-                keywords.add(t.getValue());
-            }
-            metadata.setKeywords(keywords);
-        }
-
-        if (resource.getRepresentation() != null) {
-            var representations = new HashMap<UUID, ResourceRepresentation>();
-            for (Representation r : resource.getRepresentation()) {
-                int byteSize = 0;
-                String name = null;
-                String type = null;
-                if (r.getInstance() != null && !r.getInstance().isEmpty()) {
-                    Artifact artifact = (Artifact) r.getInstance().get(0);
-                    if (artifact.getByteSize() != null)
-                        byteSize = artifact.getByteSize().intValue();
-                    if (artifact.getFileName() != null)
-                        name = artifact.getFileName();
-                    if (r.getMediaType() != null)
-                        type = r.getMediaType().getFilenameExtension();
-                }
-
-                ResourceRepresentation representation = new ResourceRepresentation(
-                        UUIDUtils.uuidFromUri(r.getId()), type, byteSize, name,
-                        new BackendSource(BackendSource.Type.LOCAL, null, null, null)
-                );
-
-                representations.put(representation.getUuid(), representation);
-            }
-            metadata.setRepresentations(representations);
-        }
-
-        if (resource.getTitle() != null && !resource.getTitle().isEmpty())
-            metadata.setTitle(resource.getTitle().get(0).getValue());
-
-        if (resource.getDescription() != null && !resource.getDescription().isEmpty())
-            metadata.setDescription(resource.getDescription().get(0).getValue());
-
-        if (resource.getContractOffer() != null && !resource.getContractOffer().isEmpty())
-            metadata.setPolicy(resource.getContractOffer().get(0).toRdf());
-
-        if (resource.getPublisher() != null)
-            metadata.setOwner(resource.getPublisher());
-
-        if (resource.getStandardLicense() != null)
-            metadata.setLicense(resource.getStandardLicense());
-
-        if (resource.getVersion() != null)
-            metadata.setVersion(resource.getVersion());
-
-        return metadata;
+        final var modelVersion = MessageUtils.extractModelVersion(message);
+        final var inboundVersions = connectorService.getInboundModelVersion();
+        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
     }
 
     /**
-     * Finds and returns the response type for a given IDS message header.
-     * @param header the header
-     * @return the response type or null, if no matching type was found
+     * If the response message is not of the expected type, message type, rejection reason, and the
+     * payload are returned as an object.
+     *
+     * @param message The ids multipart message as map.
+     * @return The object.
+     * @throws MessageResponseException Of the response could not be read or deserialized.
+     * @throws IllegalArgumentException If deserialization fails.
      */
-    public ResponseType getResponseType(String header) {
-        try {
-            serializerProvider.getSerializer().deserialize(header, AccessTokenResponseMessage.class);
-            return ResponseType.ACCESS_TOKEN_RESPONSE;
-        } catch (IOException ignored) { }
+    public Map<String, Object> getContent(final Map<String, String> message)
+            throws MessageResponseException, IllegalArgumentException {
+        final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
+        final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        try {
-            serializerProvider.getSerializer().deserialize(header, AppRegistrationResponseMessage.class);
-            return ResponseType.APP_REGISTRATION_RESPONSE;
-        } catch (IOException ignored) { }
+        final var idsMessage = deserializationService.getResponseMessage(header);
+        var responseMap = new HashMap<String, Object>() {{
+            put("type", idsMessage.getClass());
+        }};
 
-        try {
-            serializerProvider.getSerializer().deserialize(header, ArtifactResponseMessage.class);
-            return ResponseType.ARTIFACT_RESPONSE;
-        } catch (IOException ignored) { }
+        // If the message is of type exception, add the reason to the response object.
+        if (idsMessage instanceof RejectionMessage) {
+            final var rejectionMessage = (RejectionMessage) idsMessage;
+            final var reason = MessageUtils.extractRejectionReason(rejectionMessage);
+            responseMap.put("reason", reason);
+        }
 
-        try {
-            serializerProvider.getSerializer().deserialize(header, ContractAgreementMessage.class);
-            return ResponseType.CONTRACT_AGREEMENT;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, ContractResponseMessage.class);
-            return ResponseType.CONTRACT_RESPONSE;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, DescriptionResponseMessage.class);
-            return ResponseType.DESCRIPTION_RESPONSE;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, OperationResultMessage.class);
-            return ResponseType.OPERATION_RESULT;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, ParticipantResponseMessage.class);
-            return ResponseType.PARTICIPANT_RESPONSE;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, RejectionMessage.class);
-            return ResponseType.REJECTION;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, ContractRejectionMessage.class);
-            return ResponseType.CONTRACT_REJECTION;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, ResultMessage.class);
-            return ResponseType.RESULT;
-        } catch (IOException ignored) { }
-
-        try {
-            serializerProvider.getSerializer().deserialize(header, UploadResponseMessage.class);
-            return ResponseType.UPLOAD_RESPONSE;
-        } catch (IOException ignored) { }
-
-        return null;
+        responseMap.put("payload", payload);
+        return responseMap;
     }
 
     /**
-     * Enum of possible response types of IDS message headers.
+     * Validate response and save resource to database.
+     *
+     * @param response     The response message map.
+     * @param artifactList List of requested artifacts.
+     * @param download     Indicated whether the artifact is going to be downloaded automatically.
+     * @param remoteUrl    The provider's url for receiving artifact request messages.
      */
-    public enum ResponseType {
-        ACCESS_TOKEN_RESPONSE("ACCESS_TOKEN_RESPONSE"),
-        APP_REGISTRATION_RESPONSE("APP_REGISTRATION_RESPONSE"),
-        ARTIFACT_RESPONSE("ARTIFACT_RESPONSE"),
-        CONTRACT_AGREEMENT("CONTRACT_AGREEMENT"),
-        CONTRACT_RESPONSE("CONTRACT_RESPONSE"),
-        DESCRIPTION_RESPONSE("DESCRIPTION_RESPONSE"),
-        OPERATION_RESULT("OPERATION_RESULT"),
-        PARTICIPANT_RESPONSE("PARTICIPANT_RESPONSE"),
-        REJECTION("REJECTION"),
-        CONTRACT_REJECTION("CONTRACT_REJECTION"),
-        RESULT("RESULT"),
-        UPLOAD_RESPONSE("UPLOAD_RESPONSE");
+    public void saveMetadata(final Map<String, String> response, final List<URI> artifactList,
+                             final boolean download, final URI remoteUrl)
+            throws PersistenceException, MessageResponseException, IllegalArgumentException {
+        // Exceptions handled at a higher level.
+        final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var resource = deserializationService.getResource(payload);
 
-        private final String type;
+        try {
+            final var resourceTemplate =
+                    TemplateUtils.getResourceTemplate(resource);
+            final var representationTemplateList =
+                    TemplateUtils.getRepresentationTemplates(resource, artifactList, download,
+                            remoteUrl);
 
-        ResponseType(String string) {
-            type = string;
+            resourceTemplate.setRepresentations(representationTemplateList);
+
+            // Save all entities.
+            tempBuilder.build(resourceTemplate);
+        } catch (Exception e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not store resource. [exception=({})]", e.getMessage(), e);
+            }
+            throw new PersistenceException("Could not store resource.", e);
         }
+    }
 
-        @Override
-        public String toString() {
-            return type;
+    /**
+     * Save data and return the uri of the respective artifact.
+     *
+     * @param response The response message.
+     * @param remoteId The artifact id.
+     * @throws MessageResponseException  If the message response could not be processed.
+     * @throws ResourceNotFoundException If the artifact could not be found.
+     */
+    public void saveData(final Map<String, String> response, final URI remoteId)
+            throws MessageResponseException, ResourceNotFoundException {
+        final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
+        final var artifactId = artifactService.identifyByRemoteId(remoteId);
+        final var artifact = artifactService.get(artifactId.get());
+
+        artifactService.setData(artifact.getId(),
+                new ByteArrayInputStream(Base64.decode(base64Data)));
+        if (log.isDebugEnabled()) {
+            log.debug("Updated data from artifact. [target=({})]", artifactId);
+        }
+    }
+
+    /**
+     * Read query parameters from message payload.
+     *
+     * @param messagePayload The message's payload.
+     * @return the query input.
+     * @throws InvalidInputException If the query input is not empty but invalid.
+     */
+    public QueryInput getQueryInputFromPayload(final MessagePayload messagePayload)
+            throws InvalidInputException {
+        try {
+            final var payload = MessageUtils.getStreamAsString(messagePayload);
+            if (payload.equals("")) {
+                // Query input is optional, so no rejection message will be sent. Query input will
+                // be checked for null value in HttpService.class.
+                return null;
+            } else {
+                return objectMapper.readValue(payload, QueryInput.class);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid query input. [exception=({})]", e.getMessage(), e);
+            }
+            throw new InvalidInputException("Invalid query input.", e);
         }
     }
 }

@@ -18,29 +18,37 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableWebSecurity
 public class MultipleEntryPointsSecurityConfig {
 
+    /**
+     * Username defined in application.properties.
+     */
     @Value("${spring.security.user.name}")
     private String username;
 
+    /**
+     * Password defined in application.properties.
+     */
     @Value("${spring.security.user.password}")
     private String password;
 
     /**
-     * Bean setting up an default admin
-     * @return The password encoder
+     * Bean setting up an default admin.
+     *
+     * @return The password encoder.
      */
     @Bean
     public UserDetailsService userDetailsService() {
-        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        final var manager = new InMemoryUserDetailsManager();
         manager.createUser(User
-            .withUsername(username)
-            .password(encoder().encode(password))
-            .roles("ADMIN").build());
+                .withUsername(username)
+                .password(encoder().encode(password))
+                .roles("ADMIN").build());
         return manager;
     }
 
     /**
-     * Bean providing an password encoder
-     * @return The password encoder
+     * Bean providing a password encoder.
+     *
+     * @return The password encoder.
      */
     @Bean
     public PasswordEncoder encoder() {

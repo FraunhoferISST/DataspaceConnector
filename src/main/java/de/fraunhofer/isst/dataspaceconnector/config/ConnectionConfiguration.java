@@ -3,37 +3,52 @@ package de.fraunhofer.isst.dataspaceconnector.config;
 import de.fraunhofer.isst.ids.framework.communication.http.HttpService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
 
+/**
+ * This class handles connection settings for outgoing http connections.
+ */
 @Configuration
+@RequiredArgsConstructor
 public class ConnectionConfiguration {
 
+    /**
+     * Global timeout value.
+     */
     @Value("${http.timeout.connect}")
     private long connectTimeout;
 
+    /**
+     * Read timeout value.
+     */
     @Value("${http.timeout.read}")
     private long readTimeout;
 
+    /**
+     * Write timeout value.
+     */
     @Value("${http.timeout.write}")
     private long writeTimeout;
 
+    /**
+     * Call timeout value.
+     */
     @Value("${http.timeout.call}")
     private long callTimeout;
 
-    private final HttpService httpService;
+    /**
+     * Service for http connections.
+     */
+    private final @NonNull HttpService httpService;
 
-    @Autowired
-    public ConnectionConfiguration(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
+    /**
+     * Hand over connection settings from the application.properties to the http client. Either the
+     * three values connect, read, and write are used, or the global call timeout.
+     */
     @PostConstruct
     public void setTimeouts() {
         if (connectTimeout != 0 && readTimeout != 0 && writeTimeout != 0) {
@@ -43,10 +58,7 @@ public class ConnectionConfiguration {
                     Duration.ofMillis(writeTimeout),
                     null);
         } else {
-            httpService.setTimeouts(
-                    null,
-                    null,
-                    null,
+            httpService.setTimeouts(null, null, null,
                     Duration.ofMillis(callTimeout));
         }
     }

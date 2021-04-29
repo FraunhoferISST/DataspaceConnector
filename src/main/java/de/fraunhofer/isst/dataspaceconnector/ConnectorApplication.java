@@ -1,5 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
@@ -10,14 +14,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 /**
  * This is the main application class. The application is started and an openApi bean for the
  * Swagger UI is created.
  */
+
 @SpringBootApplication
 @ComponentScan({
     "de.fraunhofer.isst.ids.framework.messaging",
@@ -28,7 +29,11 @@ import java.util.Properties;
 })
 public class ConnectorApplication {
 
-    public static void main(String[] args) {
+    /**
+     * The main method.
+     * @param args List of arguments.
+     */
+    public static void main(final String[] args) {
         SpringApplication.run(ConnectorApplication.class, args);
     }
 
