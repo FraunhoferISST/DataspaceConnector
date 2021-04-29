@@ -33,7 +33,8 @@ public abstract class AbstractResourceRepresentationLinker<T extends Resource>
  */
 @Service
 @NoArgsConstructor
-class OfferedResourceRepresentation extends AbstractResourceRepresentationLinker<OfferedResource> { }
+class OfferedResourceRepresentation extends AbstractResourceRepresentationLinker<OfferedResource> {
+}
 
 /**
  * Handles the relation between a requested resource and its representations.
