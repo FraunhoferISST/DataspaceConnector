@@ -6,12 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
 import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import de.fraunhofer.isst.dataspaceconnector.utils.UUIDUtils;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,27 +25,26 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
  */
 @Component
 @Order(1)
+@Log4j2
 @ConditionalOnProperty(name = "httptrace.enabled")
-public class HttpTraceFilter extends OncePerRequestFilter {
+public final class HttpTraceFilter extends OncePerRequestFilter {
     /**
      * The trace id.
      */
-    private UUID traceId;
+    private transient UUID traceId;
 
     /**
      * The event handler.
      */
-    private final HttpTraceEventHandler eventHandler;
+    private final transient HttpTraceEventHandler eventHandler;
 
     /**
      * The constructor.
-     *
-     * @param eventHandler The handler responsible for HttpTrace events raised by this class.
+     * @param handler Responsible for HttpTrace events raised by this class.
      */
-    @SuppressWarnings("checkstyle:HiddenField")
-    public HttpTraceFilter(final HttpTraceEventHandler eventHandler) {
+    public HttpTraceFilter(final HttpTraceEventHandler handler) {
         super();
-        this.eventHandler = eventHandler;
+        this.eventHandler = handler;
     }
 
     private static UUID generateUUID() {
@@ -71,42 +72,32 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
     private void beforeRequest(final RequestWrapper request) {
         final var trace = new HttpTrace();
-        trace.id = traceId;
-        trace.timestamp = LocalDateTime.now();
-        trace.url = request.getRequestURI();
-        trace.method = request.getMethod();
-        trace.client = request.getRemoteAddr();
+        trace.setTraceId(traceId);
+        trace.setTimestamp(ZonedDateTime.now(ZoneOffset.UTC));
+        trace.setUrl(request.getRequestURI());
+        trace.setMethod(request.getMethod());
+        trace.setClient(request.getRemoteAddr());
 
-        trace.headers = "{";
+        trace.setHeaders(new HashMap<>());
         final var headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             final var key = headerNames.nextElement();
-            final var value = request.getHeader(key);
-            trace.headers += key + ": " + value;
-
-            if (headerNames.hasMoreElements()) {
-                trace.headers += ", ";
-            }
+            trace.getHeaders().put(key, request.getHeader(key));
         }
-        trace.headers += "}";
 
-        trace.parameterMap = "{";
+        trace.setParameterMap(new HashMap<>());
         final var parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             final var key = parameterNames.nextElement();
-            final var value = request.getHeader(key);
-            trace.parameterMap += key + ": " + value;
-
-            if (parameterNames.hasMoreElements()) {
-                trace.parameterMap += ", ";
-            }
+            trace.getParameterMap().put(key, request.getHeader(key));
         }
-        trace.parameterMap += "}";
 
         try {
-            trace.body = new String(request.getRequestBody(), StandardCharsets.UTF_8);
-        } catch (IOException exception) {
-            exception.printStackTrace();
+            trace.setBody(new String(request.getRequestBody(), request.getCharacterEncoding()));
+        } catch (IOException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to get the request body. [exception=({})]", e.getMessage(), e);
+            }
         }
 
         eventHandler.sendHttpTraceEvent(trace);
@@ -114,36 +105,31 @@ public class HttpTraceFilter extends OncePerRequestFilter {
 
     private void afterRequest(final ContentCachingResponseWrapper responseWrapper) {
         final var trace = new HttpTrace();
-        trace.id = traceId;
-        trace.timestamp = LocalDateTime.now();
-        trace.status = responseWrapper.getStatus();
-        trace.body = getResponseAsPayload(responseWrapper);
+        trace.setTraceId(traceId);
+        trace.setTimestamp(ZonedDateTime.now(ZoneOffset.UTC));
+        trace.setStatus(responseWrapper.getStatus());
+        trace.setBody(getResponseAsPayload(responseWrapper));
 
-        trace.headers = "{";
-        final var headerNames = responseWrapper.getHeaderNames();
-        for (final var key : headerNames) {
-            final var value = responseWrapper.getHeader(key);
-            trace.headers += key + ": " + value;
-
-            if (key != headerNames.toArray()[headerNames.toArray().length - 1]) {
-                trace.headers += ", ";
-            }
+        trace.setHeaders(new HashMap<>());
+        for (final var key : responseWrapper.getHeaderNames()) {
+            trace.getHeaders().put(key, responseWrapper.getHeader(key));
         }
-        trace.headers += "}";
 
         eventHandler.sendHttpTraceEvent(trace);
     }
 
     private String getResponseAsPayload(final ContentCachingResponseWrapper wrappedResponse) {
-        String response = "";
-        try {
-            if (wrappedResponse.getContentSize() > 0) {
+        var response = "ERROR";
+        if (wrappedResponse.getContentSize() > 0) {
+            try {
                 response = new String(wrappedResponse.getContentAsByteArray(), 0,
-                        wrappedResponse.getContentSize(),
-                        wrappedResponse.getCharacterEncoding());
+                                      wrappedResponse.getContentSize(),
+                                      wrappedResponse.getCharacterEncoding());
+            } catch (UnsupportedEncodingException e) {
+                if (log.isErrorEnabled()) {
+                    log.error("Failed to get the response. [exception=({})]", e.getMessage(), e);
+                }
             }
-        } catch (UnsupportedEncodingException e) {
-            response = "ERROR";
         }
 
         return response;
