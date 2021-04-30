@@ -9,8 +9,6 @@ import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -19,11 +17,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class EntityDependencyResolver {
-
-    /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(EntityDependencyResolver.class);
 
     /**
      * Service for persisting and querying contracts.
