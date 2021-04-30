@@ -11,8 +11,8 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 /**
  * Performs an artifact request for an artifact. All functions will block till the request is
@@ -52,6 +52,6 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
                 .sendArtifactRequestMessage(recipient, artifact.getRemoteId(), transferContract,
                                             queryInput);
         final var data = MessageUtils.extractPayloadFromMultipartMessage(response);
-        return new ByteArrayInputStream(Base64.decode(data));
+        return new ByteArrayInputStream(Base64Utils.decodeFromString(data));
     }
 }
