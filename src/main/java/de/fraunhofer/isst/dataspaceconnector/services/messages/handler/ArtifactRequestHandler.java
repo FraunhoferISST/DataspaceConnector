@@ -33,8 +33,8 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 /**
  * This @{@link ArtifactRequestHandler} handles all incoming messages that have a
@@ -237,7 +237,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             final var header = artifactService.buildMessage(desc);
 
             // Send ids response message.
-            return BodyResponse.create(header, Base64.encode(data.readAllBytes()));
+            return BodyResponse.create(header, Base64Utils.encodeToString(data.readAllBytes()));
         } catch (MessageBuilderException | ConstraintViolationException | IOException exception) {
             return exceptionService.handleResponseMessageBuilderException(exception,
                     issuerConnector, messageId);
