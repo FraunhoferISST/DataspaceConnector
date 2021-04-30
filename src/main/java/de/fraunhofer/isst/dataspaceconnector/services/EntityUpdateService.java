@@ -7,7 +7,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
@@ -49,7 +49,7 @@ public class EntityUpdateService {
     /**
      * Service for linking artifacts to agreement.
      */
-    private final @NonNull RelationshipServices.AgreementArtifactLinker agreementArtifactLinker;
+    private final @NonNull RelationServices.AgreementArtifactLinker agreementArtifactLinker;
 
     /**
      * Service for artifacts.

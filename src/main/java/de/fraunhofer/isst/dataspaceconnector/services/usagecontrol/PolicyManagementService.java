@@ -22,7 +22,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -71,7 +71,7 @@ public class PolicyManagementService {
     /**
      * Service for linking agreements and artifacts.
      */
-    private final @NonNull RelationshipServices.AgreementArtifactLinker linker;
+    private final @NonNull RelationServices.AgreementArtifactLinker linker;
 
     /**
      * Read and validate ids contract agreement from ids response message.

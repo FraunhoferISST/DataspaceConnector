@@ -13,7 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
-public final class RelationshipServices {
+public final class RelationServices {
 
     @Service
     @NoArgsConstructor
