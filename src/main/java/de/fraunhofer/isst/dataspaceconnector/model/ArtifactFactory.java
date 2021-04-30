@@ -2,6 +2,7 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +11,6 @@ import java.util.zip.CRC32C;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MetadataUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
-import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Component;
 
 /**
@@ -148,8 +148,8 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
 
     private boolean updateLocalData(final ArtifactImpl artifact, final String value) {
         final var newData = new LocalData();
-        final var data = Base64.decode(value);
-        newData.setValue(value == null ? null : data);
+        final var data = value == null ? null : value.getBytes(StandardCharsets.UTF_16);
+        newData.setValue(data);
 
         final var oldData = artifact.getData();
         if (oldData instanceof LocalData) {
