@@ -64,8 +64,8 @@ All notable changes to this project will be documented in this file.
 
 ### Security
 - Prevent leaking of technology stack in case of errors/exceptions.
-- Http tracer sanitizes inputs to prevent CRLF injections.
-- mass bindings
+- Logger sanitizes inputs to prevent CRLF injections.
+- Mass Bindings.
 
 ## [4.3.1] - 2021-04-15
 
