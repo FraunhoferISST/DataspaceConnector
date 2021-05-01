@@ -13,6 +13,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleFactory;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

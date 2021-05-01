@@ -57,7 +57,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for representation-artifact relations.
      */
-    private final @NonNull RepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull RelationServices.RepresentationArtifactLinker representationArtifactLinker;
 
     /**
      * The service for contracts.
@@ -67,7 +67,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for contract-rule relations.
      */
-    private final @NonNull ContractRuleLinker contractRuleLinker;
+    private final @NonNull RelationServices.ContractRuleLinker contractRuleLinker;
 
     /**
      * The service for artifacts.
@@ -226,8 +226,8 @@ final class TemplateBuilderOfferedResource
                     resourceRepresentationLinker,
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RepresentationArtifactLinker representationArtifactLinker,
-            final ContractService contractService, final ContractRuleLinker contractRuleLinker,
+            final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
+            final ContractService contractService, final RelationServices.ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
                 representationService, representationArtifactLinker, contractService,
@@ -268,8 +268,8 @@ final class TemplateBuilderRequestedResource
                     resourceRepresentationLinker,
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
-            final RepresentationArtifactLinker representationArtifactLinker,
-            final ContractService contractService, final ContractRuleLinker contractRuleLinker,
+            final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
+            final ContractService contractService, final RelationServices.ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
                 representationService, representationArtifactLinker, contractService,

@@ -1,7 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.util.List;
-
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
@@ -12,6 +10,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 public final class RelationServices {
 
@@ -139,6 +139,42 @@ public final class RelationServices {
         @Override
         protected final List<Agreement> getInternal(final Artifact owner) {
             return owner.getAgreements();
+        }
+    }
+
+    /**
+     * Handles the relation between a representation and its artifacts.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RepresentationArtifactLinker extends OwningRelationService<Representation,
+            Artifact, RepresentationService, ArtifactService> {
+        /**
+         * Get the list of artifacts owned by the representation.
+         * @param owner The owner of the artifacts.
+         * @return The list of owned artifacts.
+         */
+        @Override
+        protected List<Artifact> getInternal(final Representation owner) {
+            return owner.getArtifacts();
+        }
+    }
+
+    /**
+     * Handles the relation between a contract and its rules.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class ContractRuleLinker extends OwningRelationService<Contract, ContractRule,
+            ContractService, RuleService> {
+        /**
+         * Get the list of rules owned by the contract.
+         * @param owner The owner of the rules.
+         * @return The list of owned rules.
+         */
+        @Override
+        protected List<ContractRule> getInternal(final Contract owner) {
+            return owner.getRules();
         }
     }
 }

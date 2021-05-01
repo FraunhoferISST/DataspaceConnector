@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.ids;
+package de.fraunhofer.isst.dataspaceconnector.services.ids.builder;
 
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;

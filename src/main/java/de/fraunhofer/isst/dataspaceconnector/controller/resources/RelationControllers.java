@@ -11,9 +11,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceContractLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractRuleLinker;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationArtifactLinker;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
 import de.fraunhofer.isst.dataspaceconnector.view.CatalogView;
@@ -175,14 +173,14 @@ public final class RelationControllers {
     @Tag(name = "Representations", description = "Endpoints for linking artifacts to "
             + "representations")
     public static class RepresentationsToArtifacts
-            extends BaseResourceChildController<RepresentationArtifactLinker, Artifact,
+            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker, Artifact,
             ArtifactView> {
     }
 
     @RestController
     @RequestMapping("/api/contracts/{id}/rules")
     @Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
-    public static class ContractsToRules extends BaseResourceChildController<ContractRuleLinker,
+    public static class ContractsToRules extends BaseResourceChildController<RelationServices.ContractRuleLinker,
             ContractRule, ContractRuleView> {
     }
 

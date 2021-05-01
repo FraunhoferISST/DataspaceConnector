@@ -15,6 +15,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.RepresentationFactory;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.messages;
-
-import java.io.IOException;
-import java.util.Map;
+package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -18,6 +15,9 @@ import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Abstract class for building, sending, and processing ids messages.
