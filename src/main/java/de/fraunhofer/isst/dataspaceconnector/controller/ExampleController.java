@@ -15,10 +15,10 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyInformationService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PatternUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,11 +56,6 @@ public class ExampleController {
     private final @NonNull DapsTokenProvider tokenProvider;
 
     /**
-     * Policy information point.
-     */
-    private final @NonNull PolicyInformationService informationService;
-
-    /**
      * Policy management point.
      */
     private final @NonNull DeserializationService deserializationService;
@@ -82,7 +77,7 @@ public class ExampleController {
         exceptions.add(URI.create("https://localhost:8080/"));
         exceptions.add(URI.create("http://localhost:8080/"));
 
-        return new ResponseEntity<>(new ConfigurationModelBuilder()
+        return ResponseEntity.ok(new ConfigurationModelBuilder()
                 ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
                 ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
                 ._connectorProxy_(Util.asList(new ProxyBuilder()
@@ -115,7 +110,7 @@ public class ExampleController {
                         .build())
                 ._keyStore_(URI.create("file:///conf/keystore.p12"))
                 ._trustStore_(URI.create("file:///conf/truststore.p12"))
-                .build(), HttpStatus.OK);
+                .build());
     }
 
     /**
@@ -137,7 +132,7 @@ public class ExampleController {
             @RequestBody final String ruleAsString) {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
-            return new ResponseEntity<>(informationService.getPatternByRule(rule), HttpStatus.OK);
+            return ResponseEntity.ok(PolicyUtils.getPatternByRule(rule));
         } catch (ContractException exception) {
             return ControllerUtils.respondPatternNotIdentified(exception);
         } catch (Exception exception) {
@@ -164,26 +159,23 @@ public class ExampleController {
             @RequestParam("type") final PolicyPattern pattern) {
         switch (pattern) {
             case PROVIDE_ACCESS:
-                return new ResponseEntity<>(PatternUtils.buildProvideAccessRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule());
             case PROHIBIT_ACCESS:
-                return new ResponseEntity<>(PatternUtils.buildProhibitAccessRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule());
             case N_TIMES_USAGE:
-                return new ResponseEntity<>(PatternUtils.buildNTimesUsageRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildNTimesUsageRule());
             case DURATION_USAGE:
-                return new ResponseEntity<>(PatternUtils.buildDurationUsageRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildDurationUsageRule());
             case USAGE_DURING_INTERVAL:
-                return new ResponseEntity<>(PatternUtils.buildIntervalUsageRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildIntervalUsageRule());
             case USAGE_UNTIL_DELETION:
-                return new ResponseEntity<>(PatternUtils.buildUsageUntilDeletionRule(),
-                        HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildUsageUntilDeletionRule());
             case USAGE_LOGGING:
-                return new ResponseEntity<>(PatternUtils.buildUsageLoggingRule(), HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule());
             case USAGE_NOTIFICATION:
-                return new ResponseEntity<>(PatternUtils.buildUsageNotificationRule(),
-                        HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildUsageNotificationRule());
             case CONNECTOR_RESTRICTED_USAGE:
-                return new ResponseEntity<>(PatternUtils.buildConnectorRestrictedUsageRule(),
-                        HttpStatus.OK);
+                return ResponseEntity.ok(PatternUtils.buildConnectorRestrictedUsageRule());
             default:
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

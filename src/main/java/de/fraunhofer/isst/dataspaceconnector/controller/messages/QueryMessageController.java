@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,7 +68,7 @@ public class QueryMessageController {
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
             final var responseToString = Objects.requireNonNull(response.body()).string();
-            return new ResponseEntity<>(responseToString, HttpStatus.OK);
+            return ResponseEntity.ok(responseToString);
         } catch (IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }

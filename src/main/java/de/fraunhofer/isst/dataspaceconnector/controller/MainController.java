@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,7 +46,7 @@ public class MainController {
     public ResponseEntity<Object> getPublicSelfDescription() {
         try {
             final var connector = connectorService.getConnectorWithoutResources();
-            return new ResponseEntity<>(connector.toRdf(), HttpStatus.OK);
+            return ResponseEntity.ok(connector.toRdf());
         } catch (Exception exception) {
             // Connector could not be loaded or deserialized.
             return ControllerUtils.respondConnectorNotLoaded(exception);
@@ -68,7 +67,7 @@ public class MainController {
     public ResponseEntity<Object> getPrivateSelfDescription() {
         try {
             final var connector = connectorService.getConnectorWithOfferedResources();
-            return new ResponseEntity<>(connector.toRdf(), HttpStatus.OK);
+            return ResponseEntity.ok(connector.toRdf());
         } catch (Exception exception) {
             // Connector could not be loaded or deserialized.
             return ControllerUtils.respondConnectorNotLoaded(exception);

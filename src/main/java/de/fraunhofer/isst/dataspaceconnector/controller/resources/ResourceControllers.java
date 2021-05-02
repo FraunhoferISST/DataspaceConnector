@@ -26,7 +26,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationSe
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RetrievalInformation;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.SimpleDataAccessVerifier;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import de.fraunhofer.isst.dataspaceconnector.utils.ValidationUtils;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementView;
 import de.fraunhofer.isst.dataspaceconnector.view.ArtifactView;
@@ -166,7 +166,7 @@ public final class ResourceControllers {
         /**
          * The verifier for the data access.
          */
-        private final @NonNull SimpleDataAccessVerifier accessVerifier;
+        private final @NonNull DataAccessVerifier accessVerifier;
 
         /**
          * Returns data from the local database or a remote data source. In case of a remote data
@@ -264,7 +264,7 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody final byte[] inputStream) {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         }
     }
 }

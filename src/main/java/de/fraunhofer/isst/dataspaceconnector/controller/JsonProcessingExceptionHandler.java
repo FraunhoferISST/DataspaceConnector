@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -27,6 +26,6 @@ public class JsonProcessingExceptionHandler {
             log.warn("Invalid input. [exception=({})]", exception == null ? ""
                     : exception.getMessage());
         }
-        return new ResponseEntity<>("Invalid input.", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Invalid input.");
     }
 }
