@@ -1,29 +1,21 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.net.URI;
-
-import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -35,6 +27,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This @{@link ContractAgreementHandler} handles all incoming messages that have a
@@ -74,19 +68,14 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     private final @NonNull EntityUpdateService updateService;
 
     /**
-     * Service for handling log messages.
-     */
-    private final @NonNull LogMessageService logService;
-
-    /**
-     * Service for connector configurations.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
      * Service for handling notification messages.
      */
     private final @NonNull MessageProcessedNotificationService notificationService;
+
+    /**
+     * Policy execution point.
+     */
+    private final @NonNull PolicyExecutionService executionService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -141,10 +130,13 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
             }
 
             // Update contract agreement to confirmed.
-            updateService.confirmAgreement(storedAgreement);
+            if (!updateService.confirmAgreement(storedAgreement)) {
+                return exceptionService.handleUnconfirmedAgreement(storedAgreement,
+                        issuerConnector, messageId);
+            }
 
             // Send contract to clearing house.
-            sendAgreementToClearingHouse(agreement);
+            executionService.sendAgreementToClearingHouse(agreement);
 
             return respondToMessage(issuerConnector, messageId);
         } catch (IllegalArgumentException exception) {
@@ -160,47 +152,23 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     }
 
     /**
-     * Send contract agreement to clearing house.
-     *
-     * @param agreement The ids contract agreement.
-     */
-    private void sendAgreementToClearingHouse(final ContractAgreement agreement) {
-        try {
-            final var recipient = connectorConfig.getClearingHouse();
-            final var rdf = IdsUtils.toRdf(agreement);
-
-            // Build ids response message.
-            final var desc = new LogMessageDesc();
-            desc.setRecipient(recipient);
-            logService.sendMessage(desc, rdf);
-        } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to send contract agreement to clearing house. [exception=({})]",
-                        exception.getMessage(), exception);
-            }
-        }
-    }
-
-    /**
      * Build and send response message.
      *
-     * @param issuerConnector The issuer connector.
-     * @param messageId       The message id.
+     * @param issuer    The issuer connector.
+     * @param messageId The message id.
      * @return A message response.
      */
-    private MessageResponse respondToMessage(final URI issuerConnector,
-                                             final URI messageId) {
+    private MessageResponse respondToMessage(final URI issuer, final URI messageId) {
         try {
             // Build ids response message.
-            final var desc =
-                    new MessageProcessedNotificationMessageDesc(issuerConnector, messageId);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
             final var header = notificationService.buildMessage(desc);
 
             // Send ids response message.
             return BodyResponse.create(header, "Received contract agreement message.");
         } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, messageId);
+            return exceptionService.handleResponseMessageBuilderException(exception, issuer,
+                    messageId);
         }
     }
 }

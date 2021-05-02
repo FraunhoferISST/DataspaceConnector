@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidResourceException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
@@ -13,6 +14,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResourceDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.Representation;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsContractBuilder;
@@ -25,7 +27,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RepresentationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ResourceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.AlwaysAllowAccessVerifier;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
@@ -35,6 +37,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Log4j2
@@ -105,12 +109,17 @@ public class EntityResolver {
     /**
      * Skips the data access verification.
      */
-    private final @NonNull AlwaysAllowAccessVerifier allowAccessVerifier;
+    private final @NonNull AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
      */
     private final @NonNull BlockingArtifactReceiver artifactReceiver;
+
+    /**
+     * Service for deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Return any connector entity by its id.
@@ -233,5 +242,25 @@ public class EntityResolver {
     public Agreement getAgreementByUri(final URI id) throws ResourceNotFoundException {
         final var uuid = EndpointUtils.getUUIDFromPath(id);
         return agreementService.get(uuid);
+    }
+
+    /**
+     * Get stored contract agreement for requested element.
+     *
+     * @param target The requested element.
+     * @return The respective contract agreement.
+     */
+    public List<ContractAgreement> getContractAgreementsByTarget(final URI target) {
+        final var uuid = EndpointUtils.getUUIDFromPath(target);
+        final var artifact = artifactService.get(uuid);
+
+        final var agreements = artifact.getAgreements();
+        final var agreementList = new ArrayList<ContractAgreement>();
+        for (final var agreement : agreements) {
+            final var value = agreement.getValue();
+            final var idsAgreement = deserializationService.getContractAgreement(value);
+            agreementList.add(idsAgreement);
+        }
+        return agreementList;
     }
 }

@@ -7,12 +7,16 @@ import de.fraunhofer.iais.eis.ConstraintImpl;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -300,9 +304,8 @@ public final class PolicyUtils {
      *
      * @param rule the policy constraint object.
      * @return the date or null.
-     * @throws java.text.ParseException if the date cannot be parsed.
      */
-    public static ZonedDateTime getDate(final Rule rule) throws ParseException {
+    public static ZonedDateTime getDate(final Rule rule) {
         final var constraint = rule.getConstraint().get(0);
         final var date = ((ConstraintImpl) constraint).getRightOperand().getValue();
 
@@ -569,5 +572,92 @@ public final class PolicyUtils {
 
     private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
         return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
+    }
+
+    /**
+     * Read the properties of an ids rule to automatically recognize the policy pattern.
+     *
+     * @param rule The ids rule.
+     * @return The recognized policy pattern.
+     */
+    public static PolicyPattern getPatternByRule(final Rule rule) {
+        PolicyPattern detectedPattern = null;
+
+        if (rule instanceof Prohibition) {
+            detectedPattern = PolicyPattern.PROHIBIT_ACCESS;
+        } else if (rule instanceof Permission) {
+            final var constraints = rule.getConstraint();
+            final var postDuties = ((Permission) rule).getPostDuty();
+
+            if (constraints != null && constraints.get(0) != null) {
+                if (constraints.size() > 1) {
+                    if (postDuties != null && postDuties.get(0) != null) {
+                        detectedPattern = PolicyPattern.USAGE_UNTIL_DELETION;
+                    } else {
+                        detectedPattern = PolicyPattern.USAGE_DURING_INTERVAL;
+                    }
+                } else {
+                    final var firstConstraint = (ConstraintImpl) constraints.get(0);
+                    final var leftOperand = firstConstraint.getLeftOperand();
+                    final var operator = firstConstraint.getOperator();
+                    if (leftOperand == LeftOperand.COUNT) {
+                        detectedPattern = PolicyPattern.N_TIMES_USAGE;
+                    } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
+                        detectedPattern = PolicyPattern.DURATION_USAGE;
+                    } else if (leftOperand == LeftOperand.SYSTEM
+                            && operator == BinaryOperator.SAME_AS) {
+                        detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+                    } else {
+                        detectedPattern = null;
+                    }
+                }
+            } else {
+                if (postDuties != null && postDuties.get(0) != null) {
+                    final var action = postDuties.get(0).getAction().get(0);
+                    if (action == Action.NOTIFY) {
+                        detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
+                    } else if (action == Action.LOG) {
+                        detectedPattern = PolicyPattern.USAGE_LOGGING;
+                    } else {
+                        detectedPattern = null;
+                    }
+                } else {
+                    detectedPattern = PolicyPattern.PROVIDE_ACCESS;
+                }
+            }
+        }
+
+        return detectedPattern;
+    }
+
+    /**
+     * Get current system date.
+     *
+     * @return The date object.
+     */
+    public static ZonedDateTime getCurrentDate() {
+        return ZonedDateTime.now(ZoneOffset.UTC);
+    }
+
+    /**
+     * Check if the transfer contract's target matches the requested artifact.
+     *
+     * @param artifacts         List of artifacts.
+     * @param requestedArtifact Id of the requested artifact.
+     * @return True if the requested artifact matches the transfer contract's artifacts.
+     * @throws ResourceNotFoundException If a resource could not be found.
+     */
+    public static boolean isMatchingTransferContract(final List<Artifact> artifacts,
+                                                     final URI requestedArtifact)
+            throws ResourceNotFoundException {
+        for (final var artifact : artifacts) {
+            final var endpoint = SelfLinkHelper.getSelfLink(artifact);
+            if (endpoint.equals(requestedArtifact)) {
+                return true;
+            }
+        }
+
+        // If the requested artifact could not be found in the transfer contract (agreement).
+        return false;
     }
 }

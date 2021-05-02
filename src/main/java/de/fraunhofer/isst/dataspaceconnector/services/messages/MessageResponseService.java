@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.SelfLinkCreationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
@@ -587,9 +588,8 @@ public class MessageResponseService {
      * @param requestedElement The requested element that could not be constructed.
      * @return A message response.
      */
-    public MessageResponse handleSelfLinkCreationException(final SelfLinkCreationException
-                                                                   exception,
-                                                           final URI requestedElement) {
+    public MessageResponse handleSelfLinkCreationException(
+            final SelfLinkCreationException exception, final URI requestedElement) {
         if (log.isDebugEnabled()) {
             log.debug("Could not construct self links for requested element and its "
                             + "children. [exception=({}), requestedElement=({})]",
@@ -597,6 +597,28 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Internal error when constructing requested element.",
+                connectorService.getConnectorId(),
+                connectorService.getOutboundModelVersion());
+    }
+
+    /**
+     * Respond with error if the transfer contract has not yet been confirmed.
+     *
+     * @param storedAgreement The contract agreement.
+     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param messageId       The id of the incoming message.
+     * @return A message response.
+     */
+    public MessageResponse handleUnconfirmedAgreement(final Agreement storedAgreement,
+                                                      final URI issuerConnector,
+                                                      final URI messageId) {
+        if (log.isDebugEnabled()) {
+            log.debug("This the transfer contract has not yet been confirmed. "
+                            + "[agreement=({}), issuer=({}), messageId=({})]", storedAgreement,
+                    issuerConnector, messageId);
+        }
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
+                "This the transfer contract has not yet been confirmed.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }

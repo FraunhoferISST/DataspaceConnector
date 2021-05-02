@@ -84,7 +84,7 @@
 //                 (BodyResponse) handler.handleMessage((DescriptionRequestMessageImpl) message, null);
 
 //         /* ASSERT */
-//         final var expected = (BodyResponse) handler.constructConnectorSelfDescription(
+//         final var expected = (BodyResponse) handler.constructSelfDescription(
 //                 message.getIssuerConnector(), message.getId());
 
 //         // Compare payload

@@ -91,7 +91,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
 
         // Check if a specific resource has been requested.
         if (requestedElement == null) {
-            return constructConnectorSelfDescription(issuerConnector, messageId);
+            return constructSelfDescription(issuerConnector, messageId);
         } else {
             return constructResourceDescription(requestedElement, issuerConnector, messageId);
         }
@@ -140,8 +140,8 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
      * @param messageId       The message id of the incoming message.
      * @return A response message containing the resource catalog of the connector.
      */
-    public MessageResponse constructConnectorSelfDescription(final URI issuerConnector,
-                                                             final URI messageId) {
+    public MessageResponse constructSelfDescription(final URI issuerConnector,
+                                                    final URI messageId) {
         try {
             // Get self-description.
             final var selfDescription = connectorService.getConnectorWithOfferedResources();

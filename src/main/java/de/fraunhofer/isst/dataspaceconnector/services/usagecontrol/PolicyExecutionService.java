@@ -1,24 +1,24 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyExecutionException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,23 +53,24 @@ public class PolicyExecutionService {
     private final @NonNull LogMessageService logMessageService;
 
     /**
-     * Service for updating artifacts.
-     */
-    private final @NonNull ArtifactService artifactService;
-
-    /**
-     * Delete data by artifact id.
+     * Send contract agreement to clearing house.
      *
-     * @param target The artifact id.
-     * @throws ResourceNotFoundException If the artifact update fails.
+     * @param agreement The ids contract agreement.
      */
-    public void deleteDataFromArtifact(final URI target) throws ResourceNotFoundException {
-        final var entityId = EndpointUtils.getUUIDFromPath(target);
+    public void sendAgreementToClearingHouse(final ContractAgreement agreement) {
+        try {
+            final var recipient = connectorConfig.getClearingHouse();
+            final var rdf = IdsUtils.toRdf(agreement);
 
-        // Update data for artifact.
-        artifactService.setData(entityId, InputStream.nullInputStream());
-        if (log.isInfoEnabled()) {
-            log.info("Deleted data from artifact. [target=({})]", target);
+            // Build ids response message.
+            final var desc = new LogMessageDesc();
+            desc.setRecipient(recipient);
+            logMessageService.sendMessage(desc, rdf);
+        } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send contract agreement to clearing house. [exception=({})]",
+                        exception.getMessage(), exception);
+            }
         }
     }
 

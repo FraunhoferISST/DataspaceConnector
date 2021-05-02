@@ -21,7 +21,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
 import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
@@ -64,11 +63,6 @@ public class PolicyManagementService {
     private final @NonNull AgreementService agreementService;
 
     /**
-     * Service for artifacts.
-     */
-    private final @NonNull ArtifactService artifactService;
-
-    /**
      * Service for linking agreements and artifacts.
      */
     private final @NonNull RelationServices.AgreementArtifactLinker linker;
@@ -89,26 +83,6 @@ public class PolicyManagementService {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var agreement = deserializationService.getContractAgreement(payload);
         return validateContractAgreement(request, agreement);
-    }
-
-    /**
-     * Get stored contract agreement for requested element.
-     *
-     * @param target The requested element.
-     * @return The respective contract agreement.
-     */
-    public List<ContractAgreement> getContractAgreementsByTarget(final URI target) {
-        final var uuid = EndpointUtils.getUUIDFromPath(target);
-        final var artifact = artifactService.get(uuid);
-
-        final var agreements = artifact.getAgreements();
-        final var agreementList = new ArrayList<ContractAgreement>();
-        for (final var agreement : agreements) {
-            final var value = agreement.getValue();
-            final var idsAgreement = deserializationService.getContractAgreement(value);
-            agreementList.add(idsAgreement);
-        }
-        return agreementList;
     }
 
     /**
