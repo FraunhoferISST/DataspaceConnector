@@ -25,4 +25,18 @@ public class ArtifactResponseMessageDesc extends MessageDesc {
      * The transfer contract of the message.
      */
     private URI transferContract;
+
+    /**
+     * All args constructor.
+     *
+     * @param recipient The recipient.
+     * @param message   The correlation message.
+     * @param contract  The transfer contract.
+     */
+    public ArtifactResponseMessageDesc(final URI recipient, final URI message, final URI contract) {
+        super(recipient);
+
+        this.correlationMessage = message;
+        this.transferContract = contract;
+    }
 }
