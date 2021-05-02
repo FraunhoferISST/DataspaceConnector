@@ -2,7 +2,11 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
@@ -14,6 +18,9 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -34,6 +41,16 @@ public class RuleValidator {
      * Policy information point.
      */
     private final @NonNull PolicyInformationService informationService;
+
+    /**
+     * Service for resolving elements and its parents/children.
+     */
+    private final @NonNull EntityDependencyResolver dependencyResolver;
+
+    /**
+     * Service for deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Validates the data access for a given rule.
@@ -76,6 +93,61 @@ public class RuleValidator {
                 }
                 throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
         }
+    }
+
+    /**
+     * Compare content of rule offer and request with each other.
+     *
+     * @param contractOffers The contract offer.
+     * @param map            The target contract map.
+     * @param target         The target value.
+     * @return True if everything is fine, false in case of mismatch.
+     */
+    public boolean validateRulesOfRequest(final List<Contract> contractOffers,
+                                          final Map<URI, List<Rule>> map,
+                                          final URI target) {
+        boolean valid = false;
+        for (final var contract : contractOffers) {
+            // Get rule list from contract offer.
+            final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
+            // Get rule list from contract request.
+            final var values = map.get(target);
+
+            // Compare rules
+            if (compareRulesOfOfferToRequest(ruleList, values)) {
+                valid = true;
+                break;
+            }
+        }
+
+        return valid;
+    }
+
+    /**
+     * Compare rule list of a contract offer to the rule list of a contract request.
+     *
+     * @param offerRules   List of ids rules.
+     * @param requestRules List of ids rules.
+     * @return True if the lists are equal, false if not.
+     */
+    private boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
+                                                final List<Rule> requestRules) {
+        final var idsRuleList = new ArrayList<Rule>();
+        for (final var rule : offerRules) {
+            final var value = rule.getValue();
+            final var idsRule = deserializationService.getRule(value);
+            idsRuleList.add(idsRule);
+        }
+
+        if (!PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
+                        requestRules);
+            }
+            return false;
+        }
+
+        return true;
     }
 
     /**

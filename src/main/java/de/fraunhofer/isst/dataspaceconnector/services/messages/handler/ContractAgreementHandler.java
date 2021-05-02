@@ -48,9 +48,9 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     private final @NonNull MessageService messageService;
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for resolving entities.
@@ -93,14 +93,14 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         try {
             messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
         // Read message payload as string.
@@ -108,8 +108,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         try {
             payloadAsString = MessageUtils.getPayloadAsString(payload);
         } catch (MessageRequestException exception) {
-            return exceptionService.handleMessagePayloadException(exception, messageId,
-                    issuerConnector);
+            return responseService.handleMessagePayloadException(exception, messageId, issuer);
         }
 
         try {
@@ -119,35 +118,35 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
 
             // Get stored ids contract agreement.
             final var storedAgreement = entityResolver.getAgreementByUri(agreementId);
-            final var storedIdsAgreement = deserializationService
-                    .getContractAgreement(storedAgreement.getValue());
+            final var storedIdsAgreement
+                    = deserializationService.getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
             if (!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
-                return exceptionService.handleContractException(
+                return responseService.handleContractException(
                         new ContractException("Not the same contract."), payloadAsString,
-                        issuerConnector, messageId);
+                        issuer, messageId);
             }
 
             // Update contract agreement to confirmed.
             if (!updateService.confirmAgreement(storedAgreement)) {
-                return exceptionService.handleUnconfirmedAgreement(storedAgreement,
-                        issuerConnector, messageId);
+                return responseService.handleUnconfirmedAgreement(storedAgreement, issuer,
+                        messageId);
             }
 
             // Send contract to clearing house.
-            executionService.sendAgreementToClearingHouse(agreement);
+            executionService.sendAgreement(agreement);
 
-            return respondToMessage(issuerConnector, messageId);
+            return respondToMessage(issuer, messageId);
         } catch (IllegalArgumentException exception) {
-            return exceptionService.handleIllegalArgumentException(exception, payloadAsString,
-                    issuerConnector, messageId);
+            return responseService.handleIllegalArgumentException(exception, payloadAsString,
+                    issuer, messageId);
         } catch (ResourceNotFoundException exception) {
-            return exceptionService.handleMessageProcessingFailed(exception, payloadAsString,
-                    issuerConnector, messageId);
+            return responseService.handleMessageProcessingFailed(exception, payloadAsString,
+                    issuer, messageId);
         } catch (ContractException exception) {
-            return exceptionService.handleContractException(exception, payloadAsString,
-                    issuerConnector, messageId);
+            return responseService.handleContractException(exception, payloadAsString,
+                    issuer, messageId);
         }
     }
 
@@ -166,9 +165,8 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
 
             // Send ids response message.
             return BodyResponse.create(header, "Received contract agreement message.");
-        } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception, issuer,
-                    messageId);
+        } catch (MessageBuilderException | ConstraintViolationException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

@@ -35,9 +35,9 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     private final @NonNull MessageProcessedNotificationService notificationService;
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for message processing.
@@ -59,9 +59,9 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
         try {
             messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
@@ -75,7 +75,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             final var header = notificationService.buildMessage(desc);
             return BodyResponse.create(header, "Message received.");
         } catch (IllegalStateException | ConstraintViolationException e) {
-            return exceptionService.handleResponseMessageBuilderException(e, issuer, messageId);
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

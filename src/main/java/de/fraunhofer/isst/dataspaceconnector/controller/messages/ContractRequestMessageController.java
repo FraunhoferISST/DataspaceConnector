@@ -1,11 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
@@ -13,11 +7,13 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityPersistenceService;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.dataspaceconnector.view.AgreementViewAssembler;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,17 +35,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/ids")
 @Tag(name = "IDS Messages", description = "Endpoints for invoke sending IDS messages")
 public class ContractRequestMessageController {
-
-    /**
-     * Service for policy management.
-     */
-    private final @NonNull PolicyManagementService managementService;
 
     /**
      * Service for message handling.
@@ -70,6 +67,16 @@ public class ContractRequestMessageController {
      * Used for gaining access to agreements.
      */
     private final @NonNull AgreementService agreementService;
+
+    /**
+     * Service for contract processing.
+     */
+    private final @NonNull ContractManager contractManager;
+
+    /**
+     * Service for persisting entities.
+     */
+    private final @NonNull EntityPersistenceService persistenceService;
 
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
@@ -111,7 +118,7 @@ public class ContractRequestMessageController {
         try {
             // Validate input for contract request.
             PolicyUtils.validateRuleTarget(ruleList);
-            final var request = managementService.buildContractRequest(ruleList);
+            final var request = contractManager.buildContractRequest(ruleList);
 
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
@@ -123,8 +130,8 @@ public class ContractRequestMessageController {
             }
 
             // Read and process the response message.
-            final var agreement = managementService
-                    .readAndValidateAgreementFromResponse(response, request);
+            final var payload = MessageUtils.extractPayloadFromMultipartMessage(response);
+            final var agreement = contractManager.validateContractAgreement(payload, request);
 
             // Send and validate contract agreement/response message.
             response = messageService.sendContractAgreementMessage(recipient, agreement);
@@ -135,7 +142,7 @@ public class ContractRequestMessageController {
             }
 
             // Save contract agreement to database.
-            agreementId = managementService.saveContractAgreement(agreement, true);
+            agreementId = persistenceService.saveContractAgreement(agreement);
             if (log.isDebugEnabled()) {
                 log.debug("Policy negotiation success. Saved agreement: " + agreementId);
             }

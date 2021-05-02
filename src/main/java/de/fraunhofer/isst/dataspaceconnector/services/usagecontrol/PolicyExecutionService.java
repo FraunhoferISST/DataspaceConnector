@@ -3,10 +3,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyExecutionException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
@@ -57,19 +55,14 @@ public class PolicyExecutionService {
      *
      * @param agreement The ids contract agreement.
      */
-    public void sendAgreementToClearingHouse(final ContractAgreement agreement) {
+    public void sendAgreement(final ContractAgreement agreement) {
+        final var rdf = IdsUtils.toRdf(agreement);
         try {
-            final var recipient = connectorConfig.getClearingHouse();
-            final var rdf = IdsUtils.toRdf(agreement);
-
-            // Build ids response message.
-            final var desc = new LogMessageDesc();
-            desc.setRecipient(recipient);
-            logMessageService.sendMessage(desc, rdf);
-        } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
+            sendLogMessage(rdf);
+        } catch (PolicyExecutionException exception) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to send contract agreement to clearing house. [exception=({})]",
-                        exception.getMessage(), exception);
+                log.warn("Failed to send contract agreement to clearing house. "
+                        + "[exception=({})]", exception.getMessage(), exception);
             }
         }
     }
@@ -77,17 +70,24 @@ public class PolicyExecutionService {
     /**
      * Send a message to the clearing house. Allow the access only if that operation was successful.
      *
-     * @param element The accessed element.
+     * @param target The target object.
+     * @throws PolicyExecutionException if the access could not be successfully logged.
+     */
+    public void logDataAccess(final URI target) throws PolicyExecutionException {
+        sendLogMessage(target);
+    }
+
+    /**
+     * Send a message to the clearing house. Allow the access only if that operation was successful.
+     *
+     * @param logItem The item that should be logged.
      * @throws PolicyExecutionException If the access could not be successfully logged.
      */
-    public void logDataAccess(final URI element) throws PolicyExecutionException {
-        final var url = connectorConfig.getClearingHouse();
-        final var logMessage = buildLog(element).toString();
-
+    private void sendLogMessage(final Object logItem) {
         try {
-            final var desc = new LogMessageDesc();
-            desc.setRecipient(url);
-            final var response = logMessageService.sendMessage(desc, logMessage);
+            final var recipient = connectorConfig.getClearingHouse();
+            final var desc = new LogMessageDesc(recipient);
+            final var response = logMessageService.sendMessage(desc, logItem);
 
             if (response == null) {
                 if (log.isDebugEnabled()) {
@@ -96,8 +96,9 @@ public class PolicyExecutionService {
                 throw new PolicyExecutionException("Log message has no valid response.");
             }
         } catch (MessageException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Unsuccessful logging. [exception=({})]", e.getMessage(), e);
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send log message to clearing house. [exception=({})]",
+                        e.getMessage(), e);
             }
             throw new PolicyExecutionException("Log message could not be sent.");
         }
@@ -117,8 +118,7 @@ public class PolicyExecutionService {
 
         Map<String, String> response;
         try {
-            final var desc = new NotificationMessageDesc();
-            desc.setRecipient(URI.create(recipient));
+            final var desc = new NotificationMessageDesc(URI.create(recipient));
             response = notificationService.sendMessage(desc, logMessage);
 
             if (response == null) {

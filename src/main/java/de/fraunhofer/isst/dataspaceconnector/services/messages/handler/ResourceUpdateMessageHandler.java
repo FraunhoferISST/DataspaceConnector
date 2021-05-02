@@ -39,7 +39,7 @@ import java.net.URI;
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
     private final @NonNull MessageResponseService responseService;
 
@@ -85,14 +85,13 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         }
 
         // Read relevant parameters for message processing.
-        final var affectedResource = MessageUtils.extractAffectedResource(message);
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var affected = MessageUtils.extractAffectedResource(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
-        if (affectedResource == null || affectedResource.toString().isEmpty()) {
+        if (affected == null || affected.toString().isEmpty()) {
             // Without an affected resource, the message processing will be aborted.
-            return responseService.handleMissingAffectedResource(affectedResource,
-                    issuerConnector, messageId);
+            return responseService.handleMissingAffectedResource(affected, issuer, messageId);
         }
 
         String payloadAsString;
@@ -100,50 +99,45 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
             // Try to read payload as string.
             payloadAsString = MessageUtils.getStreamAsString(payload);
             if (payloadAsString.isEmpty()) {
-                return responseService.handleMissingPayload(affectedResource, issuerConnector,
-                        messageId);
+                return responseService.handleMissingPayload(affected, issuer, messageId);
             }
-        } catch (IOException | IllegalArgumentException exception) {
-            return responseService.handleMessagePayloadException(exception, messageId,
-                    issuerConnector);
+        } catch (IOException | IllegalArgumentException e) {
+            return responseService.handleMessagePayloadException(e, messageId, issuer);
         }
 
-        return updateResource(payloadAsString, affectedResource, issuerConnector, messageId);
+        return updateResource(payloadAsString, affected, issuer, messageId);
     }
 
     /**
      * Update resource in internal database.
      *
-     * @param payload          The payload as string.
-     * @param affectedResource The affected resource.
-     * @param issuerConnector  The issuer connector.
-     * @param messageId        The message id.
+     * @param payload   The payload as string.
+     * @param affected  The affected resource.
+     * @param issuer    The issuer connector.
+     * @param messageId The message id.
      * @return A message response.
      */
-    private MessageResponse updateResource(final String payload,
-                                           final URI affectedResource,
-                                           final URI issuerConnector,
-                                           final URI messageId) {
+    private MessageResponse updateResource(final String payload, final URI affected,
+                                           final URI issuer, final URI messageId) {
         // Get ids resource from payload.
         try {
             final var resource = deserializationService.getResource(payload);
             final var resourceId = resource.getId();
 
             // Check if the resource id and affected resource id match.
-            if (!resourceId.equals(affectedResource)) {
-                return responseService.handleInvalidAffectedResource(resourceId,
-                        affectedResource, issuerConnector, messageId);
+            if (!resourceId.equals(affected)) {
+                return responseService.handleInvalidAffectedResource(resourceId, affected, issuer,
+                        messageId);
             }
 
             // Update requested resource with received information.
             updateService.updateResource(resource);
-        } catch (IllegalArgumentException exception) {
-            return responseService.handleIllegalArgumentException(exception, payload,
-                    issuerConnector, messageId);
+        } catch (IllegalArgumentException e) {
+            return responseService.handleIllegalArgumentException(e, payload, issuer, messageId);
         }
 
         // Respond although updating the resource may have failed.
-        return respondToMessage(issuerConnector, messageId);
+        return respondToMessage(issuer, messageId);
     }
 
     /**
@@ -161,9 +155,8 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
             // Send ids response message.
             return BodyResponse.create(header, "Message received.");
-        } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return responseService.handleResponseMessageBuilderException(exception, issuer,
-                    messageId);
+        } catch (MessageBuilderException | ConstraintViolationException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

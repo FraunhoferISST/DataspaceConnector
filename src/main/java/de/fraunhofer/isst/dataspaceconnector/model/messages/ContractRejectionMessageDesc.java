@@ -22,11 +22,12 @@ public class ContractRejectionMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient The recipient.
+     * @param recipient The message's recipient.
      * @param message   The correlation message.
      */
     public ContractRejectionMessageDesc(final URI recipient, final URI message) {
         super(recipient);
+
         this.correlationMessage = message;
     }
 }

@@ -10,8 +10,8 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * This class provides access permission information for the {@link RuleValidator}
- * depending on the policy content. Refers to the ids policy information point (PEP).
+ * This class provides access permission information for the {@link RuleValidator} depending on
+ * the policy content.
  */
 @Service
 @RequiredArgsConstructor

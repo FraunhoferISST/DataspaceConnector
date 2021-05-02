@@ -29,7 +29,7 @@ public class ArtifactRequestMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient The recipient.
+     * @param recipient The message's recipient.
      * @param artifact  The requested artifact.
      * @param contract  The transfer contract.
      */

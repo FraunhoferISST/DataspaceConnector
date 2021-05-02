@@ -29,7 +29,7 @@ public class ArtifactResponseMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient The recipient.
+     * @param recipient The message's recipient.
      * @param message   The correlation message.
      * @param contract  The transfer contract.
      */

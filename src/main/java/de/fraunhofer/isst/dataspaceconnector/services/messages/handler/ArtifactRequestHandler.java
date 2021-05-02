@@ -12,7 +12,7 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.ContractManager;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
@@ -52,7 +52,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final @NonNull MessageService messageService;
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
     private final @NonNull MessageResponseService responseService;
 
@@ -125,8 +125,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             }
 
             try {
-                final var agreement
-                        = contractManager.validateContract(transferContract, requestedArtifact);
+                final var agreement = contractManager.validateTransferContract(
+                        transferContract, requestedArtifact);
 
                 final var input = new VerificationInput(requestedArtifact, issuer, agreement);
                 if (accessVerifier.verify(input) == VerificationResult.DENIED) {
@@ -151,8 +151,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         try {
             // Process query input.
             final var queryInput = messageService.getQueryInputFromPayload(payload);
-            return returnData(requestedArtifact, transferContract, issuer, messageId,
-                    queryInput);
+            return returnData(requestedArtifact, transferContract, issuer, messageId, queryInput);
         } catch (InvalidInputException exception) {
             return responseService.handleInvalidQueryInput(exception, requestedArtifact,
                     transferContract, issuer, messageId);
@@ -186,8 +185,8 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             // Send ids response message.
             return BodyResponse.create(header, Base64Utils.encodeToString(data.readAllBytes()));
         } catch (MessageBuilderException | ConstraintViolationException | IOException exception) {
-            return responseService.handleResponseMessageBuilderException(exception,
-                    issuer, messageId);
+            return responseService.handleResponseMessageBuilderException(exception, issuer,
+                    messageId);
         }
     }
 }

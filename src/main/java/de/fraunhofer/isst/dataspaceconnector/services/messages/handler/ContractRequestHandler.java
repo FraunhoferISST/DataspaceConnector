@@ -1,16 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
@@ -21,13 +14,14 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedExcep
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityPersistenceService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRejectionService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.RuleValidator;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -40,6 +34,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This @{@link ContractRequestHandler} handles all incoming messages that have a
@@ -59,9 +58,9 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final @NonNull MessageService messageService;
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for ids contract rejection messages.
@@ -79,14 +78,19 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     private final @NonNull EntityDependencyResolver dependencyResolver;
 
     /**
-     * Service for policy management.
+     * Service for persisting entities.
      */
-    private final @NonNull PolicyManagementService managementService;
+    private final @NonNull EntityPersistenceService persistenceService;
 
     /**
      * Service for ids deserialization.
      */
     private final @NonNull DeserializationService deserializationService;
+
+    /**
+     * Service for validating rule content.
+     */
+    private final @NonNull RuleValidator ruleValidator;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -103,14 +107,14 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         try {
             messageService.validateIncomingRequestMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
         // Read message payload as string.
@@ -118,26 +122,24 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
         try {
             payloadAsString = MessageUtils.getPayloadAsString(payload);
         } catch (MessageRequestException exception) {
-            return exceptionService.handleMessagePayloadException(exception, messageId,
-                    issuerConnector);
+            return responseService.handleMessagePayloadException(exception, messageId, issuer);
         }
 
         // Check the contract's content.
-        return checkContractRequest(payloadAsString, messageId, issuerConnector);
+        return processContractRequest(payloadAsString, messageId, issuer);
     }
 
     /**
      * Checks if the contract request content by the consumer complies with the contract offer by
      * the provider.
      *
-     * @param payload         The message payload containing a contract request.
-     * @param messageId       The message id of the incoming message.
-     * @param issuerConnector The issuer connector extracted from the incoming message.
+     * @param payload   The message payload containing a contract request.
+     * @param messageId The message id of the incoming message.
+     * @param issuer    The issuer connector extracted from the incoming message.
      * @return A message response to the requesting connector.
      */
-    public MessageResponse checkContractRequest(final String payload,
-                                                final URI messageId,
-                                                final URI issuerConnector) throws RuntimeException {
+    public MessageResponse processContractRequest(final String payload, final URI messageId,
+                                                  final URI issuer) throws RuntimeException {
         try {
             // Deserialize string to contract object.
             final var request = deserializationService.getContractRequest(payload);
@@ -146,14 +148,13 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var rules = PolicyUtils.extractRulesFromContract(request);
             if (rules.isEmpty()) {
                 // Return rejection message if the contract request is missing rules.
-                return exceptionService.handleMissingRules(request, messageId, issuerConnector);
+                return responseService.handleMissingRules(request, messageId, issuer);
             }
 
             final var targetRuleMap = PolicyUtils.getTargetRuleMap(rules);
             if (targetRuleMap.containsKey(null)) {
                 // Return rejection message if the rules are missing targets.
-                return exceptionService.handleMissingTargetInRules(request, messageId,
-                        issuerConnector);
+                return responseService.handleMissingTargetInRules(request, messageId, issuer);
             }
 
             final var targetList = new ArrayList<URI>();
@@ -163,106 +164,71 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                 try {
                     contracts = dependencyResolver.getContractOffersByArtifactId(target);
                 } catch (ResourceNotFoundException exception) {
-                    return exceptionService.handleResourceNotFoundException(exception, target,
-                            issuerConnector, messageId);
+                    return responseService.handleResourceNotFoundException(exception, target,
+                            issuer, messageId);
                 }
 
                 // Abort negotiation if no contract offer could be found.
                 if (contracts.isEmpty()) {
-                    return exceptionService.handleMissingContractOffers(request, messageId,
-                            issuerConnector);
+                    return responseService.handleMissingContractOffers(request, messageId, issuer);
                 }
 
                 // Abort negotiation if no contract offer for the issuer connector could be found.
-                final var validContracts =
-                        PolicyUtils.removeContractsWithInvalidConsumer(contracts, issuerConnector);
+                final var validContracts
+                        = PolicyUtils.removeContractsWithInvalidConsumer(contracts, issuer);
                 if (validContracts.isEmpty()) {
-                    return exceptionService.handleMissingContractOffers(request, messageId,
-                            issuerConnector);
+                    return responseService.handleMissingContractOffers(request, messageId, issuer);
                 }
 
                 var valid = false;
                 try {
-                    valid = areRulesValid(validContracts, targetRuleMap, target);
-                } catch (IllegalArgumentException exception) {
-                    return exceptionService
-                            .handleMalformedRules(exception, payload, issuerConnector, messageId);
+                    valid = ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap,
+                            target);
+                } catch (IllegalArgumentException e) {
+                    return responseService.handleMalformedRules(e, payload, issuer, messageId);
                 }
 
                 if (!valid) {
-                    return rejectContract(issuerConnector, messageId);
+                    return rejectContract(issuer, messageId);
                 }
                 targetList.add(target);
             }
 
-            return acceptContract(request, issuerConnector, messageId, targetList);
-        } catch (IllegalArgumentException exception) {
-            return exceptionService.handleIllegalArgumentException(exception, payload,
-                    issuerConnector, messageId);
-        } catch (Exception exception) {
-            // NOTE: Should not be reached. TODO Add further exception handling if necessary.
-            return exceptionService.handleMessageProcessingFailed(exception, payload,
-                    issuerConnector, messageId);
+            return acceptContract(request, issuer, messageId, targetList);
+        } catch (IllegalArgumentException e) {
+            return responseService.handleIllegalArgumentException(e, payload, issuer, messageId);
+        } catch (Exception e) {
+            // NOTE: Should not be reached.
+            return responseService.handleMessageProcessingFailed(e, payload, issuer, messageId);
         }
-    }
-
-    /**
-     * Compare content of rule offer and request with each other.
-     *
-     * @param contractOffers The contract offer.
-     * @param map            The target contract map.
-     * @param target         The target value.
-     * @return True if everything is fine, false in case of mismatch.
-     */
-    private boolean areRulesValid(final List<Contract> contractOffers,
-                                  final Map<URI, List<Rule>> map,
-                                  final URI target) {
-        boolean valid = false;
-        for (final var contract : contractOffers) {
-            // Get rule list from contract offer.
-            final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
-            // Get rule list from contract request.
-            final var values = map.get(target);
-
-            // Compare rules
-            if (managementService.compareRulesOfOfferToRequest(ruleList, values)) {
-                valid = true;
-                break;
-            }
-        }
-
-        return valid;
     }
 
     /**
      * Accept contract by building a contract agreement and sending it as payload within a
      * contract agreement message.
      *
-     * @param request            The contract request object from the data consumer.
-     * @param issuerConnector    The issuer connector id.
-     * @param correlationMessage The correlation message id.
-     * @param targetList         List of requested targets.
+     * @param request    The contract request object from the data consumer.
+     * @param issuer     The issuer connector id.
+     * @param messageId  The correlation message id.
+     * @param targetList List of requested targets.
      * @return The message response to the requesting connector.
      */
-    private MessageResponse acceptContract(final ContractRequest request,
-                                           final URI issuerConnector,
-                                           final URI correlationMessage,
-                                           final List<URI> targetList) {
+    private MessageResponse acceptContract(final ContractRequest request, final URI issuer,
+                                           final URI messageId, final List<URI> targetList) {
         ContractAgreement agreement = null;
         URI agreementId;
         try {
             // Turn the accepted contract request into a contract agreement and persist it.
-            agreement = managementService
-                    .buildAndSaveContractAgreement(request, false, targetList);
+            agreement = persistenceService.buildAndSaveContractAgreement(request, targetList);
             agreementId = agreement.getId();
         } catch (ConstraintViolationException | PersistenceException exception) {
-            return exceptionService.handleAgreementPersistenceException(exception, agreement,
-                    issuerConnector, correlationMessage);
+            return responseService.handleAgreementPersistenceException(exception, agreement,
+                    issuer, messageId);
         }
 
         try {
             // Build ids response message.
-            final var desc = new ContractAgreementMessageDesc(issuerConnector, correlationMessage);
+            final var desc = new ContractAgreementMessageDesc(issuer, messageId);
             final var header = agreementService.buildMessage(desc);
             if (log.isDebugEnabled()) {
                 log.debug("Contract request accepted. Saved agreement: " + agreementId);
@@ -271,33 +237,29 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             // Send ids response message.
             return BodyResponse.create(header, agreement.toRdf());
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-                | RdfBuilderException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, correlationMessage);
+                | RdfBuilderException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 
     /**
      * Builds a contract rejection message with a rejection reason.
      *
-     * @param issuerConnector    The issuer connector.
-     * @param correlationMessage The correlation message id.
+     * @param issuer    The issuer connector.
+     * @param messageId The correlation message id.
      * @return A contract rejection message.
      */
-    private MessageResponse rejectContract(final URI issuerConnector,
-                                           final URI correlationMessage) {
+    private MessageResponse rejectContract(final URI issuer, final URI messageId) {
         try {
             // Build ids response message.
-            final var desc = new ContractRejectionMessageDesc(issuerConnector, correlationMessage);
+            final var desc = new ContractRejectionMessageDesc(issuer, messageId);
             final var header = (RejectionMessage) rejectionService.buildMessage(desc);
-            final var payload = "Contract rejected.";
 
             // Send ids response message.
-            return ErrorResponse.create(header, payload);
+            return ErrorResponse.create(header, "Contract rejected.");
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-                | RdfBuilderException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, correlationMessage);
+                | RdfBuilderException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }
