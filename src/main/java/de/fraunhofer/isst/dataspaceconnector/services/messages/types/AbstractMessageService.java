@@ -68,7 +68,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
-    public Map<String, String> sendMessage(final D desc, final String payload)
+    public Map<String, String> sendMessage(final D desc, final Object payload)
             throws MessageException {
         try {
             final var recipient = desc.getRecipient();

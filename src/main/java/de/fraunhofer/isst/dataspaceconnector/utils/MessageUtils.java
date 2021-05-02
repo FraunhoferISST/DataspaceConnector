@@ -175,10 +175,10 @@ public final class MessageUtils {
      * @return A multipart body or error.
      * @throws MessageBuilderException If the message could not be built.
      */
-    public static MultipartBody buildIdsMultipartMessage(final Message header, final String payload)
+    public static MultipartBody buildIdsMultipartMessage(final Message header, final Object payload)
             throws MessageBuilderException {
         try {
-            return InfomodelMessageBuilder.messageWithString(header, payload);
+            return InfomodelMessageBuilder.messageWithString(header, String.valueOf(payload));
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Message could not be built. [exception=({})]", e.getMessage(), e);
