@@ -1,9 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
@@ -23,7 +19,10 @@ import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseSe
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactResponseService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyEnforcementService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationInput;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.DataProvisionVerifier;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationResult;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -35,6 +34,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
 /**
  * This @{@link ArtifactRequestHandler} handles all incoming messages that have a
@@ -78,14 +81,14 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final @NonNull DeserializationService deserializationService;
 
     /**
-     * Service for policy enforcement.
-     */
-    private final @NonNull PolicyEnforcementService enforcementService;
-
-    /**
      * Service for handling response messages.
      */
     private final @NonNull ArtifactResponseService artifactService;
+
+    /**
+     * The verifier for the data access.
+     */
+    private final @NonNull DataProvisionVerifier accessVerifier;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the
@@ -131,7 +134,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             }
 
             try {
-                checkContractConditions(transferContract, requestedArtifact, issuerConnector);
+                validateContractConditions(transferContract, requestedArtifact, issuerConnector);
             } catch (ResourceNotFoundException | IllegalArgumentException exception) {
                 // Agreement could not be loaded or deserialized.
                 return exceptionService.handleMessageProcessingFailed(exception,
@@ -169,9 +172,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * @param requestedArtifact The id of the artifact.
      * @param issuerConnector   The issuer connector.
      */
-    private void checkContractConditions(final URI transferContract,
-                                         final URI requestedArtifact,
-                                         final URI issuerConnector)
+    private void validateContractConditions(final URI transferContract,
+                                            final URI requestedArtifact,
+                                            final URI issuerConnector)
             throws IllegalArgumentException, ResourceNotFoundException,
             PolicyRestrictionException, ContractException {
         final var agreement = entityResolver.getAgreementByUri(transferContract);
@@ -183,16 +186,19 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             throw new ContractException("Transfer contract does not match the requested artifact.");
         }
 
-        // TODO Negotiation has to be finished to make the agreement valid.
-//        final var confirmed = agreement.getConfirmed();
-//        if (!confirmed) {
-//            return ...
-//        }
+        // Negotiation has to be finished to make the agreement valid.
+        if (!agreement.isConfirmed()) {
+            throw new ContractException("Contract agreement has not been confirmed. Send contract "
+                    + "agreement message to finish the negotiation sequence.");
+        }
 
         final var value = agreement.getValue();
         final var idsAgreement = deserializationService.getContractAgreement(value);
-        enforcementService.checkPolicyOnDataProvision(requestedArtifact, issuerConnector,
-                idsAgreement);
+
+        final var input = new VerificationInput(requestedArtifact, issuerConnector, idsAgreement);
+        if (accessVerifier.verify(input) == VerificationResult.DENIED) {
+            throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
+        }
     }
 
     /**
