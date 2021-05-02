@@ -71,6 +71,9 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      */
     private final @NonNull ArtifactResponseService artifactService;
 
+    /**
+     * Service for contract processing.
+     */
     private final @NonNull ContractManager contractManager;
 
     /**
