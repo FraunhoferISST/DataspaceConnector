@@ -7,11 +7,14 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.InvalidInputException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityPersistenceService;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRequestService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
@@ -49,9 +52,24 @@ import java.util.UUID;
 public class ContractRequestMessageController {
 
     /**
-     * Service for message handling.
+     * Service for contract request message handling.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull ContractRequestService cRequestService;
+
+    /**
+     * Service for artifact request message handling.
+     */
+    private final @NonNull ArtifactRequestService aRequestService;
+
+    /**
+     * Service for description request message handling.
+     */
+    private final @NonNull DescriptionRequestService dRequestService;
+
+    /**
+     * Service for contract agreement message handling.
+     */
+    private final @NonNull ContractAgreementService cAgreementService;
 
     /**
      * Service for updating database entities.
@@ -122,10 +140,10 @@ public class ContractRequestMessageController {
 
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
-            response = messageService.sendContractRequestMessage(recipient, request);
-            if (!messageService.validateContractRequestResponseMessage(response)) {
+            response = cRequestService.sendMessage(recipient, request);
+            if (!cRequestService.validateResponse(response)) {
                 // If the response is not a contract agreement message, show the response.
-                final var content = messageService.getContent(response);
+                final var content = cRequestService.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -134,10 +152,10 @@ public class ContractRequestMessageController {
             final var agreement = contractManager.validateContractAgreement(payload, request);
 
             // Send and validate contract agreement/response message.
-            response = messageService.sendContractAgreementMessage(recipient, agreement);
-            if (!messageService.validateContractAgreementResponseMessage(response)) {
+            response = cAgreementService.sendMessage(recipient, agreement);
+            if (!cAgreementService.validateResponse(response)) {
                 // If the response is not a notification message, show the response.
-                final var content = messageService.getContent(response);
+                final var content = cAgreementService.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -151,10 +169,10 @@ public class ContractRequestMessageController {
             // Iterate over list of resource ids to send description request messages for each.
             for (final var resource : resources) {
                 // Send and validate description request/response message.
-                response = messageService.sendDescriptionRequestMessage(recipient, resource);
-                if (!messageService.validateDescriptionResponseMessage(response)) {
+                response = dRequestService.sendMessage(recipient, resource);
+                if (!dRequestService.validateResponse(response)) {
                     // If the response is not a description response message, show the response.
-                    final var content = messageService.getContent(response);
+                    final var content = dRequestService.getResponseContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
@@ -163,7 +181,7 @@ public class ContractRequestMessageController {
                 // TODO Check if a resource with remoteId is already stored on consumer side,
                 //  if yes, do NOT create a new resource, but update it and all children
                 // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
-                messageService.saveMetadata(response, artifacts, download, recipient);
+                persistenceService.saveMetadata(response, artifacts, download, recipient);
             }
 
             updateService.linkArtifactToAgreement(artifacts, agreementId);
@@ -177,13 +195,12 @@ public class ContractRequestMessageController {
 
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
-                    response = messageService.sendArtifactRequestMessage(recipient, artifact,
-                            transferContract);
-                    if (!messageService.validateArtifactResponseMessage(response)) {
+                    response = aRequestService.sendMessage(recipient, artifact, transferContract);
+                    if (!aRequestService.validateResponse(response)) {
                         // If the response is not an artifact response message, show the response.
                         // Ignore when data could not be downloaded, because the artifact request
                         // can be triggered later again.
-                        final var content = messageService.getContent(response);
+                        final var content = aRequestService.getResponseContent(response);
                         if (log.isDebugEnabled()) {
                             log.debug("Data could not be loaded: \n" + content);
                         }
@@ -191,7 +208,7 @@ public class ContractRequestMessageController {
 
                     // Read and process the response message.
                     try {
-                        messageService.saveData(response, artifact);
+                        persistenceService.saveData(response, artifact);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {

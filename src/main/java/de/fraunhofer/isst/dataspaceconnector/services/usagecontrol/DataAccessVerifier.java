@@ -22,7 +22,7 @@ public final class DataAccessVerifier implements PolicyVerifier<URI> {
     /**
      * The policy execution point.
      */
-    private final @NonNull RuleValidator decisionService;
+    private final @NonNull RuleValidator ruleValidator;
 
     /**
      * Service for configuring policy settings.
@@ -79,7 +79,7 @@ public final class DataAccessVerifier implements PolicyVerifier<URI> {
                 final var pattern = PolicyUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
-                    decisionService.validatePolicy(pattern, rule, target, null);
+                    ruleValidator.validatePolicy(pattern, rule, target, null);
                 }
             }
         }

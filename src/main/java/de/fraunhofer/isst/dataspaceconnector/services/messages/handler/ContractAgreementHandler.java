@@ -13,7 +13,6 @@ import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -43,14 +42,14 @@ import java.net.URI;
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
 
     /**
-     * Service for message processing.
-     */
-    private final @NonNull MessageService messageService;
-
-    /**
      * Service for building and sending message responses.
      */
     private final @NonNull MessageResponseService responseService;
+
+    /**
+     * Service for handling notification messages.
+     */
+    private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
      * Service for resolving entities.
@@ -66,11 +65,6 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
      * Service for updating database entities from ids object.
      */
     private final @NonNull EntityUpdateService updateService;
-
-    /**
-     * Service for handling notification messages.
-     */
-    private final @NonNull MessageProcessedNotificationService notificationService;
 
     /**
      * Policy execution point.
@@ -91,7 +85,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                                          final MessagePayload payload) throws RuntimeException {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
             return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -161,7 +155,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         try {
             // Build ids response message.
             final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
-            final var header = notificationService.buildMessage(desc);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
             return BodyResponse.create(header, "Received contract agreement message.");

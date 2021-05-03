@@ -21,7 +21,7 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
     /**
      * The policy execution point.
      */
-    private final @NonNull RuleValidator decisionService;
+    private final @NonNull RuleValidator ruleValidator;
 
     /**
      * Service for configuring policy settings.
@@ -75,7 +75,7 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
             final var pattern = PolicyUtils.getPatternByRule(rule);
             // Enforce only a set of patterns.
             if (patterns.contains(pattern)) {
-                decisionService.validatePolicy(pattern, rule, target, issuerConnector);
+                ruleValidator.validatePolicy(pattern, rule, target, issuerConnector);
             }
         }
     }

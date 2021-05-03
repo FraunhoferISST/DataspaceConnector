@@ -3,7 +3,7 @@ package de.fraunhofer.isst.dataspaceconnector.controller.messages;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageResponseException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
+import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
@@ -37,7 +37,7 @@ public class DescriptionRequestMessageController {
     /**
      * Service for message handling.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull DescriptionRequestService messageService;
 
     /**
      * Service for ids deserialization.
@@ -68,12 +68,11 @@ public class DescriptionRequestMessageController {
         String payload = null;
         try {
             // Send and validate description request/response message.
-            final var response =
-                    messageService.sendDescriptionRequestMessage(recipient, elementId);
-            final var valid = messageService.validateDescriptionResponseMessage(response);
+            final var response = messageService.sendMessage(recipient, elementId);
+            final var valid = messageService.validateResponse(response);
             if (!valid) {
                 // If the response is not a description response message, show the response.
-                final var content = messageService.getContent(response);
+                final var content = messageService.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 

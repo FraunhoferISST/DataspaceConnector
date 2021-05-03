@@ -9,7 +9,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNoti
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -44,9 +43,9 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
     private final @NonNull MessageResponseService responseService;
 
     /**
-     * Service for message processing.
+     * Service for handling response messages.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
      * Service for ids deserialization.
@@ -57,11 +56,6 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      * Service for updating database entities from ids object.
      */
     private final @NonNull EntityUpdateService updateService;
-
-    /**
-     * Service for handling response messages.
-     */
-    private final @NonNull MessageProcessedNotificationService notificationService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -76,7 +70,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                                          final MessagePayload payload) throws RuntimeException {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
             return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -151,7 +145,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
         try {
             // Build ids response message.
             final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
-            final var header = notificationService.buildMessage(desc);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
             return BodyResponse.create(header, "Message received.");

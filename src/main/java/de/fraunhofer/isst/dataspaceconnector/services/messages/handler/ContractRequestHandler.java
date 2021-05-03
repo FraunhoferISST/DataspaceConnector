@@ -17,7 +17,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.ContractRejectionMes
 import de.fraunhofer.isst.dataspaceconnector.services.EntityPersistenceService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractAgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ContractRejectionService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
@@ -51,11 +50,6 @@ import java.util.List;
 @SupportedMessageType(ContractRequestMessageImpl.class)
 @RequiredArgsConstructor
 public class ContractRequestHandler implements MessageHandler<ContractRequestMessageImpl> {
-
-    /**
-     * Service for message processing.
-     */
-    private final @NonNull MessageService messageService;
 
     /**
      * Service for building and sending message responses.
@@ -105,7 +99,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            agreementService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
             return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {

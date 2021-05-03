@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
@@ -12,11 +13,10 @@ import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundExceptio
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.ArtifactResponseService;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.ContractManager;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.DataProvisionVerifier;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationInput;
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationResult;
@@ -29,6 +29,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -42,19 +43,20 @@ import java.net.URI;
  * {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} JsonTypeName annotation.
  */
 @Component
+@Log4j2
 @SupportedMessageType(ArtifactRequestMessageImpl.class)
 @RequiredArgsConstructor
 public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
     /**
-     * Service for message processing.
-     */
-    private final @NonNull MessageService messageService;
-
-    /**
      * Service for building and sending message responses.
      */
     private final @NonNull MessageResponseService responseService;
+
+    /**
+     * Service for handling artifact response messages.
+     */
+    private final @NonNull ArtifactResponseService messageService;
 
     /**
      * Service for resolving entities.
@@ -65,11 +67,6 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      * Service for connector usage control configurations.
      */
     private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
-     * Service for handling response messages.
-     */
-    private final @NonNull ArtifactResponseService artifactService;
 
     /**
      * Service for contract processing.
@@ -95,7 +92,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
                                          final MessagePayload payload) throws RuntimeException {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
             return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
@@ -150,7 +147,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         // Either without contract negotiation or if all conditions are fulfilled, data is returned.
         try {
             // Process query input.
-            final var queryInput = messageService.getQueryInputFromPayload(payload);
+            final var queryInput = getQueryInputFromPayload(payload);
             return returnData(requestedArtifact, transferContract, issuer, messageId, queryInput);
         } catch (InvalidInputException exception) {
             return responseService.handleInvalidQueryInput(exception, requestedArtifact,
@@ -180,13 +177,39 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
             // Build ids response message.
             final var desc = new ArtifactResponseMessageDesc(issuer, messageId, transferContract);
-            final var header = artifactService.buildMessage(desc);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
             return BodyResponse.create(header, Base64Utils.encodeToString(data.readAllBytes()));
         } catch (MessageBuilderException | ConstraintViolationException | IOException exception) {
             return responseService.handleResponseMessageBuilderException(exception, issuer,
                     messageId);
+        }
+    }
+
+    /**
+     * Read query parameters from message payload.
+     *
+     * @param messagePayload The message's payload.
+     * @return the query input.
+     * @throws InvalidInputException If the query input is not empty but invalid.
+     */
+    private QueryInput getQueryInputFromPayload(final MessagePayload messagePayload)
+            throws InvalidInputException {
+        try {
+            final var payload = MessageUtils.getStreamAsString(messagePayload);
+            if (payload.equals("")) {
+                // Query input is optional, so no rejection message will be sent. Query input will
+                // be checked for null value in HttpService.class.
+                return null;
+            } else {
+                return new ObjectMapper().readValue(payload, QueryInput.class);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Invalid query input. [exception=({})]", e.getMessage(), e);
+            }
+            throw new InvalidInputException("Invalid query input.", e);
         }
     }
 }
