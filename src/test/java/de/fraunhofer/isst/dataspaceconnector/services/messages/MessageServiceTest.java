@@ -1,3 +1,4 @@
+/*
 package de.fraunhofer.isst.dataspaceconnector.services.messages;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,19 +41,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {MessageService.class})
+@SpringBootTest
 public class MessageServiceTest {
 
-    @MockBean
+    @Autowired
     DescriptionRequestService descService;
 
-    @MockBean
+    @Autowired
     ContractRequestService contractRequestService;
 
-    @MockBean
+    @Autowired
     ContractAgreementService contractAgreementService;
 
-    @MockBean
+    @Autowired
     ArtifactRequestService artifactRequestService;
 
     @MockBean
@@ -73,14 +74,13 @@ public class MessageServiceTest {
     @MockBean
     ArtifactService artifactService;
 
-    @Autowired
-    MessageService service;
-
     private final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
 
     @Test
     public void sendDescriptionRequestMessage_withoutRequestedElement_returnValidResponse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var desc = new DescriptionRequestMessageDesc(recipient, null);
 
@@ -88,18 +88,24 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(descService.sendMessage(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
+        Mockito.when(descService.send(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
 
-        /* ACT */
-        final var result = service.sendDescriptionRequestMessage(recipient, null);
+        */
+/* ACT *//*
 
-        /* ARRANGE */
+        final var result = descService.sendMessage(recipient, null);
+
+        */
+/* ARRANGE *//*
+
         assertEquals(response, result);
     }
 
     @Test
     public void sendDescriptionRequestMessage_validRequestedElement_returnValidResponse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var element = URI.create("https://requestedElement");
         final var desc = new DescriptionRequestMessageDesc(recipient, element);
@@ -108,50 +114,68 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(descService.sendMessage(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
+        Mockito.when(descService.send(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
 
-        /* ACT */
-        final var result = service.sendDescriptionRequestMessage(recipient, element);
+        */
+/* ACT *//*
 
-        /* ARRANGE */
+        final var result = descService.sendMessage(recipient, element);
+
+        */
+/* ARRANGE *//*
+
         assertEquals(response, result);
     }
 
     @Test
     public void validateDescriptionResponseMessage_validResponse_returnTrue() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(descService.isValidResponseType(Mockito.eq(response))).thenReturn(true);
 
-        /* ACT */
-        final var result = service.validateDescriptionResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = descService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertTrue(result);
     }
 
     @Test
     public void validateDescriptionResponseMessage_invalidResponse_returnFalse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some invalid header");
         response.put("body", "some invalid body");
 
         Mockito.when(descService.isValidResponseType(Mockito.eq(response))).thenReturn(false);
 
-        /* ACT */
-        final var result = service.validateDescriptionResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = descService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertFalse(result);
     }
 
     @Test
     public void sendContractRequestMessage_withValidContractRequest_returnValidResponse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var contractId = URI.create("https://contractRequest");
         final var desc = new ContractRequestMessageDesc(recipient, contractId);
@@ -162,18 +186,24 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(contractRequestService.sendMessage(Mockito.eq(desc), Mockito.eq(requestAsRdf))).thenReturn(response);
+        Mockito.when(contractRequestService.send(Mockito.eq(desc), Mockito.eq(requestAsRdf))).thenReturn(response);
 
-        /* ACT */
-        final var result = service.sendContractRequestMessage(recipient, request);
+        */
+/* ACT *//*
 
-        /* ARRANGE */
+        final var result = contractRequestService.sendMessage(recipient, request);
+
+        */
+/* ARRANGE *//*
+
         assertEquals(response, result);
     }
 
     @Test
     public void sendContractRequestMessage_withoutContractRequest_throwsIllegalArgumentException() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var contractId = URI.create("https://contractRequest");
         final var desc = new ContractRequestMessageDesc(recipient, contractId);
@@ -182,47 +212,63 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(contractRequestService.sendMessage(Mockito.eq(desc), Mockito.eq(null))).thenReturn(response);
+        Mockito.when(contractRequestService.send(Mockito.eq(desc), Mockito.eq(null))).thenReturn(response);
 
-        /* ACT & ARRANGE */
-        assertThrows(IllegalArgumentException.class, () -> service.sendContractRequestMessage(recipient, null));
+        */
+/* ACT & ARRANGE *//*
+
+        assertThrows(IllegalArgumentException.class, () -> contractRequestService.sendMessage(recipient, null));
     }
 
     @Test
     public void validateContractRequestResponseMessage_validResponse_returnTrue() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(contractRequestService.isValidResponseType(Mockito.eq(response))).thenReturn(true);
 
-        /* ACT */
-        final var result = service.validateContractRequestResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = contractRequestService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertTrue(result);
     }
 
     @Test
     public void validateContractRequestResponseMessage_invalidResponse_returnFalse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(contractRequestService.isValidResponseType(Mockito.eq(response))).thenReturn(false);
 
-        /* ACT */
-        final var result = service.validateContractRequestResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = contractRequestService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertFalse(result);
     }
 
     @Test
     public void sendContractAgreementMessage_withValidContractAgreement_returnValidResponse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var contractId = URI.create("https://contractAgreement");
         final var desc = new ContractAgreementMessageDesc(recipient, contractId);
@@ -235,18 +281,24 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(contractAgreementService.sendMessage(Mockito.eq(desc), Mockito.eq(agreementAsRdf))).thenReturn(response);
+        Mockito.when(contractAgreementService.send(Mockito.eq(desc), Mockito.eq(agreementAsRdf))).thenReturn(response);
 
-        /* ACT */
-        final var result = service.sendContractAgreementMessage(recipient, agreement);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = contractAgreementService.sendMessage(recipient, agreement);
+
+        */
+/* ASSERT *//*
+
         assertEquals(response, result);
     }
 
     @Test
     public void sendContractAgreementMessage_withoutContractAgreement_throwsIllegalArgumentException() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var contractId = URI.create("https://contractAgreement");
         final var desc = new ContractAgreementMessageDesc(recipient, contractId);
@@ -255,47 +307,63 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(contractAgreementService.sendMessage(Mockito.eq(desc), Mockito.eq(null))).thenReturn(response);
+        Mockito.when(contractAgreementService.send(Mockito.eq(desc), Mockito.eq(null))).thenReturn(response);
 
-        /* ACT & ARRANGE */
-        assertThrows(IllegalArgumentException.class, () -> service.sendContractAgreementMessage(recipient, null));
+        */
+/* ACT & ARRANGE *//*
+
+        assertThrows(IllegalArgumentException.class, () -> contractAgreementService.sendMessage(recipient, null));
     }
 
     @Test
     public void validateContractAgreementResponseMessage_validResponse_returnTrue() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(contractAgreementService.isValidResponseType(Mockito.eq(response))).thenReturn(true);
 
-        /* ACT */
-        final var result = service.validateContractAgreementResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = contractAgreementService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertTrue(result);
     }
 
     @Test
     public void validateContractAgreementResponseMessage_invalidResponse_returnFalse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(contractAgreementService.isValidResponseType(Mockito.eq(response))).thenReturn(false);
 
-        /* ACT */
-        final var result = service.validateContractAgreementResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = contractAgreementService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertFalse(result);
     }
 
     @Test
     public void sendArtifactRequestMessage_withValidInput_returnValidResponse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var recipient = URI.create("https://localhost:8080/api/ids/data");
         final var elementId = URI.create("https://element");
         final var agreementId = URI.create("https://agreement");
@@ -305,44 +373,60 @@ public class MessageServiceTest {
         response.put("header", "some header values");
         response.put("body", "some body values");
 
-        Mockito.when(artifactRequestService.sendMessage(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
+        Mockito.when(artifactRequestService.send(Mockito.eq(desc), Mockito.eq(""))).thenReturn(response);
 
-        /* ACT */
-        final var result = service.sendArtifactRequestMessage(recipient, elementId, agreementId);
+        */
+/* ACT *//*
 
-        /* ARRANGE */
+        final var result = artifactRequestService.sendMessage(recipient, elementId, agreementId);
+
+        */
+/* ARRANGE *//*
+
         assertEquals(response, result);
     }
 
     @Test
     public void validateArtifactResponseMessage_validResponse_returnTrue() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(artifactRequestService.isValidResponseType(Mockito.eq(response))).thenReturn(true);
 
-        /* ACT */
-        final var result = service.validateArtifactResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = artifactRequestService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertTrue(result);
     }
 
     @Test
     public void validateArtifactResponseMessage_invalidResponse_returnFalse() {
-        /* ARRANGE */
+        */
+/* ARRANGE *//*
+
         final var response = new HashMap<String, String>();
         response.put("header", "some valid header");
         response.put("body", "some valid body");
 
         Mockito.when(artifactRequestService.isValidResponseType(Mockito.eq(response))).thenReturn(false);
 
-        /* ACT */
-        final var result = service.validateArtifactResponseMessage(response);
+        */
+/* ACT *//*
 
-        /* ASSERT */
+        final var result = artifactRequestService.validateResponse(response);
+
+        */
+/* ASSERT *//*
+
         assertFalse(result);
     }
 
@@ -353,3 +437,4 @@ public class MessageServiceTest {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 }
+*/

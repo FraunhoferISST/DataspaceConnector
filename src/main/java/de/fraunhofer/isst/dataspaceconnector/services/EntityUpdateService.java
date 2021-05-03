@@ -1,13 +1,17 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
-import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.updater.ArtifactUpdater;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.updater.RepresentationUpdater;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.updater.RequestedResourceUpdater;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationshipServices;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
@@ -17,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,17 +30,17 @@ import java.util.stream.Collectors;
 public class EntityUpdateService {
 
     /**
-     * Updates a requested resource by using an infomodel resource.
+     * Updates a requested resource by using an ids resource.
      */
     private final @NonNull RequestedResourceUpdater requestedResourceUpdater;
 
     /**
-     * Updates a representation by using an infomodel representations.
+     * Updates a representation by using an ids representations.
      */
     private final @NonNull RepresentationUpdater representationUpdater;
 
     /**
-     * Updates an artifact by using an infomodel artifacts.
+     * Updates an artifact by using an ids artifacts.
      */
     private final @NonNull ArtifactUpdater artifactUpdater;
 
@@ -49,7 +52,7 @@ public class EntityUpdateService {
     /**
      * Service for linking artifacts to agreement.
      */
-    private final @NonNull RelationshipServices.AgreementArtifactLinker agreementArtifactLinker;
+    private final @NonNull RelationServices.AgreementArtifactLinker agreementArtifactLinker;
 
     /**
      * Service for artifacts.
@@ -64,11 +67,17 @@ public class EntityUpdateService {
     public void updateResource(final Resource resource) {
         try {
             final var updated = requestedResourceUpdater.update(resource);
-            log.debug("Updated resource. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
-        } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to update resource. The resource could not be found. [uri=({})]",
-                        resource.getId());
+                log.debug("Updated resource. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+            }
+
+            final var representations = resource.getRepresentation();
+            for (final var representation : Utils.requireNonNull(representations, ErrorMessages.LIST_NULL)) {
+                updateRepresentation(representation);
+            }
+        } catch (ResourceNotFoundException | IllegalArgumentException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to update resource. [uri=({})]", resource.getId());
             }
         }
     }
@@ -81,13 +90,18 @@ public class EntityUpdateService {
     public void updateRepresentation(final Representation representation) {
         try {
             final var updated = representationUpdater.update(representation);
-            log.debug("Updated representation. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
-        } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "Failed to update representation. The resource could not be found. [uri="
-                                + "({})]",
-                        representation.getId());
+                log.debug("Updated representation. [uri=({})]",
+                        SelfLinkHelper.getSelfLink(updated));
+            }
+
+            final var artifacts = representation.getInstance();
+            for (final var artifact : Utils.requireNonNull(artifacts, ErrorMessages.LIST_NULL)) {
+                updateArtifact((Artifact) artifact);
+            }
+        } catch (ResourceNotFoundException | IllegalArgumentException exception) {
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to update representation. [uri=({})]", representation.getId());
             }
         }
     }
@@ -96,21 +110,16 @@ public class EntityUpdateService {
      * Update database artifact that is known to the consumer.
      *
      * @param artifact The ids artifact.
-     * @return True if the artifact's data should be downloaded, false if not.
      */
-    public Optional<Artifact> updateArtifact(final de.fraunhofer.iais.eis.Artifact artifact) {
+    public void updateArtifact(final Artifact artifact) {
         try {
             final var updated = artifactUpdater.update(artifact);
             log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
-            return Optional.of(updated);
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
-                log.debug("Failed to update artifact. The resource could not be found. [uri=({})]",
-                        artifact.getId());
+                log.debug("Failed to update artifact. [uri=({})]", artifact.getId());
             }
         }
-
-        return Optional.empty();
     }
 
     /**
@@ -124,9 +133,7 @@ public class EntityUpdateService {
             return agreementService.confirmAgreement(agreement);
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
-                log.debug(
-                        "Failed to confirm agreement. The resource could not be found. [uri=({})]",
-                        agreement.getId());
+                log.debug("Failed to confirm agreement. [uri=({})]", agreement.getId());
             }
 
             return false;

@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.ids;
+package de.fraunhofer.isst.dataspaceconnector.services.ids.builder;
 
 import java.net.URI;
 

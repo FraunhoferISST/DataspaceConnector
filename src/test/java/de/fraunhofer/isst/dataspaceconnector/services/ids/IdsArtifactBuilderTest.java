@@ -9,6 +9,7 @@ import de.fraunhofer.isst.dataspaceconnector.model.AbstractEntity;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

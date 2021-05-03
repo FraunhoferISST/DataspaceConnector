@@ -6,9 +6,6 @@ import java.util.UUID;
 
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractRuleLinker;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ContractService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.RuleService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {ContractRuleLinker.class})
+@SpringBootTest(classes = {RelationServices.ContractRuleLinker.class})
 class ContractRuleLinkerTest {
     @MockBean
     ContractService contractService;
@@ -29,7 +26,7 @@ class ContractRuleLinkerTest {
 
     @Autowired
     @InjectMocks
-    ContractRuleLinker linker;
+    RelationServices.ContractRuleLinker linker;
 
     Contract contract = getContract();
     ContractRule rule = getRule();

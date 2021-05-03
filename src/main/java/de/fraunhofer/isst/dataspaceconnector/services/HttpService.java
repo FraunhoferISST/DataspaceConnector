@@ -1,239 +1,207 @@
 package de.fraunhofer.isst.dataspaceconnector.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
+
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import kotlin.Pair;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import okhttp3.Response;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpHeaders;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import okhttp3.Credentials;
+import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
 
 /**
- * This class builds up HTTP or HTTPS endpoint connections and sends GET requests.
+ * This class builds up http or httpS endpoint connections and sends GET requests.
  */
 @Service
 @RequiredArgsConstructor
 public class HttpService { // TODO clean up code
 
     /**
-     * Class level logger.
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpService.class);
-
-    /**
      * Service for building and sending http requests.
      */
     private final @NonNull de.fraunhofer.isst.ids.framework.communication.http.HttpService
-            httpService;
+            httpSvc;
+
 
     /**
-     * Sends a GET request to an external HTTP endpoint.
-     *
-     * @param address    the URL.
-     * @param queryInput Header and params for data request from backend.
-     * @return the HTTP response if HTTP code is OK (200).
-     * @throws URISyntaxException if the input address is not a valid URI.
-     * @throws RuntimeException   if an error occurred when connecting or processing the HTTP
-     *                            request.
+     * The request method.
      */
-    public String sendHttpGetRequest(String address, QueryInput queryInput) throws
-            RuntimeException, URISyntaxException {
-        // TODO Process optional string
-        if (queryInput != null) {
-            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
-            address = addQueryParamsToURL(address, queryInput.getParams());
+    public enum Method {
+        /**
+         * http GET.
+         */
+        GET,
+        //        OPTIONS,
+        //        HEAD,
+        //        POST,
+        //        PUT,
+        //        PATCH,
+        //        DELETE
+    }
+
+
+    /**
+     * The http request arguments.
+     */
+    @Data
+    public static class HttpArgs {
+        /**
+         * The request headers.
+         */
+        private Map<String, String> headers;
+
+        /**
+         * The request parameters.
+         */
+        private Map<String, String> params;
+
+        /**
+         * Authentication information. Will overwrite entry in headers.
+         */
+        private Pair<String, String> auth;
+    }
+
+
+    /**
+     * The response to a http request.
+     */
+    @Data
+    public static class Response {
+        /**
+         * The response code.
+         */
+        private int code;
+
+        /**
+         * The response body.
+         */
+        private InputStream body;
+    }
+
+    /**
+     * Perform a get request.
+     * @param target The recipient of the request.
+     * @param args   The request arguments.
+     * @return The response.
+     * @throws IOException if the request failed.
+     */
+    public Response get(final URL target, final HttpArgs args) throws IOException {
+        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+
+        if (args.getParams() != null) {
+            for (final var key : args.getParams().keySet()) {
+                urlBuilder.addQueryParameter(key, args.getParams().get(key));
+            }
+        }
+
+        final var targetUri = urlBuilder.build().uri();
+
+        okhttp3.Response response;
+        if (args.getHeaders() == null) {
+            response = httpSvc.get(targetUri);
         } else {
-            if (address.contains("{")) {
-                throw new IllegalArgumentException("Missing path variables.");
+            /*
+                Make a copy of the headers and insert sensitive data only into the copy.
+             */
+            final var headerCopy = Map.copyOf(args.getHeaders());
+            if (args.getAuth() != null) {
+                headerCopy.put("Authorization",
+                        Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
             }
+
+            response = httpSvc.getWithHeaders(targetUri, headerCopy);
         }
 
-        try {
-            final var uri = new URI(address);
+        final var output = new Response();
+        output.setCode(response.code());
+        output.setBody(response.body().byteStream());
 
-            Response response;
-            if (queryInput != null) {
-                response = httpService.getWithHeaders(uri, queryInput.getHeaders());
-            } else {
-                response = httpService.get(uri);
-            }
-
-            final var responseCodeOk = 200;
-            final var responseCodeUnauthorized = 401;
-            final var responseMalformed = -1;
-
-            final var responseCode = response.code();
-
-            if (responseCode == responseCodeOk) {
-                return Objects.requireNonNull(response.body()).string();
-            } else if (responseCode == responseCodeUnauthorized) {
-                // The request is not authorized.
-                LOGGER.debug("Could not retrieve data. Unauthorized access. [url=({})]", address);
-                throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
-            } else if (responseCode == responseMalformed) {
-                // The response code could not be read.
-                LOGGER.debug("Could not retrieve data. Expectation failed. [url=({})]", address);
-                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
-            } else {
-                // This function should never be thrown.
-                LOGGER.warn("Could not retrieve data. Something else went wrong. [url=({})]",
-                        address);
-                throw new NotImplementedException("Unsupported return value "
-                        + "from getResponseCode.");
-            }
-        } catch (IOException exception) {
-            // Catch all the HTTP, IOExceptions.
-            LOGGER.warn("Failed to send the http get request. [url=({})]", address);
-            throw new RuntimeException("Failed to send the http get request.", exception);
-        }
+        return output;
     }
 
     /**
-     * Sends a GET request to an external HTTPS endpoint.
-     *
-     * @param address    the URL.
-     * @param queryInput Header and params for data request from backend.
-     * @return the HTTP body of the response when HTTP code is OK (200).
-     * @throws URISyntaxException if the input address is not a valid URI.
-     * @throws RuntimeException   if an error occurred when connecting or processing the HTTP
-     *                            request.
+     * Perform a get request.
+     * @param target The recipient of the request.
+     * @param input  The query inputs.
+     * @return The response.
+     * @throws IOException if the request failed.
      */
-    public String sendHttpsGetRequest(String address, QueryInput queryInput)
-            throws URISyntaxException, RuntimeException {
-        return sendHttpGetRequest(address, queryInput);
-
+    public Response get(final URL target, final QueryInput input) throws IOException {
+        final var url = buildTargetUrl(target, input.getOptional());
+        return this.get(url, toArgs(input));
     }
 
     /**
-     * Sends a GET request with basic authentication to an external HTTPS endpoint.
-     *
-     * @param address    the URL.
-     * @param username   The username.
-     * @param password   The password.
-     * @param queryInput Header and params for data request from backend.
-     * @return The HTTP response when HTTP code is OK (200).
-     * @throws URISyntaxException if the input address is not a valid URI.
-     * @throws RuntimeException   if an error occurred when connecting or processing the HTTP
-     *                            request.
+     * Perform a get request.
+     * @param target The recipient of the request.
+     * @param input  The query inputs.
+     * @param auth   The authentication information.
+     * @return The response.
+     * @throws IOException if the request failed.
      */
-    public String sendHttpsGetRequestWithBasicAuth(String address, String username,
-                                                   String password, QueryInput queryInput)
-            throws URISyntaxException, RuntimeException {
-        final var auth = username + ":" + password;
-        final var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
-        final var authHeader = "Basic " + new String(encodedAuth, StandardCharsets.ISO_8859_1);
+    public Response get(final URL target, final QueryInput input, final Pair<String, String> auth)
+            throws IOException {
+        final var url = buildTargetUrl(target, input.getOptional());
+        return this.get(url, toArgs(input, auth));
+    }
 
-        if (queryInput != null) {
-            address = replacePathVariablesInUrl(address, queryInput.getPathVariables());
-            address = addQueryParamsToURL(address, queryInput.getParams());
-        } else {
-            if (address.contains("{")) {
-                throw new IllegalArgumentException("Missing path variables.");
-            }
+    private URL buildTargetUrl(final URL target, final String optional) {
+        final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
+        if (optional != null) {
+            urlBuilder.addEncodedPathSegment(optional);
         }
 
-        try {
-            final var uri = new URI(address);
-            Response response;
-            if (queryInput != null && queryInput.getHeaders() != null) {
-                queryInput.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
-                response = httpService.getWithHeaders(uri, queryInput.getHeaders());
-            } else {
-                final var queryInputTemp = new QueryInput();
-                queryInputTemp.getHeaders().put(HttpHeaders.AUTHORIZATION, authHeader);
-                response = httpService.getWithHeaders(uri, queryInputTemp.getHeaders());
-            }
-
-            final var lowerBoundStatusCode = 200;
-            final var upperBoundStatusCode = 300;
-
-            if (response.code() < lowerBoundStatusCode || response.code() >= upperBoundStatusCode) {
-                response.close();
-                // Not the expected response code.
-                LOGGER.debug("Could not retrieve data. Expectation failed. [url=({})]", address);
-                throw new HttpClientErrorException(HttpStatus.EXPECTATION_FAILED);
-            } else {
-                return Objects.requireNonNull(response.body()).string();
-            }
-        } catch (IOException exception) {
-            // Catch all the HTTP, IOExceptions.
-            LOGGER.warn("Failed to send the http get request. [url=({})]", address);
-            throw new RuntimeException("Failed to send the http get request.", exception);
-        }
+        return urlBuilder.build().url();
     }
 
     /**
-     * Replaces all parts of a given URL that are marked as path variables, if any, using the values
-     * supplied in the path variables map.
-     *
-     * @param address       the URL possibly containing path variables
-     * @param pathVariables map containing the values for the path variables by name
-     * @return the URL with path variables substituted
+     * Perform a http request.
+     * @param method The request method.
+     * @param target The recipient of the request.
+     * @param args   The request arguments.
+     * @return The response.
+     * @throws IOException if the request failed.
      */
-    private String replacePathVariablesInUrl(String address, Map<String, String> pathVariables)
-            throws IllegalArgumentException {
-        if (pathVariables != null) {
-            long pathVariableCount = address.chars().filter(ch -> ch == '{').count();
-            if (pathVariableCount != pathVariables.size()) {
-                throw new IllegalArgumentException("The number of supplied path variables does "
-                        + "not match the number of path variables in the URL.");
-            }
-
-            // http://localhost:8080/{path}/{id}
-            for (int i = 1; i <= pathVariableCount; i++) {
-                String pathVariableName = address.substring(address.indexOf("{") + 1,
-                        address.indexOf("}"));
-
-                String pathVariableValue = pathVariables.get(pathVariableName); // resource
-                if (pathVariableValue == null) {
-                    throw new IllegalArgumentException("No value found for path variable with"
-                            + " name '" + pathVariableName + "'.");
-                }
-
-                // Should always be first index of braces because all prior should have been
-                // replaced.
-                address = address.substring(0, address.indexOf("{")) // http://localhost:8080/
-                        + pathVariableValue // resource
-                        + address.substring(address.indexOf("}") + 1); // /{id}
-            }
+    public Response request(final Method method, final URL target, final HttpArgs args)
+            throws IOException {
+        if (method == Method.GET) {
+            return get(target, args);
         }
-        return address;
+
+        throw new RuntimeException("Not implemented.");
     }
 
     /**
-     * Enrich the URL address with given query parameters. If the query parameters are empty, the
-     * address remains unchanged.
-     *
-     * @param address     URL address to be enriched.
-     * @param queryParams Query parameters that have to be added on the address.
-     * @return Address string.
+     * Create http request parameters from query.
+     * @param input The query inputs.
+     * @return The Http request arguments.
      */
-    private String addQueryParamsToURL(String address, Map<String, String> queryParams) {
-        if (queryParams != null) {
-            if (!queryParams.isEmpty()) {
-                address = address.concat("?");
-                for (Map.Entry<String, String> param : queryParams.entrySet()) {
-                    address = address.concat(URLEncoder.encode(param.getKey(),
-                            StandardCharsets.UTF_8) + "="
-                            + URLEncoder.encode(param.getValue(), StandardCharsets.UTF_8) + "&");
-                }
-                return StringUtils.removeEnd(address, "&");
-            }
+    public HttpArgs toArgs(final QueryInput input) {
+        final var args = new HttpArgs();
+        if (input != null) {
+            args.setParams(input.getParams());
+            args.setHeaders(input.getHeaders());
         }
-        return address;
+
+        return args;
+    }
+
+    /**
+     * Create http request parameters from query inputs and
+     * authentication information.
+     * @param input The query inputs.
+     * @param auth  The authentication information.
+     * @return The http request arguments.
+     */
+    public HttpArgs toArgs(final QueryInput input, final Pair<String, String> auth) {
+        final var args = toArgs(input);
+        args.setAuth(auth);
+
+        return args;
     }
 }

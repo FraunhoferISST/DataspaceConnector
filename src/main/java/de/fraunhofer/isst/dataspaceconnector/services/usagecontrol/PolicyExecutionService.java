@@ -1,24 +1,20 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
+import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyExecutionException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.NotificationMessageDesc;
+import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.NotificationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
+import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.HashMap;
@@ -53,53 +49,34 @@ public class PolicyExecutionService {
     private final @NonNull LogMessageService logMessageService;
 
     /**
-     * Service for updating artifacts.
-     */
-    private final @NonNull ArtifactService artifactService;
-
-    /**
-     * Delete data by artifact id.
+     * Send contract agreement to clearing house.
      *
-     * @param target The artifact id.
-     * @throws ResourceNotFoundException If the artifact update fails.
+     * @param agreement The ids contract agreement.
      */
-    public void deleteDataFromArtifact(final URI target) throws ResourceNotFoundException {
-        final var entityId = EndpointUtils.getUUIDFromPath(target);
-
-        // Update data for artifact.
-        artifactService.setData(entityId, InputStream.nullInputStream());
-        if (log.isInfoEnabled()) {
-            log.info("Deleted data from artifact. [target=({})]", target);
+    public void sendAgreement(final ContractAgreement agreement) {
+        try {
+            final var rdf = IdsUtils.toRdf(agreement);
+            final var recipient = connectorConfig.getClearingHouse();
+            logMessageService.sendMessage(recipient, rdf);
+        } catch (PolicyExecutionException | RdfBuilderException exception) {
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to send contract agreement to clearing house. "
+                        + "[exception=({})]", exception.getMessage());
+            }
         }
     }
 
     /**
      * Send a message to the clearing house. Allow the access only if that operation was successful.
      *
-     * @param element The accessed element.
-     * @throws PolicyExecutionException If the access could not be successfully logged.
+     * @param target The target object.
+     * @throws PolicyExecutionException if the access could not be successfully logged.
      */
-    public void logDataAccess(final URI element) throws PolicyExecutionException {
-        final var url = connectorConfig.getClearingHouse();
-        final var logMessage = buildLog(element).toString();
+    public void logDataAccess(final URI target) throws PolicyExecutionException {
+        final var recipient = connectorConfig.getClearingHouse();
+        final var logItem = buildLog(target).toString();
 
-        try {
-            final var desc = new LogMessageDesc();
-            desc.setRecipient(url);
-            final var response = logMessageService.sendMessage(desc, logMessage);
-
-            if (response == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No response received.");
-                }
-                throw new PolicyExecutionException("Log message has no valid response.");
-            }
-        } catch (MessageException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Unsuccessful logging. [exception=({})]", e.getMessage(), e);
-            }
-            throw new PolicyExecutionException("Log message could not be sent.");
-        }
+        logMessageService.sendMessage(recipient, logItem);
     }
 
     /**
@@ -112,26 +89,9 @@ public class PolicyExecutionService {
     public void reportDataAccess(final Rule rule, final URI element)
             throws PolicyExecutionException {
         final var recipient = PolicyUtils.getEndpoint(rule);
-        final var logMessage = buildLog(element).toString();
+        final var logItem = buildLog(element).toString();
 
-        Map<String, String> response;
-        try {
-            final var desc = new NotificationMessageDesc();
-            desc.setRecipient(URI.create(recipient));
-            response = notificationService.sendMessage(desc, logMessage);
-
-            if (response == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("No response received. [response=({})]", response);
-                }
-                throw new PolicyExecutionException("Notification has no valid response.");
-            }
-        } catch (MessageException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Notification not sent. [exception=({})]", e.getMessage(), e);
-            }
-            throw new PolicyExecutionException("Notification was not successful.");
-        }
+        notificationService.sendMessage(URI.create(recipient), logItem);
     }
 
     /**

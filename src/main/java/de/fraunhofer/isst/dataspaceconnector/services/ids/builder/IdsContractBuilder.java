@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services.ids;
+package de.fraunhofer.isst.dataspaceconnector.services.ids.builder;
 
 import java.net.URI;
 import java.util.List;
@@ -12,6 +12,7 @@ import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.Contract;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;

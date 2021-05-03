@@ -1,27 +1,26 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.UnsupportedPatternException;
+import de.fraunhofer.isst.dataspaceconnector.model.Contract;
+import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
 import de.fraunhofer.isst.dataspaceconnector.model.TimeInterval;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
+import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides policy pattern recognition and calls the {@link
@@ -31,7 +30,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class PolicyDecisionService {
+public class RuleValidator {
 
     /**
      * Policy execution point.
@@ -39,98 +38,19 @@ public class PolicyDecisionService {
     private final @NonNull PolicyExecutionService executionService;
 
     /**
-     * Policy management point.
-     */
-    @Autowired
-    private final PolicyManagementService managementService;
-
-    /**
      * Policy information point.
      */
     private final @NonNull PolicyInformationService informationService;
 
     /**
-     * Service for ids deserialization.
+     * Service for resolving elements and its parents/children.
+     */
+    private final @NonNull EntityDependencyResolver dependencyResolver;
+
+    /**
+     * Service for deserialization.
      */
     private final @NonNull DeserializationService deserializationService;
-
-    /**
-     * Service for ids deserialization.
-     */
-    private final @NonNull AgreementService agreementService;
-
-    /**
-     * Checks all known agreements for artifacts that have to be deleted.
-     *
-     * @throws ParseException            If a date from a policy cannot be parsed.
-     * @throws IllegalArgumentException  If the rule could not be deserialized.
-     * @throws ResourceNotFoundException If the data could not be deleted.
-     */
-    public void scanAgreements() throws ParseException, IllegalArgumentException,
-            ResourceNotFoundException {
-        for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
-            final var value = agreement.getValue();
-            final var idsAgreement = deserializationService.getContractAgreement(value);
-            final var rules = PolicyUtils.extractRulesFromContract(idsAgreement);
-
-            for (final var rule : rules) {
-                final var delete = PolicyUtils.checkRuleForPostDuties(rule);
-                if (delete) {
-                    final var target = rule.getTarget();
-                    executionService.deleteDataFromArtifact(target);
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks the contract content for data access (on consumer side).
-     *
-     * @param patterns List of patterns that should be enforced.
-     * @param target   The requested element.
-     * @throws UnsupportedPatternException If no suitable pattern could be found.
-     */
-    public void checkForDataAccess(final List<PolicyPattern> patterns, final URI target) {
-        // Get the contract agreement's rules for the target.
-        final var agreements = managementService.getContractAgreementsByTarget(target);
-        for (final var agreement : agreements) {
-            final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
-
-            // Check the policy of each rule.
-            for (final var rule : rules) {
-                final var pattern = informationService.getPatternByRule(rule);
-                // Enforce only a set of patterns.
-                if (patterns.contains(pattern)) {
-                    validatePolicy(pattern, rule, target, null);
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks the contract content for data access (on provider side).
-     *
-     * @param patterns        List of patterns that should be enforced.
-     * @param target          The requested element.
-     * @param issuerConnector The issuer connector.
-     * @param agreement       The ids contract agreement.
-     * @throws PolicyRestrictionException If a policy restriction has been detected.
-     */
-    public void checkForDataAccess(final List<PolicyPattern> patterns,
-                                   final URI target, final URI issuerConnector,
-                                   final ContractAgreement agreement)
-            throws PolicyRestrictionException {
-        final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
-
-        // Check the policy of each rule.
-        for (final var rule : rules) {
-            final var pattern = informationService.getPatternByRule(rule);
-            // Enforce only a set of patterns.
-            if (patterns.contains(pattern)) {
-                validatePolicy(pattern, rule, target, issuerConnector);
-            }
-        }
-    }
 
     /**
      * Validates the data access for a given rule.
@@ -141,8 +61,8 @@ public class PolicyDecisionService {
      * @param issuerConnector The issuer connector.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
-    private void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                                final URI issuerConnector) throws PolicyRestrictionException {
+    void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
+                        final URI issuerConnector) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;
@@ -176,6 +96,61 @@ public class PolicyDecisionService {
     }
 
     /**
+     * Compare content of rule offer and request with each other.
+     *
+     * @param contractOffers The contract offer.
+     * @param map            The target contract map.
+     * @param target         The target value.
+     * @return True if everything is fine, false in case of mismatch.
+     */
+    public boolean validateRulesOfRequest(final List<Contract> contractOffers,
+                                          final Map<URI, List<Rule>> map,
+                                          final URI target) {
+        boolean valid = false;
+        for (final var contract : contractOffers) {
+            // Get rule list from contract offer.
+            final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
+            // Get rule list from contract request.
+            final var values = map.get(target);
+
+            // Compare rules
+            if (compareRulesOfOfferToRequest(ruleList, values)) {
+                valid = true;
+                break;
+            }
+        }
+
+        return valid;
+    }
+
+    /**
+     * Compare rule list of a contract offer to the rule list of a contract request.
+     *
+     * @param offerRules   List of ids rules.
+     * @param requestRules List of ids rules.
+     * @return True if the lists are equal, false if not.
+     */
+    private boolean compareRulesOfOfferToRequest(final List<ContractRule> offerRules,
+                                                final List<Rule> requestRules) {
+        final var idsRuleList = new ArrayList<Rule>();
+        for (final var rule : offerRules) {
+            final var value = rule.getValue();
+            final var idsRule = deserializationService.getRule(value);
+            idsRuleList.add(idsRule);
+        }
+
+        if (!PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
+                        requestRules);
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if the requested data access is in the allowed time interval.
      *
      * @param rule The ids rule.
@@ -193,7 +168,7 @@ public class PolicyDecisionService {
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
-        final var current = informationService.getCurrentDate();
+        final var current = PolicyUtils.getCurrentDate();
         if (!current.isAfter(timeInterval.getStart()) || !current.isBefore(timeInterval.getEnd())) {
             if (log.isWarnEnabled()) {
                 log.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
@@ -233,7 +208,7 @@ public class PolicyDecisionService {
         }
 
         final var maxTime = PolicyUtils.getCalculatedDate(created, duration);
-        final var validDate = PolicyUtils.checkDate(informationService.getCurrentDate(), maxTime);
+        final var validDate = PolicyUtils.checkDate(PolicyUtils.getCurrentDate(), maxTime);
 
         if (!validDate) {
             if (log.isDebugEnabled()) {

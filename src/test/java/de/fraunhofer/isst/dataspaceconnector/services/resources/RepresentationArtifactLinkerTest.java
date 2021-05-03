@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {RepresentationArtifactLinker.class})
+@SpringBootTest(classes = {RelationServices.RepresentationArtifactLinker.class})
 public class RepresentationArtifactLinkerTest {
     @MockBean
     RepresentationService representationService;
@@ -39,7 +39,7 @@ public class RepresentationArtifactLinkerTest {
 
     @Autowired
     @InjectMocks
-    RepresentationArtifactLinker linker;
+    RelationServices.RepresentationArtifactLinker linker;
 
     Representation representation = getRepresentation();
     Artifact artifactOne = getArtifactOne();

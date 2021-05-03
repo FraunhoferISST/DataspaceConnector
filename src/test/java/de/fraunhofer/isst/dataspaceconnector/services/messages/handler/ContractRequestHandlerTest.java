@@ -1,16 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.UUID;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -30,8 +19,8 @@ import de.fraunhofer.isst.dataspaceconnector.model.ContractDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRuleFactory;
+import de.fraunhofer.isst.dataspaceconnector.services.EntityPersistenceService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.EntityDependencyResolver;
-import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyManagementService;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
@@ -42,6 +31,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ContractRequestHandlerTest {
 
     @SpyBean
-    PolicyManagementService managementService;
+    EntityPersistenceService persistenceService;
 
     @SpyBean
     EntityDependencyResolver dependencyResolver;
@@ -144,7 +144,7 @@ class ContractRequestHandlerTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = (ErrorResponse)handler.checkContractRequest(null, URI.create("https://someUri"), URI.create("https://someUri"));
+        final var result = (ErrorResponse)handler.processContractRequest(null, URI.create("https://someUri"), URI.create("https://someUri"));
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -156,7 +156,7 @@ class ContractRequestHandlerTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = (ErrorResponse)handler.checkContractRequest("", URI.create("https://someUri"), URI.create("https://someUri"));
+        final var result = (ErrorResponse)handler.processContractRequest("", URI.create("https://someUri"), URI.create("https://someUri"));
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -170,7 +170,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://someUri");
 
         /* ACT */
-        final var result = (ErrorResponse)handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse)handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -189,7 +189,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://someUri");
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -211,7 +211,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://someUri");
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -234,7 +234,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://someUri");
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -257,7 +257,7 @@ class ContractRequestHandlerTest {
         final var issuerConnector = URI.create("https://localhost:8080");
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
@@ -284,7 +284,7 @@ class ContractRequestHandlerTest {
         Mockito.doReturn(new ArrayList<Contract>()).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
@@ -314,7 +314,7 @@ class ContractRequestHandlerTest {
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.NOT_FOUND, result.getRejectionMessage().getRejectionReason());
@@ -345,7 +345,7 @@ class ContractRequestHandlerTest {
         Mockito.doThrow(IllegalArgumentException.class).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.MALFORMED_MESSAGE, result.getRejectionMessage().getRejectionReason());
@@ -382,7 +382,7 @@ class ContractRequestHandlerTest {
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (ErrorResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -417,11 +417,11 @@ class ContractRequestHandlerTest {
 
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
-        Mockito.doReturn(getContractAgreement()).when(managementService)
-                .buildAndSaveContractAgreement(Mockito.any(), Mockito.eq(false), Mockito.eq(Arrays.asList(artifactId)));
+        Mockito.doReturn(getContractAgreement()).when(persistenceService)
+                .buildAndSaveContractAgreement(Mockito.any(), Mockito.eq(Arrays.asList(artifactId)));
 
         /* ACT */
-        final var result = (BodyResponse) handler.checkContractRequest(payload, messageId, issuerConnector);
+        final var result = (BodyResponse) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertTrue(result.getHeader() instanceof ContractAgreementMessage);

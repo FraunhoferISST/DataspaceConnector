@@ -2,10 +2,8 @@ package de.fraunhofer.isst.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.AbstractMessageService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
@@ -23,8 +21,7 @@ public final class MessageProcessedNotificationService
      * @throws IllegalArgumentException If desc is null.
      */
     @Override
-    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc)
-            throws ConstraintViolationException {
+    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();

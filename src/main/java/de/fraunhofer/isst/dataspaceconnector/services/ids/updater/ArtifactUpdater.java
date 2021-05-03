@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.services;
+package de.fraunhofer.isst.dataspaceconnector.services.ids.updater;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;

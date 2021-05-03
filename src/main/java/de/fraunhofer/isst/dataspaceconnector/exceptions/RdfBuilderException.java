@@ -19,14 +19,4 @@ public class RdfBuilderException extends RuntimeException {
     public RdfBuilderException(final ErrorMessages msg) {
         super(msg.toString());
     }
-
-    /**
-     * Construct a RdfBuilderException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public RdfBuilderException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
 }

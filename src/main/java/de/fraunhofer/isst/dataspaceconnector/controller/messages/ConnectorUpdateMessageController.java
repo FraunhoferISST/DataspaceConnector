@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,13 +68,9 @@ public class ConnectorUpdateMessageController {
             // Send the connector update message.
             final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
             final var responseToString = Objects.requireNonNull(response.body()).string();
-            // final var multipart = MessageUtils.responseToMap(responseToString);
-
-            return new ResponseEntity<>(responseToString, HttpStatus.OK);
+            return ResponseEntity.ok(responseToString);
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-//        } catch (FileUploadException exception) {
-//            return ControllerUtils.respondReceivedInvalidResponse(exception);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }

@@ -1,11 +1,11 @@
 package de.fraunhofer.isst.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 @Component
-public class AlwaysAllowAccessVerifier implements PolicyVerifier<URI> {
+public final class AllowAccessVerifier implements PolicyVerifier<URI> {
     @Override
     public VerificationResult verify(final URI input) {
         return VerificationResult.ALLOWED;

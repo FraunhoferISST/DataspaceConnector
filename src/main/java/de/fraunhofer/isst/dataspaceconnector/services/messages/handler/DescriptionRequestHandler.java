@@ -12,7 +12,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.messages.DescriptionResponseM
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
@@ -41,12 +40,12 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for handling response messages.
      */
-    private final @NonNull DescriptionResponseService descriptionService;
+    private final @NonNull DescriptionResponseService messageService;
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for the current connector configuration.
@@ -57,11 +56,6 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
      * Service for resolving entities.
      */
     private final @NonNull EntityResolver entityResolver;
-
-    /**
-     * Service for message processing.
-     */
-    private final @NonNull MessageService messageService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -76,85 +70,81 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                                          final MessagePayload payload) {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
         // Read relevant parameters for message processing.
-        final var requestedElement = MessageUtils.extractRequestedElement(message);
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var requested = MessageUtils.extractRequestedElement(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
         // Check if a specific resource has been requested.
-        if (requestedElement == null) {
-            return constructConnectorSelfDescription(issuerConnector, messageId);
+        if (requested == null) {
+            return constructSelfDescription(issuer, messageId);
         } else {
-            return constructResourceDescription(requestedElement, issuerConnector, messageId);
+            return constructResourceDescription(requested, issuer, messageId);
         }
     }
 
     /**
      * Constructs the response message for a given resource description request message.
      *
-     * @param requestedElement The requested element.
-     * @param issuerConnector  The issuer connector extracted from the incoming message.
-     * @param messageId        The message id of the incoming message.
+     * @param requested The requested element.
+     * @param issuer    The issuer connector extracted from the incoming message.
+     * @param messageId The message id of the incoming message.
      * @return The response message to the passed request.
      */
-    public MessageResponse constructResourceDescription(final URI requestedElement,
-                                                        final URI issuerConnector,
+    public MessageResponse constructResourceDescription(final URI requested,
+                                                        final URI issuer,
                                                         final URI messageId) {
         try {
-            final var entity = entityResolver.getEntityById(requestedElement);
+            final var entity = entityResolver.getEntityById(requested);
 
             if (entity == null) {
                 throw new ResourceNotFoundException(ErrorMessages.EMTPY_ENTITY.toString());
             } else {
                 // If the element has been found, build the ids response message.
-                final var desc = new DescriptionResponseMessageDesc(issuerConnector, messageId);
-                final var header = descriptionService.buildMessage(desc);
+                final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
+                final var header = messageService.buildMessage(desc);
                 final var payload = entityResolver.getEntityAsRdfString(entity);
 
                 // Send ids response message.
                 return BodyResponse.create(header, payload);
             }
-        } catch (ResourceNotFoundException | InvalidResourceException exception) {
-            return exceptionService.handleResourceNotFoundException(exception, requestedElement,
-                    issuerConnector, messageId);
+        } catch (ResourceNotFoundException | InvalidResourceException e) {
+            return responseService.handleResourceNotFoundException(e, requested, issuer, messageId);
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
-            return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
-                    messageId);
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         } catch (SelfLinkCreationException exception) {
-            return exceptionService.handleSelfLinkCreationException(exception, requestedElement);
+            return responseService.handleSelfLinkCreationException(exception, requested);
         }
     }
 
     /**
      * Constructs a resource catalog description message for the connector.
      *
-     * @param issuerConnector The issuer connector extracted from the incoming message.
-     * @param messageId       The message id of the incoming message.
+     * @param issuer    The issuer connector extracted from the incoming message.
+     * @param messageId The message id of the incoming message.
      * @return A response message containing the resource catalog of the connector.
      */
-    public MessageResponse constructConnectorSelfDescription(final URI issuerConnector,
-                                                             final URI messageId) {
+    public MessageResponse constructSelfDescription(final URI issuer, final URI messageId) {
         try {
             // Get self-description.
-            final var selfDescription = connectorService.getConnectorWithOfferedResources();
+            final var connector = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
-            final var desc = new DescriptionResponseMessageDesc(issuerConnector, messageId);
-            final var header = descriptionService.buildMessage(desc);
+            final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
-            return BodyResponse.create(header, selfDescription.toRdf());
+            return BodyResponse.create(header, connector.toRdf());
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
-            return exceptionService.handleResponseMessageBuilderException(e, issuerConnector,
-                    messageId);
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

@@ -14,6 +14,8 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.OfferedResource;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.CatalogService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.OfferedResourceService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;

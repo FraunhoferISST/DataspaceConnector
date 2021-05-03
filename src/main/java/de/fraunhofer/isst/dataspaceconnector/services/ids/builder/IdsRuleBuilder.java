@@ -1,10 +1,11 @@
-package de.fraunhofer.isst.dataspaceconnector.services.ids;
+package de.fraunhofer.isst.dataspaceconnector.services.ids.builder;
 
 import java.net.URI;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.dataspaceconnector.model.ContractRule;
+import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 

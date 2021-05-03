@@ -1,7 +1,6 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources;
+package de.fraunhofer.isst.dataspaceconnector.utils;
 
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
-import de.fraunhofer.isst.dataspaceconnector.utils.EndpointUtils;
 
 /**
  * The list of the api's paths.

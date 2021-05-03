@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -63,11 +62,11 @@ public class ConfigurationController {
     public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
         try {
             // Deserialize input.
-            final var newConfig = idsService.getConfigurationModel(configuration);
+            final var config = idsService.getConfigurationModel(configuration);
 
             // Update configuration of connector.
-            configContainer.updateConfiguration(newConfig);
-            return new ResponseEntity<>("Configuration successfully updated.", HttpStatus.OK);
+            configContainer.updateConfiguration(config);
+            return ResponseEntity.ok("Configuration successfully updated.");
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
@@ -92,7 +91,7 @@ public class ConfigurationController {
         if (config == null) {
             return respondConfigurationNotFound();
         } else {
-            return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
+            return ResponseEntity.ok(config.toRdf());
         }
     }
 
@@ -105,15 +104,15 @@ public class ConfigurationController {
     @PutMapping("/configuration/negotiation")
     @Operation(summary = "Set contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
     public ResponseEntity<Object> setNegotiationStatus(
             @RequestParam("status") final boolean status) {
         connectorConfig.setPolicyNegotiation(status);
         if (connectorConfig.isPolicyNegotiation()) {
-            return new ResponseEntity<>("Contract Negotiation is activated.", HttpStatus.OK);
+            return ResponseEntity.ok("Contract Negotiation is activated.");
         } else {
-            return new ResponseEntity<>("Contract Negotiation is deactivated.", HttpStatus.OK);
+            return ResponseEntity.ok("Contract Negotiation is deactivated.");
         }
     }
 
@@ -125,13 +124,13 @@ public class ConfigurationController {
     @GetMapping("/configuration/negotiation")
     @Operation(summary = "Get contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
     public ResponseEntity<Object> getNegotiationStatus() {
         if (connectorConfig.isPolicyNegotiation()) {
-            return new ResponseEntity<>("Contract Negotiation is activated.", HttpStatus.OK);
+            return ResponseEntity.ok("Contract Negotiation is activated.");
         } else {
-            return new ResponseEntity<>("Contract Negotiation is deactivated.", HttpStatus.OK);
+            return ResponseEntity.ok("Contract Negotiation is deactivated.");
         }
     }
 
@@ -145,16 +144,14 @@ public class ConfigurationController {
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
     public ResponseEntity<Object> getPatternStatus(@RequestParam("status") final boolean status) {
         connectorConfig.setAllowUnsupported(status);
         if (connectorConfig.isAllowUnsupported()) {
-            return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
-                    HttpStatus.OK);
+            return ResponseEntity.ok("Data can be accessed despite unsupported pattern.");
         } else {
-            return new ResponseEntity<>("Data cannot be accessed with an unsupported pattern.",
-                    HttpStatus.OK);
+            return ResponseEntity.ok("Data cannot be accessed with unsupported patterns.");
         }
     }
 
@@ -167,15 +164,13 @@ public class ConfigurationController {
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Ok") })
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
     public ResponseEntity<Object> getPatternStatus() {
         if (connectorConfig.isAllowUnsupported()) {
-            return new ResponseEntity<>("Data can be accessed despite unsupported pattern.",
-                    HttpStatus.OK);
+            return ResponseEntity.ok("Data can be accessed despite unsupported pattern.");
         } else {
-            return new ResponseEntity<>("Data cannot be accessed with an unsupported pattern.",
-                    HttpStatus.OK);
+            return ResponseEntity.ok("Data cannot be accessed with unsupported patterns.");
         }
     }
 }

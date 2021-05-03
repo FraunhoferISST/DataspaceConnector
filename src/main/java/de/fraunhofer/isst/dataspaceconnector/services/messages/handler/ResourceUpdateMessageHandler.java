@@ -1,17 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -41,14 +36,14 @@ import java.net.URI;
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
 
     /**
-     * Service for the message exception handling.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
-     * Service for message processing.
+     * Service for handling response messages.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
      * Service for ids deserialization.
@@ -59,11 +54,6 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      * Service for updating database entities from ids object.
      */
     private final @NonNull EntityUpdateService updateService;
-
-    /**
-     * Service for handling response messages.
-     */
-    private final @NonNull MessageProcessedNotificationService notificationService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -78,23 +68,22 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
                                          final MessagePayload payload) throws RuntimeException {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
         // Read relevant parameters for message processing.
-        final var affectedResource = MessageUtils.extractAffectedResource(message);
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var affected = MessageUtils.extractAffectedResource(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
-        if (affectedResource == null || affectedResource.toString().isEmpty()) {
+        if (affected == null || affected.toString().isEmpty()) {
             // Without an affected resource, the message processing will be aborted.
-            return exceptionService.handleMissingAffectedResource(affectedResource,
-                    issuerConnector, messageId);
+            return responseService.handleMissingAffectedResource(affected, issuer, messageId);
         }
 
         String payloadAsString;
@@ -102,95 +91,64 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
             // Try to read payload as string.
             payloadAsString = MessageUtils.getStreamAsString(payload);
             if (payloadAsString.isEmpty()) {
-                return exceptionService.handleMissingPayload(affectedResource, issuerConnector,
-                        messageId);
+                return responseService.handleMissingPayload(affected, issuer, messageId);
             }
-        } catch (IOException | IllegalArgumentException exception) {
-            return exceptionService.handleMessagePayloadException(exception, messageId,
-                    issuerConnector);
+        } catch (IOException | IllegalArgumentException e) {
+            return responseService.handleMessagePayloadException(e, messageId, issuer);
         }
 
-        return updateResource(payloadAsString, affectedResource, issuerConnector, messageId);
+        return updateResource(payloadAsString, affected, issuer, messageId);
     }
 
     /**
      * Update resource in internal database.
      *
-     * @param payload          The payload as string.
-     * @param affectedResource The affected resource.
-     * @param issuerConnector  The issuer connector.
-     * @param messageId        The message id.
+     * @param payload   The payload as string.
+     * @param affected  The affected resource.
+     * @param issuer    The issuer connector.
+     * @param messageId The message id.
      * @return A message response.
      */
-    private MessageResponse updateResource(final String payload,
-                                           final URI affectedResource,
-                                           final URI issuerConnector,
-                                           final URI messageId) {
+    private MessageResponse updateResource(final String payload, final URI affected,
+                                           final URI issuer, final URI messageId) {
         // Get ids resource from payload.
-        Resource idsResource;
         try {
-            idsResource = deserializationService.getResource(payload);
-            final var resourceId = idsResource.getId();
+            final var resource = deserializationService.getResource(payload);
+            final var resourceId = resource.getId();
 
             // Check if the resource id and affected resource id match.
-            if (!resourceId.equals(affectedResource)) {
-                return exceptionService.handleInvalidAffectedResource(resourceId,
-                        affectedResource, issuerConnector, messageId);
+            if (!resourceId.equals(affected)) {
+                return responseService.handleInvalidAffectedResource(resourceId, affected, issuer,
+                        messageId);
             }
-        } catch (IllegalArgumentException exception) {
-            return exceptionService.handleIllegalArgumentException(exception, payload,
-                    issuerConnector, messageId);
+
+            // Update requested resource with received information.
+            updateService.updateResource(resource);
+        } catch (IllegalArgumentException e) {
+            return responseService.handleIllegalArgumentException(e, payload, issuer, messageId);
         }
 
-        // Update requested resource with received information.
-        try {
-            updateService.updateResource(idsResource);
-            final var idsRepresentations = idsResource.getRepresentation();
-            for (final var representation : idsRepresentations) {
-                updateService.updateRepresentation(representation);
-
-                final var idsArtifacts = representation.getInstance();
-                for (final var artifact : idsArtifacts) {
-                    updateService.updateArtifact((Artifact) artifact);
-                }
-            }
-        } catch (Exception exception) {
-            // As the message has been received, respond with message processed notification
-            // message, although saving the resource failed.
-            if (log.isWarnEnabled()) {
-                log.warn("Updating entities failed. [resource=({})]", idsResource);
-            }
-            final var statement = "Message received but resource not updated.";
-            return respondToMessage(statement, issuerConnector, messageId);
-        }
-
-        // If everything has been saved.
-        final var statement = "Message received and resource updated.";
-        return respondToMessage(statement, issuerConnector, messageId);
+        // Respond although updating the resource may have failed.
+        return respondToMessage(issuer, messageId);
     }
 
     /**
      * Build and send response message.
      *
-     * @param message         The message indicating whether resource could be updated or not.
-     * @param issuerConnector The issuer connector.
-     * @param messageId       The message id.
+     * @param issuer    The issuer connector.
+     * @param messageId The message id.
      * @return A message response.
      */
-    private MessageResponse respondToMessage(final String message,
-                                             final URI issuerConnector,
-                                             final URI messageId) {
+    private MessageResponse respondToMessage(final URI issuer, final URI messageId) {
         try {
             // Build ids response message.
-            final var desc = new MessageProcessedNotificationMessageDesc(issuerConnector,
-                    messageId);
-            final var header = notificationService.buildMessage(desc);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
-            return BodyResponse.create(header, message);
-        } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, messageId);
+            return BodyResponse.create(header, "Message received.");
+        } catch (IllegalStateException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

@@ -22,7 +22,7 @@ public class DescriptionRequestMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient The recipient.
+     * @param recipient The message's recipient.
      * @param element   The requested element.
      */
     public DescriptionRequestMessageDesc(final URI recipient, final URI element) {

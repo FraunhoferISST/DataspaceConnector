@@ -1,29 +1,20 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
-import java.net.URI;
-
-import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.config.ConnectorConfiguration;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ContractException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageRequestException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.RdfBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.dataspaceconnector.model.messages.LogMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityResolver;
 import de.fraunhofer.isst.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageResponseService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.MessageService;
-import de.fraunhofer.isst.dataspaceconnector.services.messages.types.LogMessageService;
 import de.fraunhofer.isst.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-import de.fraunhofer.isst.dataspaceconnector.utils.IdsUtils;
+import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import de.fraunhofer.isst.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
@@ -35,6 +26,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
 
 /**
  * This @{@link ContractAgreementHandler} handles all incoming messages that have a
@@ -49,14 +42,14 @@ import org.springframework.stereotype.Component;
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
 
     /**
-     * Service for message processing.
+     * Service for building and sending message responses.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
-     * Service for the message exception handling.
+     * Service for handling notification messages.
      */
-    private final @NonNull MessageResponseService exceptionService;
+    private final @NonNull MessageProcessedNotificationService messageService;
 
     /**
      * Service for resolving entities.
@@ -74,19 +67,9 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     private final @NonNull EntityUpdateService updateService;
 
     /**
-     * Service for handling log messages.
+     * Policy execution point.
      */
-    private final @NonNull LogMessageService logService;
-
-    /**
-     * Service for connector configurations.
-     */
-    private final @NonNull ConnectorConfiguration connectorConfig;
-
-    /**
-     * Service for handling notification messages.
-     */
-    private final @NonNull MessageProcessedNotificationService notificationService;
+    private final @NonNull PolicyExecutionService executionService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -102,16 +85,16 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                                          final MessagePayload payload) throws RuntimeException {
         // Validate incoming message.
         try {
-            messageService.validateIncomingRequestMessage(message);
+            messageService.validateIncomingMessage(message);
         } catch (MessageEmptyException exception) {
-            return exceptionService.handleMessageEmptyException(exception);
+            return responseService.handleMessageEmptyException(exception);
         } catch (VersionNotSupportedException exception) {
-            return exceptionService.handleInfoModelNotSupportedException(exception,
+            return responseService.handleInfoModelNotSupportedException(exception,
                     message.getModelVersion());
         }
 
         // Read relevant parameters for message processing.
-        final var issuerConnector = MessageUtils.extractIssuerConnector(message);
+        final var issuer = MessageUtils.extractIssuerConnector(message);
         final var messageId = MessageUtils.extractMessageId(message);
 
         // Read message payload as string.
@@ -119,8 +102,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
         try {
             payloadAsString = MessageUtils.getPayloadAsString(payload);
         } catch (MessageRequestException exception) {
-            return exceptionService.handleMessagePayloadException(exception, messageId,
-                    issuerConnector);
+            return responseService.handleMessagePayloadException(exception, messageId, issuer);
         }
 
         try {
@@ -130,77 +112,55 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
 
             // Get stored ids contract agreement.
             final var storedAgreement = entityResolver.getAgreementByUri(agreementId);
-            final var storedIdsAgreement = deserializationService
-                    .getContractAgreement(storedAgreement.getValue());
+            final var storedIdsAgreement
+                    = deserializationService.getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
             if (!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
-                return exceptionService.handleContractException(
+                return responseService.handleContractException(
                         new ContractException("Not the same contract."), payloadAsString,
-                        issuerConnector, messageId);
+                        issuer, messageId);
             }
 
             // Update contract agreement to confirmed.
-            updateService.confirmAgreement(storedAgreement);
+            if (!updateService.confirmAgreement(storedAgreement)) {
+                return responseService.handleUnconfirmedAgreement(storedAgreement, issuer,
+                        messageId);
+            }
 
             // Send contract to clearing house.
-            sendAgreementToClearingHouse(agreement);
+            executionService.sendAgreement(agreement);
 
-            return respondToMessage(issuerConnector, messageId);
+            return respondToMessage(issuer, messageId);
         } catch (IllegalArgumentException exception) {
-            return exceptionService.handleIllegalArgumentException(exception, payloadAsString,
-                    issuerConnector, messageId);
+            return responseService.handleIllegalArgumentException(exception, payloadAsString,
+                    issuer, messageId);
         } catch (ResourceNotFoundException exception) {
-            return exceptionService.handleMessageProcessingFailed(exception, payloadAsString,
-                    issuerConnector, messageId);
+            return responseService.handleMessageProcessingFailed(exception, payloadAsString,
+                    issuer, messageId);
         } catch (ContractException exception) {
-            return exceptionService.handleContractException(exception, payloadAsString,
-                    issuerConnector, messageId);
-        }
-    }
-
-    /**
-     * Send contract agreement to clearing house.
-     *
-     * @param agreement The ids contract agreement.
-     */
-    private void sendAgreementToClearingHouse(final ContractAgreement agreement) {
-        try {
-            final var recipient = connectorConfig.getClearingHouse();
-            final var rdf = IdsUtils.toRdf(agreement);
-
-            // Build ids response message.
-            final var desc = new LogMessageDesc();
-            desc.setRecipient(recipient);
-            logService.sendMessage(desc, rdf);
-        } catch (MessageBuilderException | RdfBuilderException | MessageException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to send contract agreement to clearing house. [exception=({})]",
-                        exception.getMessage(), exception);
-            }
+            return responseService.handleContractException(exception, payloadAsString,
+                    issuer, messageId);
         }
     }
 
     /**
      * Build and send response message.
      *
-     * @param issuerConnector The issuer connector.
-     * @param messageId       The message id.
+     * @param issuer    The issuer connector.
+     * @param messageId The message id.
      * @return A message response.
      */
-    private MessageResponse respondToMessage(final URI issuerConnector,
-                                             final URI messageId) {
+    private MessageResponse respondToMessage(final URI issuer, final URI messageId) {
         try {
             // Build ids response message.
-            final var desc =
-                    new MessageProcessedNotificationMessageDesc(issuerConnector, messageId);
-            final var header = notificationService.buildMessage(desc);
+            final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
+            final var header = messageService.buildMessage(desc);
 
             // Send ids response message.
             return BodyResponse.create(header, "Received contract agreement message.");
-        } catch (MessageBuilderException | ConstraintViolationException exception) {
-            return exceptionService.handleResponseMessageBuilderException(exception,
-                    issuerConnector, messageId);
+        } catch (MessageBuilderException | ConstraintViolationException e) {
+            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
 }

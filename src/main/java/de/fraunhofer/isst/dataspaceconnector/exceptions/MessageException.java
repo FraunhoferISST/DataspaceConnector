@@ -12,15 +12,6 @@ public class MessageException extends RuntimeException {
     /**
      * Construct a MessageException with the specified detail message and cause.
      *
-     * @param msg The detail message.
-     */
-    public MessageException(final String msg) {
-        super(msg);
-    }
-
-    /**
-     * Construct a MessageException with the specified detail message and cause.
-     *
      * @param msg   The detail message.
      * @param cause The cause.
      */

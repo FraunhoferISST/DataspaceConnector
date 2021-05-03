@@ -22,7 +22,7 @@ public class ContractRequestMessageDesc extends MessageDesc {
     /**
      * All args constructor.
      *
-     * @param recipient The recipient.
+     * @param recipient The message's recipient.
      * @param contract  The transfer contract.
      */
     public ContractRequestMessageDesc(final URI recipient, final URI contract) {
