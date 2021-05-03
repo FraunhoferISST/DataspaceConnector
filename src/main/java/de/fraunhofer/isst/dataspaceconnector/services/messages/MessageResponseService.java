@@ -144,7 +144,7 @@ public class MessageResponseService {
                     issuerConnector, messageId, exception);
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Internal server error.", connectorService.getConnectorId(),
+                "Could not parse message payload.", connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }
 

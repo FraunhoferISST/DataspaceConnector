@@ -11,6 +11,7 @@ import de.fraunhofer.isst.dataspaceconnector.services.ids.updater.RequestedResou
 import de.fraunhofer.isst.dataspaceconnector.services.resources.AgreementService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.ArtifactService;
 import de.fraunhofer.isst.dataspaceconnector.services.resources.RelationServices;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.SelfLinkHelper;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
@@ -69,15 +70,15 @@ public class EntityUpdateService {
             if (log.isDebugEnabled()) {
                 log.debug("Updated resource. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
             }
-        } catch (ResourceNotFoundException exception) {
+
+            final var representations = resource.getRepresentation();
+            for (final var representation : Utils.requireNonNull(representations, ErrorMessages.LIST_NULL)) {
+                updateRepresentation(representation);
+            }
+        } catch (ResourceNotFoundException | IllegalArgumentException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to update resource. [uri=({})]", resource.getId());
             }
-        }
-
-        final var representations = resource.getRepresentation();
-        for (final var representation : representations) {
-            updateRepresentation(representation);
         }
     }
 
@@ -93,15 +94,15 @@ public class EntityUpdateService {
                 log.debug("Updated representation. [uri=({})]",
                         SelfLinkHelper.getSelfLink(updated));
             }
-        } catch (ResourceNotFoundException exception) {
+
+            final var artifacts = representation.getInstance();
+            for (final var artifact : Utils.requireNonNull(artifacts, ErrorMessages.LIST_NULL)) {
+                updateArtifact((Artifact) artifact);
+            }
+        } catch (ResourceNotFoundException | IllegalArgumentException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to update representation. [uri=({})]", representation.getId());
             }
-        }
-
-        final var artifacts = representation.getInstance();
-        for (final var artifact : artifacts) {
-            updateArtifact((Artifact) artifact);
         }
     }
 

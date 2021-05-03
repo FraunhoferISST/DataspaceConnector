@@ -1,8 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageBuilderException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.MessageEmptyException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.VersionNotSupportedException;
 import de.fraunhofer.isst.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
@@ -149,7 +147,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
             // Send ids response message.
             return BodyResponse.create(header, "Message received.");
-        } catch (MessageBuilderException | ConstraintViolationException e) {
+        } catch (IllegalStateException e) {
             return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
         }
     }
