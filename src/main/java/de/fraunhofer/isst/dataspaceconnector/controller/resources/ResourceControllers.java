@@ -1,5 +1,12 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.AgreementDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
@@ -57,13 +64,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 
 public final class ResourceControllers {
     @RestController
@@ -197,8 +197,12 @@ public final class ResourceControllers {
             final var queryInput = new QueryInput();
             queryInput.setParams(params);
             queryInput.setHeaders(headers);
-            queryInput.setOptional(request.getRequestURI().substring(
-                    (request.getContextPath() + "/data").length()));
+
+            final var searchString = request.getContextPath() + "/data";
+            final var optional = request.getRequestURI().substring(
+                    request.getRequestURI().indexOf(searchString) + searchString.length());
+
+            if (!optional.isBlank()) queryInput.setOptional(optional);
 
             /*
                 If no agreement information has been passed the connector needs to check if the

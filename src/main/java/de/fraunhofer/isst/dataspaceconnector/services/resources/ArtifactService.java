@@ -1,9 +1,9 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,9 +26,9 @@ import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.PolicyVerifie
 import de.fraunhofer.isst.dataspaceconnector.services.usagecontrol.VerificationResult;
 import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
 import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
+import kotlin.Pair;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import org.jose4j.base64url.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -265,20 +265,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     private InputStream getData(final RemoteData data, final QueryInput queryInput) {
         try {
-            String backendData;
+            InputStream backendData;
             if (data.getUsername() != null || data.getPassword() != null) {
-                backendData =
-                        httpSvc.sendHttpsGetRequestWithBasicAuth(data.getAccessUrl().toString(),
-                                data.getUsername(),
-                                data.getPassword(),
-                                queryInput);
+                backendData = httpSvc.get(data.getAccessUrl(), queryInput,
+                                             new Pair<>(data.getUsername(), data.getPassword()))
+                                      .getBody();
             } else {
-                backendData =
-                        httpSvc.sendHttpsGetRequest(data.getAccessUrl().toString(), queryInput);
+                backendData = httpSvc.get(data.getAccessUrl(), queryInput).getBody();
             }
 
-            return toInputStream(Base64.decode(backendData));
-        } catch (URISyntaxException exception) {
+            return backendData;
+        } catch (IOException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not connect to data source. [exception=({})]",
                         exception.getMessage(), exception);
