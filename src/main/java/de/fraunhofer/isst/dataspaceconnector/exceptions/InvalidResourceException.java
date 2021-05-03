@@ -17,14 +17,4 @@ public class InvalidResourceException extends ResourceException {
     public InvalidResourceException(final String msg) {
         super(msg);
     }
-
-    /**
-     * Construct an InvalidResourceException with the specified detail message and cause.
-     *
-     * @param msg   The detail message.
-     * @param cause The cause.
-     */
-    public InvalidResourceException(final String msg, final Throwable cause) {
-        super(msg, cause);
-    }
 }

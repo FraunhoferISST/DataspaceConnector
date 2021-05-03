@@ -10,15 +10,6 @@ public class MessageBuilderException extends MessageResponseException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Construct a MessageBuilderException with the specified detail message.
-     *
-     * @param msg The detail message.
-     */
-    public MessageBuilderException(final String msg) {
-        super(msg);
-    }
-
-    /**
      * Construct a MessageBuilderException with the specified detail message and cause.
      *
      * @param msg   The detail message.

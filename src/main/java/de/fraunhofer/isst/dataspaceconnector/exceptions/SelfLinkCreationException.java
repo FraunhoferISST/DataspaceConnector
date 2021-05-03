@@ -20,15 +20,4 @@ public class SelfLinkCreationException extends RuntimeException {
     public SelfLinkCreationException(final ErrorMessages msg) {
         super(msg.toString());
     }
-
-    /**
-     * Constructs a SelfLinkCreationException with the specified detail message and cause.
-     *
-     * @param msg The detail message.
-     * @param cause The cause.
-     */
-    public SelfLinkCreationException(final ErrorMessages msg, final Throwable cause) {
-        super(msg.toString(), cause);
-    }
-
 }
