@@ -21,16 +21,16 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="RollingFile"/>
-        </Root>
-        <Logger name="org.springframework" level="info">
             <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
+        </Root>
+        <!-- <Logger name="org.springframework" level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger> -->
         <Logger name="org.hibernate" level="error">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-        <Logger name="de.fraunhofer.isst.dataspaceconnector" level="info">
+        <!-- <Logger name="de.fraunhofer.isst.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
+        </Logger> -->
     </Loggers>
 </Configuration>
