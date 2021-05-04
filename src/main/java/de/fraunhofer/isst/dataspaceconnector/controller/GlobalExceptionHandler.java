@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.controller;
 
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,7 @@ import net.minidev.json.JSONObject;
  */
 @Log4j2
 @ControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public final class GlobalExceptionHandler {
     /**
      * Handle runtime exceptions with response code 500.
