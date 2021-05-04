@@ -357,14 +357,36 @@
 
 	<repositories>
 		<repository>
+			<id>Maven repository</id>
+			<url>https://repo1.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
 			<id>ids-public</id>
 			<name>isst-public</name>
 			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>eis-ids-public</id>
 			<name>maven-snapshots</name>
 			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
