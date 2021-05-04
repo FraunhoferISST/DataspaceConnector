@@ -358,7 +358,7 @@
 	<repositories>
 		<repository>
 			<id>Maven repository</id>
-			<url>http://central.maven.org/maven2/</url>
+			<url>https://repo1.maven.org/maven2/</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
