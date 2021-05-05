@@ -11,7 +11,6 @@ import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactDesc;
 import de.fraunhofer.isst.dataspaceconnector.model.ArtifactFactory;
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +56,7 @@ public class ArtifactViewAssemblerTest {
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
-        final var resourceId = UUID.randomUUID();
+        final var artifactId = UUID.randomUUID();
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
         final var path = ResourceControllers.ArtifactController.class
@@ -65,11 +64,11 @@ public class ArtifactViewAssemblerTest {
         final var rel = "self";
 
         /* ACT */
-        final var result = artifactViewAssembler.getSelfLink(resourceId);
+        final var result = artifactViewAssembler.getSelfLink(artifactId);
 
         /* ASSERT */
         assertNotNull(result);
-        assertEquals(baseUrl + path + "/" + resourceId, result.getHref());
+        assertEquals(baseUrl + path + "/" + artifactId, result.getHref());
         assertEquals(rel, result.getRel().value());
     }
 
@@ -83,9 +82,6 @@ public class ArtifactViewAssemblerTest {
     @Test
     public void toModel_validInput_returnArtifactView() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
-
         final var artifact = getArtifact();
 
         /* ACT */
@@ -128,7 +124,6 @@ public class ArtifactViewAssemblerTest {
      * Utilities.
      *************************************************************************/
 
-    @SneakyThrows
     private Artifact getArtifact() {
         final var artifactDesc = new ArtifactDesc();
         artifactDesc.setTitle("title");
