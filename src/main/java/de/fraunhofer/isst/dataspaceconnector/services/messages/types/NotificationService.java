@@ -70,7 +70,7 @@ public final class NotificationService extends AbstractMessageService<Notificati
             }
         } catch (MessageException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Notification not sent. [exception=({})]", e.getMessage());
+                log.debug("Notification not sent. [exception=({})]", e.getMessage(), e);
             }
             throw new PolicyExecutionException("Notification was not successful.");
         }

@@ -57,7 +57,9 @@ public class PolicyExecutionService {
         try {
             final var rdf = IdsUtils.toRdf(agreement);
             final var recipient = connectorConfig.getClearingHouse();
-            logMessageService.sendMessage(recipient, rdf);
+            if (!recipient.equals(URI.create(""))) {
+                logMessageService.sendMessage(recipient, rdf);
+            }
         } catch (PolicyExecutionException | RdfBuilderException exception) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to send contract agreement to clearing house. "
@@ -76,7 +78,9 @@ public class PolicyExecutionService {
         final var recipient = connectorConfig.getClearingHouse();
         final var logItem = buildLog(target).toString();
 
-        logMessageService.sendMessage(recipient, logItem);
+        if (!recipient.equals(URI.create(""))) {
+            logMessageService.sendMessage(recipient, logItem);
+        }
     }
 
     /**

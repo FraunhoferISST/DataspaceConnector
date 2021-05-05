@@ -69,7 +69,7 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
             }
         } catch (MessageException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Failed to send log message. [exception=({})]", e.getMessage());
+                log.warn("Failed to send log message. [exception=({})]", e.getMessage(), e);
             }
             throw new PolicyExecutionException("Log message could not be sent.");
         }
