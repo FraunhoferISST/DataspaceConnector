@@ -100,6 +100,8 @@ public class OfferedResourceViewAssemblerTest {
         assertEquals(offeredResource.getSovereign(), result.getSovereign());
         assertEquals(offeredResource.getEndpointDocumentation(), result.getEndpointDocumentation());
         assertEquals(offeredResource.getAdditional(), result.getAdditional());
+        assertEquals(offeredResource.getCreationDate(), result.getCreationDate());
+        assertEquals(offeredResource.getModificationDate(), result.getModificationDate());
 
         final var selfLink = result.getLink("self");
         assertTrue(selfLink.isPresent());
