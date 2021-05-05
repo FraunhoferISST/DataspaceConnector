@@ -100,23 +100,23 @@ public class ArtifactViewAssemblerTest {
         final var selfLink = result.getLink("self");
         assertTrue(selfLink.isPresent());
         assertNotNull(selfLink.get());
-        assertEquals(getArtifactPath(artifact.getId()), selfLink.get().getHref());
+        assertEquals(getArtifactLink(artifact.getId()), selfLink.get().getHref());
 
         final var dataLink = result.getLink("data");
         assertTrue(dataLink.isPresent());
         assertNotNull(dataLink.get());
-        assertEquals(getArtifactDataPath(artifact.getId()), dataLink.get().getHref());
+        assertEquals(getArtifactDataLink(artifact.getId()), dataLink.get().getHref());
 
         final var representationsLink = result.getLink("representations");
         assertTrue(representationsLink.isPresent());
         assertNotNull(representationsLink.get());
-        assertEquals(getArtifactRepresentationsPath(artifact.getId()),
+        assertEquals(getArtifactRepresentationsLink(artifact.getId()),
                 representationsLink.get().getHref());
 
         final var agreementsLink = result.getLink("agreements");
         assertTrue(agreementsLink.isPresent());
         assertNotNull(agreementsLink.get());
-        assertEquals(getArtifactAgreementsPath(artifact.getId()),
+        assertEquals(getArtifactAgreementsLink(artifact.getId()),
                 agreementsLink.get().getHref());
     }
 
@@ -143,7 +143,7 @@ public class ArtifactViewAssemblerTest {
         return artifact;
     }
 
-    private String getArtifactPath(final UUID artifactId) {
+    private String getArtifactLink(final UUID artifactId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
         final var path = ResourceControllers.ArtifactController.class
@@ -151,17 +151,17 @@ public class ArtifactViewAssemblerTest {
         return baseUrl + path + "/" + artifactId;
     }
 
-    private String getArtifactDataPath(final UUID artifactId) {
+    private String getArtifactDataLink(final UUID artifactId) {
         return linkTo(methodOn(ResourceControllers.ArtifactController.class)
                 .getData(artifactId, new QueryInput())).toString();
     }
 
-    private String getArtifactRepresentationsPath(final UUID artifactId) {
+    private String getArtifactRepresentationsLink(final UUID artifactId) {
         return linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
                 .getResource(artifactId, null, null, null)).toString();
     }
 
-    private String getArtifactAgreementsPath(final UUID artifactId) {
+    private String getArtifactAgreementsLink(final UUID artifactId) {
         return linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
                 .getResource(artifactId, null, null, null)).toString();
     }

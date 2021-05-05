@@ -97,12 +97,12 @@ public class AgreementViewAssemblerTest {
         final var selfLink = result.getLink("self");
         assertTrue(selfLink.isPresent());
         assertNotNull(selfLink.get());
-        assertEquals(getAgreementPath(agreement.getId()), selfLink.get().getHref());
+        assertEquals(getAgreementLink(agreement.getId()), selfLink.get().getHref());
 
         final var artifactsLink = result.getLink("artifacts");
         assertTrue(artifactsLink.isPresent());
         assertNotNull(artifactsLink.get());
-        assertEquals(getAgreementArtifactsPath(agreement.getId()), artifactsLink.get().getHref());
+        assertEquals(getAgreementArtifactsLink(agreement.getId()), artifactsLink.get().getHref());
     }
 
     /**************************************************************************
@@ -125,7 +125,7 @@ public class AgreementViewAssemblerTest {
         return agreement;
     }
 
-    private String getAgreementPath(UUID agreementId) {
+    private String getAgreementLink(final UUID agreementId) {
         final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .toUriString();
         final var path = ResourceControllers.AgreementController.class
@@ -133,7 +133,7 @@ public class AgreementViewAssemblerTest {
         return baseUrl + path + "/" + agreementId;
     }
 
-    private String getAgreementArtifactsPath(UUID agreementId) {
+    private String getAgreementArtifactsLink(final UUID agreementId) {
         return linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
                 .getResource(agreementId, null, null, null)).toString();
     }
