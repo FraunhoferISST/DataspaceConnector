@@ -51,7 +51,6 @@ public final class DataAccessVerifier implements PolicyVerifier<URI> {
                 PolicyPattern.USAGE_NOTIFICATION);
 
         try {
-
             checkForAccess(patternsToCheck, target);
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.
