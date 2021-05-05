@@ -1,14 +1,15 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
-import java.time.ZonedDateTime;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -26,6 +27,11 @@ public class ArtifactView  extends RepresentationModel<ArtifactView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
+
+    /**
+     * Remote id.
+     */
+    private URI remoteId;
 
     /**
      * The title of the artifact.

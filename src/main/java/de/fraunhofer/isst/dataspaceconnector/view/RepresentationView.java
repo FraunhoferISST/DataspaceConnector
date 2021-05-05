@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
@@ -26,6 +27,11 @@ public class RepresentationView extends RepresentationModel<RepresentationView> 
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
+
+    /**
+     * Remote id.
+     */
+    private URI remoteId;
 
     /**
      * The title of the representation.
