@@ -84,25 +84,8 @@ def add_contract_to_resource(resource, contract):
 def add_rule_to_contract(contract, rule):
     response = s.post(contract + "/rules", json=[rule])
 
-# Reverse
-def add_catalogs_to_resource(resource, catalogs):
-    response = s.post(resource + "/catalogs", json=catalogs)
-
-def add_resource_to_contract(contract, resources):
-    response = s.post(contract + "/offers", json=resources)
-
-def add_resource_to_representation(representation, resources):
-    response = s.post(representation + "/offers", json=resources)
-
-def add_representation_to_artifact(artifact, representations):
-    response = s.post(artifact + "/representations", json=representations)
-
-def add_contract_to_rules(rule, contracts):
-    response = s.post(rule + "/contracts", json=contracts)
-
 
 # IDS
-
 def descriptionRequest(recipient, elementId):
     url = "https://localhost:8080/api/ids/description"
     params = {}
@@ -128,75 +111,20 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
 
     return s.post(url, params=params, json=[contract])
 
-# catalog1 = create_catalog()
-# catalog2 = create_catalog()
+# Create resources
+catalog = create_catalog()
+offers = create_offered_resource()
+representation = create_representation()
+artifact = create_artifact()
+contract = create_contract()
+use_rule = create_rule_allow_access()
 
-# resource = create_offered_resource()
-# add_catalogs_to_resource(resource, [catalog1, catalog2])
-
-# pprint.pprint(s.get(catalog1 + "/offers").content)
-# pprint.pprint(s.get(catalog2 + "/offers").content)
-
-# pprint.pprint("-----------------------------------")
-
-# resource1 = create_offered_resource()
-# resource2 = create_offered_resource()
-# contract = create_contract()
-
-# add_resource_to_contract(contract, [resource1, resource2])
-
-# pprint.pprint(s.get(resource1 + "/contracts").content)
-# pprint.pprint(s.get(resource2 + "/contracts").content)
-
-# pprint.pprint("-----------------------------------")
-
-# resource1 = create_offered_resource()
-# resource2 = create_offered_resource()
-# representation = create_representation()
-
-# add_resource_to_representation(representation, [resource1, resource2])
-
-# pprint.pprint(s.get(resource1 + "/representations").content)
-# pprint.pprint(s.get(resource2 + "/representations").content)
-
-# pprint.pprint("-----------------------------------")
-
-# representation1 = create_representation()
-# representation2 = create_representation()
-# artifact = create_artifact()
-
-# add_representation_to_artifact(artifact, [representation1, representation2])
-
-# pprint.pprint(s.get(representation1 + "/artifacts").content)
-# pprint.pprint(s.get(representation2 + "/artifacts").content)
-
-# pprint.pprint("-----------------------------------")
-
-# contract1 = create_contract()
-# contract2 = create_contract()
-# rule = create_rule_allow_access()
-
-# add_contract_to_rules(rule, [contract1, contract2])
-
-# pprint.pprint(s.get(contract1 + "/rules").content)
-# pprint.pprint(s.get(contract2 + "/rules").content)
-
-
-# exit()
-
-for i in tqdm.tqdm(range(1)):
-    catalog = create_catalog()
-    offers = create_offered_resource()
-    representation = create_representation()
-    artifact = create_artifact()
-    contract = create_contract()
-    use_rule = create_rule_allow_access()
-
-    add_resource_to_catalog(catalog, offers)
-    add_representation_to_resource(offers, representation)
-    add_artifact_to_representation(representation, artifact)
-    add_contract_to_resource(offers, contract)
-    add_rule_to_contract(contract, use_rule)
+# Link resources
+add_resource_to_catalog(catalog, offers)
+add_representation_to_resource(offers, representation)
+add_artifact_to_representation(representation, artifact)
+add_contract_to_resource(offers, contract)
+add_rule_to_contract(contract, use_rule)
 
 # Call description
 response = descriptionRequest("https://localhost:8090/api/ids/data", None)
@@ -209,36 +137,10 @@ pprint.pprint(str(response.content))
 with open("offers.json", "wb") as fp:
     fp.write(response.content)
 
-# response = descriptionRequest("https://localhost:8080/api/ids/data", artifact)
-# pprint.pprint(str(response.content))
-# with open("artifacts.json", "wb") as fp:
-#     fp.write(response.content)
-
-# response = descriptionRequest("https://localhost:8080/api/ids/data", contract)
-# pprint.pprint(response.content)
-# with open("contract.json", "wb") as fp:
-#     fp.write(response.content)
-
-# artifact = 'https://localhost:8080/api/artifacts/bd983695-8503-4225-b39f-081dcf6ced8e'
-# contract = 'https://localhost:8080/api/contracts/84c7e314-c21e-4b08-b211-88da9873bdb8'
-
-# with(open('index.jpeg', "rb")) as fp:
-#     file = base64.b64encode(fp.read())
-#     with(open('img.dump', "wb")) as fw:
-#         fw.write(file)
-
-
-# with open("index.jpeg", "rb") as fp:
-#      s.put(artifact + "/data", data=fp.read())
-
-
+# Negotiate contract
 with open("offers.json", "r") as fp:
     obj = json.load(fp)['ids:contractOffer'][0]['ids:permission'][0]
     obj['ids:target'] = artifact
     response = contractRequest(
         "https://localhost:8080/api/ids/data", offers, artifact, False, obj)
     pprint.pprint(str(response.content))
-
-
-response = s.delete(offers)
-pprint.pprint(str(response.content))
