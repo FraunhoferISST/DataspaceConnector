@@ -4,14 +4,18 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.util.List;
 
 /**
  * Describes resources offered by this connector.
  */
+@SQLDelete(sql = "UPDATE resource SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Entity
-@Table
 @EqualsAndHashCode(callSuper = true)
 public final class OfferedResource extends Resource {
 

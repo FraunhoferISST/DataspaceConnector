@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +20,7 @@ import lombok.ToString;
  */
 @Entity
 @Inheritance
+@Table(name = "data")
 @Getter
 @Setter(AccessLevel.NONE)
 @EqualsAndHashCode

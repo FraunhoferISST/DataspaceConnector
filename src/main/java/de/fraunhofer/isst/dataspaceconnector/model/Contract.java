@@ -4,6 +4,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -18,7 +22,9 @@ import lombok.Setter;
  * A contract documents access and usage behaviours.
  */
 @Entity
-@Table
+@Table(name = "contract")
+@SQLDelete(sql = "UPDATE contract SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

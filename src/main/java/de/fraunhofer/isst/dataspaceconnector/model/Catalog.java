@@ -3,6 +3,10 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -15,7 +19,9 @@ import lombok.Setter;
  * A catalog groups resources.
  */
 @Entity
-@Table
+@Table(name = "catalog")
+@SQLDelete(sql = "UPDATE catalog SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

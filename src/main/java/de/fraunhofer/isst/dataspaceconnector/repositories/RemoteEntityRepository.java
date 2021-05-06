@@ -26,6 +26,9 @@ public interface RemoteEntityRepository<T extends AbstractEntity> extends BaseEn
      * @param remoteId The remote id.
      * @return The id of the entity.
      */
-    @Query("SELECT a.id FROM #{#entityName} a WHERE a.remoteId = :remoteId")
+    @Query("SELECT a.id "
+            + "FROM #{#entityName} a "
+            + "WHERE a.remoteId = :remoteId "
+            + "AND a.deleted = false")
     Optional<UUID> identifyByRemoteId(URI remoteId);
 }

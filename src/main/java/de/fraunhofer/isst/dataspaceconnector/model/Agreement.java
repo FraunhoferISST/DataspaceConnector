@@ -4,6 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.net.URI;
 import java.util.List;
 
@@ -18,7 +22,9 @@ import lombok.Setter;
  * and usage behaviours.
  */
 @Entity
-@Table
+@Table(name = "agreement")
+@SQLDelete(sql = "UPDATE agreement SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

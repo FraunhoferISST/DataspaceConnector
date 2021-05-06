@@ -21,8 +21,14 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @param resourceId ID of the resource
      * @return list of all artifacts of the resource
      */
-    @Query("SELECT a FROM Artifact a, Representation r, OfferedResource o WHERE o.id = :resourceId "
-            + "AND r MEMBER OF o.representations AND a MEMBER OF r.artifacts")
+    @Query("SELECT a "
+            + "FROM Artifact a, Representation r, OfferedResource o "
+            + "WHERE o.id = :resourceId "
+            + "AND r MEMBER OF o.representations "
+            + "AND a MEMBER OF r.artifacts "
+            + "AND a.deleted = false "
+            + "AND r.deleted = false "
+            + "AND o.deleted = false")
     List<Artifact> findAllByResourceId(UUID resourceId);
 
     /**
@@ -31,8 +37,11 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @param agreementId ID of the agreement
      * @return list of all artifacts referenced in the agreement
      */
-    @Query("SELECT a FROM Artifact a INNER JOIN Agreement ag ON a MEMBER OF ag.artifacts "
-            + "WHERE ag.id = :agreementId")
+    @Query("SELECT a "
+            + "FROM Artifact a INNER JOIN Agreement ag ON a MEMBER OF ag.artifacts "
+            + "WHERE ag.id = :agreementId "
+            + "AND ag.deleted = false "
+            + "AND a.deleted = false")
     List<Artifact> findAllByAgreement(UUID agreementId);
 
     /**
@@ -43,7 +52,11 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
     @Query("SELECT ag.remoteId "
             + "FROM Artifact a, Agreement ag "
             + "WHERE a.id = :artifactId "
-            + "AND ag.remoteId <> 'aced00057372000c6a6176612e6e65742e555249ac01782e439e49ab0300014c0006737472696e677400124c6a6176612f6c616e672f537472696e673b787074000767656e6573697378' "
+            + "AND a.deleted = false "
+            + "AND ag.deleted = false "
+            + "AND ag.remoteId <> 'aced00057372000c6a6176612e6e65742e555"
+                + "249ac01782e439e49ab0300014c0006737472696e677400124c6a"
+                + "6176612f6c616e672f537472696e673b787074000767656e6573697378' "
             + "AND ag.archived = false "
             + "AND ag.confirmed = true "
             + "AND ag MEMBER OF a.agreements")
@@ -56,6 +69,9 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      * @param size The new size in bytes.
      */
     @Modifying
-    @Query("update Artifact a set a.checkSum=:checkSum, a.byteSize=:size where a.id = :artifactId")
+    @Query("UPDATE Artifact a "
+            + "SET a.checkSum=:checkSum, a.byteSize=:size "
+            + "WHERE a.id = :artifactId "
+            + "AND a.deleted = false")
     void setArtifactData(UUID artifactId, long checkSum, long size);
 }

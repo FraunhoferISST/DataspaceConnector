@@ -7,7 +7,10 @@ import lombok.Setter;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.net.URI;
 import java.util.List;
 
@@ -15,7 +18,8 @@ import java.util.List;
  * Describes resource requested by this connector.
  */
 @Entity
-@Table
+@SQLDelete(sql = "UPDATE resource SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

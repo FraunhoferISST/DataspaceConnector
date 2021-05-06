@@ -18,6 +18,8 @@ public interface DataRepository extends JpaRepository<Data, Long> {
      * @param data     The new data.
      */
     @Modifying
-    @Query("update LocalData a set a.value = :data where a.id = :entityId")
+    @Query("UPDATE LocalData a "
+            + "SET a.value = :data "
+            + "WHERE a.id = :entityId")
     void setLocalData(Long entityId, byte[] data);
 }

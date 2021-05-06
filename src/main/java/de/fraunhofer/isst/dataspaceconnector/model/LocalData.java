@@ -2,7 +2,6 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,6 @@ import lombok.Setter;
  * Simple wrapper for data stored in the internal database.
  */
 @Entity
-@Table
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor

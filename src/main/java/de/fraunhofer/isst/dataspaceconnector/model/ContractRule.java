@@ -4,6 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import java.net.URI;
 import java.util.List;
 
@@ -17,7 +21,9 @@ import lombok.Setter;
  * A ContractRule defines a rule that should be enforced.
  */
 @Entity
-@Table
+@Table(name = "contractrule")
+@SQLDelete(sql = "UPDATE contractrule SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
