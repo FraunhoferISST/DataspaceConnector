@@ -107,6 +107,7 @@ public class RepresentationViewAssemblerTest {
         assertEquals(representation.getTitle(), result.getTitle());
         assertEquals(representation.getMediaType(), result.getMediaType());
         assertEquals(representation.getLanguage(), result.getLanguage());
+        assertEquals(representation.getRemoteId(), result.getRemoteId());
         assertEquals(representation.getCreationDate(), result.getCreationDate());
         assertEquals(representation.getModificationDate(), result.getModificationDate());
         assertEquals(representation.getAdditional(), result.getAdditional());
@@ -145,6 +146,7 @@ public class RepresentationViewAssemblerTest {
         assertEquals(representation.getTitle(), result.getTitle());
         assertEquals(representation.getMediaType(), result.getMediaType());
         assertEquals(representation.getLanguage(), result.getLanguage());
+        assertEquals(representation.getRemoteId(), result.getRemoteId());
         assertEquals(representation.getCreationDate(), result.getCreationDate());
         assertEquals(representation.getModificationDate(), result.getModificationDate());
         assertEquals(representation.getAdditional(), result.getAdditional());
@@ -183,6 +185,7 @@ public class RepresentationViewAssemblerTest {
         assertEquals(representation.getTitle(), result.getTitle());
         assertEquals(representation.getMediaType(), result.getMediaType());
         assertEquals(representation.getLanguage(), result.getLanguage());
+        assertEquals(representation.getRemoteId(), result.getRemoteId());
         assertEquals(representation.getCreationDate(), result.getCreationDate());
         assertEquals(representation.getModificationDate(), result.getModificationDate());
         assertEquals(representation.getAdditional(), result.getAdditional());
@@ -227,6 +230,7 @@ public class RepresentationViewAssemblerTest {
         desc.setTitle("title");
         desc.setMediaType("application/json");
         desc.setLanguage("EN");
+        desc.setRemoteId(URI.create("https://remote-id.com"));
         final var representation = representationFactory.create(desc);
 
         final var additional = new HashMap<String, String>();
