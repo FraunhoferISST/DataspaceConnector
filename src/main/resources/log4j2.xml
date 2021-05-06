@@ -29,7 +29,7 @@
         <Logger name="org.hibernate" level="error">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-        <!-- <Logger name="de.fraunhofer.isst.dataspaceconnector" level="info">
+        <!-- <Logger name="io.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger> -->
     </Loggers>
