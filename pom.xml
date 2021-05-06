@@ -140,7 +140,7 @@
 		<dependency>
 			<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
 			<artifactId>java</artifactId>
-			<version>4.0.4</version>
+			<version>4.0.6</version>
 		</dependency>
 
 		<dependency>
