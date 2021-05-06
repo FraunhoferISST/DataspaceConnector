@@ -1,13 +1,5 @@
 package de.fraunhofer.isst.dataspaceconnector.services.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.isst.dataspaceconnector.exceptions.PolicyRestrictionException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.ResourceNotFoundException;
 import de.fraunhofer.isst.dataspaceconnector.exceptions.UnreachableLineException;
@@ -32,6 +24,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -108,7 +108,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<URI> accessVerifier,
+    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput) throws PolicyRestrictionException {
 
@@ -169,7 +169,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
-    public InputStream getData(final PolicyVerifier<URI> accessVerifier,
+    public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException {
@@ -178,7 +178,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
 
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
-        if (accessVerifier.verify(artifact.getRemoteId()) == VerificationResult.DENIED) {
+        if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
             if (log.isInfoEnabled()) {
                 log.info("Access denied. [artifactId=({})]", artifactId);
             }
