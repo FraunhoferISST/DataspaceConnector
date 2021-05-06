@@ -82,7 +82,7 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
-		<modelmapper.version>2.3.9</modelmapper.version>
+		<modelmapper.version>2.4.2</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.19</postgres.version>
 		<springdoc-ui.version>1.5.4</springdoc-ui.version>
