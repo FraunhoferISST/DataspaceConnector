@@ -1,5 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import java.util.UUID;
+
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.RelationControllers;
 import de.fraunhofer.isst.dataspaceconnector.controller.resources.ResourceControllers.RequestedResourceController;
 import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
@@ -8,8 +10,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -35,13 +35,13 @@ public class RequestedResourceViewAssembler
         view.add(getSelfLink(resource.getId()));
 
         final var contractsLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
+                linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
                         .getResource(resource.getId(), null, null, null))
                         .withRel("contracts");
         view.add(contractsLink);
 
         final var representationLink =
-                linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
+                linkTo(methodOn(RelationControllers.RequestedResourcesToRepresentations.class)
                         .getResource(resource.getId(), null, null, null))
                         .withRel("representations");
         view.add(representationLink);

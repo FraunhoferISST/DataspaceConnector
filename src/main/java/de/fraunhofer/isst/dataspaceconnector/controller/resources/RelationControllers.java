@@ -1,5 +1,10 @@
 package de.fraunhofer.isst.dataspaceconnector.controller.resources;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import javax.validation.Valid;
+
 import de.fraunhofer.isst.dataspaceconnector.model.Agreement;
 import de.fraunhofer.isst.dataspaceconnector.model.Artifact;
 import de.fraunhofer.isst.dataspaceconnector.model.Catalog;
@@ -32,11 +37,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 public final class RelationControllers {
 
@@ -205,5 +205,21 @@ public final class RelationControllers {
     public static class OfferedResourcesToRepresentations
             extends BaseResourceChildController<AbstractResourceRepresentationLinker<
             OfferedResource>, Representation, RepresentationView> {
+    }
+
+    @RestController
+    @RequestMapping("/api/requests/{id}/contracts")
+    @Tag(name = "Resources", description = "Endpoints for linking contracts to resources")
+    public static class RequestedResourcesToContracts
+            extends BaseResourceChildController<AbstractResourceContractLinker<RequestedResource>,
+            Contract, ContractView> {
+    }
+
+    @RestController
+    @RequestMapping("/api/requests/{id}/representations")
+    @Tag(name = "Resources", description = "Endpoints for linking representations to resources")
+    public static class RequestedResourcesToRepresentations
+            extends BaseResourceChildController<AbstractResourceRepresentationLinker<
+            RequestedResource>, Representation, RepresentationView> {
     }
 }
