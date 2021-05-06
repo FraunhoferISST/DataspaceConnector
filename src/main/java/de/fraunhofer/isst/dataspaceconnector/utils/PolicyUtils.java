@@ -84,21 +84,21 @@ public final class PolicyUtils {
 
         for (final var permission : contract.getPermission()) {
             final var target = permission.getTarget();
-            if (element == target) {
+            if (target.equals(element)) {
                 rules.add(permission);
             }
         }
 
         for (final var prohibition : contract.getProhibition()) {
             final var target = prohibition.getTarget();
-            if (element == target) {
+            if (target.equals(element)) {
                 rules.add(prohibition);
             }
         }
 
         for (final var obligation : contract.getObligation()) {
             final var target = obligation.getTarget();
-            if (element == target) {
+            if (target.equals(element)) {
                 rules.add(obligation);
             }
         }

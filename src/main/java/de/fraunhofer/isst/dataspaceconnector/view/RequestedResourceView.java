@@ -31,6 +31,11 @@ public class RequestedResourceView extends RepresentationModel<RequestedResource
     private ZonedDateTime modificationDate;
 
     /**
+     * Remote id.
+     */
+    private URI remoteId;
+
+    /**
      * The title of the resource.
      */
     private String title;
