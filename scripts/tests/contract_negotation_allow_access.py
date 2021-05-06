@@ -26,8 +26,7 @@ def create_representation():
 
 
 def create_artifact():
-    with open('img.dump' ,"r") as fp:
-        response = s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"})
+    response = s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"})
     return response.headers['Location']
 
 
