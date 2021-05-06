@@ -60,9 +60,19 @@ public enum ErrorMessages {
     LIST_NULL("The passed list may not be null."),
 
     /**
-     * The passed uri may note be null.
+     * The passed uri may not be null.
      */
     URI_NULL("The passed uri may not be null"),
+
+    /**
+     * The passed url may not be null.
+     */
+    URL_NULL("The passed url may not be null"),
+
+    /**
+     * The passed http arguments may not be null.
+     */
+    HTTP_ARGS_NULL("The passed http arguments may not be null"),
 
     /**
      * One of the contracts is empty.

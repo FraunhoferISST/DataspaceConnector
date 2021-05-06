@@ -6,8 +6,11 @@ import java.net.URL;
 import java.util.Map;
 
 import de.fraunhofer.isst.dataspaceconnector.model.QueryInput;
+import de.fraunhofer.isst.dataspaceconnector.utils.ErrorMessages;
+import de.fraunhofer.isst.dataspaceconnector.utils.Utils;
 import kotlin.Pair;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Credentials;
@@ -19,14 +22,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
-public class HttpService { // TODO clean up code
+public class HttpService {
 
     /**
      * Service for building and sending http requests.
      */
     private final @NonNull de.fraunhofer.isst.ids.framework.communication.http.HttpService
             httpSvc;
-
 
     /**
      * The request method.
@@ -71,6 +73,7 @@ public class HttpService { // TODO clean up code
      * The response to a http request.
      */
     @Data
+    @EqualsAndHashCode
     public static class Response {
         /**
          * The response code.
@@ -89,8 +92,12 @@ public class HttpService { // TODO clean up code
      * @param args   The request arguments.
      * @return The response.
      * @throws IOException if the request failed.
+     * @throws IllegalArgumentException if any of the parameters is null.
      */
     public Response get(final URL target, final HttpArgs args) throws IOException {
+        Utils.requireNonNull(target, ErrorMessages.URI_NULL);
+        Utils.requireNonNull(args, ErrorMessages.HTTP_ARGS_NULL);
+
         final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
 
         if (args.getParams() != null) {
