@@ -106,7 +106,7 @@
 		<dms.version>2.2.0</dms.version>
 		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
-		<jxr.version>3.0.0</jxr.version>
+		<jxr.version>3.1.1</jxr.version>
 		<jdepend.version>2.0</jdepend.version>
 
 		<!-- Licence -->
