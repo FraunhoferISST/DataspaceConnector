@@ -88,7 +88,7 @@
 		<springdoc-ui.version>1.5.4</springdoc-ui.version>
 		<springdoc-security.version>1.5.4</springdoc-security.version>
 		<jsonld-java.version>0.13.0</jsonld-java.version>
-		<equalsverifier.version>3.5.5</equalsverifier.version>
+		<equalsverifier.version>3.6</equalsverifier.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
