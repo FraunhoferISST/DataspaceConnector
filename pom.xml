@@ -10,11 +10,11 @@
 		<!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>de.fraunhofer.isst</groupId>
-	<artifactId>dataspace-connector</artifactId>
+	<groupId>io</groupId>
+	<artifactId>dataspaceconnector</artifactId>
 	<version>${revision}</version>
 
-	<name>dataspace-connector</name>
+	<name>Dataspace Connector</name>
 	<description>IDS Connector originally developed by the Fraunhofer ISST</description>
 	<url>https://www.dataspace-connector.io/</url>
 	<inceptionYear>2020</inceptionYear>
@@ -357,14 +357,36 @@
 
 	<repositories>
 		<repository>
+			<id>Maven repository</id>
+			<url>https://repo1.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
 			<id>ids-public</id>
 			<name>isst-public</name>
 			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>eis-ids-public</id>
 			<name>maven-snapshots</name>
 			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
@@ -470,14 +492,14 @@
 				</dependencies>
 				<configuration>
 					<targetClasses>
-						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+						<param>io.dataspaceconnector*</param>
 					</targetClasses>
 					<targetTests>
-						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+						<param>io.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>de.fraunhofer.isst.dataspaceconnector.model.*Persistence*</param>
-						<param>de.fraunhofer.isst.dataspaceconnector.ConnectorApplicationTests</param>
+						<param>io.dataspaceconnector.model.*Persistence*</param>
+						<param>io.dataspaceconnector.ConnectorApplicationTests</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
@@ -592,7 +614,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
 				<configuration>
-					<configLocation>ci/checkstyle.xml</configLocation>
+					<configLocation>scripts/ci/checkstyle.xml</configLocation>
 				</configuration>
 				<reportSets>
 					<reportSet>
