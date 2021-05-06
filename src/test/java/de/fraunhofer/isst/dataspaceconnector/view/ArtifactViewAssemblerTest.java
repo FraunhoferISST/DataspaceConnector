@@ -1,5 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.view;
 
+import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -93,6 +94,7 @@ public class ArtifactViewAssemblerTest {
         assertEquals(artifact.getByteSize(), result.getByteSize());
         assertEquals(artifact.getCheckSum(), result.getCheckSum());
         assertEquals(artifact.getNumAccessed(), result.getNumAccessed());
+        assertEquals(artifact.getRemoteId(), result.getRemoteId());
         assertEquals(artifact.getCreationDate(), result.getCreationDate());
         assertEquals(artifact.getModificationDate(), result.getModificationDate());
         assertEquals(artifact.getAdditional(), result.getAdditional());
@@ -125,11 +127,12 @@ public class ArtifactViewAssemblerTest {
      *************************************************************************/
 
     private Artifact getArtifact() {
-        final var artifactDesc = new ArtifactDesc();
-        artifactDesc.setTitle("title");
-        artifactDesc.setAutomatedDownload(false);
-        artifactDesc.setValue("value");
-        final var artifact = artifactFactory.create(artifactDesc);
+        final var desc = new ArtifactDesc();
+        desc.setTitle("title");
+        desc.setAutomatedDownload(false);
+        desc.setValue("value");
+        desc.setRemoteId(URI.create("https://remote-id.com"));
+        final var artifact = artifactFactory.create(desc);
 
         final var date = ZonedDateTime.now(ZoneOffset.UTC);
         final var additional = new HashMap<String, String>();

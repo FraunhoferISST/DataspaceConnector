@@ -1,7 +1,7 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
+
 import java.net.URL;
 
 import lombok.AccessLevel;
@@ -14,7 +14,6 @@ import lombok.Setter;
  * Bundles information needed for accessing remote backends.
  */
 @Entity
-@Table
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

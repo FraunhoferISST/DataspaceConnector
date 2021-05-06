@@ -64,4 +64,10 @@ public class AbstractEntity implements Serializable {
     @ElementCollection
     @Setter(AccessLevel.PACKAGE)
     private Map<String, String> additional;
+
+    /**
+     * Whether this entity is considered deleted.
+     */
+    @Column(name = "deleted")
+    private boolean deleted;
 }

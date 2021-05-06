@@ -614,7 +614,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
 				<configuration>
-					<configLocation>ci/checkstyle.xml</configLocation>
+					<configLocation>scripts/ci/checkstyle.xml</configLocation>
 				</configuration>
 				<reportSets>
 					<reportSet>

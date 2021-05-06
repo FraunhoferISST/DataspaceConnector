@@ -3,6 +3,9 @@ package de.fraunhofer.isst.dataspaceconnector.model;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
+
+import org.hibernate.annotations.Where;
+
 import java.net.URI;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import lombok.Setter;
  */
 @Inheritance
 @Entity
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
