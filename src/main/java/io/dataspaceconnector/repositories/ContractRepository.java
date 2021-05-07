@@ -3,14 +3,13 @@ package io.dataspaceconnector.repositories;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.Contract;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link
- * Catalog}.
+ * io.dataspaceconnector.model.Catalog}.
  */
 @Repository
 public interface ContractRepository extends BaseEntityRepository<Contract> {
@@ -30,5 +29,4 @@ public interface ContractRepository extends BaseEntityRepository<Contract> {
             + "AND r.deleted = false "
             + "AND a.deleted = false")
     List<Contract> findAllByArtifactId(UUID artifactId);
-
 }

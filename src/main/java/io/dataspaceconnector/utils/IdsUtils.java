@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
 
@@ -69,7 +68,8 @@ public final class IdsUtils {
      *
      * @param artifact The ids artifact.
      * @return The ids artifact as rdf string.
-     * @throws ConstraintViolationException If the response could not be extracted.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *         If the response could not be extracted.
      */
     public static String toRdf(final Artifact artifact) throws RdfBuilderException {
         try {
