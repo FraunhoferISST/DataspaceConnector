@@ -74,6 +74,7 @@ public class ContractManager {
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
         final var valid = PolicyUtils.isMatchingTransferContract(artifacts, requestedArtifact);
+        // TODO Add validation of issuer connector.
         if (!valid) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
