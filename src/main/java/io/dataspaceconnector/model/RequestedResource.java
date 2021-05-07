@@ -1,10 +1,12 @@
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
@@ -41,6 +43,13 @@ public final class RequestedResource extends Resource {
     protected RequestedResource() {
         super();
     }
+
+    /**
+     * List of backends subscribed to resource updates.
+     */
+    @ElementCollection
+    @JsonProperty("subscribers")
+    private List<URI> subscribers;
 
     /**
      * The catalogs in which this resource is used.

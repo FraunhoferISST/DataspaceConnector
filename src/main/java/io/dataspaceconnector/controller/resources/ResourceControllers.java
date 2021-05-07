@@ -25,14 +25,7 @@ import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.services.BlockingArtifactReceiver;
-import io.dataspaceconnector.services.resources.AgreementService;
-import io.dataspaceconnector.services.resources.ArtifactService;
-import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.services.resources.ContractService;
-import io.dataspaceconnector.services.resources.RepresentationService;
-import io.dataspaceconnector.services.resources.ResourceService;
-import io.dataspaceconnector.services.resources.RetrievalInformation;
-import io.dataspaceconnector.services.resources.RuleService;
+import io.dataspaceconnector.services.resources.*;
 import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.utils.ValidationUtils;
 import io.dataspaceconnector.view.AgreementView;
@@ -50,19 +43,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 public final class ResourceControllers {
@@ -109,6 +95,20 @@ public final class ResourceControllers {
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
             RequestedResourceView,
             ResourceService<RequestedResource, RequestedResourceDesc>> {
+
+        @Autowired
+        private SubscriberNotificationService subscriberNotificationService;
+
+        @PutMapping("{id}/subscription")
+        public final ResponseEntity<String> subscribe (@RequestParam final URI uri, @PathVariable final UUID id) {
+            return subscriberNotificationService.subscribeUrl(id, uri);
+        }
+
+        @DeleteMapping("{id}/subscription")
+        public final ResponseEntity<String> unsubscribe (@RequestParam final URI uri, @PathVariable final UUID id) {
+            return subscriberNotificationService.deleteSubscribedUrl(id, uri);
+        }
+
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})

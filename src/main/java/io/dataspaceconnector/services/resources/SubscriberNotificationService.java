@@ -1,9 +1,8 @@
-package de.fraunhofer.isst.dataspaceconnector.services.resources;
+package io.dataspaceconnector.services.resources;
 
-import de.fraunhofer.isst.dataspaceconnector.model.RequestedResource;
-import de.fraunhofer.isst.dataspaceconnector.repositories.RequestedResourceRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.repositories.RequestedResourcesRepository;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,6 @@ import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -25,51 +23,47 @@ import java.util.UUID;
 /**
  * This class provides methods for handling subscriptions to a requested resource.
  */
+@Log4j2
 @Service
 public class SubscriberNotificationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriberNotificationService.class);
-
-    private final RequestedResourceRepository requestedResourceRepository;
+    private final RequestedResourcesRepository requestedResourcesRepository;
 
     @Autowired
-    public SubscriberNotificationService( RequestedResourceRepository requestedResourceRepository) {
-        this.requestedResourceRepository = requestedResourceRepository;
+    public SubscriberNotificationService(final RequestedResourcesRepository requestedResourcesRepository) {
+        this.requestedResourcesRepository = requestedResourcesRepository;
     }
 
     /**
      * Add a url to the subscribers of a given resource with uuid.
      *
      * @param uuid the uuid of the resource.
-     * @param data the url.
+     * @param uri the url.
      */
-    public ResponseEntity<String> subscribeUrl(UUID uuid, String data) {
-        Optional<RequestedResource> requestedResource = null;
+    public ResponseEntity<String> subscribeUrl(final UUID uuid, final URI uri) {
+        Optional<RequestedResource> requestedResource;
         try {
-            requestedResource = requestedResourceRepository.findById(uuid);
+            requestedResource = requestedResourcesRepository.findById(uuid);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
         if (requestedResource.isEmpty()){
-            LOGGER.error("Could not found resource for given ID.");
+            log.error("Could not found resource for given ID.");
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
-        try {
 
-            if (requestedResource.get().getSubscribers().contains(new URI(data))) {
-                return new ResponseEntity<>("The URL is already subscribed to the given resource.", HttpStatus.OK);
-            } else {
-                requestedResource.get().getSubscribers().add(new URI(data));
 
-                requestedResourceRepository.save(requestedResource.get());
-            }
-        } catch (URISyntaxException e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>("An internal error occurred.", HttpStatus.NOT_FOUND);
+        if (requestedResource.get().getSubscribers().contains(uri)) {
+            return new ResponseEntity<>("The URL is already subscribed to the given resource.", HttpStatus.OK);
+        } else {
+            requestedResource.get().getSubscribers().add(uri);
+
+            requestedResourcesRepository.save(requestedResource.get());
         }
+
 
         return new ResponseEntity<>("The URL was subscribed to the given resource ID.", HttpStatus.OK);
     }
@@ -78,32 +72,29 @@ public class SubscriberNotificationService {
      * Removes a url from the subscribers of a given resource with uuid.
      *
      * @param uuid the uuid of the resource.
-     * @param data the url.
+     * @param uri the url.
      */
-    public ResponseEntity<String> deleteSubscribedUrl(UUID uuid, String data) {
-        Optional<RequestedResource> requestedResource = null;
+    public ResponseEntity<String> deleteSubscribedUrl(UUID uuid, URI uri) {
+        Optional<RequestedResource> requestedResource;
         try {
-            requestedResource = requestedResourceRepository.findById(uuid);
+            requestedResource = requestedResourcesRepository.findById(uuid);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
         if (requestedResource.isEmpty()){
-            LOGGER.error("Could not found resource for given ID.");
+            log.error("Could not found resource for given ID.");
             return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
         }
 
-        try {
-            if (requestedResource.get().getSubscribers().contains(new URI(data))) {
-                requestedResource.get().getSubscribers().remove(new URI(data));
 
-                requestedResourceRepository.save(requestedResource.get());
-            }
-        } catch (URISyntaxException e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>("An internal error occurred.", HttpStatus.NOT_FOUND);
+        if (requestedResource.get().getSubscribers().contains(uri)) {
+            requestedResource.get().getSubscribers().remove(uri);
+
+            requestedResourcesRepository.save(requestedResource.get());
         }
+
 
         return new ResponseEntity<>("The URL was deleted from the subscribers list of the given resource ID.", HttpStatus.OK);
     }
@@ -142,7 +133,7 @@ public class SubscriberNotificationService {
                         .retryWhen(Retry
                                 .fixedDelay(numberOfRetries, Duration.ofSeconds(secondsBetweenRetries))
                                 .filter(this::shouldRetry))
-                        .doOnError(throwable -> LOGGER.error("Could not notify subscriber at: {}", uri));
+                        .doOnError(throwable -> log.error("Could not notify subscriber at: {}", uri));
             }
 
             /**
@@ -168,7 +159,7 @@ public class SubscriberNotificationService {
                         .parallel()
                         .runOn(Schedulers.boundedElastic())
                         .flatMap(uri ->
-                                notifySubscriber(uri, resource.getUuid())
+                                notifySubscriber(uri, resource.getId())
                         ).subscribe();
             }
         });
