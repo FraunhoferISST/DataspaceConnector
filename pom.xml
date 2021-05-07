@@ -82,13 +82,13 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.5.20</swagger-annotations.version>
 		<okhttp.version>4.2.2</okhttp.version>
-		<modelmapper.version>2.3.9</modelmapper.version>
+		<modelmapper.version>2.4.2</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.19</postgres.version>
 		<springdoc-ui.version>1.5.4</springdoc-ui.version>
 		<springdoc-security.version>1.5.4</springdoc-security.version>
 		<jsonld-java.version>0.13.0</jsonld-java.version>
-		<equalsverifier.version>3.5.5</equalsverifier.version>
+		<equalsverifier.version>3.6</equalsverifier.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
@@ -98,7 +98,7 @@
 		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-		<maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
+		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
 		<spotbugs.version>4.2.0</spotbugs.version>
 		<checkstyle.version>3.1.2</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
