@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -85,7 +84,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @param sort The sorting applied to the page.
      * @return The children of the resource.
      * @throws IllegalArgumentException if the ownerId is null.
-     * @throws ResourceNotFoundException if the ownerId is not known.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *          if the ownerId is not known.
      */
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")

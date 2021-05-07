@@ -1,5 +1,7 @@
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -8,12 +10,9 @@ import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-
-import java.net.URI;
 
 public final class PatternUtils {
 
@@ -25,7 +24,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildProvideAccessRule() {
         return new PermissionBuilder()
@@ -39,7 +39,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildProhibitAccessRule() {
         return new ProhibitionBuilder()
@@ -53,7 +54,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildNTimesUsageRule() {
         return new PermissionBuilder()
@@ -74,7 +76,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildDurationUsageRule() {
         return new PermissionBuilder()
@@ -93,7 +96,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildIntervalUsageRule() {
         return new PermissionBuilder()
@@ -118,7 +122,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildUsageUntilDeletionRule() {
         return new PermissionBuilder()
@@ -152,7 +157,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildUsageLoggingRule() {
         return new PermissionBuilder()
@@ -169,7 +175,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildUsageNotificationRule() {
         return new PermissionBuilder()
@@ -193,7 +200,8 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws ConstraintViolationException If the object creation fails.
+     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException
+     *          If the object creation fails.
      */
     public static Rule buildConnectorRestrictedUsageRule() {
         return new PermissionBuilder()

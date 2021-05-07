@@ -1,6 +1,5 @@
 package io.dataspaceconnector.view;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;

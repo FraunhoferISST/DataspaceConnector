@@ -1,8 +1,11 @@
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.UnsupportedPatternException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.utils.PolicyUtils;
@@ -11,10 +14,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 @Log4j2
@@ -69,7 +68,8 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
      * @param patterns   List of patterns that should be enforced.
      * @param artifactId The requested artifact.
      * @param remoteId   The remote id of the requested artifact.
-     * @throws UnsupportedPatternException If no suitable pattern could be found.
+     * @throws io.dataspaceconnector.exceptions.UnsupportedPatternException
+     *         If no suitable pattern could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
                                final URI remoteId) {

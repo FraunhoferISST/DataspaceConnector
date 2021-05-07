@@ -1,12 +1,11 @@
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import java.util.Set;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.AbstractEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Creates and modifies relations between two entity types.
@@ -26,7 +25,8 @@ public interface RelationService<K extends AbstractEntity, W extends AbstractEnt
      * @param pageable The {@link Pageable} object for getting only a page of objects.
      * @return The ids of the children.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if the ownerId entity does not exists.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if the ownerId entity does not exists.
      */
     Page<W> get(UUID ownerId, Pageable pageable);
 
@@ -36,7 +36,8 @@ public interface RelationService<K extends AbstractEntity, W extends AbstractEnt
      * @param ownerId  The id of the entity that the children should be added to.
      * @param entities The children to be added.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if any of the entities does not exists.
      */
     void add(UUID ownerId, Set<UUID> entities);
 
@@ -46,7 +47,8 @@ public interface RelationService<K extends AbstractEntity, W extends AbstractEnt
      * @param ownerId  The id of the entity that the children should be removed from.
      * @param entities The children to be removed.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if any of the entities does not exists.
      */
     void remove(UUID ownerId, Set<UUID> entities);
 
@@ -56,7 +58,8 @@ public interface RelationService<K extends AbstractEntity, W extends AbstractEnt
      * @param ownerId  The id of the entity whose children should be replaced.
      * @param entities The new children for the entity.
      * @throws IllegalArgumentException  if any of the passed arguments is null.
-     * @throws ResourceNotFoundException if any of the entities does not exists.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if any of the entities does not exists.
      */
     void replace(UUID ownerId, Set<UUID> entities);
 }
