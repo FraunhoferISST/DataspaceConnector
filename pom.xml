@@ -98,7 +98,7 @@
 		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-		<maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
+		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
 		<spotbugs.version>4.2.0</spotbugs.version>
 		<checkstyle.version>3.1.2</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
