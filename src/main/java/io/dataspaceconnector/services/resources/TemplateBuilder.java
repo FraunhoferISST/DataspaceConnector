@@ -1,5 +1,7 @@
 package io.dataspaceconnector.services.resources;
 
+import java.util.stream.Collectors;
+
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Contract;
@@ -22,8 +24,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 /**
  * Builds and links entities from templates.
@@ -57,7 +57,8 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for representation-artifact relations.
      */
-    private final @NonNull RelationServices.RepresentationArtifactLinker representationArtifactLinker;
+    private final @NonNull
+    RelationServices.RepresentationArtifactLinker representationArtifactLinker;
 
     /**
      * The service for contracts.
@@ -227,7 +228,8 @@ final class TemplateBuilderOfferedResource
             final AbstractResourceContractLinker<OfferedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
-            final ContractService contractService, final RelationServices.ContractRuleLinker contractRuleLinker,
+            final ContractService contractService,
+            final RelationServices.ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
                 representationService, representationArtifactLinker, contractService,
@@ -269,7 +271,8 @@ final class TemplateBuilderRequestedResource
             final AbstractResourceContractLinker<RequestedResource> resourceContractLinker,
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
-            final ContractService contractService, final RelationServices.ContractRuleLinker contractRuleLinker,
+            final ContractService contractService,
+            final RelationServices.ContractRuleLinker contractRuleLinker,
             final ArtifactService artifactService, final RuleService ruleService) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
                 representationService, representationArtifactLinker, contractService,

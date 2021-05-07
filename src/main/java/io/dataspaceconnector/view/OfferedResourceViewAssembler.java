@@ -1,5 +1,7 @@
 package io.dataspaceconnector.view;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.OfferedResourceController;
 import io.dataspaceconnector.model.OfferedResource;
@@ -9,8 +11,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -35,9 +35,10 @@ public class OfferedResourceViewAssembler
         view.add(getSelfLink(resource.getId()));
 
         final var contractsLink =
-                WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
-                        .getResource(resource.getId(), null, null, null))
-                                 .withRel("contracts");
+                WebMvcLinkBuilder
+                        .linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
+                                        .getResource(resource.getId(), null, null, null))
+                        .withRel("contracts");
         view.add(contractsLink);
 
         final var repLink =

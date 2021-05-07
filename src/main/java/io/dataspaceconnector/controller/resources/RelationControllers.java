@@ -1,9 +1,9 @@
 package io.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.Valid;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -173,15 +173,15 @@ public final class RelationControllers {
     @Tag(name = "Representations", description = "Endpoints for linking artifacts to "
             + "representations")
     public static class RepresentationsToArtifacts
-            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker, Artifact,
-            ArtifactView> {
+            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker,
+            Artifact, ArtifactView> {
     }
 
     @RestController
     @RequestMapping("/api/contracts/{id}/rules")
     @Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
-    public static class ContractsToRules extends BaseResourceChildController<RelationServices.ContractRuleLinker,
-            ContractRule, ContractRuleView> {
+    public static class ContractsToRules extends BaseResourceChildController<
+            RelationServices.ContractRuleLinker, ContractRule, ContractRuleView> {
     }
 
     @RestController

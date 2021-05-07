@@ -83,7 +83,8 @@ public final class ContractAgreementService
      * @return True if the response type is as expected.
      * @throws MessageResponseException if the response could not be read.
      */
-    public boolean validateResponse(final Map<String, String> response) throws MessageResponseException {
+    public boolean validateResponse(final Map<String, String> response)
+            throws MessageResponseException {
         return isValidResponseType(response);
     }
 }
