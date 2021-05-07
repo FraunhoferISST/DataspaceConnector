@@ -80,7 +80,7 @@
 		<ids-framework.version>4.0.7</ids-framework.version>
 		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
-		<swagger-annotations.version>1.5.20</swagger-annotations.version>
+		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
 		<modelmapper.version>2.4.2</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
