@@ -23,6 +23,7 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                 .antMatchers("/api/ids/data").anonymous()
+                .antMatchers("/").anonymous()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/actuator/**").hasRole("ADMIN")
                 .antMatchers("/database/**").hasRole("ADMIN")

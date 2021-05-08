@@ -1,5 +1,18 @@
 package io.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -18,19 +31,6 @@ import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Log4j2
 public final class PolicyUtils {
@@ -84,21 +84,21 @@ public final class PolicyUtils {
 
         for (final var permission : contract.getPermission()) {
             final var target = permission.getTarget();
-            if (target.equals(element)) {
+            if (target != null && target.equals(element)) {
                 rules.add(permission);
             }
         }
 
         for (final var prohibition : contract.getProhibition()) {
             final var target = prohibition.getTarget();
-            if (target.equals(element)) {
+            if (target != null && target.equals(element)) {
                 rules.add(prohibition);
             }
         }
 
         for (final var obligation : contract.getObligation()) {
             final var target = obligation.getTarget();
-            if (target.equals(element)) {
+            if (target != null && target.equals(element)) {
                 rules.add(obligation);
             }
         }

@@ -266,11 +266,11 @@ public class ContractFactoryTest {
         /* ASSERT */
         Assertions.assertFalse(result);
     }
-    
+
     /**
      * provider.
      */
-    
+
     @Test
     public void create_nullProvider_defaultProvider() {
         /* ARRANGE */

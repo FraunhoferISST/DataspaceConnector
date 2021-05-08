@@ -123,7 +123,7 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         assertEquals(0, result.getRepresentations().size());
     }
-    
+
     /**
      * remoteId.
      */
@@ -241,7 +241,7 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         Assertions.assertFalse(result);
     }
-    
+
     /**
      * autoDownload.
      */
@@ -290,7 +290,7 @@ public class ArtifactFactoryTest {
         /* ASSERT */
         Assertions.assertFalse(result);
     }
-    
+
     /**
      * additional.
      */
