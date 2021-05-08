@@ -3,7 +3,8 @@ package io.dataspaceconnector.services.usagecontrol;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -68,11 +69,11 @@ public class DataProvisionVerifier implements PolicyVerifier<VerificationInput> 
                                final URI target, final URI issuerConnector,
                                final ContractAgreement agreement)
             throws PolicyRestrictionException {
-        final var rules = PolicyUtils.getRulesForTargetId(agreement, target);
+        final var rules = ContractUtils.getRulesForTargetId(agreement, target);
 
         // Check the policy of each rule.
         for (final var rule : rules) {
-            final var pattern = PolicyUtils.getPatternByRule(rule);
+            final var pattern = RuleUtils.getPatternByRule(rule);
             // Enforce only a set of patterns.
             if (patterns.contains(pattern)) {
                 ruleValidator.validatePolicy(pattern, rule, target, issuerConnector);

@@ -146,7 +146,7 @@ public final class TemplateUtils {
      */
     private static List<RuleTemplate> getRuleTemplates(final Contract contract) {
         final var list = new ArrayList<RuleTemplate>();
-        final var rules = PolicyUtils.extractRulesFromContract(contract);
+        final var rules = ContractUtils.extractRulesFromContract(contract);
 
         for (final var rule : rules) {
             final var template = MappingUtils.fromIdsRule(rule);

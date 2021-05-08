@@ -18,7 +18,7 @@ import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.dataspaceconnector.utils.PatternUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
@@ -132,7 +132,7 @@ public class ExampleController {
             @RequestBody final String ruleAsString) {
         try {
             final var rule = deserializationService.getRule(ruleAsString);
-            return ResponseEntity.ok(PolicyUtils.getPatternByRule(rule));
+            return ResponseEntity.ok(RuleUtils.getPatternByRule(rule));
         } catch (ContractException exception) {
             return ControllerUtils.respondPatternNotIdentified(exception);
         } catch (Exception exception) {

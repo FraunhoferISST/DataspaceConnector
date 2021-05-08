@@ -9,7 +9,7 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.types.LogMessageService;
 import io.dataspaceconnector.services.messages.types.NotificationService;
 import io.dataspaceconnector.utils.IdsUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -93,7 +93,7 @@ public class PolicyExecutionService {
      */
     public void reportDataAccess(final Rule rule, final URI element)
             throws PolicyExecutionException {
-        final var recipient = PolicyUtils.getEndpoint(rule);
+        final var recipient = RuleUtils.getEndpoint(rule);
         final var logItem = buildLog(element).toString();
 
         notificationService.sendMessage(URI.create(recipient), logItem);
