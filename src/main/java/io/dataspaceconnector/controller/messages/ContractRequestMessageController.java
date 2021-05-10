@@ -193,9 +193,6 @@ public class ContractRequestMessageController {
 
                 // Read and process the response message. Save resource, recipient, and agreement
                 // id to database.
-                // TODO Check if a resource with remoteId is already stored on consumer side,
-                //  if yes, do NOT create a new resource, but update it and all children
-                // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
                 persistenceSvc.saveMetadata(response, artifacts, download, recipient);
             }
 
