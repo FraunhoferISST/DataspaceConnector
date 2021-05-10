@@ -1,6 +1,6 @@
 package de.fraunhofer.isst.dataspaceconnector.model;
 
-public enum BrokerStatus {
+public enum RegisterStatus {
 
     REGISTERED,
     UNREGISTERED

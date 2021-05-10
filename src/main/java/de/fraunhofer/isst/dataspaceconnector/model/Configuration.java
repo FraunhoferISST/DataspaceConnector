@@ -41,4 +41,13 @@ public class Configuration extends AbstractEntity {
     @OneToOne
     private BrokerCatalog brokerCatalog;
 
+    @OneToOne
+    private AppStoreCatalog appStoreCatalog;
+
+    @OneToMany
+    private List<App> appList;
+
+    @OneToOne
+    private ClearingHouseCatalog clearingHouseCatalog;
+
 }
