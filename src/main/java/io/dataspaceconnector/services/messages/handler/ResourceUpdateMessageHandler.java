@@ -1,6 +1,14 @@
 package io.dataspaceconnector.services.messages.handler;
 
+import java.io.IOException;
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
@@ -8,19 +16,12 @@ import io.dataspaceconnector.services.EntityUpdateService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
+import io.dataspaceconnector.services.resources.SubscriberNotificationService;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a
@@ -55,6 +56,11 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
      */
     private final @NonNull
     EntityUpdateService updateService;
+
+    /**
+     * Service for notifying subscribers when a requested resource has been updated.
+     */
+    private final @NonNull SubscriberNotificationService notificationService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -125,6 +131,9 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
 
             // Update requested resource with received information.
             updateService.updateResource(resource);
+
+            // Notify all backends subscribed for updates to the requested resource.
+            notificationService.notifySubscribers(resourceId);
         } catch (IllegalArgumentException e) {
             return responseService.handleIllegalArgumentException(e, payload, issuer, messageId);
         }
