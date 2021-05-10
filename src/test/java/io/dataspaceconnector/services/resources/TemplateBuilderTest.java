@@ -74,8 +74,8 @@ class TemplateBuilderTest {
 
         /* ASSERT */
         assertNotNull(result);
-        Mockito.verify(offeredResourceRepresentationLinker, Mockito.atLeastOnce()).replace(Mockito.any(), Mockito.any());
-        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).replace(Mockito.any(), Mockito.any());
+        Mockito.verify(offeredResourceRepresentationLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
+        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
     }
 
     /**
