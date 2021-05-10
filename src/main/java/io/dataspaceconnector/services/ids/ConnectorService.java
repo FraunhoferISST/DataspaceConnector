@@ -173,10 +173,9 @@ public class ConnectorService {
      * @return The ids resource.
      */
     public Resource getOfferedResourceById(final URI resourceId) {
-        // TODO The filter not working
         final var resource = offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
-                .filter(x -> x.getId().toString().contains(resourceId.toString()))
+                .filter(x -> resourceId.toString().contains(x.getId().toString()))
                 .findAny();
 
         return resource.map(resourceBuilder::create).orElse(null);
