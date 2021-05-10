@@ -1,12 +1,12 @@
 package io.dataspaceconnector.model.templates;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.ArtifactDesc;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 
 /**

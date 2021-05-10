@@ -1,30 +1,11 @@
 package io.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.*;
 import io.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceContractLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.services.resources.RelationServices;
-import io.dataspaceconnector.view.AgreementView;
-import io.dataspaceconnector.view.ArtifactView;
-import io.dataspaceconnector.view.CatalogView;
-import io.dataspaceconnector.view.ContractRuleView;
-import io.dataspaceconnector.view.ContractView;
-import io.dataspaceconnector.view.OfferedResourceView;
-import io.dataspaceconnector.view.RepresentationView;
-import io.dataspaceconnector.view.RequestedResourceView;
+import io.dataspaceconnector.view.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,6 +18,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 public final class RelationControllers {
 

@@ -1,14 +1,9 @@
 package io.dataspaceconnector.model;
 
+import lombok.*;
+
 import javax.persistence.Entity;
-
 import java.net.URL;
-
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 /**
  * Bundles information needed for accessing remote backends.

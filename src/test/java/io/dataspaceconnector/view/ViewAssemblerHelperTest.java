@@ -1,16 +1,14 @@
 package io.dataspaceconnector.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {ViewAssemblerHelper.class})
 public class ViewAssemblerHelperTest {

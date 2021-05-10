@@ -1,10 +1,5 @@
 package io.dataspaceconnector.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
-
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
@@ -16,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.

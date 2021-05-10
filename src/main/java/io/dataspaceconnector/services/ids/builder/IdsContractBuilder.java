@@ -1,24 +1,20 @@
 package io.dataspaceconnector.services.ids.builder;
 
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import de.fraunhofer.iais.eis.ContractOffer;
-import de.fraunhofer.iais.eis.ContractOfferBuilder;
-import de.fraunhofer.iais.eis.Duty;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Converts DSC contracts to ids contract offers.

@@ -1,8 +1,5 @@
 package io.dataspaceconnector.services.messages.handler;
 
-import java.io.IOException;
-import java.net.URI;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -12,13 +9,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.exceptions.ContractException;
-import io.dataspaceconnector.exceptions.InvalidInputException;
-import io.dataspaceconnector.exceptions.MessageBuilderException;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.exceptions.*;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.services.EntityResolver;
@@ -35,6 +26,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * This @{@link ArtifactRequestHandler} handles all incoming messages that have a

@@ -1,24 +1,14 @@
 package io.dataspaceconnector.model;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.exceptions.ResourceException;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
+
+import javax.persistence.*;
+import java.net.URI;
+import java.util.List;
 
 /**
  * A resource describes offered or requested data.

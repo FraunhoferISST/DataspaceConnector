@@ -1,13 +1,13 @@
 package io.dataspaceconnector.repositories;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Artifact;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The repository containing all objects of type {@link Artifact}.

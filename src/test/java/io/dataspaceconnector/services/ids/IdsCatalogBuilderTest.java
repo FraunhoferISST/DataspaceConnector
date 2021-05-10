@@ -1,5 +1,13 @@
 package io.dataspaceconnector.services.ids;
 
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.services.ids.builder.*;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -7,45 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.CatalogFactory;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractFactory;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.OfferedResourceFactory;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RepresentationFactory;
-import io.dataspaceconnector.model.Resource;
-import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = { CatalogFactory.class, OfferedResourceFactory.class,
         RepresentationFactory.class, ArtifactFactory.class, ContractFactory.class,

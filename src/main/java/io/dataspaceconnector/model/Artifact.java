@@ -1,19 +1,13 @@
 package io.dataspaceconnector.model;
 
+import lombok.*;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
-
-import org.hibernate.annotations.Where;
-
 import java.net.URI;
 import java.util.List;
-
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 /**
  * An artifact stores and encapsulates data.

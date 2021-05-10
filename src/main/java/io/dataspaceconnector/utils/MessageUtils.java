@@ -1,17 +1,12 @@
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.ArtifactRequestMessage;
-import de.fraunhofer.iais.eis.DescriptionRequestMessage;
-import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.ResourceUpdateMessage;
+import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageRequestException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;

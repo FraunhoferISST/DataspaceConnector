@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @Relation(collectionRelation = "artifacts", itemRelation = "artifact")
-public class ArtifactView  extends RepresentationModel<ArtifactView> {
+public class ArtifactView extends RepresentationModel<ArtifactView> {
     /**
      * The creation date.
      */

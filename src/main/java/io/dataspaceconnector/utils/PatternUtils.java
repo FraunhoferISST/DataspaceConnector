@@ -1,18 +1,11 @@
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.BinaryOperator;
-import de.fraunhofer.iais.eis.ConstraintBuilder;
-import de.fraunhofer.iais.eis.DutyBuilder;
-import de.fraunhofer.iais.eis.LeftOperand;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.ProhibitionBuilder;
-import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+
+import java.net.URI;
 
 public final class PatternUtils {
 

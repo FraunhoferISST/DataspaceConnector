@@ -1,13 +1,16 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
-
+package io.dataspaceconnector.model;
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "configuration")
+@SQLDelete(sql = "UPDATE configuration SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
@@ -19,16 +22,17 @@ public class Configuration extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
-    private String logLevel;
+    @Enumerated(EnumType.STRING)
+    private LogLevel logLevel;
 
-    private String connectorStats;
+    @Enumerated(EnumType.STRING)
+    private ConnectorStatus connectorStatus;
 
-    private String deployMode;
+    @Enumerated(EnumType.STRING)
+    private ConnectorDeployMode deployMode;
 
     @OneToMany
     private List<Proxy> proxy;
-
-    private String description;
 
     private String trustStore;
 
@@ -37,17 +41,4 @@ public class Configuration extends AbstractEntity {
     private String keyStore;
 
     private String keyStorePassword;
-
-    @OneToOne
-    private BrokerCatalog brokerCatalog;
-
-    @OneToOne
-    private AppStoreCatalog appStoreCatalog;
-
-    @OneToMany
-    private List<App> appList;
-
-    @OneToOne
-    private ClearingHouseCatalog clearingHouseCatalog;
-
 }

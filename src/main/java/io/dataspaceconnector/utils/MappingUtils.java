@@ -1,5 +1,13 @@
 package io.dataspaceconnector.utils;
 
+import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.*;
+import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.templates.*;
+
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
@@ -7,23 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import de.fraunhofer.iais.eis.Artifact;
-import de.fraunhofer.iais.eis.ConnectorEndpoint;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.templates.ArtifactTemplate;
-import io.dataspaceconnector.model.templates.ContractTemplate;
-import io.dataspaceconnector.model.templates.RepresentationTemplate;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.model.templates.RuleTemplate;
 
 /**
  * Maps ids resources to internal resources.

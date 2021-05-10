@@ -1,13 +1,13 @@
 package io.dataspaceconnector.services.resources;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.Resource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Base class for handling resource-contract relations.

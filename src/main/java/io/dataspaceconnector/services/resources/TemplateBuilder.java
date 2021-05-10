@@ -1,29 +1,16 @@
 package io.dataspaceconnector.services.resources;
 
-import java.util.stream.Collectors;
-
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.Resource;
-import io.dataspaceconnector.model.ResourceDesc;
-import io.dataspaceconnector.model.templates.ArtifactTemplate;
-import io.dataspaceconnector.model.templates.ContractTemplate;
-import io.dataspaceconnector.model.templates.RepresentationTemplate;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.model.templates.RuleTemplate;
+import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.templates.*;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 /**
  * Builds and links entities from templates.

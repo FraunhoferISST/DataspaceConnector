@@ -1,15 +1,6 @@
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.AbstractConstraint;
-import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.BinaryOperator;
-import de.fraunhofer.iais.eis.ConstraintImpl;
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.Duty;
-import de.fraunhofer.iais.eis.LeftOperand;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.Prohibition;
-import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.*;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
 import io.dataspaceconnector.model.TimeInterval;

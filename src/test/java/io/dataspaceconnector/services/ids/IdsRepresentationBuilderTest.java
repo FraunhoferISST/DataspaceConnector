@@ -1,20 +1,7 @@
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Language;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RepresentationFactory;
+import io.dataspaceconnector.model.*;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.utils.IdsUtils;
@@ -23,11 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {RepresentationFactory.class, ArtifactFactory.class,
         IdsRepresentationBuilder.class, IdsArtifactBuilder.class})

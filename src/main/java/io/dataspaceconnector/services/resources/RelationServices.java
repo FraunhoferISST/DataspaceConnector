@@ -1,13 +1,6 @@
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.*;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,5 +1,7 @@
 package io.dataspaceconnector.controller;
 
+import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -8,9 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
 
 /**
  * Controller for global handling of runtime exceptions.

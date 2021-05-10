@@ -1,12 +1,12 @@
 package io.dataspaceconnector.services.resources;
 
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import io.dataspaceconnector.model.AbstractEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /*
     NOTE: All entities in our model use n to m relationships. Due to the use of JPA

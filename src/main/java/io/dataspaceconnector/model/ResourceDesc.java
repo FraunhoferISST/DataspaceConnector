@@ -1,10 +1,10 @@
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Base class for describing resources.

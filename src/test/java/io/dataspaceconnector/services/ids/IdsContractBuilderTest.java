@@ -1,5 +1,18 @@
 package io.dataspaceconnector.services.ids;
 
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
+import io.dataspaceconnector.utils.IdsUtils;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -7,30 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import de.fraunhofer.iais.eis.Action;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractFactory;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
-import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.utils.IdsUtils;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {ContractFactory.class, ContractRuleFactory.class,
         IdsContractBuilder.class, IdsPermissionBuilder.class, IdsProhibitionBuilder.class,

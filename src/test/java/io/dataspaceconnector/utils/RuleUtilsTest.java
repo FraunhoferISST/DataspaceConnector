@@ -1,28 +1,17 @@
  package io.dataspaceconnector.utils;
 
- import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.Duty;
-import de.fraunhofer.iais.eis.DutyBuilder;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionBuilder;
-import de.fraunhofer.iais.eis.Prohibition;
-import de.fraunhofer.iais.eis.ProhibitionBuilder;
-import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.Contract;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
+ import de.fraunhofer.iais.eis.*;
+ import de.fraunhofer.iais.eis.util.Util;
+ import io.dataspaceconnector.model.Contract;
+ import lombok.SneakyThrows;
+ import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+ import java.net.URI;
+ import java.util.ArrayList;
+ import java.util.List;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+ import static org.junit.jupiter.api.Assertions.*;
 
  class RuleUtilsTest {
 

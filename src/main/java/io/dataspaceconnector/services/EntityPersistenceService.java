@@ -1,14 +1,5 @@
 package io.dataspaceconnector.services;
 
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
@@ -34,6 +25,11 @@ import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.*;
 
 @Log4j2
 @Service

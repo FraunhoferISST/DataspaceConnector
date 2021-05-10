@@ -2,24 +2,8 @@ package io.dataspaceconnector.utils;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.view.AgreementViewAssembler;
-import io.dataspaceconnector.view.ArtifactViewAssembler;
-import io.dataspaceconnector.view.CatalogViewAssembler;
-import io.dataspaceconnector.view.ContractRuleViewAssembler;
-import io.dataspaceconnector.view.ContractViewAssembler;
-import io.dataspaceconnector.view.OfferedResourceViewAssembler;
-import io.dataspaceconnector.view.RepresentationViewAssembler;
-import io.dataspaceconnector.view.RequestedResourceViewAssembler;
-import io.dataspaceconnector.view.SelfLinking;
+import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.view.*;
 
 import java.net.URI;
 

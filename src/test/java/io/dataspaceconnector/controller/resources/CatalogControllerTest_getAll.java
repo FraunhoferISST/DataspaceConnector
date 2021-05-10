@@ -1,7 +1,11 @@
 package io.dataspaceconnector.controller.resources;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.view.CatalogView;
+import io.dataspaceconnector.view.CatalogViewAssembler;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,12 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.view.CatalogView;
-import io.dataspaceconnector.view.CatalogViewAssembler;
-import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.utils.Utils;
-import lombok.SneakyThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {ResourceControllers.CatalogController.class})
 class CatalogControllerTest_getAll {

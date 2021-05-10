@@ -2,8 +2,8 @@ package io.dataspaceconnector.controller.resources;
 
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.view.RequestedResourceViewAssembler;
 import io.dataspaceconnector.services.resources.ResourceService;
+import io.dataspaceconnector.view.RequestedResourceViewAssembler;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;

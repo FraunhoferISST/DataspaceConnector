@@ -1,12 +1,10 @@
 package io.dataspaceconnector.services.messages;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,10 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.net.URI;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {MessageResponseService.class})
 class MessageResponseServiceTest {

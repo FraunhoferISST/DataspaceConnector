@@ -1,8 +1,8 @@
 package io.dataspaceconnector.view;
 
-import java.util.UUID;
-
 import org.springframework.hateoas.Link;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 

@@ -1,11 +1,11 @@
 package io.dataspaceconnector.utils;
 
+import io.dataspaceconnector.model.QueryInput;
+import org.junit.jupiter.api.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import io.dataspaceconnector.model.QueryInput;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

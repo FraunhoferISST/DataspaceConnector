@@ -1,8 +1,5 @@
 package io.dataspaceconnector.services.ids.builder;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -13,6 +10,9 @@ import io.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
 
 /**
  * Converts DSC resource to ids resource.

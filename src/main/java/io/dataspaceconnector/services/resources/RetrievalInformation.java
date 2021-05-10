@@ -1,12 +1,12 @@
 package io.dataspaceconnector.services.resources;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.QueryInput;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 
 /**

@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.dataspaceconnector.utils.RuleUtils.compareObligations;
-import static io.dataspaceconnector.utils.RuleUtils.comparePermissions;
-import static io.dataspaceconnector.utils.RuleUtils.compareProhibitions;
+import static io.dataspaceconnector.utils.RuleUtils.*;
 
 public final class ContractUtils {
 

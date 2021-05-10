@@ -1,6 +1,8 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
+package io.dataspaceconnector.model;
 
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -10,7 +12,9 @@ import java.net.URI;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "proxy")
+@SQLDelete(sql = "UPDATE proxy SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)

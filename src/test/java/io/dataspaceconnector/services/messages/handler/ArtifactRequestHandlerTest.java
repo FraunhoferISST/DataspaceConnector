@@ -1,23 +1,19 @@
 package io.dataspaceconnector.services.messages.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
-import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

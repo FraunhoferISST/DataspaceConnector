@@ -1,12 +1,8 @@
 package io.dataspaceconnector.model;
 
-import java.time.ZonedDateTime;
+import lombok.*;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import java.time.ZonedDateTime;
 
 /**
  * Inner class for a time interval format.

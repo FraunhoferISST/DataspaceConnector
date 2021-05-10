@@ -1,9 +1,9 @@
 package io.dataspaceconnector.view;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
+import io.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
 import io.dataspaceconnector.model.ContractRule;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
-import lombok.NoArgsConstructor;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for an contract rule.

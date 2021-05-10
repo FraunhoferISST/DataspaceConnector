@@ -1,11 +1,11 @@
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
 
 /**
  * Describes a contract's properties.

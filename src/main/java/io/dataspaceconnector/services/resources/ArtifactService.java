@@ -1,22 +1,8 @@
 package io.dataspaceconnector.services.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.LocalData;
-import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.model.RemoteData;
+import io.dataspaceconnector.model.*;
 import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.repositories.DataRepository;
 import io.dataspaceconnector.services.ArtifactRetriever;
@@ -31,6 +17,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.

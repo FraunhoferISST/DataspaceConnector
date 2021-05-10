@@ -1,8 +1,5 @@
 package io.dataspaceconnector.services.messages.types;
 
-import java.net.URI;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
@@ -17,6 +14,9 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.Map;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 

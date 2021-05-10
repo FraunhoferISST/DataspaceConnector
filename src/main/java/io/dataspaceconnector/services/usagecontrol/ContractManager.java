@@ -1,20 +1,6 @@
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.ContractAgreementBuilder;
-import de.fraunhofer.iais.eis.ContractRequest;
-import de.fraunhofer.iais.eis.ContractRequestBuilder;
-import de.fraunhofer.iais.eis.Duty;
-import de.fraunhofer.iais.eis.DutyImpl;
-import de.fraunhofer.iais.eis.Permission;
-import de.fraunhofer.iais.eis.PermissionImpl;
-import de.fraunhofer.iais.eis.Prohibition;
-import de.fraunhofer.iais.eis.ProhibitionImpl;
-import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
@@ -31,6 +17,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service

@@ -1,12 +1,12 @@
 package io.dataspaceconnector.model.templates;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.AgreementDesc;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 /**
  * Describes a agreement and all its dependencies.

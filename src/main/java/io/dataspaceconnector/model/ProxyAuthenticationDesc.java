@@ -1,4 +1,4 @@
-package de.fraunhofer.isst.dataspaceconnector.model;
+package io.dataspaceconnector.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
