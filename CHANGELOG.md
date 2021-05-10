@@ -43,6 +43,9 @@ All notable changes to this project will be documented in this file.
   * Separate management of resources and its relations.
   * Define clear interfaces between data model and the IDS Infomodel objects.
   * Add IDS object builder classes.
+    * Build ids:Resource only if at least 1 representation and 1 contract is present.
+    * Build ids:Representation only if at least 1 artifact is present.
+    * Build ids:ContractOffer only if at least 1 rule is present.
   * Move remote information from `BackendSource` to `Artifact`.
 - Strict implementation of model view controller pattern for data management.
   * Controller methods for resources and representations.

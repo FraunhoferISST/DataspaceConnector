@@ -1,7 +1,28 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.ArtifactFactory;
+import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.RepresentationFactory;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.utils.IdsUtils;
@@ -17,7 +38,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {RepresentationFactory.class, ArtifactFactory.class,
         IdsRepresentationBuilder.class, IdsArtifactBuilder.class})
@@ -104,7 +129,7 @@ public class IdsRepresentationBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnRepresentationWithoutArtifacts() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
         final var representation = getRepresentation();
 
@@ -112,17 +137,7 @@ public class IdsRepresentationBuilderTest {
         final var idsRepresentation = idsRepresentationBuilder.create(representation, 0);
 
         /* ASSERT */
-        assertTrue(idsRepresentation.getId().isAbsolute());
-        assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
-
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
-        assertEquals(Language.EN, idsRepresentation.getLanguage());
-        assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
-        assertEquals(standard, idsRepresentation.getRepresentationStandard());
-        assertNull(idsRepresentation.getProperties());
-
-        assertNull(idsRepresentation.getInstance());
+        assertNull(idsRepresentation);
     }
 
     @Test

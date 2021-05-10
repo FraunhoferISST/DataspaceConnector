@@ -1,11 +1,56 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.resources;
 
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.AgreementDesc;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.CatalogDesc;
+import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.ContractDesc;
+import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.services.BlockingArtifactReceiver;
-import io.dataspaceconnector.services.resources.*;
+import io.dataspaceconnector.services.resources.AgreementService;
+import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.services.resources.ContractService;
+import io.dataspaceconnector.services.resources.RepresentationService;
+import io.dataspaceconnector.services.resources.ResourceService;
+import io.dataspaceconnector.services.resources.RetrievalInformation;
+import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.utils.ValidationUtils;
-import io.dataspaceconnector.view.*;
+import io.dataspaceconnector.view.AgreementView;
+import io.dataspaceconnector.view.ArtifactView;
+import io.dataspaceconnector.view.CatalogView;
+import io.dataspaceconnector.view.ContractRuleView;
+import io.dataspaceconnector.view.ContractView;
+import io.dataspaceconnector.view.OfferedResourceView;
+import io.dataspaceconnector.view.RepresentationView;
+import io.dataspaceconnector.view.RequestedResourceView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,7 +62,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,7 +135,7 @@ public final class ResourceControllers {
 
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
+    @Tag(name = "Agreements", description = "Endpoints for contract/policy handling")
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override

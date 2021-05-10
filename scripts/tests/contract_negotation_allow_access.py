@@ -1,3 +1,19 @@
+#
+# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 import requests
 import pprint
 import json
@@ -126,20 +142,11 @@ add_contract_to_resource(offers, contract)
 add_rule_to_contract(contract, use_rule)
 
 # Call description
-response = descriptionRequest("https://localhost:8090/api/ids/data", None)
-pprint.pprint(str(response.content))
-with open("description.json", "wb") as fp:
-     fp.write(response.content)
-
 response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
-pprint.pprint(str(response.content))
-with open("offers.json", "wb") as fp:
-    fp.write(response.content)
+offer = json.loads(response.text)
 
 # Negotiate contract
-with open("offers.json", "r") as fp:
-    obj = json.load(fp)['ids:contractOffer'][0]['ids:permission'][0]
-    obj['ids:target'] = artifact
-    response = contractRequest(
-        "https://localhost:8080/api/ids/data", offers, artifact, False, obj)
-    pprint.pprint(str(response.content))
+obj = offer['ids:contractOffer'][0]['ids:permission'][0]
+obj['ids:target'] = artifact
+response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+pprint.pprint(str(response.content))
