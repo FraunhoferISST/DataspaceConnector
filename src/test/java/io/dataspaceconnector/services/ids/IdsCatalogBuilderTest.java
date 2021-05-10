@@ -1,12 +1,21 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -35,11 +44,17 @@ import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -182,14 +197,11 @@ public class IdsCatalogBuilderTest {
         assertNull(idsCatalog.getRequestedResource());
 
         final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(1, offeredResources.size());
-
-        assertNull(offeredResources.get(0).getRepresentation());
-        assertNull(offeredResources.get(0).getContractOffer());
+        assertEquals(0, offeredResources.size());
     }
 
     @Test
-    public void create_maxDepth2_returnCatalogWithoutArtifactsAndRules() {
+    public void create_maxDepth2_returnCatalogWithoutResources() {
         /* ARRANGE */
         final var catalog = getCatalog();
 
@@ -204,17 +216,7 @@ public class IdsCatalogBuilderTest {
         assertNull(idsCatalog.getRequestedResource());
 
         final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(1, offeredResources.size());
-
-        final var representations = offeredResources.get(0).getRepresentation();
-        assertEquals(1, representations.size());
-        assertNull(representations.get(0).getInstance());
-
-        final var contracts = offeredResources.get(0).getContractOffer();
-        assertEquals(1, contracts.size());
-        assertNull(contracts.get(0).getPermission());
-        assertNull(contracts.get(0).getProhibition());
-        assertNull(contracts.get(0).getProhibition());
+        assertEquals(0, offeredResources.size());
     }
 
     @Test

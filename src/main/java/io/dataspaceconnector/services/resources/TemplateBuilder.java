@@ -1,8 +1,22 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.resources;
 
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
@@ -97,8 +111,8 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
                 .collect(Collectors.toSet());
         final var resource = buildResource(template);
 
-        resourceRepresentationLinker.replace(resource.getId(), representationIds);
-        resourceContractLinker.replace(resource.getId(), contractIds);
+        resourceRepresentationLinker.add(resource.getId(), representationIds);
+        resourceContractLinker.add(resource.getId(), contractIds);
 
         return resource;
     }
@@ -118,18 +132,14 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
         Representation representation;
-        if (template.getOldRemoteId() != null) {
-            final var repId = representationService.identifyByRemoteId(template.getOldRemoteId());
-            if (repId.isPresent()) {
-                representation = representationService.update(repId.get(), template.getDesc());
-            } else {
-                throw new ResourceNotFoundException("");
-            }
+        final var repId = representationService.identifyByRemoteId(template.getDesc().getRemoteId());
+        if (repId.isPresent()) {
+            representation = representationService.update(repId.get(), template.getDesc());
         } else {
             representation = representationService.create(template.getDesc());
         }
 
-        representationArtifactLinker.replace(representation.getId(), artifactIds);
+        representationArtifactLinker.add(representation.getId(), artifactIds);
 
         return representation;
     }
@@ -147,7 +157,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
                 .collect(Collectors.toSet());
         final var contract = contractService.create(template.getDesc());
-        contractRuleLinker.replace(contract.getId(), ruleIds);
+        contractRuleLinker.add(contract.getId(), ruleIds);
 
         return contract;
     }
@@ -163,13 +173,9 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         Artifact artifact;
-        if (template.getOldRemoteId() != null) {
-            final var contractId = artifactService.identifyByRemoteId(template.getOldRemoteId());
-            if (contractId.isPresent()) {
-                artifact = artifactService.update(contractId.get(), template.getDesc());
-            } else {
-                throw new ResourceNotFoundException("");
-            }
+        final var contractId = artifactService.identifyByRemoteId(template.getDesc().getRemoteId());
+        if (contractId.isPresent()) {
+            artifact = artifactService.update(contractId.get(), template.getDesc());
         } else {
             artifact = artifactService.create(template.getDesc());
         }
@@ -285,7 +291,7 @@ final class TemplateBuilderRequestedResource
         final var resourceService = getResourceService();
 
         RequestedResource resource;
-        if (resourceService instanceof RemoteResolver && template.getOldRemoteId() != null) {
+        if (resourceService instanceof RemoteResolver) {
             final var resourceId = ((RemoteResolver) resourceService)
                     .identifyByRemoteId(template.getOldRemoteId());
             if (resourceId.isPresent()) {
@@ -302,7 +308,7 @@ final class TemplateBuilderRequestedResource
                 }
 
             } else {
-                throw new ResourceNotFoundException("");
+                resource = resourceService.create(template.getDesc());
             }
         } else {
             resource = resourceService.create(template.getDesc());

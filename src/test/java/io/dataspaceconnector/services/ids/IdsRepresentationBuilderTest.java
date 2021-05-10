@@ -1,11 +1,19 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.ids;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Language;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -22,6 +30,13 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -114,7 +129,7 @@ public class IdsRepresentationBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnRepresentationWithoutArtifacts() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
         final var representation = getRepresentation();
 
@@ -122,17 +137,7 @@ public class IdsRepresentationBuilderTest {
         final var idsRepresentation = idsRepresentationBuilder.create(representation, 0);
 
         /* ASSERT */
-        assertTrue(idsRepresentation.getId().isAbsolute());
-        assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
-
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
-        assertEquals(Language.EN, idsRepresentation.getLanguage());
-        assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
-        assertEquals(standard, idsRepresentation.getRepresentationStandard());
-        assertNull(idsRepresentation.getProperties());
-
-        assertNull(idsRepresentation.getInstance());
+        assertNull(idsRepresentation);
     }
 
     @Test
