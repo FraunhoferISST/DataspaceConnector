@@ -136,6 +136,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     public MessageResponse constructSelfDescription(final URI issuer, final URI messageId) {
         try {
             // Get self-description.
+            // TODO Only return contract offers that have no or the right pre-defined consumer
             final var connector = connectorService.getConnectorWithOfferedResources();
 
             // Build ids response message.
