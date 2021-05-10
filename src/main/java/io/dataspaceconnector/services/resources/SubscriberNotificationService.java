@@ -87,8 +87,8 @@ public class SubscriberNotificationService {
     public void notifySubscribers(final URI remoteId) {
         final var resourceId = requestedResourceService.identifyByRemoteId(remoteId);
         if (resourceId.isEmpty()) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not notify backends about updated resource with remote ID {}: "
+            if (log.isErrorEnabled()) {
+                log.error("Could not notify backends about updated resource with remote ID {}: "
                         + "Resource not found.", remoteId);
             }
             return;
