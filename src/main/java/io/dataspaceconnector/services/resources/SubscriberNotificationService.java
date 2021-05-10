@@ -1,11 +1,12 @@
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.repositories.RequestedResourcesRepository;
+import java.net.URI;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.UUID;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -14,12 +15,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
-import java.net.URI;
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
-
 /**
  * This class provides methods for handling subscriptions to a requested resource.
  */
@@ -27,76 +22,59 @@ import java.util.UUID;
 @Service
 public class SubscriberNotificationService {
 
-    private final RequestedResourcesRepository requestedResourcesRepository;
+    /**
+     * The service for managing requested resources.
+     */
+    private final RequestedResourceService requestedResourceService;
 
+    /**
+     * Contructs a SubscriberNotificationService.
+     *
+     * @param requestedResourceService the service for managing requested resources.
+     */
     @Autowired
-    public SubscriberNotificationService(final RequestedResourcesRepository requestedResourcesRepository) {
-        this.requestedResourcesRepository = requestedResourcesRepository;
+    public SubscriberNotificationService(final RequestedResourceService requestedResourceService) {
+        this.requestedResourceService = requestedResourceService;
     }
 
     /**
-     * Add a url to the subscribers of a given resource with uuid.
+     * Adds a URL to the list of subscribers for a given resource.
      *
-     * @param uuid the uuid of the resource.
-     * @param uri the url.
+     * @param resourceId the UUID of the resource.
+     * @param uri the URL.
      */
-    public ResponseEntity<String> subscribeUrl(final UUID uuid, final URI uri) {
-        Optional<RequestedResource> requestedResource;
-        try {
-            requestedResource = requestedResourcesRepository.findById(uuid);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+    public void addSubscription(final UUID resourceId, final URI uri) {
+        final var requestedResource = requestedResourceService.get(resourceId);
+
+        var subscribers = requestedResource.getSubscribers();
+        if (subscribers == null) {
+            subscribers = new ArrayList<>();
         }
 
-        if (requestedResource.isEmpty()){
-            log.error("Could not found resource for given ID.");
-            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+        if (!subscribers.contains(uri)) {
+            subscribers.add(uri);
+            requestedResourceService.updateSubscriptions(resourceId, subscribers);
         }
-
-
-
-        if (requestedResource.get().getSubscribers().contains(uri)) {
-            return new ResponseEntity<>("The URL is already subscribed to the given resource.", HttpStatus.OK);
-        } else {
-            requestedResource.get().getSubscribers().add(uri);
-
-            requestedResourcesRepository.save(requestedResource.get());
-        }
-
-
-        return new ResponseEntity<>("The URL was subscribed to the given resource ID.", HttpStatus.OK);
     }
 
     /**
-     * Removes a url from the subscribers of a given resource with uuid.
+     * Removes a URL from the list of subscribers to a given resource.
      *
-     * @param uuid the uuid of the resource.
-     * @param uri the url.
+     * @param resourceId the UUID of the resource.
+     * @param uri the URL.
      */
-    public ResponseEntity<String> deleteSubscribedUrl(UUID uuid, URI uri) {
-        Optional<RequestedResource> requestedResource;
-        try {
-            requestedResource = requestedResourcesRepository.findById(uuid);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+    public void removeSubscription(final UUID resourceId, final URI uri) {
+        final var requestedResource = requestedResourceService.get(resourceId);
+
+        var subscribers = requestedResource.getSubscribers();
+        if (subscribers == null) {
+            subscribers = new ArrayList<>();
         }
 
-        if (requestedResource.isEmpty()){
-            log.error("Could not found resource for given ID.");
-            return new ResponseEntity<>("Could not found resource for given ID.", HttpStatus.NOT_FOUND);
+        if (subscribers.contains(uri)) {
+            subscribers.remove(uri);
+            requestedResourceService.updateSubscriptions(resourceId, subscribers);
         }
-
-
-        if (requestedResource.get().getSubscribers().contains(uri)) {
-            requestedResource.get().getSubscribers().remove(uri);
-
-            requestedResourcesRepository.save(requestedResource.get());
-        }
-
-
-        return new ResponseEntity<>("The URL was deleted from the subscribers list of the given resource ID.", HttpStatus.OK);
     }
 
     /**
@@ -104,15 +82,28 @@ public class SubscriberNotificationService {
      * are notified in parallel and asynchronously. If a request to one of the subscribed URLs
      * results in a status code 5xx, the request is retried 5 times with a delay of 5 seconds each.
      *
-     * @param resource the requested resource that was updated.
+     * @param remoteId the remote ID of the requested resource that was updated.
      */
-    public void notifySubscribers(final RequestedResource resource) {
-        ArrayList<URI> subscribers = new ArrayList<>(resource.getSubscribers());
+    public void notifySubscribers(final URI remoteId) {
+        final var resourceId = requestedResourceService.identifyByRemoteId(remoteId);
+        if (resourceId.isEmpty()) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not notify backends about updated resource with remote ID {}: "
+                        + "Resource not found.", remoteId);
+            }
+            return;
+        }
 
-        Thread notifyThread = new Thread(new Runnable() {
-            private static final long numberOfRetries = 5;
-            private static final long secondsBetweenRetries = 5;
+        final var resource = requestedResourceService.get(resourceId.get());
 
+        final var subscribers = new ArrayList<>(resource.getSubscribers());
+
+        final var notifyThread = new Thread(new Runnable() {
+            /** Maximum number of retries when a notification fails. */
+            private static final long MAX_RETRIES = 5;
+            /** Time between retries in seconds. */
+            private static final long RETRY_DELAY = 5;
+            /** The WebClient to use  */
             private final WebClient webClient = WebClient.create();
 
             /**
@@ -121,19 +112,20 @@ public class SubscriberNotificationService {
              * seconds each.
              *
              * @param uri the recipient
-             * @param resourceUUID the resource ID
+             * @param resourceId the resource ID
              * @return a {@link Mono} with the response body as string
              */
-            public Mono<String> notifySubscriber(final URI uri, final UUID resourceUUID) {
+            private Mono<String> notifySubscriber(final URI uri, final UUID resourceId) {
                 return webClient
                         .post()
                         .uri(uri)
-                        .bodyValue(resourceUUID)
+                        .bodyValue(resourceId)
                         .retrieve().bodyToMono(String.class)
                         .retryWhen(Retry
-                                .fixedDelay(numberOfRetries, Duration.ofSeconds(secondsBetweenRetries))
+                                .fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
                                 .filter(this::shouldRetry))
-                        .doOnError(throwable -> log.error("Could not notify subscriber at: {}", uri));
+                        .doOnError(throwable
+                                -> log.error("Could not notify subscriber at: {}", uri));
             }
 
             /**
@@ -145,7 +137,9 @@ public class SubscriberNotificationService {
              */
             private boolean shouldRetry(final Throwable throwable) {
                 if (throwable instanceof WebClientResponseException) {
-                    return ((WebClientResponseException) throwable).getStatusCode().is5xxServerError();
+                    return ((WebClientResponseException) throwable)
+                            .getStatusCode()
+                            .is5xxServerError();
                 }
                 return false;
             }
@@ -158,8 +152,7 @@ public class SubscriberNotificationService {
                 Flux.fromIterable(subscribers)
                         .parallel()
                         .runOn(Schedulers.boundedElastic())
-                        .flatMap(uri ->
-                                notifySubscriber(uri, resource.getId())
+                        .flatMap(uri -> notifySubscriber(uri, resource.getId())
                         ).subscribe();
             }
         });

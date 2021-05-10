@@ -1,11 +1,11 @@
 package io.dataspaceconnector.controller.resources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
@@ -25,7 +25,15 @@ import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.services.BlockingArtifactReceiver;
-import io.dataspaceconnector.services.resources.*;
+import io.dataspaceconnector.services.resources.AgreementService;
+import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.services.resources.ContractService;
+import io.dataspaceconnector.services.resources.RepresentationService;
+import io.dataspaceconnector.services.resources.ResourceService;
+import io.dataspaceconnector.services.resources.RetrievalInformation;
+import io.dataspaceconnector.services.resources.RuleService;
+import io.dataspaceconnector.services.resources.SubscriberNotificationService;
 import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.utils.ValidationUtils;
 import io.dataspaceconnector.view.AgreementView;
@@ -48,7 +56,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 public final class ResourceControllers {
@@ -96,17 +113,42 @@ public final class ResourceControllers {
             RequestedResourceView,
             ResourceService<RequestedResource, RequestedResourceDesc>> {
 
+        /**
+         * The service for managing subscriptions for resource updates.
+         */
         @Autowired
         private SubscriberNotificationService subscriberNotificationService;
 
-        @PutMapping("{id}/subscription")
-        public final ResponseEntity<String> subscribe (@RequestParam final URI uri, @PathVariable final UUID id) {
-            return subscriberNotificationService.subscribeUrl(id, uri);
+        /**
+         * Subscribes a given URL for updates to a specific resource.
+         *
+         * @param uri the URL.
+         * @param resourceId the resource ID.
+         * @return Http Status ok.
+         */
+        @PutMapping("{id}/subscriptions")
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        public final ResponseEntity<Void> subscribe(
+                @Valid @PathVariable("id") final UUID resourceId,
+                @RequestParam final URI uri) {
+            subscriberNotificationService.addSubscription(resourceId, uri);
+            return ResponseEntity.ok().build();
         }
 
-        @DeleteMapping("{id}/subscription")
-        public final ResponseEntity<String> unsubscribe (@RequestParam final URI uri, @PathVariable final UUID id) {
-            return subscriberNotificationService.deleteSubscribedUrl(id, uri);
+        /**
+         * Removes a given URL from the subscriptions for a specific resource.
+         *
+         * @param uri the URL.
+         * @param resourceId the resource ID.
+         * @return Http Status ok.
+         */
+        @DeleteMapping("{id}/subscriptions")
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        public final ResponseEntity<Void> unsubscribe(
+                @Valid @PathVariable("id") final UUID resourceId,
+                @RequestParam final URI uri) {
+            subscriberNotificationService.removeSubscription(resourceId, uri);
+            return ResponseEntity.ok().build();
         }
 
         @Override
