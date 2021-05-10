@@ -124,8 +124,10 @@ public class SubscriberNotificationService {
                         .retryWhen(Retry
                                 .fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
                                 .filter(this::shouldRetry))
-                        .doOnError(throwable
-                                -> log.error("Could not notify subscriber at: {}", uri));
+                        .onErrorResume(throwable -> {
+                            log.error("Could not notify subscriber at: {}", uri);
+                            return Mono.just("Could not notify subscriber at: " + uri);
+                        });
             }
 
             /**
