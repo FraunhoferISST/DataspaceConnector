@@ -1,0 +1,83 @@
+name: docker-image
+
+on:
+   push:
+    branches: [ master, develop ]
+    tags: 'v*'
+   release:
+     types: [published]
+
+env:
+  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+  OWNER: ${{ secrets.REPO_USER }}
+
+jobs:
+  docker:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout Repo
+        uses: actions/checkout@v2
+      -
+        name: Build registry path
+        id: get_repo
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspaceconnector/dataspace-connector"
+      -
+       name: Find tag
+       id: get_tag
+       run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+       if: startsWith(github.ref, 'refs/tags')
+      -
+       name: Find branch name
+       id: get_branch
+       run: echo ::set-output name=BRANCH::$(git rev-parse --abbrev-ref HEAD)
+      -
+       name: Login to registry
+       uses: docker/login-action@v1
+       with:
+         # This should use REGISTRY instead of the secret directly
+         registry: ${{ secrets.IMAGE_REGISTRY }}
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }}
+      -
+       name: Build image
+       run: |
+        docker build . -t $IMAGE:$BRANCH
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+      -
+       name: Push tagged image
+       run: |
+         echo $IMAGE
+         echo $BRANCH
+         echo $TAG
+         TMP=$TAG
+         if [[ $TAG == v* ]]
+         then
+           # Its a version tag
+           TMP=${TAG:1:${#TAG}}
+           echo "Found a version tag"
+           if [[ $BRANCH == 'master' ]]
+           then
+             # Its a release version tag
+             docker tag $IMAGE:$BRANCH $IMAGE:latest
+             docker push $IMAGE:latest
+           fi
+         fi
+         # Has tag
+         docker tag $IMAGE_NAME:$BRANCH_NAME $IMAGE_NAME:$TAG
+         docker push $IMAGE_NAME:$TAG
+       if: startsWith(github.ref, 'refs/tags')
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         TAG: ${{ steps.get_tag.outputs.TAG }}
+      -
+       name: Push branch image
+       run: |
+         docker push $IMAGE:$BRANCH
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}

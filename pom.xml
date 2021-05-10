@@ -10,11 +10,11 @@
 		<!-- lookup parent from repository -->
 	</parent>
 
-	<groupId>de.fraunhofer.isst</groupId>
-	<artifactId>dataspace-connector</artifactId>
+	<groupId>io</groupId>
+	<artifactId>dataspaceconnector</artifactId>
 	<version>${revision}</version>
 
-	<name>dataspace-connector</name>
+	<name>Dataspace Connector</name>
 	<description>IDS Connector originally developed by the Fraunhofer ISST</description>
 	<url>https://www.dataspace-connector.io/</url>
 	<inceptionYear>2020</inceptionYear>
@@ -80,33 +80,33 @@
 		<ids-framework.version>4.0.7</ids-framework.version>
 		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
-		<swagger-annotations.version>1.5.20</swagger-annotations.version>
-		<okhttp.version>4.2.2</okhttp.version>
-		<modelmapper.version>2.3.9</modelmapper.version>
+		<swagger-annotations.version>1.6.2</swagger-annotations.version>
+		<okhttp.version>4.9.1</okhttp.version>
+		<modelmapper.version>2.4.2</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
-		<postgres.version>42.2.19</postgres.version>
-		<springdoc-ui.version>1.5.4</springdoc-ui.version>
-		<springdoc-security.version>1.5.4</springdoc-security.version>
-		<jsonld-java.version>0.13.0</jsonld-java.version>
-		<equalsverifier.version>3.5.5</equalsverifier.version>
+		<postgres.version>42.2.20</postgres.version>
+		<springdoc-ui.version>1.5.8</springdoc-ui.version>
+		<springdoc-security.version>1.5.8</springdoc-security.version>
+		<jsonld-java.version>0.13.3</jsonld-java.version>
+		<equalsverifier.version>3.6</equalsverifier.version>
 
 		<!-- Plugins -->
-		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<pitest.version>1.6.3</pitest.version>
 		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
-		<maven-project-info-reports-plugin.version>3.1.1</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.2.0</spotbugs.version>
+		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
+		<spotbugs.version>4.2.3</spotbugs.version>
 		<checkstyle.version>3.1.2</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
-		<jxr.version>3.0.0</jxr.version>
+		<jxr.version>3.1.1</jxr.version>
 		<jdepend.version>2.0</jdepend.version>
 
 		<!-- Licence -->
@@ -357,14 +357,36 @@
 
 	<repositories>
 		<repository>
+			<id>Maven repository</id>
+			<url>https://repo1.maven.org/maven2/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
 			<id>ids-public</id>
 			<name>isst-public</name>
 			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>eis-ids-public</id>
 			<name>maven-snapshots</name>
 			<url>https://maven.iais.fraunhofer.de/artifactory/eis-ids-public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 		</repository>
 	</repositories>
 
@@ -470,14 +492,14 @@
 				</dependencies>
 				<configuration>
 					<targetClasses>
-						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+						<param>io.dataspaceconnector*</param>
 					</targetClasses>
 					<targetTests>
-						<param>de.fraunhofer.isst.dataspaceconnector*</param>
+						<param>io.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>de.fraunhofer.isst.dataspaceconnector.model.*Persistence*</param>
-						<param>de.fraunhofer.isst.dataspaceconnector.ConnectorApplicationTests</param>
+						<param>io.dataspaceconnector.model.*Persistence*</param>
+						<param>io.dataspaceconnector.ConnectorApplicationTests</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
@@ -517,7 +539,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
@@ -592,7 +614,7 @@
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>3.1.2</version>
 				<configuration>
-					<configLocation>ci/checkstyle.xml</configLocation>
+					<configLocation>scripts/ci/checkstyle.xml</configLocation>
 				</configuration>
 				<reportSets>
 					<reportSet>
@@ -622,7 +644,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>0.8.7</version>
 				<reportSets>
 					<reportSet>
 						<reports>
