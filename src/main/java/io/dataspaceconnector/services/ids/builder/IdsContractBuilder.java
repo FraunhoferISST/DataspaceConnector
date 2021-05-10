@@ -1,24 +1,24 @@
 package io.dataspaceconnector.services.ids.builder;
 
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Converts DSC contracts to ids contract offers.
@@ -61,6 +61,31 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
         final var duties =
                 create(dutyBuilder, onlyDuties(contract.getRules()), baseUri, currentDepth,
                         maxDepth);
+
+        // Build contract only if at least one rule is present.
+        if (permissions.isEmpty() && prohibitions.isEmpty() && duties.isEmpty()) {
+            return null;
+        }
+
+        boolean permissionsEmpty = false;
+        boolean prohibitionsEmpty = false;
+        boolean dutiesEmpty = false;
+
+        if (permissions.isPresent()) {
+            permissionsEmpty = permissions.get().isEmpty();
+        }
+
+        if (prohibitions.isPresent()) {
+            prohibitionsEmpty = prohibitions.get().isEmpty();
+        }
+
+        if (duties.isPresent()) {
+            dutiesEmpty = duties.get().isEmpty();
+        }
+
+        if (permissionsEmpty && prohibitionsEmpty && dutiesEmpty) {
+            return null;
+        }
 
         // Prepare contract attributes.
         final var start = IdsUtils.getGregorianOf(contract.getStart());

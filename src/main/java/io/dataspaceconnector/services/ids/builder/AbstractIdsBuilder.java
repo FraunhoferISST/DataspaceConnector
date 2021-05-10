@@ -61,7 +61,11 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
     private X create(final T entity, final URI baseUri, final int currentDepth,
                      final int maxDepth) throws ConstraintViolationException {
         final var resource = createInternal(entity, baseUri, currentDepth, maxDepth);
-        return addAdditionals(resource, entity.getAdditional());
+        if (resource != null) {
+            return addAdditionals(resource, entity.getAdditional());
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -131,13 +135,13 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
                                                    .collect(Collectors.toList())));
     }
 
-    private <X> X addAdditionals(final X idsResource, final Map<String, String> additional) {
+    private <X> X addAdditionals(final X idsObject, final Map<String, String> additional) {
         // NOTE: The Infomodel lib has setProperty on all classes, but the method is implemented
         // individually...
         try {
-            final var setPropertyMethod = findAdditionalMethod(idsResource);
+            final var setPropertyMethod = findAdditionalMethod(idsObject);
             for (final var entry : additional.entrySet()) {
-                setPropertyMethod.invoke(idsResource, entry.getKey(), entry.getValue());
+                setPropertyMethod.invoke(idsObject, entry.getKey(), entry.getValue());
             }
 
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
@@ -146,7 +150,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
             }
         }
 
-        return idsResource;
+        return idsObject;
     }
 
     private <X> Method findAdditionalMethod(final X idsResource) throws NoSuchMethodException {
