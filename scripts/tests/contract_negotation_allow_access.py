@@ -142,20 +142,11 @@ add_contract_to_resource(offers, contract)
 add_rule_to_contract(contract, use_rule)
 
 # Call description
-response = descriptionRequest("https://localhost:8090/api/ids/data", None)
-pprint.pprint(str(response.content))
-with open("description.json", "wb") as fp:
-     fp.write(response.content)
-
 response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
-pprint.pprint(str(response.content))
-with open("offers.json", "wb") as fp:
-    fp.write(response.content)
+offer = json.loads(response.text)
 
 # Negotiate contract
-with open("offers.json", "r") as fp:
-    obj = json.load(fp)['ids:contractOffer'][0]['ids:permission'][0]
-    obj['ids:target'] = artifact
-    response = contractRequest(
-        "https://localhost:8080/api/ids/data", offers, artifact, False, obj)
-    pprint.pprint(str(response.content))
+obj = offer['ids:contractOffer'][0]['ids:permission'][0]
+obj['ids:target'] = artifact
+response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+pprint.pprint(str(response.content))
