@@ -1,20 +1,18 @@
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.List;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Describes resource requested by this connector.
@@ -71,5 +69,14 @@ public final class RequestedResource extends Resource {
     @Override
     public List<Catalog> getCatalogs() {
         return catalogs;
+    }
+
+    /**
+     * Sets the list of subscribers for this resource.
+     *
+     * @param subscriberList the list of subscribers.
+     */
+    public void setSubscribers(final List<URI> subscriberList) {
+        this.subscribers = subscriberList;
     }
 }
