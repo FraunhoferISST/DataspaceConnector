@@ -160,11 +160,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             // The resource has been moved
+            final var entity = assembler.toModel(resource);
             final var headers = new HttpHeaders();
-            headers.setLocation(assembler.toModel(resource).getLink("self").get().toUri());
+            headers.setLocation(entity.getLink("self").get().toUri());
 
-            response =
-                    new ResponseEntity<>(assembler.toModel(resource), headers, HttpStatus.CREATED);
+            response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
         }
 
         return response;
