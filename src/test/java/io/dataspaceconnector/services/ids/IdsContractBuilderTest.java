@@ -1,13 +1,7 @@
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractDesc;
@@ -20,11 +14,17 @@ import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
 import io.dataspaceconnector.utils.IdsUtils;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -112,7 +112,7 @@ public class IdsContractBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnContractWithoutRules() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
         final var contract = getContract();
 
@@ -120,18 +120,7 @@ public class IdsContractBuilderTest {
         final var idsContract = idsContractBuilder.create(contract, 0);
 
         /* ASSERT */
-        assertTrue(idsContract.getId().isAbsolute());
-        assertTrue(idsContract.getId().toString().contains(contract.getId().toString()));
-
-        assertEquals(provider, idsContract.getProvider());
-        assertEquals(consumer, idsContract.getConsumer());
-        assertEquals(IdsUtils.getGregorianOf(date), idsContract.getContractStart());
-        assertEquals(IdsUtils.getGregorianOf(date), idsContract.getContractEnd());
-        assertNull(idsContract.getProperties());
-
-        assertNull(idsContract.getPermission());
-        assertNull(idsContract.getProhibition());
-        assertNull(idsContract.getObligation());
+        assertNull(idsContract);
     }
 
     @Test

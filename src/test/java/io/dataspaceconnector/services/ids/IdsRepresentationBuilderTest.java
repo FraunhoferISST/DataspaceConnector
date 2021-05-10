@@ -1,12 +1,5 @@
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Language;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
@@ -22,6 +15,13 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -114,7 +114,7 @@ public class IdsRepresentationBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnRepresentationWithoutArtifacts() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
         final var representation = getRepresentation();
 
@@ -122,17 +122,7 @@ public class IdsRepresentationBuilderTest {
         final var idsRepresentation = idsRepresentationBuilder.create(representation, 0);
 
         /* ASSERT */
-        assertTrue(idsRepresentation.getId().isAbsolute());
-        assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
-
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
-        assertEquals(Language.EN, idsRepresentation.getLanguage());
-        assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
-        assertEquals(standard, idsRepresentation.getRepresentationStandard());
-        assertNull(idsRepresentation.getProperties());
-
-        assertNull(idsRepresentation.getInstance());
+        assertNull(idsRepresentation);
     }
 
     @Test

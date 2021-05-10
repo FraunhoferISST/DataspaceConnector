@@ -1,13 +1,7 @@
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -32,11 +26,17 @@ import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -165,7 +165,7 @@ public class IdsResourceBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnResourceWithoutRepresentationsAndContracts() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
         final var resource = getOfferedResource();
 
@@ -173,26 +173,11 @@ public class IdsResourceBuilderTest {
         final var idsResource = idsResourceBuilder.create(resource, 0);
 
         /* ASSERT */
-        assertTrue(idsResource.getId().isAbsolute());
-        assertTrue(idsResource.getId().toString().contains(idsResource.getId().toString()));
-
-        assertEquals(publisher, idsResource.getPublisher());
-        assertEquals(sovereign, idsResource.getSovereign());
-        assertEquals(license, idsResource.getStandardLicense());
-        assertEquals(1, idsResource.getDescription().size());
-        assertEquals(description, idsResource.getDescription().get(0).getValue());
-        assertEquals(1, idsResource.getKeyword().size());
-        assertEquals(keyword, idsResource.getKeyword().get(0).getValue());
-        assertEquals(1, idsResource.getTitle().size());
-        assertEquals(title, idsResource.getTitle().get(0).getValue());
-        assertNull(idsResource.getProperties());
-
-        assertNull(idsResource.getRepresentation());
-        assertNull(idsResource.getContractOffer());
+        assertNull(idsResource);
     }
 
     @Test
-    public void create_maxDepth1_returnResourceWithoutArtifactsAndRules() {
+    public void create_maxDepth1_returnNull() {
         /* ARRANGE */
         final var resource = getOfferedResource();
 
@@ -200,29 +185,7 @@ public class IdsResourceBuilderTest {
         final var idsResource = idsResourceBuilder.create(resource, 1);
 
         /* ASSERT */
-        assertTrue(idsResource.getId().isAbsolute());
-        assertTrue(idsResource.getId().toString().contains(idsResource.getId().toString()));
-
-        assertEquals(publisher, idsResource.getPublisher());
-        assertEquals(sovereign, idsResource.getSovereign());
-        assertEquals(license, idsResource.getStandardLicense());
-        assertEquals(1, idsResource.getDescription().size());
-        assertEquals(description, idsResource.getDescription().get(0).getValue());
-        assertEquals(1, idsResource.getKeyword().size());
-        assertEquals(keyword, idsResource.getKeyword().get(0).getValue());
-        assertEquals(1, idsResource.getTitle().size());
-        assertEquals(title, idsResource.getTitle().get(0).getValue());
-        assertNull(idsResource.getProperties());
-
-        final var representations = idsResource.getRepresentation();
-        assertEquals(1, representations.size());
-        assertNull(representations.get(0).getInstance());
-
-        final var contracts = idsResource.getContractOffer();
-        assertEquals(1, contracts.size());
-        assertNull(contracts.get(0).getPermission());
-        assertNull(contracts.get(0).getProhibition());
-        assertNull(contracts.get(0).getProhibition());
+        assertNull(idsResource);
     }
 
     @Test
