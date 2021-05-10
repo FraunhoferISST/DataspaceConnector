@@ -45,6 +45,7 @@ public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, Resourc
         // Build children.
         final var resources = create(resourceBuilder,
                 catalog.getOfferedResources(), baseUri, currentDepth, maxDepth);
+
         final var builder = new ResourceCatalogBuilder(getAbsoluteSelfLink(catalog, baseUri));
         resources.ifPresent(builder::_offeredResource_);
 
