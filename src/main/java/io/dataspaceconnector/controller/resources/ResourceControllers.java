@@ -1,12 +1,5 @@
 package io.dataspaceconnector.controller.resources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -65,6 +58,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+
 public final class ResourceControllers {
     @RestController
     @RequestMapping("/api/catalogs")
@@ -120,7 +120,7 @@ public final class ResourceControllers {
 
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
+    @Tag(name = "Agreements", description = "Endpoints for contract/policy handling")
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override
