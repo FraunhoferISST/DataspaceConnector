@@ -21,8 +21,8 @@ import io.dataspaceconnector.services.messages.types.ContractAgreementService;
 import io.dataspaceconnector.services.messages.types.ContractRejectionService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.services.usagecontrol.RuleValidator;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -141,13 +141,13 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var request = deserializationService.getContractRequest(payload);
 
             // Get all rules of the contract request.
-            final var rules = PolicyUtils.extractRulesFromContract(request);
+            final var rules = ContractUtils.extractRulesFromContract(request);
             if (rules.isEmpty()) {
                 // Return rejection message if the contract request is missing rules.
                 return responseService.handleMissingRules(request, messageId, issuer);
             }
 
-            final var targetRuleMap = PolicyUtils.getTargetRuleMap(rules);
+            final var targetRuleMap = ContractUtils.getTargetRuleMap(rules);
             if (targetRuleMap.containsKey(null)) {
                 // Return rejection message if the rules are missing targets.
                 return responseService.handleMissingTargetInRules(request, messageId, issuer);
@@ -171,7 +171,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
                 // Abort negotiation if no contract offer for the issuer connector could be found.
                 final var validContracts
-                        = PolicyUtils.removeContractsWithInvalidConsumer(contracts, issuer);
+                        = ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
                 if (validContracts.isEmpty()) {
                     return responseService.handleMissingContractOffers(request, messageId, issuer);
                 }

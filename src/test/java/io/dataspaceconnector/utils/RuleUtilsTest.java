@@ -1,10 +1,6 @@
  package io.dataspaceconnector.utils;
 
- import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import de.fraunhofer.iais.eis.Action;
+ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.DutyBuilder;
@@ -18,13 +14,17 @@ import io.dataspaceconnector.model.Contract;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
- class PolicyUtilsTest {
+ class RuleUtilsTest {
 
      @Test
      public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.extractRulesFromContract(contract);
+         final var result = ContractUtils.extractRulesFromContract(contract);
 
          /* ASSERT */
          assertEquals(0, result.size());
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.extractRulesFromContract(contract);
+         final var result = ContractUtils.extractRulesFromContract(contract);
 
          /* ASSERT */
          assertEquals(3, result.size());
@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.extractRulesFromContract(contract);
+         final var result = ContractUtils.extractRulesFromContract(contract);
 
          /* ASSERT */
          assertEquals(4, result.size());
@@ -93,7 +93,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
          /* ACT & ASSERT */
          assertThrows(IllegalArgumentException.class,
-                 () -> PolicyUtils.extractRulesFromContract(null));
+                 () -> ContractUtils.extractRulesFromContract(null));
      }
 
      @Test
@@ -111,7 +111,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.getRulesForTargetId(contract, target);
+         final var result = ContractUtils.getRulesForTargetId(contract, target);
 
          /* ASSERT */
          assertEquals(1, result.size());
@@ -134,7 +134,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.getRulesForTargetId(contract, target);
+         final var result = ContractUtils.getRulesForTargetId(contract, target);
 
          /* ASSERT */
          assertEquals(3, result.size());
@@ -158,7 +158,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
                  .build();
 
          /* ACT */
-         final var result = PolicyUtils.getRulesForTargetId(contract, target);
+         final var result = ContractUtils.getRulesForTargetId(contract, target);
 
          /* ASSERT */
          assertEquals(0, result.size());
@@ -170,7 +170,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
          final var target = URI.create("https://target");
 
          /* ACT & ASSERT */
-         assertThrows(IllegalArgumentException.class, () -> PolicyUtils.getRulesForTargetId(null,
+         assertThrows(IllegalArgumentException.class, () -> ContractUtils.getRulesForTargetId(null,
                  target));
      }
 
@@ -186,7 +186,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
          final var list = List.of(permission, prohibition, obligation);
 
          /* ACT */
-         final var result = PolicyUtils.getTargetRuleMap(list);
+         final var result = ContractUtils.getTargetRuleMap(list);
 
          /* ASSERT */
          assertEquals(3, result.keySet().size());
@@ -210,7 +210,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
          final var list = List.of(permission, prohibition, obligation);
 
          /* ACT */
-         final var result = PolicyUtils.getTargetRuleMap(list);
+         final var result = ContractUtils.getTargetRuleMap(list);
 
          /* ASSERT */
          assertEquals(2, result.keySet().size());
@@ -240,39 +240,39 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
      @Test
      public void compareRules_null_returnTrue() {
          /* ACT && ASSERT */
-         assertTrue(PolicyUtils.compareRules(null, null));
+         assertTrue(RuleUtils.compareRules(null, null));
      }
 
      @Test
      public void compareRules_leftNull_returnFalse() {
          /* ACT && ASSERT */
-         assertFalse(PolicyUtils.compareRules(null, new ArrayList<>()));
+         assertFalse(RuleUtils.compareRules(null, new ArrayList<>()));
      }
 
      @Test
      public void compareRules_rightNull_returnFalse() {
          /* ACT && ASSERT */
-         assertFalse(PolicyUtils.compareRules(new ArrayList<>(), null));
+         assertFalse(RuleUtils.compareRules(new ArrayList<>(), null));
      }
 
      @Test
      public void compareRules_sameList_returnTrue() {
          /* ACT && ASSERT */
-         assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo()),
+         assertTrue(RuleUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo()),
                  Util.asList(getRuleOne(), getRuleTwo())));
      }
 
      @Test
      public void compareRules_sameSets_returnTrue() {
          /* ACT && ASSERT */
-         assertTrue(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(), getRuleOne())
+         assertTrue(RuleUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(), getRuleOne())
                  , Util.asList(getRuleOne(), getRuleTwo())));
      }
 
      @Test
      public void compareRules_differentSets_returnFalse() {
          /* ACT && ASSERT */
-         assertFalse(PolicyUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(),
+         assertFalse(RuleUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo(),
                  getRuleOne()), Util.asList(getRuleOne(), getRuleThree())));
      }
 
@@ -286,7 +286,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
          final var list = List.of(getContractWithConsumer(), getContractWithoutConsumer());
 
          /* ACT */
-         final var result = PolicyUtils.removeContractsWithInvalidConsumer(list, issuer);
+         final var result = ContractUtils.removeContractsWithInvalidConsumer(list, issuer);
 
          /* ASSERT */
          assertEquals(list, result);
@@ -299,7 +299,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
          final var list = List.of(getContractWithConsumer(), getContractWithoutConsumer());
 
          /* ACT */
-         final var result = PolicyUtils.removeContractsWithInvalidConsumer(list, issuer);
+         final var result = ContractUtils.removeContractsWithInvalidConsumer(list, issuer);
 
          /* ASSERT */
          assertEquals(List.of(getContractWithoutConsumer()), result);
@@ -312,7 +312,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
          /* ACT && ASSERT*/
          assertThrows(IllegalArgumentException.class,
-                 () -> PolicyUtils.removeContractsWithInvalidConsumer(null, issuer));
+                 () -> ContractUtils.removeContractsWithInvalidConsumer(null, issuer));
      }
 
      @Test
@@ -322,7 +322,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
          /* ACT && ASSERT*/
          assertThrows(IllegalArgumentException.class,
-                 () -> PolicyUtils.removeContractsWithInvalidConsumer(list, null));
+                 () -> ContractUtils.removeContractsWithInvalidConsumer(list, null));
      }
 
      @Test
@@ -332,7 +332,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
          /* ACT && ASSERT*/
          assertThrows(IllegalArgumentException.class,
-                 () -> PolicyUtils.removeContractsWithInvalidConsumer(null, null));
+                 () -> ContractUtils.removeContractsWithInvalidConsumer(null, null));
      }
 
      /**

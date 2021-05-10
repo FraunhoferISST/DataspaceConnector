@@ -25,7 +25,8 @@ import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -74,7 +75,8 @@ public class ContractManager {
         final var agreement = entityResolver.getAgreementByUri(agreementId);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
-        final var valid = PolicyUtils.isMatchingTransferContract(artifacts, requestedArtifact);
+        final var valid = ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact);
+        // TODO Add validation of issuer connector.
         if (!valid) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
@@ -104,8 +106,8 @@ public class ContractManager {
             IllegalArgumentException, ContractException {
         final var agreement = deserializationService.getContractAgreement(payload);
 
-        PolicyUtils.validateRuleAssigner(agreement);
-        PolicyUtils.validateRuleContent(request, agreement);
+        ContractUtils.validateRuleAssigner(agreement);
+        RuleUtils.validateRuleContent(request, agreement);
 
         return agreement;
     }
@@ -160,7 +162,7 @@ public class ContractManager {
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
-        final var ruleList = PolicyUtils.extractRulesFromContract(request);
+        final var ruleList = ContractUtils.extractRulesFromContract(request);
 
         final var permissions = new ArrayList<Permission>();
         final var prohibitions = new ArrayList<Prohibition>();

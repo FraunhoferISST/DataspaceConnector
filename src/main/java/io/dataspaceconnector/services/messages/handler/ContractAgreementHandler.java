@@ -15,8 +15,8 @@ import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import io.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -118,7 +118,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                     = deserializationService.getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
-            if (!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
+            if (!ContractUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
                 return responseService.handleContractException(
                         new ContractException("Not the same contract."), payloadAsString,
                         issuer, messageId);

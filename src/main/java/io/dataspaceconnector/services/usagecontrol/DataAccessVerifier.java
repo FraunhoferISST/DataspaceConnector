@@ -8,7 +8,8 @@ import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import io.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -76,11 +77,11 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
         // Get the contract agreement's rules for the target.
         final var agreements = entityResolver.getContractAgreementsByTarget(artifactId);
         for (final var agreement : agreements) {
-            final var rules = PolicyUtils.getRulesForTargetId(agreement, remoteId);
+            final var rules = ContractUtils.getRulesForTargetId(agreement, remoteId);
 
             // Check the policy of each rule.
             for (final var rule : rules) {
-                final var pattern = PolicyUtils.getPatternByRule(rule);
+                final var pattern = RuleUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
                     ruleValidator.validatePolicy(pattern, rule, artifactId, null);

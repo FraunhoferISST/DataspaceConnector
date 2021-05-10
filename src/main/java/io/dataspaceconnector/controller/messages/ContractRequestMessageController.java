@@ -17,7 +17,7 @@ import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.usagecontrol.ContractManager;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import io.dataspaceconnector.view.AgreementViewAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -136,7 +136,7 @@ public class ContractRequestMessageController {
         Map<String, String> response;
         try {
             // Validate input for contract request.
-            PolicyUtils.validateRuleTarget(ruleList);
+            RuleUtils.validateRuleTarget(ruleList);
             final var request = contractManager.buildContractRequest(ruleList);
 
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
