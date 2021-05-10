@@ -195,7 +195,7 @@ public class RepresentationFactoryTest {
         /* ASSERT */
         Assertions.assertFalse(result);
     }
-    
+
     /**
      * title.
      */
@@ -435,7 +435,7 @@ public class RepresentationFactoryTest {
     /**
      * additional.
      */
-    
+
     @Test
     public void create_nullAdditional_defaultAdditional() {
         /* ARRANGE */

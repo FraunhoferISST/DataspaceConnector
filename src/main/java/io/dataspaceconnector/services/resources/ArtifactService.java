@@ -1,7 +1,14 @@
 package io.dataspaceconnector.services.resources;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -24,14 +31,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -106,7 +105,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
@@ -167,7 +167,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional

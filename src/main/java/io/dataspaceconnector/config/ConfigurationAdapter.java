@@ -3,8 +3,8 @@ package io.dataspaceconnector.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
@@ -18,18 +18,22 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
     @Override
     protected final void configure(final HttpSecurity http) throws Exception {
         http
-                .csrf().disable().formLogin().disable()
-                .antMatcher("/api/**")
-                .authorizeRequests().anyRequest().hasRole("ADMIN")
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                .authorizeRequests()
+                .antMatchers("/api/ids/data").anonymous()
+                .antMatchers("/").anonymous()
+                .antMatchers("/api/**").authenticated()
+                .antMatchers("/actuator/**").hasRole("ADMIN")
+                .antMatchers("/database/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
                 .and()
+                .csrf().disable()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint());
-        http.headers().frameOptions().disable();
-    }
-
-    @Override
-    public final void configure(final WebSecurity web) {
-        web.ignoring().regexMatchers("/api/ids/data");
+        http.headers().frameOptions().deny();
+        http.headers().xssProtection();
     }
 
     /**

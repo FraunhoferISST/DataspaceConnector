@@ -34,7 +34,7 @@ spec:
             - name: SPRING_JPA_DATABASE-PLATFORM
               value: "org.hibernate.dialect.PostgreSQLDialect"
             - name: CONFIGURATION_PATH
-              value: "file:///connector-certs/config.json"  
+              value: "file:///connector-certs/config.json"
           volumeMounts:
             - name: certs-volume
               mountPath: /connector-certs

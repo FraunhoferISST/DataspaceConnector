@@ -671,7 +671,7 @@ public class OfferedResourceFactoryTest {
         /* ASSERT */
         Assertions.assertFalse(result);
     }
-    
+
     /**
      * additional.
      */

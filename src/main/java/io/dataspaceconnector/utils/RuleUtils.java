@@ -5,7 +5,6 @@ import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintImpl;
 import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
@@ -13,8 +12,6 @@ import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
@@ -26,136 +23,72 @@ import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 @Log4j2
-public final class PolicyUtils {
+public final class RuleUtils {
 
     /**
      * Constructor without params.
      */
-    private PolicyUtils() {
+    private RuleUtils() {
         // not used
     }
 
     /**
-     * Return all contract rules as one list.
+     * Read the properties of an ids rule to automatically recognize the policy pattern.
      *
-     * @param contract The ids contract.
-     * @return A list of ids rules.
-     * @throws IllegalArgumentException If the message is null.
+     * @param rule The ids rule.
+     * @return The recognized policy pattern.
      */
-    public static List<Rule> extractRulesFromContract(final Contract contract) {
-        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
-        final var permissionList = contract.getPermission();
-        final var ruleList = permissionList == null ? new ArrayList<Rule>()
-                : new ArrayList<Rule>(permissionList);
+    public static PolicyPattern getPatternByRule(final Rule rule) {
+        PolicyPattern detectedPattern = null;
 
-        final var prohibitionList = contract.getProhibition();
-        if (prohibitionList != null) {
-            ruleList.addAll(prohibitionList);
-        }
+        if (rule instanceof Prohibition) {
+            detectedPattern = PolicyPattern.PROHIBIT_ACCESS;
+        } else if (rule instanceof Permission) {
+            final var constraints = rule.getConstraint();
+            final var postDuties = ((Permission) rule).getPostDuty();
 
-        final var obligationList = contract.getObligation();
-        if (obligationList != null) {
-            ruleList.addAll(obligationList);
-        }
-
-        return ruleList;
-    }
-
-    /**
-     * Iterate over all rules of a contract and add the ones with the element as their target to a
-     * rule list.
-     *
-     * @param contract The contract.
-     * @param element  The requested element.
-     * @return List of ids rules.
-     * @throws IllegalArgumentException If the message is null.
-     */
-    public static List<? extends Rule> getRulesForTargetId(final Contract contract,
-                                                           final URI element) {
-        Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
-        final var rules = new ArrayList<Rule>();
-
-        for (final var permission : contract.getPermission()) {
-            final var target = permission.getTarget();
-            if (target.equals(element)) {
-                rules.add(permission);
-            }
-        }
-
-        for (final var prohibition : contract.getProhibition()) {
-            final var target = prohibition.getTarget();
-            if (target.equals(element)) {
-                rules.add(prohibition);
-            }
-        }
-
-        for (final var obligation : contract.getObligation()) {
-            final var target = obligation.getTarget();
-            if (target.equals(element)) {
-                rules.add(obligation);
-            }
-        }
-
-        return rules;
-    }
-
-    /**
-     * Extract targets and save them together with the respective rules to a map.
-     *
-     * @param rules List of ids rules.
-     * @return Map with targets and matching rules.
-     */
-    public static Map<URI, List<Rule>> getTargetRuleMap(final List<Rule> rules) {
-        final var targetRuleMap = new HashMap<URI, List<Rule>>();
-
-        // Iterate over all rules.
-        for (final var rule : rules) {
-            // Get target of rule.
-            final var target = rule.getTarget();
-
-            // If the target is already in the map, add the rule to the value list.
-            if (targetRuleMap.containsKey(target)) {
-                final var value = targetRuleMap.get(target);
-                value.add(rule);
+            if (constraints != null && constraints.get(0) != null) {
+                if (constraints.size() > 1) {
+                    if (postDuties != null && postDuties.get(0) != null) {
+                        detectedPattern = PolicyPattern.USAGE_UNTIL_DELETION;
+                    } else {
+                        detectedPattern = PolicyPattern.USAGE_DURING_INTERVAL;
+                    }
+                } else {
+                    final var firstConstraint = (ConstraintImpl) constraints.get(0);
+                    final var leftOperand = firstConstraint.getLeftOperand();
+                    final var operator = firstConstraint.getOperator();
+                    if (leftOperand == LeftOperand.COUNT) {
+                        detectedPattern = PolicyPattern.N_TIMES_USAGE;
+                    } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
+                        detectedPattern = PolicyPattern.DURATION_USAGE;
+                    } else if (leftOperand == LeftOperand.SYSTEM
+                            && operator == BinaryOperator.SAME_AS) {
+                        detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
+                    } else {
+                        detectedPattern = null;
+                    }
+                }
             } else {
-                // If not, create a target-rule-entry to the map.
-                final var value = new ArrayList<Rule>();
-                value.add(rule);
-                targetRuleMap.put(target, value);
+                if (postDuties != null && postDuties.get(0) != null) {
+                    final var action = postDuties.get(0).getAction().get(0);
+                    if (action == Action.NOTIFY) {
+                        detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
+                    } else if (action == Action.LOG) {
+                        detectedPattern = PolicyPattern.USAGE_LOGGING;
+                    } else {
+                        detectedPattern = null;
+                    }
+                } else {
+                    detectedPattern = PolicyPattern.PROVIDE_ACCESS;
+                }
             }
         }
 
-        return targetRuleMap;
-    }
-
-    /**
-     * Check if contract offer has a restricted consumer. If the value does not match the issuer
-     * connector, remove the contract from the list.
-     *
-     * @param issuerConnector The requesting consumer.
-     * @param contracts       List of contracts.
-     * @return Cleaned list of contracts.
-     * @throws IllegalArgumentException if any of the arguments is null.
-     */
-    public static
-    List<io.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
-            final List<io.dataspaceconnector.model.Contract> contracts,
-            final URI issuerConnector) {
-        Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);
-        Utils.requireNonNull(issuerConnector, ErrorMessages.URI_NULL);
-
-        return contracts.parallelStream()
-                .filter(x -> x.getConsumer().equals(issuerConnector) || x.getConsumer()
-                        .toString()
-                        .isBlank())
-                .collect(Collectors.toList());
+        return detectedPattern;
     }
 
     /**
@@ -361,18 +294,6 @@ public final class PolicyUtils {
     }
 
     /**
-     * Validate if the assigner is the expected one.
-     *
-     * @param agreement The contract agreement.
-     * @throws ContractException If the assigner is not as expected.
-     */
-    public static void validateRuleAssigner(final ContractAgreement agreement)
-            throws ContractException {
-        // TODO implement later
-        // NOTE: Recipient url might not be the connector id.
-    }
-
-    /**
      * Compare two lists of rules with each other.
      *
      * @param oldContract The old contract.
@@ -399,29 +320,13 @@ public final class PolicyUtils {
     }
 
     /**
-     * Compare two contract agreements to each other.
-     *
-     * @param consumer The consumer agreement.
-     * @param provider The provider agreement.
-     * @return True if both agreements are equal.
-     * @throws ContractException If both objects do not match.
-     */
-    public static boolean compareContractAgreements(final ContractAgreement consumer,
-                                                    final ContractAgreement provider) {
-        return consumer.getId().equals(provider.getId())
-                && comparePermissions(consumer.getPermission(), provider.getPermission())
-                && compareProhibitions(consumer.getProhibition(), provider.getProhibition())
-                && compareObligations(consumer.getObligation(), provider.getObligation());
-    }
-
-    /**
      * Compare two permission lists to each other.
      *
      * @param lList One list.
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    private static boolean comparePermissions(final ArrayList<? extends Permission> lList,
+    public static boolean comparePermissions(final ArrayList<? extends Permission> lList,
                                               final ArrayList<? extends Permission> rList) {
         return compareDuties(lList, rList) && compareRules(lList, rList);
     }
@@ -433,7 +338,7 @@ public final class PolicyUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    private static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
+    public static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
                                                final ArrayList<? extends Prohibition> rList) {
         return compareRules(lList, rList);
     }
@@ -445,7 +350,7 @@ public final class PolicyUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    private static boolean compareObligations(final ArrayList<? extends Duty> lList,
+    public static boolean compareObligations(final ArrayList<? extends Duty> lList,
                                               final ArrayList<? extends Duty> rList) {
         return compareRules(lList, rList);
     }
@@ -459,7 +364,7 @@ public final class PolicyUtils {
      */
     private static boolean compareDuties(final ArrayList<? extends Permission> lList,
                                          final ArrayList<? extends Permission> rList) {
-        return compareList(lList, rList, PolicyUtils::compareDuties);
+        return Utils.compareList(lList, rList, RuleUtils::compareDuties);
     }
 
     /**
@@ -471,7 +376,7 @@ public final class PolicyUtils {
      */
     public static boolean compareRules(final ArrayList<? extends Rule> oldRules,
                                        final ArrayList<? extends Rule> newRules) {
-        return compareList(oldRules, newRules, PolicyUtils::compareRule);
+        return Utils.compareList(oldRules, newRules, RuleUtils::compareRule);
     }
 
     /**
@@ -484,7 +389,7 @@ public final class PolicyUtils {
     private static boolean compareConstraints(
             final ArrayList<? extends AbstractConstraint> lList,
             final ArrayList<? extends AbstractConstraint> rList) {
-        return compareList(lList, rList, PolicyUtils::compareConstraint);
+        return Utils.compareList(lList, rList, RuleUtils::compareConstraint);
     }
 
     /**
@@ -496,7 +401,7 @@ public final class PolicyUtils {
      */
     private static boolean compareActions(final ArrayList<? extends Action> lList,
                                           final ArrayList<? extends Action> rList) {
-        return compareList(lList, rList, PolicyUtils::compareAction);
+        return Utils.compareList(lList, rList, RuleUtils::compareAction);
     }
 
     private static <T extends Permission> boolean compareDuties(final T lObj, final T rObj) {
@@ -518,118 +423,6 @@ public final class PolicyUtils {
         return lObj.equals(rObj);
     }
 
-    private static <T> boolean compareList(final List<? extends T> lList,
-                                           final List<? extends T> rList,
-                                           final BiFunction<T, T, Boolean> compare) {
-        var isSame = true;
-
-        if (isOnlyOneNull(lList, rList)) {
-            isSame = false;
-        } else if (lList != null /* && rList != null*/) {
-            final var lSet = makeUnique(lList, compare);
-            final var rSet = makeUnique(rList, compare);
-
-            if (lSet.size() == rSet.size()) {
-                for (final var lObj : lSet) {
-                    var found = false;
-                    for (final var rObj : rSet) {
-                        if (compare.apply(lObj, rObj)) {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found) {
-                        // At least one element is different
-                        isSame = false;
-                        break;
-                    }
-                }
-            } else {
-                // Two unique sets with different length must have different elements
-                isSame = false;
-            }
-        }
-
-        return isSame;
-    }
-
-    private static <T> List<? extends T> makeUnique(final List<? extends T> list,
-                                                    final BiFunction<T, T, Boolean> compare) {
-        final var output = new ArrayList<>(list);
-        for (int x = 0; x < output.size(); x++) {
-            final var obj = output.get(x);
-            for (int y = x + 1; y < output.size(); y++) {
-                if (compare.apply(obj, output.get(y))) {
-                    output.remove(y);
-                    --y;
-                }
-            }
-        }
-
-        return output;
-    }
-
-    private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
-        return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
-    }
-
-    /**
-     * Read the properties of an ids rule to automatically recognize the policy pattern.
-     *
-     * @param rule The ids rule.
-     * @return The recognized policy pattern.
-     */
-    public static PolicyPattern getPatternByRule(final Rule rule) {
-        PolicyPattern detectedPattern = null;
-
-        if (rule instanceof Prohibition) {
-            detectedPattern = PolicyPattern.PROHIBIT_ACCESS;
-        } else if (rule instanceof Permission) {
-            final var constraints = rule.getConstraint();
-            final var postDuties = ((Permission) rule).getPostDuty();
-
-            if (constraints != null && constraints.get(0) != null) {
-                if (constraints.size() > 1) {
-                    if (postDuties != null && postDuties.get(0) != null) {
-                        detectedPattern = PolicyPattern.USAGE_UNTIL_DELETION;
-                    } else {
-                        detectedPattern = PolicyPattern.USAGE_DURING_INTERVAL;
-                    }
-                } else {
-                    final var firstConstraint = (ConstraintImpl) constraints.get(0);
-                    final var leftOperand = firstConstraint.getLeftOperand();
-                    final var operator = firstConstraint.getOperator();
-                    if (leftOperand == LeftOperand.COUNT) {
-                        detectedPattern = PolicyPattern.N_TIMES_USAGE;
-                    } else if (leftOperand == LeftOperand.ELAPSED_TIME) {
-                        detectedPattern = PolicyPattern.DURATION_USAGE;
-                    } else if (leftOperand == LeftOperand.SYSTEM
-                            && operator == BinaryOperator.SAME_AS) {
-                        detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
-                    } else {
-                        detectedPattern = null;
-                    }
-                }
-            } else {
-                if (postDuties != null && postDuties.get(0) != null) {
-                    final var action = postDuties.get(0).getAction().get(0);
-                    if (action == Action.NOTIFY) {
-                        detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
-                    } else if (action == Action.LOG) {
-                        detectedPattern = PolicyPattern.USAGE_LOGGING;
-                    } else {
-                        detectedPattern = null;
-                    }
-                } else {
-                    detectedPattern = PolicyPattern.PROVIDE_ACCESS;
-                }
-            }
-        }
-
-        return detectedPattern;
-    }
-
     /**
      * Get current system date.
      *
@@ -639,25 +432,4 @@ public final class PolicyUtils {
         return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
-    /**
-     * Check if the transfer contract's target matches the requested artifact.
-     *
-     * @param artifacts         List of artifacts.
-     * @param requestedArtifact Id of the requested artifact.
-     * @return True if the requested artifact matches the transfer contract's artifacts.
-     * @throws ResourceNotFoundException If a resource could not be found.
-     */
-    public static boolean isMatchingTransferContract(final List<Artifact> artifacts,
-                                                     final URI requestedArtifact)
-            throws ResourceNotFoundException {
-        for (final var artifact : artifacts) {
-            final var endpoint = SelfLinkHelper.getSelfLink(artifact);
-            if (endpoint.equals(requestedArtifact)) {
-                return true;
-            }
-        }
-
-        // If the requested artifact could not be found in the transfer contract (agreement).
-        return false;
-    }
 }

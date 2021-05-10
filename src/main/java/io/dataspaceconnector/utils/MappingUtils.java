@@ -1,12 +1,19 @@
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.exceptions.RdfBuilderException;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractRuleDesc;
@@ -17,14 +24,6 @@ import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Maps ids resources to internal resources.
@@ -323,7 +322,8 @@ public final class MappingUtils {
      * @param rule The ids rule.
      * @return The rule template.
      * @throws IllegalArgumentException if the rule is null.
-     * @throws RdfBuilderException      if the rule cannot be converted to string.
+     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
+     *         if the rule cannot be converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
         Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);

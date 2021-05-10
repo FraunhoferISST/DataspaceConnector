@@ -6,8 +6,9 @@ import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.EndpointUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -85,10 +86,10 @@ public class ScheduledDataRemoval {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
             final var idsAgreement = deserializationService.getContractAgreement(value);
-            final var rules = PolicyUtils.extractRulesFromContract(idsAgreement);
+            final var rules = ContractUtils.extractRulesFromContract(idsAgreement);
 
             for (final var rule : rules) {
-                final var delete = PolicyUtils.checkRuleForPostDuties(rule);
+                final var delete = RuleUtils.checkRuleForPostDuties(rule);
                 if (delete) {
                     final var target = rule.getTarget();
                     removeDataFromArtifact(target);

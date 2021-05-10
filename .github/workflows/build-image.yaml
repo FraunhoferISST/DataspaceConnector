@@ -6,13 +6,11 @@ on:
     tags: 'v*'
    release:
      types: [published]
-   schedule:
-      - cron: '0 4 * * *'
-      
+
 env:
   REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
   OWNER: ${{ secrets.REPO_USER }}
-    
+
 jobs:
   docker:
     timeout-minutes: 30

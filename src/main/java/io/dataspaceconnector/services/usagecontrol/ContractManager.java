@@ -1,5 +1,9 @@
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -13,6 +17,7 @@ import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -20,16 +25,12 @@ import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
-import io.dataspaceconnector.utils.PolicyUtils;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 @Log4j2
 @Service
@@ -62,6 +63,7 @@ public class ContractManager {
      *
      * @param agreementId       The id of the contract.
      * @param requestedArtifact The id of the artifact.
+     * @return The contract agreement on successful validation.
      * @throws IllegalArgumentException  if contract agreement deserialization fails.
      * @throws ResourceNotFoundException if agreement could not be found.
      * @throws ContractException         if the contract agreement does not match the requested
@@ -73,7 +75,8 @@ public class ContractManager {
         final var agreement = entityResolver.getAgreementByUri(agreementId);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
-        final var valid = PolicyUtils.isMatchingTransferContract(artifacts, requestedArtifact);
+        final var valid = ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact);
+        // TODO Add validation of issuer connector.
         if (!valid) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
@@ -103,8 +106,8 @@ public class ContractManager {
             IllegalArgumentException, ContractException {
         final var agreement = deserializationService.getContractAgreement(payload);
 
-        PolicyUtils.validateRuleAssigner(agreement);
-        PolicyUtils.validateRuleContent(request, agreement);
+        ContractUtils.validateRuleAssigner(agreement);
+        RuleUtils.validateRuleContent(request, agreement);
 
         return agreement;
     }
@@ -159,7 +162,7 @@ public class ContractManager {
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
-        final var ruleList = PolicyUtils.extractRulesFromContract(request);
+        final var ruleList = ContractUtils.extractRulesFromContract(request);
 
         final var permissions = new ArrayList<Permission>();
         final var prohibitions = new ArrayList<Prohibition>();

@@ -59,7 +59,8 @@ public final class NotificationService extends AbstractMessageService<Notificati
      * @param logItem   The item that should be logged.
      * @throws PolicyExecutionException if sending the notification message was unsuccessful.
      */
-    public void sendMessage(final URI recipient, final Object logItem) throws PolicyExecutionException {
+    public void sendMessage(final URI recipient, final Object logItem)
+            throws PolicyExecutionException {
         try {
             final var response = send(new NotificationMessageDesc(recipient), logItem);
             if (response == null) {

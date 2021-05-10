@@ -8,7 +8,7 @@ import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -139,7 +139,7 @@ public class RuleValidator {
             idsRuleList.add(idsRule);
         }
 
-        if (!PolicyUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+        if (!RuleUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
             if (log.isDebugEnabled()) {
                 log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
                         requestRules);
@@ -160,7 +160,7 @@ public class RuleValidator {
     private void validateInterval(final Rule rule) throws PolicyRestrictionException {
         TimeInterval timeInterval;
         try {
-            timeInterval = PolicyUtils.getTimeInterval(rule);
+            timeInterval = RuleUtils.getTimeInterval(rule);
         } catch (ParseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not read time interval. [exception=({})]", e.getMessage());
@@ -168,7 +168,7 @@ public class RuleValidator {
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL, e);
         }
 
-        final var current = PolicyUtils.getCurrentDate();
+        final var current = RuleUtils.getCurrentDate();
         if (!current.isAfter(timeInterval.getStart()) || !current.isBefore(timeInterval.getEnd())) {
             if (log.isWarnEnabled()) {
                 log.warn("Invalid time interval. [timeInterval=({})]", timeInterval);
@@ -191,7 +191,7 @@ public class RuleValidator {
 
         final Duration duration;
         try {
-            duration = PolicyUtils.getDuration(rule);
+            duration = RuleUtils.getDuration(rule);
         } catch (DatatypeConfigurationException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not read duration. [target=({}), exception=({})]",
@@ -207,8 +207,8 @@ public class RuleValidator {
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
 
-        final var maxTime = PolicyUtils.getCalculatedDate(created, duration);
-        final var validDate = PolicyUtils.checkDate(PolicyUtils.getCurrentDate(), maxTime);
+        final var maxTime = RuleUtils.getCalculatedDate(created, duration);
+        final var validDate = RuleUtils.checkDate(RuleUtils.getCurrentDate(), maxTime);
 
         if (!validDate) {
             if (log.isDebugEnabled()) {
@@ -227,7 +227,7 @@ public class RuleValidator {
      */
     private void validateAccessNumber(final Rule rule, final URI target)
             throws PolicyRestrictionException {
-        final var max = PolicyUtils.getMaxAccess(rule);
+        final var max = RuleUtils.getMaxAccess(rule);
         // final var endpoint = PolicyUtils.getPipEndpoint(rule);
         // NOTE: might be used later
 
@@ -249,7 +249,7 @@ public class RuleValidator {
      */
     private void validateIssuerConnector(final Rule rule, final URI issuerConnector)
             throws PolicyRestrictionException {
-        final var allowedConsumer = PolicyUtils.getEndpoint(rule);
+        final var allowedConsumer = RuleUtils.getEndpoint(rule);
         final var allowedConsumerAsUri = URI.create(allowedConsumer);
         if (!allowedConsumerAsUri.equals(issuerConnector)) {
             if (log.isDebugEnabled()) {

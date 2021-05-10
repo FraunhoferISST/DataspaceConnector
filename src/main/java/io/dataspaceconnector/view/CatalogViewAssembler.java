@@ -1,20 +1,18 @@
 package io.dataspaceconnector.view;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
+import io.dataspaceconnector.controller.resources.ResourceControllers.CatalogController;
 import io.dataspaceconnector.model.Catalog;
+import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
-import io.dataspaceconnector.controller.resources.ResourceControllers.CatalogController;
-import lombok.NoArgsConstructor;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for a catalog.
