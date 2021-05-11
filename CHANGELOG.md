@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
   * Handle out contract agreements for multiple artifacts (targets) within one negotiation sequence.
   * Restrict agreement processing to confirmed agreements.
   * Add relation between artifacts and agreements.
+- Add possibility to subscribe backend URLs for updates to a requested resource.
 
 ### Changed
 - Support of IDS Infomodel v4.0.4 (direct import in `pom.xml`).
