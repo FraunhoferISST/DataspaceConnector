@@ -8,4 +8,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class ProxyAuthenticationDesc extends AbstractDescription<ProxyAuthentication> {
 
+    private String username;
+
+    private String password;
 }

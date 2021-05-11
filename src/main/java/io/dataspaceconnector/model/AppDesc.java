@@ -6,4 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AppDesc extends AbstractDescription<App> {
+
+    private String title;
 }

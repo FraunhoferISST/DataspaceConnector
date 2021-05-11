@@ -4,8 +4,6 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc<T>>
         implements AbstractFactory<T, D> {

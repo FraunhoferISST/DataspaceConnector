@@ -6,4 +6,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class GenericEndpointDesc extends EndpointDesc<GenericEndpoint> {
+
+    private String absolutePath;
+
 }
