@@ -117,7 +117,8 @@
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
 		<spotbugs.version>4.2.3</spotbugs.version>
-		<checkstyle.version>3.1.2</checkstyle.version>
+		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
+		<checkstyle.version>8.42</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<dms.version>2.2.0</dms.version>
@@ -431,6 +432,22 @@
 				</includes>
 			</resource>
 		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>${checkstyle-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.puppycrawl.tools</groupId>
+							<artifactId>checkstyle</artifactId>
+							<version>${checkstyle.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -659,7 +676,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>${checkstyle-plugin.version}</version>
 				<configuration>
 					<configLocation>scripts/ci/checkstyle.xml</configLocation>
 				</configuration>
