@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -46,6 +42,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -170,10 +170,12 @@ public class ContractManager {
      *
      * @param request The contract request.
      * @param id      ID to use when creating the contract agreement.
+     * @param issuer  The issuer connector id.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
-    public ContractAgreement buildContractAgreement(final ContractRequest request, final URI id)
+    public ContractAgreement buildContractAgreement(
+            final ContractRequest request, final URI id, final URI issuer)
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
@@ -199,7 +201,7 @@ public class ContractManager {
 
         // Return contract request.
         return new ContractAgreementBuilder(id)
-                ._consumer_(request.getId())
+                ._consumer_(issuer)
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._contractStart_(IDSUtils.getGregorianNow())
                 ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
