@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 
 /**
  * This class implements automated policy check.
@@ -81,7 +81,7 @@ public class ScheduledDataRemoval {
                 }
                 scanAgreements();
             }
-        } catch (IllegalArgumentException | ParseException | ResourceNotFoundException e) {
+        } catch (IllegalArgumentException | DateTimeParseException | ResourceNotFoundException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to check policy. [exception=({})]", e.getMessage());
             }
@@ -91,11 +91,11 @@ public class ScheduledDataRemoval {
     /**
      * Checks all known agreements for artifacts that have to be deleted.
      *
-     * @throws ParseException            If a date from a policy cannot be parsed.
+     * @throws DateTimeParseException    If a date from a policy cannot be parsed.
      * @throws IllegalArgumentException  If the rule could not be deserialized.
      * @throws ResourceNotFoundException If the data could not be deleted.
      */
-    private void scanAgreements() throws ParseException, IllegalArgumentException,
+    private void scanAgreements() throws DateTimeParseException, IllegalArgumentException,
             ResourceNotFoundException {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
@@ -110,6 +110,7 @@ public class ScheduledDataRemoval {
             }
         }
     }
+
     /**
      * Delete data by artifact id.
      *

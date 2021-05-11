@@ -33,12 +33,12 @@ import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,9 +113,9 @@ public final class RuleUtils {
      *
      * @param rule The ids rule.
      * @return True if resource should be deleted, false if not.
-     * @throws ParseException If the policy could not be checked.
+     * @throws DateTimeParseException If the policy could not be checked.
      */
-    public static boolean checkRuleForPostDuties(final Rule rule) throws ParseException {
+    public static boolean checkRuleForPostDuties(final Rule rule) throws DateTimeParseException {
         if (rule instanceof PermissionImpl || rule instanceof DutyImpl) {
             final var postDuties = ((Permission) rule).getPostDuty();
             if (postDuties != null && !postDuties.isEmpty()) {
@@ -131,10 +131,10 @@ public final class RuleUtils {
      *
      * @param duties The post duty list.
      * @return True if resource should be deleted, false if not.
-     * @throws ParseException If the policy could not be checked.
+     * @throws DateTimeParseException If the policy could not be checked.
      */
     public static boolean checkDutiesForDeletion(final ArrayList<? extends Duty> duties)
-            throws ParseException {
+            throws DateTimeParseException {
         for (final var duty : duties) {
             for (final var action : duty.getAction()) {
                 if (action == Action.DELETE) {
@@ -151,9 +151,9 @@ public final class RuleUtils {
      *
      * @param rule a {@link de.fraunhofer.iais.eis.Rule} object.
      * @return true, if the duration or date has been exceeded; false otherwise.
-     * @throws java.text.ParseException if a duration cannot be parsed.
+     * @throws DateTimeParseException if a duration cannot be parsed.
      */
-    public static boolean checkRuleForDeletion(final Rule rule) throws ParseException {
+    public static boolean checkRuleForDeletion(final Rule rule) throws DateTimeParseException {
         final var max = getDate(rule);
         if (max != null) {
             return checkDate(ZonedDateTime.now(ZoneOffset.UTC), max);
@@ -203,7 +203,11 @@ public final class RuleUtils {
                 log.debug("Failed to parse value to integer. [exception=({})]",
                         e.getMessage(), e);
             }
-            number = 1;
+            throw e;
+        }
+
+        if (number < 0) {
+            number = 0;
         }
 
         switch (operator) {
@@ -258,7 +262,7 @@ public final class RuleUtils {
      * @param rule the policy constraint object.
      * @return the date or null.
      */
-    public static ZonedDateTime getDate(final Rule rule) {
+    public static ZonedDateTime getDate(final Rule rule) throws DateTimeParseException {
         final var constraint = rule.getConstraint().get(0);
         final var date = ((ConstraintImpl) constraint).getRightOperand().getValue();
 
@@ -270,10 +274,10 @@ public final class RuleUtils {
      *
      * @param rule The ids rule.
      * @return The duration or null.
-     * @throws javax.xml.datatype.DatatypeConfigurationException If the duration cannot be parsed.
+     * @throws DateTimeParseException If the duration cannot be parsed.
      */
     public static java.time.Duration getDuration(final Rule rule)
-            throws DatatypeConfigurationException {
+            throws DateTimeParseException {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
@@ -347,7 +351,7 @@ public final class RuleUtils {
      * @return True, if the lists are equal, false if not.
      */
     public static boolean comparePermissions(final ArrayList<? extends Permission> lList,
-                                              final ArrayList<? extends Permission> rList) {
+                                             final ArrayList<? extends Permission> rList) {
         return compareDuties(lList, rList) && compareRules(lList, rList);
     }
 
@@ -359,7 +363,7 @@ public final class RuleUtils {
      * @return True, if the lists are equal, false if not.
      */
     public static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
-                                               final ArrayList<? extends Prohibition> rList) {
+                                              final ArrayList<? extends Prohibition> rList) {
         return compareRules(lList, rList);
     }
 
@@ -371,7 +375,7 @@ public final class RuleUtils {
      * @return True, if the lists are equal, false if not.
      */
     public static boolean compareObligations(final ArrayList<? extends Duty> lList,
-                                              final ArrayList<? extends Duty> rList) {
+                                             final ArrayList<? extends Duty> rList) {
         return compareRules(lList, rList);
     }
 
