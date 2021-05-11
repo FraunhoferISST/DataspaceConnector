@@ -22,7 +22,6 @@ import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.utils.ContractUtils;
-import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -96,13 +95,12 @@ public class ScheduledDataRemoval {
      * @throws IllegalArgumentException  If the rule could not be deserialized.
      * @throws ResourceNotFoundException If the data could not be deleted.
      */
-    public void scanAgreements() throws ParseException, IllegalArgumentException,
+    private void scanAgreements() throws ParseException, IllegalArgumentException,
             ResourceNotFoundException {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
             final var idsAgreement = deserializationService.getContractAgreement(value);
             final var rules = ContractUtils.extractRulesFromContract(idsAgreement);
-
             for (final var rule : rules) {
                 final var delete = RuleUtils.checkRuleForPostDuties(rule);
                 if (delete) {
@@ -118,13 +116,14 @@ public class ScheduledDataRemoval {
      * @param target The artifact id.
      * @throws ResourceNotFoundException If the artifact update fails.
      */
-    public void removeDataFromArtifact(final URI target) throws ResourceNotFoundException {
-        final var entityId = EndpointUtils.getUUIDFromPath(target);
-
-        // Update data for artifact.
-        artifactService.setData(entityId, InputStream.nullInputStream());
-        if (log.isDebugEnabled()) {
-            log.debug("Deleted data from artifact. [target=({})]", target);
+    private void removeDataFromArtifact(final URI target) throws ResourceNotFoundException {
+        final var artifactId = artifactService.identifyByRemoteId(target);
+        if (artifactId.isPresent()) {
+            // Update data for artifact.
+            artifactService.setData(artifactId.get(), InputStream.nullInputStream());
+            if (log.isDebugEnabled()) {
+                log.debug("Removed data from artifact. [target=({})]", artifactId);
+            }
         }
     }
 }
