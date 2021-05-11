@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class NotificationMessageDescTest {
+public class NotificationMessageDescTest {
     @Test
-    void defaultConstructor_nothing_emptyDesc() {
+    public void defaultConstructor_nothing_emptyDesc() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -36,7 +36,7 @@ class NotificationMessageDescTest {
     }
 
     @Test
-    void allArgsConstructor_valid_validDesc() {
+    public void allArgsConstructor_valid_validDesc() {
         /* ARRANGE */
         final var recipient = URI.create("someRecipient");
 
@@ -48,7 +48,7 @@ class NotificationMessageDescTest {
     }
 
     @Test
-    void equals_everything_valid() {
+    public void equals_everything_valid() {
         EqualsVerifier.simple().forClass(NotificationMessageDesc.class).verify();
     }
 }

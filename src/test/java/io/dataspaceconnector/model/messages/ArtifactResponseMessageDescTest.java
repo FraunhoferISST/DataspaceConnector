@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ArtifactResponseMessageDescTest {
+public class ArtifactResponseMessageDescTest {
     @Test
-    void defaultConstructor_nothing_emptyDesc() {
+    public void defaultConstructor_nothing_emptyDesc() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -38,7 +38,7 @@ class ArtifactResponseMessageDescTest {
     }
 
     @Test
-    void allArgsConstructor_valid_validDesc() {
+    public void allArgsConstructor_valid_validDesc() {
         /* ARRANGE */
         final var recipient = URI.create("someRecipient");
         final var message = URI.create("someMessage");
@@ -54,7 +54,7 @@ class ArtifactResponseMessageDescTest {
     }
 
     @Test
-    void equals_everything_valid() {
+    public void equals_everything_valid() {
         EqualsVerifier.simple().forClass(ArtifactResponseMessageDesc.class).verify();
     }
 }

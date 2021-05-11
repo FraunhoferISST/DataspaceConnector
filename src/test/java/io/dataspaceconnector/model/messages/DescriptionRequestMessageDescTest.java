@@ -22,9 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DescriptionRequestMessageDescTest {
+public class DescriptionRequestMessageDescTest {
     @Test
-    void defaultConstructor_nothing_emptyDesc() {
+    public void defaultConstructor_nothing_emptyDesc() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -37,7 +37,7 @@ class DescriptionRequestMessageDescTest {
     }
 
     @Test
-    void allArgsConstructor_valid_validDesc() {
+    public void allArgsConstructor_valid_validDesc() {
         /* ARRANGE */
         final var recipient = URI.create("someRecipient");
         final var element = URI.create("someElement");
@@ -51,7 +51,7 @@ class DescriptionRequestMessageDescTest {
     }
 
     @Test
-    void equals_everything_valid() {
+    public void equals_everything_valid() {
         EqualsVerifier.simple().forClass(DescriptionRequestMessageDesc.class).verify();
     }
 }
