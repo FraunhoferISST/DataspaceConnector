@@ -1,5 +1,14 @@
 package io.dataspaceconnector.services.messages.handler;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
@@ -13,27 +22,27 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import io.dataspaceconnector.services.EntityUpdateService;
+import io.dataspaceconnector.services.resources.SubscriberNotificationService;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 class ResourceUpdateMessageHandlerTest {
@@ -41,8 +50,17 @@ class ResourceUpdateMessageHandlerTest {
     @SpyBean
     EntityUpdateService updateService;
 
+    @MockBean
+    SubscriberNotificationService notificationService;
+
     @Autowired
     ResourceUpdateMessageHandler handler;
+
+    @BeforeEach
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        ReflectionTestUtils.setField(handler, "notificationService", notificationService);
+    }
 
     @Test
     public void handleMessage_nullMessage_returnBadRequest() {
@@ -186,6 +204,7 @@ class ResourceUpdateMessageHandlerTest {
         final var validInput = new Serializer().serialize(resource);
         final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
 
+        doNothing().when(notificationService).notifySubscribers(any());
 
         /* ACT */
         final var result = (BodyResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
@@ -196,6 +215,7 @@ class ResourceUpdateMessageHandlerTest {
         // Mockito.verify(updateService).updateRepresentation(Mockito.argThat(x -> x.getId().equals(representation.getId())));
         // Mockito.verify(updateService).updateArtifact(Mockito.argThat(x -> x.getId().equals(artifact.getId())));
         assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
+        verify(notificationService, times(1)).notifySubscribers(resource.getId());
     }
 
     @SneakyThrows
