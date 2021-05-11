@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.services;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Map;
-
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
@@ -31,6 +26,11 @@ import lombok.RequiredArgsConstructor;
 import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Map;
 
 /**
  * This class builds up http or httpS endpoint connections and sends GET requests.
@@ -103,10 +103,11 @@ public class HttpService {
 
     /**
      * Perform a get request.
+     *
      * @param target The recipient of the request.
      * @param args   The request arguments.
      * @return The response.
-     * @throws IOException if the request failed.
+     * @throws IOException              if the request failed.
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     public Response get(final URL target, final HttpArgs args) throws IOException {
@@ -148,18 +149,21 @@ public class HttpService {
 
     /**
      * Perform a get request.
+     *
      * @param target The recipient of the request.
      * @param input  The query inputs.
      * @return The response.
      * @throws IOException if the request failed.
      */
     public Response get(final URL target, final QueryInput input) throws IOException {
-        final var url = buildTargetUrl(target, input.getOptional());
+        final var url = (input == null) ? buildTargetUrl(target, "")
+                : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input));
     }
 
     /**
      * Perform a get request.
+     *
      * @param target The recipient of the request.
      * @param input  The query inputs.
      * @param auth   The authentication information.
@@ -168,7 +172,8 @@ public class HttpService {
      */
     public Response get(final URL target, final QueryInput input, final Pair<String, String> auth)
             throws IOException {
-        final var url = buildTargetUrl(target, input.getOptional());
+        final var url = (input == null) ? buildTargetUrl(target, "")
+                : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
     }
 
@@ -183,6 +188,7 @@ public class HttpService {
 
     /**
      * Perform a http request.
+     *
      * @param method The request method.
      * @param target The recipient of the request.
      * @param args   The request arguments.
@@ -200,6 +206,7 @@ public class HttpService {
 
     /**
      * Create http request parameters from query.
+     *
      * @param input The query inputs.
      * @return The Http request arguments.
      */
@@ -216,6 +223,7 @@ public class HttpService {
     /**
      * Create http request parameters from query inputs and
      * authentication information.
+     *
      * @param input The query inputs.
      * @param auth  The authentication information.
      * @return The http request arguments.
