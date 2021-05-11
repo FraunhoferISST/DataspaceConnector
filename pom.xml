@@ -120,8 +120,10 @@
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>8.42</checkstyle.version>
+		<jacoco.version>0.8.7</jacoco.version>
 		<pmd.version>3.14.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
@@ -517,7 +519,7 @@
 			<plugin>
 				<groupId>com.mycila</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>4.1</version>
+				<version>${license-plugin.version}</version>
 				<configuration>
 					<licenseSets>
 						<licenseSet>
@@ -604,7 +606,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
+				<version>${jacoco.version}</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
@@ -709,7 +711,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.7</version>
+				<version>${jacoco.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
