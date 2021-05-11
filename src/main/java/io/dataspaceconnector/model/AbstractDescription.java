@@ -37,6 +37,7 @@ public class AbstractDescription<T> {
     /**
      * Add a value to the overflow field.
      * If the key already exists it will be overwritten.
+     * Null for either key or values will be ignored.
      * @param key The key.
      * @param value The value.
      */
@@ -44,6 +45,10 @@ public class AbstractDescription<T> {
     public void addOverflow(final String key, final String value) {
         if (additional == null) {
             additional = new HashMap<>();
+        }
+
+        if (key == null || value == null) {
+            return;
         }
 
         additional.put(key, value);

@@ -13,27 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.messages;
+package io.dataspaceconnector.exceptions;
 
-import java.net.URI;
+import org.junit.jupiter.api.Test;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Class for all description request message parameters.
- */
-@Data
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class LogMessageDesc extends MessageDesc {
-    /**
-     * All args constructor.
-     *
-     * @param recipient The message's recipient.
-     */
-    public LogMessageDesc(final URI recipient) {
-        super(recipient);
+class InvalidResourceExceptionTest {
+    @Test
+    public void constructor_someMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = "Some msg";
+
+        /* ACT */
+        final var exception = new InvalidResourceException(msg);
+
+        /* ASSERT */
+        assertEquals(msg, exception.getMessage());
     }
 }
