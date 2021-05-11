@@ -14,7 +14,6 @@ import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceFactory;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -37,7 +36,6 @@ public class SubscriberNotificationServiceTest {
     private RequestedResourceService requestedResourceService;
 
     @Autowired
-    @InjectMocks
     private SubscriberNotificationService subscriberNotificationService;
 
     @Autowired

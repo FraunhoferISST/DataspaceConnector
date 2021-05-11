@@ -6,31 +6,23 @@ import java.util.UUID;
 
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * This class provides methods for handling subscriptions to a requested resource.
  */
 @Log4j2
+@RequiredArgsConstructor
 @Service
 public class SubscriberNotificationService {
 
     /**
      * The service for managing requested resources.
      */
-    private final RequestedResourceService requestedResourceService;
-
-    /**
-     * Contructs a SubscriberNotificationService.
-     *
-     * @param requestedResourceService the service for managing requested resources.
-     */
-    @Autowired
-    public SubscriberNotificationService(final RequestedResourceService requestedResourceService) {
-        this.requestedResourceService = requestedResourceService;
-    }
+    private final @NonNull RequestedResourceService requestedResourceService;
 
     /**
      * Adds a URL to the list of subscribers for a given resource.

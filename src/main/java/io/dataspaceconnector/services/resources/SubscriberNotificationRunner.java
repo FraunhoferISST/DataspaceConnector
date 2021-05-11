@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -18,6 +20,7 @@ import reactor.util.retry.Retry;
  * to the list of subscribed URLs.
  */
 @Log4j2
+@RequiredArgsConstructor
 public class SubscriberNotificationRunner implements Runnable {
 
     /** Maximum number of retries when a notification fails. */
@@ -29,29 +32,15 @@ public class SubscriberNotificationRunner implements Runnable {
     /**
      * ID of the resource that was updated.
      */
-    private final UUID resourceId;
+    private final @NonNull UUID resourceId;
 
     /**
      * List of URLs subscribed for updates to the resource.
      */
-    private final List<URI> subscribers;
+    private final @NonNull List<URI> subscribers;
 
     /** The {@link WebClient} to use for sending the notifications. */
-    private final WebClient webClient;
-
-    /**
-     * Constructs a SubscriberNotificationRunner that sends the resource ID to all URLs in
-     * the list.
-     *
-     * @param resourceId ID of the resource.
-     * @param subscribers the list of URLs.
-     */
-    public SubscriberNotificationRunner(final UUID resourceId,
-                                        final List<URI> subscribers) {
-        this.resourceId = resourceId;
-        this.subscribers = subscribers;
-        this.webClient = WebClient.create();
-    }
+    private final WebClient webClient = WebClient.create();
 
     /**
      * Sends a notification to each URL subscribed for updates to a given resource in parallel.
