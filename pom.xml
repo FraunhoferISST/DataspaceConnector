@@ -694,7 +694,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -708,6 +707,8 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>${pmd.version}</version>
 				<configuration>
+					<!-- enable incremental analysis -->
+					<analysisCache>true</analysisCache>
 					<rulesets>
 						<ruleset>/category/java/bestpractices.xml</ruleset>
 						<ruleset>/category/java/codestyle.xml</ruleset>
@@ -760,6 +761,21 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
 				<version>${taglist.version}</version>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+						  <tagClass>
+							<displayName>TODO</displayName>
+							<tags>
+							  <tag>
+								<matchString>TODO</matchString>
+								<matchType>exact</matchType>
+							  </tag>
+							</tags>
+						  </tagClass>
+						</tagClasses>
+					  </tagListOptions>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
