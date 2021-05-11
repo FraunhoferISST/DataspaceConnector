@@ -1,19 +1,14 @@
 package io.dataspaceconnector.services.resources;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
-import reactor.util.retry.Retry;
 
 /**
  * This class provides methods for handling subscriptions to a requested resource.
@@ -44,6 +39,7 @@ public class SubscriberNotificationService {
      * @param uri the URL.
      */
     public void addSubscription(final UUID resourceId, final URI uri) {
+        Utils.requireNonNull(uri, ErrorMessages.URI_NULL);
         final var requestedResource = requestedResourceService.get(resourceId);
 
         var subscribers = requestedResource.getSubscribers();
@@ -64,23 +60,21 @@ public class SubscriberNotificationService {
      * @param uri the URL.
      */
     public void removeSubscription(final UUID resourceId, final URI uri) {
+        Utils.requireNonNull(uri, ErrorMessages.URI_NULL);
         final var requestedResource = requestedResourceService.get(resourceId);
 
         var subscribers = requestedResource.getSubscribers();
-        if (subscribers == null) {
-            subscribers = new ArrayList<>();
-        }
-
-        if (subscribers.contains(uri)) {
+        if (subscribers != null && subscribers.contains(uri)) {
             subscribers.remove(uri);
             requestedResourceService.updateSubscriptions(resourceId, subscribers);
         }
     }
 
     /**
-     * Notifies all backend systems subscribed for updates to a requested resource. The backends
-     * are notified in parallel and asynchronously. If a request to one of the subscribed URLs
-     * results in a status code 5xx, the request is retried 5 times with a delay of 5 seconds each.
+     * Notifies all backend systems subscribed for updates to a requested resource using a
+     * {@link SubscriberNotificationRunner}. The backends are notified in parallel and
+     * asynchronously. If a request to one of the subscribed URLs results in a status code 5xx,
+     * the request is retried 5 times with a delay of 5 seconds each.
      *
      * @param remoteId the remote ID of the requested resource that was updated.
      */
@@ -95,70 +89,12 @@ public class SubscriberNotificationService {
         }
 
         final var resource = requestedResourceService.get(resourceId.get());
+        final var subscribers = resource.getSubscribers() != null
+                ? new ArrayList<>(resource.getSubscribers()) : new ArrayList<URI>();
 
-        final var subscribers = new ArrayList<>(resource.getSubscribers());
-
-        final var notifyThread = new Thread(new Runnable() {
-            /** Maximum number of retries when a notification fails. */
-            private static final long MAX_RETRIES = 5;
-            /** Time between retries in seconds. */
-            private static final long RETRY_DELAY = 5;
-            /** The WebClient to use  */
-            private final WebClient webClient = WebClient.create();
-
-            /**
-             * Sends the given resource ID to the given URL as the body of a POST request. If the
-             * response has a status code 5xx, the request is retried 5 times with a delay of 5
-             * seconds each.
-             *
-             * @param uri the recipient
-             * @param resourceId the resource ID
-             * @return a {@link Mono} with the response body as string
-             */
-            private Mono<String> notifySubscriber(final URI uri, final UUID resourceId) {
-                return webClient
-                        .post()
-                        .uri(uri)
-                        .bodyValue(resourceId)
-                        .retrieve().bodyToMono(String.class)
-                        .retryWhen(Retry
-                                .fixedDelay(MAX_RETRIES, Duration.ofSeconds(RETRY_DELAY))
-                                .filter(this::shouldRetry))
-                        .onErrorResume(throwable -> {
-                            log.error("Could not notify subscriber at: {}", uri);
-                            return Mono.just("Could not notify subscriber at: " + uri);
-                        });
-            }
-
-            /**
-             * Checks whether a request should be retried based on the exception thrown by the
-             * {@link WebClient}. The request should be retried if a status code 5xx was returned.
-             *
-             * @param throwable the exception thrown by the WebClient
-             * @return true, if the request should be retried; false otherwise
-             */
-            private boolean shouldRetry(final Throwable throwable) {
-                if (throwable instanceof WebClientResponseException) {
-                    return ((WebClientResponseException) throwable)
-                            .getStatusCode()
-                            .is5xxServerError();
-                }
-                return false;
-            }
-
-            /**
-             * Sends a request to each URL subscribed for updates to a given resource in parallel.
-             */
-            @Override
-            public void run() {
-                Flux.fromIterable(subscribers)
-                        .parallel()
-                        .runOn(Schedulers.boundedElastic())
-                        .flatMap(uri -> notifySubscriber(uri, resource.getId())
-                        ).subscribe();
-            }
-        });
-        notifyThread.start();
+        if (!subscribers.isEmpty()) {
+            new Thread(new SubscriberNotificationRunner(resource.getId(), subscribers)).start();
+        }
     }
 
 }
