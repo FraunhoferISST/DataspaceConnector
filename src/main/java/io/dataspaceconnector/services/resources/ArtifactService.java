@@ -1,7 +1,21 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.resources;
 
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -106,7 +120,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
@@ -167,7 +182,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws ResourceNotFoundException  if the artifact does not exist.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
     @Transactional
@@ -194,8 +210,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             /*
                 NOTE: Make this not blocking.
              */
-            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
-                    information.getTransferContract(),
+            final var dataStream = retriever.retrieve(artifactId,
+                    artifact.getRemoteAddress(), information.getTransferContract(),
                     information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();

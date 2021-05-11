@@ -1,20 +1,35 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.usagecontrol;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.UnsupportedPatternException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import io.dataspaceconnector.utils.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 
 @Component
 @Log4j2
@@ -69,18 +84,19 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
      * @param patterns   List of patterns that should be enforced.
      * @param artifactId The requested artifact.
      * @param remoteId   The remote id of the requested artifact.
-     * @throws UnsupportedPatternException If no suitable pattern could be found.
+     * @throws io.dataspaceconnector.exceptions.UnsupportedPatternException
+     *         If no suitable pattern could be found.
      */
     public void checkForAccess(final List<PolicyPattern> patterns, final URI artifactId,
                                final URI remoteId) {
         // Get the contract agreement's rules for the target.
         final var agreements = entityResolver.getContractAgreementsByTarget(artifactId);
         for (final var agreement : agreements) {
-            final var rules = PolicyUtils.getRulesForTargetId(agreement, remoteId);
+            final var rules = ContractUtils.getRulesForTargetId(agreement, remoteId);
 
             // Check the policy of each rule.
             for (final var rule : rules) {
-                final var pattern = PolicyUtils.getPatternByRule(rule);
+                final var pattern = RuleUtils.getPatternByRule(rule);
                 // Enforce only a set of patterns.
                 if (patterns.contains(pattern)) {
                     ruleValidator.validatePolicy(pattern, rule, artifactId, null);

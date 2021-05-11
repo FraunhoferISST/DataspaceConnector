@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -21,8 +36,8 @@ import io.dataspaceconnector.services.messages.types.ContractAgreementService;
 import io.dataspaceconnector.services.messages.types.ContractRejectionService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.services.usagecontrol.RuleValidator;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -141,13 +156,13 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var request = deserializationService.getContractRequest(payload);
 
             // Get all rules of the contract request.
-            final var rules = PolicyUtils.extractRulesFromContract(request);
+            final var rules = ContractUtils.extractRulesFromContract(request);
             if (rules.isEmpty()) {
                 // Return rejection message if the contract request is missing rules.
                 return responseService.handleMissingRules(request, messageId, issuer);
             }
 
-            final var targetRuleMap = PolicyUtils.getTargetRuleMap(rules);
+            final var targetRuleMap = ContractUtils.getTargetRuleMap(rules);
             if (targetRuleMap.containsKey(null)) {
                 // Return rejection message if the rules are missing targets.
                 return responseService.handleMissingTargetInRules(request, messageId, issuer);
@@ -171,7 +186,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
 
                 // Abort negotiation if no contract offer for the issuer connector could be found.
                 final var validContracts
-                        = PolicyUtils.removeContractsWithInvalidConsumer(contracts, issuer);
+                        = ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
                 if (validContracts.isEmpty()) {
                     return responseService.handleMissingContractOffers(request, messageId, issuer);
                 }
@@ -203,19 +218,19 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * Accept contract by building a contract agreement and sending it as payload within a
      * contract agreement message.
      *
-     * @param request    The contract request object from the data consumer.
-     * @param issuer     The issuer connector id.
-     * @param messageId  The correlation message id.
-     * @param targetList List of requested targets.
+     * @param request   The contract request object from the data consumer.
+     * @param issuer    The issuer connector id.
+     * @param messageId The correlation message id.
+     * @param targets   List of requested targets.
      * @return The message response to the requesting connector.
      */
     private MessageResponse acceptContract(final ContractRequest request, final URI issuer,
-                                           final URI messageId, final List<URI> targetList) {
+                                           final URI messageId, final List<URI> targets) {
         ContractAgreement agreement = null;
         URI agreementId;
         try {
             // Turn the accepted contract request into a contract agreement and persist it.
-            agreement = persistenceService.buildAndSaveContractAgreement(request, targetList);
+            agreement = persistenceService.buildAndSaveContractAgreement(request, targets, issuer);
             agreementId = agreement.getId();
         } catch (ConstraintViolationException | PersistenceException exception) {
             return responseService.handleAgreementPersistenceException(exception, agreement,

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -81,7 +96,8 @@ public class EntityPersistenceService {
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
-    public UUID saveContractAgreement(final ContractAgreement agreement) throws PersistenceException {
+    public UUID saveContractAgreement(final ContractAgreement agreement)
+            throws PersistenceException {
         try {
             final var agreementId = agreement.getId();
             final var rdf = IdsUtils.toRdf(agreement);
@@ -105,11 +121,13 @@ public class EntityPersistenceService {
      *
      * @param request    The ids contract request.
      * @param targetList List of artifacts.
+     * @param issuer     The issuer connector id.
      * @return The id of the stored contract agreement.
      * @throws PersistenceException If the contract agreement could not be saved.
      */
     public ContractAgreement buildAndSaveContractAgreement(
-            final ContractRequest request, final List<URI> targetList) throws PersistenceException {
+            final ContractRequest request, final List<URI> targetList, final URI issuer)
+            throws PersistenceException {
         UUID agreementUuid = null;
         try {
             // Get base URL of application and path to agreements API.
@@ -125,7 +143,7 @@ public class EntityPersistenceService {
 
             // Build the contract agreement using the constructed ID
             final var agreement = contractManager.buildContractAgreement(request,
-                    agreementId);
+                    agreementId, issuer);
 
             // Iterate over all targets to get the UUIDs of the corresponding artifacts.
             final var artifactList = new ArrayList<UUID>();

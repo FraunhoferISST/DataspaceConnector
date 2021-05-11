@@ -1,11 +1,19 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.resources;
-
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
@@ -67,6 +75,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 public final class ResourceControllers {
     @RestController
@@ -162,7 +177,7 @@ public final class ResourceControllers {
 
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
+    @Tag(name = "Agreements", description = "Endpoints for contract/policy handling")
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override
@@ -245,11 +260,13 @@ public final class ResourceControllers {
             final var optional = request.getRequestURI().substring(
                     request.getRequestURI().indexOf(searchString) + searchString.length());
 
-            if (!optional.isBlank()) queryInput.setOptional(optional);
+            if (!optional.isBlank()) {
+                queryInput.setOptional(optional);
+            }
 
             /*
-                If no agreement information has been passed the connector needs to check if the
-                data access is restricted by the usage control.
+                If no agreement information has been passed the connector needs
+                to check if the data access is restricted by the usage control.
              */
             // TODO: Check what happens when this connector is the provider and one of its provided
             //  agreements is passed.

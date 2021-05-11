@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
@@ -15,8 +30,8 @@ import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import io.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
@@ -118,7 +133,7 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
                     = deserializationService.getContractAgreement(storedAgreement.getValue());
 
             // Compare both contract agreements.
-            if (!PolicyUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
+            if (!ContractUtils.compareContractAgreements(agreement, storedIdsAgreement)) {
                 return responseService.handleContractException(
                         new ContractException("Not the same contract."), payloadAsString,
                         issuer, messageId);

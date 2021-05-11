@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -80,18 +97,18 @@
 		<ids-framework.version>4.0.7</ids-framework.version>
 		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
-		<swagger-annotations.version>1.5.20</swagger-annotations.version>
-		<okhttp.version>4.2.2</okhttp.version>
-		<modelmapper.version>2.4.2</modelmapper.version>
+		<swagger-annotations.version>1.6.2</swagger-annotations.version>
+		<okhttp.version>4.9.1</okhttp.version>
+		<modelmapper.version>2.4.3</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
-		<springdoc-ui.version>1.5.4</springdoc-ui.version>
-		<springdoc-security.version>1.5.4</springdoc-security.version>
-		<jsonld-java.version>0.13.0</jsonld-java.version>
+		<springdoc-ui.version>1.5.8</springdoc-ui.version>
+		<springdoc-security.version>1.5.8</springdoc-security.version>
+		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6</equalsverifier.version>
 
 		<!-- Plugins -->
-		<maven-enforcer-plugin.version>3.0.0-M2</maven-enforcer-plugin.version>
+		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<pitest.version>1.6.3</pitest.version>
@@ -99,10 +116,14 @@
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
-		<spotbugs.version>4.2.0</spotbugs.version>
-		<checkstyle.version>3.1.2</checkstyle.version>
+		<spotbugs.version>4.2.3</spotbugs.version>
+		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
+		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
+		<checkstyle.version>8.42</checkstyle.version>
+		<jacoco.version>0.8.7</jacoco.version>
 		<pmd.version>3.14.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
+		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
@@ -420,6 +441,37 @@
 				</includes>
 			</resource>
 		</resources>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-checkstyle-plugin</artifactId>
+					<version>${checkstyle-plugin.version}</version>
+					<dependencies>
+						<dependency>
+							<groupId>com.puppycrawl.tools</groupId>
+							<artifactId>checkstyle</artifactId>
+							<version>${checkstyle.version}</version>
+						</dependency>
+					</dependencies>
+					<configuration>
+						<configLocation>scripts/ci/checkstyle.xml</configLocation>
+						<encoding>UTF-8</encoding>
+						<consoleOutput>true</consoleOutput>
+						<failsOnError>true</failsOnError>
+					</configuration>
+					<executions>
+						<execution>
+							<id>validate</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -485,6 +537,36 @@
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license-plugin.version}</version>
+				<configuration>
+					<licenseSets>
+						<licenseSet>
+							<header>scripts/ci/license/header.txt</header>
+							<excludes>
+								<exclude>**/README</exclude>
+								<exclude>src/test/resources/**</exclude>
+								<exclude>src/main/resources/**</exclude>
+								<exclude>**/*.env</exclude>
+								<exclude>**/lombok.config</exclude>
+								<exclude>**/.dockerignore</exclude>
+							</excludes>
+						</licenseSet>
+					</licenseSets>
+					<properties>
+						<year>${project.inceptionYear}</year>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 			<!-- <plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
@@ -545,7 +627,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>${jacoco.version}</version>
 				<executions>
 					<execution>
 						<id>default-prepare-agent</id>
@@ -610,7 +692,7 @@
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
 							<artifactId>findsecbugs-plugin</artifactId>
-							<version>1.11.0</version>
+							<version>${findsecbugs-plugin.version}</version>
 						</plugin>
 					</plugins>
 				</configuration>
@@ -618,10 +700,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.2</version>
-				<configuration>
-					<configLocation>scripts/ci/checkstyle.xml</configLocation>
-				</configuration>
+				<version>${checkstyle-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -650,7 +729,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.6</version>
+				<version>${jacoco.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>

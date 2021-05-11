@@ -1,4 +1,21 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.view;
+
+import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.RepresentationController;
@@ -13,8 +30,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -43,9 +58,10 @@ public class RepresentationViewAssembler
         view.add(selfLink);
 
         final var artifactsLink =
-                WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
-                        .getResource(representation.getId(), null, null, null))
-                                 .withRel("artifacts");
+                WebMvcLinkBuilder
+                        .linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
+                                        .getResource(representation.getId(), null, null, null))
+                        .withRel("artifacts");
         view.add(artifactsLink);
 
         final var resourceType = representation.getResources();
@@ -54,19 +70,20 @@ public class RepresentationViewAssembler
             // No elements found, default to offered resources
             resourceLinker =
                     linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                            .getResource(representation.getId(), null, null, null))
+                                   .getResource(representation.getId(), null, null, null))
                             .withRel("offers");
         } else {
             // Construct the link for the right resource type.
             if (resourceType.get(0) instanceof OfferedResource) {
                 resourceLinker =
                         linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                                .getResource(representation.getId(), null, null, null))
+                                       .getResource(representation.getId(), null, null, null))
                                 .withRel("offers");
             } else if (resourceType.get(0) instanceof RequestedResource) {
                 resourceLinker =
-                        linkTo(methodOn(RelationControllers.RepresentationsToRequestedResources.class)
-                                .getResource(representation.getId(), null, null, null))
+                        linkTo(methodOn(
+                                RelationControllers.RepresentationsToRequestedResources.class)
+                                       .getResource(representation.getId(), null, null, null))
                                 .withRel("requests");
             } else {
                 throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);

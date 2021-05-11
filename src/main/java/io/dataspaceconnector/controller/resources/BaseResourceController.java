@@ -1,9 +1,23 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.resources;
 
 import javax.validation.Valid;
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
@@ -124,7 +138,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @param resourceId The id of the resource.
      * @return The resource.
      * @throws IllegalArgumentException if the resourceId is null.
-     * @throws ResourceNotFoundException if the resourceId is unknown.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *          if the resourceId is unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
@@ -142,7 +157,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code (No_Content) when the resource has been updated or response with
      * code (201) if the resource has been updated and been moved to a new endpoint.
      * @throws IllegalArgumentException if the any of the parameters is null.
-     * @throws ResourceNotFoundException if the resourceId is unknown.
+     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     *          if the resourceId is unknown.
      */
     @PutMapping(value = "{id}")
     @Operation(summary = "Update a base resource by id")
@@ -159,11 +175,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             // The resource has been moved
+            final var entity = assembler.toModel(resource);
             final var headers = new HttpHeaders();
-            headers.setLocation(assembler.toModel(resource).getLink("self").get().toUri());
+            headers.setLocation(entity.getLink("self").get().toUri());
 
-            response =
-                    new ResponseEntity<>(assembler.toModel(resource), headers, HttpStatus.CREATED);
+            response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
         }
 
         return response;

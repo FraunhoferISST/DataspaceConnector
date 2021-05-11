@@ -1,9 +1,24 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.Valid;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -173,15 +188,15 @@ public final class RelationControllers {
     @Tag(name = "Representations", description = "Endpoints for linking artifacts to "
             + "representations")
     public static class RepresentationsToArtifacts
-            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker, Artifact,
-            ArtifactView> {
+            extends BaseResourceChildController<RelationServices.RepresentationArtifactLinker,
+            Artifact, ArtifactView> {
     }
 
     @RestController
     @RequestMapping("/api/contracts/{id}/rules")
     @Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
-    public static class ContractsToRules extends BaseResourceChildController<RelationServices.ContractRuleLinker,
-            ContractRule, ContractRuleView> {
+    public static class ContractsToRules extends BaseResourceChildController<
+            RelationServices.ContractRuleLinker, ContractRule, ContractRuleView> {
     }
 
     @RestController

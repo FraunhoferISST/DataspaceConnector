@@ -1,4 +1,22 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.services.messages.types;
+
+import java.net.URI;
+import java.util.Map;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
@@ -8,15 +26,11 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
-import io.dataspaceconnector.exceptions.RdfBuilderException;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
@@ -65,7 +79,8 @@ public final class ContractAgreementService
      * @param agreement The contract agreement.
      * @return The response map.
      * @throws MessageException         if message handling failed.
-     * @throws RdfBuilderException      if the contract agreement rdf string could not be built.
+     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
+     *         if the contract agreement rdf string could not be built.
      * @throws IllegalArgumentException if contract agreement is null.
      */
     public Map<String, String> sendMessage(final URI recipient, final ContractAgreement agreement)
@@ -83,7 +98,8 @@ public final class ContractAgreementService
      * @return True if the response type is as expected.
      * @throws MessageResponseException if the response could not be read.
      */
-    public boolean validateResponse(final Map<String, String> response) throws MessageResponseException {
+    public boolean validateResponse(final Map<String, String> response)
+            throws MessageResponseException {
         return isValidResponseType(response);
     }
 }

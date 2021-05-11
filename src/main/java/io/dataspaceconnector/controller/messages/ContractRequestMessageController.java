@@ -1,4 +1,25 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.controller.messages;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -17,7 +38,7 @@ import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.usagecontrol.ContractManager;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-import io.dataspaceconnector.utils.PolicyUtils;
+import io.dataspaceconnector.utils.RuleUtils;
 import io.dataspaceconnector.view.AgreementViewAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,12 +59,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -54,33 +69,32 @@ public class ContractRequestMessageController {
     /**
      * Service for contract request message handling.
      */
-    private final @NonNull ContractRequestService cRequestService;
+    private final @NonNull ContractRequestService contractReqSvc;
 
     /**
      * Service for artifact request message handling.
      */
-    private final @NonNull ArtifactRequestService aRequestService;
+    private final @NonNull ArtifactRequestService artifactReqSvc;
 
     /**
      * Service for description request message handling.
      */
-    private final @NonNull DescriptionRequestService dRequestService;
+    private final @NonNull DescriptionRequestService descReqSvc;
 
     /**
      * Service for contract agreement message handling.
      */
-    private final @NonNull ContractAgreementService cAgreementService;
+    private final @NonNull ContractAgreementService agreementSvc;
 
     /**
      * Service for updating database entities.
      */
-    private final @NonNull
-    EntityUpdateService updateService;
+    private final @NonNull EntityUpdateService updateService;
 
     /**
      * Assemblers DTOs for agreements.
      */
-    private final @NonNull AgreementViewAssembler agreementAssembler;
+    private final @NonNull AgreementViewAssembler agreementAsm;
 
     /**
      * Used for gaining access to agreements.
@@ -95,7 +109,7 @@ public class ContractRequestMessageController {
     /**
      * Service for persisting entities.
      */
-    private final @NonNull EntityPersistenceService persistenceService;
+    private final @NonNull EntityPersistenceService persistenceSvc;
 
     /**
      * Starts a contract, metadata, and data exchange with an external connector.
@@ -136,15 +150,15 @@ public class ContractRequestMessageController {
         Map<String, String> response;
         try {
             // Validate input for contract request.
-            PolicyUtils.validateRuleTarget(ruleList);
+            RuleUtils.validateRuleTarget(ruleList);
             final var request = contractManager.buildContractRequest(ruleList);
 
             // CONTRACT NEGOTIATION ----------------------------------------------------------------
             // Send and validate contract request/response message.
-            response = cRequestService.sendMessage(recipient, request);
-            if (!cRequestService.validateResponse(response)) {
+            response = contractReqSvc.sendMessage(recipient, request);
+            if (!contractReqSvc.validateResponse(response)) {
                 // If the response is not a contract agreement message, show the response.
-                final var content = cRequestService.getResponseContent(response);
+                final var content = contractReqSvc.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -153,15 +167,15 @@ public class ContractRequestMessageController {
             final var agreement = contractManager.validateContractAgreement(payload, request);
 
             // Send and validate contract agreement/response message.
-            response = cAgreementService.sendMessage(recipient, agreement);
-            if (!cAgreementService.validateResponse(response)) {
+            response = agreementSvc.sendMessage(recipient, agreement);
+            if (!agreementSvc.validateResponse(response)) {
                 // If the response is not a notification message, show the response.
-                final var content = cAgreementService.getResponseContent(response);
+                final var content = agreementSvc.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
             // Save contract agreement to database.
-            agreementId = persistenceService.saveContractAgreement(agreement);
+            agreementId = persistenceSvc.saveContractAgreement(agreement);
             if (log.isDebugEnabled()) {
                 log.debug("Policy negotiation success. Saved agreement: " + agreementId);
             }
@@ -170,19 +184,16 @@ public class ContractRequestMessageController {
             // Iterate over list of resource ids to send description request messages for each.
             for (final var resource : resources) {
                 // Send and validate description request/response message.
-                response = dRequestService.sendMessage(recipient, resource);
-                if (!dRequestService.validateResponse(response)) {
+                response = descReqSvc.sendMessage(recipient, resource);
+                if (!descReqSvc.validateResponse(response)) {
                     // If the response is not a description response message, show the response.
-                    final var content = dRequestService.getResponseContent(response);
+                    final var content = descReqSvc.getResponseContent(response);
                     return ControllerUtils.respondWithMessageContent(content);
                 }
 
                 // Read and process the response message. Save resource, recipient, and agreement
                 // id to database.
-                // TODO Check if a resource with remoteId is already stored on consumer side,
-                //  if yes, do NOT create a new resource, but update it and all children
-                // TODO store remote address (= recipient) to artifact (RemoteConsumerData??)
-                persistenceService.saveMetadata(response, artifacts, download, recipient);
+                persistenceSvc.saveMetadata(response, artifacts, download, recipient);
             }
 
             updateService.linkArtifactToAgreement(artifacts, agreementId);
@@ -196,12 +207,12 @@ public class ContractRequestMessageController {
 
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
-                    response = aRequestService.sendMessage(recipient, artifact, transferContract);
-                    if (!aRequestService.validateResponse(response)) {
+                    response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);
+                    if (!artifactReqSvc.validateResponse(response)) {
                         // If the response is not an artifact response message, show the response.
                         // Ignore when data could not be downloaded, because the artifact request
                         // can be triggered later again.
-                        final var content = aRequestService.getResponseContent(response);
+                        final var content = artifactReqSvc.getResponseContent(response);
                         if (log.isDebugEnabled()) {
                             log.debug("Data could not be loaded: \n" + content);
                         }
@@ -209,7 +220,7 @@ public class ContractRequestMessageController {
 
                     // Read and process the response message.
                     try {
-                        persistenceService.saveData(response, artifact);
+                        persistenceSvc.saveData(response, artifact);
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
@@ -234,7 +245,7 @@ public class ContractRequestMessageController {
         // Return response entity containing the locations of the contract agreement, the
         // downloaded resources, and the downloaded data.
 
-        final var entity = agreementAssembler.toModel(agreementService.get(agreementId));
+        final var entity = agreementAsm.toModel(agreementService.get(agreementId));
 
         final var headers = new HttpHeaders();
         headers.setLocation(entity.getLink("self").get().toUri());

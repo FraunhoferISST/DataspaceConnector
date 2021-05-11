@@ -1,3 +1,18 @@
+/*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.dataspaceconnector.utils;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 /**
@@ -154,4 +170,69 @@ public final class Utils {
      * Default first page.
      */
     public static final int DEFAULT_FIRST_PAGE = 0;
+
+    /**
+     * Compare two lists to each other.
+     *
+     * @param lList   One list.
+     * @param rList   The other list.
+     * @param compare The function that should be used for comparison.
+     * @param <T>     Type of the list.
+     * @return True if lists are equal, false if not.
+     */
+    public static <T> boolean compareList(final List<? extends T> lList,
+                                          final List<? extends T> rList,
+                                          final BiFunction<T, T, Boolean> compare) {
+        var isSame = true;
+
+        if (isOnlyOneNull(lList, rList)) {
+            isSame = false;
+        } else if (lList != null /* && rList != null*/) {
+            final var lSet = makeUnique(lList, compare);
+            final var rSet = makeUnique(rList, compare);
+
+            if (lSet.size() == rSet.size()) {
+                for (final var lObj : lSet) {
+                    var found = false;
+                    for (final var rObj : rSet) {
+                        if (compare.apply(lObj, rObj)) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        // At least one element is different
+                        isSame = false;
+                        break;
+                    }
+                }
+            } else {
+                // Two unique sets with different length must have different elements
+                isSame = false;
+            }
+        }
+
+        return isSame;
+    }
+
+    private static <T> List<? extends T> makeUnique(final List<? extends T> list,
+                                                    final BiFunction<T, T, Boolean> compare) {
+        final var output = new ArrayList<>(list);
+        for (int x = 0; x < output.size(); x++) {
+            final var obj = output.get(x);
+            for (int y = x + 1; y < output.size(); y++) {
+                if (compare.apply(obj, output.get(y))) {
+                    output.remove(y);
+                    --y;
+                }
+            }
+        }
+
+        return output;
+    }
+
+    private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
+        return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
+    }
 }
