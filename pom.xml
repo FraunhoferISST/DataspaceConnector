@@ -448,6 +448,21 @@
 							<version>${checkstyle.version}</version>
 						</dependency>
 					</dependencies>
+					<configuration>
+						<configLocation>scripts/ci/checkstyle.xml</configLocation>
+						<encoding>UTF-8</encoding>
+						<consoleOutput>true</consoleOutput>
+						<failsOnError>true</failsOnError>
+					</configuration>
+					<executions>
+						<execution>
+							<id>validate</id>
+							<phase>validate</phase>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -680,9 +695,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${checkstyle-plugin.version}</version>
-				<configuration>
-					<configLocation>scripts/ci/checkstyle.xml</configLocation>
-				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>
