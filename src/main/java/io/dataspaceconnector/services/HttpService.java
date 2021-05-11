@@ -156,7 +156,7 @@ public class HttpService {
      * @throws IOException if the request failed.
      */
     public Response get(final URL target, final QueryInput input) throws IOException {
-        final var url = (input == null) ? buildTargetUrl(target, "")
+        final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input));
     }
@@ -172,7 +172,7 @@ public class HttpService {
      */
     public Response get(final URL target, final QueryInput input, final Pair<String, String> auth)
             throws IOException {
-        final var url = (input == null) ? buildTargetUrl(target, "")
+        final var url = (input == null) ? buildTargetUrl(target, null)
                 : buildTargetUrl(target, input.getOptional());
         return this.get(url, toArgs(input, auth));
     }
