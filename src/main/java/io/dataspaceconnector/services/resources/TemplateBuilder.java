@@ -41,7 +41,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Builds and links entities from templates.
- *
  * @param <T> The resource type.
  * @param <D> The resource description type.
  */
@@ -87,16 +86,17 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The service for artifacts.
      */
-    private final @NonNull ArtifactService artifactService;
+    @Autowired
+    private ArtifactService artifactService;
 
     /**
      * The service for rules.
      */
-    private final @NonNull RuleService ruleService;
+    @Autowired
+    private RuleService ruleService;
 
     /**
      * Build a resource and dependencies from a template.
-     *
      * @param template The resource template.
      * @return The new resource.
      * @throws IllegalArgumentException if the passed template is null.
@@ -106,9 +106,9 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
         final var representationIds =
                 Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
-                        .collect(Collectors.toSet());
+                     .collect(Collectors.toSet());
         final var contractIds = Utils.toStream(template.getContracts()).map(x -> build(x).getId())
-                .collect(Collectors.toSet());
+                                     .collect(Collectors.toSet());
         final var resource = buildResource(template);
 
         resourceRepresentationLinker.add(resource.getId(), representationIds);
@@ -121,7 +121,6 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a representation and dependencies from template.
-     *
      * @param template The representation template.
      * @return The new representation.
      * @throws IllegalArgumentException if the passed template is null.
@@ -130,9 +129,10 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
-                .collect(Collectors.toSet());
+                                     .collect(Collectors.toSet());
         Representation representation;
-        final var repId = representationService.identifyByRemoteId(template.getDesc().getRemoteId());
+        final var repId =
+                representationService.identifyByRemoteId(template.getDesc().getRemoteId());
         if (repId.isPresent()) {
             representation = representationService.update(repId.get(), template.getDesc());
         } else {
@@ -146,7 +146,6 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a contract and dependencies from a template.
-     *
      * @param template The contract template.
      * @return The new contract.
      * @throws IllegalArgumentException if the passed template is null.
@@ -155,7 +154,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
-                .collect(Collectors.toSet());
+                                 .collect(Collectors.toSet());
         final var contract = contractService.create(template.getDesc());
         contractRuleLinker.add(contract.getId(), ruleIds);
 
@@ -164,7 +163,6 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build an artifact and dependencies from a template.
-     *
      * @param template The artifact template.
      * @return The new artifact.
      * @throws IllegalArgumentException if the passed template is null.
@@ -185,7 +183,6 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a rule and dependencies from a template.
-     *
      * @param template The rule template.
      * @return The new rule.
      * @throws IllegalArgumentException if the passed template is null.
@@ -197,7 +194,6 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Return the resource service for subclasses.
-     *
      * @return The resource service.
      */
     protected ResourceService<T, D> getResourceService() {
@@ -214,7 +210,6 @@ final class TemplateBuilderOfferedResource
         extends TemplateBuilder<OfferedResource, OfferedResourceDesc> {
     /**
      * Default constructor.
-     *
      * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
      * @param resourceContractLinker       The resource-contract service.
@@ -222,10 +217,7 @@ final class TemplateBuilderOfferedResource
      * @param representationArtifactLinker The representation-artifact service.
      * @param contractService              The contract service.
      * @param contractRuleLinker           The contract-rule service.
-     * @param artifactService              The artifact service.
-     * @param ruleService                  The rule service.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
@@ -235,11 +227,10 @@ final class TemplateBuilderOfferedResource
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final RelationServices.ContractRuleLinker contractRuleLinker,
-            final ArtifactService artifactService, final RuleService ruleService) {
+            final RelationServices.ContractRuleLinker contractRuleLinker) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-                representationService, representationArtifactLinker, contractService,
-                contractRuleLinker, artifactService, ruleService);
+              representationService, representationArtifactLinker, contractService,
+              contractRuleLinker);
     }
 
     @Override
@@ -257,7 +248,6 @@ final class TemplateBuilderRequestedResource
         extends TemplateBuilder<RequestedResource, RequestedResourceDesc> {
     /**
      * Default constructor.
-     *
      * @param resourceService              The resource service.
      * @param resourceRepresentationLinker The resource-representation service.
      * @param resourceContractLinker       The resource-contract service.
@@ -265,10 +255,7 @@ final class TemplateBuilderRequestedResource
      * @param representationArtifactLinker The representation-artifact service.
      * @param contractService              The contract service.
      * @param contractRuleLinker           The contract-rule service.
-     * @param artifactService              The artifact service.
-     * @param ruleService                  The rule service.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
@@ -278,11 +265,10 @@ final class TemplateBuilderRequestedResource
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final RelationServices.ContractRuleLinker contractRuleLinker,
-            final ArtifactService artifactService, final RuleService ruleService) {
+            final RelationServices.ContractRuleLinker contractRuleLinker) {
         super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-                representationService, representationArtifactLinker, contractService,
-                contractRuleLinker, artifactService, ruleService);
+              representationService, representationArtifactLinker, contractService,
+              contractRuleLinker);
     }
 
     @Override
