@@ -9,6 +9,9 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * The entity where connectors and resources can be registered.
+ */
 @Entity
 @Table(name = "broker")
 @SQLDelete(sql = "UPDATE broker SET deleted=true WHERE id=?")
@@ -24,18 +27,36 @@ public class Broker extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The access url of the broker.
+     */
     private URI accessUrl;
 
+    /**
+     * The title of the broker.
+     */
     private String title;
 
+    /**
+     * The status of registration.
+     */
     @Enumerated(EnumType.STRING)
     private RegisterStatus status;
 
+    /**
+     * The list of resources.
+     */
     @OneToMany
     private List<OfferedResource> offeredResources;
 
+    /**
+     * Necessary credentials.
+     */
     private String credentials;
 
+    /**
+     * The date specification.
+     */
     private ZonedDateTime lastSeen;
 
 }

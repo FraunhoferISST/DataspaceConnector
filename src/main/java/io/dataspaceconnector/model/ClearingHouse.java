@@ -11,6 +11,10 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.time.ZonedDateTime;
 
+/**
+ * The Clearing House is an intermediary that provides clearing and settlement services for all data exchange
+ * transactions.
+ */
 @Entity
 @Table(name = "clearinghouse")
 @SQLDelete(sql = "UPDATE clearinghouse SET deleted=true WHERE id=?")
@@ -26,13 +30,25 @@ public class ClearingHouse extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The access url of the clearing house.
+     */
     private URI accessUrl;
 
+    /**
+     * The title of the clearing house.
+     */
     private String title;
 
+    /**
+     * The status of registration.
+     */
     @Enumerated(EnumType.STRING)
     private RegisterStatus registerStatus;
 
+    /**
+     * The date specification.
+     */
     private ZonedDateTime lastSeen;
 
 }

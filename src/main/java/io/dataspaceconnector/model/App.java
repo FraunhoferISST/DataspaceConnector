@@ -7,6 +7,9 @@ import org.hibernate.annotations.Where;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+/**
+ * An app can be used to perform operations on the data.
+ */
 @Entity
 @Table(name = "app")
 @SQLDelete(sql = "UPDATE app SET deleted=true WHERE id=?")
@@ -22,5 +25,8 @@ public class App extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The title of the app.
+     */
     private String title;
 }

@@ -48,6 +48,22 @@ public final class MetadataUtils {
     }
 
     /**
+     * Update string.
+     *
+     * @param oldPort     Old port.
+     * @param newPort     New port.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<Integer> updateInteger(final int oldPort,
+                                                  final int newPort) {
+        if (oldPort != newPort) {
+            return Optional.of(newPort);
+        }
+
+        return Optional.of(oldPort);
+    }
+
+    /**
      * Update uri.
      *
      * @param oldUri     Old uri.
