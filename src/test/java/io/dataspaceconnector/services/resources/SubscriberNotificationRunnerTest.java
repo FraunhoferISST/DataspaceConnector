@@ -84,13 +84,15 @@ public class SubscriberNotificationRunnerTest {
     }
 
     @Test
-    public void run_twoSubscriptions_sendTwoNotifications() {
+    public void run_twoSubscriptions_sendTwoNotifications() throws InterruptedException {
         /* ARRANGE */
         runner = new SubscriberNotificationRunner(resourceId, List.of(subscriber1, subscriber2));
         ReflectionTestUtils.setField(runner, "webClient", webClient);
 
         /* ACT */
         runner.run();
+
+        Thread.sleep(1000);
 
         /* ASSERT */
         verify(webClient, times(2)).post();
