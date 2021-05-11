@@ -15,7 +15,18 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.AbstractConstraint;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConstraintImpl;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
 import io.dataspaceconnector.model.TimeInterval;
@@ -105,10 +116,13 @@ public final class RuleUtils {
      * @throws ParseException If the policy could not be checked.
      */
     public static boolean checkRuleForPostDuties(final Rule rule) throws ParseException {
-        final var postDuties = ((Permission) rule).getPostDuty();
-        if (postDuties != null && !postDuties.isEmpty()) {
-            return checkDutiesForDeletion(postDuties);
+        if (rule instanceof PermissionImpl || rule instanceof DutyImpl) {
+            final var postDuties = ((Permission) rule).getPostDuty();
+            if (postDuties != null && !postDuties.isEmpty()) {
+                return checkDutiesForDeletion(postDuties);
+            }
         }
+
         return false;
     }
 

@@ -204,8 +204,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             /*
                 NOTE: Make this not blocking.
              */
-            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
-                    information.getTransferContract(),
+            final var dataStream = retriever.retrieve(artifactId,
+                    artifact.getRemoteAddress(), information.getTransferContract(),
                     information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();

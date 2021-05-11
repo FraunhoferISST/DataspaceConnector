@@ -15,7 +15,17 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.DutyImpl;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
@@ -160,10 +170,12 @@ public class ContractManager {
      *
      * @param request The contract request.
      * @param id      ID to use when creating the contract agreement.
+     * @param issuer  The issuer connector id.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
-    public ContractAgreement buildContractAgreement(final ContractRequest request, final URI id)
+    public ContractAgreement buildContractAgreement(
+            final ContractRequest request, final URI id, final URI issuer)
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
@@ -189,7 +201,7 @@ public class ContractManager {
 
         // Return contract request.
         return new ContractAgreementBuilder(id)
-                ._consumer_(request.getId())
+                ._consumer_(issuer)
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._contractStart_(IDSUtils.getGregorianNow())
                 ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
