@@ -130,9 +130,9 @@ public class Resource extends AbstractEntity {
     public List<Catalog> getCatalogs() {
         /*
             NOTE: Offered and Requested Resource override this function
-            so that null should never be returned. Return null here so
-            that a missing override crashes really load.
+            so that exception should never be returned. Throw exception
+            here so that a missing override crashes really load.
          */
-        return null;
+        throw new ResourceException("Not implemented");
     }
 }

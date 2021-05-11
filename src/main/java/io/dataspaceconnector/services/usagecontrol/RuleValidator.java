@@ -29,10 +29,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import java.net.URI;
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +207,7 @@ public class RuleValidator {
         final Duration duration;
         try {
             duration = RuleUtils.getDuration(rule);
-        } catch (DatatypeConfigurationException e) {
+        } catch (DateTimeParseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Could not read duration. [target=({}), exception=({})]",
                         target, e.getMessage(), e);

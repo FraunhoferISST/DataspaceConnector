@@ -33,6 +33,9 @@ import static io.dataspaceconnector.utils.RuleUtils.compareObligations;
 import static io.dataspaceconnector.utils.RuleUtils.comparePermissions;
 import static io.dataspaceconnector.utils.RuleUtils.compareProhibitions;
 
+/**
+ * Contains utility methods for creating and validation ids contracts.
+ */
 public final class ContractUtils {
 
     /**

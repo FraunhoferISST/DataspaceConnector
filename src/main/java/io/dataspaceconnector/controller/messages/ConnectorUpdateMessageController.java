@@ -54,8 +54,7 @@ public class ConnectorUpdateMessageController {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Sending an ids connector update message with the current connector as payload.
