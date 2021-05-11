@@ -218,19 +218,19 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
      * Accept contract by building a contract agreement and sending it as payload within a
      * contract agreement message.
      *
-     * @param request    The contract request object from the data consumer.
-     * @param issuer     The issuer connector id.
-     * @param messageId  The correlation message id.
-     * @param targetList List of requested targets.
+     * @param request   The contract request object from the data consumer.
+     * @param issuer    The issuer connector id.
+     * @param messageId The correlation message id.
+     * @param targets   List of requested targets.
      * @return The message response to the requesting connector.
      */
     private MessageResponse acceptContract(final ContractRequest request, final URI issuer,
-                                           final URI messageId, final List<URI> targetList) {
+                                           final URI messageId, final List<URI> targets) {
         ContractAgreement agreement = null;
         URI agreementId;
         try {
             // Turn the accepted contract request into a contract agreement and persist it.
-            agreement = persistenceService.buildAndSaveContractAgreement(request, targetList);
+            agreement = persistenceService.buildAndSaveContractAgreement(request, targets, issuer);
             agreementId = agreement.getId();
         } catch (ConstraintViolationException | PersistenceException exception) {
             return responseService.handleAgreementPersistenceException(exception, agreement,

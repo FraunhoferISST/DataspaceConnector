@@ -432,8 +432,8 @@ class ContractRequestHandlerTest {
 
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
-        Mockito.doReturn(getContractAgreement()).when(persistenceService)
-                .buildAndSaveContractAgreement(Mockito.any(), Mockito.eq(Arrays.asList(artifactId)));
+        Mockito.doReturn(getContractAgreement()).when(persistenceService).buildAndSaveContractAgreement(
+                Mockito.any(), Mockito.eq(Arrays.asList(artifactId)), Mockito.eq(issuerConnector));
 
         /* ACT */
         final var result = (BodyResponse) handler.processContractRequest(payload, messageId, issuerConnector);

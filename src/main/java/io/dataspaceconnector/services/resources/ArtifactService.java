@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
@@ -46,6 +38,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.
@@ -210,8 +210,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             /*
                 NOTE: Make this not blocking.
              */
-            final var dataStream = retriever.retrieve(artifactId, artifact.getRemoteAddress(),
-                    information.getTransferContract(),
+            final var dataStream = retriever.retrieve(artifactId,
+                    artifact.getRemoteAddress(), information.getTransferContract(),
                     information.getQueryInput());
             final var persistedData = setData(artifactId, dataStream);
             artifact.incrementAccessCounter();
