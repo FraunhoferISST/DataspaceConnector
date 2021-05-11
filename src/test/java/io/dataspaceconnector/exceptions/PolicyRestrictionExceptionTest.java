@@ -15,22 +15,35 @@
  */
 package io.dataspaceconnector.exceptions;
 
+import io.dataspaceconnector.utils.ErrorMessages;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageExceptionTest {
+public class PolicyRestrictionExceptionTest {
+    @Test
+    public void constructor_someMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = ErrorMessages.CONTRACT_NULL;
+
+        /* ACT */
+        final var exception = new PolicyRestrictionException(msg);
+
+        /* ASSERT */
+        assertEquals(msg.toString(), exception.getMessage());
+    }
+
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
-        final var msg = "Some msg";
+        final var msg = ErrorMessages.CONTRACT_NULL;
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new MessageException(msg, someError);
+        final var exception = new PolicyRestrictionException(msg, someError);
 
         /* ASSERT */
-        assertEquals(msg, exception.getMessage());
+        assertEquals(msg.toString(), exception.getMessage());
         assertEquals(someError, exception.getCause());
     }
 }

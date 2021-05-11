@@ -19,7 +19,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageExceptionTest {
+public class MessageResponseExceptionTest {
+    @Test
+    public void constructor_someMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = "Some msg";
+
+        /* ACT */
+        final var exception = new MessageResponseException(msg);
+
+        /* ASSERT */
+        assertEquals(msg, exception.getMessage());
+    }
+
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
@@ -27,7 +39,7 @@ public class MessageExceptionTest {
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new MessageException(msg, someError);
+        final var exception = new MessageResponseException(msg, someError);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

@@ -17,9 +17,9 @@ package io.dataspaceconnector.exceptions;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MessageExceptionTest {
+public class UUIDFormatExceptionTest {
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
@@ -27,7 +27,7 @@ public class MessageExceptionTest {
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new MessageException(msg, someError);
+        final var exception = new UUIDFormatException(msg, someError);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

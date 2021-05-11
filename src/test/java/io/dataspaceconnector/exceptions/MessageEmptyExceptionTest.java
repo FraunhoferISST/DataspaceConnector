@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MessageEmptyExceptionTest {
+public class MessageEmptyExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
