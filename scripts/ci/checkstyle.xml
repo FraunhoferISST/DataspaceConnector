@@ -179,6 +179,7 @@
     <module name="ArrayTypeStyle"/>
     <module name="FinalParameters"/>
     <module name="TodoComment">
+      <property name="format" value="TODO"/>
       <property name="severity" value="warning"/>
     </module>
     <module name="UpperEll"/>
