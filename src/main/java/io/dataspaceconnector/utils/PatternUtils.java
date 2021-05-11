@@ -29,8 +29,14 @@ import de.fraunhofer.iais.eis.util.Util;
 
 import java.net.URI;
 
+/**
+ * Contains utility methods for creating example ids rules.
+ */
 public final class PatternUtils {
 
+    /**
+     * Default constructor.
+     */
     private PatternUtils() {
         // not used
     }

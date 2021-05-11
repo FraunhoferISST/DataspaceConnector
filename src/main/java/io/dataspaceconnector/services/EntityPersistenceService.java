@@ -58,8 +58,7 @@ public class EntityPersistenceService {
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for updating artifact data.
@@ -69,14 +68,12 @@ public class EntityPersistenceService {
     /**
      * Service for linking agreements and artifacts.
      */
-    private final @NonNull
-    RelationServices.AgreementArtifactLinker linker;
+    private final @NonNull RelationServices.AgreementArtifactLinker linker;
 
     /**
      * Service for contract processing.
      */
-    private final @NonNull
-    ContractManager contractManager;
+    private final @NonNull ContractManager contractManager;
 
     /**
      * Service for deserialization.
@@ -86,8 +83,7 @@ public class EntityPersistenceService {
     /**
      * Template builder.
      */
-    private final @NonNull
-    TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
 
     /**
      * Save contract agreement to database (consumer side).

@@ -42,6 +42,9 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Contains utility methods for validating the content of ids rules.
+ */
 @Log4j2
 public final class RuleUtils {
 

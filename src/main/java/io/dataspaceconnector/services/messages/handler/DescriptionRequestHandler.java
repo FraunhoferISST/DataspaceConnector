@@ -65,8 +65,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Service for resolving entities.

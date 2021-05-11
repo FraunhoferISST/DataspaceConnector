@@ -54,8 +54,7 @@ public class ResourceUpdateMessageController {
     /**
      * Service for ids resources.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Sending an ids resource update message with a resource as payload.
