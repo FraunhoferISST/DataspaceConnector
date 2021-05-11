@@ -87,8 +87,8 @@ public final class TemplateUtils {
             }
         } catch (IllegalArgumentException exception) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Resource %s does not contain any representations.",
-                        resource.getId()));
+                log.debug("Resource does not contain any representations. [resourceId=({})]",
+                        resource.getId());
             }
         }
 
@@ -126,8 +126,8 @@ public final class TemplateUtils {
             }
         } catch (IllegalArgumentException exception) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Representation %s does not contain any artifacts.",
-                        representation.getId()));
+                log.debug("Representation does not contain any artifacts. [representationId=({})]",
+                        representation.getId());
             }
         }
 
