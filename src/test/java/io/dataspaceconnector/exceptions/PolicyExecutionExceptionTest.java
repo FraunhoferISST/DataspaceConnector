@@ -19,18 +19,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageExceptionTest {
+public class PolicyExecutionExceptionTest {
     @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
+    public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new MessageException(msg, someError);
+        final var exception = new PolicyExecutionException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
     }
 }
