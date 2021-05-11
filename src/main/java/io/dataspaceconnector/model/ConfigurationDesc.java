@@ -22,5 +22,4 @@ public class ConfigurationDesc extends AbstractDescription<Configuration>{
     private String keyStore;
 
     private String keyStorePassword;
-
 }

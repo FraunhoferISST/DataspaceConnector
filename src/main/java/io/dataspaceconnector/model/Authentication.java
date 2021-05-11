@@ -8,14 +8,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "proxyauthentication")
-@SQLDelete(sql = "UPDATE proxyauthentication SET deleted=true WHERE id=?")
+@Table(name = "authentication")
+@SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class ProxyAuthentication extends AbstractEntity {
+public class Authentication extends AbstractEntity {
 
     /**
      * Serial version uid.

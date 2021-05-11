@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ProxyAuthenticationDesc extends AbstractDescription<ProxyAuthentication> {
+public class AuthenticationDesc extends AbstractDescription<Authentication> {
 
     private String username;
 
