@@ -117,6 +117,7 @@
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
 		<spotbugs.version>4.2.3</spotbugs.version>
+		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>8.42</checkstyle.version>
 		<pmd.version>3.14.0</pmd.version>
@@ -668,7 +669,7 @@
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
 							<artifactId>findsecbugs-plugin</artifactId>
-							<version>1.11.0</version>
+							<version>${findsecbugs-plugin.version}</version>
 						</plugin>
 					</plugins>
 				</configuration>
