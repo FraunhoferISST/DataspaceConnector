@@ -194,7 +194,7 @@ public final class PatternUtils {
                                 ._leftOperand_(LeftOperand.ENDPOINT)
                                 ._operator_(BinaryOperator.DEFINES_AS)
                                 ._rightOperand_(new RdfResource(
-                                        "https://localhost:8000/api/ids"
+                                        "https://localhost:8080/api/ids"
                                                 + "/data", URI.create("xsd:anyURI")))
                                 .build()))
                         .build()))
