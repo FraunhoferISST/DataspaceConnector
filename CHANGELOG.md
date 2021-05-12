@@ -36,7 +36,8 @@ All notable changes to this project will be documented in this file.
 - Move Swagger UI to `/api/docs`.
 - Change response type from string to object.
 - Use correct response codes as defined by RFC 7231.
-- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and agreements.
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and 
+  agreements.
   * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
   * Separate `ResourceContract` into `Contract` and `Rule`.
   * Handle data in own database entity.
@@ -62,13 +63,11 @@ All notable changes to this project will be documented in this file.
 - Fix of buffer overflow in http tracer.
 - Make message handler stateless.
 
-### Removed
-- All classes.
-
 ### Security
 - Prevent leaking of technology stack in case of errors/exceptions.
 - Logger sanitizes inputs to prevent CRLF injections.
 - Mass Bindings.
+- Timezone independence.
 
 ## [4.3.1] - 2021-04-15
 

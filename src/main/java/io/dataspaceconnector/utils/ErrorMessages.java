@@ -19,6 +19,7 @@ package io.dataspaceconnector.utils;
  * Contains a list of common error messages used by exceptions.
  */
 public enum ErrorMessages {
+
     /**
      * The passed desc parameter may not be null.
      */

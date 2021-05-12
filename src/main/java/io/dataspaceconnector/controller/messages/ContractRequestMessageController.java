@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.exceptions.*;
@@ -49,6 +43,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Log4j2
 @RestController
@@ -194,8 +194,6 @@ public class ContractRequestMessageController {
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
                 for (final var artifact : artifacts) {
-
-
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
                     response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);

@@ -23,7 +23,14 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Contains utility methods for updating entity attributes.
+ */
 public final class MetadataUtils {
+
+    /**
+     * Default constructor.
+     */
     private MetadataUtils() {
         // not used
     }

@@ -74,14 +74,12 @@ public class ContractAgreementHandler implements MessageHandler<ContractAgreemen
     /**
      * Service for updating database entities from ids object.
      */
-    private final @NonNull
-    EntityUpdateService updateService;
+    private final @NonNull EntityUpdateService updateService;
 
     /**
      * Policy execution point.
      */
-    private final @NonNull
-    PolicyExecutionService executionService;
+    private final @NonNull PolicyExecutionService executionService;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns

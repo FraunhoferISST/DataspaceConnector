@@ -31,6 +31,9 @@ import java.util.stream.Collectors;
 
 import static io.dataspaceconnector.utils.RuleUtils.*;
 
+/**
+ * Contains utility methods for creating and validation ids contracts.
+ */
 public final class ContractUtils {
 
     /**

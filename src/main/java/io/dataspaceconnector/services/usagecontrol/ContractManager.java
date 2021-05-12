@@ -70,8 +70,7 @@ public class ContractManager {
     /**
      * Service for current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Check if the transfer contract is valid and the conditions are fulfilled.

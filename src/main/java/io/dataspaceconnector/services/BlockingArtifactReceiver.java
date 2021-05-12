@@ -44,14 +44,12 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     /**
      * Used for sending an artifact request message.
      */
-    private final @NonNull
-    ArtifactRequestService messageService;
+    private final @NonNull ArtifactRequestService messageService;
 
     /**
      * Used for accessing artifacts and their data.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * {@inheritDoc}

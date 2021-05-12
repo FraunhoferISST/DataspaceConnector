@@ -16,6 +16,7 @@
 package io.dataspaceconnector.services.usagecontrol;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
@@ -118,6 +119,12 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 log.debug("Data access denied. [input=({})]", input, exception);
             }
             return VerificationResult.DENIED;
+        } catch (PolicyExecutionException e) {
+            // If message could not be sent, ignore and provide access anyway.
+            if (log.isDebugEnabled()) {
+                log.debug("[exception=({}), input=({})]", e.getMessage(), input, e);
+            }
+            return VerificationResult.ALLOWED;
         }
     }
 }

@@ -29,6 +29,9 @@ import java.util.Map;
 @Log4j2
 public final class ControllerUtils {
 
+    /**
+     * Default constructor.
+     */
     private ControllerUtils() {
         // not used
     }

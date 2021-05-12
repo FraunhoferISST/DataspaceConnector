@@ -30,6 +30,9 @@ import java.util.regex.Pattern;
  */
 public final class UUIDUtils {
 
+    /**
+     * Default constructor.
+     */
     private UUIDUtils() {
         // not used
     }

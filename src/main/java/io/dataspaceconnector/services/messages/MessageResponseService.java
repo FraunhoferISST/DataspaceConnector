@@ -43,8 +43,7 @@ public class MessageResponseService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Handles thrown {@link MessageEmptyException}.

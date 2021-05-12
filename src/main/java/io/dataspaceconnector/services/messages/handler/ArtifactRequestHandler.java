@@ -60,14 +60,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Service for building and sending message responses.
      */
-    private final @NonNull
-    MessageResponseService responseService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for handling artifact response messages.
      */
-    private final @NonNull
-    ArtifactResponseService messageService;
+    private final @NonNull ArtifactResponseService messageService;
 
     /**
      * Service for resolving entities.
@@ -77,20 +75,17 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Service for connector usage control configurations.
      */
-    private final @NonNull
-    ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
      * Service for contract processing.
      */
-    private final @NonNull
-    ContractManager contractManager;
+    private final @NonNull ContractManager contractManager;
 
     /**
      * The verifier for the data access.
      */
-    private final @NonNull
-    DataProvisionVerifier accessVerifier;
+    private final @NonNull DataProvisionVerifier accessVerifier;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the

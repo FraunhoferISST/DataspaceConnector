@@ -15,27 +15,49 @@
  */
  package io.dataspaceconnector.utils;
 
- import de.fraunhofer.iais.eis.*;
- import de.fraunhofer.iais.eis.util.Util;
- import io.dataspaceconnector.model.Contract;
- import lombok.SneakyThrows;
- import org.junit.jupiter.api.Test;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.ConstraintBuilder;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.DutyBuilder;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.ProhibitionBuilder;
+import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.util.RdfResource;
+import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.model.Contract;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 
- import java.net.URI;
- import java.util.ArrayList;
- import java.util.List;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
- import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
- import static org.junit.jupiter.api.Assertions.*;
+import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
- class RuleUtilsTest {
+class RuleUtilsTest {
 
-     @Test
-     public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
-         /* ARRANGE */
-         final var contract = new ContractRequestBuilder()
-                 ._contractStart_(getGregorianNow())
-                 .build();
+    @Test
+    public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
+        /* ARRANGE */
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                .build();
 
          /* ACT */
          final var result = ContractUtils.extractRulesFromContract(contract);
@@ -337,6 +359,702 @@
          /* ACT && ASSERT*/
          assertThrows(IllegalArgumentException.class,
                  () -> ContractUtils.removeContractsWithInvalidConsumer(null, null));
+     }
+
+     @Test
+     public void getMaxAccess_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT */
+         assertThrows(NullPointerException.class, () -> RuleUtils.getMaxAccess(null));
+     }
+
+     @Test
+     public void getMaxAccess_inputCorrectOperatorEquals_returnAccessInteger() {
+         /* ARRANGE */
+         final var maxAccess = 2;
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource(String.valueOf(maxAccess), URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getMaxAccess(permission);
+
+         /* ASSERT */
+         assertEquals(maxAccess, result);
+     }
+
+     @Test
+     public void getMaxAccess_inputCorrectOperatorLessThanEquals_returnAccessInteger() {
+         /* ARRANGE */
+         final var maxAccess = 2;
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.LTEQ)
+                 ._rightOperand_(new RdfResource(String.valueOf(maxAccess), URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getMaxAccess(permission);
+
+         /* ASSERT */
+         assertEquals(maxAccess, result);
+     }
+
+     @Test
+     public void getMaxAccess_inputCorrectOperatorLessThan_returnAccessInteger() {
+         /* ARRANGE */
+         final var maxAccess = 2;
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.LT)
+                 ._rightOperand_(new RdfResource(String.valueOf(maxAccess), URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getMaxAccess(permission);
+
+         /* ASSERT */
+         assertEquals(maxAccess - 1, result);
+     }
+
+     @Test
+     public void getMaxAccess_inputInvalidAccessBiggerThanMaxInteger_returnSomething() {
+         /* ARRANGE */
+         final var maxAccess = Integer.MAX_VALUE + 1;
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource(String.valueOf(maxAccess), URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getMaxAccess(permission);
+
+         /* ASSERT */
+         assertTrue(result >= 0);
+     }
+
+     @Test
+     public void getMaxAccess_inputInvalidAccessNotInteger_throwNumberFormatException() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("I am not an integer.", URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(NumberFormatException.class, () -> RuleUtils.getMaxAccess(permission));
+     }
+
+     @Test
+     public void getMaxAccess_inputInvalidAccessNegative_returnZero() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("-3", URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getMaxAccess(permission);
+
+         /* ASSERT */
+         assertEquals(0, result);
+     }
+
+     @Test
+     public void getMaxAccess_inputInvalidMaxAccessConstraintNotFirstInList_throwNumberFormatException() {
+         /* ARRANGE */
+         final var maxAccess = 3;
+
+         final var constraint1 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                 .build();
+         final var constraint2 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource(String.valueOf(maxAccess), URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint1, constraint2))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(NumberFormatException.class, () -> RuleUtils.getMaxAccess(permission));
+     }
+
+     @Test
+     public void getTimeInterval_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT */
+         assertThrows(NullPointerException.class, () -> RuleUtils.getTimeInterval(null));
+     }
+
+     @Test
+     public void getTimeInterval_inputCorrect_returnTimeInterval() throws ParseException {
+         /* ARRANGE */
+         final var startDate = "2021-01-01T00:00:00Z";
+         final var endDate = "2022-01-01T00:00:00Z";
+
+         final var startConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+         final var endConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.BEFORE)
+                 ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(startConstraint, endConstraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+         /* ASSERT */
+         assertEquals(ZonedDateTime.parse(startDate), result.getStart());
+         assertEquals(ZonedDateTime.parse(endDate), result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidWrongConstraintType_returnNull() throws ParseException {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+         /* ASSERT */
+         assertNull(result.getStart());
+         assertNull(result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidNoStartDate_returnCorrectOutput() throws ParseException {
+         /* ARRANGE */
+         final var endDate = "2022-01-01T00:00:00Z";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.BEFORE)
+                 ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+         /* ASSERT */
+         assertNull(result.getStart());
+         assertEquals(ZonedDateTime.parse(endDate), result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidNoEndDate_returnCorrectOutput() throws ParseException {
+         /* ARRANGE */
+         final var startDate = "2021-01-01T00:00:00Z";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+         /* ASSERT */
+         assertEquals(ZonedDateTime.parse(startDate), result.getStart());
+         assertNull(result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidStartAfterEnd_returnCorrectOutput() throws ParseException {
+         /* ARRANGE */
+         final var startDate = "2022-01-01T00:00:00Z";
+         final var endDate = "2021-01-01T00:00:00Z";
+
+         final var startConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+         final var endConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.BEFORE)
+                 ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(startConstraint, endConstraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+         /* ASSERT */
+         assertEquals(ZonedDateTime.parse(startDate), result.getStart());
+         assertEquals(ZonedDateTime.parse(endDate), result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidWrongOperator_returnNull() throws ParseException {
+         /* ARRANGE */
+         final var startDate = "2021-01-01T00:00:00Z";
+         final var endDate = "2022-01-01T00:00:00Z";
+
+         final var startConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.CONTAINS)
+                 ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+         final var endConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.CONTAINS)
+                 ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(startConstraint, endConstraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+        /* ASSERT */
+        assertNull(result.getStart());
+        assertNull(result.getEnd());
+     }
+
+     @Test
+     public void getTimeInterval_inputInvalidWrongDateFormat_returnNull() throws ParseException {
+         /* ARRANGE */
+         final var startDate = "2021-01-01T00:00:00.000";
+         final var endDate = "2022-01-01T00:00:00.000";
+
+         final var startConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.CONTAINS)
+                 ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+         final var endConstraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.CONTAINS)
+                 ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(startConstraint, endConstraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getTimeInterval(permission);
+
+        /* ASSERT */
+        assertNull(result.getStart());
+        assertNull(result.getEnd());
+     }
+
+     @Test
+     public void getEndpoint_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT */
+         assertThrows(NullPointerException.class, () -> RuleUtils.getEndpoint(null));
+     }
+
+     @Test
+     public void getEndpoint_inputCorrect_returnEndpoint() {
+         /* ARRANGE */
+         final var endpoint = "https://localhost:8000/notify";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ENDPOINT)
+                 ._operator_(BinaryOperator.DEFINES_AS)
+                 ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
+                 .build();
+
+         final var duty = new DutyBuilder()
+                 ._action_(Util.asList(Action.NOTIFY))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getEndpoint(duty);
+
+         /* ASSERT */
+         assertEquals(endpoint, result);
+     }
+
+     @Test
+     public void getEndpoint_inputInvalidWrongConstraintType_returnValue() {
+         /* ARRANGE */
+         final var value = "5";
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource(value, URI.create("xsd:decimal")))
+                 .build();
+
+         final var duty = new DutyBuilder()
+                 ._action_(Util.asList(Action.NOTIFY))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getEndpoint(duty);
+
+         /* ASSERT */
+         assertEquals(value, result);
+     }
+
+     @Test
+     public void getEndpoint_inputInvalidNotificationConstraintNotFirstInList_returnWrongValue() {
+         /* ARRANGE */
+         final var endpoint = "https://localhost:8000/notify";
+
+         final var constraint1 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 .build();
+         final var constraint2 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ENDPOINT)
+                 ._operator_(BinaryOperator.DEFINES_AS)
+                 ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
+                 .build();
+
+         final var duty = new DutyBuilder()
+                 ._action_(Util.asList(Action.NOTIFY))
+                 ._constraint_(Util.asList(constraint1, constraint2))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getEndpoint(duty);
+
+         /* ASSERT */
+         assertNotEquals(endpoint, result);
+     }
+
+     @Test
+     public void getPipEndpoint_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT */
+         assertThrows(NullPointerException.class, () -> RuleUtils.getPipEndpoint(null));
+     }
+
+     @Test
+     public void getPipEndpoint_inputCorrect_returnPipEndpoint() {
+         /* ARRANGE */
+         final var pipEndpoint = URI.create("https://pip.com");
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 ._pipEndpoint_(pipEndpoint)
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getPipEndpoint(permission);
+
+         /* ASSERT */
+         assertEquals(pipEndpoint, result);
+     }
+
+     @Test
+     public void getPipEndpoint_inputInvalidConstraintHasNoPipEndpoint_returnNull() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getPipEndpoint(permission);
+
+        /* ASSERT */
+        assertNull(result);
+     }
+
+     @Test
+     public void getDate_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT*/
+         assertThrows(NullPointerException.class, () -> RuleUtils.getDate(null));
+     }
+
+     @Test
+     public void getDate_inputCorrect_returnDate() {
+         /* ARRANGE */
+         final var date = "2021-01-01T00:00:00Z";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getDate(permission);
+
+         /* ASSERT */
+         assertEquals(ZonedDateTime.parse(date), result);
+     }
+
+     @Test
+     public void getDate_inputInvalidWrongConstraintType_throwDateTimeParseException() {
+         /* ARRANGE */
+         final var date = "2021-01-01T00:00:00Z";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.EQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
+     }
+
+     @Test
+     public void getDate_inputInvalidWrongDateFormat_throwDateTimeParseException() {
+         /* ARRANGE */
+         final var date = "2021-01-01T00:00:00.000";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
+     }
+
+     @Test
+     public void getDate_inputInvalidNotADate_throwDateTimeParseException() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource("I am not a date.", URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
+     }
+
+     @Test
+     public void getDate_inputInvalidDateConstraintNotFirstInList_throwDateTimeParseException() {
+         /* ARRANGE */
+         final var date = "2021-01-01T00:00:00Z";
+
+         final var constraint1 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                 .build();
+         final var constraint2 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                 ._operator_(BinaryOperator.AFTER)
+                 ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint1, constraint2))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
+     }
+
+     @Test
+     public void getDuration_inputNull_throwNullPointerException() {
+         /* ACT & ASSERT*/
+         assertThrows(NullPointerException.class, () -> RuleUtils.getDuration(null));
+     }
+
+     @Test
+     public void getDuration_inputCorrect_returnDuration() throws DatatypeConfigurationException {
+         /* ARRANGE */
+         final var duration = "PT1M30.5S";
+
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getDuration(permission);
+
+         /* ASSERT */
+         assertEquals(DatatypeFactory.newInstance().newDuration(duration).toString(), result.toString());
+     }
+
+     @Test
+     public void getDuration_inputInvalidWrongConstraintType_returnNull() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.LTEQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT */
+         final var result = RuleUtils.getDuration(permission);
+
+        /* ASSERT */
+        assertNull(result);
+     }
+
+     @Test
+     public void getDuration_inputInvalidNotADuration_throwDateTimeParseException() {
+         /* ARRANGE */
+         final var constraint = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource("I am not a duration.", URI.create("xsd:duration")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint))
+                 .build();
+
+         /* ACT & ASSERT */
+         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDuration(permission));
+     }
+
+     @Test
+     public void getDuration_inputInvalidDurationConstraintNotFirstInList_returnNull() {
+         /* ARRANGE */
+         final var duration = "P6M";
+
+         final var constraint1 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.COUNT)
+                 ._operator_(BinaryOperator.LTEQ)
+                 ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                 .build();
+         final var constraint2 = new ConstraintBuilder()
+                 ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                 ._operator_(BinaryOperator.SHORTER_EQ)
+                 ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
+                 .build();
+
+         final var permission = new PermissionBuilder()
+                 ._action_(Util.asList(Action.USE))
+                 ._constraint_(Util.asList(constraint1, constraint2))
+                 .build();
+
+         /*ACT*/
+         final var result = RuleUtils.getDuration(permission);
+
+         /*ASSERT*/
+         assertNull(result);
      }
 
      /**

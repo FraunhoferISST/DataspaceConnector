@@ -45,8 +45,7 @@ public class MainController {
     /**
      * Service for ids connector management.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Gets connector self-description without catalogs and resources.

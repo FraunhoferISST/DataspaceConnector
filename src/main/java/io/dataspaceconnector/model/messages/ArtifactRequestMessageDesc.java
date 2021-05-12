@@ -15,21 +15,19 @@
  */
 package io.dataspaceconnector.model.messages;
 
-import lombok.AllArgsConstructor;
+import java.net.URI;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.net.URI;
 
 /**
  * Class for all artifact request message parameters.
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ArtifactRequestMessageDesc extends MessageDesc {
+public final class ArtifactRequestMessageDesc extends MessageDesc {
 
     /**
      * The requested artifact of the message.

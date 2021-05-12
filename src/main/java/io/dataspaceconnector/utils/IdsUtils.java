@@ -15,7 +15,16 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.Catalog;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
 
@@ -35,6 +44,9 @@ import java.util.TimeZone;
  */
 public final class IdsUtils {
 
+    /**
+     * Default constructor.
+     */
     private IdsUtils() {
         // not used
     }

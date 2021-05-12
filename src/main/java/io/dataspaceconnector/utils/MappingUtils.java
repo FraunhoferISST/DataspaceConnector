@@ -35,6 +35,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Maps ids resources to internal resources.
  */
 public final class MappingUtils {
+
+    /**
+     * Default constructor.
+     */
     private MappingUtils() {
         // not used
     }

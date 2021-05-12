@@ -33,6 +33,9 @@ import java.util.List;
 @Log4j2
 public final class TemplateUtils {
 
+    /**
+     * Default constructor.
+     */
     private TemplateUtils() {
         // not used
     }

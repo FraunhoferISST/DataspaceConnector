@@ -50,8 +50,7 @@ public class ResourceUnavailableMessageController {
     /**
      * Service for current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Sending an ids resource unavailable message with a resource as payload.
