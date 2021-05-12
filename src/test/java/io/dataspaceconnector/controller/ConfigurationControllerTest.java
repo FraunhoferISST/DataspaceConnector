@@ -23,6 +23,7 @@ import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -64,6 +66,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
@@ -83,6 +86,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
+        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
@@ -102,7 +106,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-
+        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
@@ -147,7 +151,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-
+        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
@@ -217,5 +221,317 @@ public class ConfigurationControllerTest {
 
 
         Mockito.verify(configContainer, Mockito.never()).updateConfiguration(Mockito.any());
+    }
+
+    /**
+     * getConfiguration
+     */
+
+    @Test
+    public void getConfiguration_unauthorized_return500() throws Exception {
+        /* ACT && ASSERT */
+        mockMvc.perform(get("/api/configuration"))
+               .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getConfiguration_hasConfig_returnConfig() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.doReturn(model).when(configContainer).getConfigModel();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration"))
+                    .andExpect(status().isOk()).andReturn();
+
+        assertEquals(model.toRdf(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getConfiguration_hasConfig_returnMediaTypeJson() throws Exception {
+        /* ARRANGE */
+        final var model = new ConfigurationModelBuilder()
+                ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
+                ._configurationModelLogLevel_(LogLevel.MINIMAL_LOGGING)
+                ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
+                .build();
+
+        Mockito.doReturn(model).when(configContainer).getConfigModel();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getConfiguration_noConfig_return404() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(null).when(configContainer).getConfigModel();
+
+        /* ACT && ASSERT */
+        mockMvc.perform(get("/api/configuration"))
+                                  .andExpect(status().isNotFound());
+    }
+
+    /**
+     * setNegotiationStatus
+     */
+
+    @Test
+    public void setNegotiationStatus_unauthorized_return500() throws Exception {
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration/negotiation")
+                                .param("status", "true"))
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setNegotiationStatus_noStatusParam_return401() throws Exception {
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/negotiation"))
+               .andExpect(status().is4xxClientError()).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setNegotiationStatus_true_returnTrue() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", true);
+
+        Mockito.doReturn(true).when(connectorConfig).isPolicyNegotiation();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/negotiation")
+                                    .param("status", "true"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setPolicyNegotiation(Mockito.eq(true));
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setNegotiationStatus_false_returnFalse() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isPolicyNegotiation();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/negotiation")
+                                                   .param("status", "false"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setPolicyNegotiation(Mockito.eq(false));
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setNegotiationStatus_any_returnJson() throws Exception {
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/negotiation")
+                                                   .param("status", "false"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
+    }
+
+
+    /**
+     * getNegotiationStatus
+     */
+
+    @Test
+    public void getNegotiationStatus_unauthorized_return500() throws Exception {
+        /* ACT && ASSERT */
+        mockMvc.perform(get("/api/configuration/negotiation"))
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getNegotiationStatus_isTrue_returnTrue() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", true);
+
+        Mockito.doReturn(true).when(connectorConfig).isPolicyNegotiation();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/negotiation"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getNegotiationStatus_isFalse_returnFalse() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isPolicyNegotiation();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/negotiation"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getNegotiationStatus_any_returnJson() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isPolicyNegotiation();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/negotiation"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
+    }
+
+    /**
+     * setPatternStatus
+     */
+
+    @Test
+    public void setPatternStatus_unauthorized_return500() throws Exception {
+        /* ACT && ASSERT */
+        mockMvc.perform(put("/api/configuration/pattern")
+                                .param("status", "true"))
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setPatternStatus_noStatusParam_return401() throws Exception {
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/pattern"))
+                                  .andExpect(status().is4xxClientError()).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setPatternStatus_true_returnTrue() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", true);
+
+        Mockito.doReturn(true).when(connectorConfig).isAllowUnsupported();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/pattern")
+                                                   .param("status", "true"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setAllowUnsupported(Mockito.eq(true));
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setPatternStatus_false_returnFalse() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isAllowUnsupported();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/pattern")
+                                                   .param("status", "false"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setAllowUnsupported(Mockito.eq(false));
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void setPatternStatus_any_returnJson() throws Exception {
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(put("/api/configuration/pattern")
+                                                   .param("status", "false"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
+    }
+
+    /**
+     * getPatternStatus
+     */
+
+    @Test
+    public void getPatternStatus_unauthorized_return500() throws Exception {
+        /* ACT && ASSERT */
+        mockMvc.perform(get("/api/configuration/pattern"))
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getPatternStatus_isTrue_returnTrue() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", true);
+
+        Mockito.doReturn(true).when(connectorConfig).isAllowUnsupported();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/pattern"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getPatternStatus_isFalse_returnFalse() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isAllowUnsupported();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/negotiation"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void getPatternStatus_any_returnJson() throws Exception {
+        final var body = new JSONObject();
+        body.put("status", false);
+
+        Mockito.doReturn(false).when(connectorConfig).isAllowUnsupported();
+
+        /* ACT && ASSERT */
+        final var result = mockMvc.perform(get("/api/configuration/negotiation"))
+                                  .andExpect(status().isOk()).andReturn();
+
+        assertEquals("application/json", result.getResponse().getContentType());
     }
 }
