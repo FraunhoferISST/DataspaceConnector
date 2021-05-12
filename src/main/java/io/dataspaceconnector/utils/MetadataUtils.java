@@ -55,7 +55,7 @@ public final class MetadataUtils {
     }
 
     /**
-     * Update string.
+     * Update integer.
      *
      * @param oldPort     Old port.
      * @param newPort     New port.
