@@ -15,20 +15,20 @@
  */
 package io.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,11 +65,14 @@ public class ConfigurationController {
      * @param configuration The new configuration.
      * @return Ok or error response.
      */
-    @PostMapping("/configuration")
+    @PutMapping(value = "/configuration", consumes = {"application/json", "application/ld+json"},
+            produces = {"application/ld+json"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
+            @ApiResponse(responseCode = "415", description = "Wrong media type."),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
@@ -79,7 +82,7 @@ public class ConfigurationController {
 
             // Update configuration of connector.
             configContainer.updateConfiguration(config);
-            return ResponseEntity.ok("Configuration successfully updated.");
+            return new ResponseEntity<>(config.toRdf(), HttpStatus.OK);
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
