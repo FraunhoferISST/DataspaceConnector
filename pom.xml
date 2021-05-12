@@ -560,7 +560,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -579,8 +579,7 @@
 						<param>io.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>io.dataspaceconnector.model.*Persistence*</param>
-						<param>io.dataspaceconnector.ConnectorApplicationTests</param>
+						<param>**</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
@@ -588,9 +587,9 @@
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
 					<verbose>false</verbose>
-					<threads>2</threads>
+					<threads>4</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>80</coverageThreshold>
+					<!-- <coverageThreshold>80</coverageThreshold> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -601,7 +600,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tidy-maven-plugin</artifactId>
@@ -781,7 +780,12 @@
 				<artifactId>jdepend-maven-plugin</artifactId>
 				<version>${jdepend.version}</version>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			  </plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -792,7 +796,7 @@
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</reporting>
 
