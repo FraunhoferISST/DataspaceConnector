@@ -8,9 +8,12 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import java.net.URL;
+import java.net.URI;
 import java.time.ZonedDateTime;
 
+/**
+ * Entity, which holds connector information.
+ */
 @Entity
 @Table(name = "connector")
 @SQLDelete(sql = "UPDATE connector SET deleted=true WHERE id=?")
@@ -26,12 +29,24 @@ public class Connector extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
-    private URL accessUrl;
+    /**
+     * The access url of the connector.
+     */
+    private URI accessUrl;
 
+    /**
+     * The title of the connector.
+     */
     private String title;
 
+    /**
+     * The registration status of the connector.
+     */
     @Enumerated(EnumType.STRING)
     private RegisterStatus registerStatus;
 
+    /**
+     * The date specification.
+     */
     private ZonedDateTime lastSeen;
 }

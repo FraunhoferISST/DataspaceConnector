@@ -15,7 +15,7 @@ public class AppFactory implements AbstractFactory<App, AppDesc> {
      * @return new app entity.
      */
     @Override
-    public App create(AppDesc desc) {
+    public App create(final AppDesc desc) {
         return new App();
     }
 
@@ -27,7 +27,7 @@ public class AppFactory implements AbstractFactory<App, AppDesc> {
      * @return true, if app is updated
      */
     @Override
-    public boolean update(App entity, AppDesc desc) {
+    public boolean update(final App entity, final AppDesc desc) {
         return false;
     }
 }

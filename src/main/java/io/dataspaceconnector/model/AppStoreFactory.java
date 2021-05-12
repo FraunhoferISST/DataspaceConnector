@@ -13,7 +13,7 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
      * @return New app store entity.
      */
     @Override
-    public AppStore create(AppStoreDesc desc) {
+    public AppStore create(final AppStoreDesc desc) {
         return new AppStore();
     }
 
@@ -23,7 +23,7 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
      * @return True, if entity is updated.
      */
     @Override
-    public boolean update(AppStore entity, AppStoreDesc desc) {
+    public boolean update(final AppStore entity, final AppStoreDesc desc) {
         return false;
     }
 }

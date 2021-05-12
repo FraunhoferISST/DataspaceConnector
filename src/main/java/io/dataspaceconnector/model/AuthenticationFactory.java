@@ -46,7 +46,7 @@ public class AuthenticationFactory implements AbstractFactory<Authentication, Au
      * @param password The new password of the authentication.
      * @return True, if password is updated.
      */
-    private boolean updatePassword(Authentication auth, String password) {
+    private boolean updatePassword(final Authentication auth, final String password) {
         final var newPassword = MetadataUtils.updateString(auth.getPassword(), password,
                 "password");
         newPassword.ifPresent(auth::setPassword);

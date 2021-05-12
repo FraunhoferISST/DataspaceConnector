@@ -29,7 +29,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @return The new broker entity.
      */
     @Override
-    public Broker create(BrokerDesc desc) {
+    public Broker create(final BrokerDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var broker = new Broker();
@@ -45,7 +45,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @return True, if broker is updated.
      */
     @Override
-    public boolean update(Broker broker, BrokerDesc desc) {
+    public boolean update(final Broker broker, final BrokerDesc desc) {
         Utils.requireNonNull(broker, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -61,7 +61,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @param status The registration status of the broker.
      * @return True, if broker is updated.
      */
-    private boolean updateRegisterStatus(Broker broker, RegisterStatus status) {
+    private boolean updateRegisterStatus(final Broker broker, final RegisterStatus status) {
         final boolean updated;
         if (broker.getStatus().equals(status)) {
             updated = false;
@@ -77,7 +77,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @param title  The new title of the entity.
      * @return True, if broker is updated
      */
-    private boolean updateTitle(Broker broker, String title) {
+    private boolean updateTitle(final Broker broker, final String title) {
         final var newTitle = MetadataUtils.updateString(broker.getTitle(), title,
                 DEFAULT_STRING);
         newTitle.ifPresent(broker::setTitle);
@@ -89,7 +89,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @param accessUrl The new access url of the entity.
      * @return True, if broker is updated.
      */
-    private boolean updateAccessUrl(Broker broker, URI accessUrl) {
+    private boolean updateAccessUrl(final Broker broker, final URI accessUrl) {
         final var newAccessUrl = MetadataUtils.updateUri(broker.getAccessUrl(), accessUrl,
                 DEFAULT_URI);
         newAccessUrl.ifPresent(broker::setAccessUrl);

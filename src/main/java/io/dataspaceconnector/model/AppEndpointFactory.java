@@ -29,7 +29,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @return true, if app endpoint is updated
      */
     @Override
-    public boolean update(final AppEndpoint appEndpoint, AppEndpointDesc desc) {
+    public boolean update(final AppEndpoint appEndpoint, final AppEndpointDesc desc) {
         Utils.requireNonNull(appEndpoint, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -47,7 +47,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param language    The app endpoint protocol
      * @return true, if language is updated
      */
-    private boolean updateLanguage(AppEndpoint appEndpoint, String language) {
+    private boolean updateLanguage(final AppEndpoint appEndpoint, final String language) {
         final var newLanguage = MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
                 language, "EN");
         newLanguage.ifPresent(appEndpoint::setLanguage);
@@ -59,7 +59,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param appEndpointProtocol The app endpoint protocol
      * @return true, if protocol is updated
      */
-    private boolean updateProtocol(AppEndpoint appEndpoint, String appEndpointProtocol) {
+    private boolean updateProtocol(final AppEndpoint appEndpoint, final String appEndpointProtocol) {
         final var newProtocol = MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
                 appEndpointProtocol, DEFAULT_STRING);
         newProtocol.ifPresent(appEndpoint::setAppEndpointProtocol);
@@ -71,7 +71,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param appEndpointPort The new app endpoint port
      * @return true, if app endpoint is updated
      */
-    private boolean updateEndpointPort(AppEndpoint appEndpoint, int appEndpointPort) {
+    private boolean updateEndpointPort(final AppEndpoint appEndpoint,final int appEndpointPort) {
 
         final var newPort = MetadataUtils.updateInteger(appEndpoint.getAppEndpointPort(),
                 appEndpointPort);
@@ -84,7 +84,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param mediaType   The new media type
      * @return true, if media type is updated
      */
-    private boolean updateMediaType(AppEndpoint appEndpoint, String mediaType) {
+    private boolean updateMediaType(final AppEndpoint appEndpoint, final String mediaType) {
         final var newMediaType = MetadataUtils.updateString(appEndpoint.getMediaType(), mediaType,
                 DEFAULT_STRING);
         newMediaType.ifPresent(appEndpoint::setMediaType);
@@ -96,7 +96,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param accessURL   The new access url
      * @return true, if access url is updated
      */
-    private boolean updateAccessUrl(AppEndpoint appEndpoint, URI accessURL) {
+    private boolean updateAccessUrl(final AppEndpoint appEndpoint, final URI accessURL) {
         final var newUri = MetadataUtils.updateUri(appEndpoint.getAccessURL(), accessURL,
                 URI.create(DEFAULT_ACCESS_URL));
 

@@ -28,12 +28,18 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @return The new clearing house entity.
      */
     @Override
-    public ClearingHouse create(ClearingHouseDesc desc) {
-        return null;
+    public ClearingHouse create(final ClearingHouseDesc desc) {
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final var clearingHouse = new ClearingHouse();
+
+        update(clearingHouse, desc);
+
+        return clearingHouse;
     }
 
     @Override
-    public boolean update(ClearingHouse clearingHouse, ClearingHouseDesc desc) {
+    public boolean update(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
         Utils.requireNonNull(clearingHouse, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -49,7 +55,7 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @param status        The registration status of the clearing house.
      * @return True, if clearing house is updated.
      */
-    private boolean updateRegisterStatus(ClearingHouse clearingHouse, RegisterStatus status) {
+    private boolean updateRegisterStatus(final ClearingHouse clearingHouse, final RegisterStatus status) {
         final boolean updated;
         if (clearingHouse.getRegisterStatus().equals(status)) {
             updated = false;
@@ -65,7 +71,7 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @param title         The new title of the entity.
      * @return True, if clearing house is updated
      */
-    private boolean updateTitle(ClearingHouse clearingHouse, String title) {
+    private boolean updateTitle(final ClearingHouse clearingHouse, final String title) {
         final var newTitle = MetadataUtils.updateString(clearingHouse.getTitle(), title,
                 DEFAULT_STRING);
         newTitle.ifPresent(clearingHouse::setTitle);
@@ -77,7 +83,7 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @param accessUrl     The new access url of the entity.
      * @return True, if clearing house is updated.
      */
-    private boolean updateAccessUrl(ClearingHouse clearingHouse, URI accessUrl) {
+    private boolean updateAccessUrl(final ClearingHouse clearingHouse, final URI accessUrl) {
         final var newAccessUrl = MetadataUtils.updateUri(clearingHouse.getAccessUrl(), accessUrl,
                 DEFAULT_URI);
         newAccessUrl.ifPresent(clearingHouse::setAccessUrl);

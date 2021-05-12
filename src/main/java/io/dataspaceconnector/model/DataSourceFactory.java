@@ -2,6 +2,9 @@ package io.dataspaceconnector.model;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Creates and updates data sources
+ */
 @Component
 public class DataSourceFactory implements AbstractFactory<DataSource, DataSourceDesc> {
 

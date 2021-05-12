@@ -7,6 +7,9 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * Entity which holds information about the data sources.
+ */
 @Entity
 @Inheritance
 @Getter
@@ -23,13 +26,25 @@ public class DataSource extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The relative path of the data source.
+     */
     private String relativePath;
 
+    /**
+     * The authentication for the data source.
+     */
     @OneToOne
     private Authentication authentication;
 
+    /**
+     * The type of the data source.
+     */
     private DataSourceType dataSourceType;
 
+    /**
+     * The list of generic endpoints.
+     */
     @OneToMany
     private List<GenericEndpoint> genericEndpoint;
 }
