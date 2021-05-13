@@ -25,11 +25,9 @@ import org.springframework.http.MediaType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {GlobalExceptionHandler.class})
 public class GlobalExceptionHandlerTest {
 
-    @Autowired
-    GlobalExceptionHandler handler;
+    private GlobalExceptionHandler handler = new GlobalExceptionHandler();
 
     @Test
     public void handleAnyException_anyException_returnInternalServerError() {

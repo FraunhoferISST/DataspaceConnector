@@ -25,11 +25,9 @@ import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {JsonProcessingExceptionHandler.class})
 class JsonProcessingExceptionHandlerTest {
 
-    @Autowired
-    JsonProcessingExceptionHandler handler;
+    private JsonProcessingExceptionHandler handler = new JsonProcessingExceptionHandler();
 
 
     @Test
