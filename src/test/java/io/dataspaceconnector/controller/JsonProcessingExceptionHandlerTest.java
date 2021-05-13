@@ -18,14 +18,12 @@ package io.dataspaceconnector.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class JsonProcessingExceptionHandlerTest {
+public class JsonProcessingExceptionHandlerTest {
 
     private JsonProcessingExceptionHandler handler = new JsonProcessingExceptionHandler();
 
