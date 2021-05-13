@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.templates;
-
+package io.dataspaceconnector.model;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-public class ArtifactTemplateTest {
+class ArtifactDescTest {
 
     @Test
     public void equals_verify() {
-        EqualsVerifier.simple().forClass(ArtifactTemplate.class).verify();
+        EqualsVerifier.simple().forClass(ArtifactDesc.class).verify();
     }
 }
