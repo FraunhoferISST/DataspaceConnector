@@ -55,6 +55,8 @@ public class HttpTraceEventHandler {
      * @param trace The http trace that others should be notified about.
      */
     public void sendHttpTraceEvent(final HttpTrace trace) {
-        publisher.publishEvent(trace);
+        if (trace != null) {
+            publisher.publishEvent(trace);
+        }
     }
 }
