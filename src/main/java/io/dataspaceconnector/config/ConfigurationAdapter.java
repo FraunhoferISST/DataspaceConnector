@@ -33,6 +33,9 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
 @Configuration
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
+    /**
+     * Whether the h2 console is enabled.
+     */
     @Value("${spring.h2.console.enabled}")
     private boolean isH2ConsoleEnabled;
 

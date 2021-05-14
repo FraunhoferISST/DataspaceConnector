@@ -229,7 +229,7 @@ public final class MappingUtils {
         desc.setAdditional(additional);
         desc.setRemoteId(representationId);
 
-        if(standard != null) {
+        if (standard != null) {
             desc.setStandard(String.valueOf(standard));
         }
 
