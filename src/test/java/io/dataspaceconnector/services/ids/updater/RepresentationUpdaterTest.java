@@ -117,7 +117,6 @@ public class RepresentationUpdaterTest {
         output.getDesc().setLanguage("https://w3id.org/idsa/code/DE");
         output.getDesc().setRemoteId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
         output.getDesc().setAdditional(new ConcurrentHashMap<>());
-        output.getDesc().setStandard("null");
 
         return output;
     }
