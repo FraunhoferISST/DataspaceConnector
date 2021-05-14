@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.config;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,8 +29,12 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
  * This class configures admin rights for all backend endpoints behind "/api" using the role
  * defined in {@link MultipleEntryPointsSecurityConfig}.
  */
+@Log4j2
 @Configuration
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
+
+    @Value("${spring.h2.console.enabled}")
+    private boolean isH2ConsoleEnabled;
 
     @Override
     protected final void configure(final HttpSecurity http) throws Exception {
@@ -47,8 +53,16 @@ public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint());
-        http.headers().frameOptions().deny();
         http.headers().xssProtection();
+
+        if (isH2ConsoleEnabled) {
+            http.headers().frameOptions().disable();
+            if (log.isWarnEnabled()) {
+                log.warn("H2 Console enabled. Disabling frame protection.");
+            }
+        } else {
+            http.headers().frameOptions().deny();
+        }
     }
 
     /**
