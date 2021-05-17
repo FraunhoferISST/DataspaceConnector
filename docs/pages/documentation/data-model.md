@@ -25,8 +25,6 @@ bytesize. An artifact then has a reference to `contract agreements`, which descr
 between data provider and data consumer. Contract offers as `contracts` can contain multiple rules.
 Each rule may represent one IDS Usage Control Pattern as described [here](usage-control.md).
 
-<img src="../../assets/images/data_model.png" width="100" height="100">
-
 ![Data Model Overview](../../assets/images/data_model.png)
 
 Furthermore, the Connector distinguishes between offered and requested resources. If data is offered, 
