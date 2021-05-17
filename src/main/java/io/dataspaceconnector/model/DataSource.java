@@ -40,11 +40,13 @@ public class DataSource extends AbstractEntity {
     /**
      * The type of the data source.
      */
+    @Enumerated(EnumType.STRING)
     private DataSourceType dataSourceType;
 
     /**
      * The list of generic endpoints.
      */
+    // ToDO: Discuss the right place for generic endpoints
     @OneToMany
     private List<GenericEndpoint> genericEndpoint;
 }

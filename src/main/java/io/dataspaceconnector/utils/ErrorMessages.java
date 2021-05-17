@@ -21,6 +21,10 @@ package io.dataspaceconnector.utils;
 public enum ErrorMessages {
 
     /**
+     * The passed authentication may not be null.
+     */
+    AUTH_NULL("The passed authentication may not be null."),
+    /**
      * The passed desc parameter may not be null.
      */
     DESC_NULL("The description parameter may not be null."),

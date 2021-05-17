@@ -6,7 +6,7 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Creates and updates proxies.
@@ -20,6 +20,11 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
     private static final URI DEFAULT_URI = URI.create("https://access");
 
     /**
+     * The default uris assigned to all no proxy list..
+     */
+    public static final List<URI> DEFAULT_URI_LIST = List.of(URI.create("https://noproxylist"));
+
+    /**
      * @param desc The description of the entity.
      * @return The new proxy entity.
      */
@@ -28,7 +33,6 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var proxy = new Proxy();
-        proxy.setNoProxyURI(new ArrayList<>());
         proxy.setAuthentication(null);
 
         update(proxy, desc);
@@ -47,9 +51,22 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var hasUpdatedProxyUri = updateProxyUri(proxy, desc.getProxyURI());
+        final var hasUpdatedNoProxyList = updateNoProxyList(proxy, desc.getNoProxyURI());
 
+        return hasUpdatedProxyUri || hasUpdatedNoProxyList;
+    }
 
-        return false;
+    /**
+     * @param proxy       The proxy.
+     * @param noProxyUris The no proxy list.
+     * @return True, if list is updated.
+     */
+    private boolean updateNoProxyList(final Proxy proxy, final List<URI> noProxyUris) {
+        final var newProxyList =
+                MetadataUtils.updateUriList(proxy.getNoProxyURI(), noProxyUris, DEFAULT_URI_LIST);
+        newProxyList.ifPresent(proxy::setNoProxyURI);
+
+        return newProxyList.isPresent();
     }
 
     /**

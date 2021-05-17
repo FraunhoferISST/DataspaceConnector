@@ -129,6 +129,27 @@ public final class MetadataUtils {
     }
 
     /**
+     * Update list of uris.
+     *
+     * @param oldList     Old list.
+     * @param newList     New list.
+     * @param defaultList Default values.
+     * @return Optional with the new value or without a value.
+     */
+    public static Optional<List<URI>> updateUriList(
+            final List<URI> oldList,
+            final List<URI> newList,
+            final List<URI> defaultList) {
+        final var newValues = cleanUriList(newList == null ? defaultList : newList);
+
+        if (oldList == null || !oldList.equals(newValues)) {
+            return Optional.of(newValues);
+        }
+
+        return Optional.empty();
+    }
+
+    /**
      * Update map of strings.
      *
      * @param oldMap     Old map.
@@ -157,6 +178,17 @@ public final class MetadataUtils {
     public static List<String> cleanStringList(final List<String> list) {
         var result = removeNullFromList(list);
         result = removeEmptyStringFromList(result);
+        return result;
+    }
+
+    /**
+     * Clean list of uris.
+     *
+     * @param list List of uris.
+     * @return Cleared list.
+     */
+    public static List<URI> cleanUriList(final List<URI> list) {
+        var result = removeNullFromList(list);
         return result;
     }
 
