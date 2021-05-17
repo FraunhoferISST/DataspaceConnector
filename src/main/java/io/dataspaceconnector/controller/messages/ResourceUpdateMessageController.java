@@ -89,8 +89,6 @@ public class ResourceUpdateMessageController {
             final var response = brokerService.updateResourceAtBroker(recipient, resource.get());
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);
-        } catch (ClassCastException exception) {
-            return ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
