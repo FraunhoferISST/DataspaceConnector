@@ -8,6 +8,9 @@ import javax.persistence.*;
 import java.net.URI;
 import java.time.ZonedDateTime;
 
+/**
+ * Entity class for the identity provider.
+ */
 @Entity
 @Inheritance
 @Table(name = "identityprovider")
@@ -24,12 +27,24 @@ public class IdentityProvider extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The access url of the identity provider.
+     */
     private URI accessUrl;
 
+    /**
+     * The title of the identity provider.
+     */
     private String title;
 
+    /**
+     * The registration status.
+     */
     @Enumerated(EnumType.STRING)
     private RegisterStatus registerStatus;
 
+    /**
+     * The date specification.
+     */
     private ZonedDateTime lastSeen;
 }

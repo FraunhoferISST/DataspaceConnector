@@ -11,6 +11,9 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
+/**
+ * Entity for managing proxies.
+ */
 @Entity
 @Table(name = "proxy")
 @SQLDelete(sql = "UPDATE proxy SET deleted=true WHERE id=?")
@@ -26,11 +29,20 @@ public class Proxy extends AbstractEntity {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**
+     * The proxy uri.
+     */
     private URI proxyURI;
 
+    /**
+     * List of no proxy uris.
+     */
     @ElementCollection
     private List<URI> noProxyURI;
 
+    /**
+     * The authentication for the proxy.
+     */
     @OneToOne
     private Authentication authentication;
 
