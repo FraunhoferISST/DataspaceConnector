@@ -2,7 +2,8 @@
 <Configuration status="INFO">
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%thread] %highlight{%level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} - %msg%n" />
+            <PatternLayout
+                    pattern="%d{ISO8601} [%thread] %highlight{%level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} - %encode{%.-10000msg}{CRLF}%n" />
         </Console>
         <RollingFile
                 name="RollingFile"
@@ -10,7 +11,7 @@
                 filePattern="./log/dataspaceconnector.%i.log.gz"
                 ignoreExceptions="false" append="true">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5p %m%n</Pattern>
+                <Pattern>%d{ISO8601} [%thread] %-5p %encode{%.-10000m}{CRLF}%n</Pattern>
             </PatternLayout>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -20,16 +21,16 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="RollingFile"/>
-        </Root>
-        <Logger name="org.springframework" level="info">
             <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
+        </Root>
+        <!-- <Logger name="org.springframework" level="info">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger> -->
         <Logger name="org.hibernate" level="error">
             <AppenderRef ref="ConsoleAppender"/>
         </Logger>
-        <Logger name="de.fraunhofer.isst.dataspaceconnector" level="info">
+        <!-- <Logger name="io.dataspaceconnector" level="info">
             <AppenderRef ref="ConsoleAppender"/>
-        </Logger>
+        </Logger> -->
     </Loggers>
 </Configuration>
