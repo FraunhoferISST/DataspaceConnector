@@ -16,7 +16,7 @@
 
 openapi: 3.0.1
 info:
-  title: dataspace-connector
+  title: Dataspace Connector
   description: IDS Connector originally developed by the Fraunhofer ISST
   contact:
     name: Fraunhofer Institute for Software and Systems Engineering
@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 5.0.0-SNAPSHOT
+  version: 5.0.0
 servers:
   - url: http://localhost:8080
     description: Generated server url

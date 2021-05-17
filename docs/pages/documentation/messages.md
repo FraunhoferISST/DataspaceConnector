@@ -10,7 +10,7 @@ parent: Documentation
 # IDS Messages
 {: .fs-9 }
 
-...
+See what IDS message types can be sent and received.
 {: .fs-6 .fw-300 }
 
 ---

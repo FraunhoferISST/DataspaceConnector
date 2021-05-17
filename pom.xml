@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.0.0-SNAPSHOT</revision>
+		<revision>5.0.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -545,6 +545,7 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
+								<exclude>docs/**</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
