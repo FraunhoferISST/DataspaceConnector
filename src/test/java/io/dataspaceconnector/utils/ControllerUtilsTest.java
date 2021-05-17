@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -78,7 +78,7 @@ class ControllerUtilsTest {
         /* ARRANGE */
         final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to update.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+                HttpStatus.BAD_REQUEST);
 
         /* ACT */
         final var response = ControllerUtils.respondDeserializationError(exception);

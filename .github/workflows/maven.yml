@@ -6,6 +6,10 @@ name: Java CI with Maven
 on:
   pull_request:
     branches: [ master, develop ]
+    
+concurrency:
+  group: ${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
   build:

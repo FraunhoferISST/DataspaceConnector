@@ -177,7 +177,8 @@ public class ContractRequestMessageController {
             // Save contract agreement to database.
             agreementId = persistenceSvc.saveContractAgreement(agreement);
             if (log.isDebugEnabled()) {
-                log.debug("Policy negotiation success. Saved agreement: " + agreementId);
+                log.debug("Policy negotiation success. Saved agreement. [agreemendId=({})].",
+                        agreementId);
             }
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
@@ -212,7 +213,7 @@ public class ContractRequestMessageController {
                         // can be triggered later again.
                         final var content = artifactReqSvc.getResponseContent(response);
                         if (log.isDebugEnabled()) {
-                            log.debug("Data could not be loaded: \n" + content);
+                            log.debug("Data could not be loaded. [content=({})]", content);
                         }
                     }
 
@@ -222,8 +223,9 @@ public class ContractRequestMessageController {
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
-                            log.warn("Could not save data for artifact with id" + artifact
-                                    + ". [exception=({})]", exception.getMessage());
+                            log.warn("Could not save data for artifact."
+                                            + "[artifact=({}), exception=({})]",
+                                    artifact, exception.getMessage());
                         }
                     }
                 }

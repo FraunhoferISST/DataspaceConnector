@@ -208,7 +208,7 @@ public final class MappingUtils {
         final var language = representation.getLanguage();
         final var mediaType = representation.getMediaType();
         final var modified = representation.getModified();
-        final var standard = String.valueOf(representation.getRepresentationStandard());
+        final var standard = representation.getRepresentationStandard();
         final var shape = representation.getShapesGraph();
 
         // Add additional properties to map.
@@ -228,7 +228,10 @@ public final class MappingUtils {
         final var desc = new RepresentationDesc();
         desc.setAdditional(additional);
         desc.setRemoteId(representationId);
-        desc.setStandard(standard);
+
+        if (standard != null) {
+            desc.setStandard(String.valueOf(standard));
+        }
 
         if (language != null) {
             desc.setLanguage(language.toString());

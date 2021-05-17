@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.templates;
+package io.dataspaceconnector;
 
-
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-public class ArtifactTemplateTest {
-
-    @Test
-    public void equals_verify() {
-        EqualsVerifier.simple().forClass(ArtifactTemplate.class).verify();
-    }
+@SpringBootTest
+class ConnectorApplicationIT {
+	@Test
+	void contextLoads() {
+	}
 }
