@@ -43,6 +43,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service offers different methods related to the connector configuration, like e.g. getting
+ * configuration properties or updating the configuration model.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor

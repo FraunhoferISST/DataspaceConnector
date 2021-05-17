@@ -15,18 +15,17 @@
  */
 package io.dataspaceconnector.utils;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 /**
  * This utility class contains general purpose functions.
@@ -113,47 +112,18 @@ public final class Utils {
     }
 
     /**
-     * DO NOT USE.
-     *
-     * @param sort Sorting instructions within user input.
-     * @return Java object of input value.
-     */
-    public static Sort toSort(final String sort) {
-        // TODO Implement with Regex
-        if (sort == null) {
-            return Sort.unsorted();
-        }
-
-        final var comma = sort.indexOf(",");
-        if (comma == -1) {
-            return Sort.by(sort);
-        }
-
-        try {
-            final var dirString = sort.substring(comma + 1, sort.length()).toUpperCase();
-            final var dir = Sort.Direction.valueOf(dirString);
-            final var property = sort.substring(0, comma);
-            return Sort.by(dir, property);
-        } catch (Exception e) {
-            return Sort.unsorted();
-        }
-    }
-
-    /**
      * Creates a page request based on page, size, and sort inputs.
      *
      * @param page The page index.
      * @param size The page size.
-     * @param sort The sorting of page.
      * @return The page request.
      */
-    public static PageRequest toPageRequest(final Integer page, final Integer size,
-                                            final String sort) {
+    public static PageRequest toPageRequest(final Integer page, final Integer size) {
         final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
         final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
                 : DEFAULT_PAGE_SIZE;
 
-        return PageRequest.of(pageIndex, sizeValue, Utils.toSort(sort));
+        return PageRequest.of(pageIndex, sizeValue);
     }
 
     /**

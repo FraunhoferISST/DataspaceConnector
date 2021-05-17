@@ -45,17 +45,22 @@ import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.io.InputStream;
 
+import org.springframework.stereotype.Service;
+
+/**
+ * This service offers methods for finding entities by their identifying URI.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -142,8 +147,11 @@ public class EntityResolver {
      * @param elementId The entity id.
      * @return The respective object.
      * @throws ResourceNotFoundException If the resource could not be found.
+     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
     public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+        Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
+
         try {
             final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
             final var basePath = endpointId.getBasePath();

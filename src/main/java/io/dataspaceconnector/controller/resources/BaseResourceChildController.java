@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
@@ -96,7 +96,6 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @param ownerId The id of the owning resource.
      * @param page The page index.
      * @param size The page size.
-     * @param sort The sorting applied to the page.
      * @return The children of the resource.
      * @throws IllegalArgumentException if the ownerId is null.
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
@@ -108,9 +107,8 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     public ResponseEntity<PagedModel<V>> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
-            @RequestParam(required = false, defaultValue = "30") final Integer size,
-            @RequestParam(required = false) final String sort) {
-        final var pageable = Utils.toPageRequest(page, size, sort);
+            @RequestParam(required = false, defaultValue = "30") final Integer size) {
+        final var pageable = Utils.toPageRequest(page, size);
         final var entities = linker.get(ownerId, pageable);
 
         PagedModel<V> model;
@@ -142,7 +140,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
         // Send back the list of children after modification.
         // See https://tools.ietf.org/html/rfc7231#section-4.3.3 and
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200
-        return this.getResource(ownerId, null, null, null);
+        return this.getResource(ownerId, null, null);
     }
 
     /**

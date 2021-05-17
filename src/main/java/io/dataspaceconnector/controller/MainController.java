@@ -87,21 +87,21 @@ public class MainController {
 
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
         model.add(linkTo(methodOn(ResourceControllers.AgreementController.class)
-                .getAll(null, null, null)).withRel("agreements"));
+                .getAll(null, null)).withRel("agreements"));
         model.add(linkTo(methodOn(ResourceControllers.ArtifactController.class)
-                .getAll(null, null, null)).withRel("artifacts"));
+                .getAll(null, null)).withRel("artifacts"));
         model.add(linkTo(methodOn(ResourceControllers.CatalogController.class)
-                .getAll(null, null, null)).withRel("catalogs"));
+                .getAll(null, null)).withRel("catalogs"));
         model.add(linkTo(methodOn(ResourceControllers.ContractController.class)
-                .getAll(null, null, null)).withRel("contracts"));
+                .getAll(null, null)).withRel("contracts"));
         model.add(linkTo(methodOn(ResourceControllers.OfferedResourceController.class)
-                .getAll(null, null, null)).withRel("offers"));
+                .getAll(null, null)).withRel("offers"));
         model.add(linkTo(methodOn(ResourceControllers.RepresentationController.class)
-                .getAll(null, null, null)).withRel("representations"));
+                .getAll(null, null)).withRel("representations"));
         model.add(linkTo(methodOn(ResourceControllers.RequestedResourceController.class)
-                .getAll(null, null, null)).withRel("requests"));
+                .getAll(null, null)).withRel("requests"));
         model.add(linkTo(methodOn(ResourceControllers.RuleController.class)
-                .getAll(null, null, null)).withRel("rules"));
+                .getAll(null, null)).withRel("rules"));
 
         return ResponseEntity.ok(model);
     }

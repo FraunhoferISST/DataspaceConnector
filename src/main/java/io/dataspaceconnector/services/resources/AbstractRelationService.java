@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -22,11 +27,6 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * Creates a parent-children relationship between two types of resources.
@@ -171,16 +171,44 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
         return true;
     }
 
+    /**
+     * Adds a list of children to an entity.
+     *
+     * @param ownerId ID of the owning entity.
+     * @param entities list of the children's IDs.
+     */
     protected abstract void addInternal(UUID ownerId, Set<UUID> entities);
 
+    /**
+     * Removes a list of children from an entity.
+     *
+     * @param ownerId ID of the owning entity.
+     * @param entities list of the children's IDs.
+     */
     protected abstract void removeInternal(UUID ownerId, Set<UUID> entities);
 
+    /**
+     * Replaces the list of children for an entity.
+     *
+     * @param ownerId ID of the owning entity.
+     * @param entities list of the children's IDs.
+     */
     protected abstract void replaceInternal(UUID ownerId, Set<UUID> entities);
 
+    /**
+     * Returns the service for managing the "one"-side of the one-to-many-relationship.
+     *
+     * @return the service.
+     */
     protected final T getOneService() {
         return oneService;
     }
 
+    /**
+     * Returns the service for managing the "many"-side of the one-to-many-relationship.
+     *
+     * @return the service.
+     */
     protected final X getManyService() {
         return manyService;
     }

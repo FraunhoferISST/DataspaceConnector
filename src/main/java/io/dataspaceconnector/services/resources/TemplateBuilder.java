@@ -117,6 +117,12 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         return resource;
     }
 
+    /**
+     * Creates a resource from a resource template.
+     *
+     * @param template the template.
+     * @return the resource.
+     */
     protected abstract T buildResource(ResourceTemplate<D> template);
 
     /**

@@ -18,6 +18,9 @@ package io.dataspaceconnector.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 
+/**
+ * Configures HAL support for API responses.
+ */
 @Configuration
 @EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
 public class RestConfiguration {
