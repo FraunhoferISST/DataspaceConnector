@@ -51,6 +51,8 @@ public class ConnectorUnavailableMessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private final String recipient = "https://someURL";
+
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
         mockMvc.perform(post("/api/ids/connector/unavailable")).andExpect(status().isUnauthorized());
@@ -79,7 +81,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", "https://someURL"))
+                                                   .param("recipient", recipient))
                                   .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
@@ -91,11 +93,11 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.any());
+        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", "https://someURL"))
+                                                   .param("recipient", recipient))
                                   .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
@@ -107,11 +109,14 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(NullPointerException.class).when(brokerService).unregisterAtBroker(Mockito.any());
+        final var response =
+                new Response.Builder().request(new Request.Builder().url(recipient).build())
+                                      .protocol(Protocol.HTTP_1_1).code(200).message("").build();
+        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", "https://someURL"))
+                                                   .param("recipient", recipient))
                                   .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
@@ -123,7 +128,6 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
             throws Exception {
         /* ARRANGE */
-        final var recipient = "https://someURL";
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(
@@ -132,7 +136,7 @@ public class ConnectorUnavailableMessageControllerTest {
                                               .parse("application/text")))
                                       .build();
 
-        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.any());
+        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")

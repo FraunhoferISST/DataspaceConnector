@@ -59,6 +59,7 @@ public class ResourceUpdateMessageControllerTest {
     private final UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
     private final URI resourceURI = URI.create(resourceId.toString());
     private final Resource resource = getResource();
+    private final String recipient = "https://someURL";
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
@@ -121,7 +122,6 @@ public class ResourceUpdateMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
             throws Exception {
         /* ARRANGE */
-
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(Mockito.any(),
                                                                                       Mockito.eq(resource));
@@ -142,7 +142,6 @@ public class ResourceUpdateMessageControllerTest {
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
             throws Exception {
         /* ARRANGE */
-        final var recipient = "https://someURL";
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(Protocol.HTTP_1_1).code(200).message("").build();
@@ -167,7 +166,6 @@ public class ResourceUpdateMessageControllerTest {
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
             throws Exception {
         /* ARRANGE */
-        final var recipient = "https://someURL";
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(
@@ -182,7 +180,7 @@ public class ResourceUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
-                                                   .param("recipient", "https://someURL")
+                                                   .param("recipient", recipient)
                                                    .param("resourceId", resourceId.toString()))
                                   .andExpect(status().isOk()).andReturn();
 
