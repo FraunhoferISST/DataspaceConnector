@@ -73,7 +73,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
         if (!messageService.validateResponse(response)) {
             final var content = messageService.getResponseContent(response);
             if (log.isDebugEnabled()) {
-                log.debug("Data could not be loaded: \n" + content);
+                log.debug("Data could not be loaded. [content=({})]", content);
             }
 
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);

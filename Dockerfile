@@ -20,6 +20,9 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn -e -B dependency:resolve
 
+# Plugins
+RUN mvn -e -B dependency:resolve-plugins
+
 # Classes
 COPY src/main/java ./src/main/java
 COPY src/main/resources ./src/main/resources

@@ -120,7 +120,7 @@ class HttpServiceTest {
                 new Response.Builder().request(new Request.Builder().url(target).build()).protocol(
                         Protocol.HTTP_1_1).code(200).message("Some message")
                                       .body(ResponseBody.create(
-                                              MediaType.parse("application/text"), "someBody"))
+                                              "someBody", MediaType.parse("application/text")))
                                       .build();
 
         Mockito.doReturn(response).when(httpSvc).get(Mockito.any());

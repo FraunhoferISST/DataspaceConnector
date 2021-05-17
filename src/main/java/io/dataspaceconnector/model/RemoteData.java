@@ -15,10 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
-import lombok.*;
-
-import javax.persistence.Entity;
 import java.net.URL;
+import javax.persistence.Entity;
+
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Bundles information needed for accessing remote backends.
@@ -26,6 +32,8 @@ import java.net.URL;
 @Entity
 @Getter
 @Setter(AccessLevel.PACKAGE)
+@SQLDelete(sql = "UPDATE data SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class RemoteData extends Data {

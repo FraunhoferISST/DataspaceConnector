@@ -13,34 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.templates;
+package io.dataspaceconnector;
 
-import io.dataspaceconnector.model.ArtifactDesc;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.net.URI;
-
-
-/**
- * Describes an artifact and all its dependencies.
- */
-@Getter
-@NoArgsConstructor
-@RequiredArgsConstructor
-@EqualsAndHashCode
-public class ArtifactTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
-
-    /**
-     * Artifact parameters.
-     */
-    private @NonNull ArtifactDesc desc;
+@SpringBootTest
+class ConnectorApplicationIT {
+	@Test
+	void contextLoads() {
+	}
 }

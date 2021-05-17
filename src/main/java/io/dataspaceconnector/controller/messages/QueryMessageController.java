@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,10 +31,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Objects;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for sending ids query messages.
@@ -66,7 +72,7 @@ public class QueryMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient,
+            @RequestParam("recipient") final URI recipient,
             @Schema(description = "Database query (SparQL)", required = true,
                     example = "SELECT ?subject ?predicate ?object\n"
                             + "FROM <urn:x-arq:UnionGraph>\n"
@@ -75,7 +81,7 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the resource update message.
-            final var response = brokerService.queryBroker(recipient, query,
+            final var response = brokerService.queryBroker(recipient.toString(), query,
                     null, null, null);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);

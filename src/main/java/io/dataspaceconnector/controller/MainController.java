@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller;
 
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,17 +54,10 @@ public class MainController {
     @GetMapping(value = {"/", ""}, produces = "application/ld+json")
     @Operation(summary = "Public IDS self-description")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
     public ResponseEntity<Object> getPublicSelfDescription() {
-        try {
-            final var connector = connectorService.getConnectorWithoutResources();
-            return ResponseEntity.ok(connector.toRdf());
-        } catch (Exception exception) {
-            // Connector could not be loaded or deserialized.
-            return ControllerUtils.respondConnectorNotLoaded(exception);
-        }
+        return ResponseEntity.ok(connectorService.getConnectorWithoutResources().toRdf());
     }
 
     /**
@@ -80,13 +72,7 @@ public class MainController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> getPrivateSelfDescription() {
-        try {
-            final var connector = connectorService.getConnectorWithOfferedResources();
-            return ResponseEntity.ok(connector.toRdf());
-        } catch (Exception exception) {
-            // Connector could not be loaded or deserialized.
-            return ControllerUtils.respondConnectorNotLoaded(exception);
-        }
+        return ResponseEntity.ok(connectorService.getConnectorWithOfferedResources().toRdf());
     }
 
     /**

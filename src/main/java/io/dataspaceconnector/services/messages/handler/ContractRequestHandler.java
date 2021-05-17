@@ -235,7 +235,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var desc = new ContractAgreementMessageDesc(issuer, messageId);
             final var header = agreementService.buildMessage(desc);
             if (log.isDebugEnabled()) {
-                log.debug("Contract request accepted. Saved agreement: " + agreementId);
+                log.debug("Contract request accepted. [agreementId=({})]", agreementId);
             }
 
             // Send ids response message.

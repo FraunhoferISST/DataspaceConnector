@@ -15,20 +15,28 @@
  */
 package io.dataspaceconnector.model;
 
-import lombok.*;
-import org.hibernate.annotations.Where;
-
+import java.net.URI;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
-import java.net.URI;
-import java.util.List;
+import javax.persistence.Table;
+
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * An artifact stores and encapsulates data.
  */
 @Inheritance
 @Entity
+@Table(name = "artifact")
+@SQLDelete(sql = "UPDATE artifact SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)

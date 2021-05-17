@@ -16,6 +16,13 @@
 package io.dataspaceconnector.model.templates;
 
 
-class ArtifactTemplateTest {
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
+public class ArtifactTemplateTest {
+
+    @Test
+    public void equals_verify() {
+        EqualsVerifier.simple().forClass(ArtifactTemplate.class).verify();
+    }
 }

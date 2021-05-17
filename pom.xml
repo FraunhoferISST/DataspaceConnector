@@ -111,8 +111,8 @@
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.3</pitest.version>
-		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
+		<pitest.version>1.6.6</pitest.version>
+		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
@@ -125,7 +125,6 @@
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
-		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
 		<jdepend.version>2.0</jdepend.version>
@@ -561,7 +560,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -580,8 +579,7 @@
 						<param>io.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>io.dataspaceconnector.model.*Persistence*</param>
-						<param>io.dataspaceconnector.ConnectorApplicationTests</param>
+						<param>**</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
@@ -589,9 +587,9 @@
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
 					<verbose>false</verbose>
-					<threads>2</threads>
+					<threads>4</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>80</coverageThreshold>
+					<!-- <coverageThreshold>80</coverageThreshold> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -602,7 +600,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tidy-maven-plugin</artifactId>
@@ -694,7 +692,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -708,6 +705,8 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>${pmd.version}</version>
 				<configuration>
+					<!-- enable incremental analysis -->
+					<analysisCache>true</analysisCache>
 					<rulesets>
 						<ruleset>/category/java/bestpractices.xml</ruleset>
 						<ruleset>/category/java/codestyle.xml</ruleset>
@@ -752,14 +751,24 @@
 				<version>${dms.version}</version>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-linkcheck-plugin</artifactId>
-				<version>${linkcheck.version}</version>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
 				<version>${taglist.version}</version>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+						  <tagClass>
+							<displayName>TODO</displayName>
+							<tags>
+							  <tag>
+								<matchString>TODO</matchString>
+								<matchType>exact</matchType>
+							  </tag>
+							</tags>
+						  </tagClass>
+						</tagClasses>
+					  </tagListOptions>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -771,7 +780,12 @@
 				<artifactId>jdepend-maven-plugin</artifactId>
 				<version>${jdepend.version}</version>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			  </plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -782,7 +796,7 @@
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</reporting>
 
