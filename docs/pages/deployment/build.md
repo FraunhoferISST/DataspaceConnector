@@ -97,6 +97,11 @@ steps:
 2. For starting the application, run `docker-compose up`. Have a look at the `docker-compose.yaml`
    and make your own configurations if necessary.
 
+---
+
+**Note**: Environment variables will overwrite the Spring Boot settings.
+
+---
 
 ## Kubernetes
 
