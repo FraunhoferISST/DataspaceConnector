@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Objects;
+
+import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,10 +36,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
 
 /**
  * Controller for sending ids resource unavailable messages.
@@ -81,12 +81,12 @@ public class ResourceUnavailableMessageController {
             @RequestParam(value = "resourceId") final URI resourceId) {
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
-            if (resource == null) {
+            if (resource.isEmpty()) {
                 return ControllerUtils.respondResourceNotFound(resourceId);
             }
 
             // Send the resource unavailable message.
-            final var response = brokerService.removeResourceFromBroker(recipient, resource);
+            final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);
         } catch (ClassCastException exception) {
