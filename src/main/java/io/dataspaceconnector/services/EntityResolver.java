@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services;
 
-/**
- * This service offers methods for finding entities by their identifying URI.
- */
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -54,6 +51,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service offers methods for finding entities by their identifying URI.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
