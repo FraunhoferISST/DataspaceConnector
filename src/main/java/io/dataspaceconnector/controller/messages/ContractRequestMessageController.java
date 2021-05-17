@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.exceptions.ContractException;
@@ -53,12 +59,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+/**
+ * This controller provides the endpoint for sending a contract request message and starting the
+ * metadata and data exchange.
+ */
 @Log4j2
 @RestController
 @RequiredArgsConstructor

@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.services;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
+/**
+ * This service offers methods for finding entities by their identifying URI.
+ */
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;

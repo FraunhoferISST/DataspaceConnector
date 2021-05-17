@@ -28,6 +28,9 @@ import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Assembles the REST resource for an agreement.
+ */
 @Component
 public class AgreementViewAssembler
         implements RepresentationModelAssembler<Agreement, AgreementView>, SelfLinking {

@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -73,14 +80,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
+/**
+ * This class contains all implementations of the {@link BaseResourceController}.
+ */
 public final class ResourceControllers {
+
+    /**
+     * Offers the endpoints for managing catalogs.
+     */
     @RestController
     @RequestMapping("/api/catalogs")
     @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
@@ -88,6 +95,9 @@ public final class ResourceControllers {
             extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
     }
 
+    /**
+     * Offers the endpoints for managing rules.
+     */
     @RestController
     @RequestMapping("/api/rules")
     @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
@@ -95,6 +105,9 @@ public final class ResourceControllers {
             ContractRuleDesc, ContractRuleView, RuleService> {
     }
 
+    /**
+     * Offers the endpoints for managing representations.
+     */
     @RestController
     @RequestMapping("/api/representations")
     @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
@@ -102,6 +115,9 @@ public final class ResourceControllers {
             RepresentationDesc, RepresentationView, RepresentationService> {
     }
 
+    /**
+     * Offers the endpoints for managing contracts.
+     */
     @RestController
     @RequestMapping("/api/contracts")
     @Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
@@ -109,6 +125,9 @@ public final class ResourceControllers {
             extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
     }
 
+    /**
+     * Offers the endpoints for managing offered resources.
+     */
     @RestController
     @RequestMapping("/api/offers")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
@@ -117,6 +136,9 @@ public final class ResourceControllers {
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
     }
 
+    /**
+     * Offers the endpoints for managing requested resources.
+     */
     @RestController
     @RequestMapping("/api/requests")
     @Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
@@ -133,6 +155,9 @@ public final class ResourceControllers {
         }
     }
 
+    /**
+     * Offers the endpoints for managing agreements.
+     */
     @RestController
     @RequestMapping("/api/agreements")
     @Tag(name = "Agreements", description = "Endpoints for contract/policy handling")
@@ -161,6 +186,9 @@ public final class ResourceControllers {
         }
     }
 
+    /**
+     * Offers the endpoints for managing artifacts.
+     */
     @RestController
     @RequestMapping("/api/artifacts")
     @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
