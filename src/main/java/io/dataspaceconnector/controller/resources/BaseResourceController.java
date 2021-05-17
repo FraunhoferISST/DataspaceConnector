@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
 import java.util.UUID;
+import javax.validation.Valid;
 
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
-import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
@@ -111,7 +111,6 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * Endpoint for GET requests.
      * @param page The page index.
      * @param size The page size.
-     * @param sort The sorting applied to the page.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -119,9 +118,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public ResponseEntity<CollectionModel<V>> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
-            @RequestParam(required = false, defaultValue = "30") final Integer size,
-            @RequestParam(required = false) final String sort) {
-        final var pageable = Utils.toPageRequest(page, size, sort);
+            @RequestParam(required = false, defaultValue = "30") final Integer size) {
+        final var pageable = PageRequest.of(page, size);
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {

@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {AgreementViewAssembler.class, ViewAssemblerHelper.class,
@@ -152,7 +151,7 @@ public class AgreementViewAssemblerTest {
 
     private String getAgreementArtifactsLink(final UUID agreementId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
-                .getResource(agreementId, null, null, null)).toString();
+                .getResource(agreementId, null, null)).toString();
     }
 
 }

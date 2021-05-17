@@ -58,13 +58,13 @@ public class ArtifactViewAssembler
         final var repLink =
                 WebMvcLinkBuilder.linkTo(
                         methodOn(RelationControllers.ArtifactsToRepresentations.class)
-                                .getResource(artifact.getId(), null, null, null))
+                                .getResource(artifact.getId(), null, null))
                                  .withRel("representations");
         view.add(repLink);
 
         final var agreementLink =
                 linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
-                        .getResource(artifact.getId(), null, null, null))
+                        .getResource(artifact.getId(), null, null))
                         .withRel("agreements");
         view.add(agreementLink);
 

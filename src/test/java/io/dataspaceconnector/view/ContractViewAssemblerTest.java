@@ -321,17 +321,17 @@ public class ContractViewAssemblerTest {
 
     private String getContractRulesLink(final UUID contractId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.ContractsToRules.class)
-                .getResource(contractId, null, null, null)).toString();
+                .getResource(contractId, null, null)).toString();
     }
 
     private String getContractOfferedResourcesLink(final UUID contractId) {
         return linkTo(methodOn(RelationControllers.ContractsToOfferedResources.class)
-                .getResource(contractId, null, null, null)).toString();
+                .getResource(contractId, null, null)).toString();
     }
 
     private String getContractRequestedResourcesLink(final UUID contractId) {
         return linkTo(methodOn(RelationControllers.ContractsToRequestedResources.class)
-                .getResource(contractId, null, null, null)).toString();
+                .getResource(contractId, null, null)).toString();
     }
 
     private static class UnknownResource extends Resource {

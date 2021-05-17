@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {CatalogViewAssembler.class, ViewAssemblerHelper.class,
@@ -155,7 +154,7 @@ public class CatalogViewAssemblerTest {
 
     private String getCatalogOfferedResourcesLink(final UUID catalogId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
-                .getResource(catalogId, null, null, null)).toString();
+                .getResource(catalogId, null, null)).toString();
     }
 
 }

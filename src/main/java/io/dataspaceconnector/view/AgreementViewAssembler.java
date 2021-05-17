@@ -39,7 +39,7 @@ public class AgreementViewAssembler
 
         final var artifactLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
-                .getResource(agreement.getId(), null, null, null))
+                .getResource(agreement.getId(), null, null))
                 .withRel("artifacts");
         view.add(artifactLink);
 
