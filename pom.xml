@@ -341,11 +341,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>io.opentracing.contrib</groupId>
 			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
 			<version>3.3.1</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
@@ -656,9 +656,9 @@
 									<element>BUNDLE</element>
 									<limits>
 										<limit>
-											<counter>COMPLEXITY</counter>
+											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
+											<minimum>25%</minimum>
 										</limit>
 									</limits>
 								</rule>
