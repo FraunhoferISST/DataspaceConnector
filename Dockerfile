@@ -30,7 +30,7 @@ RUN mvn -e -B clean package -DskipTests -Dmaven.javadoc.skip=true
 
 # Copy the jar and build image
 FROM gcr.io/distroless/java-debian10:11
-COPY --from=maven /app/target/*.jar /app/app.jar
+COPY --from=maven --chown=65532:65532 /app/target/*.jar /app/app.jar
 WORKDIR /app
 EXPOSE 8080
 USER nonroot
