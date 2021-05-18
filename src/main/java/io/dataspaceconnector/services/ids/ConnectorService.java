@@ -133,7 +133,7 @@ public class ConnectorService {
 
         // Create a connector with a list of offered resources.
         final var connectorImpl = (BaseConnectorImpl) connector;
-        connectorImpl.setResourceCatalog((ArrayList<? extends ResourceCatalog>) catalogs);
+        connectorImpl.setResourceCatalog(catalogs);
         return connectorImpl;
     }
 

@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.utils.SelfLinkHelper;
@@ -22,16 +31,6 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The base class for constructing an ids object from DSC objects.
@@ -126,10 +125,6 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         return currentDepth <= maxDepth || maxDepth < 0;
     }
 
-    // NOTE: The type of ArrayList is used because the ids object expects ArrayList for some
-    // unknown reason. By changing the return type from List to ArrayList it is more convenient
-    // to use since no typecast is required.
-
     /**
      * Batch call of create. Use this call for building an object's dependencies. This function
      * increments the currentDepth.
@@ -143,17 +138,17 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @param <W>          The type of the ids entity.
      * @return The converted ids objects. Null if the distance is to far to the original call.
      */
-    protected <V extends AbstractEntity, W> Optional<ArrayList<W>> create(
+    protected <V extends AbstractEntity, W> Optional<List<W>> create(
             final AbstractIdsBuilder<V, W> builder, final List<V> entityList, final URI baseUri,
             final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;
 
         return !shouldGenerate(nextDepth, maxDepth) ? Optional.empty()
-                : Optional.of(new ArrayList<>(Utils.toStream(entityList)
+                : Optional.of(Utils.toStream(entityList)
                 .map(r -> builder
                         .create(r, baseUri, nextDepth, maxDepth))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList()));
     }
 
     private <X> X addAdditionals(final X idsObject, final Map<String, String> additional) {

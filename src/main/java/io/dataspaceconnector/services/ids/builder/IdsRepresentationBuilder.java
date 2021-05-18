@@ -15,16 +15,18 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import java.net.URI;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.RepresentationInstance;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Converts DSC representation to ids representation.
@@ -72,7 +74,9 @@ public final class IdsRepresentationBuilder
                 ._modified_(modified)
                 ._representationStandard_(standard);
 
-        artifacts.ifPresent(builder::_instance_);
+        if (artifacts.isPresent()) {
+            builder._instance_((List<RepresentationInstance>) (List<?>) artifacts.get());
+        }
 
         return builder.build();
     }

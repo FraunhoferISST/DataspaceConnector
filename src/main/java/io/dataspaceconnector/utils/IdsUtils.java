@@ -15,6 +15,17 @@
  */
 package io.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.TimeZone;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.Catalog;
@@ -27,17 +38,6 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.TimeZone;
 
 /**
  *
@@ -226,8 +226,7 @@ public final class IdsUtils {
      * @param keywords List of typed literals.
      * @return List of strings.
      */
-    public static List<String> getKeywordsAsString(
-            final ArrayList<? extends TypedLiteral> keywords) {
+    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
 
         final var list = new ArrayList<String>();
         if (keywords != null) {

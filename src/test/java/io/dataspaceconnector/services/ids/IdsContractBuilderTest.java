@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -33,13 +40,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -178,7 +178,7 @@ public class IdsContractBuilderTest {
                 + "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n"
                 + "    } ],\n"
                 + "    \"ids:action\" : [ {\n"
-                + "      \"@id\" : \"idsc:USE\"\n"
+                + "      \"@id\" : \"https://w3id.org/idsa/code/USE\"\n"
                 + "    } ],\n"
                 + "    \"ids:title\" : [ {\n"
                 + "      \"@value\" : \"Example Usage Policy\",\n"

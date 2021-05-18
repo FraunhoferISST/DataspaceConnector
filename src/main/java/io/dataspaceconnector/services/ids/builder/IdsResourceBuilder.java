@@ -96,7 +96,7 @@ public final class IdsResourceBuilder<T extends Resource>
                 ._created_(created)
                 ._description_(Util.asList(new TypedLiteral(description, language)))
                 ._language_(Util.asList(idsLanguage))
-                ._keyword_((ArrayList<? extends TypedLiteral>) keywords)
+                ._keyword_(keywords)
                 ._modified_(modified)
                 ._publisher_(publisher)
                 ._resourceEndpoint_(Util.asList(endpoint))
