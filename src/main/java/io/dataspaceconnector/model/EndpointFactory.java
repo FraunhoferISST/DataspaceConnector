@@ -14,7 +14,6 @@ import java.net.URI;
  * @param <T> The endpoint type.
  * @param <D> The description type.
  */
-@Component
 public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc<T>>
         implements AbstractFactory<T, D> {
 
