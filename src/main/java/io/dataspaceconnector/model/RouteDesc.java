@@ -39,7 +39,7 @@ public class RouteDesc extends AbstractDescription<Route> {
     /**
      * The last endpoint of the route.
      */
-    private Endpoint endpoint;
+    private Endpoint endEndpoint;
 
     /**
      * List of offered resources.

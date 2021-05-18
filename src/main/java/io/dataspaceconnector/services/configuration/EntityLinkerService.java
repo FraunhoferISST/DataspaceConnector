@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class EntityLinkerSerivce {
+public final class EntityLinkerService {
 
     @Service
     @NoArgsConstructor
@@ -88,7 +88,11 @@ public final class EntityLinkerSerivce {
         }
     }
 
-    @Service
+    /**
+     * ToDO: Discuss how it could be solved with the @Service Annotation
+     */
+
+//    @Service
     @NoArgsConstructor
     public static class RouteStartEndpointLinker
             extends OwningRelationService<Route, Endpoint, RouteService,
@@ -105,9 +109,13 @@ public final class EntityLinkerSerivce {
         }
     }
 
-    @Service
+    /**
+     * ToDO: Discuss how it could be solved with the @Service Annotation
+     */
+
+//  @Service
     @NoArgsConstructor
-    public static class RouteEndpointLinker
+    public static class RouteEndEndpointLinker
             extends OwningRelationService<Route, Endpoint, RouteService,
             EndpointService<Endpoint, EndpointDesc<Endpoint>>> {
 
@@ -116,7 +124,7 @@ public final class EntityLinkerSerivce {
             var endpoints = new ArrayList<Endpoint>();
             if (EndpointType.GENERIC_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())
                     || EndpointType.IDS_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())) {
-                endpoints = (ArrayList<Endpoint>) List.of(owner.getEndpoint());
+                endpoints = (ArrayList<Endpoint>) List.of(owner.getEndEndpoint());
             }
             return endpoints;
         }

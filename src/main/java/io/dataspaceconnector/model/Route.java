@@ -52,7 +52,7 @@ public class Route extends AbstractEntity {
      * The last endpoint of the route.
      */
     @OneToOne
-    private Endpoint endpoint;
+    private Endpoint endEndpoint;
 
     /**
      * List of offered resources.
