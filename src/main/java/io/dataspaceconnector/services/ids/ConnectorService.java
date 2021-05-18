@@ -15,7 +15,19 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import de.fraunhofer.iais.eis.*;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.ConfigurationModelImpl;
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -31,12 +43,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+/**
+ * This service offers different methods related to the connector configuration, like e.g. getting
+ * configuration properties or updating the configuration model.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -182,12 +192,12 @@ public class ConnectorService {
      * @param resourceId The resource id.
      * @return The ids resource.
      */
-    public Resource getOfferedResourceById(final URI resourceId) {
+    public Optional<Resource> getOfferedResourceById(final URI resourceId) {
         final var resource = offeredResourceService.getAll(Pageable.unpaged())
                 .stream()
                 .filter(x -> resourceId.toString().contains(x.getId().toString()))
                 .findAny();
 
-        return resource.map(resourceBuilder::create).orElse(null);
+        return resource.map(resourceBuilder::create);
     }
 }

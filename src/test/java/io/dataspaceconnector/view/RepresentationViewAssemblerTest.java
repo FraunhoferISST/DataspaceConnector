@@ -314,17 +314,17 @@ public class RepresentationViewAssemblerTest {
 
     private String getRepresentationArtifactsLink(final UUID representationId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
-                .getResource(representationId, null, null, null)).toString();
+                .getResource(representationId, null, null)).toString();
     }
 
     private String getRepresentationOfferedResourcesLink(final UUID representationId) {
         return linkTo(methodOn(RelationControllers.RepresentationsToOfferedResources.class)
-                .getResource(representationId, null, null, null)).toString();
+                .getResource(representationId, null, null)).toString();
     }
 
     private String getRepresentationRequestedResourcesLink(final UUID representationId) {
         return linkTo(methodOn(RelationControllers.RepresentationsToRequestedResources.class)
-                .getResource(representationId, null, null, null)).toString();
+                .getResource(representationId, null, null)).toString();
     }
 
     private static class UnknownResource extends Resource {

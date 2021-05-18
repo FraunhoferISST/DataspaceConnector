@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.Objects;
+
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
@@ -27,11 +31,11 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for sending ids resource unavailable messages.
@@ -73,20 +77,18 @@ public class ResourceUnavailableMessageController {
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final String recipient,
-            @Parameter(description = "The resource id.")
+            @Parameter(description = "The resource id.", required = true)
             @RequestParam(value = "resourceId") final URI resourceId) {
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
-            if (resource == null) {
+            if (resource.isEmpty()) {
                 return ControllerUtils.respondResourceNotFound(resourceId);
             }
 
             // Send the resource unavailable message.
-            final var response = brokerService.removeResourceFromBroker(recipient, resource);
+            final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);
-        } catch (ClassCastException exception) {
-            return ControllerUtils.respondResourceCouldNotBeLoaded(resourceId);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }

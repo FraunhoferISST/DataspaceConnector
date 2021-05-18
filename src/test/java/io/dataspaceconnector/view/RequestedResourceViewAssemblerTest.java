@@ -181,17 +181,17 @@ public class RequestedResourceViewAssemblerTest {
 
     private String getRequestedResourceContractsLink(final UUID resourceId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
-                .getResource(resourceId, null, null, null)).toString();
+                .getResource(resourceId, null, null)).toString();
     }
 
     private String getRequestedResourceRepresentationsLink(final UUID resourceId) {
         return linkTo(methodOn(RelationControllers.RequestedResourcesToRepresentations.class)
-                .getResource(resourceId, null, null, null)).toString();
+                .getResource(resourceId, null, null)).toString();
     }
 
     private String getRequestedResourceCatalogsLink(final UUID resourceId) {
         return linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
-                .getResource(resourceId, null, null, null)).toString();
+                .getResource(resourceId, null, null)).toString();
     }
 
 }

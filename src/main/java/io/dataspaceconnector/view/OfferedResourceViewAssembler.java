@@ -52,19 +52,19 @@ public class OfferedResourceViewAssembler
         final var contractsLink =
                 WebMvcLinkBuilder
                         .linkTo(methodOn(RelationControllers.OfferedResourcesToContracts.class)
-                                        .getResource(resource.getId(), null, null, null))
+                                        .getResource(resource.getId(), null, null))
                         .withRel("contracts");
         view.add(contractsLink);
 
         final var repLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToRepresentations.class)
-                        .getResource(resource.getId(), null, null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("representations");
         view.add(repLink);
 
         final var catalogLink =
                 linkTo(methodOn(RelationControllers.OfferedResourcesToCatalogs.class)
-                        .getResource(resource.getId(), null, null, null))
+                        .getResource(resource.getId(), null, null))
                         .withRel("catalogs");
         view.add(catalogLink);
 

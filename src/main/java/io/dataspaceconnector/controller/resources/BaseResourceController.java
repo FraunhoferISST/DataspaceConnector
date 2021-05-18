@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.util.UUID;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
@@ -32,10 +35,14 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.UUID;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Offers REST-Api endpoints for REST resource handling.
@@ -104,7 +111,6 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * Endpoint for GET requests.
      * @param page The page index.
      * @param size The page size.
-     * @param sort The sorting applied to the page.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
     @RequestMapping(method = RequestMethod.GET)
@@ -112,9 +118,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     public ResponseEntity<CollectionModel<V>> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
-            @RequestParam(required = false, defaultValue = "30") final Integer size,
-            @RequestParam(required = false) final String sort) {
-        final var pageable = Utils.toPageRequest(page, size, sort);
+            @RequestParam(required = false, defaultValue = "30") final Integer size) {
+        final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {

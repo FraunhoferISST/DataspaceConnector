@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
-import javax.validation.ConstraintViolationException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.validation.ConstraintViolationException;
 
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
@@ -149,19 +149,19 @@ public class MainControllerTest {
         final var result = mockMvc.perform(get("/api")).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
-                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size,"
-                     + "sort}\",\"templated\":true},"
-                     + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size,"
-                     + "sort}\",\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
-                     + "/catalogs{?page,size,sort}\",\"templated\":true},"
-                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size,"
-                     + "sort}\",\"templated\":true},"
-                     + "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size,sort}\","
+                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
+                     + "\"templated\":true},"
+                     + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\","
+                     + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
+                     + "/catalogs{?page,size}\",\"templated\":true},"
+                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
+                     + "\"templated\":true},"
+                     + "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\","
                      + "\"templated\":true},\"representations\":{\"href\":\"http://localhost/api"
-                     + "/representations{?page,size,sort}\",\"templated\":true},"
-                     + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size,"
-                     + "sort}\",\"templated\":true},"
-                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size,sort}\","
+                     + "/representations{?page,size}\",\"templated\":true},"
+                     + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
+                     + "\"templated\":true},"
+                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
                      + "\"templated\":true}}}", result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }

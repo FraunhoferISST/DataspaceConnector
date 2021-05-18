@@ -49,7 +49,7 @@ public class CatalogViewAssembler
 
         final var offeredResLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.CatalogsToOfferedResources.class)
-                .getResource(catalog.getId(), null, null, null))
+                .getResource(catalog.getId(), null, null))
                 .withRel("offers");
         view.add(offeredResLink);
 

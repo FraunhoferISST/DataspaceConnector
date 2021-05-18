@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.view;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.ContractRule;
@@ -29,12 +34,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {ContractRuleViewAssembler.class, ViewAssemblerHelper.class,
@@ -151,7 +154,7 @@ public class ContractRuleViewAssemblerTest {
 
     private String getContractRuleContractsLink(final UUID contractRuleId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RulesToContracts.class)
-                .getResource(contractRuleId, null, null, null)).toString();
+                .getResource(contractRuleId, null, null)).toString();
     }
 
 }

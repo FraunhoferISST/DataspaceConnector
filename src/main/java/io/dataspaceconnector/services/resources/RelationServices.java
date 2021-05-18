@@ -15,14 +15,28 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.*;
+import java.util.List;
+
+import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
+/**
+ * This class contains all implementations of {@link OwningRelationService} and
+ * {@link NonOwningRelationService}.
+ */
 public final class RelationServices {
 
+    /**
+     * Handles the relation between rules and contracts.
+     */
     @Service
     @NoArgsConstructor
     public static class RuleContractLinker extends NonOwningRelationService<ContractRule, Contract,
@@ -34,7 +48,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between artifacts and representations.
+     */
     @Service
     @NoArgsConstructor
     public static class ArtifactRepresentationLinker
@@ -47,7 +63,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between representations and offered resources.
+     */
     @Service
     @NoArgsConstructor
     public static class RepresentationOfferedResourceLinker
@@ -60,7 +78,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between representations and requested resources.
+     */
     @Service
     @NoArgsConstructor
     public static class RepresentationRequestedResourceLinker
@@ -73,7 +93,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between offered resources and catalogs.
+     */
     @Service
     @NoArgsConstructor
     public static class OfferedResourceCatalogLinker
@@ -86,7 +108,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between requested resources and catalogs.
+     */
     @Service
     @NoArgsConstructor
     public static class RequestedResourceCatalogLinker
@@ -99,7 +123,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between contracts and offered resources.
+     */
     @Service
     @NoArgsConstructor
     public static class ContractOfferedResourceLinker
@@ -112,7 +138,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between contracts and requested resources.
+     */
     @Service
     @NoArgsConstructor
     public static class ContractRequestedResourceLinker
@@ -125,7 +153,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between agreements and artifacts.
+     */
     @Service
     @NoArgsConstructor
     public static class AgreementArtifactLinker
@@ -137,7 +167,9 @@ public final class RelationServices {
         }
     }
 
-
+    /**
+     * Handles the relation between artifacts and agreements.
+     */
     @Service
     @NoArgsConstructor
     public static class ArtifactAgreementLinker
@@ -151,7 +183,7 @@ public final class RelationServices {
     }
 
     /**
-     * Handles the relation between a representation and its artifacts.
+     * Handles the relation between representations and artifacts.
      */
     @Service
     @NoArgsConstructor
@@ -169,7 +201,7 @@ public final class RelationServices {
     }
 
     /**
-     * Handles the relation between a contract and its rules.
+     * Handles the relation between contracts and rules.
      */
     @Service
     @NoArgsConstructor

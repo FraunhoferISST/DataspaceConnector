@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
+
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
@@ -28,10 +32,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
+/**
+ * A {@link PolicyVerifier} implementation that checks whether data access should be allowed.
+ */
 @Component
 @Log4j2
 @RequiredArgsConstructor

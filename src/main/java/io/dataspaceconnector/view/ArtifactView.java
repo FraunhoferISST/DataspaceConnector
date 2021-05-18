@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.view;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,10 +26,9 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.Map;
-
+/**
+ * A DTO for controlled exposing of artifact information in API responses.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)

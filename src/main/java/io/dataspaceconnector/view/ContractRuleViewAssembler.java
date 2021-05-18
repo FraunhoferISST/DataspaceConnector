@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.view;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
 import io.dataspaceconnector.model.ContractRule;
@@ -24,8 +26,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -49,7 +49,7 @@ public class ContractRuleViewAssembler
 
         final var contractLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.RulesToContracts.class)
-                .getResource(rule.getId(), null, null, null))
+                .getResource(rule.getId(), null, null))
                 .withRel("contracts");
         view.add(contractLink);
 

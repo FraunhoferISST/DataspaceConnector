@@ -15,17 +15,18 @@
  */
 package io.dataspaceconnector.utils;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilsTest {
 
@@ -164,61 +165,6 @@ class UtilsTest {
     }
 
     /**************************************************************************
-     * toSort.
-     *************************************************************************/
-
-    @Test
-    public void toSort_null_returnUnsorted() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT */
-        final var result = Utils.toSort(null);
-
-        /* ASSERT */
-        assertEquals(Sort.unsorted(), result);
-    }
-
-    @Test
-    public void toSort_onlyOneProperty_returnSort() {
-        /* ARRANGE */
-        final var input = "title";
-
-        /* ACT */
-        final var result = Utils.toSort(input);
-
-        /* ASSERT */
-        assertNotNull(result.getOrderFor(input));
-        assertEquals(Sort.Direction.ASC,result.getOrderFor(input).getDirection());
-    }
-
-    @Test
-    public void toSort_onePropertyAsc_returnAscSort() {
-        /* ARRANGE */
-        final var input = "title,asc";
-
-        /* ACT */
-        final var result = Utils.toSort(input);
-
-        /* ASSERT */
-        assertNotNull(result.getOrderFor("title"));
-        assertEquals(Sort.Direction.ASC,result.getOrderFor("title").getDirection());
-    }
-
-    @Test
-    public void toSort_onePropertyDesc_returnDescSort() {
-        /* ARRANGE */
-        final var input = "title,desc";
-
-        /* ACT */
-        final var result = Utils.toSort(input);
-
-        /* ASSERT */
-        assertNotNull(result.getOrderFor("title"));
-        assertEquals(Sort.Direction.DESC,result.getOrderFor("title").getDirection());
-    }
-
-    /**************************************************************************
      * toPageRequest.
      *************************************************************************/
 
@@ -228,7 +174,7 @@ class UtilsTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = Utils.toPageRequest(null, null, null);
+        final var result = Utils.toPageRequest(null, null);
 
         /* ASSERT */
         assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.DEFAULT_PAGE_SIZE), result);
@@ -240,7 +186,7 @@ class UtilsTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = Utils.toPageRequest(-500, -3, null);
+        final var result = Utils.toPageRequest(-500, -3);
 
         /* ASSERT */
         assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.DEFAULT_PAGE_SIZE), result);
@@ -252,22 +198,10 @@ class UtilsTest {
         // Nothing to arrange.
 
         /* ACT */
-        final var result = Utils.toPageRequest(Utils.DEFAULT_FIRST_PAGE, Utils.MAX_PAGE_SIZE + 20, null);
+        final var result = Utils.toPageRequest(Utils.DEFAULT_FIRST_PAGE, Utils.MAX_PAGE_SIZE + 20);
 
         /* ASSERT */
         assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.MAX_PAGE_SIZE), result);
-    }
-
-    @Test
-    public void toPageRequest_invalidSort_defaultRequest() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT */
-        final var result = Utils.toPageRequest(-500, -3, "INVALID SORT,,");
-
-        /* ASSERT */
-        assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.DEFAULT_PAGE_SIZE), result);
     }
 
     @Test
@@ -275,13 +209,12 @@ class UtilsTest {
         /* ARRANGE */
         final var page = 21;
         final var size = 50;
-        final var sort = "title,desc";
 
         /* ACT */
-        final var result = Utils.toPageRequest(page, size, sort);
+        final var result = Utils.toPageRequest(page, size);
 
         /* ASSERT */
-        assertEquals(PageRequest.of(page, size, Sort.by("title").descending()), result);
+        assertEquals(PageRequest.of(page, size), result);
     }
 
     /**************************************************************************
