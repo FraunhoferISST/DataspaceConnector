@@ -3,11 +3,10 @@ package io.dataspaceconnector.services.configuration;
 import io.dataspaceconnector.model.*;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class EntityLinkerSerivce {
@@ -50,13 +49,9 @@ public final class EntityLinkerSerivce {
     public static class DataSourceAuthenticationLinker
             extends OwningRelationService<DataSource, Authentication, DataSourceService, AuthenticationService> {
 
-        protected Authentication getAuthentication(final DataSource owner) {
-            return Utils.requireNonNull(owner.getAuthentication(), ErrorMessages.AUTH_NULL);
-        }
-
         @Override
         protected List<Authentication> getInternal(final DataSource owner) {
-            return null;
+            return List.of(owner.getAuthentication());
         }
     }
 
@@ -76,15 +71,66 @@ public final class EntityLinkerSerivce {
     public static class ProxyAuthenticationLinker
             extends OwningRelationService<Proxy, Authentication, ProxyService, AuthenticationService> {
 
-        protected Authentication getAuthentication(final Proxy owner) {
-            return Utils.requireNonNull(owner.getAuthentication(), ErrorMessages.AUTH_NULL);
-        }
-
         @Override
         protected List<Authentication> getInternal(final Proxy owner) {
-            return null;
+            return List.of(owner.getAuthentication());
         }
     }
 
+    @Service
+    @NoArgsConstructor
+    public static class RouteSubrouteLinker
+            extends OwningRelationService<Route, Route, RouteService, RouteService> {
+
+        @Override
+        protected List<Route> getInternal(final Route owner) {
+            return owner.getSubRoutes();
+        }
+    }
+
+    @Service
+    @NoArgsConstructor
+    public static class RouteStartEndpointLinker
+            extends OwningRelationService<Route, Endpoint, RouteService,
+            EndpointService<Endpoint, EndpointDesc<Endpoint>>> {
+
+        @Override
+        protected List<Endpoint> getInternal(final Route owner) {
+            var endpoints = new ArrayList<Endpoint>();
+            if (EndpointType.GENERIC_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())
+                    || EndpointType.IDS_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())) {
+                endpoints = (ArrayList<Endpoint>) List.of(owner.getStartEndpoint());
+            }
+            return endpoints;
+        }
+    }
+
+    @Service
+    @NoArgsConstructor
+    public static class RouteEndpointLinker
+            extends OwningRelationService<Route, Endpoint, RouteService,
+            EndpointService<Endpoint, EndpointDesc<Endpoint>>> {
+
+        @Override
+        protected List<Endpoint> getInternal(final Route owner) {
+            var endpoints = new ArrayList<Endpoint>();
+            if (EndpointType.GENERIC_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())
+                    || EndpointType.IDS_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())) {
+                endpoints = (ArrayList<Endpoint>) List.of(owner.getEndpoint());
+            }
+            return endpoints;
+        }
+    }
+
+    @Service
+    @NoArgsConstructor
+    public static class RouteOfferedResourceLinker
+            extends OwningRelationService<Route, OfferedResource, RouteService, OfferedResourceService> {
+
+        @Override
+        protected List<OfferedResource> getInternal(final Route owner) {
+            return owner.getOfferedResources();
+        }
+    }
 
 }

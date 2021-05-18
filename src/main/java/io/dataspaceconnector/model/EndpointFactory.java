@@ -65,11 +65,30 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
         final var hasUpdatedDocumentation = updateEndpointDocumentation(endpoint,
                 desc.getEndpointDocumentation());
-        final var hasUpdatedInformation = updateEndpointInformation(endpoint, endpoint.getEndpointInformation());
+        final var hasUpdatedInformation = updateEndpointInformation(endpoint,
+                endpoint.getEndpointInformation());
         final var hasUpdatedInboundPath = updateInboundPath(endpoint, endpoint.getInboundPath());
         final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, endpoint.getOutboundPath());
+        final var hasUpdatedEndpointType = updateEndpointType(endpoint, endpoint.getEndpointType());
 
-        return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath || hasUpdatedOutboundPath;
+        return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath || hasUpdatedOutboundPath
+                || hasUpdatedEndpointType;
+    }
+
+    /**
+     * @param endpoint     The endpoint.
+     * @param endpointType The endpoint type.
+     * @return True, if endpoint is updated.
+     */
+    private boolean updateEndpointType(Endpoint endpoint, EndpointType endpointType) {
+        final boolean updated;
+        if (endpoint.getEndpointType().equals(endpointType)) {
+            updated = false;
+        } else {
+            endpoint.setEndpointType(endpointType);
+            updated = true;
+        }
+        return updated;
     }
 
     /**
