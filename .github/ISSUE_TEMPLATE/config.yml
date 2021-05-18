@@ -1,0 +1,9 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question or get support
+    url: https://github.com/International-Data-Spaces-Association/DataspaceConnector/discussions
+    about: Ask a question or request support for using the Dataspace Connector
+  - name: Take a look at the wiki
+    url: https://github.com/International-Data-Spaces-Association/DataspaceConnector/wiki
+    about: Browse the wiki for help regarding the Dataspace Connector

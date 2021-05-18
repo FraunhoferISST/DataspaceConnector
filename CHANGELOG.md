@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.0.0-SNAPSHOT] - 2021-04-29
+## [5.0.0] - 2021-05-17
 
 ### Added
 - Partially support of HATEOAS.
@@ -36,22 +36,26 @@ All notable changes to this project will be documented in this file.
 - Move Swagger UI to `/api/docs`.
 - Change response type from string to object.
 - Use correct response codes as defined by RFC 7231.
-- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and agreements.
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and 
+  agreements.
   * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
   * Separate `ResourceContract` into `Contract` and `Rule`.
-  * Handle data in own database entity. 
+  * Handle data in own database entity.
   * Separate management of resources and its relations.
-  * Define clear interfaces between data model and the IDS Infomodel objects. 
-  * Add IDS object builder classes.  
+  * Define clear interfaces between data model and the IDS Infomodel objects.
+  * Add IDS object builder classes.
+    * Build ids:Resource only if at least 1 representation and 1 contract is present.
+    * Build ids:Representation only if at least 1 artifact is present.
+    * Build ids:ContractOffer only if at least 1 rule is present.
   * Move remote information from `BackendSource` to `Artifact`.
 - Strict implementation of model view controller pattern for data management.
   * Controller methods for resources and representations.
   * Provide strict access control to backend. Information can only be read and changed by services.
   * Strict state validation for entities via factory classes.
-- Change IDS messaging sequence: Start with `ContractRequestMessage` for automated 
+- Change IDS messaging sequence: Start with `ContractRequestMessage` for automated
   `DescriptionRequestMessage` and `ArtifactRequestMessage`.
 - Improve data transfer.
-  * Process bytes instead of strings. 
+  * Process bytes instead of strings.
   * Remove limit for data in internal database.
   * Establish connection via `ArtifactRequestMessage` for always pulling recent data.
 
@@ -59,13 +63,11 @@ All notable changes to this project will be documented in this file.
 - Fix of buffer overflow in http tracer.
 - Make message handler stateless.
 
-### Removed
-- All classes.
-
 ### Security
 - Prevent leaking of technology stack in case of errors/exceptions.
-- Http tracer sanitizes inputs to prevent CRLF injections.
-- mass bindings
+- Logger sanitizes inputs to prevent CRLF injections.
+- Mass Bindings.
+- Timezone independence.
 
 ## [4.3.1] - 2021-04-15
 
@@ -74,7 +76,7 @@ All notable changes to this project will be documented in this file.
 
 ## [4.3.0] - 2021-03-24
 
-### Added 
+### Added
 - Configure timeout values for http connections via `application.properties`.
 
 ## [4.2.0] - 2021-03-09
@@ -101,7 +103,7 @@ All notable changes to this project will be documented in this file.
 - Add data string as request body instead of request parameter.
 
 ### Fixed
-- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and 
+- Exclusive use of the `ConfigurationContainer` for processing the connector's self-description and
   configurations to avoid state errors (relevant for the broker communication).
 
 ## [4.0.2] - 2021-02-04
@@ -111,7 +113,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Answer with a `MessageProcessedNotificationMessage` to the consumer's `ContractAgreementMessage`.
-- Save the `ContractAgreement` to the database and the Clearing House when the second 
+- Save the `ContractAgreement` to the database and the Clearing House when the second
 `AgreementMessage` has been processed.
 - Refine exception handling in the message building and sending process.
 - Update from IDS Framework v4.0.2 to v4.0.3.
@@ -166,12 +168,12 @@ All notable changes to this project will be documented in this file.
 
 ## [3.2.1] - 2020-11-05
 
-### Changed 
+### Changed
 - Update to IDS framework v3.2.3.
 - Move self-service and example endpoints to admin API.
 - Improve Dockerfile.
 - Add key- and truststore to example configuration.
-- Add default policy (provide access) to resource on creation. 
+- Add default policy (provide access) to resource on creation.
 
 ### Added
 - Update and delete resources from broker.
@@ -199,13 +201,13 @@ All notable changes to this project will be documented in this file.
 - Add file URI scheme to paths of KeyStore and TrustStore in config.json.
 - Add test classes: SelfDescriptionTest, RequestDescriptionTest, RequestArtifactTest, DescriptionRequestMessageHandlingTest, ArtifactRequestMessageHandlingTest.
 
-### Removed 
+### Removed
 - IDS Connector certificate file.
 
 ## [3.1.0] - 2020-09-29
 
 ### Changed
-- Integrate IDS policy language. 
+- Integrate IDS policy language.
 - Modify policy patterns.
 - Adapt policy reader to new policy language.
 - Adapt usage control implementation to new patterns.
