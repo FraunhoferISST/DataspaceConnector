@@ -26,12 +26,19 @@ jobs:
       -
        name: Find tag
        id: get_tag
-       run: echo ::set-output name=TAG::${GITHUB_REF/refs\/tags\//}
+       run: |
+         echo ${GITHUB_REF#refs/tags/}
+         echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
        if: startsWith(github.ref, 'refs/tags')
       -
        name: Find branch name
        id: get_branch
-       run: echo ::set-output name=BRANCH::$(git rev-parse --abbrev-ref HEAD)
+       run: |
+         # to lowercase
+         TMP=$(git rev-parse --abbrev-ref HEAD)
+         TMP=$(echo "$TMP" | tr '[:upper:]' '[:lower:]')
+         echo $TMP
+         echo ::set-output name=BRANCH::$TMP
       -
        name: Login to registry
        uses: docker/login-action@v1
@@ -54,21 +61,17 @@ jobs:
          echo $BRANCH
          echo $TAG
          TMP=$TAG
-         if [[ $TAG == v* ]]
+         if [[ $TMP == v* ]]
          then
            # Its a version tag
            TMP=${TAG:1:${#TAG}}
            echo "Found a version tag"
-           if [[ $BRANCH == 'master' ]]
-           then
-             # Its a release version tag
-             docker tag $IMAGE:$BRANCH $IMAGE:latest
-             docker push $IMAGE:latest
-           fi
+           docker tag $IMAGE:$BRANCH $IMAGE:latest
+           docker push $IMAGE:latest
          fi
          # Has tag
-         docker tag $IMAGE_NAME:$BRANCH_NAME $IMAGE_NAME:$TAG
-         docker push $IMAGE_NAME:$TAG
+         docker tag $IMAGE:$BRANCH $IMAGE:$TMP
+         docker push $IMAGE:$TMP
        if: startsWith(github.ref, 'refs/tags')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
@@ -78,6 +81,7 @@ jobs:
        name: Push branch image
        run: |
          docker push $IMAGE:$BRANCH
+       if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
