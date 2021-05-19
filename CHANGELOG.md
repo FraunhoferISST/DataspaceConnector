@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - H2 does not persist database to files.
 - Change additional list mapping for received attribute list with a single item.
+- Disable unused rolling file appender in log4j2.xml
 
 ## [5.0.0] - 2021-05-17
 
@@ -42,7 +43,7 @@ All notable changes to this project will be documented in this file.
 - Move Swagger UI to `/api/docs`.
 - Change response type from string to object.
 - Use correct response codes as defined by RFC 7231.
-- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and 
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and
   agreements.
   * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
   * Separate `ResourceContract` into `Contract` and `Rule`.
