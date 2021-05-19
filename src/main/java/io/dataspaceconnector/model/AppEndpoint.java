@@ -57,4 +57,11 @@ public class AppEndpoint extends Endpoint {
      */
     @Enumerated(EnumType.STRING)
     private AppEndpointType appEndpointType;
+
+    /**
+     * Default constructor.
+     */
+    protected AppEndpoint() {
+        super();
+    }
 }

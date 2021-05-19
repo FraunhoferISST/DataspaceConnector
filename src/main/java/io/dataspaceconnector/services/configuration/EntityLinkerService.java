@@ -9,8 +9,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains all implementations of {@link OwningRelationService}.
+ */
 public final class EntityLinkerService {
 
+    /**
+     * Handles the relation between app store and apps.
+     */
     @Service
     @NoArgsConstructor
     public static class AppStoreAppLinker
@@ -22,6 +28,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between broker and offered resources.
+     */
     @Service
     @NoArgsConstructor
     public static class BrokerOfferedResourcesLinker
@@ -33,6 +42,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between the configuration and the proxy.
+     */
     @Service
     @NoArgsConstructor
     public static class ConfigurationProxyLinker
@@ -44,6 +56,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between the data source and the authentication.
+     */
     @Service
     @NoArgsConstructor
     public static class DataSourceAuthenticationLinker
@@ -55,6 +70,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between the data source and the generic endpoints.
+     */
     @Service
     @NoArgsConstructor
     public static class DataSourceGenericEndpointsLinker
@@ -66,6 +84,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between proxy and authentication.
+     */
     @Service
     @NoArgsConstructor
     public static class ProxyAuthenticationLinker
@@ -77,6 +98,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between the routes and subroutes.
+     */
     @Service
     @NoArgsConstructor
     public static class RouteSubrouteLinker
@@ -90,9 +114,9 @@ public final class EntityLinkerService {
 
     /**
      * ToDO: Discuss how it could be solved with the @Service Annotation
+     * Handles the relation between the route and start endpoint.
      */
-
-//    @Service
+    @Service
     @NoArgsConstructor
     public static class RouteStartEndpointLinker
             extends OwningRelationService<Route, Endpoint, RouteService,
@@ -111,9 +135,9 @@ public final class EntityLinkerService {
 
     /**
      * ToDO: Discuss how it could be solved with the @Service Annotation
+     * Handles the relation between the route and the last endpoint.
      */
-
-//  @Service
+    @Service
     @NoArgsConstructor
     public static class RouteEndEndpointLinker
             extends OwningRelationService<Route, Endpoint, RouteService,
@@ -130,6 +154,9 @@ public final class EntityLinkerService {
         }
     }
 
+    /**
+     * Handles the relation between the route and offered resources.
+     */
     @Service
     @NoArgsConstructor
     public static class RouteOfferedResourceLinker

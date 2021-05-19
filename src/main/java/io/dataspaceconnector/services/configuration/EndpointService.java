@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 /**
  * Service class for endpoints.
  */
+@Service
 @NoArgsConstructor
 public class EndpointService<T extends Endpoint, D extends EndpointDesc<T>>
         extends BaseEntityService<T, D> {

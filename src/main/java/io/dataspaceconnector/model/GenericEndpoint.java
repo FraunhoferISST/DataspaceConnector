@@ -28,4 +28,11 @@ public class GenericEndpoint extends Endpoint {
      * The absolute path of the generic endpoint.
      */
     private String absolutePath;
+
+    /**
+     * Default constructor.
+     */
+    protected GenericEndpoint() {
+        super();
+    }
 }
