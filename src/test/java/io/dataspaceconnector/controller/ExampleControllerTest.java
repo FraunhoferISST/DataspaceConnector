@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.BasicAuthenticationBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -33,6 +28,7 @@ import de.fraunhofer.iais.eis.PublicKeyBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.config.BootstrapConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +37,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -52,6 +53,12 @@ public class ExampleControllerTest {
 
     @MockBean
     private DeserializationService deserializationService;
+
+    /**
+     * Required to disable bootstrapping.
+     */
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     private MockMvc mockMvc;
