@@ -49,8 +49,8 @@ public class RequestedResourceUpdaterTest {
     @Autowired
     private RequestedResourceUpdater updater;
 
-    private final UUID                                          resourceId  = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Resource                             resource    = getResource();
+    private final UUID resourceId  = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+    private final Resource resource = getResource();
     private final io.dataspaceconnector.model.RequestedResource dscResource = getDscResource();
     private final io.dataspaceconnector.model.RequestedResource dscUpdatedResource = getUpdatedDscResource();
     private final ResourceTemplate<RequestedResourceDesc>       template           = getTemplate();
@@ -96,8 +96,7 @@ public class RequestedResourceUpdaterTest {
         final var result = updater.update(resource);
         assertEquals(dscUpdatedResource, result);
         Mockito.verify(requestedResourceService, Mockito.atLeastOnce()).update(Mockito.eq(
-                resourceId),
-                                                                               Mockito.eq(template.getDesc()));
+                resourceId), Mockito.eq(template.getDesc()));
     }
 
     private Resource getResource() {
@@ -111,7 +110,7 @@ public class RequestedResourceUpdaterTest {
         final var resourceConstructor = RequestedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
         final var output =  resourceConstructor.newInstance();
-        ReflectionTestUtils.setField(output, "language", "[SOME Language]");
+        ReflectionTestUtils.setField(output, "language", "SOME Language");
         return output;
     }
 
@@ -126,7 +125,7 @@ public class RequestedResourceUpdaterTest {
 
     private ResourceTemplate<RequestedResourceDesc> getTemplate() {
         final var output = new ResourceTemplate<>(new RequestedResourceDesc());
-        output.getDesc().setLanguage("[https://w3id.org/idsa/code/DE]");
+        output.getDesc().setLanguage("https://w3id.org/idsa/code/DE");
         output.getDesc().setRemoteId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
         output.getDesc().setAdditional(new ConcurrentHashMap<>());
         output.getDesc().setKeywords(new ArrayList<>());
