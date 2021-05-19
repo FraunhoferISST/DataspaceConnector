@@ -15,30 +15,35 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Maps ids resources to internal resources.
@@ -50,6 +55,216 @@ public final class MappingUtils {
      */
     private MappingUtils() {
         // not used
+    }
+
+    /**
+     * Map ids catalog to connector catalog.
+     *
+     * @param catalog The ids catalog.
+     * @return The connector catalog.
+     * @throws IllegalArgumentException if the passed resource is null.
+     */
+    public static CatalogTemplate fromIdsCatalog(final Catalog catalog) {
+        Utils.requireNonNull(catalog, ErrorMessages.ENTITY_NULL);
+
+        final var additional = new HashMap<String, String>();
+        if (catalog.getProperties() != null) {
+            catalog.getProperties().forEach((key, value) -> additional.put(key, value.toString()));
+        }
+        // add ids:id as additional field in order to later check if this catalog is already known
+        // to the connector
+        additional.put("idsId", catalog.getId().toString());
+
+        final var catalogDesc = new CatalogDesc();
+        catalogDesc.setAdditional(additional);
+        catalogDesc.setTitle("IDS Catalog");
+        catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+
+        return new CatalogTemplate(catalogDesc, null, null);
+    }
+
+    /**
+     * Map ids resource to connector resource.
+     *
+     * @param resource The ids resource.
+     * @return The connector resource.
+     * @throws IllegalArgumentException if the passed resource is null.
+     */
+    public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
+            final Resource resource) {
+        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var periodicity = resource.getAccrualPeriodicity();
+        final var contentPart = resource.getContentPart();
+        final var contentStandard = resource.getContentStandard();
+        final var contentType = resource.getContentType();
+        final var created = resource.getCreated();
+        final var customLicense = resource.getCustomLicense();
+        final var representation = resource.getDefaultRepresentation();
+        final var description = resource.getDescription();
+        final var resourceId = resource.getId();
+        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
+        final var language = resource.getLanguage();
+        final var modified = resource.getModified();
+        final var publisher = resource.getPublisher();
+        final var resourceEndpoint = resource.getResourceEndpoint();
+        final var resourcePart = resource.getResourcePart();
+        final var sample = resource.getSample();
+        final var shapesGraph = resource.getShapesGraph();
+        final var sovereign = resource.getSovereign();
+        final var spatialCoverage = resource.getSpatialCoverage();
+        final var standardLicense = resource.getStandardLicense();
+        final var temporalCoverage = resource.getTemporalCoverage();
+        final var temporalRes = resource.getTemporalResolution();
+        final var theme = resource.getTheme();
+        final var title = resource.getTitle();
+        final var variant = resource.getVariant();
+        final var version = resource.getVersion();
+
+        // Add additional properties to map.
+        final var additional = propertiesToAdditional(resource.getProperties());
+
+        if (periodicity != null) {
+            additional.put("ids:accrualPeriodicity", periodicity.toRdf());
+        }
+
+        if (contentPart != null) {
+            if (contentPart.size() == 1) {
+                additional.put("ids:contentPart", contentPart.get(0).toString());
+            } else {
+                additional.put("ids:contentPart", contentPart.toString());
+            }
+        }
+
+        if (contentStandard != null) {
+            additional.put("ids:contentStandard", contentStandard.toString());
+        }
+
+        if (contentType != null) {
+            additional.put("ids:contentType", contentType.toRdf());
+        }
+
+        if (created != null) {
+            additional.put("ids:created", created.toXMLFormat());
+        }
+
+        if (customLicense != null) {
+            additional.put("ids:customLicense", customLicense.toString());
+        }
+
+        if (representation != null) {
+            if (representation.size() == 1) {
+                additional.put("ids:defaultRepresentation", representation.get(0).toString());
+            } else {
+                additional.put("ids:defaultRepresentation", representation.toString());
+            }
+        }
+
+        if (modified != null) {
+            additional.put("ids:modified", modified.toXMLFormat());
+        }
+
+        if (resourceEndpoint != null) {
+            if (resourceEndpoint.size() == 1) {
+                additional.put("ids:resourceEndpoint", resourceEndpoint.get(0).toString());
+            } else {
+                additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+            }
+        }
+
+        if (resourcePart != null) {
+            if (resourcePart.size() == 1) {
+                additional.put("ids:resourcePart", resourcePart.get(0).toString());
+            } else {
+                additional.put("ids:resourcePart", resourcePart.toString());
+            }
+        }
+
+        if (sample != null) {
+            if (sample.size() == 1) {
+                additional.put("ids:sample", sample.get(0).toString());
+            } else {
+                additional.put("ids:sample", sample.toString());
+            }
+        }
+
+        if (shapesGraph != null) {
+            additional.put("ids:shapesGraph", shapesGraph.toString());
+        }
+
+        if (spatialCoverage != null) {
+            if (spatialCoverage.size() == 1) {
+                additional.put("ids:spatialCoverage", spatialCoverage.get(0).toString());
+            } else {
+                additional.put("ids:spatialCoverage", spatialCoverage.toString());
+            }
+        }
+
+        if (temporalCoverage != null) {
+            if (temporalCoverage.size() == 1) {
+                additional.put("ids:temporalCoverage", temporalCoverage.get(0).toString());
+            } else {
+                additional.put("ids:temporalCoverage", temporalCoverage.toString());
+            }
+        }
+
+        if (temporalRes != null) {
+            additional.put("ids:temporalResolution", temporalRes.toString());
+        }
+
+        if (theme != null) {
+            if (theme.size() == 1) {
+                additional.put("ids:theme", theme.get(0).toString());
+            } else {
+                additional.put("ids:theme", theme.toString());
+            }
+        }
+
+        if (variant != null) {
+            additional.put("ids:variant", variant.toString());
+        }
+
+        if (version != null) {
+            additional.put("ids:version", version);
+        }
+
+        final var desc = new OfferedResourceDesc();
+        desc.setAdditional(additional);
+        desc.setKeywords(keywords);
+        desc.setPublisher(publisher);
+        desc.setLicence(standardLicense);
+        desc.setSovereign(sovereign);
+
+        if (description != null) {
+            if (description.size() == 1) {
+                desc.setDescription(description.get(0).toString());
+            } else {
+                desc.setDescription(description.toString());
+            }
+        }
+
+        if (title != null) {
+            if (title.size() == 1) {
+                desc.setTitle(title.get(0).toString());
+            } else {
+                desc.setTitle(title.toString());
+            }
+        }
+
+        if (language != null) {
+            if (language.size() == 1) {
+                desc.setLanguage(language.get(0).toString());
+            } else {
+                desc.setLanguage(language.toString());
+            }
+        }
+
+        if (resourceEndpoint != null) {
+            getFirstEndpointDocumentation(resourceEndpoint)
+                    .ifPresent(desc::setEndpointDocumentation);
+        }
+
+        return new ResourceTemplate<>(null, desc, null, null);
     }
 
     /**
