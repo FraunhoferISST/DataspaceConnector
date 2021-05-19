@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [5.0.1]
+
+### Changed
+- H2 does not persist database to files.
+
 ## [5.0.0] - 2021-05-17
 
 ### Added
