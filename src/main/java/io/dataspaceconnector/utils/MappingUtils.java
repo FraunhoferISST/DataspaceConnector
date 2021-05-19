@@ -97,7 +97,11 @@ public final class MappingUtils {
         }
 
         if (contentPart != null) {
-            additional.put("ids:contentPart", contentPart.toString());
+            if (contentPart.size() == 1) {
+                additional.put("ids:contentPart", contentPart.get(0).toString());
+            } else {
+                additional.put("ids:contentPart", contentPart.toString());
+            }
         }
 
         if (contentStandard != null) {
@@ -117,7 +121,11 @@ public final class MappingUtils {
         }
 
         if (representation != null) {
-            additional.put("ids:defaultRepresentation", representation.toString());
+            if (representation.size() == 1) {
+                additional.put("ids:defaultRepresentation", representation.get(0).toString());
+            } else {
+                additional.put("ids:defaultRepresentation", representation.toString());
+            }
         }
 
         if (modified != null) {
@@ -125,15 +133,27 @@ public final class MappingUtils {
         }
 
         if (resourceEndpoint != null) {
-            additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+            if (resourceEndpoint.size() == 1) {
+                additional.put("ids:resourceEndpoint", resourceEndpoint.get(0).toString());
+            } else {
+                additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+            }
         }
 
         if (resourcePart != null) {
-            additional.put("ids:resourcePart", resourcePart.toString());
+            if (resourcePart.size() == 1) {
+                additional.put("ids:resourcePart", resourcePart.get(0).toString());
+            } else {
+                additional.put("ids:resourcePart", resourcePart.toString());
+            }
         }
 
         if (sample != null) {
-            additional.put("ids:sample", sample.toString());
+            if (sample.size() == 1) {
+                additional.put("ids:sample", sample.get(0).toString());
+            } else {
+                additional.put("ids:sample", sample.toString());
+            }
         }
 
         if (shapesGraph != null) {
@@ -141,11 +161,19 @@ public final class MappingUtils {
         }
 
         if (spatialCoverage != null) {
-            additional.put("ids:spatialCoverage", spatialCoverage.toString());
+            if (spatialCoverage.size() == 1) {
+                additional.put("ids:spatialCoverage", spatialCoverage.get(0).toString());
+            } else {
+                additional.put("ids:spatialCoverage", spatialCoverage.toString());
+            }
         }
 
         if (temporalCoverage != null) {
-            additional.put("ids:temporalCoverage", temporalCoverage.toString());
+            if (temporalCoverage.size() == 1) {
+                additional.put("ids:temporalCoverage", temporalCoverage.get(0).toString());
+            } else {
+                additional.put("ids:temporalCoverage", temporalCoverage.toString());
+            }
         }
 
         if (temporalRes != null) {
@@ -153,7 +181,11 @@ public final class MappingUtils {
         }
 
         if (theme != null) {
-            additional.put("ids:theme", theme.toString());
+            if (theme.size() == 1) {
+                additional.put("ids:theme", theme.get(0).toString());
+            } else {
+                additional.put("ids:theme", theme.toString());
+            }
         }
 
         if (variant != null) {
@@ -173,15 +205,27 @@ public final class MappingUtils {
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            desc.setDescription(description.toString());
+            if (description.size() == 1) {
+                desc.setDescription(description.get(0).toString());
+            } else {
+                desc.setDescription(description.toString());
+            }
         }
 
         if (title != null) {
-            desc.setTitle(title.toString());
+            if (title.size() == 1) {
+                desc.setTitle(title.get(0).toString());
+            } else {
+                desc.setTitle(title.toString());
+            }
         }
 
         if (language != null) {
-            desc.setLanguage(language.toString());
+            if (language.size() == 1) {
+                desc.setLanguage(language.get(0).toString());
+            } else {
+                desc.setLanguage(language.toString());
+            }
         }
 
         if (resourceEndpoint != null) {
