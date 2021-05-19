@@ -29,6 +29,7 @@ import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.ResourceDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
@@ -83,15 +84,9 @@ public final class MappingUtils {
         return new CatalogTemplate(catalogDesc, null, null);
     }
 
-    /**
-     * Map ids resource to connector resource.
-     *
-     * @param resource The ids resource.
-     * @return The connector resource.
-     * @throws IllegalArgumentException if the passed resource is null.
-     */
-    public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
-            final Resource resource) {
+    private static Map<String, String> buildAdditionalForResource(final Resource resource) {
+        final var additional = propertiesToAdditional(resource.getProperties());
+
         Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
 
         final var periodicity = resource.getAccrualPeriodicity();
@@ -101,28 +96,17 @@ public final class MappingUtils {
         final var created = resource.getCreated();
         final var customLicense = resource.getCustomLicense();
         final var representation = resource.getDefaultRepresentation();
-        final var description = resource.getDescription();
-        final var resourceId = resource.getId();
-        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
-        final var language = resource.getLanguage();
         final var modified = resource.getModified();
-        final var publisher = resource.getPublisher();
         final var resourceEndpoint = resource.getResourceEndpoint();
         final var resourcePart = resource.getResourcePart();
         final var sample = resource.getSample();
         final var shapesGraph = resource.getShapesGraph();
-        final var sovereign = resource.getSovereign();
         final var spatialCoverage = resource.getSpatialCoverage();
-        final var standardLicense = resource.getStandardLicense();
         final var temporalCoverage = resource.getTemporalCoverage();
         final var temporalRes = resource.getTemporalResolution();
         final var theme = resource.getTheme();
-        final var title = resource.getTitle();
         final var variant = resource.getVariant();
         final var version = resource.getVersion();
-
-        // Add additional properties to map.
-        final var additional = propertiesToAdditional(resource.getProperties());
 
         if (periodicity != null) {
             additional.put("ids:accrualPeriodicity", periodicity.toRdf());
@@ -228,7 +212,21 @@ public final class MappingUtils {
             additional.put("ids:version", version);
         }
 
-        final var desc = new OfferedResourceDesc();
+        return additional;
+    }
+
+    private static <T extends io.dataspaceconnector.model.Resource> void
+            fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
+        final var description = resource.getDescription();
+        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
+        final var language = resource.getLanguage();
+        final var additional = buildAdditionalForResource(resource);
+        final var publisher = resource.getPublisher();
+        final var sovereign = resource.getSovereign();
+        final var standardLicense = resource.getStandardLicense();
+        final var title = resource.getTitle();
+        final var resourceEndpoint = resource.getResourceEndpoint();
+
         desc.setAdditional(additional);
         desc.setKeywords(keywords);
         desc.setPublisher(publisher);
@@ -263,6 +261,21 @@ public final class MappingUtils {
             getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
         }
+    }
+
+    /**
+     * Map ids resource to connector resource.
+     *
+     * @param resource The ids resource.
+     * @return The connector resource.
+     * @throws IllegalArgumentException if the passed resource is null.
+     */
+    public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
+            final Resource resource) {
+        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var desc = new OfferedResourceDesc();
+        fillResourceDesc(desc, resource);
 
         return new ResourceTemplate<>(null, desc, null, null);
     }
@@ -277,176 +290,9 @@ public final class MappingUtils {
     public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
         Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
 
-        final var periodicity = resource.getAccrualPeriodicity();
-        final var contentPart = resource.getContentPart();
-        final var contentStandard = resource.getContentStandard();
-        final var contentType = resource.getContentType();
-        final var created = resource.getCreated();
-        final var customLicense = resource.getCustomLicense();
-        final var representation = resource.getDefaultRepresentation();
-        final var description = resource.getDescription();
-        final var resourceId = resource.getId();
-        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
-        final var language = resource.getLanguage();
-        final var modified = resource.getModified();
-        final var publisher = resource.getPublisher();
-        final var resourceEndpoint = resource.getResourceEndpoint();
-        final var resourcePart = resource.getResourcePart();
-        final var sample = resource.getSample();
-        final var shapesGraph = resource.getShapesGraph();
-        final var sovereign = resource.getSovereign();
-        final var spatialCoverage = resource.getSpatialCoverage();
-        final var standardLicense = resource.getStandardLicense();
-        final var temporalCoverage = resource.getTemporalCoverage();
-        final var temporalRes = resource.getTemporalResolution();
-        final var theme = resource.getTheme();
-        final var title = resource.getTitle();
-        final var variant = resource.getVariant();
-        final var version = resource.getVersion();
-
-        // Add additional properties to map.
-        final var additional = propertiesToAdditional(resource.getProperties());
-
-        if (periodicity != null) {
-            additional.put("ids:accrualPeriodicity", periodicity.toRdf());
-        }
-
-        if (contentPart != null) {
-            if (contentPart.size() == 1) {
-                additional.put("ids:contentPart", contentPart.get(0).toString());
-            } else {
-                additional.put("ids:contentPart", contentPart.toString());
-            }
-        }
-
-        if (contentStandard != null) {
-            additional.put("ids:contentStandard", contentStandard.toString());
-        }
-
-        if (contentType != null) {
-            additional.put("ids:contentType", contentType.toRdf());
-        }
-
-        if (created != null) {
-            additional.put("ids:created", created.toXMLFormat());
-        }
-
-        if (customLicense != null) {
-            additional.put("ids:customLicense", customLicense.toString());
-        }
-
-        if (representation != null) {
-            if (representation.size() == 1) {
-                additional.put("ids:defaultRepresentation", representation.get(0).toString());
-            } else {
-                additional.put("ids:defaultRepresentation", representation.toString());
-            }
-        }
-
-        if (modified != null) {
-            additional.put("ids:modified", modified.toXMLFormat());
-        }
-
-        if (resourceEndpoint != null) {
-            if (resourceEndpoint.size() == 1) {
-                additional.put("ids:resourceEndpoint", resourceEndpoint.get(0).toString());
-            } else {
-                additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
-            }
-        }
-
-        if (resourcePart != null) {
-            if (resourcePart.size() == 1) {
-                additional.put("ids:resourcePart", resourcePart.get(0).toString());
-            } else {
-                additional.put("ids:resourcePart", resourcePart.toString());
-            }
-        }
-
-        if (sample != null) {
-            if (sample.size() == 1) {
-                additional.put("ids:sample", sample.get(0).toString());
-            } else {
-                additional.put("ids:sample", sample.toString());
-            }
-        }
-
-        if (shapesGraph != null) {
-            additional.put("ids:shapesGraph", shapesGraph.toString());
-        }
-
-        if (spatialCoverage != null) {
-            if (spatialCoverage.size() == 1) {
-                additional.put("ids:spatialCoverage", spatialCoverage.get(0).toString());
-            } else {
-                additional.put("ids:spatialCoverage", spatialCoverage.toString());
-            }
-        }
-
-        if (temporalCoverage != null) {
-            if (temporalCoverage.size() == 1) {
-                additional.put("ids:temporalCoverage", temporalCoverage.get(0).toString());
-            } else {
-                additional.put("ids:temporalCoverage", temporalCoverage.toString());
-            }
-        }
-
-        if (temporalRes != null) {
-            additional.put("ids:temporalResolution", temporalRes.toString());
-        }
-
-        if (theme != null) {
-            if (theme.size() == 1) {
-                additional.put("ids:theme", theme.get(0).toString());
-            } else {
-                additional.put("ids:theme", theme.toString());
-            }
-        }
-
-        if (variant != null) {
-            additional.put("ids:variant", variant.toString());
-        }
-
-        if (version != null) {
-            additional.put("ids:version", version);
-        }
-
         final var desc = new RequestedResourceDesc();
-        desc.setAdditional(additional);
-        desc.setRemoteId(resourceId);
-        desc.setKeywords(keywords);
-        desc.setPublisher(publisher);
-        desc.setLicence(standardLicense);
-        desc.setSovereign(sovereign);
-
-        if (description != null) {
-            if (description.size() == 1) {
-                desc.setDescription(description.get(0).toString());
-            } else {
-                desc.setDescription(description.toString());
-            }
-        }
-
-        if (title != null) {
-            if (title.size() == 1) {
-                desc.setTitle(title.get(0).toString());
-            } else {
-                desc.setTitle(title.toString());
-            }
-        }
-
-        if (language != null) {
-            if (language.size() == 1) {
-                desc.setLanguage(language.get(0).toString());
-            } else {
-                desc.setLanguage(language.toString());
-            }
-        }
-
-        if (resourceEndpoint != null) {
-            getFirstEndpointDocumentation(resourceEndpoint)
-                    .ifPresent(desc::setEndpointDocumentation);
-        }
+        desc.setRemoteId(resource.getId());
+        fillResourceDesc(desc, resource);
 
         return new ResourceTemplate<>(null, desc, null, null);
     }
