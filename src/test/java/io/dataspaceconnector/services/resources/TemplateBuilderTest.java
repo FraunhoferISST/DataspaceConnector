@@ -18,11 +18,13 @@ package io.dataspaceconnector.services.resources;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
 import lombok.SneakyThrows;
@@ -52,10 +54,38 @@ class TemplateBuilderTest {
     private OfferedResourceContractLinker offeredResourceContractLinker;
 
     @MockBean
-    private RequestedResourceContractLinker requestedResourceContractLinker;
+    private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
 
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
+
+    /**
+     * ContractTemplate.
+     */
+
+    @Test
+    public void build_ContractTemplateNull_throwIllegalArgumentException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> builder.build((CatalogTemplate) null));
+    }
+
+    @Test
+    public void build_CatalogTemplateOnlyDesc_returnOnlyResource() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        final var template = new CatalogTemplate(desc);
+
+        /* ACT */
+        final var result = builder.build(template);
+
+        /* ASSERT */
+        assertNotNull(result);
+        Mockito.verify(catalogOfferedResourceLinker, Mockito.atLeastOnce()).replace(Mockito.any(), Mockito.any());
+    }
+
+    /**
+     * ResourceTemplate.
+     */
 
     @Test
     public void build_ResourceTemplateNull_throwIllegalArgumentException() {
