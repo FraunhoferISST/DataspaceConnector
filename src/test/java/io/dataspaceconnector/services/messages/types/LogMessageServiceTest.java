@@ -22,6 +22,7 @@ import io.dataspaceconnector.model.messages.LogMessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import io.dataspaceconnector.services.messages.MessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +46,11 @@ class LogMessageServiceTest {
     @MockBean
     private DeserializationService deserializationService;
 
+    @MockBean
+    private MessageService messageService;
+
     @Autowired
-    private LogMessageService messageService;
+    private LogMessageService logService;
 
     @Test
     public void buildMessage_null_throwsIllegalArgumentException() {
@@ -54,7 +58,7 @@ class LogMessageServiceTest {
         // Nothing to arrange here.
 
         /* ACT & ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> messageService.buildMessage(null));
+        assertThrows(IllegalArgumentException.class, () -> logService.buildMessage(null));
     }
 
     @Test
@@ -72,7 +76,7 @@ class LogMessageServiceTest {
         Mockito.when(connectorService.getCurrentDat()).thenReturn(token);
 
         /* ACT */
-        final var result = (LogMessage) messageService.buildMessage(desc);
+        final var result = (LogMessage) logService.buildMessage(desc);
 
         /* ASSERT */
         assertEquals(1, result.getRecipientConnector().size());

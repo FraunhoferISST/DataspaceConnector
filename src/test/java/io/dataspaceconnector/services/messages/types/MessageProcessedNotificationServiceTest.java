@@ -22,6 +22,7 @@ import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageD
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import io.dataspaceconnector.services.messages.MessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,9 @@ class MessageProcessedNotificationServiceTest {
 
     @MockBean
     private DeserializationService deserializationService;
+
+    @MockBean
+    private MessageService messageService;
 
     @Autowired
     private MessageProcessedNotificationService notificationService;
