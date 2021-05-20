@@ -37,6 +37,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -211,7 +212,7 @@ public final class IdsUtils {
      * @return The ids language object.
      */
     public static Language getLanguage(final String language) {
-        switch (language.toLowerCase()) {
+        switch (language.toLowerCase(Locale.ENGLISH)) {
             case "de":
                 return Language.DE;
             case "en":
