@@ -148,7 +148,7 @@ public class BootstrapConfiguration {
      * Bootstrap the connector.
      * Will load JSON-LD files which contain ids catalog entities and register
      * them to the DSC. Additionally, property files will be loaded which can
-     * provide information on the clearing house & broker which shall be used
+     * provide information on the clearing house and broker which shall be used
      * and which resources needs to be registered at the broker.
      */
     @PostConstruct
