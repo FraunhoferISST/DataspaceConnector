@@ -451,12 +451,12 @@
 						<configLocation>scripts/ci/checkstyle.xml</configLocation>
 						<encoding>UTF-8</encoding>
 						<consoleOutput>true</consoleOutput>
-						<failsOnError>true</failsOnError>
+						<failOnViolation>true</failOnViolation>
 					</configuration>
 					<executions>
 						<execution>
 							<id>validate</id>
-							<phase>validate</phase>
+							<phase>verify</phase>
 							<goals>
 								<goal>check</goal>
 							</goals>
@@ -466,6 +466,11 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-plugin.version}</version>
+			</plugin>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>${maven-dependency-plugin.version}</version>
@@ -681,6 +686,7 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
@@ -848,8 +854,7 @@
 						<configuration>
 							<showWarnings>true</showWarnings>
 							<showDeprecation>true</showDeprecation>
-							<failOnWarning>true</failOnWarning>
-							<failOnError>true</failOnError>
+							<failOnViolation>true</failOnViolation>
 
 							<compilerArgs>
 								<arg>-Xlint:all</arg>
