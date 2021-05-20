@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
@@ -48,6 +42,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -194,17 +189,17 @@ public class ConnectorService {
      */
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
         final URI baseUri = deserializationService
-                    .getConfigurationModel(
-                            new Scanner(
-                                    Objects.requireNonNull(
-                                            ConnectorService
-                                                    .class.getClassLoader()
-                                                    .getResourceAsStream("conf/config.json")),
-                                    StandardCharsets.UTF_8)
-                                    .useDelimiter("\\A").next()
-                    )
-                    .getConnectorDescription()
-                    .getId();
+                .getConfigurationModel(
+                        new Scanner(
+                                Objects.requireNonNull(
+                                        ConnectorService
+                                                .class.getClassLoader()
+                                                .getResourceAsStream("conf/config.json")),
+                                StandardCharsets.UTF_8)
+                                .useDelimiter("\\A").next()
+                )
+                .getConnectorDescription()
+                .getId();
 
         return catalogService.getAll(Pageable.unpaged())
                 .stream()

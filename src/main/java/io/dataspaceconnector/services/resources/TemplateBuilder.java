@@ -295,6 +295,7 @@ class TemplateBuilderOfferedResource
      * @param catalogOfferedResourceLinker The catalog-offered resource service.
      * @param catalogRequestedResourceLinker The catalog-requested resource service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
             final ApplicationContext applicationContext,
@@ -343,6 +344,7 @@ class TemplateBuilderRequestedResource
      * @param catalogOfferedResourceLinker The catalog-offered resource service.
      * @param catalogRequestedResourceLinker The catalog-requested resource service.
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
             final ApplicationContext applicationContext,

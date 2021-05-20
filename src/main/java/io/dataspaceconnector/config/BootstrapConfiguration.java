@@ -69,7 +69,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -231,7 +230,7 @@ public class BootstrapConfiguration {
                         response = brokerService.updateSelfDescriptionAtBroker(brokerURL);
                         if (validateBrokerResponse(response, brokerURL)) {
                             if (log.isInfoEnabled()) {
-                                log.info("Registered connector at broker '" + brokerURL + "'.");
+                                log.info("Registered connector at broker '{}'.", brokerURL);
                             }
                         } else {
                             return false;
@@ -241,26 +240,25 @@ public class BootstrapConfiguration {
                     response = brokerService.updateResourceAtBroker(brokerURL, entry.getValue());
                     if (!response.isSuccessful()) {
                         if (log.isErrorEnabled()) {
-                            log.error("Failed to update resource description for resource '"
-                                    + entry.getValue().getId().toString() + "' at broker '"
-                                    + brokerURL + "'.");
+                            log.error("Failed to update resource description for resource '{}'"
+                                    + " at broker '{}'.",
+                                    entry.getValue().getId().toString(), brokerURL);
                         }
 
                         return false;
                     }
                     if (validateBrokerResponse(response, brokerURL)) {
                         if (log.isInfoEnabled()) {
-                            log.info("Registered resource with IDS ID '"
-                                    + entry.getKey().toString()
-                                    + "' at broker '" + brokerURL + "'.");
+                            log.info("Registered resource with IDS ID '{}' at broker '{}'.",
+                                    entry.getKey().toString(), brokerURL);
                         }
                     } else {
                         return false;
                     }
                 } catch (IOException e) {
                     if (log.isErrorEnabled()) {
-                        log.error("Could not register resource with IDS id '" + entry.getKey()
-                                + "' at the broker '" + brokerURL + "'.", e);
+                        log.error("Could not register resource with IDS id '{}' at the "
+                                + "broker '{}'.", entry.getKey().toString(), brokerURL, e);
                     }
 
                     return false;
@@ -283,15 +281,21 @@ public class BootstrapConfiguration {
             throws IOException {
         if (!response.isSuccessful()) {
             if (log.isErrorEnabled()) {
-                log.error("Failed to sent message to a broker '"
-                        + brokerURL + "'.");
+                log.error("Failed to sent message to a broker '{}'.", brokerURL);
             }
 
             return false;
         }
-        final var body = Objects.requireNonNull(response.body()).string();
-        final var responseMessage =
-                getMessage(body);
+        final var responseBody = response.body();
+        if (responseBody == null) {
+            if (log.isErrorEnabled()) {
+                log.error("Could not parse response after sending a request "
+                        + "to a broker.");
+            }
+            return false;
+        }
+        final var body = responseBody.string();
+        final var responseMessage = getMessage(body);
         if (responseMessage == null) {
             if (log.isErrorEnabled()) {
                 log.error("Could not parse response after sending a request "
@@ -304,9 +308,9 @@ public class BootstrapConfiguration {
                 if (responseMessage instanceof RejectionMessage) {
                     final var payload = getMultipartPart(body, "payload");
                     log.error("The broker rejected the message. Reason: "
-                            + MessageUtils.extractRejectionReason(
-                            (RejectionMessage) responseMessage)
-                            + ((payload != null) ? " - " + payload : ""));
+                            + ((payload != null) ? " - " + "{}" : ""),
+                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage)
+                                    .toString(), payload);
                 } else {
                     log.error("An error occurred while registering the "
                             + "connector at the broker.");
@@ -373,7 +377,7 @@ public class BootstrapConfiguration {
                 if (matcher.group().equals("name=\"" + partName + "\"")) {
                     multipart.readBodyData(outputStream);
 
-                    return outputStream.toString();
+                    return outputStream.toString(StandardCharsets.UTF_8);
                 } else {
                     multipart.discardBodyData();
                 }
@@ -388,7 +392,7 @@ public class BootstrapConfiguration {
         }
 
         if (log.isErrorEnabled()) {
-            log.error("Could not find part '" + partName + "' in multipart message.");
+            log.error("Could not find part '{}' in multipart message.", partName);
         }
         return null;
     }
@@ -417,8 +421,8 @@ public class BootstrapConfiguration {
                 );
             } catch (IOException e) {
                 if (log.isErrorEnabled()) {
-                    log.error("Could not deserialize ids catalog file '"
-                            + jsonFile.getPath() + "'.", e);
+                    log.error("Could not deserialize ids catalog file '{}'.",
+                            jsonFile.getPath(), e);
                 }
                 return false;
             }
@@ -447,8 +451,8 @@ public class BootstrapConfiguration {
 
             if (duplicate != null && duplicate) {
                 if (log.isInfoEnabled()) {
-                    log.info("Catlog with IDS id '" + catalog.getId().toString() + "' is "
-                            + "already registered and will be skipped.");
+                    log.info("Catlog with IDS id '{}' is already registered and will be"
+                            + " skipped.", catalog.getId());
                 }
                 continue;
             }
@@ -495,7 +499,7 @@ public class BootstrapConfiguration {
         // perform registration
         templateBuilder.build(catalogTemplate);
         if (log.isInfoEnabled()) {
-            log.info("Bootstrapped catalog with IDS ID '" + catalog.getId().toString() + "'.");
+            log.info("Bootstrapped catalog with IDS ID '{}'.", catalog.getId());
         }
 
         return true;
@@ -524,13 +528,10 @@ public class BootstrapConfiguration {
         if (!properties.containsKey("resource.remoteUrl."
                 + resource.getId().toString())) {
             if (log.isErrorEnabled()) {
-                log.error("Remote URL for resource with id '"
-                        + resource.getId() + "' is not "
-                        + "provided in " + PROPERTIES_NAME
-                        + "." + PROPERTIES_EXT + " file(s). The key "
-                        + "'resource.remoteUrl."
-                        + resource.getId().toString()
-                        + "' must be used.");
+                log.error(("Remote URL for resource with id '{}' is not provided in {}.{}"
+                        + " file(s). The key 'resource.remoteUrl.{}' must be used."),
+                        resource.getId().toString(),
+                        PROPERTIES_NAME, PROPERTIES_EXT, resource.getId().toString());
             }
             throw new IllegalStateException();
         }
@@ -581,8 +582,7 @@ public class BootstrapConfiguration {
                 properties.load(FileUtils.openInputStream(propertyFile));
             } catch (IOException e) {
                 if (log.isErrorEnabled()) {
-                    log.error("Could not open properties file '" + propertyFile.getPath() + "'.",
-                            e);
+                    log.error("Could not open properties file '{}'.", propertyFile.getPath(), e);
                 }
             }
             // iterate all properties from file and check for duplicates
@@ -597,10 +597,11 @@ public class BootstrapConfiguration {
                         config.put(property.getKey(), existingValues.addAll(multipleValues));
                     } else {
                         if (log.isWarnEnabled()) {
-                            log.warn("Collision for single-value property '" + property.getKey()
-                                    + "' found. Going to keep the old value '"
-                                    + config.get(property.getKey()) + "'; new value '"
-                                    + property.getValue() + "' will be ignored.");
+                            log.warn("Collision for single-value property '{}' found. Going to"
+                                    + " keep the old value '{}'; new value '{}' will be ignored.",
+                                    property.getKey().toString(),
+                                    config.get(property.getKey()).toString(),
+                                    property.getValue().toString());
                         }
                     }
                 } else {
@@ -644,15 +645,18 @@ public class BootstrapConfiguration {
         final List<File> files = new ArrayList<>();
         if (base.isDirectory()) {
             // if the base file is a directory iterate all child files
-            for (final File child : Objects.requireNonNull(base.listFiles())) {
-                if (child.isDirectory()) {
-                    files.addAll(findFilesByExtension(child.getPath(), filename, extension));
-                } else {
-                    if (FilenameUtils.getExtension(child.getName()).equals(extension)
-                            && (filename == null
-                            || FilenameUtils.removeExtension(
-                            FilenameUtils.getName(child.getName())).equals(filename))) {
-                        files.add(child);
+            final var parentFiles = base.listFiles();
+            if (parentFiles != null) {
+                for (final File child : parentFiles) {
+                    if (child.isDirectory()) {
+                        files.addAll(findFilesByExtension(child.getPath(), filename, extension));
+                    } else {
+                        if (FilenameUtils.getExtension(child.getName()).equals(extension)
+                                && (filename == null
+                                || FilenameUtils.removeExtension(
+                                FilenameUtils.getName(child.getName())).equals(filename))) {
+                            files.add(child);
+                        }
                     }
                 }
             }

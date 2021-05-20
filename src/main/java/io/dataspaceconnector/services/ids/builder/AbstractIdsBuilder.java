@@ -84,7 +84,8 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *                 negative number to follow all dependencies.
      * @return The Infomodel object.
      */
-    public X create(final T entity, final URI baseUri, final int maxDepth) throws ConstraintViolationException {
+    public X create(final T entity, final URI baseUri, final int maxDepth)
+            throws ConstraintViolationException {
         return create(entity, baseUri, 0, maxDepth);
     }
 

@@ -240,13 +240,15 @@ public class DeserializationService {
      * @return The ids catalog.
      * @throws IllegalArgumentException If deserialization fails.
      */
-    public ResourceCatalog getResourceCatalog(final String catalog) throws IllegalArgumentException {
+    public ResourceCatalog getResourceCatalog(final String catalog)
+            throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(catalog,
                     ResourceCatalog.class);
         } catch (IOException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not deserialize resource catalog. [exception=({})]", e.getMessage(), e);
+                log.warn("Could not deserialize resource catalog. [exception=({})]",
+                        e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize resource catalog.", e);
         }

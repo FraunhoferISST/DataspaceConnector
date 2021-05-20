@@ -28,6 +28,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Describes an catalog and all its dependencies.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
