@@ -56,7 +56,8 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * Spring application context.
      */
-    private final @NonNull ApplicationContext applicationContext;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * The service for resources.
@@ -92,7 +93,8 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The service for catalogs.
      */
-    private final @NonNull CatalogService catalogService;
+    @Autowired
+    private CatalogService catalogService;
 
     /**
      * The linker for contract-rule relations.
@@ -114,12 +116,14 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     /**
      * The linker for catalog-offeredResource relations.
      */
-    private final @NonNull CatalogOfferedResourceLinker catalogOfferedResourceLinker;
+    @Autowired
+    private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
 
     /**
      * The linker for catalog-requestedResource relations.
      */
-    private final @NonNull CatalogRequestedResourceLinker catalogRequestedResourceLinker;
+    @Autowired
+    private CatalogRequestedResourceLinker catalogRequestedResourceLinker;
 
     /**
      * Build a catalog and dependencies from a template.
@@ -283,22 +287,16 @@ class TemplateBuilderOfferedResource
     /**
      * Default constructor.
      *
-     * @param applicationContext             The application context.
      * @param resourceService                The resource service.
      * @param resourceRepresentationLinker   The resource-representation service.
      * @param resourceContractLinker         The resource-contract service.
      * @param representationService          The representation service.
      * @param representationArtifactLinker   The representation-artifact service.
      * @param contractService                The contract service.
-     * @param catalogService                 The catalog service.
      * @param contractRuleLinker             The contract-rule service.
-     * @param catalogOfferedResourceLinker The catalog-offered resource service.
-     * @param catalogRequestedResourceLinker The catalog-requested resource service.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderOfferedResource(
-            final ApplicationContext applicationContext,
             final ResourceService<OfferedResource, OfferedResourceDesc> resourceService,
             final AbstractResourceRepresentationLinker<OfferedResource>
                     resourceRepresentationLinker,
@@ -306,14 +304,10 @@ class TemplateBuilderOfferedResource
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final CatalogService catalogService,
-            final RelationServices.ContractRuleLinker contractRuleLinker,
-            final CatalogOfferedResourceLinker catalogOfferedResourceLinker,
-            final CatalogRequestedResourceLinker catalogRequestedResourceLinker) {
-        super(applicationContext, resourceService, resourceRepresentationLinker,
+            final RelationServices.ContractRuleLinker contractRuleLinker) {
+        super(resourceService, resourceRepresentationLinker,
                 resourceContractLinker, representationService, representationArtifactLinker,
-                contractService, catalogService, contractRuleLinker, catalogOfferedResourceLinker,
-                catalogRequestedResourceLinker);
+                contractService, contractRuleLinker);
     }
 
     @Override
@@ -332,22 +326,16 @@ class TemplateBuilderRequestedResource
     /**
      * Default constructor.
      *
-     * @param applicationContext             The application context.
      * @param resourceService                The resource service.
      * @param resourceRepresentationLinker   The resource-representation service.
      * @param resourceContractLinker         The resource-contract service.
      * @param representationService          The representation service.
      * @param representationArtifactLinker   The representation-artifact service.
      * @param contractService                The contract service.
-     * @param catalogService                 The catalog service.
      * @param contractRuleLinker             The contract-rule service.
-     * @param catalogOfferedResourceLinker The catalog-offered resource service.
-     * @param catalogRequestedResourceLinker The catalog-requested resource service.
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
     @Autowired
     TemplateBuilderRequestedResource(
-            final ApplicationContext applicationContext,
             final ResourceService<RequestedResource, RequestedResourceDesc> resourceService,
             final AbstractResourceRepresentationLinker<RequestedResource>
                     resourceRepresentationLinker,
@@ -355,14 +343,10 @@ class TemplateBuilderRequestedResource
             final RepresentationService representationService,
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
-            final CatalogService catalogService,
-            final RelationServices.ContractRuleLinker contractRuleLinker,
-            final CatalogOfferedResourceLinker catalogOfferedResourceLinker,
-            final CatalogRequestedResourceLinker catalogRequestedResourceLinker) {
-        super(applicationContext, resourceService, resourceRepresentationLinker,
+            final RelationServices.ContractRuleLinker contractRuleLinker) {
+        super(resourceService, resourceRepresentationLinker,
                 resourceContractLinker, representationService, representationArtifactLinker,
-                contractService, catalogService, contractRuleLinker, catalogOfferedResourceLinker,
-                catalogRequestedResourceLinker);
+                contractService, contractRuleLinker);
     }
 
     @Override
