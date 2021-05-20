@@ -451,7 +451,7 @@
 						<configLocation>scripts/ci/checkstyle.xml</configLocation>
 						<encoding>UTF-8</encoding>
 						<consoleOutput>true</consoleOutput>
-						<failsOnError>true</failsOnError>
+						<failOnViolation>true</failOnViolation>
 					</configuration>
 					<executions>
 						<execution>
@@ -854,8 +854,7 @@
 						<configuration>
 							<showWarnings>true</showWarnings>
 							<showDeprecation>true</showDeprecation>
-							<failOnWarning>true</failOnWarning>
-							<failOnError>true</failOnError>
+							<failOnViolation>true</failOnViolation>
 
 							<compilerArgs>
 								<arg>-Xlint:all</arg>
