@@ -64,8 +64,8 @@ curl -X 'POST' \
 ```
 
 The values `title`, `description`, `keywords`, `publisher`, `sovereign`, `license`, etc. describe 
-the data resource and will be used to fill in the IDS Information Model attributes for IDS 
-communication with a connector as data consumer.
+the data resource and will be used to fill in the IDS Infomodel attributes for IDS communication 
+with a connector as data consumer.
 
 ---
 
@@ -142,14 +142,15 @@ Apart from the metadata, the response body contains links to further points of i
 itself, its parents, etc. A version number is generated automatically and is increased with every 
 entity change, as well as the creation and modification date.
 
-The endpoints `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to read, 
-update, and delete the metadata, respectively the data resource - as described 
+The endpoints `POST`, `PUT`, `GET`, and`DELETE` `/offers/{id}` provide standard CRUD functions to 
+read, update, and delete the metadata, respectively the data resource - as described 
 [here](../documentation/data-model.md).
 
 Next to the resource, we need a catalog as a parent for the offer. Use `POST /api/catalogs` to 
 create one. Its location is: [https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d](https://localhost:8080/api/catalogs/5ac012e1-ffa5-43b3-af41-9707d2a9137d). 
-Then, we need to link both objects to each other via another endpoint. Therefore, we execute a `POST`
-catalog's id extended by `/offers` and the resource's id as part of the list in the request body.
+Then, we need to link both objects to each other via another endpoint. Therefore, we execute a 
+`POST` on the catalog's location + `/offers` and the resource's id as part of the list in the 
+request body.
 
 ![Example Offer Catalog](../../assets/images/swagger_example_catalogs_offer.png)
 
@@ -170,8 +171,8 @@ Otherwise, it will not be listed in the IDS self-description because there is no
 Next, create a contract and one rule, that you add to the contract. The rule is the 
 object, that contains the usage policy as `value`. Since the IDS Usage Control Language is 
 rather complicated and it is not trivial to manually create a valid policy, endpoints are provided 
-to obtain example policies(`POST /api/examples/policy`) or to validate created and modified usage
-policies (`POST /api/examples/validation`).
+to obtain example policies (`POST` `/api/examples/policy`) or to validate created and modified usage
+policies (`POST` `/api/examples/validation`).
 
 By adding multiple rules to one contract offer, you are now able to add multiple usage policies to
 one resource (e.g. the data usage can be logged and the data should be deleted at a given date).
@@ -180,7 +181,7 @@ one resource (e.g. the data usage can be logged and the data should be deleted a
 
 ### Step 2: Add Local Data
 
-After we created created a contract offer and a resource offer and added the latter to a catalog, we 
+After we created a contract and a resource offer and added the latter to a catalog, we 
 have to create a representation and add it to the resource offer. Then, we have to create an 
 artifact and add it to the representation.
 
@@ -257,8 +258,8 @@ for one representation, or multiple artifacts with one representation each. Each
 refer to one specified http request or database query with fix parameters. 
 
 If you want to leave it up to the consumer which part of the data should be retrieved, a reference 
-to the OpenApi description of the connected REST Api as "endpointDocumentation" may be supplied. 
-This is useful, for example, if the connected API is a generic Linked Data platform. The consumer 
+to the OpenApi description of the connected REST Api as `endpointDocumentation` may be supplied. 
+This is useful, e.g., if the connected API is a generic linked data platform. The consumer 
 can then pass request parameters when retrieving data, which are automatically resolved at the 
 Dataspace Connector to the provider backend.
 
@@ -273,7 +274,7 @@ connector, but are only used for internal data handling.
 
 ### Step 4: Publish Resources at an IDS Broker (optional)
 
-For communicating with an IDS metadata broker, some endpoints are provided.
+For communicating with an IDS Metadata Broker, some endpoints are provided.
 - `POST /api/ids/connector/update`: send a `ConnectorUpdateMessage` with the connector's
   self-description as `payload`
 - `POST /api/ids/connector/unavailable`: send a `ConnectorUnavailableMessage` to unregister the connector

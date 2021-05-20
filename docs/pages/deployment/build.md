@@ -36,7 +36,9 @@ steps:
 If everything worked fine, the connector is available at 
 [https://localhost:8080/](https://localhost:8080/) and its API can be accessed at 
 [https://localhost:8080/api](https://localhost:8080/api). By default, the Dataspace Connector is 
-running with an h2 database.
+running with an h2 database. **This is temporary and is reset after each reboot**. To have 
+persistence, please use a PostgreSQL as described [here](#option-2-using-docker-compose) or
+[here](kubernetes.md#postgresql-deployment).
 
 ---
 

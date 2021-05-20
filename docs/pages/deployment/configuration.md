@@ -18,10 +18,7 @@ Customize the Dataspace Connector to fit your use case.
 If you want to set up the Dataspace Connector yourself, follow the instructions below. If you
 encounter any problems, please have a look at the [FAQ](../faq.md).
 
-At first, clone the repository:
-```commandline
-git clone https://github.com/International-Data-Spaces-Association/DataspaceConnector.git
-```
+Clone the project: `git clone https://github.com/International-Data-Spaces-Association/DataspaceConnector.git`
 
 The resource folder `resources/conf` provides three important files that are loaded at application start:
 

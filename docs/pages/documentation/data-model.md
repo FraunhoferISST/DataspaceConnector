@@ -46,17 +46,17 @@ child entities n to m relations are provided.
 
 | Entity | Provided Attributes | Automated Attributes | Relations |
 |:-------|:-----------|:---------------------|:---------|
-| catalog | title, description | - | n offers, n requests|
-| offer | title, description, keywords, publisher, sovereign, language, license, endpointDocumentation | version| n representations, n contracts, n catalogs |
-| request | title, description, keywords, publisher, sovereign, language, license, endpointDocumentation | version| n representations, n contracts, n catalogs |
-| representation | title, mediaType, language, standard | remoteId, | n artifacts, n offers/requests |
-| artifact | title, accessUrl, username, password | remoteId, remoteAddress, numAccessed, automatedDownload, byteSize, checkSum | n representations, n agreements |
-| contract | consumer, provider, title, start, end | remoteId| n rules, n offers/requests |
-| rule | title, value | remoteId | n contracts |
-| agreement | - | remoteId, confirmed, archived, value | n artifacts |
+| catalog | title, description | creationDate, modificationDate | n offers, n requests|
+| offer | title, description, keywords, publisher, sovereign, language, license, endpointDocumentation | version, creationDate, modificationDate | n representations, n contracts, n catalogs |
+| request | title, description, keywords, publisher, sovereign, language, license, endpointDocumentation | version, creationDate, modificationDate | n representations, n contracts, n catalogs |
+| representation | title, mediaType, language, standard | remoteId, creationDate, modificationDate | n artifacts, n offers/requests |
+| artifact | title, accessUrl, username, password | remoteId, remoteAddress, numAccessed, automatedDownload, byteSize, checkSum, creationDate, modificationDate | n representations, n agreements |
+| contract | consumer, provider, title, start, end | remoteId, creationDate, modificationDate | n rules, n offers/requests |
+| rule | title, value | remoteId, creationDate, modificationDate | n contracts |
+| agreement | - | remoteId, confirmed, archived, value, creationDate, modificationDate | n artifacts |
 
 Mapping between the Dataspace Connector's data model and the IDS Infomodel takes place for any IDS 
-communication. Then a catalog with offered resources is built from all related objects. 
+communication. Then, a catalog with offered resources is built from all related objects. 
 
 ---
 

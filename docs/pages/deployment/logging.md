@@ -69,7 +69,7 @@ A list of all available loggers and their current logging level will be exposed 
 To change the logging level at runtime, you will need to perform a `POST` request against the 
 logger. Here is an example using curl:
 
-```commandline
+```
 curl -i -k -X POST -H 'Content-Type: application/json' 
     -d '{"configuredLevel": "OFF"}' https://localhost:8080/actuator/loggers/io.dataspaceconnector
 ```

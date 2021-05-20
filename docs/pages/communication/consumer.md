@@ -280,7 +280,7 @@ If you provide wrong inputs, you will get a response body with a hint on what we
 
 ![Contract Request](../../assets/images/swagger_contract_request.png)
 
-With the `download` value you may specify whether you want the Dataspace Connector to download the
+With the `download` value, you may specify whether you want the Dataspace Connector to download the
 data immediately or later.
 
 For our example, a correct request would look like that:
@@ -310,7 +310,7 @@ curl -X 'POST' \
 ]'
 ```
 
-The rule list will be automatically turned into a contract request to then send it to the provider.
+The rule list will be automatically turned into a contract request to then be sent to the provider.
 This will read this contract request, compare it to the artifact's (respectively the corresponding 
 resource's) contract offers, and return either a `ContractRejectionMessage` or a 
 `ContractAgreementMessage`.
@@ -355,7 +355,7 @@ If we change e.g. the `ids:action` from `idsc:USE` to `idsc:MODIFY`, we will rec
 
 ---
 
-**Note**: As the endpoint for a contract request expects a list of resource IDs, artifact IDS, and 
+**Note**: As the endpoint for a contract request expects a list of resource IDs, artifact IDs, and 
 rules, you are able to handle out contract agreements for multiple artifacts at once.
 
 ---
@@ -376,9 +376,17 @@ used.
 
 ![Data Request](../../assets/images/swagger_artifact_data.png)
 
-Either way, the requested and downloaded data will be stored in the database as a bytestream and
+Either way, the requested and downloaded data will be stored in the database as a byte stream and
 is automatically decoded on an API call.
 
+---
+
+**Parametrized Data Request**:
+If the provider allows to query the data that you want to consume, you are able to make generic
+`GET` requests on `/api/artifacts/{id}/data/**`. Any request headers, parameters, or path variables
+will be forwarded to the provider and you will only receive a snapshot of the offered data string.
+
+---
 
 ## Policy Enforcement
 
@@ -400,9 +408,3 @@ usage control is executed and the concerned data is deleted.
 If the Dataspace Connector receives a `ResourceUpdateMessage` for a known requested resource, it 
 automatically sends a `DescriptionRequestMessage` and an `ArtifactRequestMessage` to retrieve the
 latest metadata and data.
-
-## Parametrized Data Request
-
-If the provider allows to query the data that you want to consume, you are able to make generic 
-`GET` requests on `/api/artifacts/{id}/data/**`. Any request headers, parameters, or path variables
-will be forwarded to the provider and you will only receive a snapshot of the offered data string.

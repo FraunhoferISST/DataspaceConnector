@@ -31,14 +31,14 @@ connector replicas. Therefore, an external database should be used.
 Execute the 3 following commands in the given order in the root directory of the project to start a 
 PostgreSQL database that the Dataspace Connector can use:
 
-```commandline
+```
 kubectl create -f postgres-configmap.yaml
 kubectl apply -f postgres-deployment.yaml
 kubectl expose -f postgres-service.yaml 
 ```
 
 Now, a PostgreSQL instance is running and accessible by other services in the cluster using the 
-`service name` (*postgres*) and the `service port` (*5432*).
+`service name` (postgres) and the `service port` (5432).
 
 ## Connector Deployment
 
@@ -62,7 +62,7 @@ The example deployment expects the configuration to be in the same secret as the
 To create a secret, put all files it should contain in a directory and execute the following 
 command:
 
-```commandline
+```
 kubectl create secret generic dataspace-connector-certs --from-file=path/to/certs/directory
 ```
 
@@ -94,7 +94,7 @@ deployment file or omit the registry to use a locally built image.
 If you want to use a private registry that requires credentials, first create a docker-registry 
 secret:
 
-```commandline
+```
 kubectl create secret docker-registry registry-credentials --docker-server=[registry-server] 
     --docker-username=[username] --docker-password=[password] --docker-email=[email]
 ```
@@ -117,7 +117,7 @@ Alternatively, you can change the mount path of the secret at `volumeMounts`.
 
 To start the deployment, execute the following command:
 
-```commandline
+```
 kubectl apply -f deployment.yaml
 ```
 
@@ -135,19 +135,19 @@ or create an [Ingress](https://kubernetes.io/docs/concepts/services-networking/i
 
 To start the service as type `LoadBalancer` (reachable from inside and outside the cluster), execute
 
-```commandline
+```
 kubectl expose -f service.yaml --type=LoadBalancer
 ```
 
 Afterwards, you can find the IP of the Master node by executing
 
-```commandline
+```
 kubectl cluster-info
 ```
 
 and the NodePort the service is running on by executing
 
-```commandline
+```
 kubectl describe service dataspace-connector
 ```
 
