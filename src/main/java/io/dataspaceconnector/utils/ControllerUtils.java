@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import lombok.extern.log4j.Log4j2;
+import okhttp3.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -251,5 +252,19 @@ public final class ControllerUtils {
             log.warn("Expectation failed. [response=({})]", response);
         }
         return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+    }
+
+    /**
+     * Show unexpected http response and code.
+     *
+     * @param response The http response.
+     * @return ResponseEntity with status code.
+     */
+    public static ResponseEntity<Object> respondConnectionFailed(final Response response) {
+        if (log.isDebugEnabled()) {
+            log.debug("Connection building failed. [response=({})]", response);
+        }
+        final var code = response.code();
+        return new ResponseEntity<>(response, HttpStatus.valueOf(code));
     }
 }
