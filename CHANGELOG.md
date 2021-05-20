@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 ### [5.x]
 
 ### Changed
- - Make the Clearing House url setting optional in `application.properties`
+ - Make the Clearing House url setting optional in `application.properties`.
 
 ## [5.0.1] - 2021-05-19
 
