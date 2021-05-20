@@ -686,6 +686,7 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
