@@ -16,8 +16,9 @@
 package io.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
@@ -26,16 +27,14 @@ import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.messages.MessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -65,6 +64,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     private DeserializationService deserializationService;
 
     /**
+     * Service for processing ids messages.
+     */
+    @Autowired
+    private MessageService messageService;
+
+    /**
      * Build ids message with params.
      *
      * @param desc Type-specific message parameter.
@@ -88,7 +93,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
-    public Map<String, String> send(final D desc, final Object payload)
+    protected Map<String, String> send(final D desc, final Object payload)
             throws MessageException {
         try {
             final var recipient = desc.getRecipient();
@@ -96,7 +101,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
-                 // TODO Add logging house class
+                // TODO Add logging house class
                 log.debug("Built request message. [body=({})]", body);
             }
 
@@ -141,12 +146,12 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return True if the response type is as expected.
      * @throws MessageResponseException If the response could not be read.
      */
-    public boolean isValidResponseType(final Map<String, String> message)
+    protected boolean isValidResponseType(final Map<String, String> message)
             throws MessageResponseException {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-            final var idsMessage = getDeserializer().getMessage(header);
+            final var idsMessage = deserializationService.getMessage(header);
 
             final var messageType = idsMessage.getClass();
             final var allowedType = getResponseMessageType();
@@ -192,23 +197,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      */
     public Map<String, Object> getResponseContent(final Map<String, String> message)
             throws MessageResponseException, IllegalArgumentException {
-        final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
-        final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
-
-        final var idsMessage = deserializationService.getResponseMessage(header);
-        var responseMap = new HashMap<String, Object>() {{
-            put("type", idsMessage.getClass());
-        }};
-
-        // If the message is of type exception, add the reason to the response object.
-        if (idsMessage instanceof RejectionMessage) {
-            final var rejectionMessage = (RejectionMessage) idsMessage;
-            final var reason = MessageUtils.extractRejectionReason(rejectionMessage);
-            responseMap.put("reason", reason);
-        }
-
-        responseMap.put("payload", payload);
-        return responseMap;
+        return messageService.getResponseContent(message);
     }
 
     /**
@@ -218,14 +207,5 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      */
     public ConnectorService getConnectorService() {
         return connectorService;
-    }
-
-    /**
-     * Getter for ids deserialization service.
-     *
-     * @return The service class.
-     */
-    public DeserializationService getDeserializer() {
-        return deserializationService;
     }
 }
