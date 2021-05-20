@@ -604,8 +604,8 @@ public class BootstrapConfiguration {
                     } else {
                         if (log.isWarnEnabled()) {
                             log.warn("Collision for single-value property '{}' found. Going to"
-                                            + " keep the old value '{}'; new value '{}' will be " +
-                                            "ignored.",
+                                            + " keep the old value '{}'; new value '{}' will be "
+                                            + "ignored.",
                                     property.getKey().toString(),
                                     config.get(property.getKey()).toString(),
                                     property.getValue().toString());
