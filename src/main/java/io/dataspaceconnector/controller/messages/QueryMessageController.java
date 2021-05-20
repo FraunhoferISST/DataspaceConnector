@@ -15,11 +15,8 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
-
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +35,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.URI;
+
 /**
  * Controller for sending ids query messages.
  */
@@ -53,8 +53,12 @@ public class QueryMessageController {
     private final @NonNull IDSBrokerService brokerService;
 
     /**
+     * Service for ids messages.
+     */
+    private final @NonNull MessageService messageService;
+
+    /**
      * Sending an ids query message with a query message as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @param query     The query statement.
@@ -66,7 +70,6 @@ public class QueryMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
@@ -83,9 +86,8 @@ public class QueryMessageController {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient.toString(), query,
                     null, null, null);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
-            return ResponseEntity.ok(responseToString);
-        } catch (IOException exception) {
+            return messageService.processIdsResponse(response);
+        } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

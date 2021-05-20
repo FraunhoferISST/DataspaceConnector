@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.MessageService;
+import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Controller for sending ids connector unavailable messages.
@@ -57,8 +57,12 @@ public class ConnectorUnavailableMessageController {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Service for ids messages.
+     */
+    private final @NonNull MessageService messageService;
+
+    /**
      * Sending an ids connector unavailable message with the current connector as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.
@@ -69,7 +73,6 @@ public class ConnectorUnavailableMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
@@ -82,8 +85,7 @@ public class ConnectorUnavailableMessageController {
 
             // Send the connector unavailable message.
             final var response = brokerService.unregisterAtBroker(recipient);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
-            return ResponseEntity.ok(responseToString);
+            return messageService.processIdsResponse(response);
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (NullPointerException | IOException exception) {

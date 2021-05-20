@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
-
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +33,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Controller for sending ids resource unavailable messages.
@@ -57,8 +57,12 @@ public class ResourceUnavailableMessageController {
     private final @NonNull ConnectorService connectorService;
 
     /**
+     * Service for ids messages.
+     */
+    private final @NonNull MessageService messageService;
+
+    /**
      * Sending an ids resource unavailable message with a resource as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.
@@ -87,8 +91,7 @@ public class ResourceUnavailableMessageController {
 
             // Send the resource unavailable message.
             final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
-            final var responseToString = Objects.requireNonNull(response.body()).string();
-            return ResponseEntity.ok(responseToString);
+            return messageService.processIdsResponse(response);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
