@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2021-05-20
+- Add `BootstrapConfiguration`
+  * Allows to register IDS-catalogs during startup
+  * Allows to register offered resources, which are part of the catalogs, to brokers
+- Add `CatalogTemplate` and matching mapping/build functions
+- Add a method to `AbstractIdsBuilder` which allows to create elements with a custom base URI
+- Changed `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
+- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found
+
 ## [5.0.1] - 2021-05-19
 
 ### Changed

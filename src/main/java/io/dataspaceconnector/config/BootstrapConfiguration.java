@@ -241,7 +241,7 @@ public class BootstrapConfiguration {
                     if (!response.isSuccessful()) {
                         if (log.isErrorEnabled()) {
                             log.error("Failed to update resource description for resource '{}'"
-                                    + " at broker '{}'.",
+                                            + " at broker '{}'.",
                                     entry.getValue().getId().toString(), brokerURL);
                         }
 
@@ -304,14 +304,20 @@ public class BootstrapConfiguration {
             return false;
         }
         if (!(responseMessage instanceof MessageProcessedNotificationMessage)) {
-            if (log.isErrorEnabled()) {
-                if (responseMessage instanceof RejectionMessage) {
-                    final var payload = getMultipartPart(body, "payload");
-                    log.error("The broker rejected the message. Reason: "
-                            + ((payload != null) ? " - " + "{}" : ""),
+
+            if (responseMessage instanceof RejectionMessage) {
+                final var payload = getMultipartPart(body, "payload");
+                if (log.isErrorEnabled() && payload != null) {
+                    log.error("The broker rejected the message. Reason: {} - {}",
                             MessageUtils.extractRejectionReason((RejectionMessage) responseMessage)
                                     .toString(), payload);
-                } else {
+                } else if (log.isErrorEnabled()) {
+                    log.error("The broker rejected the message. Reason: {}",
+                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage)
+                                    .toString());
+                }
+            } else {
+                if (log.isErrorEnabled()) {
                     log.error("An error occurred while registering the "
                             + "connector at the broker.");
                 }
@@ -343,7 +349,7 @@ public class BootstrapConfiguration {
     /**
      * Extract a part with given name from a multipart message.
      *
-     * @param message the multipart message
+     * @param message  the multipart message
      * @param partName the part name
      * @return part with given name, null if the part does not exist in given message
      */
@@ -529,7 +535,7 @@ public class BootstrapConfiguration {
                 + resource.getId().toString())) {
             if (log.isErrorEnabled()) {
                 log.error(("Remote URL for resource with id '{}' is not provided in {}.{}"
-                        + " file(s). The key 'resource.remoteUrl.{}' must be used."),
+                                + " file(s). The key 'resource.remoteUrl.{}' must be used."),
                         resource.getId().toString(),
                         PROPERTIES_NAME, PROPERTIES_EXT, resource.getId().toString());
             }
@@ -598,7 +604,8 @@ public class BootstrapConfiguration {
                     } else {
                         if (log.isWarnEnabled()) {
                             log.warn("Collision for single-value property '{}' found. Going to"
-                                    + " keep the old value '{}'; new value '{}' will be ignored.",
+                                            + " keep the old value '{}'; new value '{}' will be " +
+                                            "ignored.",
                                     property.getKey().toString(),
                                     config.get(property.getKey()).toString(),
                                     property.getValue().toString());
