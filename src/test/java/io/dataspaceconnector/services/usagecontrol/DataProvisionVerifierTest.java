@@ -57,7 +57,7 @@ public class DataProvisionVerifierTest {
     private final URI target = URI.create("https://target.com");
 
     @Test
-    public void checkPolicy_accessAllowed_allowAccess() {
+    public void verify_provisionAllowed_allowProvision() {
         /* ARRANGE */
         final var agreement = getContractAgreement();
         final var issuerConnector = URI.create("https://issuer.com");
@@ -74,7 +74,7 @@ public class DataProvisionVerifierTest {
     }
 
     @Test
-    public void checkPolicy_accessNotAllowed_denyAccess() {
+    public void verify_provisionNotAllowed_denyProvision() {
         /* ARRANGE */
         final var agreement = getContractAgreement();
         final var issuerConnector = URI.create("https://issuer.com");
