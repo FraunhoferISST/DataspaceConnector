@@ -28,6 +28,8 @@
     <rule ref="category/java/codestyle.xml"></rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling"/>
+        <!-- TODO: At the moment there are too many false postives especilly with streams -->
+        <exclude name="LawOfDemeter"/>
     </rule>
     <rule ref="category/java/documentation.xml"></rule>
     <rule ref="category/java/errorprone.xml"></rule>
