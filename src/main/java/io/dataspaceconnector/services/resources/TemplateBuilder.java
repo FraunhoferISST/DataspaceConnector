@@ -271,7 +271,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
      *
      * @return The resource service.
      */
-    @org.jetbrains.annotations.NotNull
+    @NonNull
     protected ResourceService<T, D> getResourceService() {
         return resourceService;
     }

@@ -15,7 +15,7 @@ Load resources during startup and register them at a broker.
 
 ---
 
-If you want to register e.g. offered resources at the connector during the startup, please read this document.
+In this section the registration of resources during the startup will be described.
 
 ### Registering Elements at the Connector
 
@@ -25,7 +25,7 @@ found in the base path.
 
 Each `jsonld`-file contains the JSON-LD representation of an IDS catalog. These representations will be
 loaded and registered at the connector. This includes all elements which are part of the catalog, except
-requested resources. The IDs used for the IDS catalog are used to prevent duplicates among multiple
+requested resources. The ids used for the IDS catalog are used to prevent duplicates among multiple
 startups.
 
 An example for a valid catalog which can be used for bootstrapping can be found below.
@@ -291,7 +291,7 @@ It is possible to register different resources at different brokers, but each re
 at one broker. The registration of a resource at a broker implicitly registers the connector itself at the
 broker.
 
-In order so register a resource at a broker, an entry with the following structure must be placed in a
+In order to register a resource at a broker, an entry with the following structure must be placed in a
 `bootstrap.properties` file:
 
 ```properties

@@ -220,8 +220,9 @@ public class BootstrapConfiguration {
         }
         // iterate over all registered resources
         for (Map.Entry<URI, Resource> entry : idsResources.entrySet()) {
-            if (properties.containsKey("broker.register." + entry.getKey().toString())) {
-                final var brokerURL = (String) properties.get("broker.register." + entry.getKey());
+            final var propertyKey = "broker.register." + entry.getKey().toString();
+            if (properties.containsKey(propertyKey)) {
+                final var brokerURL = (String) properties.get(propertyKey);
 
                 try {
                     Response response;
@@ -505,7 +506,7 @@ public class BootstrapConfiguration {
         // perform registration
         templateBuilder.build(catalogTemplate);
         if (log.isInfoEnabled()) {
-            log.info("Bootstrapped catalog with IDS ID '{}'.", catalog.getId());
+            log.info("Bootstrapped catalog with IDS id '{}'.", catalog.getId());
         }
 
         return true;
