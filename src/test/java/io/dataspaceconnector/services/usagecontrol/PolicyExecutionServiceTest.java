@@ -68,6 +68,11 @@ public class PolicyExecutionServiceTest {
 
     @Test
     public void sendAgreement_inputNull_doNothing() {
+        /* ARRANGE */
+        final var chUri= URI.create("https://clearing-house.com");
+
+        when(connectorConfig.getClearingHouse()).thenReturn(chUri);
+
         /* ACT */
         policyExecutionService.sendAgreement(null);
 
