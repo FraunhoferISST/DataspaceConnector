@@ -694,12 +694,12 @@
 						<configuration>
 							<rules>
 								<rule>
-									<element>BUNDLE</element>
+									<element>PACKAGE</element>
 									<limits>
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>25%</minimum>
+											<minimum>40%</minimum>
 										</limit>
 									</limits>
 								</rule>
