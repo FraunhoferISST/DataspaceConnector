@@ -446,9 +446,8 @@ public class BootstrapConfiguration {
                 boolean catalogDuplicate = false;
                 for (Catalog knownCatalog : knownCatalogs) {
                     Hibernate.initialize(knownCatalog.getAdditional());
-                    if (knownCatalog.getAdditional().containsKey("idsId")
-                            && knownCatalog.getAdditional().get("idsId")
-                            .equals(catalog.getId().toString())) {
+                    if (catalog.getId().toString()
+                            .equals(knownCatalog.getAdditional().get("idsId"))) {
                         catalogDuplicate = true;
                         break;
                     }
