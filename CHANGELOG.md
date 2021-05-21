@@ -4,16 +4,16 @@ All notable changes to this project will be documented in this file.
 ## [5.x] 2021-05-20
 
 ### Added
-- Add `BootstrapConfiguration`
-  * Allows to register IDS-catalogs during startup
-  * Allows to register offered resources, which are part of the catalogs, to brokers
-- Add `CatalogTemplate` and matching mapping/build functions
-- Add a method to `AbstractIdsBuilder` which allows to create elements with a custom base URI
-- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found
+- Add `BootstrapConfiguration`.
+  * Allow registering ids catalogs during startup.
+  * Allow registering offered resources as part of the catalogs to brokers.
+- Add `CatalogTemplate` and matching mapping/build functions.
+- Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
+- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found.
 
 ### Changed
  - Make the Clearing House url setting optional in `application.properties`.
- - Changed `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
+ - Change `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
 
 
 ## [5.0.1] - 2021-05-19
