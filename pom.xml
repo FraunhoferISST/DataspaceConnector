@@ -102,7 +102,7 @@
 		<modelmapper.version>2.4.3</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
-		<springdoc-ui.version>1.5.8</springdoc-ui.version>
+		<springdoc-ui.version>1.5.9</springdoc-ui.version>
 		<springdoc-security.version>1.5.8</springdoc-security.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6</equalsverifier.version>
