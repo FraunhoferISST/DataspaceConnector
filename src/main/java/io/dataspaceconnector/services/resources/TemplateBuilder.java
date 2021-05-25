@@ -143,12 +143,12 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
         final var offeredIds =
                 Utils.toStream(template.getOfferedResources()).map(x ->
-                        templateBuilderOfferedResource.buildResource(x).getId())
+                        templateBuilderOfferedResource.build(x).getId())
                         .collect(Collectors.toSet());
 
         final var requestedIds =
                 Utils.toStream(template.getRequestedResources()).map(x ->
-                        templateBuilderRequestedResource.buildResource(x).getId())
+                        templateBuilderRequestedResource.build(x).getId())
                         .collect(Collectors.toSet());
         final var catalog = catalogService.create(template.getDesc());
 
