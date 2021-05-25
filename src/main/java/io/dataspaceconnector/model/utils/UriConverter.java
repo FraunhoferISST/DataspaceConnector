@@ -37,7 +37,7 @@ public class UriConverter implements AttributeConverter<URI, String> {
      */
     @Override
     public String convertToDatabaseColumn(final URI uri) {
-        return uri != null ? uri.toString() : null;
+        return uri == null ? null : uri.toString();
     }
 
     /**

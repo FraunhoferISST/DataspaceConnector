@@ -38,7 +38,7 @@ public class UrlConverter implements AttributeConverter<URL, String> {
      */
     @Override
     public String convertToDatabaseColumn(final URL url) {
-        return url != null ? url.toString() : null;
+        return url == null ? null : url.toString();
     }
 
     /**
