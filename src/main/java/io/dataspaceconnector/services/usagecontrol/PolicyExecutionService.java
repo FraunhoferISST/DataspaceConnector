@@ -71,10 +71,9 @@ public class PolicyExecutionService {
      */
     public void sendAgreement(final ContractAgreement agreement) {
         try {
-            final var rdf = IdsUtils.toRdf(agreement);
             final var recipient = connectorConfig.getClearingHouse();
             if (!recipient.equals(URI.create(""))) {
-                logMessageService.sendMessage(recipient, rdf);
+                logMessageService.sendMessage(recipient, IdsUtils.toRdf(agreement));
             }
         } catch (PolicyExecutionException | RdfBuilderException exception) {
             if (log.isWarnEnabled()) {
@@ -92,10 +91,8 @@ public class PolicyExecutionService {
      */
     public void logDataAccess(final URI target) throws PolicyExecutionException {
         final var recipient = connectorConfig.getClearingHouse();
-        final var logItem = buildLog(target).toString();
-
         if (!recipient.equals(URI.create(""))) {
-            logMessageService.sendMessage(recipient, logItem);
+            logMessageService.sendMessage(recipient, buildLog(target).toString());
         }
     }
 

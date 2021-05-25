@@ -16,8 +16,10 @@
 package io.dataspaceconnector.model;
 
 import java.net.URL;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 
+import io.dataspaceconnector.model.utils.UrlConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,6 +42,7 @@ public class RemoteData extends Data {
     /**
      * Access url of the backend.
      */
+    @Convert(converter = UrlConverter.class)
     private URL accessUrl;
 
     /**

@@ -15,22 +15,22 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.List;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import java.net.URI;
-import java.util.List;
-
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * A ContractRule defines a rule that should be enforced.
@@ -53,6 +53,7 @@ public class ContractRule extends AbstractEntity {
     /**
      * The rule id on provider side.
      */
+    @Convert(converter = UriConverter.class)
     private URI remoteId;
 
     /**
