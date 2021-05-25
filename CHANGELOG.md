@@ -1,10 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-### [5.x]
+### [5.0.2]
 
 ### Changed
  - Make the Clearing House url setting optional in `application.properties`.
+
+### Fixed
+  - Persist URIs as strings in database.
 
 ## [5.0.1] - 2021-05-19
 
