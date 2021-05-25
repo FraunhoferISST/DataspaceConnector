@@ -19,11 +19,14 @@ import java.net.URI;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+import lombok.NoArgsConstructor;
+
 /**
  * A converter for converting URIs to strings and strings to URIs. Used for persisting entity
  * attributes of type URI.
  */
 @Converter
+@NoArgsConstructor
 public class UriConverter implements AttributeConverter<URI, String> {
 
     /**

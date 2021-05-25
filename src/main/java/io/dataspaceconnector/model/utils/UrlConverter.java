@@ -19,6 +19,7 @@ import java.net.URL;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 /**
@@ -26,6 +27,7 @@ import lombok.SneakyThrows;
  * attributes of type URL.
  */
 @Converter
+@NoArgsConstructor
 public class UrlConverter implements AttributeConverter<URL, String> {
 
     /**
