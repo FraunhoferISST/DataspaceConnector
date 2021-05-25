@@ -3,7 +3,6 @@ package io.dataspaceconnector.model;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
-import org.jooq.Meta;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;

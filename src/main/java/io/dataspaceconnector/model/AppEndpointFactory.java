@@ -24,9 +24,9 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     public static final String DEFAULT_STRING = "unknown";
 
     /**
-     * @param appEndpoint The app endpoint
+     * @param appEndpoint The app endpoint.
      * @param desc        The description of the new entity.
-     * @return true, if app endpoint is updated
+     * @return True, if app endpoint is updated.
      */
     @Override
     public boolean update(final AppEndpoint appEndpoint, final AppEndpointDesc desc) {
@@ -35,17 +35,17 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
 
         final var hasUpdatedAccessUrl = updateAccessUrl(appEndpoint, desc.getAccessURL());
         final var hasUpdatedMediaType = updateMediaType(appEndpoint, desc.getMediaType());
-        final var hasUpdatedPort = updateEndpointPort(appEndpoint, appEndpoint.getAppEndpointPort());
-        final var hasUpdatedProtocol = updateProtocol(appEndpoint, appEndpoint.getAppEndpointProtocol());
-        final var hasUpdatedLanguage = updateLanguage(appEndpoint, appEndpoint.getLanguage());
+        final var hasUpdatedPort = updateEndpointPort(appEndpoint, desc.getAppEndpointPort());
+        final var hasUpdatedProtocol = updateProtocol(appEndpoint, desc.getAppEndpointProtocol());
+        final var hasUpdatedLanguage = updateLanguage(appEndpoint, desc.getLanguage());
 
         return hasUpdatedAccessUrl || hasUpdatedMediaType || hasUpdatedPort || hasUpdatedProtocol || hasUpdatedLanguage;
     }
 
     /**
-     * @param appEndpoint The app endpoint
-     * @param language    The app endpoint protocol
-     * @return true, if language is updated
+     * @param appEndpoint The app endpoint.
+     * @param language    The app endpoint protocol.
+     * @return True, if language is updated.
      */
     private boolean updateLanguage(final AppEndpoint appEndpoint, final String language) {
         final var newLanguage = MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
@@ -55,9 +55,9 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     }
 
     /**
-     * @param appEndpoint         The app endpoint
-     * @param appEndpointProtocol The app endpoint protocol
-     * @return true, if protocol is updated
+     * @param appEndpoint         The app endpoint.
+     * @param appEndpointProtocol The app endpoint protocol.
+     * @return True, if protocol is updated
      */
     private boolean updateProtocol(final AppEndpoint appEndpoint, final String appEndpointProtocol) {
         final var newProtocol = MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
@@ -67,11 +67,11 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     }
 
     /**
-     * @param appEndpoint     The app endpoint
-     * @param appEndpointPort The new app endpoint port
-     * @return true, if app endpoint is updated
+     * @param appEndpoint     The app endpoint.
+     * @param appEndpointPort The new app endpoint port.
+     * @return True, if app endpoint is updated.
      */
-    private boolean updateEndpointPort(final AppEndpoint appEndpoint,final int appEndpointPort) {
+    private boolean updateEndpointPort(final AppEndpoint appEndpoint, final int appEndpointPort) {
 
         final var newPort = MetadataUtils.updateInteger(appEndpoint.getAppEndpointPort(),
                 appEndpointPort);
@@ -80,9 +80,9 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     }
 
     /**
-     * @param appEndpoint The app endpoint
-     * @param mediaType   The new media type
-     * @return true, if media type is updated
+     * @param appEndpoint The app endpoint.
+     * @param mediaType   The new media type.
+     * @return True, if media type is updated.
      */
     private boolean updateMediaType(final AppEndpoint appEndpoint, final String mediaType) {
         final var newMediaType = MetadataUtils.updateString(appEndpoint.getMediaType(), mediaType,
@@ -106,7 +106,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
 
     /**
      * @param desc The description passed to the factory.
-     * @return app endpoint
+     * @return The app endpoint entity.
      */
     @Override
     protected AppEndpoint createInternal(final AppEndpointDesc desc) {

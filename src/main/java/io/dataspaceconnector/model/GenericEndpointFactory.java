@@ -26,9 +26,7 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
         Utils.requireNonNull(genericEndpoint, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedAbsolutePath = updateAbsolutePath(genericEndpoint, desc.getAbsolutePath());
-
-        return hasUpdatedAbsolutePath;
+        return updateAbsolutePath(genericEndpoint, desc.getAbsolutePath());
     }
 
     /**
