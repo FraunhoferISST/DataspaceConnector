@@ -61,7 +61,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -194,6 +196,14 @@ public class BootstrapConfiguration {
             SpringApplication.exit(context, () -> -1);
         }
 
+        try {
+            connectorService.updateConfigModel();
+        } catch (ConfigurationUpdateException e) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to update config model.", e);
+            }
+        }
+
         // register resources at broker
         if (!registerAtBroker(properties, idsResources)) {
             if (log.isErrorEnabled()) {
@@ -210,14 +220,6 @@ public class BootstrapConfiguration {
     private boolean registerAtBroker(final Properties properties,
                                      final Map<URI, Resource> idsResources) {
         final var knownBrokers = new HashSet<String>();
-        try {
-            connectorService.updateConfigModel();
-        } catch (ConfigurationUpdateException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to update config model.", e);
-            }
-            return false;
-        }
         // iterate over all registered resources
         for (Map.Entry<URI, Resource> entry : idsResources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
@@ -530,23 +532,11 @@ public class BootstrapConfiguration {
         // add ids id to additional fields
         resourceTemplate.getDesc().getAdditional().put("idsId", resource.getId().toString());
 
-        // ensure necessary properties are available
-        if (!properties.containsKey("resource.remoteUrl."
-                + resource.getId().toString())) {
-            if (log.isErrorEnabled()) {
-                log.error(("Remote URL for resource with id '{}' is not provided in {}.{}"
-                                + " file(s). The key 'resource.remoteUrl.{}' must be used."),
-                        resource.getId().toString(),
-                        PROPERTIES_NAME, PROPERTIES_EXT, resource.getId().toString());
-            }
-            throw new IllegalStateException();
-        }
-
         // collect all artifact IDs from artifacts inside representations
         final var artifacts = new ArrayList<URI>();
         for (final Representation representation : resource.getRepresentation()) {
-            for (final RepresentationInstance instance : representation.getInstance()) {
-                artifacts.add(instance.getId());
+            for (final RepresentationInstance artifact : representation.getInstance()) {
+                artifacts.add(artifact.getId());
             }
         }
 
@@ -557,13 +547,43 @@ public class BootstrapConfiguration {
                         properties.containsKey("resource.download.auto")
                                 && ((Set<String>) properties.get("resource.download.auto"))
                                 .contains(resource.getId().toString()),
-                        URI.create(
-                                properties.getProperty(
-                                        "resource.remoteUrl." + resource.getId()))
+                        null
                 )
         );
 
         resourceTemplate.setContracts(TemplateUtils.getContractTemplates(resource));
+
+        // add additional information from properties to artifact descriptions
+        for (final var representationTemplate : resourceTemplate.getRepresentations()) {
+            for (final var artifactTemplate : representationTemplate.getArtifacts()) {
+                final var idsId = artifactTemplate.getDesc().getAdditional().get("idsId");
+                final var accessUrl = properties.getProperty("artifact.accessUrl." + idsId);
+                final var username = properties.getProperty("artifact.username." + idsId);
+                final var password = properties.getProperty("artifact.password." + idsId);
+                final var value = properties.getProperty("artifact.value." + idsId);
+
+                if (accessUrl != null) {
+                    try {
+                        artifactTemplate.getDesc().setAccessUrl(new URL(accessUrl));
+                    } catch (MalformedURLException e) {
+                        if (log.isErrorEnabled()) {
+                            log.error("Could not parse accessUrl '{}' for artifact with "
+                                    + "IDS id '{}'.", accessUrl, idsId, e);
+                        }
+                    }
+                }
+                if (username != null) {
+                    artifactTemplate.getDesc().setUsername(username);
+                }
+                if (password != null) {
+                    artifactTemplate.getDesc().setPassword(password);
+                }
+                if (value != null) {
+                    artifactTemplate.getDesc().setValue(value);
+                }
+
+            }
+        }
     }
 
     /**

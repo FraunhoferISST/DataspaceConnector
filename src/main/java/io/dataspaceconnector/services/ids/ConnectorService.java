@@ -38,12 +38,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -188,18 +186,7 @@ public class ConnectorService {
      * @return List of resource catalogs.
      */
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
-        final URI baseUri = deserializationService
-                .getConfigurationModel(
-                        new Scanner(
-                                Objects.requireNonNull(
-                                        ConnectorService
-                                                .class.getClassLoader()
-                                                .getResourceAsStream("conf/config.json")),
-                                StandardCharsets.UTF_8)
-                                .useDelimiter("\\A").next()
-                )
-                .getConnectorDescription()
-                .getId();
+        final URI baseUri =  configContainer.getConnector().getId();
 
         return catalogService.getAll(Pageable.unpaged())
                 .stream()

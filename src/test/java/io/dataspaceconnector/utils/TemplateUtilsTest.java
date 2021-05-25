@@ -132,7 +132,7 @@ class TemplateUtilsTest {
         assertNull(desc.getPassword());
         assertNull(desc.getValue());
         assertEquals(download, desc.isAutomatedDownload());
-        assertEquals(0, desc.getAdditional().size());
+        assertEquals(1, desc.getAdditional().size());
     }
 
     @Test

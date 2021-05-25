@@ -113,7 +113,6 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
             throws ConstraintViolationException;
 
     private URI getBaseUri() {
-
         return URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
     }
 

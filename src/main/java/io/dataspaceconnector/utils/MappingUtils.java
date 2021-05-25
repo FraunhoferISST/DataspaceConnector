@@ -357,6 +357,10 @@ public final class MappingUtils {
         // Add additional properties to map.
         final var additional = propertiesToAdditional(artifact.getProperties());
 
+        if (artifact.getId() != null) {
+            additional.put("idsId", artifact.getId().toString());
+        }
+
         if (byteSize != null) {
             additional.put("ids:byteSize", byteSize.toString());
         }
