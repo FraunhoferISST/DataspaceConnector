@@ -86,7 +86,27 @@
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/1d982c8a-c5ae-4c19-9a26-6815e9540fc8",
           "ids:provider": "https://example.com",
-          "ids:permission": null,
+          "ids:permission": [{
+                               "@type": "ids:Permission",
+                               "@id": "https://w3id.org/idsa/autogen/permission/a3c57cd0-5022-484d-8fb0-0676351de2da",
+                               "ids:description": [
+                                 {
+                                   "@value": "provide-access",
+                                   "@type": "http://www.w3.org/2001/XMLSchema#string"
+                                 }
+                               ],
+                               "ids:title": [
+                                 {
+                                   "@value": "Allow Data Usage",
+                                   "@type": "http://www.w3.org/2001/XMLSchema#string"
+                                 }
+                               ],
+                               "ids:action": [
+                                 {
+                                   "@id": "idsc:USE"
+                                 }
+                               ]
+                             }],
           "ids:obligation": null,
           "ids:prohibition": null,
           "ids:contractDate": "2016-10-03T15:10:40.000Z",
