@@ -17,11 +17,13 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.List;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -52,11 +54,13 @@ public abstract class Artifact extends AbstractEntity {
     /**
      * The artifact id on provider side.
      */
+    @Convert(converter = UriConverter.class)
     private URI remoteId;
 
     /**
      * The provider's address for artifact request messages.
      */
+    @Convert(converter = UriConverter.class)
     private URI remoteAddress;
 
     /**
