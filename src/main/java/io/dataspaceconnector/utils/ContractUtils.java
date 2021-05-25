@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.Contract;
-import de.fraunhofer.iais.eis.ContractAgreement;
-import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.exceptions.ContractException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +22,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static io.dataspaceconnector.utils.RuleUtils.*;
+import de.fraunhofer.iais.eis.Contract;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.exceptions.ContractException;
+import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.model.Artifact;
+
+import static io.dataspaceconnector.utils.RuleUtils.compareObligations;
+import static io.dataspaceconnector.utils.RuleUtils.comparePermissions;
+import static io.dataspaceconnector.utils.RuleUtils.compareProhibitions;
 
 /**
  * Contains utility methods for creating and validation ids contracts.
@@ -83,24 +85,30 @@ public final class ContractUtils {
         Utils.requireNonNull(contract, ErrorMessages.CONTRACT_NULL);
         final var rules = new ArrayList<Rule>();
 
-        for (final var permission : contract.getPermission()) {
-            final var target = permission.getTarget();
-            if (target != null && target.equals(element)) {
-                rules.add(permission);
+        if (contract.getPermission() != null) {
+            for (final var permission : contract.getPermission()) {
+                final var target = permission.getTarget();
+                if (target != null && target.equals(element)) {
+                    rules.add(permission);
+                }
             }
         }
 
-        for (final var prohibition : contract.getProhibition()) {
-            final var target = prohibition.getTarget();
-            if (target != null && target.equals(element)) {
-                rules.add(prohibition);
+        if (contract.getProhibition() != null) {
+            for (final var prohibition : contract.getProhibition()) {
+                final var target = prohibition.getTarget();
+                if (target != null && target.equals(element)) {
+                    rules.add(prohibition);
+                }
             }
         }
 
-        for (final var obligation : contract.getObligation()) {
-            final var target = obligation.getTarget();
-            if (target != null && target.equals(element)) {
-                rules.add(obligation);
+        if (contract.getObligation() != null) {
+            for (final var obligation : contract.getObligation()) {
+                final var target = obligation.getTarget();
+                if (target != null && target.equals(element)) {
+                    rules.add(obligation);
+                }
             }
         }
 

@@ -5,7 +5,7 @@
             <PatternLayout
                     pattern="%d{ISO8601} [%thread] %highlight{%level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} - %encode{%.-10000msg}{CRLF}%n" />
         </Console>
-        <RollingFile
+<!--        <RollingFile
                 name="RollingFile"
                 fileName="./log/dataspaceconnector.log"
                 filePattern="./log/dataspaceconnector.%i.log.gz"
@@ -17,7 +17,7 @@
                 <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
             <DefaultRolloverStrategy max="5" />
-        </RollingFile>
+        </RollingFile>-->
     </Appenders>
     <Loggers>
         <Root level="info">
