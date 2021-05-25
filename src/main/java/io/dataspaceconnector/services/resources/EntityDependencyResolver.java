@@ -29,6 +29,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service offers methods for finding entities related to another given entity.
+ */
 @Service
 @RequiredArgsConstructor
 public class EntityDependencyResolver {

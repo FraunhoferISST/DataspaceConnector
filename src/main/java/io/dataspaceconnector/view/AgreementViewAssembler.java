@@ -28,6 +28,9 @@ import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+/**
+ * Assembles the REST resource for an agreement.
+ */
 @Component
 public class AgreementViewAssembler
         implements RepresentationModelAssembler<Agreement, AgreementView>, SelfLinking {
@@ -39,7 +42,7 @@ public class AgreementViewAssembler
 
         final var artifactLink = WebMvcLinkBuilder
                 .linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
-                .getResource(agreement.getId(), null, null, null))
+                .getResource(agreement.getId(), null, null))
                 .withRel("artifacts");
         view.add(artifactLink);
 

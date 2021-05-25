@@ -21,6 +21,7 @@ import io.dataspaceconnector.exceptions.UnreachableLineException;
  * The list of the api's paths.
  */
 public enum BasePath {
+
     /**
      * The resource offer's endpoint's base path.
      */

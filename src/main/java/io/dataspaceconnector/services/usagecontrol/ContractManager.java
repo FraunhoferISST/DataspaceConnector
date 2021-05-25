@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -43,10 +47,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * This service offers methods related to contract management.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -70,8 +73,7 @@ public class ContractManager {
     /**
      * Service for current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Check if the transfer contract is valid and the conditions are fulfilled.

@@ -15,8 +15,16 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.view.CatalogView;
+import io.dataspaceconnector.view.CatalogViewAssembler;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,16 +39,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.view.CatalogView;
-import io.dataspaceconnector.view.CatalogViewAssembler;
-import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.utils.Utils;
-import lombok.SneakyThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {ResourceControllers.CatalogController.class})
 class CatalogControllerTest_getAll {
@@ -78,7 +77,7 @@ class CatalogControllerTest_getAll {
         Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(Page.empty());
 
         /* ACT */
-        final var result = controller.getAll(null, 1, null);
+        final var result = controller.getAll(null, 1);
 
         /* ASSERT */
         assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
@@ -93,7 +92,7 @@ class CatalogControllerTest_getAll {
                 .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
-        final var result = controller.getAll(null, pageSize, null);
+        final var result = controller.getAll(null, pageSize);
 
         /* ASSERT */
         final var body = (PagedModel<CatalogView>) result.getBody();
@@ -113,7 +112,7 @@ class CatalogControllerTest_getAll {
                 .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
-        final var result = controller.getAll(page, pageSize, null);
+        final var result = controller.getAll(page, pageSize);
 
         /* ASSERT */
         final var body = (PagedModel<CatalogView>) result.getBody();
@@ -130,7 +129,7 @@ class CatalogControllerTest_getAll {
                 .thenReturn(Utils.toPage(catalogList, request));
 
         /* ACT */
-        final var result = controller.getAll(page, pageSize, null);
+        final var result = controller.getAll(page, pageSize);
 
         /* ASSERT */
         final var body = (PagedModel<CatalogView>) result.getBody();
@@ -147,7 +146,7 @@ class CatalogControllerTest_getAll {
         Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(returnPage);
 
         /* ACT */
-        final var result = controller.getAll(toFar, pageSize, null);
+        final var result = controller.getAll(toFar, pageSize);
 
         /* ASSERT */
         final var body = (PagedModel<CatalogView>) result.getBody();
@@ -164,7 +163,7 @@ class CatalogControllerTest_getAll {
         Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(returnPage);
 
         /* ACT */
-        final var result = controller.getAll(toEarly, pageSize, null);
+        final var result = controller.getAll(toEarly, pageSize);
 
         /* ASSERT */
 

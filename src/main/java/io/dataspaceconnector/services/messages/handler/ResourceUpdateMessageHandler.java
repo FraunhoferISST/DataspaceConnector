@@ -69,8 +69,7 @@ public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpda
     /**
      * Service for updating database entities from ids object.
      */
-    private final @NonNull
-    EntityUpdateService updateService;
+    private final @NonNull EntityUpdateService updateService;
 
     /**
      * Service for notifying subscribers when a requested resource has been updated.

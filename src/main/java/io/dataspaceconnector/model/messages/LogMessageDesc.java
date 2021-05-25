@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.model.messages;
 
-import lombok.AllArgsConstructor;
+import java.net.URI;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
+import lombok.NoArgsConstructor;
 
 /**
  * Class for all description request message parameters.
  */
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class LogMessageDesc extends MessageDesc {
     /**

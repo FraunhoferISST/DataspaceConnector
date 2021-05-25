@@ -26,6 +26,9 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
+/**
+ * A DTO for controlled exposing of representation information in API responses.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)

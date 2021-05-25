@@ -1,7 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.0.0-SNAPSHOT] - 2021-04-29
+### [5.x]
+
+### Changed
+ - Make the Clearing House url setting optional in `application.properties`.
+
+## [5.0.1] - 2021-05-19
+
+### Changed
+- H2 does not persist database to files.
+- Change additional list mapping for received attribute list with a single item.
+- Disable unused rolling file appender in `log4j2.xml`.
+
+## [5.0.0] - 2021-05-17
 
 ### Added
 - Partially support of HATEOAS.
@@ -37,7 +49,8 @@ All notable changes to this project will be documented in this file.
 - Move Swagger UI to `/api/docs`.
 - Change response type from string to object.
 - Use correct response codes as defined by RFC 7231.
-- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and agreements.
+- Replace old data model: catalogs, resources, representations, artifacts, contract, rules, and
+  agreements.
   * Separate `ResourceRepresentation` into `Representation` and `Artifact`.
   * Separate `ResourceContract` into `Contract` and `Rule`.
   * Handle data in own database entity.
@@ -63,13 +76,11 @@ All notable changes to this project will be documented in this file.
 - Fix of buffer overflow in http tracer.
 - Make message handler stateless.
 
-### Removed
-- All classes.
-
 ### Security
 - Prevent leaking of technology stack in case of errors/exceptions.
 - Logger sanitizes inputs to prevent CRLF injections.
 - Mass Bindings.
+- Timezone independence.
 
 ## [4.3.1] - 2021-04-15
 

@@ -23,9 +23,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.UUID;
 
+/**
+ * Contains utility methods for processing path and entity IDs.
+ */
 @Log4j2
 public final class EndpointUtils {
 
+    /**
+     * Default constructor.
+     */
     private EndpointUtils() {
         // not used
     }

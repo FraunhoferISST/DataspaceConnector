@@ -34,8 +34,7 @@ public final class RepresentationUpdater implements InfomodelUpdater<Representat
     /**
      * Service for representations.
      */
-    private final @NonNull
-    RepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
     /**
      * {@inheritDoc}

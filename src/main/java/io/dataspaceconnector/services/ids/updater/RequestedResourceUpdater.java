@@ -34,8 +34,7 @@ public final class RequestedResourceUpdater
     /**
      * Service for requested resources.
      */
-    private final @NonNull
-    RequestedResourceService requestedResourceService;
+    private final @NonNull RequestedResourceService requestedResourceService;
 
     /**
      * {@inheritDoc}

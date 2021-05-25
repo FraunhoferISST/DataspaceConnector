@@ -82,7 +82,7 @@ class RepresentationsToArtifactsTest {
         Mockito.when(linker.get(Mockito.isNull(), Mockito.any())).thenThrow(IllegalArgumentException.class);
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> controller.getResource(null, 0, null, null));
+        assertThrows(IllegalArgumentException.class, () -> controller.getResource(null, 0, null));
     }
 
     @Test
@@ -92,7 +92,7 @@ class RepresentationsToArtifactsTest {
         Mockito.when(linker.get(Mockito.eq(unknownUUid), Mockito.any())).thenThrow(ResourceNotFoundException.class);
 
         /* ACT && ASSERT */
-        assertThrows(ResourceNotFoundException.class, () -> controller.getResource(unknownUUid, null, null, null));
+        assertThrows(ResourceNotFoundException.class, () -> controller.getResource(unknownUUid, null, null));
     }
 
     @Test
@@ -102,7 +102,7 @@ class RepresentationsToArtifactsTest {
         Mockito.when(linker.get(Mockito.eq(knownUUID), Mockito.any())).thenReturn(Utils.toPage(new ArrayList<>(), Pageable.unpaged()));
 
         /* ACT */
-        final var result = controller.getResource(knownUUID, null, null, null);
+        final var result = controller.getResource(knownUUID, null, null);
 
         /* ASSERT */
         assertNotNull(result);

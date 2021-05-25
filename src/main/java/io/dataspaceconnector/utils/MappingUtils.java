@@ -44,6 +44,10 @@ import io.dataspaceconnector.model.templates.RuleTemplate;
  * Maps ids resources to internal resources.
  */
 public final class MappingUtils {
+
+    /**
+     * Default constructor.
+     */
     private MappingUtils() {
         // not used
     }
@@ -93,7 +97,7 @@ public final class MappingUtils {
         }
 
         if (contentPart != null) {
-            additional.put("ids:contentPart", contentPart.toString());
+            addListToAdditional(contentPart, additional, "ids:contentPart");
         }
 
         if (contentStandard != null) {
@@ -113,7 +117,7 @@ public final class MappingUtils {
         }
 
         if (representation != null) {
-            additional.put("ids:defaultRepresentation", representation.toString());
+            addListToAdditional(representation, additional, "ids:defaultRepresentation");
         }
 
         if (modified != null) {
@@ -121,15 +125,15 @@ public final class MappingUtils {
         }
 
         if (resourceEndpoint != null) {
-            additional.put("ids:resourceEndpoint", resourceEndpoint.toString());
+            addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
         }
 
         if (resourcePart != null) {
-            additional.put("ids:resourcePart", resourcePart.toString());
+            addListToAdditional(resourcePart, additional, "ids:resourcePart");
         }
 
         if (sample != null) {
-            additional.put("ids:sample", sample.toString());
+            addListToAdditional(sample, additional, "ids:sample");
         }
 
         if (shapesGraph != null) {
@@ -137,11 +141,11 @@ public final class MappingUtils {
         }
 
         if (spatialCoverage != null) {
-            additional.put("ids:spatialCoverage", spatialCoverage.toString());
+            addListToAdditional(spatialCoverage, additional, "ids:spatialCoverage");
         }
 
         if (temporalCoverage != null) {
-            additional.put("ids:temporalCoverage", temporalCoverage.toString());
+            addListToAdditional(temporalCoverage, additional, "ids:temporalCoverage");
         }
 
         if (temporalRes != null) {
@@ -149,7 +153,7 @@ public final class MappingUtils {
         }
 
         if (theme != null) {
-            additional.put("ids:theme", theme.toString());
+            addListToAdditional(theme, additional, "ids:theme");
         }
 
         if (variant != null) {
@@ -169,15 +173,27 @@ public final class MappingUtils {
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            desc.setDescription(description.toString());
+            if (description.size() == 1) {
+                desc.setDescription(description.get(0).toString());
+            } else {
+                desc.setDescription(description.toString());
+            }
         }
 
         if (title != null) {
-            desc.setTitle(title.toString());
+            if (title.size() == 1) {
+                desc.setTitle(title.get(0).toString());
+            } else {
+                desc.setTitle(title.toString());
+            }
         }
 
         if (language != null) {
-            desc.setLanguage(language.toString());
+            if (language.size() == 1) {
+                desc.setLanguage(language.get(0).toString());
+            } else {
+                desc.setLanguage(language.toString());
+            }
         }
 
         if (resourceEndpoint != null) {
@@ -186,6 +202,23 @@ public final class MappingUtils {
         }
 
         return new ResourceTemplate<>(null, desc, null, null);
+    }
+
+    /**
+     * Adds the string value of a given list as an additional property. If the list only contains
+     * one element, the string value will not contain brackets.
+     *
+     * @param list the list.
+     * @param additional the map of additional properties.
+     * @param key the map key to use.
+     */
+    private static void addListToAdditional(final List list, final Map<String, String> additional,
+                                            final String key) {
+        if (list.size() == 1) {
+            additional.put(key, list.get(0).toString());
+        } else {
+            additional.put(key, list.toString());
+        }
     }
 
     /**
@@ -204,7 +237,7 @@ public final class MappingUtils {
         final var language = representation.getLanguage();
         final var mediaType = representation.getMediaType();
         final var modified = representation.getModified();
-        final var standard = String.valueOf(representation.getRepresentationStandard());
+        final var standard = representation.getRepresentationStandard();
         final var shape = representation.getShapesGraph();
 
         // Add additional properties to map.
@@ -224,7 +257,10 @@ public final class MappingUtils {
         final var desc = new RepresentationDesc();
         desc.setAdditional(additional);
         desc.setRemoteId(representationId);
-        desc.setStandard(standard);
+
+        if (standard != null) {
+            desc.setStandard(String.valueOf(standard));
+        }
 
         if (language != null) {
             desc.setLanguage(language.toString());

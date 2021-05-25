@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import javax.persistence.PersistenceException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import javax.persistence.PersistenceException;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -59,6 +59,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This controller provides the endpoint for sending a contract request message and starting the
+ * metadata and data exchange.
+ */
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -177,7 +181,8 @@ public class ContractRequestMessageController {
             // Save contract agreement to database.
             agreementId = persistenceSvc.saveContractAgreement(agreement);
             if (log.isDebugEnabled()) {
-                log.debug("Policy negotiation success. Saved agreement: " + agreementId);
+                log.debug("Policy negotiation success. Saved agreement. [agreemendId=({})].",
+                        agreementId);
             }
 
             // DESCRIPTION REQUESTS ----------------------------------------------------------------
@@ -203,8 +208,6 @@ public class ContractRequestMessageController {
             if (download) {
                 // Iterate over list of resource ids to send artifact request messages for each.
                 for (final var artifact : artifacts) {
-
-
                     // Send and validate artifact request/response message.
                     final var transferContract = agreement.getId();
                     response = artifactReqSvc.sendMessage(recipient, artifact, transferContract);
@@ -214,7 +217,7 @@ public class ContractRequestMessageController {
                         // can be triggered later again.
                         final var content = artifactReqSvc.getResponseContent(response);
                         if (log.isDebugEnabled()) {
-                            log.debug("Data could not be loaded: \n" + content);
+                            log.debug("Data could not be loaded. [content=({})]", content);
                         }
                     }
 
@@ -224,8 +227,9 @@ public class ContractRequestMessageController {
                     } catch (ResourceNotFoundException | MessageResponseException exception) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
-                            log.warn("Could not save data for artifact with id" + artifact
-                                    + ". [exception=({})]", exception.getMessage());
+                            log.warn("Could not save data for artifact."
+                                            + "[artifact=({}), exception=({})]",
+                                    artifact, exception.getMessage());
                         }
                     }
                 }

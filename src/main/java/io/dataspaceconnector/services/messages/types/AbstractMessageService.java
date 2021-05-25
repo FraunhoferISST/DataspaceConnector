@@ -96,7 +96,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
-                log.debug("Built request message:" + body); // TODO Add logging house class
+                 // TODO Add logging house class
+                log.debug("Built request message. [body=({})]", body);
             }
 
             // Send message and return response.

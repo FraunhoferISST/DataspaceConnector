@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.5</version>
+		<version>2.5.0</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.0.0-SNAPSHOT</revision>
+		<revision>5.0.1</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -102,17 +102,17 @@
 		<modelmapper.version>2.4.3</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
-		<springdoc-ui.version>1.5.8</springdoc-ui.version>
-		<springdoc-security.version>1.5.8</springdoc-security.version>
+		<springdoc-ui.version>1.5.9</springdoc-ui.version>
+		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.6</equalsverifier.version>
+		<equalsverifier.version>3.6.1</equalsverifier.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.3</pitest.version>
-		<pitest-junit5-plugin.version>0.12</pitest-junit5-plugin.version>
+		<pitest.version>1.6.6</pitest.version>
+		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
 		<maven-project-info-reports-plugin.version>3.1.2</maven-project-info-reports-plugin.version>
@@ -121,11 +121,11 @@
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
 		<checkstyle.version>8.42</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
-		<pmd.version>3.14.0</pmd.version>
+		<pmd-plugin.version>3.14.0</pmd-plugin.version>
+		<pmd.version>6.34.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
-		<linkcheck.version>1.2</linkcheck.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
 		<jdepend.version>2.0</jdepend.version>
@@ -342,11 +342,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>io.opentracing.contrib</groupId>
 			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
 			<version>3.3.1</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
@@ -458,21 +458,60 @@
 						<configLocation>scripts/ci/checkstyle.xml</configLocation>
 						<encoding>UTF-8</encoding>
 						<consoleOutput>true</consoleOutput>
-						<failsOnError>true</failsOnError>
+						<failOnViolation>true</failOnViolation>
 					</configuration>
 					<executions>
 						<execution>
 							<id>validate</id>
-							<phase>validate</phase>
+							<phase>verify</phase>
 							<goals>
 								<goal>check</goal>
 							</goals>
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>${pmd-plugin.version}</version>
+					<configuration>
+						<!-- enable incremental analysis -->
+						<analysisCache>true</analysisCache>
+						<rulesets>
+							<ruleset>./scripts/ci/pmd-rules.xml</ruleset>
+						</rulesets>
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-core</artifactId>
+							<version>${pmd.version}</version>
+						  </dependency>
+						  <dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-java</artifactId>
+							<version>${pmd.version}</version>
+						  </dependency>
+						  <dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-javascript</artifactId>
+							<version>${pmd.version}</version>
+						  </dependency>
+						  <dependency>
+							<groupId>net.sourceforge.pmd</groupId>
+							<artifactId>pmd-jsp</artifactId>
+							<version>${pmd.version}</version>
+						  </dependency>
+					</dependencies>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-plugin.version}</version>
+			</plugin>
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<version>${maven-dependency-plugin.version}</version>
@@ -552,6 +591,7 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
+								<exclude>docs/**</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
@@ -567,7 +607,7 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -586,8 +626,7 @@
 						<param>io.dataspaceconnector*</param>
 					</targetTests>
 					<excludedTestClasses>
-						<param>io.dataspaceconnector.model.*Persistence*</param>
-						<param>io.dataspaceconnector.ConnectorApplicationTests</param>
+						<param>**</param>
 					</excludedTestClasses>
 					<mutators>
 						<mutator>ALL</mutator>
@@ -595,9 +634,9 @@
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
 					<verbose>false</verbose>
-					<threads>2</threads>
+					<threads>4</threads>
 					<timestampedReports>false</timestampedReports>
-					<coverageThreshold>80</coverageThreshold>
+					<!-- <coverageThreshold>80</coverageThreshold> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -608,7 +647,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>tidy-maven-plugin</artifactId>
@@ -661,12 +700,12 @@
 						<configuration>
 							<rules>
 								<rule>
-									<element>BUNDLE</element>
+									<element>PACKAGE</element>
 									<limits>
 										<limit>
-											<counter>COMPLEXITY</counter>
+											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.0</minimum>
+											<minimum>40%</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -688,6 +727,7 @@
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<xmlOutput>true</xmlOutput>
+					<excludeFilterFile>./scripts/ci/spotbugs-excludes.xml</excludeFilterFile>
 					<plugins>
 						<plugin>
 							<groupId>com.h3xstream.findsecbugs</groupId>
@@ -700,7 +740,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -709,23 +748,11 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			<plugin>
+			<!-- TODO: Enable code checks on verify, at the moment 2021-05-21 there are 1323 violations -->
+<!-- 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd.version}</version>
-				<configuration>
-					<rulesets>
-						<ruleset>/category/java/bestpractices.xml</ruleset>
-						<ruleset>/category/java/codestyle.xml</ruleset>
-						<ruleset>/category/java/design.xml</ruleset>
-						<ruleset>/category/java/documentation.xml</ruleset>
-						<ruleset>/category/java/errorprone.xml</ruleset>
-						<ruleset>/category/java/multithreading.xml</ruleset>
-						<ruleset>/category/java/performance.xml</ruleset>
-						<ruleset>/category/java/security.xml</ruleset>
-					</rulesets>
-				</configuration>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -758,14 +785,24 @@
 				<version>${dms.version}</version>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-linkcheck-plugin</artifactId>
-				<version>${linkcheck.version}</version>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
 				<version>${taglist.version}</version>
+				<configuration>
+					<tagListOptions>
+						<tagClasses>
+						  <tagClass>
+							<displayName>TODO</displayName>
+							<tags>
+							  <tag>
+								<matchString>TODO</matchString>
+								<matchType>exact</matchType>
+							  </tag>
+							</tags>
+						  </tagClass>
+						</tagClasses>
+					  </tagListOptions>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -777,7 +814,12 @@
 				<artifactId>jdepend-maven-plugin</artifactId>
 				<version>${jdepend.version}</version>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+			  </plugin>
+			<plugin>
 				<groupId>org.pitest</groupId>
 				<artifactId>pitest-maven</artifactId>
 				<version>${pitest.version}</version>
@@ -788,7 +830,7 @@
 						</reports>
 					</reportSet>
 				</reportSets>
-			</plugin> -->
+			</plugin>
 		</plugins>
 	</reporting>
 
@@ -839,8 +881,7 @@
 						<configuration>
 							<showWarnings>true</showWarnings>
 							<showDeprecation>true</showDeprecation>
-							<failOnWarning>true</failOnWarning>
-							<failOnError>true</failOnError>
+							<failOnViolation>true</failOnViolation>
 
 							<compilerArgs>
 								<arg>-Xlint:all</arg>

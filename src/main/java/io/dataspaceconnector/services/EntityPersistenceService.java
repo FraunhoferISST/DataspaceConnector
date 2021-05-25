@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.services;
 
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.persistence.PersistenceException;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
@@ -41,15 +50,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+/**
+ * This service offers methods for saving contract agreements as well as metadata and data requested
+ * from other connectors to the database.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -58,8 +62,7 @@ public class EntityPersistenceService {
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for updating artifact data.
@@ -69,14 +72,12 @@ public class EntityPersistenceService {
     /**
      * Service for linking agreements and artifacts.
      */
-    private final @NonNull
-    RelationServices.AgreementArtifactLinker linker;
+    private final @NonNull RelationServices.AgreementArtifactLinker linker;
 
     /**
      * Service for contract processing.
      */
-    private final @NonNull
-    ContractManager contractManager;
+    private final @NonNull ContractManager contractManager;
 
     /**
      * Service for deserialization.
@@ -86,8 +87,7 @@ public class EntityPersistenceService {
     /**
      * Template builder.
      */
-    private final @NonNull
-    TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
+    private final @NonNull TemplateBuilder<RequestedResource, RequestedResourceDesc> tempBuilder;
 
     /**
      * Save contract agreement to database (consumer side).

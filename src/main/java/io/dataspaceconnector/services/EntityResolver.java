@@ -45,17 +45,22 @@ import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.io.InputStream;
 
+import org.springframework.stereotype.Service;
+
+/**
+ * This service offers methods for finding entities by their identifying URI.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -64,80 +69,67 @@ public class EntityResolver {
     /**
      * Service for artifacts.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * Service for representations.
      */
-    private final @NonNull
-    RepresentationService representationService;
+    private final @NonNull RepresentationService representationService;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull
-    ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     /**
      * Service for catalogs.
      */
-    private final @NonNull
-    CatalogService catalogService;
+    private final @NonNull CatalogService catalogService;
 
     /**
      * Service for contract offers.
      */
-    private final @NonNull
-    ContractService contractService;
+    private final @NonNull ContractService contractService;
 
     /**
      * Service for contract rules.
      */
-    private final @NonNull
-    RuleService ruleService;
+    private final @NonNull RuleService ruleService;
 
     /**
      * Service for contract agreements.
      */
-    private final @NonNull
-    AgreementService agreementService;
+    private final @NonNull AgreementService agreementService;
 
     /**
      * Service for building ids objects.
      */
-    private final @NonNull
-    IdsCatalogBuilder catalogBuilder;
+    private final @NonNull IdsCatalogBuilder catalogBuilder;
 
     /**
      * Service for building ids resource.
      */
-    private final @NonNull
-    IdsResourceBuilder<OfferedResource> offerBuilder;
+    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
      */
-    private final @NonNull
-    IdsArtifactBuilder artifactBuilder;
+    private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     /**
      * Service for building ids representation.
      */
-    private final @NonNull
-    IdsRepresentationBuilder representationBuilder;
+    private final @NonNull IdsRepresentationBuilder representationBuilder;
 
     /**
      * Service for building ids contract.
      */
-    private final @NonNull
-    IdsContractBuilder contractBuilder;
+    private final @NonNull IdsContractBuilder contractBuilder;
 
     /**
      * Skips the data access verification.
      */
-    private final @NonNull
-    AllowAccessVerifier allowAccessVerifier;
+    private final @NonNull AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
@@ -155,8 +147,11 @@ public class EntityResolver {
      * @param elementId The entity id.
      * @return The respective object.
      * @throws ResourceNotFoundException If the resource could not be found.
+     * @throws IllegalArgumentException If the resource is null or the elementId.
      */
     public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+        Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
+
         try {
             final var endpointId = EndpointUtils.getEndpointIdFromPath(elementId);
             final var basePath = endpointId.getBasePath();

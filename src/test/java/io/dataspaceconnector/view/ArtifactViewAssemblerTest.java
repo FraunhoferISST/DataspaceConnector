@@ -178,12 +178,12 @@ public class ArtifactViewAssemblerTest {
 
     private String getArtifactRepresentationsLink(final UUID artifactId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
-                .getResource(artifactId, null, null, null)).toString();
+                .getResource(artifactId, null, null)).toString();
     }
 
     private String getArtifactAgreementsLink(final UUID artifactId) {
         return linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
-                .getResource(artifactId, null, null, null)).toString();
+                .getResource(artifactId, null, null)).toString();
     }
 
 }

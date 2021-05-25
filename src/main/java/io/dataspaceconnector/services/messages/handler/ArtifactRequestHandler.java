@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import java.io.IOException;
-import java.net.URI;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -51,6 +48,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
+import java.io.IOException;
+import java.net.URI;
+
 /**
  * This @{@link ArtifactRequestHandler} handles all incoming messages that have a
  * {@link de.fraunhofer.iais.eis.ArtifactRequestMessageImpl} as part one in the multipart message.
@@ -66,14 +66,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Service for building and sending message responses.
      */
-    private final @NonNull
-    MessageResponseService responseService;
+    private final @NonNull MessageResponseService responseService;
 
     /**
      * Service for handling artifact response messages.
      */
-    private final @NonNull
-    ArtifactResponseService messageService;
+    private final @NonNull ArtifactResponseService messageService;
 
     /**
      * Service for resolving entities.
@@ -83,20 +81,17 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     /**
      * Service for connector usage control configurations.
      */
-    private final @NonNull
-    ConnectorConfiguration connectorConfig;
+    private final @NonNull ConnectorConfiguration connectorConfig;
 
     /**
      * Service for contract processing.
      */
-    private final @NonNull
-    ContractManager contractManager;
+    private final @NonNull ContractManager contractManager;
 
     /**
      * The verifier for the data access.
      */
-    private final @NonNull
-    DataProvisionVerifier accessVerifier;
+    private final @NonNull DataProvisionVerifier accessVerifier;
 
     /**
      * This message implements the logic that is needed to handle the message. As it returns the

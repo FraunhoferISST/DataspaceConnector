@@ -38,7 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @SpringBootTest(classes = {ContractRuleViewAssembler.class, ViewAssemblerHelper.class,
@@ -155,7 +154,7 @@ public class ContractRuleViewAssemblerTest {
 
     private String getContractRuleContractsLink(final UUID contractRuleId) {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RulesToContracts.class)
-                .getResource(contractRuleId, null, null, null)).toString();
+                .getResource(contractRuleId, null, null)).toString();
     }
 
 }

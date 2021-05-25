@@ -39,6 +39,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+/**
+ * This service offers method for updating entities.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor

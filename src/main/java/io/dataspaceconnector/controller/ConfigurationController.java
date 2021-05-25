@@ -15,20 +15,23 @@
  */
 package io.dataspaceconnector.controller;
 
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.minidev.json.JSONObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,11 +68,14 @@ public class ConfigurationController {
      * @param configuration The new configuration.
      * @return Ok or error response.
      */
-    @PostMapping("/configuration")
+    @PutMapping(value = "/configuration", consumes = {"application/json", "application/ld+json"},
+            produces = {"application/ld+json"})
     @Operation(summary = "Update current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "400", description = "Failed to deserialize."),
+            @ApiResponse(responseCode = "415", description = "Wrong media type."),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @ResponseBody
     public ResponseEntity<Object> updateConfiguration(@RequestBody final String configuration) {
@@ -79,7 +85,7 @@ public class ConfigurationController {
 
             // Update configuration of connector.
             configContainer.updateConfiguration(config);
-            return ResponseEntity.ok("Configuration successfully updated.");
+            return getConfiguration();
         } catch (ConfigurationUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
@@ -92,7 +98,7 @@ public class ConfigurationController {
      *
      * @return The configuration object or an error.
      */
-    @GetMapping(value = "/configuration", produces = "application/ld+json")
+    @GetMapping(value = "/configuration", produces = "application/json")
     @Operation(summary = "Get current configuration.")
     @Tag(name = "Connector", description = "Endpoints for connector information and configuration")
     @ApiResponses(value = {
@@ -114,19 +120,15 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping("/configuration/negotiation")
+    @PutMapping(value = "/configuration/negotiation", produces = "application/json")
     @Operation(summary = "Set contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
-    public ResponseEntity<Object> setNegotiationStatus(
+    public ResponseEntity<JSONObject> setNegotiationStatus(
             @RequestParam("status") final boolean status) {
         connectorConfig.setPolicyNegotiation(status);
-        if (connectorConfig.isPolicyNegotiation()) {
-            return ResponseEntity.ok("Contract Negotiation is activated.");
-        } else {
-            return ResponseEntity.ok("Contract Negotiation is deactivated.");
-        }
+        return getNegotiationStatus();
     }
 
     /**
@@ -134,17 +136,19 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping("/configuration/negotiation")
+    @GetMapping(value = "/configuration/negotiation", produces = "application/json")
     @Operation(summary = "Get contract negotiation status")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
-    public ResponseEntity<Object> getNegotiationStatus() {
-        if (connectorConfig.isPolicyNegotiation()) {
-            return ResponseEntity.ok("Contract Negotiation is activated.");
-        } else {
-            return ResponseEntity.ok("Contract Negotiation is deactivated.");
-        }
+    public ResponseEntity<JSONObject> getNegotiationStatus() {
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final var body = new JSONObject();
+        body.put("status", connectorConfig.isPolicyNegotiation());
+
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 
     /**
@@ -153,19 +157,16 @@ public class ConfigurationController {
      * @param status The desired state.
      * @return Http ok or error response.
      */
-    @PutMapping("/configuration/pattern")
+    @PutMapping(value = "/configuration/pattern", produces = "application/json")
     @Operation(summary = "Allow unsupported patterns", description = "Allow "
             + "requesting data without policy enforcement if an unsupported pattern is recognized.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
-    public ResponseEntity<Object> getPatternStatus(@RequestParam("status") final boolean status) {
+    public ResponseEntity<JSONObject> setPatternStatus(
+            @RequestParam("status") final boolean status) {
         connectorConfig.setAllowUnsupported(status);
-        if (connectorConfig.isAllowUnsupported()) {
-            return ResponseEntity.ok("Data can be accessed despite unsupported pattern.");
-        } else {
-            return ResponseEntity.ok("Data cannot be accessed with unsupported patterns.");
-        }
+        return getPatternStatus();
     }
 
     /**
@@ -173,17 +174,19 @@ public class ConfigurationController {
      *
      * @return Http ok or error response.
      */
-    @GetMapping("/configuration/pattern")
+    @GetMapping(value = "/configuration/pattern", produces = "application/json")
     @Operation(summary = "Get pattern validation status",
             description = "Return if unsupported patterns are ignored when requesting data.")
     @Tag(name = "Usage Control", description = "Endpoints for contract/policy handling")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
     @ResponseBody
-    public ResponseEntity<Object> getPatternStatus() {
-        if (connectorConfig.isAllowUnsupported()) {
-            return ResponseEntity.ok("Data can be accessed despite unsupported pattern.");
-        } else {
-            return ResponseEntity.ok("Data cannot be accessed with unsupported patterns.");
-        }
+    public ResponseEntity<JSONObject> getPatternStatus() {
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final var body = new JSONObject();
+        body.put("status", connectorConfig.isAllowUnsupported());
+
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 }

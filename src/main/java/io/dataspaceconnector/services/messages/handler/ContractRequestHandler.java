@@ -84,8 +84,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     /**
      * Service for resolving elements and its parents/children.
      */
-    private final @NonNull
-    EntityDependencyResolver dependencyResolver;
+    private final @NonNull EntityDependencyResolver dependencyResolver;
 
     /**
      * Service for persisting entities.
@@ -100,8 +99,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     /**
      * Service for validating rule content.
      */
-    private final @NonNull
-    RuleValidator ruleValidator;
+    private final @NonNull RuleValidator ruleValidator;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -242,7 +240,7 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
             final var desc = new ContractAgreementMessageDesc(issuer, messageId);
             final var header = agreementService.buildMessage(desc);
             if (log.isDebugEnabled()) {
-                log.debug("Contract request accepted. Saved agreement: " + agreementId);
+                log.debug("Contract request accepted. [agreementId=({})]", agreementId);
             }
 
             // Send ids response message.

@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
+import javax.validation.Valid;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -53,8 +53,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * This class contains all implementations of the {@link BaseResourceChildController}.
+ */
 public final class RelationControllers {
 
+    /**
+     * Offers the endpoints for managing the relations between rules and contracts.
+     */
     @RestController
     @RequestMapping("/api/rules/{id}/contracts")
     @Tag(name = "Rules", description = "Endpoints for linking rules to contracts")
@@ -62,6 +68,9 @@ public final class RelationControllers {
             RelationServices.RuleContractLinker, Contract, ContractView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between artifacts and representations.
+     */
     @RestController
     @RequestMapping("/api/artifacts/{id}/representations")
     @Tag(name = "Artifacts", description = "Endpoints for linking artifacts to representations")
@@ -69,6 +78,10 @@ public final class RelationControllers {
             RelationServices.ArtifactRepresentationLinker, Representation, RepresentationView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between representations and offered
+     * resources.
+     */
     @RestController
     @RequestMapping("/api/representations/{id}/offers")
     @Tag(name = "Representations", description = "Endpoints for linking representations to "
@@ -78,6 +91,10 @@ public final class RelationControllers {
             OfferedResourceView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between representations and requested
+     * resources.
+     */
     @RestController
     @RequestMapping("/api/representations/{id}/requests")
     @Tag(name = "Representations", description = "Endpoints for linking representations to "
@@ -87,6 +104,9 @@ public final class RelationControllers {
             RequestedResourceView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between offered resources and catalogs.
+     */
     @RestController
     @RequestMapping("/api/offers/{id}/catalogs")
     @Tag(name = "Resources", description = "Endpoints for linking offered resources to catalogs")
@@ -94,6 +114,9 @@ public final class RelationControllers {
             RelationServices.OfferedResourceCatalogLinker, Catalog, CatalogView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between requested resources and catalogs.
+     */
     @RestController
     @RequestMapping("/api/requests/{id}/catalogs")
     @Tag(name = "Resources", description = "Endpoints for linking requested resources to catalogs")
@@ -101,6 +124,9 @@ public final class RelationControllers {
             RelationServices.RequestedResourceCatalogLinker, Catalog, CatalogView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between contracts and offered resources.
+     */
     @RestController
     @RequestMapping("/api/contracts/{id}/offers")
     @Tag(name = "Contracts", description = "Endpoints for linking contracts to offers")
@@ -109,6 +135,9 @@ public final class RelationControllers {
             OfferedResourceView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between contracts and requested resources.
+     */
     @RestController
     @RequestMapping("/api/contracts/{id}/requests")
     @Tag(name = "Contracts", description = "Endpoints for linking contracts to requests")
@@ -117,6 +146,9 @@ public final class RelationControllers {
             RequestedResourceView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between artifacts and agreements.
+     */
     @RestController
     @RequestMapping("/api/artifacts/{id}/agreements")
     @Tag(name = "Artifacts", description = "Endpoints for linking artifacts to agreements")
@@ -150,6 +182,9 @@ public final class RelationControllers {
         }
     }
 
+    /**
+     * Offers the endpoints for managing the relations between agreements and artifacts.
+     */
     @RestController
     @RequestMapping("/api/agreements/{id}/artifacts")
     @Tag(name = "Agreements", description = "Endpoints for linking agreements to artifacts")
@@ -183,6 +218,9 @@ public final class RelationControllers {
         }
     }
 
+    /**
+     * Offers the endpoints for managing the relations between representations and artifacts.
+     */
     @RestController
     @RequestMapping("/api/representations/{id}/artifacts")
     @Tag(name = "Representations", description = "Endpoints for linking artifacts to "
@@ -192,6 +230,9 @@ public final class RelationControllers {
             Artifact, ArtifactView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between contracts and rules.
+     */
     @RestController
     @RequestMapping("/api/contracts/{id}/rules")
     @Tag(name = "Contracts", description = "Endpoints for linking rules to contracts")
@@ -199,6 +240,9 @@ public final class RelationControllers {
             RelationServices.ContractRuleLinker, ContractRule, ContractRuleView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between catalogs and offered resources.
+     */
     @RestController
     @RequestMapping("/api/catalogs/{id}/offers")
     @Tag(name = "Catalogs", description = "Endpoints for linking offered resources to catalogs")
@@ -206,6 +250,9 @@ public final class RelationControllers {
             AbstractCatalogResourceLinker<OfferedResource>, OfferedResource, OfferedResourceView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between offered resources and contracts.
+     */
     @RestController
     @RequestMapping("/api/offers/{id}/contracts")
     @Tag(name = "Resources", description = "Endpoints for linking contracts to resources")
@@ -214,6 +261,10 @@ public final class RelationControllers {
             Contract, ContractView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between offered resources and
+     * representations.
+     */
     @RestController
     @RequestMapping("/api/offers/{id}/representations")
     @Tag(name = "Resources", description = "Endpoints for linking representations to resources")
@@ -222,6 +273,9 @@ public final class RelationControllers {
             OfferedResource>, Representation, RepresentationView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between requested resources and contracts.
+     */
     @RestController
     @RequestMapping("/api/requests/{id}/contracts")
     @Tag(name = "Resources", description = "Endpoints for linking contracts to resources")
@@ -230,6 +284,10 @@ public final class RelationControllers {
             Contract, ContractView> {
     }
 
+    /**
+     * Offers the endpoints for managing the relations between requested resources and
+     * representations.
+     */
     @RestController
     @RequestMapping("/api/requests/{id}/representations")
     @Tag(name = "Resources", description = "Endpoints for linking representations to resources")

@@ -44,14 +44,12 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
     /**
      * Used for sending an artifact request message.
      */
-    private final @NonNull
-    ArtifactRequestService messageService;
+    private final @NonNull ArtifactRequestService messageService;
 
     /**
      * Used for accessing artifacts and their data.
      */
-    private final @NonNull
-    ArtifactService artifactService;
+    private final @NonNull ArtifactService artifactService;
 
     /**
      * {@inheritDoc}
@@ -75,7 +73,7 @@ public class BlockingArtifactReceiver implements ArtifactRetriever {
         if (!messageService.validateResponse(response)) {
             final var content = messageService.getResponseContent(response);
             if (log.isDebugEnabled()) {
-                log.debug("Data could not be loaded: \n" + content);
+                log.debug("Data could not be loaded. [content=({})]", content);
             }
 
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);

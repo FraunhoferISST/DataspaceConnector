@@ -23,6 +23,9 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+/**
+ * This component is responsible for updating artifacts when an IDS artifact is provided.
+ */
 @Component
 @RequiredArgsConstructor
 public class ArtifactUpdater

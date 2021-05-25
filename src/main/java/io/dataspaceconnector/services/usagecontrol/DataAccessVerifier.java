@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
+import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
@@ -31,6 +32,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+/**
+ * A {@link PolicyVerifier} implementation that checks whether data access should be allowed.
+ */
 @Component
 @Log4j2
 @RequiredArgsConstructor
@@ -118,6 +122,12 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 log.debug("Data access denied. [input=({})]", input, exception);
             }
             return VerificationResult.DENIED;
+        } catch (PolicyExecutionException e) {
+            // If message could not be sent, ignore and provide access anyway.
+            if (log.isDebugEnabled()) {
+                log.debug("[exception=({}), input=({})]", e.getMessage(), input, e);
+            }
+            return VerificationResult.ALLOWED;
         }
     }
 }

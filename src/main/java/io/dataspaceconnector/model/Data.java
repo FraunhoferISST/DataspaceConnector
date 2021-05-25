@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,6 +30,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * The interface for describing data in the backend.
@@ -36,6 +39,8 @@ import lombok.ToString;
 @Entity
 @Inheritance
 @Table(name = "data")
+@SQLDelete(sql = "UPDATE data SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.NONE)
 @EqualsAndHashCode
@@ -50,4 +55,11 @@ public class Data {
     @JsonIgnore
     @ToString.Exclude
     private Long id;
+
+    /**
+     * Whether this entity is considered deleted.
+     */
+    @Column(name = "deleted")
+    private boolean deleted;
+
 }

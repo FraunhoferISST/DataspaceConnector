@@ -16,6 +16,7 @@
 package io.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
@@ -51,8 +52,7 @@ public class PolicyExecutionService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull
-    ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorService;
 
     /**
      * Service for ids notification messages.
@@ -71,10 +71,9 @@ public class PolicyExecutionService {
      */
     public void sendAgreement(final ContractAgreement agreement) {
         try {
-            final var rdf = IdsUtils.toRdf(agreement);
             final var recipient = connectorConfig.getClearingHouse();
             if (!recipient.equals(URI.create(""))) {
-                logMessageService.sendMessage(recipient, rdf);
+                logMessageService.sendMessage(recipient, IdsUtils.toRdf(agreement));
             }
         } catch (PolicyExecutionException | RdfBuilderException exception) {
             if (log.isWarnEnabled()) {
@@ -92,10 +91,8 @@ public class PolicyExecutionService {
      */
     public void logDataAccess(final URI target) throws PolicyExecutionException {
         final var recipient = connectorConfig.getClearingHouse();
-        final var logItem = buildLog(target).toString();
-
         if (!recipient.equals(URI.create(""))) {
-            logMessageService.sendMessage(recipient, logItem);
+            logMessageService.sendMessage(recipient, buildLog(target).toString());
         }
     }
 
@@ -108,7 +105,9 @@ public class PolicyExecutionService {
      */
     public void reportDataAccess(final Rule rule, final URI element)
             throws PolicyExecutionException {
-        final var recipient = RuleUtils.getEndpoint(rule);
+        final var postDuty = ((Permission) rule).getPostDuty().get(0);
+        final var recipient = RuleUtils.getEndpoint(postDuty);
+
         final var logItem = buildLog(element).toString();
 
         notificationService.sendMessage(URI.create(recipient), logItem);

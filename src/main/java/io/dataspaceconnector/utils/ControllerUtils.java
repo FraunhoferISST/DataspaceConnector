@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.Map;
+
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -29,6 +29,9 @@ import java.util.Map;
 @Log4j2
 public final class ControllerUtils {
 
+    /**
+     * Default constructor.
+     */
     private ControllerUtils() {
         // not used
     }
@@ -83,18 +86,18 @@ public final class ControllerUtils {
     }
 
     /**
-     * Creates a ResponseEntity with status code 500 and a message indicating that an input could
+     * Creates a ResponseEntity with status code 400 and a message indicating that an input could
      * not be deserialized.
      *
      * @param exception The exception that was thrown.
-     * @return ResponseEntity with status code 500.
+     * @return ResponseEntity with status code 400.
      */
     public static ResponseEntity<Object> respondDeserializationError(final Exception exception) {
         if (log.isWarnEnabled()) {
             log.warn("Failed to deserialize the object. [exception=({})]",
                     exception.getMessage(), exception);
         }
-        return new ResponseEntity<>("Failed to update.", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Failed to update.", HttpStatus.BAD_REQUEST);
     }
 
     /**

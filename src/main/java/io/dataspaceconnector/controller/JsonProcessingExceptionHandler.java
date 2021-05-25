@@ -18,7 +18,11 @@ package io.dataspaceconnector.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
 
+import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,12 +42,19 @@ public class JsonProcessingExceptionHandler {
      * @return A http response.
      */
     @ExceptionHandler(JsonProcessingException.class)
-    public ResponseEntity<String> handleJsonProcessingException(
+    public ResponseEntity<JSONObject> handleJsonProcessingException(
             final JsonProcessingException exception) {
         if (log.isWarnEnabled()) {
             log.warn("Invalid input. [exception=({})]", exception == null ? ""
                     : exception.getMessage());
         }
-        return ResponseEntity.badRequest().body("Invalid input.");
+
+        final var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        final var body = new JSONObject();
+        body.put("message", "Invalid input.");
+
+        return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
     }
 }
