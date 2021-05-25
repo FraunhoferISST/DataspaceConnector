@@ -588,6 +588,8 @@
 								<exclude>**/.dockerignore</exclude>
 								<exclude>charts/dataspace-connector/Chart.lock</exclude>
 								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<exclude>**/*.tgz</exclude>
+								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
 							</excludes>
 						</licenseSet>
