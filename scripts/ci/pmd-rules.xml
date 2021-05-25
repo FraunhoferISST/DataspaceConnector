@@ -25,10 +25,15 @@
     </description>
 
     <rule ref="category/java/bestpractices.xml"></rule>
-    <rule ref="category/java/codestyle.xml"></rule>
+    <rule ref="category/java/codestyle.xml">
+        <!-- Small methods are only bloated, big methods should raise eyebrows in code review -->
+        <exclude name="OnlyOneReturn"/>
+        <!-- Too many false positives -->
+        <exlucde name="LongVariable"/>
+    </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling"/>
-        <!-- TODO: At the moment there are too many false postives especilly with streams -->
+        <!-- TODO: At the moment there are too many false positives especially with streams -->
         <exclude name="LawOfDemeter"/>
     </rule>
     <rule ref="category/java/documentation.xml"></rule>

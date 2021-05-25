@@ -31,3 +31,9 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/resources/conf/
+
+### Helm ###
+*.tgz
+
+### precommit ###
+.pre-commit-config.yaml

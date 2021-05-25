@@ -1,0 +1,60 @@
+#
+# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Default values for dataspace-connector.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/international-data-spaces-association/dataspace-connector
+  pullPolicy: IfNotPresent
+
+env:
+  config:
+    SPRING_DATASOURCE_PLATFORM: "postgres"
+    SPRING_DATASOURCE_URL: "jdbc:postgresql://dsc-postgresql-headless:5432/test"
+    SPRING_DATASOURCE_DRIVER-CLASS-NAME: "org.postgresql.Driver"
+    SPRING_JPA_DATABASE-PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+    # CONFIGURATION_PATH: "file:///connector-certs/config.json"
+  secrets:
+    SPRING_DATASOURCE_USERNAME: "postgres"
+    SPRING_DATASOURCE_PASSWORD: "password"
+
+postgresql:
+  postgresqlPassword: "password"
+  postgresqlDatabase: "test"
+
+imagePullSecrets: []
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
