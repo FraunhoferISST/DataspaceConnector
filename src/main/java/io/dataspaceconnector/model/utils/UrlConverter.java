@@ -21,14 +21,30 @@ import javax.persistence.Converter;
 
 import lombok.SneakyThrows;
 
+/**
+ * A converter for converting URLs to strings and strings to URLs. Used for persisting entity
+ * attributes of type URL.
+ */
 @Converter
 public class UrlConverter implements AttributeConverter<URL, String> {
 
+    /**
+     * Converts a URL to a string.
+     *
+     * @param url the URL.
+     * @return string representation of the URL.
+     */
     @Override
     public String convertToDatabaseColumn(final URL url) {
         return url != null ? url.toString() : null;
     }
 
+    /**
+     * Converts a string to a URI.
+     *
+     * @param string the string.
+     * @return URL representation of the string.
+     */
     @Override
     @SneakyThrows
     public URL convertToEntityAttribute(final String string) {

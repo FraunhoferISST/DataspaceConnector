@@ -19,14 +19,30 @@ import java.net.URI;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
+/**
+ * A converter for converting URIs to strings and strings to URIs. Used for persisting entity
+ * attributes of type URI.
+ */
 @Converter
 public class UriConverter implements AttributeConverter<URI, String> {
 
+    /**
+     * Converts a URI to a string.
+     *
+     * @param uri the URI.
+     * @return string representation of the URI.
+     */
     @Override
     public String convertToDatabaseColumn(final URI uri) {
         return uri != null ? uri.toString() : null;
     }
 
+    /**
+     * Converts a string to a URI.
+     *
+     * @param string the string.
+     * @return URI representation of the string.
+     */
     @Override
     public URI convertToEntityAttribute(final String string) {
         return string == null ? null : URI.create(string);
