@@ -17,6 +17,7 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
@@ -54,6 +55,7 @@ public class ContractRule extends AbstractEntity {
      * The rule id on provider side.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = 2048)
     private URI remoteId;
 
     /**

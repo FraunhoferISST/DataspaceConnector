@@ -55,18 +55,21 @@ public class Contract extends AbstractEntity {
      * The contract id on provider side.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = 2048)
     private URI remoteId;
 
     /**
      * The consumer signing the contract.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = 2048)
     private URI consumer;
 
     /**
      * The provider signing the contract.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = 2048)
     private URI provider;
 
     /**

@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model;
 
 import java.net.URL;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 
@@ -43,6 +44,7 @@ public class RemoteData extends Data {
      * Access url of the backend.
      */
     @Convert(converter = UrlConverter.class)
+    @Column(length = 2048)
     private URL accessUrl;
 
     /**
