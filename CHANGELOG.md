@@ -1,10 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.x]
+## [5.x.x] - XXXX-XX-XX
 
+### Added
+ - Add telemetry collection via Jaeger.
+ 
 ### Changed
-- Increase length restriction for URIs in database columns to 2048.
+ - Replace deprecated JPA calls (`getOne` -> `getById`).
+ - Increase length restriction for URIs in database columns to 2048.
+
+### Fixed
+ - Representations have now only one self-link.
 
 ## [5.0.2] - 2021-05-25
 
