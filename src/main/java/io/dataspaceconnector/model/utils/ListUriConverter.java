@@ -9,34 +9,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A converter for converting list of uris to a string or to convert a string to a list of uris.
+ * A converter for converting list of uris to a list of strings or to convert a list of strings to a list of uris.
  */
 @Converter
 @NoArgsConstructor
-public class ListUriConverter implements AttributeConverter<List<URI>, String> {
+public class ListUriConverter implements AttributeConverter<List<URI>, List<String>> {
 
     /**
-     * Converts a list of uri to a string.
+     * Converts a list of uris to a string.
      *
      * @param uriList List of uris.
-     * @return String representation of the list.
+     * @return List of string representing uris.
      */
     @Override
-    public String convertToDatabaseColumn(final List<URI> uriList) {
-        return String.join(",", uriList.toString());
+    public List<String> convertToDatabaseColumn(final List<URI> uriList) {
+        final var list = new ArrayList<String>();
+        for (var uri : uriList) {
+            list.add(uri.toString());
+        }
+        return list;
     }
 
     /**
-     * Converts the string representation to a list of uri.
+     * Converts a list of strings to a list of uri.
      *
-     * @param joinedList String representation of the list.
+     * @param joinedList List of uris in string representation.
      * @return List of uri.
      */
     @Override
-    public List<URI> convertToEntityAttribute(final String joinedList) {
-        final var strings = joinedList.split(",");
+    public List<URI> convertToEntityAttribute(final List<String> joinedList) {
         final ArrayList<URI> uriList = new ArrayList<>();
-        for (var s : strings) {
+        for (var s : joinedList) {
             uriList.add(URI.create(s));
         }
         return uriList;
