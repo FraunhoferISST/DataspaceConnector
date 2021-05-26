@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ### [5.x.x] - XXXX-XX-XX
+
+### Added
+ - Add telemetry collection via Jaeger.
  
 ### Changed
  - Replace deprecated JPA calls (`getOne` -> `getById`).
