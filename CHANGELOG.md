@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+### [5.x] - XXX-XX-XX
+
+### Changed
+ - Replace deprecated jpa calls (getOne -> getById).
+
 ### [5.0.2] - 2021-05-25
 
 ### Changed

@@ -93,7 +93,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             } else {
                 // The data element exists already, check if an update is
                 // required
-                final var storedCopy = dataRepo.getOne(tmp.getData().getId());
+                final var storedCopy = dataRepo.getById(tmp.getData().getId());
                 if (!storedCopy.equals(tmp.getData())) {
                     dataRepo.saveAndFlush(tmp.getData());
                 }
