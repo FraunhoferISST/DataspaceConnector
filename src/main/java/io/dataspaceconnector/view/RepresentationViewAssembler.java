@@ -53,10 +53,6 @@ public class RepresentationViewAssembler
         final var view = modelMapper.map(representation, RepresentationView.class);
         view.add(getSelfLink(representation.getId()));
 
-        final var selfLink =
-                linkTo(RepresentationController.class).slash(representation.getId()).withSelfRel();
-        view.add(selfLink);
-
         final var artifactsLink =
                 WebMvcLinkBuilder
                         .linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
