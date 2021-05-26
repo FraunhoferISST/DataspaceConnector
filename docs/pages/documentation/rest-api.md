@@ -23,19 +23,18 @@ modified at any time.
 
 Overview of all available endpoints reduced to generic endpoints:
 
-| Method | Endpoint | Usage | Returns  |
-| :----- | :------------- | :-------------| :-----|
-| GET | / | Get the connector | connector |
-| |
-| POST | /Ts | Create a T | - |
-| GET | /Ts | Get a list of all T | Ts |
-| GET | /Ts/{​​​​id}​​​​ | Get a T | T |
-| PUT | /Ts/{​​​​id}​​​​ | Change a T's details | - |
-| DELETE | /Ts/{​​​​id}​​​​ | Remove a T | - |
-| GET | /Ts/{​​​​id}​​​​/Xs | Get a T's Xs | Xs |
-| POST | /Ts/{​​​​id}​​​​/Xs | Add Xs to the T | - |
-| PUT | /Ts/{​​​​id}​​​​/Xs | Replace Xs of the T | - |
-| DELETE | /Ts/{​​​​id}​​​​/Xs | Remove Xs from the T | - |
+| Method | Endpoint    | Usage                | Returns   |
+| :----- | :---------- | :------------------- | :-----    |
+| GET    | /           | Get the connector    | connector |
+| POST   | /Ts         | Create a T           | -         |
+| GET    | /Ts         | Get a list of all T  | Ts        |
+| GET    | /Ts/{id}    | Get a T              | T         |
+| PUT    | /Ts/{id}    | Change a T's details | -         |
+| DELETE | /Ts/{id}    | Remove a T           | -         |
+| GET    | /Ts/{id}/Xs | Get a T's Xs         | Xs        |
+| POST   | /Ts/{id}/Xs | Add Xs to the T      | -         |
+| PUT    | /Ts/{id}/Xs | Replace Xs of the T  | -         |
+| DELETE | /Ts/{id}/Xs | Remove Xs from the T | -         |
 
 CRUD endpoints allow the creation and modification of both individual entities and the relations 
 between objects - starting from the child and the parent.

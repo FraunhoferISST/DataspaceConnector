@@ -17,7 +17,7 @@ See how to consume data with the Dataspace Connector.
 
 The connector provides an endpoint for requesting its self-description.
 The self-description is returned as JSON-LD and contains several information about the running
-connector instance. This includes e.g. the title, the maintainer, the IDS Informodel version, and
+connector instance. This includes e.g. the title, the maintainer, the IDS Infomodel version, and
 the resource catalog. At the public endpoint `/`, the resource catalog is not displayed. It can only
 be accessed with admin credentials at `GET /api/connector` or by sending an IDS description request
 message as explained [here](consumer.md#step-1-request-a-connectors-self-description)).
@@ -108,7 +108,7 @@ the same description request endpoint and put the value of `@id` as requested el
 
 If your DAT within the `DescriptionRequestMessage` was not valid, the requested element could not be 
 found, or any other error occurred, you will receive a `RejectionMessage` with an according 
-rejection reason from the provider connector.
+rejection reason from the provider connector. E.g.:
 
 ````json
 {
@@ -379,6 +379,14 @@ used.
 Either way, the requested and downloaded data will be stored in the database as a bytestream and
 is automatically decoded on an API call.
 
+---
+**Parametrized Data Request**
+
+If the provider allows to query the data that you want to consume, you are able to make generic
+`GET` requests on `/api/artifacts/{id}/data/**`. Any request headers, parameters, or path variables
+will be forwarded to the provider and you will only receive a snapshot of the offered data string.
+
+---
 
 ## Policy Enforcement
 
@@ -400,9 +408,3 @@ usage control is executed and the concerned data is deleted.
 If the Dataspace Connector receives a `ResourceUpdateMessage` for a known requested resource, it 
 automatically sends a `DescriptionRequestMessage` and an `ArtifactRequestMessage` to retrieve the
 latest metadata and data.
-
-## Parametrized Data Request
-
-If the provider allows to query the data that you want to consume, you are able to make generic 
-`GET` requests on `/api/artifacts/{id}/data/**`. Any request headers, parameters, or path variables
-will be forwarded to the provider and you will only receive a snapshot of the offered data string.
