@@ -2,9 +2,12 @@
 All notable changes to this project will be documented in this file.
 
 ### [5.x.x] - XXXX-XX-XX
+ 
+### Changed
+ - Replace deprecated JPA calls (`getOne` -> `getById`).
 
 ### Fixed
- - Representations have now only one self link.
+ - Representations have now only one self-link.
 
 ### [5.0.2] - 2021-05-25
 
