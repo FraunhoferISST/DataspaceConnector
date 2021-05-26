@@ -1,14 +1,13 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.net.URI;
 
 /**
@@ -30,6 +29,7 @@ public class AppEndpoint extends Endpoint {
     /**
      * The access url of the endpoint.
      */
+    @Convert(converter = UriConverter.class)
     private URI accessURL;
 
     /**

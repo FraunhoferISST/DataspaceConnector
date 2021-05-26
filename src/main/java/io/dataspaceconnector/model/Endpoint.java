@@ -1,9 +1,11 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.Table;
@@ -31,6 +33,7 @@ public class Endpoint extends AbstractEntity {
     /**
      * The documentation for the endpoint.
      */
+    @Convert(converter = UriConverter.class)
     private URI endpointDocumentation;
 
     /**

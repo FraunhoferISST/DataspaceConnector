@@ -1,13 +1,11 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.time.ZonedDateTime;
 
@@ -32,6 +30,7 @@ public class Connector extends AbstractEntity {
     /**
      * The access url of the connector.
      */
+    @Convert(converter = UriConverter.class)
     private URI accessUrl;
 
     /**

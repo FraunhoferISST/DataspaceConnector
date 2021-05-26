@@ -1,13 +1,12 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.utils.ListUriConverter;
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.net.URI;
 import java.util.List;
 
@@ -32,12 +31,13 @@ public class Proxy extends AbstractEntity {
     /**
      * The proxy uri.
      */
+    @Convert(converter = UriConverter.class)
     private URI proxyURI;
 
     /**
      * List of no proxy uris.
      */
-    @ElementCollection
+    @Convert(converter = ListUriConverter.class)
     private List<URI> noProxyURI;
 
     /**

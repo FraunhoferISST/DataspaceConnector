@@ -1,5 +1,6 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -30,6 +31,7 @@ public class Broker extends AbstractEntity {
     /**
      * The access url of the broker.
      */
+    @Convert(converter = UriConverter.class)
     private URI accessUrl;
 
     /**
