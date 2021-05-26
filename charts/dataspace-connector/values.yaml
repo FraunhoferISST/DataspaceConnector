@@ -14,30 +14,24 @@
 # limitations under the License.
 #
 
-# Default values for dataspace-connector.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
   repository: ghcr.io/international-data-spaces-association/dataspace-connector
   pullPolicy: IfNotPresent
 
-env:
-  config:
-    SPRING_DATASOURCE_PLATFORM: "postgres"
-    SPRING_DATASOURCE_URL: "jdbc:postgresql://dsc-postgresql-headless:5432/test"
-    SPRING_DATASOURCE_DRIVER-CLASS-NAME: "org.postgresql.Driver"
-    SPRING_JPA_DATABASE-PLATFORM: "org.hibernate.dialect.PostgreSQLDialect"
+env: {}
+  # config:
     # CONFIGURATION_PATH: "file:///connector-certs/config.json"
-  secrets:
-    SPRING_DATASOURCE_USERNAME: "postgres"
-    SPRING_DATASOURCE_PASSWORD: "password"
+  # secrets:
+    # Some secrets
 
 postgresql:
-  postgresqlPassword: "password"
+  postgresqlUsername: "password"
+  postgresqlPassword: "username"
   postgresqlDatabase: "test"
+  service:
+    port: "5432"
 
 imagePullSecrets: []
 
