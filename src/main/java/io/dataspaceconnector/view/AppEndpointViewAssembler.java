@@ -17,12 +17,12 @@ public class AppEndpointViewAssembler implements
         RepresentationModelAssembler<AppEndpoint, AppEndpointView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(UUID entityId) {
+    public Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, AppEndpointController.class);
     }
 
     @Override
-    public AppEndpointView toModel(AppEndpoint appEndpoint) {
+    public AppEndpointView toModel(final AppEndpoint appEndpoint) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(appEndpoint, AppEndpointView.class);
         view.add(getSelfLink(appEndpoint.getId()));
