@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model;
 
 import java.net.URL;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 
@@ -28,6 +29,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * Bundles information needed for accessing remote backends.
  */
@@ -39,10 +42,12 @@ import org.hibernate.annotations.Where;
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class RemoteData extends Data {
+
     /**
      * Access url of the backend.
      */
     @Convert(converter = UrlConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URL accessUrl;
 
     /**
