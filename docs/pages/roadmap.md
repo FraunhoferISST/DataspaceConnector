@@ -17,5 +17,5 @@ Ensuring developments following the same goal, the project's roadmap and each as
 
 ---
 
-In this section you will find planned features and the ones that are specified by the IDS 
+In this section, you will find planned features and the ones that are specified by the IDS 
 certification criteria.
