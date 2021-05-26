@@ -33,6 +33,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * A contract documents access and usage behaviours.
  */
@@ -55,21 +57,21 @@ public class Contract extends AbstractEntity {
      * The contract id on provider side.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
      * The consumer signing the contract.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI consumer;
 
     /**
      * The provider signing the contract.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI provider;
 
     /**

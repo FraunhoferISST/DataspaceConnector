@@ -33,6 +33,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * A contract agreement is an agreement between two parties on access
  * and usage behaviours.
@@ -56,7 +58,7 @@ public class Agreement extends AbstractEntity {
      * The agreement id on provider side.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**

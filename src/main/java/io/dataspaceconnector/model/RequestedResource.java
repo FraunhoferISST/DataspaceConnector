@@ -30,6 +30,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * Describes resource requested by this connector.
  */
@@ -50,7 +52,7 @@ public final class RequestedResource extends Resource {
      * The resource id on provider side.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**

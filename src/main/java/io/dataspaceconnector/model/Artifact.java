@@ -33,6 +33,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * An artifact stores and encapsulates data.
  */
@@ -56,14 +58,14 @@ public abstract class Artifact extends AbstractEntity {
      * The artifact id on provider side.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
      * The provider's address for artifact request messages.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteAddress;
 
     /**

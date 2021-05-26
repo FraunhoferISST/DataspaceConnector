@@ -33,6 +33,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+
 /**
  * A ContractRule defines a rule that should be enforced.
  */
@@ -55,7 +57,7 @@ public class ContractRule extends AbstractEntity {
      * The rule id on provider side.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = 2048)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
