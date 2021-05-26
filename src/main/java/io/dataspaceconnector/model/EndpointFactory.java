@@ -3,7 +3,6 @@ package io.dataspaceconnector.model;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
@@ -49,7 +48,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @param desc The description passed to the factory.
      * @return The new resource.
      */
-    protected abstract T createInternal(D desc);
+    protected abstract T createInternal(final D desc);
 
     /**
      * @param endpoint The entity to be updated.
@@ -69,8 +68,8 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, endpoint.getOutboundPath());
         final var hasUpdatedEndpointType = updateEndpointType(endpoint, endpoint.getEndpointType());
 
-        return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath || hasUpdatedOutboundPath
-                || hasUpdatedEndpointType;
+        return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath
+                || hasUpdatedOutboundPath || hasUpdatedEndpointType;
     }
 
     /**
@@ -78,7 +77,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @param endpointType The endpoint type.
      * @return True, if endpoint is updated.
      */
-    private boolean updateEndpointType(Endpoint endpoint, EndpointType endpointType) {
+    private boolean updateEndpointType(final Endpoint endpoint, final EndpointType endpointType) {
         final boolean updated;
         if (endpoint.getEndpointType().equals(endpointType)) {
             updated = false;
@@ -135,10 +134,10 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @return True, if endpoint documentation is updated.
      */
     private boolean updateEndpointDocumentation(final Endpoint endpoint, final URI endpointDocumentation) {
-        final var newDocumenation = MetadataUtils.updateUri(endpoint.getEndpointDocumentation(),
+        final var newDocumentation = MetadataUtils.updateUri(endpoint.getEndpointDocumentation(),
                 endpointDocumentation, DEFAULT_URI);
-        newDocumenation.ifPresent(endpoint::setEndpointDocumentation);
+        newDocumentation.ifPresent(endpoint::setEndpointDocumentation);
 
-        return newDocumenation.isPresent();
+        return newDocumentation.isPresent();
     }
 }

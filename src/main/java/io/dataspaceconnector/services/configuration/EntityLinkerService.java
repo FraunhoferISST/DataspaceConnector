@@ -6,7 +6,6 @@ import io.dataspaceconnector.services.resources.OwningRelationService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -113,44 +112,58 @@ public final class EntityLinkerService {
     }
 
     /**
-     * ToDO: Discuss how it could be solved with the @Service Annotation
      * Handles the relation between the route and start endpoint.
      */
     @Service
     @NoArgsConstructor
-    public static class RouteStartEndpointLinker
-            extends OwningRelationService<Route, Endpoint, RouteService,
-            EndpointService<Endpoint, EndpointDesc<Endpoint>>> {
+    public static class RouteStartGenericEndpointLinker
+            extends OwningRelationService<Route, GenericEndpoint, RouteService, GenericEndpointService> {
 
         @Override
-        protected List<Endpoint> getInternal(final Route owner) {
-            var endpoints = new ArrayList<Endpoint>();
-            if (EndpointType.GENERIC_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())
-                    || EndpointType.IDS_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())) {
-                endpoints = (ArrayList<Endpoint>) List.of(owner.getStartEndpoint());
-            }
-            return endpoints;
+        protected List<GenericEndpoint> getInternal(final Route owner) {
+            return List.of(owner.getStartGenericEndpoint());
         }
     }
 
     /**
-     * ToDO: Discuss how it could be solved with the @Service Annotation
-     * Handles the relation between the route and the last endpoint.
+     * Handles the relation between the route and last endpoint.
      */
     @Service
     @NoArgsConstructor
-    public static class RouteEndEndpointLinker
-            extends OwningRelationService<Route, Endpoint, RouteService,
-            EndpointService<Endpoint, EndpointDesc<Endpoint>>> {
+    public static class RouteEndGenericEndpointLinker
+            extends OwningRelationService<Route, GenericEndpoint, RouteService, GenericEndpointService> {
 
         @Override
-        protected List<Endpoint> getInternal(final Route owner) {
-            var endpoints = new ArrayList<Endpoint>();
-            if (EndpointType.GENERIC_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())
-                    || EndpointType.IDS_ENDPOINT.equals(owner.getStartEndpoint().getEndpointType())) {
-                endpoints = (ArrayList<Endpoint>) List.of(owner.getEndEndpoint());
-            }
-            return endpoints;
+        protected List<GenericEndpoint> getInternal(final Route owner) {
+            return List.of(owner.getEndGenericEndpoint());
+        }
+    }
+
+    /**
+     * Handles the relation between the route and start endpoint.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RouteStartIDSEndpointLinker
+            extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
+
+        @Override
+        protected List<IdsEndpoint> getInternal(final Route owner) {
+            return List.of(owner.getStartIdsEndpoint());
+        }
+    }
+
+    /**
+     * Handles the relation between the route and last endpoint.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RouteEndIDSEndpointLinker
+            extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
+
+        @Override
+        protected List<IdsEndpoint> getInternal(final Route owner) {
+            return List.of(owner.getEndIdsEndpoint());
         }
     }
 

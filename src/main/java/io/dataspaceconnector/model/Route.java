@@ -43,16 +43,28 @@ public class Route extends AbstractEntity {
     private String routeConfiguration;
 
     /**
-     * The start endpoint of the route.
+     * The possible start endpoint of the route.
      */
     @OneToOne
-    private Endpoint startEndpoint;
+    private GenericEndpoint startGenericEndpoint;
 
     /**
-     * The last endpoint of the route.
+     * The possible last endpoint of the route.
      */
     @OneToOne
-    private Endpoint endEndpoint;
+    private GenericEndpoint endGenericEndpoint;
+
+    /**
+     * The possible start endpoint of the route.
+     */
+    @OneToOne
+    private IdsEndpoint startIdsEndpoint;
+
+    /**
+     * The possible last endpoint of the route.
+     */
+    @OneToOne
+    private IdsEndpoint endIdsEndpoint;
 
     /**
      * List of offered resources.

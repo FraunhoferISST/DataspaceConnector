@@ -46,7 +46,6 @@ public class DataSource extends AbstractEntity {
     /**
      * The list of generic endpoints.
      */
-    // ToDO: Discuss the right place for generic endpoints
     @OneToMany
     private List<GenericEndpoint> genericEndpoint;
 }

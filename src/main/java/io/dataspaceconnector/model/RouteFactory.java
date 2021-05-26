@@ -24,8 +24,10 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var route = new Route();
-        route.setStartEndpoint(null);
-        route.setEndEndpoint(null);
+        route.setStartIdsEndpoint(null);
+        route.setStartGenericEndpoint(null);
+        route.setEndIdsEndpoint(null);
+        route.setEndGenericEndpoint(null);
         route.setSubRoutes(new ArrayList<>());
         route.setOfferedResources(new ArrayList<>());
 
