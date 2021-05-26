@@ -22,7 +22,7 @@ public class ListUriConverter implements AttributeConverter<List<URI>, String> {
      * @return String representation of the list.
      */
     @Override
-    public String convertToDatabaseColumn(List<URI> uriList) {
+    public String convertToDatabaseColumn(final List<URI> uriList) {
         return String.join(",", uriList.toString());
     }
 
@@ -33,7 +33,7 @@ public class ListUriConverter implements AttributeConverter<List<URI>, String> {
      * @return List of uri.
      */
     @Override
-    public List<URI> convertToEntityAttribute(String joinedList) {
+    public List<URI> convertToEntityAttribute(final String joinedList) {
         final var strings = joinedList.split(",");
         final ArrayList<URI> uriList = new ArrayList<>();
         for (var s : strings) {
