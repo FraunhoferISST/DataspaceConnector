@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+### [5.x.x] - XXXX-XX-XX
+
+### Added
+ - Add telemetry collection via jaeger.
+
 ### [5.0.2] - 2021-05-25
 
 ### Changed
