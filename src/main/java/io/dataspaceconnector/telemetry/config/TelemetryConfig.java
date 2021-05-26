@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TelemetryConfig {
     /**
-     * Cio.dataspaceconnector.telemetry.config
+     * Create an empty tracer.
      * @return The new tracer.
      */
     @Bean
