@@ -17,6 +17,7 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -30,6 +31,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
 
 /**
  * A representation describes how data is presented.
@@ -53,6 +56,7 @@ public class Representation extends AbstractEntity {
      * The representation id on provider side.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**

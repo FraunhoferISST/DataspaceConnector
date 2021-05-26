@@ -1,15 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-### [5.x.x] - XXXX-XX-XX
+## [5.x.x] - XXXX-XX-XX
+
+### Added
+ - Add telemetry collection via Jaeger.
  
 ### Changed
  - Replace deprecated JPA calls (`getOne` -> `getById`).
+ - Increase length restriction for URIs in database columns to 2048.
 
 ### Fixed
  - Representations have now only one self-link.
 
-### [5.0.2] - 2021-05-25
+## [5.0.2] - 2021-05-25
 
 ### Changed
  - Make the Clearing House url setting optional in `application.properties`.

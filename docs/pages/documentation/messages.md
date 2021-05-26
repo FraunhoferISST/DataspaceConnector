@@ -17,10 +17,11 @@ See what IDS message types can be sent and received.
 
 ## Message Types
 
-IDS messages and their content are defined [here](http://htmlpreview.github.io/?https://github.com/IndustrialDataSpace/InformationModel/blob/feature/message_taxonomy_description/model/communication/Message_Description.htm).
+IDS messages and their content are defined 
+[here](http://htmlpreview.github.io/?https://github.com/IndustrialDataSpace/InformationModel/blob/feature/message_taxonomy_description/model/communication/Message_Description.htm).
 The table below lists the supported message types. Thereby, it is to be distinguished whether the
-Connector provides functionality for sending messages as request or response, or for processing
-incoming messages.
+Dataspace Connector provides functionality for sending messages as request or response, or for 
+processing incoming messages.
 
 | IDS Message Type                    | Outgoing           | Incoming | Description              |
 |:------------------------------------|:------------------:|:--------:|:-------------------------|
