@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-### [5.0.2] - 2021-05-25
+## [5.x]
+
+### Changed
+- Increase length restriction for URIs in database columns to 2048.
+
+## [5.0.2] - 2021-05-25
 
 ### Changed
  - Make the Clearing House url setting optional in `application.properties`.
