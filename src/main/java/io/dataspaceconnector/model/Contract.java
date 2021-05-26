@@ -15,17 +15,23 @@
  */
 package io.dataspaceconnector.model;
 
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import io.dataspaceconnector.model.utils.UriConverter;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * A contract documents access and usage behaviours.
@@ -48,16 +54,19 @@ public class Contract extends AbstractEntity {
     /**
      * The contract id on provider side.
      */
+    @Convert(converter = UriConverter.class)
     private URI remoteId;
 
     /**
      * The consumer signing the contract.
      */
+    @Convert(converter = UriConverter.class)
     private URI consumer;
 
     /**
      * The provider signing the contract.
      */
+    @Convert(converter = UriConverter.class)
     private URI provider;
 
     /**
