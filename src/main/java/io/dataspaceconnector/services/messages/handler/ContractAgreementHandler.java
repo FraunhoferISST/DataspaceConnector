@@ -39,7 +39,6 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -51,7 +50,6 @@ import java.net.URI;
  * {@link ContractAgreementMessageImpl} JsonTypeName annotation.
  */
 @Component
-@Log4j2
 @RequiredArgsConstructor
 @SupportedMessageType(ContractAgreementMessageImpl.class)
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
