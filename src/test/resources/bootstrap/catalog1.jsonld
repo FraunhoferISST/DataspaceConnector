@@ -94,7 +94,6 @@
         {
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/57c89dfa-1dc6-430c-a6ba-9b8d9af2d8b1",
-          "ids:provider": "https://example.com",
           "ids:permission": [
             {
               "@type": "ids:Permission",
@@ -116,37 +115,8 @@
                   "@id": "idsc:USE"
                 }
               ]
-            },
-            {
-              "@type": "ids:Permission",
-              "@id": "https://w3id.org/idsa/autogen/permission/a3c57cd0-5a22-484d-8fb0-0676551de2da",
-              "ids:description": [
-                {
-                  "@value": "provide-access",
-                  "@type": "http://www.w3.org/2001/XMLSchema#string"
-                }
-              ],
-              "ids:title": [
-                {
-                  "@value": "Allow Data Usage",
-                  "@type": "http://www.w3.org/2001/XMLSchema#string"
-                }
-              ],
-              "ids:action": [
-                {
-                  "@id": "idsc:USE"
-                }
-              ]
             }
-          ],
-          "ids:obligation": null,
-          "ids:prohibition": null,
-          "ids:contractDate": "2016-10-03T15:10:40.000Z",
-          "ids:contractAnnex": null,
-          "ids:contractStart": "2017-10-03T15:10:40.000Z",
-          "ids:contractEnd": "2018-10-03T15:10:40.000Z",
-          "ids:consumer": "https://example.com",
-          "ids:contractDocument": null
+          ]
         }
       ],
       "ids:keyword": [
@@ -253,7 +223,6 @@
         {
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/d2232122-776c-4a5d-b2a9-c3c69fe30e83",
-          "ids:provider": "https://example.com",
           "ids:permission": [
             {
               "@type": "ids:Permission",
@@ -275,37 +244,8 @@
                   "@id": "idsc:USE"
                 }
               ]
-            },
-            {
-              "@type": "ids:Permission",
-              "@id": "https://w3id.org/idsa/autogen/permission/a3c57cd0-5022-484d-8fb0-06fff51de2da",
-              "ids:description": [
-                {
-                  "@value": "provide-access",
-                  "@type": "http://www.w3.org/2001/XMLSchema#string"
-                }
-              ],
-              "ids:title": [
-                {
-                  "@value": "Allow Data Usage",
-                  "@type": "http://www.w3.org/2001/XMLSchema#string"
-                }
-              ],
-              "ids:action": [
-                {
-                  "@id": "idsc:USE"
-                }
-              ]
             }
-          ],
-          "ids:obligation": null,
-          "ids:prohibition": null,
-          "ids:contractDate": "2016-10-03T15:10:40.000Z",
-          "ids:contractAnnex": null,
-          "ids:contractStart": "2016-10-03T15:10:40.000Z",
-          "ids:contractEnd": "2016-10-03T15:10:40.000Z",
-          "ids:consumer": "https://example.com",
-          "ids:contractDocument": null
+          ]
         }
       ],
       "ids:keyword": [

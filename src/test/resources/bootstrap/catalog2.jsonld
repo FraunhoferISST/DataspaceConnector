@@ -85,7 +85,6 @@
         {
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/1d982c8a-c5ae-4c19-9a26-6815e9540fc8",
-          "ids:provider": "https://example.com",
           "ids:permission": [
             {
               "@type": "ids:Permission",
@@ -108,15 +107,7 @@
                 }
               ]
             }
-          ],
-          "ids:obligation": null,
-          "ids:prohibition": null,
-          "ids:contractDate": "2016-10-03T15:10:40.000Z",
-          "ids:contractAnnex": null,
-          "ids:contractStart": "2019-10-03T15:10:40.000Z",
-          "ids:contractEnd": "2020-10-03T15:10:40.000Z",
-          "ids:consumer": "https://example.com",
-          "ids:contractDocument": null
+          ]
         }
       ],
       "ids:keyword": [
