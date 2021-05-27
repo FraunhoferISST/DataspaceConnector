@@ -65,8 +65,8 @@ public class ConnectorApplication {
     @Bean
     public OpenAPI customOpenAPI() throws IOException {
         final var properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader()
-            .getResourceAsStream("application.properties")) {
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                                             .getResourceAsStream("application.properties")) {
             // This function may crash (e.g. ill-formatted file). Let it bubble up.
             properties.load(inputStream);
         }
