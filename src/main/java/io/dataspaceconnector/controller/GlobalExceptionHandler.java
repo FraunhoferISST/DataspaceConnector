@@ -46,7 +46,7 @@ public final class GlobalExceptionHandler {
     public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
         if (log.isErrorEnabled()) {
             log.error("An unhandled exception has been caught. [exception=({})]",
-                    exception != null ? exception.getMessage() : "Passed null as exception",
+                    exception == null ? "Passed null as exception" : exception.getMessage(),
                     exception);
         }
 
