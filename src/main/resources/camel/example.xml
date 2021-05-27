@@ -1,0 +1,17 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="test-route">
+        <from uri="direct:descHandler"/>
+        <process ref="VersionValidator"/>
+        <choice>
+            <when>
+                <simple>${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedElement()} ==
+                    null</simple>
+                <process ref="SelfDescription"/>
+            </when>
+            <otherwise>
+                <process ref="ResourceDescription"/>
+            </otherwise>
+        </choice>
+        <log message="DOOM! ${body}"/>
+    </route>
+</routes>

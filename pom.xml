@@ -126,6 +126,7 @@
 		<pmd.version>6.34.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
+		<camel.version>3.10.0</camel.version>
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
@@ -375,6 +376,18 @@
 			<version>${equalsverifier.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-spring-boot-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.springboot</groupId>
+			<artifactId>camel-http-starter</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>
@@ -412,6 +425,19 @@
 		</repository>
 	</repositories>
 
+	<dependencyManagement>
+		<dependencies>
+			<!-- Camel BOM -->
+			<dependency>
+				<groupId>org.apache.camel.springboot</groupId>
+				<artifactId>camel-spring-boot-bom</artifactId>
+				<version>${camel.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<build>
 		<resources>
 			<resource>
@@ -419,6 +445,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>conf/**/*.*</include>
+					<include>camel/**</include>
 					<include>log4j2.xml</include>
 					<include>application.properties</include>
 					<include>banner.txt</include>
