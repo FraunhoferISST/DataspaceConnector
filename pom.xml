@@ -362,6 +362,13 @@
 			<version>${springdoc-security.version}</version>
 		</dependency>
 
+		<!-- https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services -->
+		<dependency>
+			<groupId>de.fraunhofer.ids.messaging</groupId>
+			<artifactId>broker</artifactId>
+			<version>4.1.0.0</version>
+		</dependency>
+
 		<!-- https://github.com/jsonld-java/jsonld-java -->
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
@@ -409,6 +416,11 @@
 			<releases>
 				<enabled>true</enabled>
 			</releases>
+		</repository>
+		<repository>
+			<id>isst-nexus-public</id>
+			<name>isst-public</name>
+			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
 		</repository>
 	</repositories>
 
