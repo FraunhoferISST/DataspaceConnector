@@ -24,12 +24,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 
 /**
  * Controller for global handling of runtime exceptions.
  */
+@NoArgsConstructor
 @Log4j2
 @ControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)

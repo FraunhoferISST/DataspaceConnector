@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +31,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationEn
  * defined in {@link MultipleEntryPointsSecurityConfig}.
  */
 @Log4j2
+@NoArgsConstructor
 @Configuration
 public class ConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
