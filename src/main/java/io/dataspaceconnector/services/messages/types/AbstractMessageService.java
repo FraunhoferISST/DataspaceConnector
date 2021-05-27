@@ -196,7 +196,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
         final var idsMessage = deserializationService.getResponseMessage(header);
-        var responseMap = new HashMap<String, Object>() {{
+        final var responseMap = new HashMap<String, Object>() {{
             put("type", idsMessage.getClass());
         }};
 

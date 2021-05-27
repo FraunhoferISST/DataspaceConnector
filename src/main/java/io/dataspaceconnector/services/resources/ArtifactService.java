@@ -329,7 +329,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      */
     @Transactional
     public InputStream setData(final UUID artifactId, final InputStream data) {
-        var artifact = get(artifactId);
+        final var artifact = get(artifactId);
         final var localData = ((ArtifactImpl) artifact).getData();
         if (localData instanceof LocalData) {
             try {

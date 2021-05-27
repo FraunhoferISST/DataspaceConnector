@@ -262,7 +262,7 @@ public final class ResourceControllers {
                     new RetrievalInformation(agreementUri, download,
                                              queryInput));
 
-            StreamingResponseBody body = outputStream -> {
+            final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
                 int numBytesToWrite;
                 var buffer = new byte[blockSize];
