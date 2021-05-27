@@ -33,14 +33,15 @@ public class AuthenticationViewAssembler implements
 
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, AuthenticationController.class);
     }
 
     @Override
-    public AuthenticationView toModel(final Authentication authentication) {
+    public final AuthenticationView toModel(final Authentication authentication) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(authentication, AuthenticationView.class);
+        final var view =
+                modelMapper.map(authentication, AuthenticationView.class);
         view.add(getSelfLink(authentication.getId()));
 
         return view;

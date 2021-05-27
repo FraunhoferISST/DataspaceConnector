@@ -55,10 +55,10 @@ public enum AppEndpointType {
     private final String value;
 
     /**
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    AppEndpointType(String value) {
-        this.value = value;
+    AppEndpointType(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

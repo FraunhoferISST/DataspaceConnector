@@ -31,7 +31,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     /**
      * The default string.
      */
-    private final static String DEFAULT_STRING = "unknown";
+    private static final String DEFAULT_STRING = "unknown";
 
     /**
      * @param desc The description of the entity.
@@ -61,8 +61,10 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         Utils.requireNonNull(dataSource, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedRelativePath = updateRelativPath(dataSource, desc.getRelativePath());
-        final var hasUpdatedDataSourceType = updateDataSourceType(dataSource, desc.getDataSourceType());
+        final var hasUpdatedRelativePath = updateRelativPath(dataSource,
+                desc.getRelativePath());
+        final var hasUpdatedDataSourceType = updateDataSourceType(dataSource,
+                desc.getDataSourceType());
 
         return hasUpdatedRelativePath || hasUpdatedDataSourceType;
     }
@@ -73,8 +75,9 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
      * @return True, if data source type is updated.
      */
     private boolean updateRelativPath(final DataSource dataSource, final String relativePath) {
-        final var newRelativePath = MetadataUtils.updateString(dataSource.getRelativePath(),
-                relativePath, DEFAULT_STRING);
+        final var newRelativePath =
+                MetadataUtils.updateString(dataSource.getRelativePath(), relativePath,
+                        DEFAULT_STRING);
         newRelativePath.ifPresent(dataSource::setRelativePath);
 
         return newRelativePath.isPresent();
@@ -85,7 +88,8 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
      * @param dataSourceType The type of the data source.
      * @return True, if data source type is updated.
      */
-    private boolean updateDataSourceType(final DataSource dataSource, final DataSourceType dataSourceType) {
+    private boolean updateDataSourceType(final DataSource dataSource,
+                                         final DataSourceType dataSourceType) {
         final boolean updated;
         if (dataSource.getDataSourceType().equals(dataSourceType)) {
             updated = false;

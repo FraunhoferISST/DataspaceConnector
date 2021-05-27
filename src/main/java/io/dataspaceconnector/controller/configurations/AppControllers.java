@@ -17,7 +17,12 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.App;
+import io.dataspaceconnector.model.AppDesc;
+import io.dataspaceconnector.model.AppEndpoint;
+import io.dataspaceconnector.model.AppEndpointDesc;
+import io.dataspaceconnector.model.AppStore;
+import io.dataspaceconnector.model.AppStoreDesc;
 import io.dataspaceconnector.services.configuration.AppEndpointService;
 import io.dataspaceconnector.services.configuration.AppService;
 import io.dataspaceconnector.services.configuration.AppStoreService;
@@ -51,7 +56,8 @@ public final class AppControllers {
     @RequestMapping("/api/appendpoints")
     @Tag(name = "App Endpoints", description = "Endpoints for CRUD operations on app endpoints")
     public static class AppEndpointController
-            extends BaseResourceController<AppEndpoint, AppEndpointDesc, AppEndpointView, AppEndpointService> {
+            extends BaseResourceController<AppEndpoint, AppEndpointDesc, AppEndpointView,
+            AppEndpointService> {
     }
 
     /**

@@ -29,7 +29,7 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
     /**
      * Default absolute path.
      */
-    private final static String DEFAULT_PATH = "https://path";
+    private static final String DEFAULT_PATH = "https://path";
 
     /**
      * @param genericEndpoint The generic endpoint.
@@ -49,9 +49,11 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
      * @param absolutePath    The absolute path of the generic endpoint.
      * @return True, if generic endpoint is updated.
      */
-    private boolean updateAbsolutePath(final GenericEndpoint genericEndpoint, final String absolutePath) {
-        final var newAbsolutePath = MetadataUtils.updateString(genericEndpoint.getAbsolutePath(),
-                absolutePath, DEFAULT_PATH);
+    private boolean updateAbsolutePath(final GenericEndpoint genericEndpoint,
+                                       final String absolutePath) {
+        final var newAbsolutePath =
+                MetadataUtils.updateString(genericEndpoint.getAbsolutePath(), absolutePath,
+                        DEFAULT_PATH);
         newAbsolutePath.ifPresent(genericEndpoint::setAbsolutePath);
 
         return newAbsolutePath.isPresent();

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 /**
- * Creates and updates a configuration
+ * Creates and updates a configuration.
  */
 @Component
 public class ConfigurationFactory implements AbstractFactory<Configuration, ConfigurationDesc> {
@@ -56,12 +56,14 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
         final var hasUpdatedDelpoyMode = updateDeployMode(config, config.getDeployMode());
         final var hasUpdatedTrustStore = updateTrustStore(config, config.getTrustStore());
-        final var hasUpdatedTrustPassword = updateTrustStorePassword(config, config.getTrustStorePassword());
+        final var hasUpdatedTrustPassword = updateTrustStorePassword(config,
+                config.getTrustStorePassword());
         final var hasUpdatedKeyStore = updateKeyStore(config, config.getKeyStore());
-        final var hasUpdatedKeyStorePassword = updateKeyStorePassword(config, config.getKeyStorePassword());
+        final var hasUpdatedKeyStorePassword = updateKeyStorePassword(config,
+                config.getKeyStorePassword());
 
-        return hasUpdatedLogLevel || hasUpdatedDelpoyMode || hasUpdatedTrustStore || hasUpdatedTrustPassword
-                || hasUpdatedKeyStore || hasUpdatedKeyStorePassword;
+        return hasUpdatedLogLevel || hasUpdatedDelpoyMode || hasUpdatedTrustStore
+                || hasUpdatedTrustPassword || hasUpdatedKeyStore || hasUpdatedKeyStorePassword;
     }
 
     /**
@@ -69,9 +71,11 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      * @param keyStorePassword The key store password of the entity.
      * @return True, if configuration is updated.
      */
-    private boolean updateKeyStorePassword(final Configuration config, final String keyStorePassword) {
-        final var newKeystorePassword = MetadataUtils.updateString(config.getKeyStorePassword(),
-                keyStorePassword, "password");
+    private boolean updateKeyStorePassword(final Configuration config,
+                                           final String keyStorePassword) {
+        final var newKeystorePassword =
+                MetadataUtils.updateString(config.getKeyStorePassword(), keyStorePassword,
+                        "password");
         newKeystorePassword.ifPresent(config::setKeyStore);
         return newKeystorePassword.isPresent();
     }
@@ -93,9 +97,11 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      * @param trustStorePassword The trust store password of the entity.
      * @return True, if configuration is updated.
      */
-    private boolean updateTrustStorePassword(final Configuration config, final String trustStorePassword) {
-        final var newPassword = MetadataUtils.updateString(config.getTrustStorePassword(),
-                trustStorePassword, "password");
+    private boolean updateTrustStorePassword(final Configuration config,
+                                             final String trustStorePassword) {
+        final var newPassword =
+                MetadataUtils.updateString(config.getTrustStorePassword(), trustStorePassword,
+                        "password");
         newPassword.ifPresent(config::setTrustStorePassword);
         return newPassword.isPresent();
     }
@@ -117,7 +123,8 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      * @param deployMode The deploy mode of the configuration
      * @return True, if configuration is updated.
      */
-    private boolean updateDeployMode(final Configuration config, final ConnectorDeployMode deployMode) {
+    private boolean updateDeployMode(final Configuration config,
+                                     final ConnectorDeployMode deployMode) {
         final boolean updated;
         if (config.getDeployMode().equals(deployMode)) {
             updated = false;

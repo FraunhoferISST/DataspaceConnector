@@ -35,10 +35,10 @@ public enum RegisterStatus {
     private final String value;
 
     /**
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    RegisterStatus(String value) {
-        this.value = value;
+    RegisterStatus(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

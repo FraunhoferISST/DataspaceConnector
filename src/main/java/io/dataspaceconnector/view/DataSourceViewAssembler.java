@@ -36,12 +36,12 @@ public class DataSourceViewAssembler
         implements RepresentationModelAssembler<DataSource, DataSourceView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, DataSourceController.class);
     }
 
     @Override
-    public DataSourceView toModel(final DataSource dataSource) {
+    public final DataSourceView toModel(final DataSource dataSource) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(dataSource, DataSourceView.class);
         view.add(getSelfLink(dataSource.getId()));

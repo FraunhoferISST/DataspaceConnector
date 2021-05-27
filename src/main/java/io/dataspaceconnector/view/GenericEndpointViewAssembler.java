@@ -32,14 +32,16 @@ public class GenericEndpointViewAssembler
         implements RepresentationModelAssembler<GenericEndpoint, GenericEndpointView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ConfigmanagerController.GenericEndpointController.class);
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ConfigmanagerController.GenericEndpointController.class);
     }
 
     @Override
-    public GenericEndpointView toModel(final GenericEndpoint genericEndpoint) {
+    public final GenericEndpointView toModel(final GenericEndpoint genericEndpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(genericEndpoint, GenericEndpointView.class);
+        final var view = modelMapper.map(genericEndpoint,
+                GenericEndpointView.class);
         view.add(getSelfLink(genericEndpoint.getId()));
 
         return view;

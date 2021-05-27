@@ -28,6 +28,9 @@ import java.util.ArrayList;
 @Component
 public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
 
+    /**
+     * The default string.
+     */
     private static final String DEFAULT_STRING = "Default configuration";
 
     /**
@@ -61,8 +64,10 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
         Utils.requireNonNull(route, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedRouteConfig = updateRouteConfiguration(route, desc.getRouteConfiguration());
-        final var hasUpatedDeployMethod = updateRouteDeployMethod(route, route.getDeployMethod());
+        final var hasUpdatedRouteConfig = updateRouteConfiguration(route,
+                desc.getRouteConfiguration());
+        final var hasUpatedDeployMethod = updateRouteDeployMethod(route,
+                route.getDeployMethod());
 
         return hasUpdatedRouteConfig || hasUpatedDeployMethod;
     }

@@ -31,12 +31,12 @@ import java.util.UUID;
 public class ClearingHouseViewAssembler implements
         RepresentationModelAssembler<ClearingHouse, ClearingHouseView>, SelfLinking {
     @Override
-    public Link getSelfLink(final UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, ClearingHouseController.class);
     }
 
     @Override
-    public ClearingHouseView toModel(final ClearingHouse clearingHouse) {
+    public final ClearingHouseView toModel(final ClearingHouse clearingHouse) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(clearingHouse, ClearingHouseView.class);
         view.add(getSelfLink(clearingHouse.getId()));

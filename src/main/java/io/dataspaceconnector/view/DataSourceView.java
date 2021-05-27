@@ -18,7 +18,6 @@ package io.dataspaceconnector.view;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.DataSourceType;
-import io.dataspaceconnector.model.GenericEndpoint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * A DTO for controlled exposing of data source information in API responses.

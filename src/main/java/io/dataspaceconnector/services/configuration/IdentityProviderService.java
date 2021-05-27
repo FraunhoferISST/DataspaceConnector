@@ -26,5 +26,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class IdentityProviderService extends BaseEntityService<IdentityProvider, IdentityProviderDesc> {
+public class IdentityProviderService
+        extends BaseEntityService<IdentityProvider, IdentityProviderDesc> {
 }

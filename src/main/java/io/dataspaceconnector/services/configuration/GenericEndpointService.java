@@ -26,5 +26,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class GenericEndpointService extends BaseEntityService<GenericEndpoint, GenericEndpointDesc> {
+public class GenericEndpointService
+        extends BaseEntityService<GenericEndpoint, GenericEndpointDesc> {
 }

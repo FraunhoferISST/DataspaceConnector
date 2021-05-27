@@ -63,7 +63,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @param desc The description passed to the factory.
      * @return The new resource.
      */
-    protected abstract T createInternal(final D desc);
+    protected abstract T createInternal(D desc);
 
     /**
      * @param endpoint The entity to be updated.
@@ -134,9 +134,11 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @param endpointInformation The endpoint information.
      * @return True, if endpoint information is updated.
      */
-    private boolean updateEndpointInformation(final Endpoint endpoint, final String endpointInformation) {
-        final var newEndpointInfo = MetadataUtils.updateString(endpoint.getEndpointInformation(),
-                endpointInformation, DEFAULT_STRING);
+    private boolean updateEndpointInformation(final Endpoint endpoint,
+                                              final String endpointInformation) {
+        final var newEndpointInfo =
+                MetadataUtils.updateString(endpoint.getEndpointInformation(), endpointInformation,
+                        DEFAULT_STRING);
         newEndpointInfo.ifPresent(endpoint::setEndpointInformation);
 
         return newEndpointInfo.isPresent();
@@ -148,9 +150,11 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      * @param endpointDocumentation The endpoint documentation.
      * @return True, if endpoint documentation is updated.
      */
-    private boolean updateEndpointDocumentation(final Endpoint endpoint, final URI endpointDocumentation) {
-        final var newDocumentation = MetadataUtils.updateUri(endpoint.getEndpointDocumentation(),
-                endpointDocumentation, DEFAULT_URI);
+    private boolean updateEndpointDocumentation(final Endpoint endpoint,
+                                                final URI endpointDocumentation) {
+        final var newDocumentation =
+                MetadataUtils.updateUri(endpoint.getEndpointDocumentation(), endpointDocumentation,
+                        DEFAULT_URI);
         newDocumentation.ifPresent(endpoint::setEndpointDocumentation);
 
         return newDocumentation.isPresent();

@@ -18,9 +18,6 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
 import java.util.List;
 
 /**

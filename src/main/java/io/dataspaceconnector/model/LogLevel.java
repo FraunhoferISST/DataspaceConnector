@@ -39,10 +39,10 @@ public enum LogLevel {
     private final String value;
 
     /**
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    LogLevel(String value) {
-        this.value = value;
+    LogLevel(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

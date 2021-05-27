@@ -33,12 +33,12 @@ public class ConnectorViewAssembler implements
 
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, ConnectorController.class);
     }
 
     @Override
-    public ConnectorView toModel(final Connector connector) {
+    public final ConnectorView toModel(final Connector connector) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(connector, ConnectorView.class);
         view.add(getSelfLink(connector.getId()));

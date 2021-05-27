@@ -13,23 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
-
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.net.URI;
-
 /**
- * Describing ids endpoints properties.
+ * Service classes for the Configuration Manager.
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class IdsEndpointDesc extends EndpointDesc<IdsEndpoint> {
-
-    /**
-     * The absolute path of the generic endpoint.
-     */
-    private URI accessURL;
-
-}
+package io.dataspaceconnector.services.configuration;

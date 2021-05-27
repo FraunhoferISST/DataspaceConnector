@@ -32,15 +32,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
  * Assembles the REST resource for a broker.
  */
 @Component
-public class BrokerViewAssembler implements RepresentationModelAssembler<Broker, BrokerView>, SelfLinking {
+public class BrokerViewAssembler
+        implements RepresentationModelAssembler<Broker, BrokerView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, ConfigmanagerController.BrokerController.class);
+    public final Link getSelfLink(final UUID entityId) {
+        return ViewAssemblerHelper.getSelfLink(entityId,
+                ConfigmanagerController.BrokerController.class);
     }
 
     @Override
-    public BrokerView toModel(final Broker broker) {
+    public final BrokerView toModel(final Broker broker) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(broker, BrokerView.class);
         view.add(getSelfLink(broker.getId()));

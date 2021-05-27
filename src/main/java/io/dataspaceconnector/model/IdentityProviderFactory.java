@@ -26,7 +26,8 @@ import java.net.URI;
  * Creates and updates identity providers.
  */
 @Component
-public class IdentityProviderFactory implements AbstractFactory<IdentityProvider, IdentityProviderDesc> {
+public class IdentityProviderFactory
+        implements AbstractFactory<IdentityProvider, IdentityProviderDesc> {
 
     /**
      * Default access url.
@@ -59,13 +60,16 @@ public class IdentityProviderFactory implements AbstractFactory<IdentityProvider
      * @return True, if entity is updated.
      */
     @Override
-    public boolean update(final IdentityProvider identityProvider, final IdentityProviderDesc desc) {
+    public boolean update(final IdentityProvider identityProvider,
+                          final IdentityProviderDesc desc) {
         Utils.requireNonNull(identityProvider, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateAccessUrl(identityProvider, identityProvider.getAccessUrl());
+        final var newAccessUrl = updateAccessUrl(identityProvider,
+                identityProvider.getAccessUrl());
         final var newTitle = updateTitle(identityProvider, identityProvider.getTitle());
-        final var newStatus = updateRegisterStatus(identityProvider, identityProvider.getRegisterStatus());
+        final var newStatus = updateRegisterStatus(identityProvider,
+                identityProvider.getRegisterStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -75,7 +79,8 @@ public class IdentityProviderFactory implements AbstractFactory<IdentityProvider
      * @param status           The registration status of the identity provider.
      * @return True, if registration status is updated.
      */
-    private boolean updateRegisterStatus(final IdentityProvider identityProvider, final RegisterStatus status) {
+    private boolean updateRegisterStatus(final IdentityProvider identityProvider,
+                                         final RegisterStatus status) {
         final boolean updated;
         if (identityProvider.getRegisterStatus().equals(status)) {
             updated = false;
@@ -92,8 +97,8 @@ public class IdentityProviderFactory implements AbstractFactory<IdentityProvider
      * @return True, if title is updated.
      */
     private boolean updateTitle(final IdentityProvider identityProvider, final String title) {
-        final var newTitle = MetadataUtils.updateString(identityProvider.getTitle(), title,
-                DEFAULT_STRING);
+        final var newTitle =
+                MetadataUtils.updateString(identityProvider.getTitle(), title, DEFAULT_STRING);
         newTitle.ifPresent(identityProvider::setTitle);
         return newTitle.isPresent();
     }
@@ -104,8 +109,8 @@ public class IdentityProviderFactory implements AbstractFactory<IdentityProvider
      * @return True, if access url is updated.
      */
     private boolean updateAccessUrl(final IdentityProvider identityProvider, final URI accessUrl) {
-        final var newAccessUrl = MetadataUtils.updateUri(identityProvider.getAccessUrl(), accessUrl,
-                DEFAULT_URI);
+        final var newAccessUrl =
+                MetadataUtils.updateUri(identityProvider.getAccessUrl(), accessUrl, DEFAULT_URI);
         newAccessUrl.ifPresent(identityProvider::setAccessUrl);
         return newAccessUrl.isPresent();
     }

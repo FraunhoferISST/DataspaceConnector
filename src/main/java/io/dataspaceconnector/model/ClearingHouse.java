@@ -25,8 +25,8 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * The Clearing House is an intermediary that provides clearing and settlement services for all data exchange
- * transactions.
+ * The Clearing House is an intermediary that provides clearing and settlement services
+ * for all data exchange transactions.
  */
 @Entity
 @Table(name = "clearinghouse")

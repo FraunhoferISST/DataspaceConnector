@@ -43,7 +43,7 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      * @return The new connector entity.
      */
     @Override
-    public Connector create(ConnectorDesc desc) {
+    public Connector create(final ConnectorDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.MESSAGE_NULL);
 
         final var connector = new Connector();
@@ -59,7 +59,7 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      * @return True, if connector is updated.
      */
     @Override
-    public boolean update(Connector connector, ConnectorDesc desc) {
+    public boolean update(final Connector connector, final ConnectorDesc desc) {
         Utils.requireNonNull(connector, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 

@@ -17,14 +17,44 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.*;
-import io.dataspaceconnector.services.configuration.*;
-import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.view.*;
+import io.dataspaceconnector.model.Authentication;
+import io.dataspaceconnector.model.AuthenticationDesc;
+import io.dataspaceconnector.model.Broker;
+import io.dataspaceconnector.model.BrokerDesc;
+import io.dataspaceconnector.model.ClearingHouse;
+import io.dataspaceconnector.model.ClearingHouseDesc;
+import io.dataspaceconnector.model.Configuration;
+import io.dataspaceconnector.model.ConfigurationDesc;
+import io.dataspaceconnector.model.Connector;
+import io.dataspaceconnector.model.ConnectorDesc;
+import io.dataspaceconnector.model.DataSource;
+import io.dataspaceconnector.model.DataSourceDesc;
+import io.dataspaceconnector.model.GenericEndpoint;
+import io.dataspaceconnector.model.GenericEndpointDesc;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.services.configuration.AuthenticationService;
+import io.dataspaceconnector.services.configuration.BrokerService;
+import io.dataspaceconnector.services.configuration.ClearingHouseService;
+import io.dataspaceconnector.services.configuration.ConfigurationService;
+import io.dataspaceconnector.services.configuration.ConnectorsService;
+import io.dataspaceconnector.services.configuration.DataSourceService;
+import io.dataspaceconnector.services.configuration.EntityLinkerService;
+import io.dataspaceconnector.services.configuration.GenericEndpointService;
+import io.dataspaceconnector.view.AuthenticationView;
+import io.dataspaceconnector.view.BrokerView;
+import io.dataspaceconnector.view.ClearingHouseView;
+import io.dataspaceconnector.view.ConfigurationView;
+import io.dataspaceconnector.view.ConnectorView;
+import io.dataspaceconnector.view.DataSourceView;
+import io.dataspaceconnector.view.GenericEndpointView;
+import io.dataspaceconnector.view.OfferedResourceView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller for the Configuration Manager.
+ */
 public final class ConfigmanagerController {
 
     /**
@@ -44,7 +74,8 @@ public final class ConfigmanagerController {
     @RestController
     @RequestMapping("/api/brokers")
     @Tag(name = "Broker", description = "Endpoints for CRUD operations on broker")
-    public static class BrokerController extends BaseResourceController<Broker, BrokerDesc, BrokerView, BrokerService> {
+    public static class BrokerController extends BaseResourceController<Broker, BrokerDesc,
+            BrokerView, BrokerService> {
     }
 
     /**
@@ -54,8 +85,8 @@ public final class ConfigmanagerController {
     @RequestMapping("/api/brokers/{id}/resources")
     @Tag(name = "Broker", description = "Endpoints for linking broker to offered resources")
     public static class BrokerToOfferedResources extends
-            BaseResourceChildController<EntityLinkerService.BrokerOfferedResourcesLinker, OfferedResource,
-                    OfferedResourceView> {
+            BaseResourceChildController<EntityLinkerService.BrokerOfferedResourcesLinker,
+                    OfferedResource, OfferedResourceView> {
     }
 
     /**
@@ -65,7 +96,8 @@ public final class ConfigmanagerController {
     @RequestMapping("/api/clearinghouses")
     @Tag(name = "Clearing House", description = "Endpoints for CRUD operations on clearing houses")
     public static class ClearingHouseController
-            extends BaseResourceController<ClearingHouse, ClearingHouseDesc, ClearingHouseView, ClearingHouseService> {
+            extends BaseResourceController<ClearingHouse, ClearingHouseDesc,
+            ClearingHouseView, ClearingHouseService> {
     }
 
     /**
@@ -75,7 +107,8 @@ public final class ConfigmanagerController {
     @RequestMapping("/api/configurations")
     @Tag(name = "Configuration", description = "Endpoints for CRUD operations on configurations")
     public static class ConfigurationController
-            extends BaseResourceController<Configuration, ConfigurationDesc, ConfigurationView, ConfigurationService> {
+            extends BaseResourceController<Configuration, ConfigurationDesc,
+            ConfigurationView, ConfigurationService> {
     }
 
     /**
@@ -85,7 +118,8 @@ public final class ConfigmanagerController {
     @RequestMapping("/api/connectors")
     @Tag(name = "Connector", description = "Endpoints for CRUD operations on connectors")
     public static class ConnectorController
-            extends BaseResourceController<Connector, ConnectorDesc, ConnectorView, ConnectorsService> {
+            extends BaseResourceController<Connector, ConnectorDesc, ConnectorView,
+            ConnectorsService> {
     }
 
     /**
@@ -95,7 +129,8 @@ public final class ConfigmanagerController {
     @RequestMapping("/api/datasources")
     @Tag(name = "Data Source", description = "Endpoints for CRUD operations on data sources")
     public static class DataSourceController
-            extends BaseResourceController<DataSource, DataSourceDesc, DataSourceView, DataSourceService> {
+            extends BaseResourceController<DataSource, DataSourceDesc, DataSourceView,
+            DataSourceService> {
     }
 
     /**
@@ -104,9 +139,9 @@ public final class ConfigmanagerController {
     @RestController
     @RequestMapping("/api/datasources/{id}/genericendpoints")
     @Tag(name = "Data Source", description = "Endpoints for CRUD operations on data sources")
-    public static class DataSourceToGenericEndpoints
-            extends BaseResourceChildController<EntityLinkerService.DataSourceGenericEndpointsLinker, GenericEndpoint,
-            GenericEndpointView> {
+    public static class DataSourceToGenericEndpoints extends
+            BaseResourceChildController<EntityLinkerService.DataSourceGenericEndpointsLinker,
+                    GenericEndpoint, GenericEndpointView> {
     }
 
     /**
@@ -114,9 +149,10 @@ public final class ConfigmanagerController {
      */
     @RestController
     @RequestMapping("/api/genericendpoints")
-    @Tag(name = "Generic Endpoint", description = "Endpoints for CRUD operations on generic endpoints")
+    @Tag(name = "Generic Endpoint", description = "Endpoints for CRUD operations on"
+           + " generic endpoints")
     public static class GenericEndpointController
-            extends BaseResourceController<GenericEndpoint, GenericEndpointDesc, GenericEndpointView,
-            GenericEndpointService> {
+            extends BaseResourceController<GenericEndpoint, GenericEndpointDesc,
+            GenericEndpointView, GenericEndpointService> {
     }
 }

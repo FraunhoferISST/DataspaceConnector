@@ -31,7 +31,7 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
     /**
      * Default absolute path.
      */
-    private final static URI DEFAULT_URI = URI.create("https://path");
+    private static final URI DEFAULT_URI = URI.create("https://path");
 
     /**
      * @param idsEndpoint The ids endpoint.

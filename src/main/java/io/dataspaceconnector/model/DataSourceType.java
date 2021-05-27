@@ -16,7 +16,7 @@
 package io.dataspaceconnector.model;
 
 /**
- * Enumeration for data source type
+ * Enumeration for data source type.
  */
 public enum DataSourceType {
 
@@ -44,10 +44,10 @@ public enum DataSourceType {
     private final String value;
 
     /**
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    DataSourceType(String value) {
-        this.value = value;
+    DataSourceType(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

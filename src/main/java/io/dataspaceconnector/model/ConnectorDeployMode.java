@@ -36,10 +36,10 @@ public enum ConnectorDeployMode {
 
     /**
      *
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    ConnectorDeployMode(String value) {
-        this.value = value;
+    ConnectorDeployMode(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

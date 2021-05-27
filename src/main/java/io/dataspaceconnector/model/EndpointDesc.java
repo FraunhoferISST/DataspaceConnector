@@ -20,6 +20,11 @@ import lombok.EqualsAndHashCode;
 
 import java.net.URI;
 
+/**
+ * Base class for describing ednpoints.
+ *
+ * @param <T> The type of the endpoint.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class EndpointDesc<T extends Endpoint> extends AbstractDescription<T> {

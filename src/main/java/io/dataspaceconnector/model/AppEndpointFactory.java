@@ -54,7 +54,8 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
         final var hasUpdatedProtocol = updateProtocol(appEndpoint, desc.getAppEndpointProtocol());
         final var hasUpdatedLanguage = updateLanguage(appEndpoint, desc.getLanguage());
 
-        return hasUpdatedAccessUrl || hasUpdatedMediaType || hasUpdatedPort || hasUpdatedProtocol || hasUpdatedLanguage;
+        return hasUpdatedAccessUrl || hasUpdatedMediaType || hasUpdatedPort
+                || hasUpdatedProtocol || hasUpdatedLanguage;
     }
 
     /**
@@ -74,8 +75,10 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @param appEndpointProtocol The app endpoint protocol.
      * @return True, if protocol is updated
      */
-    private boolean updateProtocol(final AppEndpoint appEndpoint, final String appEndpointProtocol) {
-        final var newProtocol = MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
+    private boolean updateProtocol(final AppEndpoint appEndpoint,
+                                   final String appEndpointProtocol) {
+        final var newProtocol =
+                MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
                 appEndpointProtocol, DEFAULT_STRING);
         newProtocol.ifPresent(appEndpoint::setAppEndpointProtocol);
         return newProtocol.isPresent();

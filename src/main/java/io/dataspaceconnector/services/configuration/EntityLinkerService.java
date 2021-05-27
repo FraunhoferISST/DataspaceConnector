@@ -48,7 +48,8 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class BrokerOfferedResourcesLinker
-            extends OwningRelationService<Broker, OfferedResource, BrokerService, OfferedResourceService> {
+            extends OwningRelationService<Broker, OfferedResource, BrokerService,
+            OfferedResourceService> {
 
         @Override
         protected final List<OfferedResource> getInternal(final Broker owner) {
@@ -62,8 +63,8 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class ConfigurationProxyLinker
-            extends OwningRelationService<Configuration, Proxy, ConfigurationService, ProxyService> {
-
+            extends OwningRelationService<Configuration, Proxy,
+            ConfigurationService, ProxyService> {
         @Override
         protected final List<Proxy> getInternal(final Configuration owner) {
             return owner.getProxy();
@@ -76,10 +77,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class DataSourceAuthenticationLinker
-            extends OwningRelationService<DataSource, Authentication, DataSourceService, AuthenticationService> {
+            extends OwningRelationService<DataSource, Authentication, DataSourceService,
+            AuthenticationService> {
 
         @Override
-        protected List<Authentication> getInternal(final DataSource owner) {
+        protected final List<Authentication> getInternal(final DataSource owner) {
             return List.of(owner.getAuthentication());
         }
     }
@@ -90,10 +92,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class DataSourceGenericEndpointsLinker
-            extends OwningRelationService<DataSource, GenericEndpoint, DataSourceService, GenericEndpointService> {
+            extends OwningRelationService<DataSource, GenericEndpoint, DataSourceService,
+            GenericEndpointService> {
 
         @Override
-        protected List<GenericEndpoint> getInternal(final DataSource owner) {
+        protected final List<GenericEndpoint> getInternal(final DataSource owner) {
             return owner.getGenericEndpoint();
         }
     }
@@ -104,10 +107,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class ProxyAuthenticationLinker
-            extends OwningRelationService<Proxy, Authentication, ProxyService, AuthenticationService> {
+            extends OwningRelationService<Proxy, Authentication, ProxyService,
+            AuthenticationService> {
 
         @Override
-        protected List<Authentication> getInternal(final Proxy owner) {
+        protected final List<Authentication> getInternal(final Proxy owner) {
             return List.of(owner.getAuthentication());
         }
     }
@@ -121,7 +125,7 @@ public final class EntityLinkerService {
             extends OwningRelationService<Route, Route, RouteService, RouteService> {
 
         @Override
-        protected List<Route> getInternal(final Route owner) {
+        protected final List<Route> getInternal(final Route owner) {
             return owner.getSubRoutes();
         }
     }
@@ -132,10 +136,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class RouteStartGenericEndpointLinker
-            extends OwningRelationService<Route, GenericEndpoint, RouteService, GenericEndpointService> {
+            extends OwningRelationService<Route, GenericEndpoint, RouteService,
+            GenericEndpointService> {
 
         @Override
-        protected List<GenericEndpoint> getInternal(final Route owner) {
+        protected final List<GenericEndpoint> getInternal(final Route owner) {
             return List.of(owner.getStartGenericEndpoint());
         }
     }
@@ -146,10 +151,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class RouteEndGenericEndpointLinker
-            extends OwningRelationService<Route, GenericEndpoint, RouteService, GenericEndpointService> {
+            extends OwningRelationService<Route, GenericEndpoint, RouteService,
+            GenericEndpointService> {
 
         @Override
-        protected List<GenericEndpoint> getInternal(final Route owner) {
+        protected final List<GenericEndpoint> getInternal(final Route owner) {
             return List.of(owner.getEndGenericEndpoint());
         }
     }
@@ -163,7 +169,7 @@ public final class EntityLinkerService {
             extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
 
         @Override
-        protected List<IdsEndpoint> getInternal(final Route owner) {
+        protected final List<IdsEndpoint> getInternal(final Route owner) {
             return List.of(owner.getStartIdsEndpoint());
         }
     }
@@ -177,7 +183,7 @@ public final class EntityLinkerService {
             extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
 
         @Override
-        protected List<IdsEndpoint> getInternal(final Route owner) {
+        protected final List<IdsEndpoint> getInternal(final Route owner) {
             return List.of(owner.getEndIdsEndpoint());
         }
     }
@@ -188,10 +194,11 @@ public final class EntityLinkerService {
     @Service
     @NoArgsConstructor
     public static class RouteOfferedResourceLinker
-            extends OwningRelationService<Route, OfferedResource, RouteService, OfferedResourceService> {
+            extends OwningRelationService<Route, OfferedResource, RouteService,
+            OfferedResourceService> {
 
         @Override
-        protected List<OfferedResource> getInternal(final Route owner) {
+        protected final List<OfferedResource> getInternal(final Route owner) {
             return owner.getOfferedResources();
         }
     }

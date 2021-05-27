@@ -53,14 +53,21 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
         return clearingHouse;
     }
 
+    /**
+     * @param clearingHouse The clearing house entity.
+     * @param desc          The description of the new entity.
+     * @return True, if clearing house is updated.
+     */
     @Override
     public boolean update(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
         Utils.requireNonNull(clearingHouse, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateAccessUrl(clearingHouse, clearingHouse.getAccessUrl());
+        final var newAccessUrl = updateAccessUrl(clearingHouse,
+                clearingHouse.getAccessUrl());
         final var newTitle = updateTitle(clearingHouse, clearingHouse.getTitle());
-        final var newStatus = updateRegisterStatus(clearingHouse, clearingHouse.getRegisterStatus());
+        final var newStatus = updateRegisterStatus(clearingHouse,
+                clearingHouse.getRegisterStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -70,7 +77,8 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @param status        The registration status of the clearing house.
      * @return True, if clearing house is updated.
      */
-    private boolean updateRegisterStatus(final ClearingHouse clearingHouse, final RegisterStatus status) {
+    private boolean updateRegisterStatus(final ClearingHouse clearingHouse,
+                                         final RegisterStatus status) {
         final boolean updated;
         if (clearingHouse.getRegisterStatus().equals(status)) {
             updated = false;
@@ -87,8 +95,8 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @return True, if clearing house is updated
      */
     private boolean updateTitle(final ClearingHouse clearingHouse, final String title) {
-        final var newTitle = MetadataUtils.updateString(clearingHouse.getTitle(), title,
-                DEFAULT_STRING);
+        final var newTitle = MetadataUtils.updateString(clearingHouse.getTitle(),
+                title, DEFAULT_STRING);
         newTitle.ifPresent(clearingHouse::setTitle);
         return newTitle.isPresent();
     }
@@ -99,8 +107,8 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @return True, if clearing house is updated.
      */
     private boolean updateAccessUrl(final ClearingHouse clearingHouse, final URI accessUrl) {
-        final var newAccessUrl = MetadataUtils.updateUri(clearingHouse.getAccessUrl(), accessUrl,
-                DEFAULT_URI);
+        final var newAccessUrl =
+                MetadataUtils.updateUri(clearingHouse.getAccessUrl(), accessUrl, DEFAULT_URI);
         newAccessUrl.ifPresent(clearingHouse::setAccessUrl);
         return newAccessUrl.isPresent();
     }

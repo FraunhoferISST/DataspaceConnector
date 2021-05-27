@@ -18,8 +18,6 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.net.URI;
 /**
  * Describing the clearing house's properties.

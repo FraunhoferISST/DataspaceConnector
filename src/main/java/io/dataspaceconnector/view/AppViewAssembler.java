@@ -32,12 +32,12 @@ import java.util.UUID;
 public class AppViewAssembler implements RepresentationModelAssembler<App, AppView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, AppController.class);
     }
 
     @Override
-    public AppView toModel(final App app) {
+    public final AppView toModel(final App app) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(app, AppView.class);
         view.add(getSelfLink(app.getId()));

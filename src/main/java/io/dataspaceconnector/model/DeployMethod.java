@@ -47,10 +47,10 @@ public enum DeployMethod {
     private final String value;
 
     /**
-     * @param value The value of the enum.
+     * @param enumValue The value of the enum.
      */
-    DeployMethod(String value) {
-        this.value = value;
+    DeployMethod(final String enumValue) {
+        this.value = enumValue;
     }
 
     /**

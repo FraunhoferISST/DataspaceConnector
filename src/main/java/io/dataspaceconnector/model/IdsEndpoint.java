@@ -35,7 +35,7 @@ import java.net.URI;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class IdsEndpoint extends Endpoint{
+public class IdsEndpoint extends Endpoint {
 
     /**
      * Serial version uid.

@@ -25,7 +25,7 @@ import java.net.URI;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AppEndpointDesc extends EndpointDesc<AppEndpoint>{
+public class AppEndpointDesc extends EndpointDesc<AppEndpoint> {
 
     /**
      * The access url of the endpoint.

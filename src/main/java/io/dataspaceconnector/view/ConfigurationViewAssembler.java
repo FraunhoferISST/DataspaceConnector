@@ -32,12 +32,12 @@ public class ConfigurationViewAssembler implements
         RepresentationModelAssembler<Configuration, ConfigurationView>, SelfLinking {
 
     @Override
-    public Link getSelfLink(final UUID entityId) {
+    public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId, ConfigurationController.class);
     }
 
     @Override
-    public ConfigurationView toModel(final Configuration configuration) {
+    public final ConfigurationView toModel(final Configuration configuration) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(configuration, ConfigurationView.class);
         view.add(getSelfLink(configuration.getId()));
