@@ -28,8 +28,12 @@ public class SelfDescription implements Processor {
     public void process(final Exchange exchange) throws Exception {
         // TODO Only return contract offers that have no or the right pre-defined consumer
         final var msg = exchange.getIn().getBody(Request.class);
-        final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
-        final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        exchange.getIn().setBody(process(msg));
+    }
+
+    protected Response process(final Request request) {
+        final var issuer = MessageUtils.extractIssuerConnector(request.getHeader());
+        final var messageId = MessageUtils.extractMessageId(request.getHeader());
         final var connector = connectorService.getConnectorWithOfferedResources();
 
         // Build ids response message.
@@ -37,6 +41,6 @@ public class SelfDescription implements Processor {
         final var header = messageService.buildMessage(desc);
 
         // Send ids response message.
-        exchange.getIn().setBody(new Response(header, connector.toRdf()));
+        return new Response(header, connector.toRdf());
     }
 }
