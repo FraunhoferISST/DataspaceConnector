@@ -16,10 +16,10 @@ Get an example setup running without diving into the code.
 
 ## Quick Start
 
-We provide Docker images. These can be found [here](https://github.com/orgs/International-Data-Spaces-Association/packages/container/package/dataspace-connector). 
-The GitHub container registry (GHCR) allows to download Docker images without credentials.
+**We provide Docker images. These can be found [here](https://github.com/orgs/International-Data-Spaces-Association/packages/container/package/dataspace-connector). 
+The GitHub Container Registry (GHCR) allows to download Docker images without credentials.
 You will find an image for each release tag with the corresponding version. In addition, an image of 
-the master and dev branch is automatically provided as soon as changes are identified.
+the master and dev branch is automatically provided as soon as changes are identified.**
 
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these 
 steps:
@@ -52,7 +52,7 @@ An instance of the Dataspace Connector is currently available in the IDS Lab at
 It can only be reached from inside a VPN network. To get your IP address unblocked, please contact
 [us](mailto:info@dataspace-connector.de).
 * The connector self-description is available at [https://simpleconnector.ids.isst.fraunhofer.de/](https://simpleconnector.ids.isst.fraunhofer.de/) (GET).
-* The **open endpoint for IDS communication** is 
+* The open endpoint for IDS communication is 
   [https://simpleconnector.ids.isst.fraunhofer.de/api/ids/data](https://simpleconnector.ids.isst.fraunhofer.de/api/ids/data) (POST).
 * The backend API and its endpoints (`/api/**`) are only accessible to users with admin rights.
 
@@ -92,13 +92,15 @@ guaranteed.
 * The Dynamic Attribute Provisioning Service (DAPS) is available at
 [https://daps.aisec.fraunhofer.de/](https://daps.aisec.fraunhofer.de/).
   
-* The IDS Metadata Broker is available at 
-[https://broker.ids.isst.fraunhofer.de](https://broker.ids.isst.fraunhofer.de). It expects IDS 
-multipart messages at[https://broker.ids.isst.fraunhofer.de/infrastructure](https://broker.ids.isst.fraunhofer.de/infrastructure). 
-The GUI can be accessed at [https://broker.ids.isst.fraunhofer.de/browse](https://broker.ids.isst.fraunhofer.de/browse).
+* The IDS Metadata Broker is available at
+  [https://broker.ids.isst.fraunhofer.de](https://broker.ids.isst.fraunhofer.de). It expects IDS 
+  multipart messages at[https://broker.ids.isst.fraunhofer.de/infrastructure](https://broker.ids.isst.fraunhofer.de/infrastructure). 
+  The GUI can be accessed at [https://broker.ids.isst.fraunhofer.de/browse](https://broker.ids.isst.fraunhofer.de/browse). 
+  To get your IP address unblocked, please contact [us](mailto:info@dataspace-connector.de).
   
-* The Participant Information System (ParIS) is available at 
-[https://paris.ids.isst.fraunhofer.de](https://paris.ids.isst.fraunhofer.de). 
-It expects IDS multipart messages at 
-[https://paris.ids.isst.fraunhofer.de/infrastructure](https://paris.ids.isst.fraunhofer.de/infrastructure). 
-The GUI can be accessed at [https://paris.ids.isst.fraunhofer.de/browse](https://paris.ids.isst.fraunhofer.de/browse).
+* The Participant Information System (ParIS) is available at
+  [https://paris.ids.isst.fraunhofer.de](https://paris.ids.isst.fraunhofer.de). 
+  It expects IDS multipart messages at
+  [https://paris.ids.isst.fraunhofer.de/infrastructure](https://paris.ids.isst.fraunhofer.de/infrastructure). 
+  The GUI can be accessed at [https://paris.ids.isst.fraunhofer.de/browse](https://paris.ids.isst.fraunhofer.de/browse). 
+  To get your IP address unblocked, please contact [us](mailto:info@dataspace-connector.de).

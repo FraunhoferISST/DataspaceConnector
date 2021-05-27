@@ -1,20 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.x] 2021-05-20
+## [5.x.x] - XXXX-XX-XX
 
 ### Added
-- Add `BootstrapConfiguration`.
-  * Allow registering ids catalogs during startup.
-  * Allow registering offered resources as part of the catalogs to brokers.
-- Add `CatalogTemplate` and matching mapping/build functions.
-- Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
-- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found.
+ - Add telemetry collection via Jaeger.
+ - Add `BootstrapConfiguration`.
+   * Allow registering ids catalogs during startup.
+   * Allow registering offered resources as part of the catalogs to brokers.
+ - Add `CatalogTemplate` and matching mapping/build functions.
+ - Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
+ - Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found.
+ 
+### Changed
+ - Replace deprecated JPA calls (`getOne` -> `getById`).
+ - Increase length restriction for URIs in database columns to 2048.
+
+### Fixed
+ - Representations have now only one self-link.
+
+## [5.0.2] - 2021-05-25
 
 ### Changed
  - Make the Clearing House url setting optional in `application.properties`.
  - Change `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
 
+
+### Fixed
+ - Persist URIs as strings in database.
 
 ## [5.0.1] - 2021-05-19
 
