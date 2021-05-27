@@ -15,19 +15,22 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import java.net.URI;
-import java.util.List;
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
 
 /**
  * Describes resource requested by this connector.
@@ -48,6 +51,8 @@ public final class RequestedResource extends Resource {
     /**
      * The resource id on provider side.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**

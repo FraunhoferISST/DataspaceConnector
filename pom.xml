@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.0.1</revision>
+		<revision>5.0.2</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -102,14 +102,15 @@
 		<modelmapper.version>2.4.3</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
-		<springdoc-ui.version>1.5.8</springdoc-ui.version>
-		<springdoc-security.version>1.5.8</springdoc-security.version>
+		<springdoc-ui.version>1.5.9</springdoc-ui.version>
+		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
-		<equalsverifier.version>3.6</equalsverifier.version>
+		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<jaeger.version>3.3.1</jaeger.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
-		<maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
 		<pitest.version>1.6.6</pitest.version>
 		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
@@ -342,11 +343,11 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>io.opentracing.contrib</groupId>
 			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
-			<version>3.3.1</version>
-		</dependency> -->
+			<version>${jaeger.version}</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>

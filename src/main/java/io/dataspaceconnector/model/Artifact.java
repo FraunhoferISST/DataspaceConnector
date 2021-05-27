@@ -17,11 +17,14 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
 
 /**
  * An artifact stores and encapsulates data.
@@ -52,11 +57,15 @@ public abstract class Artifact extends AbstractEntity {
     /**
      * The artifact id on provider side.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
      * The provider's address for artifact request messages.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteAddress;
 
     /**
