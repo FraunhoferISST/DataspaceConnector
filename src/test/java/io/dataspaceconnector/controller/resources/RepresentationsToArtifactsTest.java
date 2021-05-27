@@ -16,14 +16,12 @@
 package io.dataspaceconnector.controller.resources;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.services.resources.RelationServices;
 import io.dataspaceconnector.view.ArtifactView;
 import io.dataspaceconnector.utils.Utils;
