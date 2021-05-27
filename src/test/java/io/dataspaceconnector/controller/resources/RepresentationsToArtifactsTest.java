@@ -61,7 +61,6 @@ class RepresentationsToArtifactsTest {
     @InjectMocks
     private RelationControllers.RepresentationsToArtifacts controller;
 
-    private Representation representation = getRepresentation("Owner");
     private List<Artifact> artifacts = new ArrayList<>();
 
     /**
@@ -163,32 +162,6 @@ class RepresentationsToArtifactsTest {
     /**
      * Utilities
      */
-    @SneakyThrows
-    private Representation getRepresentation(final String title) {
-        final var constructor = Representation.class.getConstructor();
-        constructor.setAccessible(true);
-
-        final var representation = constructor.newInstance();
-
-        final var titleField = representation.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(representation, title);
-
-        final var artifactsField = representation.getClass().getDeclaredField("artifacts");
-        artifactsField.setAccessible(true);
-        artifactsField.set(representation, new ArrayList<ArtifactImpl>());
-
-        final var idField = representation.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(representation, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
-
-        final var additionalField =
-                representation.getClass().getSuperclass().getDeclaredField("additional");
-        additionalField.setAccessible(true);
-        additionalField.set(representation, new HashMap<>());
-
-        return representation;
-    }
 
     @SneakyThrows
     private ArtifactImpl getArtifact(String title) {
