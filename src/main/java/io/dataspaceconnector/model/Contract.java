@@ -33,7 +33,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConfiguration.URI_COLUMN_LENGTH;
 
 /**
  * A contract documents access and usage behaviours.
