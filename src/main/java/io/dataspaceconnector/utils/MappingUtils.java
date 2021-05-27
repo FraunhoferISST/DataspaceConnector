@@ -416,13 +416,13 @@ public final class MappingUtils {
 
         try {
             desc.setEnd(getDateOf(end.toXMLFormat()));
-        } catch (DateTimeParseException ignored) {
+        } catch (Exception ignored) {
             // Default values don't need to be set here.
         }
 
         try {
             desc.setStart(getDateOf(start.toXMLFormat()));
-        } catch (DateTimeParseException ignored) {
+        } catch (Exception ignored) {
             // Default values don't need to be set here.
         }
 
