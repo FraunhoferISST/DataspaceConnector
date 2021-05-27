@@ -108,7 +108,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *
      * @param entity  The entity.
      * @param baseUri The hostname.
-     * @param <X>     The entity type.
+     * @param <K>     The entity type.
      * @return The absolute path to this entity.
      */
     protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity,
