@@ -15,8 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ControllerUtils;
@@ -50,7 +52,7 @@ public class ConfigurationController {
     /**
      * The current connector configuration.
      */
-    private final @NonNull ConfigurationContainer configContainer;
+    private final @NonNull ConfigContainer configContainer;
 
     /**
      * The current policy configuration.
@@ -86,7 +88,7 @@ public class ConfigurationController {
             // Update configuration of connector.
             configContainer.updateConfiguration(config);
             return getConfiguration();
-        } catch (ConfigurationUpdateException exception) {
+        } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (IllegalArgumentException exception) {
             return ControllerUtils.respondDeserializationError(exception);
@@ -106,7 +108,7 @@ public class ConfigurationController {
             @ApiResponse(responseCode = "404", description = "Not found")})
     @ResponseBody
     public ResponseEntity<Object> getConfiguration() {
-        final var config = configContainer.getConfigModel();
+        final var config = configContainer.getConfigurationModel();
         if (config == null) {
             return ControllerUtils.respondConfigurationNotFound();
         } else {

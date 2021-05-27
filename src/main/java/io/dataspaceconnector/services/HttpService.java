@@ -42,7 +42,7 @@ public class HttpService {
     /**
      * Service for building and sending http requests.
      */
-    private final @NonNull de.fraunhofer.isst.ids.framework.communication.http.HttpService
+    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService
             httpSvc;
 
     /**

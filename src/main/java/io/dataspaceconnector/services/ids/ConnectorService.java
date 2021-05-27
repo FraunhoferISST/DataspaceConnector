@@ -29,9 +29,12 @@ import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+//import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
@@ -55,7 +58,7 @@ public class ConnectorService {
     /**
      * The current connector configuration.
      */
-    private final @NonNull ConfigurationContainer configContainer;
+    private final @NonNull ConfigContainer configContainer;
 
     /**
      * The token provider.
@@ -155,12 +158,12 @@ public class ConnectorService {
     /**
      * Updates the connector object in the ids framework's config container.
      *
-     * @throws ConfigurationUpdateException If the configuration could not be update.
+     * @throws ConfigUpdateException If the configuration could not be update.
      */
-    public void updateConfigModel() throws ConfigurationUpdateException {
+    public void updateConfigModel() throws ConfigUpdateException {
         try {
             final var connector = getConnectorWithOfferedResources();
-            final var configModel = (ConfigurationModelImpl) configContainer.getConfigModel();
+            final var configModel = (ConfigurationModelImpl) configContainer.getConfigurationModel();
             configModel.setConnectorDescription(connector);
 
             // Handled at a higher level.
@@ -169,7 +172,7 @@ public class ConnectorService {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to retrieve connector. [exception=({})]", e.getMessage(), e);
             }
-            throw new ConfigurationUpdateException("Failed to retrieve connector.", e);
+            throw new ConfigUpdateException("Failed to retrieve connector.", e);
         }
     }
 

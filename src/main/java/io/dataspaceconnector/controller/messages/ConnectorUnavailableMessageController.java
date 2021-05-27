@@ -17,8 +17,10 @@ package io.dataspaceconnector.controller.messages;
 
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -84,7 +86,7 @@ public class ConnectorUnavailableMessageController {
             final var response = brokerService.unregisterAtBroker(recipient);
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);
-        } catch (ConfigurationUpdateException exception) {
+        } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (NullPointerException | IOException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);

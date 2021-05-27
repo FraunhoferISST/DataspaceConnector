@@ -40,7 +40,9 @@ import org.springframework.context.annotation.ComponentScan;
     "io.dataspaceconnector",
     "de.fraunhofer.isst.ids.framework.communication",
     "de.fraunhofer.isst.ids.framework.configuration",
-    "de.fraunhofer.isst.ids.framework.daps", "de.fraunhofer.ids.*", "de.fraunhofer.ids.messaging.*"
+    "de.fraunhofer.isst.ids.framework.daps",
+    "de.fraunhofer.ids.*",
+    "de.fraunhofer.ids.messaging.*"
 })
 public class ConnectorApplication {
 

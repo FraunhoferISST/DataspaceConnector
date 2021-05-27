@@ -22,7 +22,8 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;

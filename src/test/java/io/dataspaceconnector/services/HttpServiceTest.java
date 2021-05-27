@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HttpServiceTest {
 
     @MockBean
-    de.fraunhofer.isst.ids.framework.communication.http.HttpService httpSvc;
+    de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
 
     @Autowired
     HttpService service;

@@ -17,8 +17,10 @@ package io.dataspaceconnector.controller.messages;
 
 import java.io.IOException;
 
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -78,7 +80,7 @@ public class ConnectorUpdateMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateConfigModel_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(ConfigurationUpdateException.class).when(connectorService).updateConfigModel();
+        Mockito.doThrow(ConfigUpdateException.class).when(connectorService).updateConfigModel();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")

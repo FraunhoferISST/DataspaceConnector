@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
 
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;

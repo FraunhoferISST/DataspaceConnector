@@ -16,7 +16,8 @@
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+//import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;

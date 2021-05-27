@@ -28,8 +28,10 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
+//import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+//import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Service for ids communication.
      */
     @Autowired
-    private IDSHttpService idsHttpService;
+    private IdsHttpService idsHttpService;
 
     /**
      * Service for the current connector configuration.

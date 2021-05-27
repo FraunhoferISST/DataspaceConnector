@@ -37,8 +37,10 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+//import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
@@ -69,7 +71,7 @@ import static org.mockito.Mockito.when;
 public class ConnectorServiceTest {
 
     @MockBean
-    private ConfigurationContainer configContainer;
+    private ConfigContainer configContainer;
 
     @MockBean
     private DapsTokenProvider tokenProvider;
@@ -158,7 +160,7 @@ public class ConnectorServiceTest {
         when(configContainer.getConnector()).thenReturn(getConnector());
         when(catalogService.getAll(Pageable.unpaged())).thenReturn(new PageImpl<>(List.of(catalog)));
         when(catalogBuilder.create(catalog, 0)).thenReturn(idsCatalog);
-        when(configContainer.getConfigModel()).thenReturn(configModel);
+        when(configContainer.getConfigurationModel()).thenReturn(configModel);
         doNothing().when(configContainer).updateConfiguration(any());
 
         /* ACT */

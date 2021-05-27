@@ -19,8 +19,10 @@ import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
+//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import net.minidev.json.JSONObject;
@@ -44,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ConfigurationControllerTest {
 
     @MockBean
-    private ConfigurationContainer configContainer;
+    private ConfigContainer configContainer;
 
     @MockBean
     private ConnectorConfiguration connectorConfig;
@@ -66,7 +68,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
@@ -86,7 +88,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
@@ -106,7 +108,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
@@ -151,7 +153,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
@@ -195,7 +197,7 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.doThrow(ConfigurationUpdateException.class).when(configContainer).updateConfiguration(Mockito.eq(model));
+        Mockito.doThrow(ConfigUpdateException.class).when(configContainer).updateConfiguration(Mockito.eq(model));
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
@@ -245,7 +247,7 @@ public class ConfigurationControllerTest {
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
                 .build();
 
-        Mockito.doReturn(model).when(configContainer).getConfigModel();
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration"))
@@ -264,7 +266,7 @@ public class ConfigurationControllerTest {
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
                 .build();
 
-        Mockito.doReturn(model).when(configContainer).getConfigModel();
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration"))
@@ -277,7 +279,7 @@ public class ConfigurationControllerTest {
     @WithMockUser("ADMIN")
     public void getConfiguration_noConfig_return404() throws Exception {
         /* ARRANGE */
-        Mockito.doReturn(null).when(configContainer).getConfigModel();
+        Mockito.doReturn(null).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration"))
