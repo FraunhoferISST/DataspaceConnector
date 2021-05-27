@@ -16,7 +16,6 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.RegisterStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,7 +25,6 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * A DTO for controlled exposing of broker information in API responses.
@@ -63,11 +61,6 @@ public class BrokerView extends RepresentationModel<BrokerView> {
      * The status of registration.
      */
     private RegisterStatus status;
-
-    /**
-     * The list of resources.
-     */
-    private List<OfferedResource> offeredResources;
 
     /**
      * The date specification.

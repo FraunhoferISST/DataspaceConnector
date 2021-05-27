@@ -16,7 +16,6 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.App;
 import io.dataspaceconnector.model.RegisterStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,7 +25,6 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * A DTO for controlled exposing of app store information in API responses.
@@ -63,11 +61,6 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
      * The registration status.
      */
     private RegisterStatus registerStatus;
-
-    /**
-     * The list of apps.
-     */
-    private List<App> appList;
 
     /**
      * The date specification.
