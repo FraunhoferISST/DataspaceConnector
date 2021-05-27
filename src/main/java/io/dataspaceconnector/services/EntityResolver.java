@@ -50,6 +50,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -248,9 +249,10 @@ public class EntityResolver {
      * @param requestedArtifact The artifact uri.
      * @param queryInput        Http query for data request.
      * @return Artifact from database.
+     * @throws IOException if the data cannot be received.
      */
     public InputStream getDataByArtifactId(final URI requestedArtifact,
-                                           final QueryInput queryInput) {
+                                           final QueryInput queryInput) throws IOException {
         final var endpoint = EndpointUtils.getUUIDFromPath(requestedArtifact);
         return artifactService.getData(allowAccessVerifier, artifactReceiver, endpoint, queryInput);
     }
