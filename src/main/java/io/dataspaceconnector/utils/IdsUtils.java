@@ -29,7 +29,6 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
 import lombok.SneakyThrows;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.ZoneId;
