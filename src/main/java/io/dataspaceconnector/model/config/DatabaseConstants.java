@@ -18,12 +18,12 @@ package io.dataspaceconnector.model.config;
 /**
  * This class contains static constants for configuring database columns.
  */
-public final class DatabaseConfiguration {
+public final class DatabaseConstants {
 
     /**
      * Private constructor.
      */
-    private DatabaseConfiguration() { }
+    private DatabaseConstants() { }
 
     /**
      * The maximum length of database columns containing URIs.
