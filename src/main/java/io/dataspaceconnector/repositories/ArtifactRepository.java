@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.repositories;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Artifact;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The repository containing all objects of type {@link Artifact}.
@@ -89,4 +89,15 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "WHERE a.id = :artifactId "
             + "AND a.deleted = false")
     void setArtifactData(UUID artifactId, long checkSum, long size);
+
+    /**
+     * Finds all artifacts with a specific bootstrap ID.
+     *
+     * @param bootstrapId bootstrap ID of the artifact
+     * @return list of all artifacts with given bootstrap ID
+     */
+    @Query("SELECT a "
+            + "FROM Artifact a "
+            + "WHERE a.bootstrapId = :bootstrapId ")
+    List<Artifact> findAllByBootstrapId(URI bootstrapId);
 }

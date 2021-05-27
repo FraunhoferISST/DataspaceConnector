@@ -29,10 +29,13 @@ import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.ResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
+import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
 import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
@@ -125,6 +128,12 @@ public class BootstrapConfiguration {
     private String bootstrapPath;
 
     /**
+     * Base URI.
+     */
+    @Value("${bootstrap.base.uri}")
+    private String baseUri;
+
+    /**
      * Spring application context. Needed for shutdowns in case of errors.
      */
     private final @NotNull ApplicationContext context;
@@ -159,6 +168,16 @@ public class BootstrapConfiguration {
      * Service for the current connector configuration.
      */
     private final @NonNull ConnectorService connectorService;
+
+    /**
+     * Service for rules.
+     */
+    private final @NonNull RuleService ruleService;
+
+    /**
+     * Repository for artifacts.
+     */
+    private final @NonNull ArtifactRepository artifactRepository;
 
     /**
      * Bootstrap the connector.
@@ -448,8 +467,8 @@ public class BootstrapConfiguration {
                 boolean catalogDuplicate = false;
                 for (Catalog knownCatalog : knownCatalogs) {
                     Hibernate.initialize(knownCatalog.getAdditional());
-                    if (catalog.getId().toString()
-                            .equals(knownCatalog.getAdditional().get("idsId"))) {
+                    if (catalog.getId()
+                            .equals(knownCatalog.getBootstrapId())) {
                         catalogDuplicate = true;
                         break;
                     }
@@ -482,6 +501,7 @@ public class BootstrapConfiguration {
      * @param idsResources (IDS ID, IDS-Resource) map that cointains bootstrapped elements
      * @return true if the catalog could be registered, false otherwise
      */
+    @Transactional
     protected boolean registerCatalog(final ResourceCatalog catalog,
                                       final Properties properties,
                                       final Map<URI, Resource> idsResources) {
@@ -505,7 +525,57 @@ public class BootstrapConfiguration {
         catalogTemplate.setRequestedResources(requestedResources);
 
         // perform registration
-        templateBuilder.build(catalogTemplate);
+        final var builtCatalog = templateBuilder.build(catalogTemplate);
+
+        // update target IDs from rules to match dsc IDs
+        /* for (OfferedResource resource : builtCatalog.getOfferedResources()) {
+            for (Contract contract : resource.getContracts()) {
+                for (ContractRule rule : contract.getRules()) {
+                    final var artifacts = artifactRepository.findAllByBootstrapId(
+                            deserializationService.getRule(rule.getValue()).getTarget());
+                    if (artifacts.size() != 1) {
+                        if (log.isErrorEnabled()) {
+                            log.error("Failed to retrieve bootstrapped artifact. "
+                                    + "Expected 1 but found {}.", artifacts.size());
+                        }
+
+                        return false;
+                    }
+
+                    final var idsRule = deserializationService.getRule(rule.getValue());
+                    try {
+                        final var field =
+                                idsRule.getClass().getDeclaredField("_target");
+                        field.setAccessible(true);
+                        field.set(idsRule, URI.create(baseUri + SelfLinkHelper.getSelfLink(
+                                artifacts.get(0))));
+                        field.setAccessible(false);
+                    } catch (NoSuchFieldException | IllegalAccessException e) {
+                        if (log.isErrorEnabled()) {
+                            log.error("Could not update target in IDS rule entity.", e);
+                        }
+
+                        return false;
+                    }
+
+                    final var newValue = idsRule.toRdf();
+
+                    TransactionTemplate template = new TransactionTemplate(transactionManager);
+
+                    template.execute(status -> {
+                        Hibernate.initialize(rule.getAdditional());
+
+                        final var desc = new ContractRuleDesc();
+                        desc.setValue(newValue);
+                        desc.setTitle(rule.getTitle());
+                        desc.setRemoteId(rule.getRemoteId());
+                        desc.setAdditional(rule.getAdditional());
+                        return ruleService.update(rule.getId(), desc);
+                    });
+                }
+            }
+        }*/
+
         if (log.isInfoEnabled()) {
             log.info("Bootstrapped catalog with IDS id '{}'.", catalog.getId());
         }
@@ -530,7 +600,8 @@ public class BootstrapConfiguration {
             final Properties properties,
             final Resource resource) {
         // add ids id to additional fields
-        resourceTemplate.getDesc().getAdditional().put("idsId", resource.getId().toString());
+        ((ResourceDesc<OfferedResource>) resourceTemplate.getDesc())
+                .setBootstrapId(resource.getId().toString());
 
         // collect all artifact IDs from artifacts inside representations
         final var artifacts = new ArrayList<URI>();
@@ -556,11 +627,11 @@ public class BootstrapConfiguration {
         // add additional information from properties to artifact descriptions
         for (final var representationTemplate : resourceTemplate.getRepresentations()) {
             for (final var artifactTemplate : representationTemplate.getArtifacts()) {
-                final var idsId = artifactTemplate.getDesc().getAdditional().get("idsId");
-                final var accessUrl = properties.getProperty("artifact.accessUrl." + idsId);
-                final var username = properties.getProperty("artifact.username." + idsId);
-                final var password = properties.getProperty("artifact.password." + idsId);
-                final var value = properties.getProperty("artifact.value." + idsId);
+                final var bootstrapId = artifactTemplate.getDesc().getBootstrapId();
+                final var accessUrl = properties.getProperty("artifact.accessUrl." + bootstrapId);
+                final var username = properties.getProperty("artifact.username." + bootstrapId);
+                final var password = properties.getProperty("artifact.password." + bootstrapId);
+                final var value = properties.getProperty("artifact.value." + bootstrapId);
 
                 if (accessUrl != null) {
                     try {
@@ -568,7 +639,7 @@ public class BootstrapConfiguration {
                     } catch (MalformedURLException e) {
                         if (log.isErrorEnabled()) {
                             log.error("Could not parse accessUrl '{}' for artifact with "
-                                    + "IDS id '{}'.", accessUrl, idsId, e);
+                                    + "IDS id '{}'.", accessUrl, bootstrapId, e);
                         }
                     }
                 }

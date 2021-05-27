@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
 
 /**
  * Base class for creating and updating resources.
@@ -129,13 +129,14 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
+        final var hasUpdatedBootstrapId = updateBootstrapId(resource, desc.getBootstrapId());
 
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
                                || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs
-                               || hasUpdatedAdditional;
+                               || hasUpdatedAdditional || hasUpdatedBootstrapId;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -263,6 +264,18 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
+    }
+
+    private boolean updateBootstrapId(final Resource resource, final String bootstrapId) {
+        final var newBootstrapId =
+                MetadataUtils
+                        .updateUri(
+                                resource.getBootstrapId(),
+                                URI.create(bootstrapId),
+                                resource.getBootstrapId());
+        newBootstrapId.ifPresent(resource::setBootstrapId);
+
+        return newBootstrapId.isPresent();
     }
 
     private boolean updateAdditional(

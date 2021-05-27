@@ -47,7 +47,7 @@ public class AbstractDescriptionTest {
         result.addOverflow(key, value);
 
         /* ASSERT */
-        assertEquals(1, result.getAdditional().size());
+        assertEquals(0, result.getAdditional().size());
         assertTrue(result.getAdditional().keySet().contains(key));
         assertEquals(value, result.getAdditional().get(key));
     }

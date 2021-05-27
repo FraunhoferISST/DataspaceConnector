@@ -72,14 +72,12 @@ public final class MappingUtils {
         if (catalog.getProperties() != null) {
             catalog.getProperties().forEach((key, value) -> additional.put(key, value.toString()));
         }
-        // add ids:id as additional field in order to later check if this catalog is already known
-        // to the connector
-        additional.put("idsId", catalog.getId().toString());
 
         final var catalogDesc = new CatalogDesc();
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
         catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+        catalogDesc.setBootstrapId(catalog.getId().toString());
 
         return new CatalogTemplate(catalogDesc, null, null);
     }
@@ -357,10 +355,6 @@ public final class MappingUtils {
         // Add additional properties to map.
         final var additional = propertiesToAdditional(artifact.getProperties());
 
-        if (artifact.getId() != null) {
-            additional.put("idsId", artifact.getId().toString());
-        }
-
         if (byteSize != null) {
             additional.put("ids:byteSize", byteSize.toString());
         }
@@ -383,6 +377,9 @@ public final class MappingUtils {
         desc.setTitle(filename);
         desc.setAutomatedDownload(download);
         desc.setRemoteAddress(remoteUrl);
+        if (artifactId != null) {
+            desc.setBootstrapId(artifactId.toString());
+        }
 
         return new ArtifactTemplate(desc);
     }
