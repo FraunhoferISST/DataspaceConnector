@@ -16,12 +16,21 @@
 package io.dataspaceconnector.utils;
 
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.*;
-import io.dataspaceconnector.model.*;
-import io.dataspaceconnector.model.templates.*;
+import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.ContractDesc;
+import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.ContractTemplate;
+import io.dataspaceconnector.model.templates.RepresentationTemplate;
+import io.dataspaceconnector.model.templates.ResourceTemplate;
+import io.dataspaceconnector.model.templates.RuleTemplate;
 
 import java.net.URI;
 import java.time.ZonedDateTime;

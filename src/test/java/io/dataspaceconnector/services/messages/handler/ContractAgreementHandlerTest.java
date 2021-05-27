@@ -16,7 +16,11 @@
 package io.dataspaceconnector.services.messages.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
+import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import org.junit.jupiter.api.Test;

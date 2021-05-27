@@ -20,7 +20,11 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.templates.*;
+import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.ContractTemplate;
+import io.dataspaceconnector.model.templates.RepresentationTemplate;
+import io.dataspaceconnector.model.templates.ResourceTemplate;
+import io.dataspaceconnector.model.templates.RuleTemplate;
 import lombok.extern.log4j.Log4j2;
 
 import java.net.URI;

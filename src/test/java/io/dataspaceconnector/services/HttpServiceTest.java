@@ -17,7 +17,11 @@ package io.dataspaceconnector.services;
 
 import io.dataspaceconnector.model.QueryInput;
 import kotlin.Pair;
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.Protocol;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.bouncycastle.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,7 +35,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {HttpService.class})
 class HttpServiceTest {

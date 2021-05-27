@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.validation.ConstraintViolationException;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import io.dataspaceconnector.services.ids.ConnectorService;
@@ -31,6 +26,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.validation.ConstraintViolationException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

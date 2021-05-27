@@ -15,15 +15,13 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import javax.persistence.PersistenceException;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.exceptions.*;
+import io.dataspaceconnector.exceptions.ContractException;
+import io.dataspaceconnector.exceptions.InvalidInputException;
+import io.dataspaceconnector.exceptions.MessageException;
+import io.dataspaceconnector.exceptions.MessageResponseException;
+import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.services.EntityPersistenceService;
 import io.dataspaceconnector.services.EntityUpdateService;
 import io.dataspaceconnector.services.messages.types.ArtifactRequestService;
@@ -48,7 +46,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.persistence.PersistenceException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the

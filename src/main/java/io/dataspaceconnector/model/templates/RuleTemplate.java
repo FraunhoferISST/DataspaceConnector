@@ -16,7 +16,11 @@
 package io.dataspaceconnector.model.templates;
 
 import io.dataspaceconnector.model.ContractRuleDesc;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
 

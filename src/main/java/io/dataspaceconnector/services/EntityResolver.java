@@ -19,10 +19,29 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.SelfLinkCreationException;
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.services.ids.builder.*;
-import io.dataspaceconnector.services.resources.*;
+import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
+import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.services.resources.AgreementService;
+import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.services.resources.ContractService;
+import io.dataspaceconnector.services.resources.RepresentationService;
+import io.dataspaceconnector.services.resources.ResourceService;
+import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -30,14 +49,13 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.io.InputStream;
-
-import org.springframework.stereotype.Service;
 
 /**
  * This service offers methods for finding entities by their identifying URI.

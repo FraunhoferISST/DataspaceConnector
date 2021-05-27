@@ -26,7 +26,12 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
-import io.dataspaceconnector.exceptions.*;
+import io.dataspaceconnector.exceptions.MessageBuilderException;
+import io.dataspaceconnector.exceptions.MessageEmptyException;
+import io.dataspaceconnector.exceptions.MessageRequestException;
+import io.dataspaceconnector.exceptions.RdfBuilderException;
+import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.messages.ContractRejectionMessageDesc;

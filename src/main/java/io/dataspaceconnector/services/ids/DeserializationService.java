@@ -15,7 +15,14 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ConfigurationModel;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.InfrastructureComponent;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResponseMessage;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

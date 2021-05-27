@@ -18,7 +18,7 @@ package io.dataspaceconnector.exceptions;
 import io.dataspaceconnector.utils.ErrorMessages;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RdfBuilderExceptionTest {
     @Test

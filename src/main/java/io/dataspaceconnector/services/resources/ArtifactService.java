@@ -17,7 +17,13 @@ package io.dataspaceconnector.services.resources;
 
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.ArtifactFactory;
+import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.LocalData;
+import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.model.RemoteData;
 import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.repositories.DataRepository;
 import io.dataspaceconnector.services.ArtifactRetriever;

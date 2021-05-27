@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URL;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-
 import io.dataspaceconnector.model.utils.UrlConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -28,6 +23,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import java.net.URL;
 
 import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
 

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.utils.Utils;
@@ -38,6 +34,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

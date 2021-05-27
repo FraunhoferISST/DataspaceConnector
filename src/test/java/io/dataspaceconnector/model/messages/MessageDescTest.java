@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.model.messages;
 
-import java.net.URI;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.net.URI;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class MessageDescTest {
     @Test

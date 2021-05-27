@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -79,6 +72,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.

@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.BinaryOperator;
+import de.fraunhofer.iais.eis.Constraint;
+import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.Prohibition;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -24,7 +29,9 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PatternUtilsTest {
 

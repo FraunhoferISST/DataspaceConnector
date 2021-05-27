@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.net.URI;
 
 /**
  * A DTO for information required to decide if data provision should be allowed.

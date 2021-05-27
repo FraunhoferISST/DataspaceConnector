@@ -15,7 +15,12 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.ArtifactRequestMessage;
+import de.fraunhofer.iais.eis.DescriptionRequestMessage;
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import io.dataspaceconnector.exceptions.MessageBuilderException;

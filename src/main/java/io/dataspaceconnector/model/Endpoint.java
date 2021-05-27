@@ -16,7 +16,11 @@
 package io.dataspaceconnector.model;
 
 import io.dataspaceconnector.model.utils.UriConverter;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

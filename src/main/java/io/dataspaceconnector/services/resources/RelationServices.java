@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -27,6 +25,8 @@ import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * This class contains all implementations of {@link OwningRelationService} and

@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Function;
-
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -27,6 +22,11 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
 
 /**
  * Creates a parent-children relationship between two types of resources.

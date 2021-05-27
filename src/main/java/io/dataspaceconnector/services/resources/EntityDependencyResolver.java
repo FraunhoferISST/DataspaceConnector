@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Contract;
@@ -28,6 +25,9 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * This service offers methods for finding entities related to another given entity.

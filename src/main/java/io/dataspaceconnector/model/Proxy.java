@@ -17,11 +17,18 @@ package io.dataspaceconnector.model;
 
 import io.dataspaceconnector.model.utils.ListUriConverter;
 import io.dataspaceconnector.model.utils.UriConverter;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 

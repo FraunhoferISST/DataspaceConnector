@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -32,6 +23,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
 

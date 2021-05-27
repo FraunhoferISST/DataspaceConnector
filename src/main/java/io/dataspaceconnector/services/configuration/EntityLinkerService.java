@@ -15,7 +15,17 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.*;
+import io.dataspaceconnector.model.App;
+import io.dataspaceconnector.model.AppStore;
+import io.dataspaceconnector.model.Authentication;
+import io.dataspaceconnector.model.Broker;
+import io.dataspaceconnector.model.Configuration;
+import io.dataspaceconnector.model.DataSource;
+import io.dataspaceconnector.model.GenericEndpoint;
+import io.dataspaceconnector.model.IdsEndpoint;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.model.Route;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
 import lombok.NoArgsConstructor;
