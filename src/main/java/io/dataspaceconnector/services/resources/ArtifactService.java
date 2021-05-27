@@ -73,6 +73,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService) {
+        super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
     }
