@@ -95,7 +95,12 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
-        final var hasUpdatedBootstrapId = this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId = this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
         return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle
                || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional

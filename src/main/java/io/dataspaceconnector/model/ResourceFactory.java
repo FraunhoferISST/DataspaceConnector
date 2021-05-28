@@ -123,7 +123,12 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
-        final var hasUpdatedBootstrapId = updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId = this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
         final var hasChildUpdated = updateInternal(resource, desc);
 

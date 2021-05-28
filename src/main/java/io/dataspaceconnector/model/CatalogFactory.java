@@ -80,8 +80,13 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
                 this.updateTitle(catalog, desc.getTitle());
         final var hasUpdatedDesc =
                 this.updateDescription(catalog, desc.getDescription());
-        final var hasUpdatedBootstrapId =
-                this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId = this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
+
         final var hasUpdatedAdditional =
                 this.updateAdditional(catalog, desc.getAdditional());
 
