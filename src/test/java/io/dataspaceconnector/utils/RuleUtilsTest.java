@@ -250,20 +250,6 @@ class RuleUtilsTest {
      }
 
      @Test
-     public void getTargetRuleMap_listWithRulesWithoutTargets_returnMap() {
-         /* ARRANGE */
-         final var permission = (Permission) getRuleThree();
-         final var prohibition = (Prohibition) getRuleTwo();
-         final var obligation = (Duty) getRuleOne();
-         final var contract = new ContractRequestBuilder()
-                 ._contractStart_(getGregorianNow())
-                 ._permission_(Util.asList(permission))
-                 ._prohibition_(Util.asList(prohibition, prohibition))
-                 ._obligation_(Util.asList(obligation))
-                 .build();
-     }
-
-     @Test
      public void compareRules_null_returnTrue() {
          /* ACT && ASSERT */
          assertTrue(RuleUtils.compareRules(null, null));
