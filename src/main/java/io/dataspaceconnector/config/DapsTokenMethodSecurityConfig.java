@@ -22,12 +22,9 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 
-import lombok.NoArgsConstructor;
-
 /**
  * Configuration for checking if a daps token is valid before entering a function.
  */
-@NoArgsConstructor
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class DapsTokenMethodSecurityConfig extends GlobalMethodSecurityConfiguration {
