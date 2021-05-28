@@ -7,13 +7,11 @@ import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
 @Component("ResourceDescription")
 @RequiredArgsConstructor
-public class ResourceDescription implements Processor {
+public class ResourceDescription extends IdsProcessor {
 
     /**
      * Service for handling response messages.
@@ -23,18 +21,16 @@ public class ResourceDescription implements Processor {
     /**
      * Service for resolving entities.
      */
-    private final @NonNull EntityResolver             entityResolver;
+    private final @NonNull EntityResolver entityResolver;
 
     @Override
-    public void process(final Exchange exchange) throws Exception {
-        final var msg = exchange.getIn().getBody(Request.class);
-
+    protected Response processInternal(final Request request) throws Exception {
         // Read relevant parameters for message processing.
         final var requested = MessageUtils.extractRequestedElement(
-                (DescriptionRequestMessage) msg.getHeader());
+                (DescriptionRequestMessage) request.getHeader());
         final var entity = entityResolver.getEntityById(requested);
-        final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
-        final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var issuer = MessageUtils.extractIssuerConnector(request.getHeader());
+        final var messageId = MessageUtils.extractMessageId(request.getHeader());
 
         // If the element has been found, build the ids response message.
         final var desc = new DescriptionResponseMessageDesc(issuer, messageId);
@@ -42,6 +38,6 @@ public class ResourceDescription implements Processor {
         final var payload = entityResolver.getEntityAsRdfString(entity);
 
         // Send ids response message.
-        exchange.getIn().setBody(new Response(header, payload));
+        return new Response(header, payload);
     }
 }

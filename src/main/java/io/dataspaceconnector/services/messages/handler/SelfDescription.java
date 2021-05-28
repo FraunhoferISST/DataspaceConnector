@@ -6,13 +6,11 @@ import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
 @Component("SelfDescription")
 @RequiredArgsConstructor
-public class SelfDescription implements Processor {
+public class SelfDescription extends IdsProcessor {
 
     /**
      * Service for the current connector configuration.
@@ -25,13 +23,7 @@ public class SelfDescription implements Processor {
     private final @NonNull DescriptionResponseService messageService;
 
     @Override
-    public void process(final Exchange exchange) throws Exception {
-        // TODO Only return contract offers that have no or the right pre-defined consumer
-        final var msg = exchange.getIn().getBody(Request.class);
-        exchange.getIn().setBody(process(msg));
-    }
-
-    protected Response process(final Request request) {
+    protected Response processInternal(final Request request) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(request.getHeader());
         final var messageId = MessageUtils.extractMessageId(request.getHeader());
         final var connector = connectorService.getConnectorWithOfferedResources();
