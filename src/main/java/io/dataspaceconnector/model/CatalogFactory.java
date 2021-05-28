@@ -82,7 +82,8 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
                 this.updateDescription(catalog, desc.getDescription());
         final boolean hasUpdatedBootstrapId;
         if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId = this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
         } else {
             hasUpdatedBootstrapId = false;
         }
@@ -125,7 +126,7 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
             newBootstrapId = MetadataUtils
                     .updateUri(
                             catalog.getBootstrapId(),
-                            (bootstrapId == null) ? null : bootstrapId,
+                            bootstrapId,
                             catalog.getBootstrapId());
         }
 

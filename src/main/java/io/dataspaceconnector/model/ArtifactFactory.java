@@ -97,7 +97,8 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
         final boolean hasUpdatedBootstrapId;
         if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId = this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
         } else {
             hasUpdatedBootstrapId = false;
         }
@@ -240,7 +241,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
             newBootstrapId = MetadataUtils
                     .updateUri(
                             artifact.getBootstrapId(),
-                            (bootstrapId == null) ? null : bootstrapId,
+                            bootstrapId,
                             artifact.getBootstrapId());
         }
 

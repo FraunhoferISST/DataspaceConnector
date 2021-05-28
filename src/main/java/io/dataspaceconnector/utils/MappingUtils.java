@@ -37,7 +37,6 @@ import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
 
-import javax.validation.constraints.Null;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;

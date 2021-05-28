@@ -125,7 +125,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
         final boolean hasUpdatedBootstrapId;
         if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId = this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
         } else {
             hasUpdatedBootstrapId = false;
         }
@@ -273,7 +274,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
             newBootstrapId = MetadataUtils
                     .updateUri(
                             resource.getBootstrapId(),
-                            (bootstrapId == null) ? null : bootstrapId,
+                            bootstrapId,
                             resource.getBootstrapId());
         }
 
