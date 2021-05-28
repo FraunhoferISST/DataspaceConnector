@@ -99,7 +99,7 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
-		<modelmapper.version>2.4.3</modelmapper.version>
+		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
@@ -499,6 +499,7 @@
 					<configuration>
 						<!-- enable incremental analysis -->
 						<analysisCache>true</analysisCache>
+						<printFailingErrors>true</printFailingErrors>
 						<rulesets>
 							<ruleset>./scripts/ci/pmd-rules.xml</ruleset>
 						</rulesets>
@@ -613,7 +614,12 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
+								<exclude>charts/dataspace-connector/Chart.lock</exclude>
+								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<exclude>**/*.tgz</exclude>
+								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
+								<exclude>.editorconfig</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
@@ -770,11 +776,10 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			<!-- TODO: Enable code checks on verify, at the moment 2021-05-21 there are 1323 violations -->
-<!-- 			<plugin>
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
