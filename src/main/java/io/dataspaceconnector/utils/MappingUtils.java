@@ -39,7 +39,6 @@ import io.dataspaceconnector.model.templates.RuleTemplate;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,9 +137,9 @@ public final class MappingUtils {
             additional.put("ids:modified", modified.toXMLFormat());
         }
 
-        if (resourceEndpoint != null) {
+        // if (resourceEndpoint != null) {
             //addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
-        }
+        // }
 
         if (resourcePart != null) {
             addListToAdditional(resourcePart, additional, "ids:resourcePart");
