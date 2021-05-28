@@ -881,8 +881,6 @@ class RuleUtilsTest {
      @Test
      public void getDate_inputInvalidWrongConstraintType_throwDateTimeParseException() {
          /* ARRANGE */
-         final var date = "2021-01-01T00:00:00Z";
-
          final var constraint = new ConstraintBuilder()
                  ._leftOperand_(LeftOperand.COUNT)
                  ._operator_(BinaryOperator.EQ)

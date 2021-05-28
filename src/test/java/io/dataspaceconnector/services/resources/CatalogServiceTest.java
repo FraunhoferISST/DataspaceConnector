@@ -323,7 +323,6 @@ class CatalogServiceTest {
     @Test
     public void delete_unknownId_removedObject() {
         /* ARRANGE */
-        final var id = service.create(catalogOneDesc);
         service.create(catalogTwoDesc);
 
         final var beforeCount = service.getAll(Pageable.unpaged()).getSize();
