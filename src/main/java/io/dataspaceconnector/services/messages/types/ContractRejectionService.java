@@ -26,7 +26,8 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
  * Message service for ids contract request messages.
@@ -54,7 +55,7 @@ public final class ContractRejectionService
         return new ContractRejectionMessageBuilder()
                 ._securityToken_(token)
                 ._correlationMessage_(correlationMessage)
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._issuerConnector_(connectorId)
                 ._modelVersion_(modelVersion)
                 ._senderAgent_(connectorId)

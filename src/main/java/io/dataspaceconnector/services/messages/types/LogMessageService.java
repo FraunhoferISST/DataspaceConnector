@@ -29,7 +29,8 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
  * Message service for ids log messages.
@@ -52,7 +53,7 @@ public final class LogMessageService extends AbstractMessageService<LogMessageDe
         final var recipient = desc.getRecipient();
 
         return new LogMessageBuilder()
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)

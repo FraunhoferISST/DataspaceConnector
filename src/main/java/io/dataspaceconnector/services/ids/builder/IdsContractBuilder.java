@@ -21,7 +21,8 @@ import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+//import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
@@ -111,7 +112,7 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
         final var builder = new ContractOfferBuilder(getAbsoluteSelfLink(contract, baseUri))
                 ._contractStart_(start)
                 ._contractEnd_(end)
-                ._contractDate_(IDSUtils.getGregorianNow())
+                ._contractDate_(IdsMessageUtils.getGregorianNow())
                 ._consumer_(consumer)
                 ._provider_(provider);
 

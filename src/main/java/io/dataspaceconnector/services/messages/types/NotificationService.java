@@ -29,7 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
  * Message service for ids notification messages.
@@ -53,7 +54,7 @@ public final class NotificationService extends AbstractMessageService<Notificati
         final var recipient = desc.getRecipient();
 
         return new NotificationMessageBuilder()
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)

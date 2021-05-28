@@ -30,7 +30,8 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+//import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
@@ -107,8 +108,8 @@ public class DataAccessVerifierTest {
 
     private ContractAgreement getContractAgreement() {
         return new ContractAgreementBuilder(URI.create("https://agreement.com"))
-                ._contractStart_(IDSUtils.getGregorianNow())
-                ._contractEnd_(IDSUtils.getGregorianNow())
+                ._contractStart_(IdsMessageUtils.getGregorianNow())
+                ._contractEnd_(IdsMessageUtils.getGregorianNow())
                 ._permission_(Util.asList(getPermission()))
 //                ._prohibition_(new ArrayList<>())
 //                ._obligation_(new ArrayList<>())

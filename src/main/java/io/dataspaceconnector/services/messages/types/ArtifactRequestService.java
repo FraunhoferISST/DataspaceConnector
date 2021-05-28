@@ -35,7 +35,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
  * Message service for ids artifact request messages.
@@ -63,7 +64,7 @@ public final class ArtifactRequestService
         final var contractId = desc.getTransferContract();
 
         return new ArtifactRequestMessageBuilder()
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)

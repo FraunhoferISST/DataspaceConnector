@@ -42,7 +42,8 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import static de.fraunhofer.ids.messaging.util.IdsMessageUtils.getGregorianNow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;

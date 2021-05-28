@@ -29,7 +29,8 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.services.EntityUpdateService;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
+//import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 //import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 //import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
@@ -115,7 +116,7 @@ class ResourceUpdateMessageHandlerTest {
         final var message = getResourceUpdateMessage();
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadImpl(null, new ObjectMapper()));
+        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadInputstream(null, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -127,7 +128,7 @@ class ResourceUpdateMessageHandlerTest {
         final var message = getResourceUpdateMessage();
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadImpl(
+        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadInputstream(
                 InputStream.nullInputStream(), new ObjectMapper()));
 
         /* ASSERT */
@@ -144,7 +145,7 @@ class ResourceUpdateMessageHandlerTest {
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                 new MessagePayloadImpl(stream, new ObjectMapper()));
+                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -162,7 +163,7 @@ class ResourceUpdateMessageHandlerTest {
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                 new MessagePayloadImpl(stream, new ObjectMapper()));
+                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -181,7 +182,7 @@ class ResourceUpdateMessageHandlerTest {
 
         /* ACT */
         final var result = (BodyResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                new MessagePayloadImpl(stream, new ObjectMapper()));
+                                                                new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
         assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
@@ -206,7 +207,7 @@ class ResourceUpdateMessageHandlerTest {
 
         /* ACT */
         final var result = (BodyResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                new MessagePayloadImpl(stream, new ObjectMapper()));
+                                                                new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT TODO*/
         // Mockito.verify(updateService).updateResource(Mockito.argThat(x -> x.getId().equals(resource.getId())));

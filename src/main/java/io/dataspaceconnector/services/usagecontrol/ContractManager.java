@@ -32,7 +32,8 @@ import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+//import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -204,8 +205,8 @@ public class ContractManager {
         // Return contract request.
         return new ContractAgreementBuilder(id)
                 ._consumer_(issuer)
-                ._contractDate_(IDSUtils.getGregorianNow())
-                ._contractStart_(IDSUtils.getGregorianNow())
+                ._contractDate_(IdsMessageUtils.getGregorianNow())
+                ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
                 // end.
                 ._obligation_(obligations)
