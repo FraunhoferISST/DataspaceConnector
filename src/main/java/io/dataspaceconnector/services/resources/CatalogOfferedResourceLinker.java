@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @NoArgsConstructor
-public class CatalogOfferedResourceLinker extends AbstractCatalogResourceLinker<OfferedResource> {
+public final class CatalogOfferedResourceLinker
+        extends AbstractCatalogResourceLinker<OfferedResource> {
     @Override
     protected List<OfferedResource> getInternal(final Catalog owner) {
         return owner.getOfferedResources();
