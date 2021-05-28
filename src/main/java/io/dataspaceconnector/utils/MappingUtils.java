@@ -479,7 +479,6 @@ public final class MappingUtils {
      *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
-     * @throws DateTimeParseException if the string could not be converted.
      */
     public static ZonedDateTime getDateOf(final String calendar) {
         return ZonedDateTime.parse(calendar);
