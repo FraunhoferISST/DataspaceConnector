@@ -95,7 +95,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
-        final var hasUpdatedBootstrapId = this.updateBootstrapId(artifact, desc.getBootstrapId());
+        final var hasUpdatedBootstrapId = this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
 
         return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle
                || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional
@@ -227,7 +227,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         return hasChanged;
     }
 
-    private boolean updateBootstrapId(final Artifact artifact, final String bootstrapId) {
+    private boolean updateBootstrapId(final Artifact artifact, final URI bootstrapId) {
         final Optional<URI> newBootstrapId;
         if (bootstrapId == null && artifact.getBootstrapId() == null) {
             newBootstrapId = Optional.empty();
@@ -235,7 +235,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
             newBootstrapId = MetadataUtils
                     .updateUri(
                             artifact.getBootstrapId(),
-                            (bootstrapId == null) ? null : URI.create(bootstrapId),
+                            (bootstrapId == null) ? null : bootstrapId,
                             artifact.getBootstrapId());
         }
 

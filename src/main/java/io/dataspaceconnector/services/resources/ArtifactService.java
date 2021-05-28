@@ -123,7 +123,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
@@ -186,7 +186,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
-     * @throws IOException if IO errors occurr
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
@@ -283,7 +283,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
-     * @throws IOException if IO errors occurr
+     * @throws IOException if IO errors occurr.
      */
     private InputStream getData(final RemoteData data, final QueryInput queryInput)
             throws IOException {

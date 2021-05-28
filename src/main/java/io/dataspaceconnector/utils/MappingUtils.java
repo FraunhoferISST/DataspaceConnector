@@ -39,6 +39,7 @@ import io.dataspaceconnector.model.templates.RuleTemplate;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -422,7 +423,7 @@ public final class MappingUtils {
 
         try {
             desc.setStart(getDateOf(start.toXMLFormat()));
-        } catch (Exception ignored) {
+        } catch (DateTimeParseException ignored) {
             // Default values don't need to be set here.
         }
 

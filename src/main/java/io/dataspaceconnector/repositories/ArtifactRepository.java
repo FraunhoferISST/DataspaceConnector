@@ -96,6 +96,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      */
     @Query("SELECT a "
             + "FROM Artifact a "
-            + "WHERE a.bootstrapId = :bootstrapId ")
+            + "WHERE a.bootstrapId = :bootstrapId "
+            + "AND a.deleted = false")
     List<Artifact> findAllByBootstrapId(URI bootstrapId);
 }

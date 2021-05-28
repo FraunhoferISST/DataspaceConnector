@@ -123,7 +123,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
-        final var hasUpdatedBootstrapId = updateBootstrapId(resource, desc.getBootstrapId());
+        final var hasUpdatedBootstrapId = updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
 
         final var hasChildUpdated = updateInternal(resource, desc);
 
@@ -260,7 +260,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         return newPublisher.isPresent();
     }
 
-    private boolean updateBootstrapId(final Resource resource, final String bootstrapId) {
+    private boolean updateBootstrapId(final Resource resource, final URI bootstrapId) {
         final Optional<URI> newBootstrapId;
         if (bootstrapId == null && resource.getBootstrapId() == null) {
             newBootstrapId = Optional.empty();
@@ -268,7 +268,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
             newBootstrapId = MetadataUtils
                     .updateUri(
                             resource.getBootstrapId(),
-                            (bootstrapId == null) ? null : URI.create(bootstrapId),
+                            (bootstrapId == null) ? null : bootstrapId,
                             resource.getBootstrapId());
         }
 

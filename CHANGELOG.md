@@ -6,12 +6,12 @@ All notable changes to this project will be documented in this file.
 ### Added
  - Add telemetry collection via Jaeger.
  - Add `BootstrapConfiguration`.
-   * Allow registering ids catalogs during startup.
+   * Allow registering ids catalogs, offered resources, representations, artifacts and contract offers during startup.
    * Allow registering offered resources as part of the catalogs to brokers.
  - Add `CatalogTemplate` and matching mapping/build functions.
  - Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
  - Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data can be found.
- 
+
 ### Changed
  - Replace deprecated JPA calls (`getOne` -> `getById`).
  - Increase length restriction for URIs in database columns to 2048.

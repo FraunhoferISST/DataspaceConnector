@@ -186,7 +186,7 @@ public class ConnectorService {
      * @return List of resource catalogs.
      */
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
-        final URI baseUri = configContainer.getConnector().getId();
+        final var baseUri = configContainer.getConnector().getId();
 
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
