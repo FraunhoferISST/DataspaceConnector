@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
+package io.dataspaceconnector.services.resources;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
-
+import io.dataspaceconnector.model.RequestedResource;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
- * Configures HAL support for API responses.
+ * Handles the relation between a requested resource and its representations.
  */
+@Service
 @NoArgsConstructor
-@Configuration
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-public class RestConfiguration {
-}
+public class RequestedResourceRepresentation
+        extends AbstractResourceRepresentationLinker<RequestedResource> { }

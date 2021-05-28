@@ -19,10 +19,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.NoArgsConstructor;
+
 /**
  * Create an empty tracer when tracing should be disabled.
  * See: https://github.com/opentracing-contrib/java-spring-jaeger
  */
+@NoArgsConstructor
 @ConditionalOnProperty(
         value = "opentracing.jaeger.enabled", havingValue = "false", matchIfMissing = false)
 @Configuration

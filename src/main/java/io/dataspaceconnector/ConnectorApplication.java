@@ -24,6 +24,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import lombok.NoArgsConstructor;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +44,7 @@ import org.springframework.context.annotation.ComponentScan;
     "de.fraunhofer.isst.ids.framework.configuration",
     "de.fraunhofer.isst.ids.framework.daps"
 })
+@NoArgsConstructor
 public class ConnectorApplication {
 
     /**
@@ -61,9 +64,9 @@ public class ConnectorApplication {
      */
     @Bean
     public OpenAPI customOpenAPI() throws IOException {
-        Properties properties = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader()
-            .getResourceAsStream("application.properties")) {
+        final var properties = new Properties();
+        try (InputStream inputStream = Thread.currentThread().getContextClassLoader()
+                                             .getResourceAsStream("application.properties")) {
             // This function may crash (e.g. ill-formatted file). Let it bubble up.
             properties.load(inputStream);
         }

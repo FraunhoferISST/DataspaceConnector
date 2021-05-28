@@ -592,6 +592,7 @@
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
+								<exclude>.editorconfig</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>

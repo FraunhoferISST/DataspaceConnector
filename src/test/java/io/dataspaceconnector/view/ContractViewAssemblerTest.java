@@ -335,6 +335,9 @@ public class ContractViewAssemblerTest {
     }
 
     private static class UnknownResource extends Resource {
+
+        private static final long serialVersionUID = 1L;
+
         public UnknownResource() {}
     }
 

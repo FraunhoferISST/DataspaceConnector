@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
-
-import lombok.NoArgsConstructor;
+package io.dataspaceconnector.model.config;
 
 /**
- * Configures HAL support for API responses.
+ * This class contains static constants for configuring database columns.
  */
-@NoArgsConstructor
-@Configuration
-@EnableHypermediaSupport(type = EnableHypermediaSupport.HypermediaType.HAL)
-public class RestConfiguration {
+public final class DatabaseConstants {
+
+    /**
+     * Private constructor.
+     */
+    private DatabaseConstants() { }
+
+    /**
+     * The maximum length of database columns containing URIs.
+     */
+    public static final int URI_COLUMN_LENGTH = 2048;
+
 }

@@ -82,8 +82,8 @@ public class MainController {
      */
     @Hidden
     @GetMapping("/api")
-    public ResponseEntity<RepresentationModel> root() {
-        final var model = new RepresentationModel();
+    public ResponseEntity<RepresentationModel<?>> root() {
+        final var model = new RepresentationModel<>();
 
         model.add(linkTo(methodOn(MainController.class).root()).withSelfRel());
         model.add(linkTo(methodOn(ResourceControllers.AgreementController.class)

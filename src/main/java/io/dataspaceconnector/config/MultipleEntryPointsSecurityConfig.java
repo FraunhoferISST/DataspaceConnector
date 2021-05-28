@@ -25,10 +25,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import lombok.NoArgsConstructor;
+
 /**
  * This class creates an admin role for spring basic security setup used in {@link
  * ConfigurationAdapter}.
  */
+@NoArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class MultipleEntryPointsSecurityConfig {
