@@ -75,13 +75,6 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     public static final URI DEFAULT_ENDPOINT_DOCS = URI.create("");
 
     /**
-     * Default constructor.
-     */
-    public ResourceFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new resource.
      * @param desc The description of the new resource.
      * @return The new resource.

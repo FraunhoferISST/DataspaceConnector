@@ -44,13 +44,11 @@ import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 /**
  * This service offers methods related to contract management.
  */
-@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ContractManager {

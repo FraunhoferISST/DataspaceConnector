@@ -56,13 +56,6 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
     public static final boolean DEFAULT_AUTO_DOWNLOAD = false;
 
     /**
-     * Default constructor.
-     */
-    public ArtifactFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new artifact.
      * @param desc The description of the new artifact.
      * @return The new artifact.

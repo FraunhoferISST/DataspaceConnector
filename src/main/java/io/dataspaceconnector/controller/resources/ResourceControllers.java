@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resources;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
@@ -224,6 +225,7 @@ public final class ResourceControllers {
          * @param headers      All request headers.
          * @param request      The current http request.
          * @return The data object.
+         * @throws IOException if the data cannot be received.
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
@@ -234,7 +236,7 @@ public final class ResourceControllers {
                 @RequestParam(required = false) final URI agreementUri,
                 @RequestParam final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
-                final HttpServletRequest request) {
+                final HttpServletRequest request) throws IOException {
             headers.remove("authorization");
             headers.remove("host");
 
@@ -262,7 +264,7 @@ public final class ResourceControllers {
                     new RetrievalInformation(agreementUri, download,
                                              queryInput));
 
-            StreamingResponseBody body = outputStream -> {
+            final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
                 int numBytesToWrite;
                 var buffer = new byte[blockSize];
@@ -290,13 +292,14 @@ public final class ResourceControllers {
          * @param artifactId Artifact id.
          * @param queryInput Query input containing headers, query parameters, and path variables.
          * @return The data object.
+         * @throws IOException if the data could not be stored.
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<Object> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) final QueryInput queryInput) {
+                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
             ValidationUtils.validateQueryInput(queryInput);
             return ResponseEntity.ok(artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                     queryInput));
@@ -308,11 +311,12 @@ public final class ResourceControllers {
          * @param artifactId  The artifact whose data should be replaced.
          * @param inputStream The new data.
          * @return Http Status ok.
+         * @throws IOException if the data could not be stored.
          */
         @PutMapping(value = "{id}/data", consumes = "*/*")
         public ResponseEntity<Void> putData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody final byte[] inputStream) {
+                @RequestBody final byte[] inputStream) throws IOException {
             artifactSvc.setData(artifactId, new ByteArrayInputStream(inputStream));
             return ResponseEntity.ok().build();
         }

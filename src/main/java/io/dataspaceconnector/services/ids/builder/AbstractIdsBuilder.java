@@ -121,10 +121,10 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *
      * @param entity  The entity.
      * @param baseUri The hostname.
-     * @param <X>     The entity type.
+     * @param <K>     The entity type.
      * @return The absolute path to this entity.
      */
-    protected <X extends AbstractEntity> URI getAbsoluteSelfLink(final X entity,
+    protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity,
                                                                  final URI baseUri) {
         var uri = SelfLinkHelper.getSelfLink(entity);
 
@@ -169,7 +169,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
                 .collect(Collectors.toList())));
     }
 
-    private <X> X addAdditionals(final X idsObject, final Map<String, String> additional) {
+    private <K> K addAdditionals(final K idsObject, final Map<String, String> additional) {
         // NOTE: The Infomodel lib has setProperty on all classes, but the method is implemented
         // individually...
         try {
@@ -187,7 +187,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         return idsObject;
     }
 
-    private <X> Method findAdditionalMethod(final X idsResource) throws NoSuchMethodException {
+    private <K> Method findAdditionalMethod(final K idsResource) throws NoSuchMethodException {
         // NOTE: The Infomodel lib has setProperty on all classes, but some of them are implemented
         // higher up the inheritance chain.
         // If the setProperty method has a different signature null is returned.

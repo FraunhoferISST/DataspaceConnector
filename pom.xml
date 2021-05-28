@@ -99,7 +99,7 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
-		<modelmapper.version>2.4.3</modelmapper.version>
+		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
@@ -333,6 +333,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 
@@ -592,6 +598,7 @@
 								<exclude>**/*.tgz</exclude>
 								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
+								<exclude>.editorconfig</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
