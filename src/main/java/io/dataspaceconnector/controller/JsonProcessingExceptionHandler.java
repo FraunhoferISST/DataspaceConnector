@@ -16,8 +16,6 @@
 package io.dataspaceconnector.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import net.minidev.json.JSONObject;
@@ -32,7 +30,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * This class handles exceptions of type {@link JsonProcessingException}.
  */
-@NoArgsConstructor
 @RestControllerAdvice
 @Log4j2
 @Order(1)
