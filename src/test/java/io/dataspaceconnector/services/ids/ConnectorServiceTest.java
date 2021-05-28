@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -54,6 +50,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -67,6 +67,9 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ConnectorService.class})
 public class ConnectorServiceTest {
+
+    @MockBean
+    private DeserializationService deserializationService;
 
     @MockBean
     private ConfigurationContainer configContainer;

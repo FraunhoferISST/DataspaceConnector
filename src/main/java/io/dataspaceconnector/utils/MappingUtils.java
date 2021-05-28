@@ -139,7 +139,7 @@ public final class MappingUtils {
         }
 
         if (resourceEndpoint != null) {
-            addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
+            //addListToAdditional(resourceEndpoint, additional, "ids:resourceEndpoint");
         }
 
         if (resourcePart != null) {

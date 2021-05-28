@@ -128,12 +128,6 @@ public class BootstrapConfiguration {
     private String bootstrapPath;
 
     /**
-     * Base URI.
-     */
-    @Value("${bootstrap.base.uri}")
-    private String baseUri;
-
-    /**
      * Spring application context. Needed for shutdowns in case of errors.
      */
     private final @NotNull ApplicationContext context;
@@ -525,56 +519,7 @@ public class BootstrapConfiguration {
         catalogTemplate.setRequestedResources(requestedResources);
 
         // perform registration
-        final var builtCatalog = templateBuilder.build(catalogTemplate);
-
-        // update target IDs from rules to match dsc IDs
-        /* for (OfferedResource resource : builtCatalog.getOfferedResources()) {
-            for (Contract contract : resource.getContracts()) {
-                for (ContractRule rule : contract.getRules()) {
-                    final var artifacts = artifactRepository.findAllByBootstrapId(
-                            deserializationService.getRule(rule.getValue()).getTarget());
-                    if (artifacts.size() != 1) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Failed to retrieve bootstrapped artifact. "
-                                    + "Expected 1 but found {}.", artifacts.size());
-                        }
-
-                        return false;
-                    }
-
-                    final var idsRule = deserializationService.getRule(rule.getValue());
-                    try {
-                        final var field =
-                                idsRule.getClass().getDeclaredField("_target");
-                        field.setAccessible(true);
-                        field.set(idsRule, URI.create(baseUri + SelfLinkHelper.getSelfLink(
-                                artifacts.get(0))));
-                        field.setAccessible(false);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Could not update target in IDS rule entity.", e);
-                        }
-
-                        return false;
-                    }
-
-                    final var newValue = idsRule.toRdf();
-
-                    TransactionTemplate template = new TransactionTemplate(transactionManager);
-
-                    template.execute(status -> {
-                        Hibernate.initialize(rule.getAdditional());
-
-                        final var desc = new ContractRuleDesc();
-                        desc.setValue(newValue);
-                        desc.setTitle(rule.getTitle());
-                        desc.setRemoteId(rule.getRemoteId());
-                        desc.setAdditional(rule.getAdditional());
-                        return ruleService.update(rule.getId(), desc);
-                    });
-                }
-            }
-        }*/
+        templateBuilder.build(catalogTemplate);
 
         if (log.isInfoEnabled()) {
             log.info("Bootstrapped catalog with IDS id '{}'.", catalog.getId());

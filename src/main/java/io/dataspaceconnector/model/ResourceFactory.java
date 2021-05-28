@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Base class for creating and updating resources.
@@ -267,12 +268,17 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     }
 
     private boolean updateBootstrapId(final Resource resource, final String bootstrapId) {
-        final var newBootstrapId =
-                MetadataUtils
-                        .updateUri(
-                                resource.getBootstrapId(),
-                                URI.create(bootstrapId),
-                                resource.getBootstrapId());
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && resource.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            resource.getBootstrapId(),
+                            (bootstrapId == null) ? null : URI.create(bootstrapId),
+                            resource.getBootstrapId());
+        }
+
         newBootstrapId.ifPresent(resource::setBootstrapId);
 
         return newBootstrapId.isPresent();

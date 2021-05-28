@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.CRC32C;
 
 /**
@@ -74,7 +75,9 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var artifact = new ArtifactImpl();
         artifact.setAgreements(new ArrayList<>());
         artifact.setRepresentations(new ArrayList<>());
-        artifact.setBootstrapId(URI.create(desc.getBootstrapId()));
+        if (desc.getBootstrapId() != null) {
+            artifact.setBootstrapId(URI.create(desc.getBootstrapId()));
+        }
 
         update(artifact, desc);
 
@@ -232,12 +235,17 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
     }
 
     private boolean updateBootstrapId(final Artifact artifact, final String bootstrapId) {
-        final var newBootstrapId =
-                MetadataUtils
-                        .updateUri(
-                                artifact.getBootstrapId(),
-                                URI.create(bootstrapId),
-                                artifact.getBootstrapId());
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && artifact.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            artifact.getBootstrapId(),
+                            (bootstrapId == null) ? null : URI.create(bootstrapId),
+                            artifact.getBootstrapId());
+        }
+
         newBootstrapId.ifPresent(artifact::setBootstrapId);
 
         return newBootstrapId.isPresent();
