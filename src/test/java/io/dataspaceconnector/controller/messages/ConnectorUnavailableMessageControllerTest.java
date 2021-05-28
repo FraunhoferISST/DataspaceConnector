@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.messages;
 
 import java.io.IOException;
+import java.net.URI;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 //import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -95,7 +96,7 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
+        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -114,7 +115,7 @@ public class ConnectorUnavailableMessageControllerTest {
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(Protocol.HTTP_1_1).code(200).message("").build();
-        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
+        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -138,7 +139,7 @@ public class ConnectorUnavailableMessageControllerTest {
                                               .parse("application/text")))
                                       .build();
 
-        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(recipient));
+        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")

@@ -18,6 +18,7 @@ package io.dataspaceconnector.services.messages.types;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
@@ -128,11 +129,17 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
-        } catch (FileUploadException | IOException e) {
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Message could not be sent. [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
+        } catch (MultipartParseException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Message could not be parsed. [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
+            //TODO: Check if a more specific Error Message should be used instead
         }
     }
 

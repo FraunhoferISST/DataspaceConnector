@@ -34,6 +34,9 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 //import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
@@ -120,7 +123,7 @@ public class ConnectorService {
      *
      * @return The connector's DAT.
      */
-    public DynamicAttributeToken getCurrentDat() {
+    public DynamicAttributeToken getCurrentDat() throws ConnectorMissingCertExtensionException, DapsConnectionException, DapsEmptyResponseException {
         return tokenProvider.getDAT();
     }
 

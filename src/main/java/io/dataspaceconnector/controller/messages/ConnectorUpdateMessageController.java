@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -83,12 +87,15 @@ public class ConnectorUpdateMessageController {
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
+            final var response = brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
+            //final var responseToString = Objects.requireNonNull(response.body()).string();
+            final var responseToString = Objects.requireNonNull(response);
+            //TODO: check if using the raw response leads to a sufficient output
             return ResponseEntity.ok(responseToString);
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (NullPointerException | IOException exception) {
+        } catch (NullPointerException | IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
+            //TODO: as the Messaging services added  DapsTokenManagerException, ClaimsException and MultipartParseException as ne Eceptions, check if a new type of Response Message is needed
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

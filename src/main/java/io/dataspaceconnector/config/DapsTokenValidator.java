@@ -16,9 +16,13 @@
 package io.dataspaceconnector.config;
 
 //import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
+import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -28,6 +32,7 @@ import java.io.Serializable;
 /**
  * This class provides DAT validation.
  */
+@Log4j2
 @Component
 @AllArgsConstructor
 public final class DapsTokenValidator implements PermissionEvaluator {
@@ -61,7 +66,24 @@ public final class DapsTokenValidator implements PermissionEvaluator {
         if (tokenProvider == null) {
             return false;
         } else {
-            return tokenProvider.getDAT() != null;
+            try {
+                return tokenProvider.getDAT() != null;
+            } catch (ConnectorMissingCertExtensionException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The Connector is missing a Cert Extension exception=({})]", e.getMessage());
+                }
+                return false;
+            } catch (DapsConnectionException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
+                };
+                return false;
+            } catch (DapsEmptyResponseException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
+                }
+                return false;
+            }
         }
     }
 }

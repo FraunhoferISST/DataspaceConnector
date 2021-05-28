@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.messages;
 
 import java.io.IOException;
+import java.net.URI;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 //import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -96,7 +97,7 @@ public class ConnectorUpdateMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(IOException.class).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(recipient));
+        Mockito.doThrow(IOException.class).when(brokerService).updateSelfDescriptionAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
@@ -115,7 +116,7 @@ public class ConnectorUpdateMessageControllerTest {
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(Protocol.HTTP_1_1).code(200).message("").build();
-        Mockito.doReturn(response).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(recipient));
+        Mockito.doReturn(response).when(brokerService).updateSelfDescriptionAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
@@ -139,7 +140,7 @@ public class ConnectorUpdateMessageControllerTest {
                                               .parse("application/text")))
                                       .build();
 
-        Mockito.doReturn(response).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(recipient));
+        Mockito.doReturn(response).when(brokerService).updateSelfDescriptionAtBroker(URI.create(Mockito.eq(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")

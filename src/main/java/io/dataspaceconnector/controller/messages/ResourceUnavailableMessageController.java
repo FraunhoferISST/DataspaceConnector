@@ -87,7 +87,7 @@ public class ResourceUnavailableMessageController {
             }
 
             // Send the resource unavailable message.
-            final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
+            final var response = brokerService.removeResourceFromBroker(URI.create(recipient), resource.get());
             final var responseToString = Objects.requireNonNull(response.body()).string();
             return ResponseEntity.ok(responseToString);
         } catch (NullPointerException | IOException exception) {
