@@ -54,13 +54,6 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
     public static final String DEFAULT_TITLE = "";
 
     /**
-     * Default constructor.
-     */
-    public ContractFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new contract.
      * @param desc The description of the new contract.
      * @return The new contract.
