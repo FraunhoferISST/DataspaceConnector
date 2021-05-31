@@ -134,7 +134,8 @@ public class HttpService {
             /*
                 Make a copy of the headers and insert sensitive data only into the copy.
              */
-            final var headerCopy = new HashMap<>(args.getHeaders());
+            final var headerCopy = args.getHeaders() == null
+                    ? new HashMap<String, String>() : new HashMap<>(args.getHeaders());
             if (args.getAuth() != null) {
                 headerCopy.put("Authorization",
                         Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
