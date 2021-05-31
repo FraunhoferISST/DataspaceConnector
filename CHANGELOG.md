@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 ### Fixed
  - Representations have now only one self-link.
  - Set Basic Auth Header on (provider) backend calls.
+ - Remove appended `/**` from `GET **/artifacts/{id}/data`.
+ - `GET **/artifacts/{id}/data` and `POST **/artifacts/{id}/data` will now return the same output.
 
 ## [5.0.2] - 2021-05-25
 
