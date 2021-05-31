@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
  - Increase spring-openapi-ui version to 1.5.9.
  - Increase maven-javadoc-plugin version to 3.3.0.
  - Increase spring-boot version to 2.5.0.
+ - Increase checkstyle version to 8.43.
+ - Increase pmd version to 6.35.0.
 
 ### Fixed
  - Representations have now only one self-link.
