@@ -91,7 +91,7 @@ public class ResourceUnavailableMessageController {
 
             // Send the resource unavailable message.
             final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
-            final var responseToString = Objects.requireNonNull(response);
+            final var responseToString = Objects.requireNonNull(response.getPayload());
             // TODO: check if this leads to the same output as the original code
             return ResponseEntity.ok(responseToString);
         } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {

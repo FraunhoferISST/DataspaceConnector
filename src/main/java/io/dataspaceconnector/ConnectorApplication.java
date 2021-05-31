@@ -28,6 +28,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * This is the main application class. The application is started and an openApi bean for the
@@ -36,13 +37,13 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({
-    "de.fraunhofer.isst.ids.framework.messaging",
+    //"de.fraunhofer.isst.ids.framework.messaging",
     "io.dataspaceconnector",
-    "de.fraunhofer.isst.ids.framework.communication",
-    "de.fraunhofer.isst.ids.framework.configuration",
-    "de.fraunhofer.isst.ids.framework.daps",
+    //"de.fraunhofer.isst.ids.framework.communication",
+    //"de.fraunhofer.isst.ids.framework.configuration",
+    //"de.fraunhofer.isst.ids.framework.daps",
     "de.fraunhofer.ids.*",
-    "de.fraunhofer.ids.messaging.*"
+    "de.fraunhofer.ids.messaging*"
 })
 public class ConnectorApplication {
 

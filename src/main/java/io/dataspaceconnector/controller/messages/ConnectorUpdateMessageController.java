@@ -89,7 +89,7 @@ public class ConnectorUpdateMessageController {
             // Send the connector update message.
             final var response = brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
             //final var responseToString = Objects.requireNonNull(response.body()).string();
-            final var responseToString = Objects.requireNonNull(response);
+            final var responseToString = Objects.requireNonNull(response.getPayload());
             //TODO: check if using the raw response leads to a sufficient output
             return ResponseEntity.ok(responseToString);
         } catch (ConfigUpdateException exception) {

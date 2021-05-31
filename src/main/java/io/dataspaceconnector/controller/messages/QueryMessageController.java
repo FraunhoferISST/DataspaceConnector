@@ -88,7 +88,7 @@ public class QueryMessageController {
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
             //final var responseToString = Objects.requireNonNull(response.body()).string();
-            final var responseToString = Objects.requireNonNull(response);
+            final var responseToString = Objects.requireNonNull(response.getPayload());
             // TODO: check if this leads to the same output as the original code
             return ResponseEntity.ok(responseToString);
         } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
