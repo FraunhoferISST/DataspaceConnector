@@ -27,7 +27,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
   version: 5.0.2
 servers:
-  - url: http://localhost:8080
+  - url: https://localhost:8080
     description: Generated server url
 tags:
   - name: Resources
@@ -2339,6 +2339,36 @@ paths:
         "204":
           description: No content
   /api/artifacts/{id}/data:
+    get:
+      tags:
+        - Artifacts
+      summary: Get data by artifact id with query input
+      operationId: getData_1
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: download
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: agreementUri
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uri
+      responses:
+        "200":
+          description: Ok
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/StreamingResponseBody'
     put:
       tags:
         - Artifacts
@@ -2385,7 +2415,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/StreamingResponseBody'
   /api/rules:
     get:
       tags:
@@ -2637,8 +2667,12 @@ paths:
             schema:
               type: string
               description: Database query (SparQL)
-              example: "SELECT ?subject ?predicate ?object\nFROM <urn:x-arq:UnionGraph>\n\
-                WHERE {\n  ?subject ?predicate ?object\n};"
+              example: |-
+                SELECT ?subject ?predicate ?object
+                FROM <urn:x-arq:UnionGraph>
+                WHERE {
+                  ?subject ?predicate ?object
+                };
         required: true
       responses:
         "401":
@@ -3120,44 +3154,6 @@ paths:
             application/ld+json:
               schema:
                 type: object
-  /api/artifacts/{id}/data/**:
-    get:
-      tags:
-        - Artifacts
-      summary: Get data by artifact id with query input
-      operationId: getData_1
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: download
-          in: query
-          required: false
-          schema:
-            type: boolean
-        - name: agreementUri
-          in: query
-          required: false
-          schema:
-            type: string
-            format: uri
-        - name: params
-          in: query
-          required: true
-          schema:
-            type: object
-            additionalProperties:
-              type: string
-      responses:
-        "200":
-          description: Ok
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/StreamingResponseBody'
   /api/artifacts/{id}/agreements:
     get:
       tags:
@@ -3787,11 +3783,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:rightOperandReference:
+              type: string
+              format: uri
+            ids:pipEndpoint:
+              type: string
+              format: uri
             ids:unit:
               type: string
               format: uri
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
             ids:leftOperand:
               type: string
               enum:
@@ -3812,9 +3812,8 @@ components:
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/ENDPOINT
                 - https://w3id.org/idsa/code/PATH
-            ids:pipEndpoint:
-              type: string
-              format: uri
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
             ids:operator:
               type: string
               enum:
@@ -3864,9 +3863,6 @@ components:
                 - https://w3id.org/idsa/code/HAS_SITE
                 - https://w3id.org/idsa/code/INSIDE_NETWORK
                 - https://w3id.org/idsa/code/DEFINES_AS
-            ids:rightOperandReference:
-              type: string
-              format: uri
             '@type':
               type: string
     Duty:
@@ -3894,11 +3890,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -3932,13 +3923,18 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
-            - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:description:
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:title:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        ids:title:
+        ids:description:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -3957,15 +3953,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:and:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
             ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:xone:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -3983,11 +3979,11 @@ components:
         - $ref: '#/components/schemas/Rule'
         - type: object
           properties:
-            ids:preDuty:
+            ids:postDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
-            ids:postDuty:
+            ids:preDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
@@ -4039,11 +4035,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -4077,13 +4068,18 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
-            - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:description:
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Constraint'
+              - $ref: '#/components/schemas/LogicalConstraint'
+        ids:title:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        ids:title:
+        ids:description:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -4140,6 +4136,8 @@ components:
           key: value
       oneOf:
         - $ref: '#/components/schemas/QueryInput'
+    StreamingResponseBody:
+      type: object
     CollectionModelContractRuleView:
       type: object
       properties:
@@ -4217,8 +4215,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArtifactView'
-    StreamingResponseBody:
-      type: object
     AgreementView:
       type: object
       properties:
