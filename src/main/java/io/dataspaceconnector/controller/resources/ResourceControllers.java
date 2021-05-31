@@ -17,6 +17,7 @@ package io.dataspaceconnector.controller.resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
@@ -264,24 +265,7 @@ public final class ResourceControllers {
                     new RetrievalInformation(agreementUri, download,
                                              queryInput));
 
-            final StreamingResponseBody body = outputStream -> {
-                final int blockSize = 1024;
-                int numBytesToWrite;
-                var buffer = new byte[blockSize];
-                while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
-                    outputStream.write(buffer, 0, numBytesToWrite);
-                }
-
-                data.close();
-            };
-
-            final var outputHeader = new HttpHeaders();
-            outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
-
-            return ResponseEntity.ok()
-                    .headers(outputHeader)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(body);
+            return returnData(artifactId, data);
         }
 
         /**
@@ -297,12 +281,33 @@ public final class ResourceControllers {
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<Object> getData(
+        public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput) throws IOException {
             ValidationUtils.validateQueryInput(queryInput);
-            return ResponseEntity.ok(artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    queryInput));
+            final var data = artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+            return returnData(artifactId, data);
+        }
+
+        private ResponseEntity<StreamingResponseBody> returnData(final UUID artifactId, final InputStream data) {
+            final StreamingResponseBody body = outputStream -> {
+                final int blockSize = 1024;
+                int numBytesToWrite;
+                var buffer = new byte[blockSize];
+                while ((numBytesToWrite = data.read(buffer, 0, buffer.length)) != -1) {
+                    outputStream.write(buffer, 0, numBytesToWrite);
+                }
+
+                data.close();
+            };
+
+            final var outputHeader = new HttpHeaders();
+            outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
+
+            return ResponseEntity.ok()
+                                 .headers(outputHeader)
+                                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                 .body(body);
         }
 
         /**
