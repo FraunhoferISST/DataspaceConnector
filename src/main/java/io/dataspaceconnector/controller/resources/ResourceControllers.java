@@ -227,14 +227,14 @@ public final class ResourceControllers {
          * @return The data object.
          * @throws IOException if the data cannot be received.
          */
-        @GetMapping("{id}/data/**")
+        @GetMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
                 @RequestParam(required = false) final URI agreementUri,
-                @RequestParam final Map<String, String> params,
+                @RequestParam(required = false) final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
                 final HttpServletRequest request) throws IOException {
             headers.remove("authorization");
