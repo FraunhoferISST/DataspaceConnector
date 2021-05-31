@@ -285,11 +285,13 @@ public final class ResourceControllers {
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput) throws IOException {
             ValidationUtils.validateQueryInput(queryInput);
-            final var data = artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+            final var data =
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
             return returnData(artifactId, data);
         }
 
-        private ResponseEntity<StreamingResponseBody> returnData(final UUID artifactId, final InputStream data) {
+        private ResponseEntity<StreamingResponseBody> returnData(
+                final UUID artifactId, final InputStream data) {
             final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
                 int numBytesToWrite;
@@ -305,9 +307,9 @@ public final class ResourceControllers {
             outputHeader.set("Content-Disposition", "attachment;filename=" + artifactId.toString());
 
             return ResponseEntity.ok()
-                                 .headers(outputHeader)
-                                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                                 .body(body);
+                    .headers(outputHeader)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(body);
         }
 
         /**
