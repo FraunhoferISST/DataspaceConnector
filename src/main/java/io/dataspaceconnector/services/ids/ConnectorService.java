@@ -123,8 +123,28 @@ public class ConnectorService {
      *
      * @return The connector's DAT.
      */
-    public DynamicAttributeToken getCurrentDat() throws ConnectorMissingCertExtensionException, DapsConnectionException, DapsEmptyResponseException {
-        return tokenProvider.getDAT();
+    public DynamicAttributeToken getCurrentDat() {
+        try {
+            return tokenProvider.getDAT();
+        } catch (ConnectorMissingCertExtensionException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Connector is missing a Cert Extension exception=({})]", e.getMessage());
+            }
+            return null;
+            // TODO: Null value has to be handled
+        } catch (DapsConnectionException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
+            }
+            return null;
+            // TODO: Null value has to be handled
+        } catch (DapsEmptyResponseException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
+            }
+            return null;
+            // TODO: Null value has to be handled
+        }
     }
 
     /**

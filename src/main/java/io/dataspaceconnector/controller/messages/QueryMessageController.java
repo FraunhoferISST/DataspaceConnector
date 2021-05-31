@@ -21,6 +21,9 @@ import java.util.Objects;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -84,9 +87,12 @@ public class QueryMessageController {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
+            //final var responseToString = Objects.requireNonNull(response.body()).string();
+            final var responseToString = Objects.requireNonNull(response);
+            // TODO: check if this leads to the same output as the original code
             return ResponseEntity.ok(responseToString);
-        } catch (IOException exception) {
+        } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
+            // TODO: should all exceptions be handled this way or should a differentiation be made?
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

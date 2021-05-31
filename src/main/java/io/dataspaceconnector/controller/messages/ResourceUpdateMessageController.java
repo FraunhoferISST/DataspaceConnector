@@ -21,6 +21,9 @@ import java.util.Objects;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,7 +80,7 @@ public class ResourceUpdateMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient,
+            @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The resource id.", required = true)
             @RequestParam(value = "resourceId") final URI resourceId) {
         try {
@@ -87,10 +90,13 @@ public class ResourceUpdateMessageController {
             }
 
             // Send the resource update message.
-            final var response = brokerService.updateResourceAtBroker(URI.create(recipient), resource.get());
-            final var responseToString = Objects.requireNonNull(response.body()).string();
+            final var response = brokerService.updateResourceAtBroker(recipient, resource.get());
+            //final var responseToString = Objects.requireNonNull(response.body()).string();
+            final var responseToString = Objects.requireNonNull(response);
+            // TODO: check if this leads to the same output as the original code
             return ResponseEntity.ok(responseToString);
-        } catch (NullPointerException | IOException exception) {
+        } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
+            // TODO: should all exceptions be handled this way or should a differentiation be made?
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }
