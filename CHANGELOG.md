@@ -1,17 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.x.x] - XXXX-XX-XX
+## [5.1.0] - XXXX-XX-XX
 
 ### Added
  - Add telemetry collection via Jaeger.
- 
+
 ### Changed
  - Replace deprecated JPA calls (`getOne` -> `getById`).
  - Increase length restriction for URIs in database columns to 2048.
+ - Increase modelmapper version to 2.4.4.
+ - Increase equalsverifier version to 3.6.1.
+ - Increase spring-ppenApi-security version to 1.5.9.
+ - Increase spring-openapi-ui version to 1.5.9.
+ - Increase maven-javadoc-plugin version to 3.3.0.
+ - Increase spring-boot version to 2.5.0.
 
 ### Fixed
  - Representations have now only one self-link.
+ - Set Basic Auth Header on (provider) backend calls.
 
 ## [5.0.2] - 2021-05-25
 
