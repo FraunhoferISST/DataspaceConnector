@@ -10,5 +10,5 @@ public abstract class IdsProcessor implements Processor {
         exchange.getIn().setBody(processInternal(exchange.getIn().getBody(Request.class)));
     }
 
-    protected abstract Response processInternal(final Request request) throws Exception;
+    protected abstract Response processInternal(Request request) throws Exception;
 }

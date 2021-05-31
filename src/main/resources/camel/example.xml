@@ -1,7 +1,8 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="test-route">
+    <route id="test-route" errorHandlerRef="Error">
+        <onException/>
         <from uri="direct:descHandler"/>
-        <to uri="direct:version-validator"/>
+        <to uri="direct:ids-validation"/>
         <choice>
             <when>
                 <simple>${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedElement()} ==

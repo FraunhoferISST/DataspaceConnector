@@ -1,0 +1,6 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="ids-validation">
+        <from uri="direct:ids-validation"/>
+        <process ref="VersionValidator"/>
+    </route>
+</routes>

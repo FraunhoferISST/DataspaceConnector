@@ -10,5 +10,5 @@ public abstract class IdsValidator implements Processor {
         processInternal(exchange.getIn().getBody(Request.class));
     }
 
-    protected abstract void processInternal(final Request request) throws Exception;
+    protected abstract void processInternal(Request request) throws Exception;
 }
