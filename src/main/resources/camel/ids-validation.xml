@@ -1,6 +1,18 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="ids-validation">
+    <route id="ids-validation-route">
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.VersionNotSupportedException</exception>
+            <to uri="direct:versionNotSupported"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MessageEmptyException</exception>
+            <to uri="direct:messageEmpty"/>
+        </onException>
+
         <from uri="direct:ids-validation"/>
         <process ref="VersionValidator"/>
+
     </route>
 </routes>

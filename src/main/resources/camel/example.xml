@@ -1,6 +1,19 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="test-route" errorHandlerRef="Error">
-        <onException/>
+    <route id="test-route">
+
+        <!--<onException>
+            <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
+            <exception>java.lang.IllegalStateException</exception>
+            <exception>javax.validation.ConstraintViolationException</exception>
+            <to uri=""/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
+            <exception>io.dataspaceconnector.exceptions.InvalidResourceException</exception>
+            <to uri=""/>
+        </onException>-->
+
         <from uri="direct:descHandler"/>
         <to uri="direct:ids-validation"/>
         <choice>
@@ -14,5 +27,6 @@
             </otherwise>
         </choice>
         <log message="DOOM! ${body}"/>
+
     </route>
 </routes>

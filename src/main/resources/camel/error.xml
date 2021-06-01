@@ -1,3 +1,16 @@
-<!-- <onException>io.dataspaceconnector.exceptions.ResourceNotFoundException</onException>
-<log message="HELLO"/>
-<stop/> -->
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="versionNotSupported-route">
+        <from uri="direct:versionNotSupported"/>
+        <log message="Version not supported!"/>
+        <to uri="bean:messageResponseService?method=handleInfoModelNotSupportedException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getModelVersion()})"/>
+    </route>
+
+    <route id="messageEmpty-route">
+        <from uri="direct:messageEmpty"/>
+        <log message="Message empty!"/>
+        <to uri="bean:messageResponseService?method=handleMessageEmptyException(${exception})"/>
+    </route>
+
+</routes>

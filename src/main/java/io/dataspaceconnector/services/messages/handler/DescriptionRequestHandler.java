@@ -20,6 +20,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,12 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
                 ExchangeBuilder.anExchange(context)
                         .withBody(new Request(message, payload))
                         .build());
+
         final var response = result.getIn().getBody(Response.class);
-        return BodyResponse.create(response.getHeader(), response.getBody());
+        if (response != null) {
+            return BodyResponse.create(response.getHeader(), response.getBody());
+        } else {
+            return result.getIn().getBody(ErrorResponse.class);
+        }
     }
 }
