@@ -36,6 +36,8 @@ import io.dataspaceconnector.model.IdentityProviderDesc;
 import io.dataspaceconnector.model.IdsEndpoint;
 import io.dataspaceconnector.model.IdsEndpointDesc;
 import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.model.ProxyDesc;
 import io.dataspaceconnector.services.configuration.AuthenticationService;
 import io.dataspaceconnector.services.configuration.BrokerService;
 import io.dataspaceconnector.services.configuration.ClearingHouseService;
@@ -46,6 +48,7 @@ import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.services.configuration.IdentityProviderService;
 import io.dataspaceconnector.services.configuration.IdsEndpointService;
+import io.dataspaceconnector.services.configuration.ProxyService;
 import io.dataspaceconnector.view.AuthenticationView;
 import io.dataspaceconnector.view.BrokerView;
 import io.dataspaceconnector.view.ClearingHouseView;
@@ -56,6 +59,7 @@ import io.dataspaceconnector.view.GenericEndpointView;
 import io.dataspaceconnector.view.IdentityProviderView;
 import io.dataspaceconnector.view.IdsEndpointView;
 import io.dataspaceconnector.view.OfferedResourceView;
+import io.dataspaceconnector.view.ProxyView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -187,5 +191,16 @@ public final class ConfigmanagerController {
             extends BaseResourceController<IdsEndpoint, IdsEndpointDesc,
             IdsEndpointView, IdsEndpointService> {
 
+    }
+
+    /**
+     * Offers the endpoints for managing proxies.
+     */
+    @RestController
+    @RequestMapping("/api/proxies")
+    @Tag(name = "Proxy", description = "Endpoints for CRUD operations on"
+            + " proxies")
+    public static class ProxyController
+            extends BaseResourceController<Proxy, ProxyDesc, ProxyView, ProxyService> {
     }
 }

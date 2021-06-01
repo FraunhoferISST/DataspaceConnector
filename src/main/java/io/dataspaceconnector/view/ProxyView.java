@@ -1,7 +1,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.RegisterStatus;
+import io.dataspaceconnector.model.Authentication;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,15 +10,16 @@ import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
- * A DTO for controlled exposing of identity provider information in API responses.
+ * A DTO for controlled exposing of proxy information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "identityproviders", itemRelation = "identityprovider")
-public class IdentityProviderView extends RepresentationModel<IdentityProviderView> {
+@Relation(collectionRelation = "proxies", itemRelation = "proxy")
+public class ProxyView extends RepresentationModel<ProxyView> {
 
     /**
      * The creation date.
@@ -33,17 +34,17 @@ public class IdentityProviderView extends RepresentationModel<IdentityProviderVi
     private ZonedDateTime modificationDate;
 
     /**
-     * The access url of the identity provider.
+     * The proxy uri.
      */
-    private URI accessUrl;
+    private URI proxyURI;
 
     /**
-     * The title of the identity provider.
+     * List of no proxy uris.
      */
-    private String title;
+    private List<URI> noProxyURI;
 
     /**
-     * The registration status.
+     * The authentication for the proxy.
      */
-    private RegisterStatus registerStatus;
+    private Authentication authentication;
 }

@@ -11,7 +11,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of generic endpoint information in API responses.
+ * A DTO for controlled exposing of ids endpoint information in API responses.
  */
 @Getter
 @Setter
