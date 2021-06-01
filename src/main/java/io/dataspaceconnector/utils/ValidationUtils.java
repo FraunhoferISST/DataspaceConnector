@@ -61,8 +61,7 @@ public final class ValidationUtils {
      * @throws IllegalArgumentException if any key or value in the map is null, emtpy or blank
      */
     private static void validateMapContent(final Map<String, String> map) {
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-
+        for (final var entry : map.entrySet()) {
             // Check if key of the map entry is null, empty or blank
             if (entry.getKey() == null || entry.getKey().isBlank()) {
                 throw new IllegalArgumentException("Map key in query input should not be "

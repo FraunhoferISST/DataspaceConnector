@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.config;
+package io.dataspaceconnector.services.resources;
+
+import io.dataspaceconnector.model.OfferedResource;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
- * This class contains static constants for configuring database columns.
+ * Handles the relation between an offered resource and its representations.
  */
-public final class DatabaseConfig {
-
-    /**
-     * Private constructor.
-     */
-    private DatabaseConfig() { }
-
-    /**
-     * The maximum length of database columns containing URIs.
-     */
-    public static final int URI_COLUMN_LENGTH = 2048;
-
-}
+@Service
+@NoArgsConstructor
+public class OfferedResourceRepresentation
+        extends AbstractResourceRepresentationLinker<OfferedResource> { }

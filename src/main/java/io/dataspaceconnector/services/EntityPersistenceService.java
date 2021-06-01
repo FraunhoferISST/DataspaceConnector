@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.services;
 
+import javax.persistence.PersistenceException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
@@ -40,15 +50,6 @@ import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.persistence.PersistenceException;
-import java.io.ByteArrayInputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This service offers methods for saving contract agreements as well as metadata and data requested
@@ -222,9 +223,10 @@ public class EntityPersistenceService {
      * @param remoteId The artifact id.
      * @throws MessageResponseException  If the message response could not be processed.
      * @throws ResourceNotFoundException If the artifact could not be found.
+     * @throws IOException If the data could not be stored.
      */
     public void saveData(final Map<String, String> response, final URI remoteId)
-            throws MessageResponseException, ResourceNotFoundException {
+            throws MessageResponseException, ResourceNotFoundException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
         final var artifact = artifactService.get(artifactId.get());

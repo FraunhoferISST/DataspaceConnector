@@ -20,6 +20,7 @@ import io.dataspaceconnector.controller.resources.ResourceControllers.ArtifactCo
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.QueryInput;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -44,6 +45,7 @@ public class ArtifactViewAssembler
      * @param artifact The artifact.
      * @return The new view.
      */
+    @SneakyThrows
     @Override
     public ArtifactView toModel(final Artifact artifact) {
         final var modelMapper = new ModelMapper();

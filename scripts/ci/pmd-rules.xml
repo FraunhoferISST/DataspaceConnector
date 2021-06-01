@@ -30,10 +30,12 @@
         <exclude name="OnlyOneReturn"/>
         <!-- Too many false positives -->
         <exclude name="LongVariable"/>
+        <!-- Conflicts quite often with unnecessary constructor rule -->
+        <exclude name="AtLeastOneConstructor"/>
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling"/>
-        <!-- TODO: At the moment there are too many false positives especially with streams -->
+        <!-- There are too many false positives especially with streams -->
         <exclude name="LawOfDemeter"/>
     </rule>
     <rule ref="category/java/documentation.xml"></rule>

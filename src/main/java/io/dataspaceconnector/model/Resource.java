@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
 import io.dataspaceconnector.exceptions.ResourceException;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
@@ -26,17 +36,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
 
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import java.net.URI;
-import java.util.List;
-
-import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * A resource describes offered or requested data.

@@ -71,7 +71,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * The assembler for creating list of views.
      */
     @Autowired
-    private PagedResourcesAssembler<T> pagedResourcesAssembler;
+    private PagedResourcesAssembler<T> pagedAssembler;
 
     /**
      * The type of the entity used for creating empty pages.
@@ -81,9 +81,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     /**
      * Default constructor.
      */
+    @SuppressWarnings("unchecked")
     protected BaseResourceController() {
         final var resolved =
                 GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceController.class);
+        assert resolved != null;
         resourceType = (Class<T>) resolved[2];
     }
 
@@ -113,6 +115,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @param size The page size.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
@@ -123,9 +126,9 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {
-            model = pagedResourcesAssembler.toModel(entities, assembler);
+            model = pagedAssembler.toModel(entities, assembler);
         } else {
-            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+            model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
         return ResponseEntity.ok(model);

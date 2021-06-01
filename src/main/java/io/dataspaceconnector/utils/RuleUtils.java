@@ -233,7 +233,7 @@ public final class RuleUtils {
     public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
         final var interval = new TimeInterval();
 
-        for (var constraint : rule.getConstraint()) {
+        for (final var constraint : rule.getConstraint()) {
             final var operator = ((ConstraintImpl) constraint).getOperator();
             if (operator == BinaryOperator.AFTER) {
                 final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();

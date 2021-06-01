@@ -417,7 +417,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertTrue(((ArtifactImpl)result).getData() instanceof LocalData);
+        assertTrue(result.getData() instanceof LocalData);
     }
 
     @Test
@@ -430,7 +430,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertTrue(((ArtifactImpl)result).getData() instanceof LocalData);
+        assertTrue(result.getData() instanceof LocalData);
     }
 
     @Test
@@ -443,7 +443,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertTrue(((ArtifactImpl)result).getData() instanceof RemoteData);
+        assertTrue(result.getData() instanceof RemoteData);
     }
 
     @Test
@@ -490,7 +490,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertNull(((LocalData)((ArtifactImpl)result).getData()).getValue());
+        assertNull(((LocalData)result.getData()).getValue());
     }
 
     @Test
@@ -505,7 +505,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertTrue(Arrays.equals(desc.getValue().getBytes(StandardCharsets.UTF_16), ((LocalData)((ArtifactImpl)artifact).getData()).getValue()));
+        assertTrue(Arrays.equals(desc.getValue().getBytes(StandardCharsets.UTF_16), ((LocalData)artifact.getData()).getValue()));
     }
 
     @Test

@@ -21,6 +21,7 @@ import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
 import io.dataspaceconnector.model.QueryInput;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,6 +172,7 @@ public class ArtifactViewAssemblerTest {
         return baseUrl + path + "/" + artifactId;
     }
 
+    @SneakyThrows
     private String getArtifactDataLink(final UUID artifactId) {
         return linkTo(methodOn(ResourceControllers.ArtifactController.class)
                 .getData(artifactId, new QueryInput())).toString();

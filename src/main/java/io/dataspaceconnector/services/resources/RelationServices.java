@@ -73,6 +73,7 @@ public final class RelationServices {
             RepresentationService, OfferedResourceService> {
 
         @Override
+        @SuppressWarnings("unchecked")
         protected final List<OfferedResource> getInternal(final Representation owner) {
             return (List<OfferedResource>) (List<?>) owner.getResources();
         }
@@ -88,6 +89,7 @@ public final class RelationServices {
             RepresentationService, RequestedResourceService> {
 
         @Override
+        @SuppressWarnings("unchecked")
         protected final List<RequestedResource> getInternal(final Representation owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
         }
@@ -133,6 +135,7 @@ public final class RelationServices {
             OfferedResourceService> {
 
         @Override
+        @SuppressWarnings("unchecked")
         protected final List<OfferedResource> getInternal(final Contract owner) {
             return (List<OfferedResource>) (List<?>) owner.getResources();
         }
@@ -148,6 +151,7 @@ public final class RelationServices {
             RequestedResourceService> {
 
         @Override
+        @SuppressWarnings("unchecked")
         protected final List<RequestedResource> getInternal(final Contract owner) {
             return (List<RequestedResource>) (List<?>) owner.getResources();
         }

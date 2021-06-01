@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import javax.persistence.PersistenceException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.exceptions.ContractException;
@@ -52,12 +59,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.persistence.PersistenceException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -224,12 +225,13 @@ public class ContractRequestMessageController {
                     // Read and process the response message.
                     try {
                         persistenceSvc.saveData(response, artifact);
-                    } catch (ResourceNotFoundException | MessageResponseException exception) {
+                    } catch (IOException | ResourceNotFoundException
+                             | MessageResponseException e) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
                             log.warn("Could not save data for artifact."
                                             + "[artifact=({}), exception=({})]",
-                                    artifact, exception.getMessage());
+                                    artifact, e.getMessage());
                         }
                     }
                 }

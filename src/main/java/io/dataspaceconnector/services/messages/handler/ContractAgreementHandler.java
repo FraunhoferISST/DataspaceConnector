@@ -39,7 +39,6 @@ import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -51,7 +50,6 @@ import java.net.URI;
  * {@link ContractAgreementMessageImpl} JsonTypeName annotation.
  */
 @Component
-@Log4j2
 @RequiredArgsConstructor
 @SupportedMessageType(ContractAgreementMessageImpl.class)
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {

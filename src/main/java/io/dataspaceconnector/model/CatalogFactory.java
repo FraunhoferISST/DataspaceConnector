@@ -41,13 +41,6 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     public static final String DEFAULT_DESCRIPTION = "";
 
     /**
-     * Default constructor.
-     */
-    public CatalogFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new catalog.
      * @param desc The description of the new catalog.
      * @return The new catalog.

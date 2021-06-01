@@ -74,7 +74,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * The assembler for creating list of views.
      */
     @Autowired
-    private PagedResourcesAssembler<T> pagedResourcesAssembler;
+    private PagedResourcesAssembler<T> pagedAssembler;
 
     /**
      * The type of the service.
@@ -84,9 +84,11 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     /**
      * Default constructor.
      */
+    @SuppressWarnings("unchecked")
     protected BaseResourceChildController() {
         final var resolved = GenericTypeResolver
                 .resolveTypeArguments(getClass(), BaseResourceChildController.class);
+        assert resolved != null;
         resourceType = (Class<S>) resolved[2];
     }
 
@@ -101,6 +103,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *          if the ownerId is not known.
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
@@ -113,9 +116,9 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
 
         PagedModel<V> model;
         if (entities.hasContent()) {
-            model = pagedResourcesAssembler.toModel((Page<T>) entities, assembler);
+            model = pagedAssembler.toModel((Page<T>) entities, assembler);
         } else {
-            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+            model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
         return ResponseEntity.ok(model);

@@ -31,7 +31,6 @@ import io.dataspaceconnector.services.messages.types.MessageProcessedNotificatio
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -45,7 +44,6 @@ import java.net.URI;
  */
 
 @Component
-@Log4j2
 @RequiredArgsConstructor
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {

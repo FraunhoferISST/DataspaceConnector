@@ -15,14 +15,11 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.OfferedResource;
+import java.util.List;
+
 import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.Resource;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Handles the relation between a resources and its representations.
@@ -42,19 +39,3 @@ public abstract class AbstractResourceRepresentationLinker<T extends Resource>
         return owner.getRepresentations();
     }
 }
-
-/**
- * Handles the relation between an offered resource and its representations.
- */
-@Service
-@NoArgsConstructor
-class OfferedResourceRepresentation extends AbstractResourceRepresentationLinker<OfferedResource> {
-}
-
-/**
- * Handles the relation between a requested resource and its representations.
- */
-@Service
-@NoArgsConstructor
-class RequestedResourceRepresentation
-        extends AbstractResourceRepresentationLinker<RequestedResource> { }

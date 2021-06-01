@@ -54,13 +54,6 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
     public static final String DEFAULT_TITLE = "";
 
     /**
-     * Default constructor.
-     */
-    public ContractFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new contract.
      * @param desc The description of the new contract.
      * @return The new contract.
@@ -142,7 +135,7 @@ public class ContractFactory implements AbstractFactory<Contract, ContractDesc> 
 
         // Validate the state of the contract with the new times
         var realStart = newStart.orElseGet(contract::getStart);
-        var realEnd = newEnd.orElseGet(contract::getEnd);
+        final var realEnd = newEnd.orElseGet(contract::getEnd);
 
         if (realStart.isAfter(realEnd)) {
             // Invalid state, fix up

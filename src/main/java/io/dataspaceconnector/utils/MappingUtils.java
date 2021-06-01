@@ -212,7 +212,8 @@ public final class MappingUtils {
      * @param additional the map of additional properties.
      * @param key the map key to use.
      */
-    private static void addListToAdditional(final List list, final Map<String, String> additional,
+    private static void addListToAdditional(final List<?> list,
+                                            final Map<String, String> additional,
                                             final String key) {
         if (list.size() == 1) {
             additional.put(key, list.get(0).toString());

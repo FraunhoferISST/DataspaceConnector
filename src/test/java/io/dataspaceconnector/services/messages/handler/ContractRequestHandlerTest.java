@@ -436,7 +436,7 @@ class ContractRequestHandlerTest {
                 Mockito.any(), Mockito.eq(Arrays.asList(artifactId)), Mockito.eq(issuerConnector));
 
         /* ACT */
-        final var result = (BodyResponse) handler.processContractRequest(payload, messageId, issuerConnector);
+        final var result = (BodyResponse<?>) handler.processContractRequest(payload, messageId, issuerConnector);
 
         /* ASSERT */
         assertTrue(result.getHeader() instanceof ContractAgreementMessage);
