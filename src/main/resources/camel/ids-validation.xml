@@ -3,12 +3,12 @@
 
         <onException>
             <exception>io.dataspaceconnector.exceptions.VersionNotSupportedException</exception>
-            <to uri="direct:versionNotSupported"/>
+            <to uri="direct:handleVersionNotSupportedException"/>
         </onException>
 
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageEmptyException</exception>
-            <to uri="direct:messageEmpty"/>
+            <to uri="direct:handleMessageEmptyException"/>
         </onException>
 
         <from uri="direct:ids-validation"/>

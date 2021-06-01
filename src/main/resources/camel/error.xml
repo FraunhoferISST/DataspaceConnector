@@ -1,16 +1,40 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-    <route id="versionNotSupported-route">
-        <from uri="direct:versionNotSupported"/>
+    <route id="versionNotSupportedException-route">
+        <from uri="direct:handleVersionNotSupportedException"/>
         <log message="Version not supported!"/>
         <to uri="bean:messageResponseService?method=handleInfoModelNotSupportedException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getModelVersion()})"/>
     </route>
 
-    <route id="messageEmpty-route">
-        <from uri="direct:messageEmpty"/>
+    <route id="messageEmptyException-route">
+        <from uri="direct:handleMessageEmptyException"/>
         <log message="Message empty!"/>
         <to uri="bean:messageResponseService?method=handleMessageEmptyException(${exception})"/>
+    </route>
+
+    <route id="resourceNotFoundException-route">
+        <from uri="direct:handleResourceNotFoundException"/>
+        <log message="Resource not found!"/>
+        <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="responseMessageBuilderException-route">
+        <from uri="direct:handleResponseMessageBuilderException"/>
+        <log message="Error building response message!"/>
+        <to uri="bean:messageResponseService?method=handleResponseMessageBuilderException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="selfLinkCreationException-route">
+        <from uri="direct:handleSelfLinkCreationException"/>
+        <log message="Error in self link creation!"/>
+        <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()})"/>
     </route>
 
 </routes>
