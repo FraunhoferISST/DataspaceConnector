@@ -33,6 +33,8 @@ import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.GenericEndpointDesc;
 import io.dataspaceconnector.model.IdentityProvider;
 import io.dataspaceconnector.model.IdentityProviderDesc;
+import io.dataspaceconnector.model.IdsEndpoint;
+import io.dataspaceconnector.model.IdsEndpointDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.configuration.AuthenticationService;
 import io.dataspaceconnector.services.configuration.BrokerService;
@@ -43,6 +45,7 @@ import io.dataspaceconnector.services.configuration.DataSourceService;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.services.configuration.IdentityProviderService;
+import io.dataspaceconnector.services.configuration.IdsEndpointService;
 import io.dataspaceconnector.view.AuthenticationView;
 import io.dataspaceconnector.view.BrokerView;
 import io.dataspaceconnector.view.ClearingHouseView;
@@ -51,6 +54,7 @@ import io.dataspaceconnector.view.ConnectorView;
 import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.GenericEndpointView;
 import io.dataspaceconnector.view.IdentityProviderView;
+import io.dataspaceconnector.view.IdsEndpointView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -170,5 +174,18 @@ public final class ConfigmanagerController {
     public static class IdentityProviderController
             extends BaseResourceController<IdentityProvider, IdentityProviderDesc,
             IdentityProviderView, IdentityProviderService> {
+    }
+
+    /**
+     * Offers the endpoints for managing ids endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/idsendpoints")
+    @Tag(name = "Ids Endpoint", description = "Endpoints for CRUD operations on"
+            + " ids endpoints")
+    public static class IdsEndpointController
+            extends BaseResourceController<IdsEndpoint, IdsEndpointDesc,
+            IdsEndpointView, IdsEndpointService> {
+
     }
 }
