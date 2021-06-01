@@ -16,33 +16,49 @@
 package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerController;
-import io.dataspaceconnector.model.IdentityProvider;
+import io.dataspaceconnector.model.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 /**
- * Assembles the REST resource for an identity provider.
+ * Assembles the REST resource for a route.
  */
 @Component
-public class IdentityProviderViewAssembler implements
-        RepresentationModelAssembler<IdentityProvider, IdentityProviderView>, SelfLinking {
+public class RouteViewAssembler
+        implements RepresentationModelAssembler<Route, RouteView>, SelfLinking {
+
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigmanagerController.IdentityProviderController.class);
+                ConfigmanagerController.RouteController.class);
     }
 
     @Override
-    public final IdentityProviderView toModel(final IdentityProvider identityProvider) {
+    public final RouteView toModel(final Route route) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(identityProvider,
-                IdentityProviderView.class);
-        view.add(getSelfLink(identityProvider.getId()));
+        final var view = modelMapper.map(route,
+                RouteView.class);
+        view.add(getSelfLink(route.getId()));
+
+        final var subroutes = WebMvcLinkBuilder
+                .linkTo(methodOn(ConfigmanagerController.RoutesToSubroutes.class)
+                        .getResource(route.getId(), null, null))
+                .withRel("routes");
+        view.add(subroutes);
+
+        final var offeredResources = WebMvcLinkBuilder
+                .linkTo(methodOn(ConfigmanagerController.RoutesToOfferedResources.class)
+                        .getResource(route.getId(), null, null))
+                .withRel("resources");
+        view.add(offeredResources);
 
         return view;
     }

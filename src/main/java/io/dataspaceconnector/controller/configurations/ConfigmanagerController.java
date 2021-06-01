@@ -38,6 +38,8 @@ import io.dataspaceconnector.model.IdsEndpointDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Proxy;
 import io.dataspaceconnector.model.ProxyDesc;
+import io.dataspaceconnector.model.Route;
+import io.dataspaceconnector.model.RouteDesc;
 import io.dataspaceconnector.services.configuration.AuthenticationService;
 import io.dataspaceconnector.services.configuration.BrokerService;
 import io.dataspaceconnector.services.configuration.ClearingHouseService;
@@ -49,6 +51,7 @@ import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.services.configuration.IdentityProviderService;
 import io.dataspaceconnector.services.configuration.IdsEndpointService;
 import io.dataspaceconnector.services.configuration.ProxyService;
+import io.dataspaceconnector.services.configuration.RouteService;
 import io.dataspaceconnector.view.AuthenticationView;
 import io.dataspaceconnector.view.BrokerView;
 import io.dataspaceconnector.view.ClearingHouseView;
@@ -60,6 +63,7 @@ import io.dataspaceconnector.view.IdentityProviderView;
 import io.dataspaceconnector.view.IdsEndpointView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.ProxyView;
+import io.dataspaceconnector.view.RouteView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -202,5 +206,38 @@ public final class ConfigmanagerController {
             + " proxies")
     public static class ProxyController
             extends BaseResourceController<Proxy, ProxyDesc, ProxyView, ProxyService> {
+    }
+
+    /**
+     * Offers the endpoints for managing proxies.
+     */
+    @RestController
+    @RequestMapping("/api/routes")
+    @Tag(name = "Route", description = "Endpoints for CRUD operations on"
+            + " routes")
+    public static class RouteController
+            extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
+    }
+
+    /**
+     * Offers the endpoints for managing subroutes.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/subroutes")
+    @Tag(name = "Data Source", description = "Endpoints for CRUD operations on subroutes")
+    public static class RoutesToSubroutes
+            extends BaseResourceChildController<EntityLinkerService.RouteSubrouteLinker,
+            Route, RouteView> {
+    }
+
+    /**
+     * Offers the endpoints for managing subroutes.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/resources")
+    @Tag(name = "Data Source", description = "Endpoints for CRUD operations on subroutes")
+    public static class RoutesToOfferedResources
+            extends BaseResourceChildController<EntityLinkerService.RouteOfferedResourceLinker,
+            OfferedResource, OfferedResourceView> {
     }
 }

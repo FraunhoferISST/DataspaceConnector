@@ -16,24 +16,24 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.RegisterStatus;
+import io.dataspaceconnector.model.GenericEndpoint;
+import io.dataspaceconnector.model.IdsEndpoint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of identity provider information in API responses.
+ * A DTO for controlled exposing of route information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "identityproviders", itemRelation = "identityprovider")
-public class IdentityProviderView extends RepresentationModel<IdentityProviderView> {
+@Relation(collectionRelation = "routes", itemRelation = "route")
+public class RouteView extends RepresentationModel<RouteView> {
 
     /**
      * The creation date.
@@ -47,18 +47,38 @@ public class IdentityProviderView extends RepresentationModel<IdentityProviderVi
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
-    /**
-     * The access url of the identity provider.
-     */
-    private URI accessUrl;
+//    /**
+//     * List of subroutes.
+//     */
+//    private List<Route> subRoutes;
 
     /**
-     * The title of the identity provider.
+     * The route configuration.
      */
-    private String title;
+    private String routeConfiguration;
 
     /**
-     * The registration status.
+     * The possible start endpoint of the route.
      */
-    private RegisterStatus registerStatus;
+    private GenericEndpoint startGenericEndpoint;
+
+    /**
+     * The possible last endpoint of the route.
+     */
+    private GenericEndpoint endGenericEndpoint;
+
+    /**
+     * The possible start endpoint of the route.
+     */
+    private IdsEndpoint startIdsEndpoint;
+
+    /**
+     * The possible last endpoint of the route.
+     */
+    private IdsEndpoint endIdsEndpoint;
+
+//    /**
+//     * List of offered resources.
+//     */
+//    private List<OfferedResource> offeredResources;
 }
