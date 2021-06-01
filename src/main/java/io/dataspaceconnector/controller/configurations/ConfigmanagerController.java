@@ -31,6 +31,8 @@ import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.DataSourceDesc;
 import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.GenericEndpointDesc;
+import io.dataspaceconnector.model.IdentityProvider;
+import io.dataspaceconnector.model.IdentityProviderDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.configuration.AuthenticationService;
 import io.dataspaceconnector.services.configuration.BrokerService;
@@ -40,6 +42,7 @@ import io.dataspaceconnector.services.configuration.ConnectorsService;
 import io.dataspaceconnector.services.configuration.DataSourceService;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
+import io.dataspaceconnector.services.configuration.IdentityProviderService;
 import io.dataspaceconnector.view.AuthenticationView;
 import io.dataspaceconnector.view.BrokerView;
 import io.dataspaceconnector.view.ClearingHouseView;
@@ -47,6 +50,7 @@ import io.dataspaceconnector.view.ConfigurationView;
 import io.dataspaceconnector.view.ConnectorView;
 import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.GenericEndpointView;
+import io.dataspaceconnector.view.IdentityProviderView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -150,9 +154,21 @@ public final class ConfigmanagerController {
     @RestController
     @RequestMapping("/api/genericendpoints")
     @Tag(name = "Generic Endpoint", description = "Endpoints for CRUD operations on"
-           + " generic endpoints")
+            + " generic endpoints")
     public static class GenericEndpointController
             extends BaseResourceController<GenericEndpoint, GenericEndpointDesc,
             GenericEndpointView, GenericEndpointService> {
+    }
+
+    /**
+     * Offers the endpoints for managing identity provider endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/identityproviders")
+    @Tag(name = "Identity Provider", description = "Endpoints for CRUD operations on"
+            + " identity providers")
+    public static class IdentityProviderController
+            extends BaseResourceController<IdentityProvider, IdentityProviderDesc,
+            IdentityProviderView, IdentityProviderService> {
     }
 }
