@@ -47,6 +47,10 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageRespons
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.PersistenceException;
@@ -65,6 +69,10 @@ import java.util.List;
 @SupportedMessageType(ContractRequestMessageImpl.class)
 @RequiredArgsConstructor
 public class ContractRequestHandler implements MessageHandler<ContractRequestMessageImpl> {
+
+    private final @NonNull ProducerTemplate template;
+
+    private final @NonNull CamelContext context;
 
     /**
      * Service for building and sending message responses.
@@ -112,15 +120,15 @@ public class ContractRequestHandler implements MessageHandler<ContractRequestMes
     @Override
     public MessageResponse handleMessage(final ContractRequestMessageImpl message,
                                          final MessagePayload payload) {
-        // Validate incoming message.
-        try {
-            agreementService.validateIncomingMessage(message);
-        } catch (MessageEmptyException exception) {
-            return responseService.handleMessageEmptyException(exception);
-        } catch (VersionNotSupportedException exception) {
-            return responseService.handleInfoModelNotSupportedException(exception,
-                    message.getModelVersion());
-        }
+        final var result = template.send("direct:contractRequestHandler",
+                ExchangeBuilder.anExchange(context)
+                        .withBody(new Request(message, payload))
+                        .build());
+
+        final var response = result.getIn().getBody(Response.class);
+        return response == null
+            ? result.getIn().getBody(ErrorResponse.class)
+            : BodyResponse.create(response.getHeader(), response.getBody());
 
         // Read relevant parameters for message processing.
         final var issuer = MessageUtils.extractIssuerConnector(message);

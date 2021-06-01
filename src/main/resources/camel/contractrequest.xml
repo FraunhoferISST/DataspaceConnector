@@ -1,0 +1,11 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="test-route">
+        <from uri="direct:contractRequestHandler"/>
+        <to uri="direct:ids-validation"/>
+        <!-- deserialize contract -->
+        <!-- validate has rules -->
+        <!-- validate has target in rules -->
+        <!-- find all contract offers for  -->
+        <!-- accept contract -->
+    </route>
+</routes>

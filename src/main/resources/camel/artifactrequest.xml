@@ -1,0 +1,8 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="test-route">
+        <from uri="direct:artifactRequestHandler"/>
+        <!-- validate contract (merge with usage control?)-->
+        <!-- usage control -->
+        <!-- return data -->
+    </route>
+</routes>

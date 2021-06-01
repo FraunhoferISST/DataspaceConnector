@@ -15,22 +15,20 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
+import org.springframework.stereotype.Component;
+
 import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
-import io.dataspaceconnector.services.messages.MessageResponseService;
-import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-import io.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 /**
  * This @{@link NotificationMessageHandler} handles all incoming messages that have a
@@ -42,16 +40,9 @@ import org.springframework.stereotype.Component;
 @SupportedMessageType(NotificationMessageImpl.class)
 @RequiredArgsConstructor
 public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
+    private final @NonNull ProducerTemplate template;
 
-    /**
-     * Service for handling message processed notification messages.
-     */
-    private final @NonNull MessageProcessedNotificationService messageService;
-
-    /**
-     * Service for building and sending message responses.
-     */
-    private final @NonNull MessageResponseService responseService;
+    private final @NonNull CamelContext context;
 
     /**
      * This message implements the logic that is needed to handle the message. As it just returns
@@ -62,29 +53,15 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
      * @return The response message.
      */
     @Override
-    public MessageResponse handleMessage(final NotificationMessageImpl message,
-                                         final MessagePayload payload) {
-        // Validate incoming message.
-        try {
-            messageService.validateIncomingMessage(message);
-        } catch (MessageEmptyException exception) {
-            return responseService.handleMessageEmptyException(exception);
-        } catch (VersionNotSupportedException exception) {
-            return responseService.handleInfoModelNotSupportedException(exception,
-                    message.getModelVersion());
-        }
+    public MessageResponse handleMessage(
+            final NotificationMessageImpl message, final MessagePayload payload) {
+        final var result = template.send("direct:notificationMsgHandler",
+                ExchangeBuilder.anExchange(context)
+                        .withBody(new Request(message, payload))
+                        .build());
 
-        // Read relevant parameters for message processing.
-        final var issuer = MessageUtils.extractIssuerConnector(message);
-        final var messageId = MessageUtils.extractMessageId(message);
-
-        try {
-            // Build the ids response.
-            final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
-            final var header = messageService.buildMessage(desc);
-            return BodyResponse.create(header, "Message received.");
-        } catch (IllegalStateException | ConstraintViolationException e) {
-            return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
-        }
+        final var response = result.getIn().getBody(Response.class);
+        return response == null ? result.getIn().getBody(ErrorResponse.class)
+                                : BodyResponse.create(response.getHeader(), response.getBody());
     }
 }

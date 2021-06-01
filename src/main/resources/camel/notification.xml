@@ -1,0 +1,12 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+
+<!-- } catch (IllegalStateException | ConstraintViolationException e) {
+    return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
+} -->
+
+    <route id="notification-handler-route">
+        <from uri="direct:notificationMsgHandler"/>
+        <to uri="direct:ids-validation"/>
+        <process ref="ProcessedNotification"/>
+    </route>
+</routes>

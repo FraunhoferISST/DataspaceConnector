@@ -22,6 +22,7 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.ContractException;
@@ -45,6 +46,10 @@ import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -93,6 +98,10 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
      */
     private final @NonNull DataProvisionVerifier accessVerifier;
 
+    private final @NonNull ProducerTemplate template;
+
+    private final @NonNull CamelContext context;
+
     /**
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
@@ -105,14 +114,16 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     @Override
     public MessageResponse handleMessage(final ArtifactRequestMessageImpl message,
                                          final MessagePayload payload) throws RuntimeException {
-        // Validate incoming message.
-        try {
-            messageService.validateIncomingMessage(message);
-        } catch (MessageEmptyException exception) {
-            return responseService.handleMessageEmptyException(exception);
-        } catch (VersionNotSupportedException exception) {
-            return responseService.handleInfoModelNotSupportedException(exception,
-                    message.getModelVersion());
+        final var result = template.send("direct:artifactRequestHandler",
+                ExchangeBuilder.anExchange(context)
+                    .withBody(new Request(message, payload))
+                    .build());
+
+        final var response = result.getIn().getBody(Response.class);
+        if (response != null) {
+            return BodyResponse.create(response.getHeader(), response.getBody());
+        } else {
+            return result.getIn().getBody(ErrorResponse.class);
         }
 
         // Read relevant parameters for message processing.
