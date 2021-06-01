@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.model.templates;
 
+import java.net.URI;
+import java.util.List;
+
 import io.dataspaceconnector.model.RepresentationDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,9 +26,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.net.URI;
-import java.util.List;
 
 /**
  * Describes a representation and all its dependencies.

@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.view;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
 
 /**
  * A DTO for controlled exposing of agreement information in API responses.

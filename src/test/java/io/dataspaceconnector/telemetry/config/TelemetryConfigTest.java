@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.telemetry.config;
 
-import io.opentracing.noop.NoopTracer;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import io.opentracing.noop.NoopTracer;
 
 public class TelemetryConfigTest {
     private TelemetryConfig config = new TelemetryConfig();

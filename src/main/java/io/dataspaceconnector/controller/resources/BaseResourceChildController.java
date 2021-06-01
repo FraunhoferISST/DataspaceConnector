@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -41,13 +48,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Offers REST-Api Endpoints for modifying relations between REST resources.

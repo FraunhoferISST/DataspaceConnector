@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.util.UUID;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
@@ -40,9 +43,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * Offers REST-Api endpoints for REST resource handling.

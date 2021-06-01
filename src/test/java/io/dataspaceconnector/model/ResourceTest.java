@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model;
 
+import java.util.ArrayList;
+
 import io.dataspaceconnector.exceptions.ResourceException;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceTest {
     @Test

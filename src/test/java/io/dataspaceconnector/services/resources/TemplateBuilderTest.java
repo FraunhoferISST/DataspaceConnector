@@ -15,13 +15,7 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.*;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
@@ -32,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class TemplateBuilderTest {

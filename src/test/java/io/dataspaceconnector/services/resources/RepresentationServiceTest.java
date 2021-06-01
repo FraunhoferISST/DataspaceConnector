@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.RepresentationFactory;
 import io.dataspaceconnector.repositories.RepresentationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;

@@ -15,12 +15,7 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
-import de.fraunhofer.iais.eis.NotificationMessageBuilder;
-import de.fraunhofer.iais.eis.NotificationMessageImpl;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;

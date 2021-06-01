@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.filter.httptracing;
 
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+
 import io.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -26,11 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

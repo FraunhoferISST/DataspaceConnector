@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model.utils;
 
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-
+import java.net.URL;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.net.URL;
+
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 
 /**
  * A converter for converting URLs to strings and strings to URLs. Used for persisting entity

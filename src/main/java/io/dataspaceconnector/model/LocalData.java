@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,9 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.Lob;
 
 /**
  * Simple wrapper for data stored in the internal database.

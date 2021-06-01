@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model.utils;
 
-import lombok.NoArgsConstructor;
-
+import java.net.URI;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.net.URI;
+
+import lombok.NoArgsConstructor;
 
 /**
  * A converter for converting URIs to strings and strings to URIs. Used for persisting entity

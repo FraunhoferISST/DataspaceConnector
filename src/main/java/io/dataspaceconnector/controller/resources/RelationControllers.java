@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -47,11 +52,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceChildController}.

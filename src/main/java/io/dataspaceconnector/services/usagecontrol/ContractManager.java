@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -41,10 +45,6 @@ import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This service offers methods related to contract management.

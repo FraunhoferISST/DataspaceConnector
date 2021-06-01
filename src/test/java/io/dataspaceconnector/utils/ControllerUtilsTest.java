@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

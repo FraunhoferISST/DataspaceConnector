@@ -15,18 +15,7 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.ArtifactRequestMessage;
-import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
-import de.fraunhofer.iais.eis.DescriptionRequestMessage;
-import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
-import de.fraunhofer.iais.eis.DynamicAttributeToken;
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.RejectionMessageBuilder;
-import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.iais.eis.ResourceUpdateMessage;
-import de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder;
-import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
@@ -37,10 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MessageUtilsTest {
 

@@ -17,11 +17,6 @@ package io.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
@@ -37,6 +32,11 @@ import io.dataspaceconnector.services.messages.types.MessageProcessedNotificatio
 import io.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

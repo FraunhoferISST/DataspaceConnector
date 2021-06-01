@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.stream.Collectors;
+
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
@@ -36,8 +38,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.stream.Collectors;
 
 /**
  * Builds and links entities from templates.

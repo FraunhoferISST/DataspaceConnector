@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.GeneratedValue;
@@ -33,6 +24,15 @@ import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 /**
  * Base type for all entities.
