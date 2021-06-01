@@ -18,10 +18,9 @@ package io.dataspaceconnector.services.resources;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.Resource;
 
-import java.util.List;
-
 /**
  * Base class for handling catalog-resource relations.
+ *
  * @param <T> The resource type.
  */
 public abstract class AbstractCatalogResourceLinker<T extends Resource>
