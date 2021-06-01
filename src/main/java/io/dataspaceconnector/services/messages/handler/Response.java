@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class Response {
+public class Response implements RouteMsg<Message, String> {
     private final @NonNull Message header;
     private final @NonNull String body;
 }

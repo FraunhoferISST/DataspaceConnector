@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component("SelfDescription")
 @RequiredArgsConstructor
-public class SelfDescription extends IdsProcessor {
+public class SelfDescription<> extends IdsProcessor {
 
     /**
      * Service for the current connector configuration.

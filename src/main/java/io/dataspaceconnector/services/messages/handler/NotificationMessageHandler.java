@@ -57,7 +57,7 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
             final NotificationMessageImpl message, final MessagePayload payload) {
         final var result = template.send("direct:notificationMsgHandler",
                 ExchangeBuilder.anExchange(context)
-                        .withBody(new Request(message, payload))
+                        .withBody(new Request<>(message, payload))
                         .build());
 
         final var response = result.getIn().getBody(Response.class);
