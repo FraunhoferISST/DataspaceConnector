@@ -226,7 +226,7 @@ public class ContractRequestMessageController {
                     try {
                         persistenceSvc.saveData(response, artifact);
                     } catch (IOException | ResourceNotFoundException
-                             | MessageResponseException e) {
+                            | MessageResponseException e) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
                             log.warn("Could not save data for artifact."

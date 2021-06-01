@@ -262,7 +262,7 @@ public final class ResourceControllers {
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
                     new RetrievalInformation(agreementUri, download,
-                                             queryInput));
+                            queryInput));
 
             final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
