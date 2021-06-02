@@ -57,7 +57,7 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
     @Override
     public MessageResponse handleMessage(
             final DescriptionRequestMessageImpl message, final MessagePayload payload) {
-        final var result = template.send("direct:descHandler",
+        final var result = template.send("direct:descriptionRequestHandler",
                 ExchangeBuilder.anExchange(context)
                         .withBody(new Request<>(message, payload))
                         .build());

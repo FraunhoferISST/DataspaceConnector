@@ -19,7 +19,7 @@
             <to uri="direct:handleSelfLinkCreationException"/>
         </onException>
 
-        <from uri="direct:descHandler"/>
+        <from uri="direct:descriptionRequestHandler"/>
         <to uri="direct:ids-validation"/>
         <choice>
             <when>

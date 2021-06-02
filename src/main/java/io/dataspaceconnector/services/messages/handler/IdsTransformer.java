@@ -1,5 +1,7 @@
 package io.dataspaceconnector.services.messages.handler;
 
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.annotations.Component;
@@ -37,6 +39,24 @@ class ContractTransformer extends IdsTransformer<RouteMsg<ContractRequestMessage
     protected RouteMsg<ContractRequestMessageImpl, ContractRequest> processInternal(RouteMsg<ContractRequestMessageImpl, MessagePayload> msg) throws Exception {
         final var contract = deserializationService.getContractRequest(MessageUtils.getPayloadAsString(msg.getBody()));
         return new Request<ContractRequestMessageImpl, ContractRequest>(msg.getHeader(), contract);
+    }
+
+}
+
+@org.springframework.stereotype.Component("ResourceDeserializer")
+@RequiredArgsConstructor
+class ResourceTransformer extends IdsTransformer<RouteMsg<ResourceUpdateMessageImpl, MessagePayload>,
+                                                 RouteMsg<ResourceUpdateMessageImpl, Resource>> {
+
+    /**
+     * Service for ids deserialization.
+     */
+    private final @NonNull DeserializationService deserializationService;
+
+    @Override
+    protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
+        final var resource = deserializationService.getResource(MessageUtils.getStreamAsString(msg.getBody()));
+        return new Request<>(msg.getHeader(), resource);
     }
 
 }

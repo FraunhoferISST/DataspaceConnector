@@ -1,0 +1,26 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="resourceUpdateMessageHandler">
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.NoAffectedResourceException</exception>
+            <to uri="direct:handleNoAffectedResourceException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.InvalidAffectedResourceException</exception>
+            <to uri="direct:handleInvalidAffectedResourceException"/>
+        </onException>
+
+        <onException>
+            <exception>java.lang.IllegalStateException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <from uri="direct:resourceUpdateHandler"/>
+        <to uri="direct:ids-validation"/>
+        <process ref="AffectedResourceValidator"/>
+        <process ref="ResourceTransformer"/>
+        <process ref="CorrectAffectedResourceValidator"/>
+        <process ref="ResourceUpdateProcessor"/>
+    </route>
+</routes>

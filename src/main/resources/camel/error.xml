@@ -37,4 +37,23 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()})"/>
     </route>
 
+    <route id="noAffectedResourceException-route">
+        <from uri="direct:handleNoAffectedResourceException"/>
+        <log message="Affected resource is missing!"/>
+        <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getAffectedResource()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidAffectedResourceException">
+        <from uri="direct:handleInvalidAffectedResourceException"/>
+        <log message="Mismatch between affected resource from header and payload!"/>
+        <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().getId()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getAffectedResource()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
 </routes>
