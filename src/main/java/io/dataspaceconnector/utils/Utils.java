@@ -33,6 +33,21 @@ import org.springframework.data.domain.Pageable;
 public final class Utils {
 
     /**
+     * Default page size.
+     */
+    public static final int DEFAULT_PAGE_SIZE = 30;
+
+    /**
+     * Max page size.
+     */
+    public static final int MAX_PAGE_SIZE = 100;
+
+    /**
+     * Default first page.
+     */
+    public static final int DEFAULT_FIRST_PAGE = 0;
+
+    /**
      * Default constructor.
      */
     private Utils() {
@@ -126,21 +141,6 @@ public final class Utils {
 
         return PageRequest.of(pageIndex, sizeValue);
     }
-
-    /**
-     * Default page size.
-     */
-    public static final int DEFAULT_PAGE_SIZE = 30;
-
-    /**
-     * Max page size.
-     */
-    public static final int MAX_PAGE_SIZE = 100;
-
-    /**
-     * Default first page.
-     */
-    public static final int DEFAULT_FIRST_PAGE = 0;
 
     /**
      * Compare two lists to each other.
