@@ -15,12 +15,15 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.view.CatalogViewAssembler;
+import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,10 +35,11 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {ResourceControllers.CatalogController.class})
 class CatalogControllerTest {

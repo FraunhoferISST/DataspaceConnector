@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The base class for all descriptions.

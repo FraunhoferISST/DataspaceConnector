@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.utils;
 
-import de.fraunhofer.iais.eis.*;
-import de.fraunhofer.iais.eis.util.TypedLiteral;
-import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.exceptions.RdfBuilderException;
-import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.math.BigInteger;
@@ -30,9 +23,50 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
+import de.fraunhofer.iais.eis.ContractOffer;
+import de.fraunhofer.iais.eis.ContractOfferBuilder;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.Duty;
+import de.fraunhofer.iais.eis.DutyBuilder;
+import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
+import de.fraunhofer.iais.eis.KeyType;
+import de.fraunhofer.iais.eis.Language;
+import de.fraunhofer.iais.eis.Permission;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.Prohibition;
+import de.fraunhofer.iais.eis.PublicKeyBuilder;
+import de.fraunhofer.iais.eis.Representation;
+import de.fraunhofer.iais.eis.RepresentationBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.Rule;
+import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.util.TypedLiteral;
+import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.exceptions.RdfBuilderException;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdsUtilsTest {
 

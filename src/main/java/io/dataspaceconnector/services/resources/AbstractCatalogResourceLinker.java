@@ -20,7 +20,6 @@ import io.dataspaceconnector.model.Resource;
 
 /**
  * Base class for handling catalog-resource relations.
- *
  * @param <T> The resource type.
  */
 public abstract class AbstractCatalogResourceLinker<T extends Resource>

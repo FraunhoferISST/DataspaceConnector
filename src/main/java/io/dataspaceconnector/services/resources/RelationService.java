@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.Set;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.AbstractEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Creates and modifies relations between two entity types.

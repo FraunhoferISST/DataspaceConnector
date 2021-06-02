@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.filter.httptracing.internal;
 
-import lombok.extern.log4j.Log4j2;
-import org.springframework.util.StreamUtils;
-
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +24,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+
+import lombok.extern.log4j.Log4j2;
+import org.springframework.util.StreamUtils;
 
 /**
  * Wraps incoming HTTP requests too read the message payload multiple times.

@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.filter.httptracing;
 
+import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Data;
-
-import java.time.ZonedDateTime;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This class stores information about a http connection.

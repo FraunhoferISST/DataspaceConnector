@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller.resources;
 
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
-import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.view.AgreementViewAssembler;
+import io.dataspaceconnector.services.resources.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;

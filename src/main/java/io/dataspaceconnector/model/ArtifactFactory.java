@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +22,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.CRC32C;
+
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.

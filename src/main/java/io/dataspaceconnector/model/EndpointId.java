@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.util.UUID;
 
 /**
  * Describes an endpoint splitting it into the general path and the

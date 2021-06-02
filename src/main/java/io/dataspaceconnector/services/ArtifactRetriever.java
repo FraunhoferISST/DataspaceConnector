@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.services;
 
-import io.dataspaceconnector.model.QueryInput;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
+
+import io.dataspaceconnector.model.QueryInput;
 
 /**
  * Performs an artifact request for an artifact.

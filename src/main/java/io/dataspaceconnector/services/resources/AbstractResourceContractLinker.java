@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.List;
+
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.Resource;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * Base class for handling resource-contract relations.

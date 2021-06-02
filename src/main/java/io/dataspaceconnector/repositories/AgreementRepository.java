@@ -15,12 +15,13 @@
  */
 package io.dataspaceconnector.repositories;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.model.Agreement;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.UUID;
 
 /**
  * The repository containing all objects of type {@link Agreement}.

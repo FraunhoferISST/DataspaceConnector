@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
+import java.net.URI;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessageImpl;
 import de.fraunhofer.iais.eis.Message;
@@ -26,9 +29,6 @@ import io.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
-
-import java.net.URI;
-import java.util.Map;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 

@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.AbstractEntity;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import io.dataspaceconnector.model.AbstractEntity;
 
 /**
  * Creates a parent-children relationship between two types of resources.
