@@ -43,7 +43,7 @@ import org.springframework.context.annotation.Configuration;
     //"de.fraunhofer.isst.ids.framework.configuration",
     //"de.fraunhofer.isst.ids.framework.daps",
     "de.fraunhofer.ids.*",
-    "de.fraunhofer.ids.messaging*"
+    "de.fraunhofer.ids.messaging.*"
 })
 public class ConnectorApplication {
 
