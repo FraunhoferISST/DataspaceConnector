@@ -16,6 +16,11 @@
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleIllegalArgumentException"/>
+        </onException>
+
         <from uri="direct:resourceUpdateHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="AffectedResourceValidator"/>

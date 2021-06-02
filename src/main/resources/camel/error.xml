@@ -56,4 +56,13 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
 
+    <route id="illegalArgumentException">
+        <from uri="direct:handleIllegalArgumentException"/>
+        <log message="An IllegalArgumentException occurred!"/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
 </routes>
