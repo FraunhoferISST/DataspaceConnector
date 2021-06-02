@@ -102,7 +102,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             }
 
             if (tmp.getData() instanceof LocalData) {
-                final var factory = ((ArtifactFactory) getFactory());
+                final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             }
         }

@@ -26,7 +26,6 @@ import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -57,11 +56,9 @@ public class ArtifactViewAssembler
                 .withRel("data");
         view.add(dataLink);
 
-        final var repLink =
-                WebMvcLinkBuilder.linkTo(
-                        methodOn(RelationControllers.ArtifactsToRepresentations.class)
-                                .getResource(artifact.getId(), null, null))
-                                 .withRel("representations");
+        final var repLink = linkTo(methodOn(RelationControllers.ArtifactsToRepresentations.class)
+                                           .getResource(artifact.getId(), null, null))
+                                    .withRel("representations");
         view.add(repLink);
 
         final var agreementLink =
