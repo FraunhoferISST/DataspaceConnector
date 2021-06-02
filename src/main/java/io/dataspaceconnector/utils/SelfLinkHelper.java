@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -36,55 +38,52 @@ import io.dataspaceconnector.view.RepresentationViewAssembler;
 import io.dataspaceconnector.view.RequestedResourceViewAssembler;
 import io.dataspaceconnector.view.SelfLinking;
 
-import java.net.URI;
-
 /**
  * This is a helper class for retrieving self-links of a database entity.
  */
 public final class SelfLinkHelper {
-
     /**
      * View assembler for catalogs.
      */
-    static final CatalogViewAssembler CATALOG_ASSEMBLER = new CatalogViewAssembler();
+    private static final CatalogViewAssembler CATALOG_ASSEMBLER = new CatalogViewAssembler();
 
     /**
      * View assembler for offered resources.
      */
-    static final OfferedResourceViewAssembler OFFERED_RESOURCE_ASSEMBLER
-            = new OfferedResourceViewAssembler();
+    private static final OfferedResourceViewAssembler OFFERED_RESOURCE_ASSEMBLER =
+            new OfferedResourceViewAssembler();
 
     /**
      * View assembler for requested resources.
      */
-    static final RequestedResourceViewAssembler REQUESTED_RESOURCE_ASSEMBLER
-            = new RequestedResourceViewAssembler();
+    private static final RequestedResourceViewAssembler REQUESTED_RESOURCE_ASSEMBLER =
+            new RequestedResourceViewAssembler();
 
     /**
      * View assembler for representations.
      */
-    static final RepresentationViewAssembler REPRESENTATION_ASSEMBLER
-            = new RepresentationViewAssembler();
+    private static final RepresentationViewAssembler REPRESENTATION_ASSEMBLER =
+            new RepresentationViewAssembler();
 
     /**
      * View assembler for artifacts.
      */
-    static final ArtifactViewAssembler ARTIFACT_ASSEMBLER = new ArtifactViewAssembler();
+    private static final ArtifactViewAssembler ARTIFACT_ASSEMBLER = new ArtifactViewAssembler();
 
     /**
      * View assembler for contracts.
      */
-    static final ContractViewAssembler CONTRACT_ASSEMBLER = new ContractViewAssembler();
+    private static final ContractViewAssembler CONTRACT_ASSEMBLER = new ContractViewAssembler();
 
     /**
      * View assembler for contract rules.
      */
-    static final ContractRuleViewAssembler RULE_ASSEMBLER = new ContractRuleViewAssembler();
+    private static final ContractRuleViewAssembler RULE_ASSEMBLER = new ContractRuleViewAssembler();
 
     /**
      * View assembler for contract agreements.
      */
-    static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
+    private static final AgreementViewAssembler AGREEMENT_ASSEMBLER = new AgreementViewAssembler();
 
     /**
      * Default constructor.
