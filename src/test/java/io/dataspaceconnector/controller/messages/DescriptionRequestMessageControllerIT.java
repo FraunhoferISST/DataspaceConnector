@@ -37,14 +37,16 @@ public class DescriptionRequestMessageControllerIT {
         mockMvc.perform(post("/api/ids/description")).andExpect(status().isUnauthorized());
     }
 
-    @Test
-    @WithMockUser(roles = {"ADMIN"})
-    public void sendDescriptionRequestMessage_validInput_() throws Exception {
-        /* ARRANGE */
+    // TODO Implement
+//    @Test
+//    @WithMockUser(roles = {"ADMIN"})
+//    public void sendDescriptionRequestMessage_validInput_() throws Exception {
+//        /* ARRANGE */
+//
+//        /* ACT && ASSERT */
+//        mockMvc.perform(post("/api/ids/description")
+//            .param("recipient", "https://localhost:8080/")
+//        ).andExpect(status().isOk());
+//    }
 
-        /* ACT && ASSERT */
-        mockMvc.perform(post("/api/ids/description")
-            .param("recipient", "https://localhost:8080/")
-        ).andExpect(status().isOk());
-    }
 }

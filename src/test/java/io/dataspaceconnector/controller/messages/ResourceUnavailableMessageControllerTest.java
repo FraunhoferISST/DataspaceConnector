@@ -20,10 +20,13 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
+import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -165,6 +168,7 @@ public class ResourceUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
             throws Exception {
         /* ARRANGE */
+
         final var response =
                 new Response.Builder().request(new Request.Builder().url(recipient).build())
                                       .protocol(
@@ -172,6 +176,7 @@ public class ResourceUnavailableMessageControllerTest {
                                       .body(ResponseBody.create("ANSWER", MediaType
                                               .parse("application/text")))
                                       .build();
+
 
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doReturn(response).when(brokerService).removeResourceFromBroker(Mockito.any(),

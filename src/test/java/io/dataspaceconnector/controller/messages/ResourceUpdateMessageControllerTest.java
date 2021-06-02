@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
