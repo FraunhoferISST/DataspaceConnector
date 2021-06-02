@@ -280,7 +280,7 @@ public final class RuleUtils {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
-        if (type.equals("xsd:duration")) {
+        if ("xsd:duration".equals(type)) {
             final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
             return Duration.parse(duration);
         } else {
@@ -310,7 +310,7 @@ public final class RuleUtils {
             throws InvalidInputException {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
-            if (target == null || target.toString().equals("")) {
+            if (target == null || target.toString().isBlank()) {
                 throw new InvalidInputException(ErrorMessages.MISSING_TARGET.toString());
             }
         }

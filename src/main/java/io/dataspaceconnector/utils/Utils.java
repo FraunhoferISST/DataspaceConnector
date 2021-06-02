@@ -122,7 +122,7 @@ public final class Utils {
         if (param == null) {
             return true;
         } else {
-            return param.toString().equals("");
+            return param.toString().isEmpty();
         }
     }
 
