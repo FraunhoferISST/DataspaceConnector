@@ -1,0 +1,29 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="policyCheck">
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.NoTransferContractException</exception>
+            <to uri="direct:handleNoTransferContractException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleMessageProcessingFailed"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.PolicyRestrictionException</exception>
+            <to uri="direct:handlePolicyRestrictionException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ContractException</exception>
+            <to uri="direct:handleInvalidTransferContract"/>
+        </onException>
+
+        <from uri="direct:policyCheck"/>
+        <process ref="PolicyValidator"/>
+
+    </route>
+</routes>

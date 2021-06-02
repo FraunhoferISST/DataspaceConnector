@@ -2,30 +2,30 @@ package io.dataspaceconnector.services.messages.handler;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map;
 import javax.persistence.PersistenceException;
-
-import org.springframework.stereotype.Component;
 
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import de.fraunhofer.iais.eis.Rule;
+import io.dataspaceconnector.exceptions.ContractListEmptyException;
+import io.dataspaceconnector.exceptions.MissingRulesException;
+import io.dataspaceconnector.exceptions.MissingTargetInRuleException;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
 import io.dataspaceconnector.services.EntityPersistenceService;
 import io.dataspaceconnector.services.messages.types.ContractAgreementService;
 import io.dataspaceconnector.services.messages.types.ContractRejectionService;
+import io.dataspaceconnector.services.resources.EntityDependencyResolver;
+import io.dataspaceconnector.services.usagecontrol.RuleValidator;
 import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.minidev.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -46,6 +46,10 @@ public class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequ
      * Service for ids contract rejection messages.
      */
     private final @NonNull ContractRejectionService rejectionService;
+
+    private final @NonNull EntityDependencyResolver dependencyResolver;
+
+    private final @NonNull RuleValidator ruleValidator;
 
     @Override
     protected Response processInternal(RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
@@ -68,19 +72,17 @@ public class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequ
         // Get all rules of the contract request.
         final var rules = ContractUtils.extractRulesFromContract(request);
         if (rules.isEmpty()) {
-            // Return rejection message if the contract request is missing rules.
-            // return responseService.handleMissingRules(request, messageId, issuer);
+            throw new MissingRulesException(request, "Rule list is empty.");
         }
 
         final var targetRuleMap = ContractUtils.getTargetRuleMap(rules);
         if (targetRuleMap.containsKey(null)) {
-            // Return rejection message if the rules are missing targets.
-            // return responseService.handleMissingTargetInRules(request, messageId, issuer);
+            throw new MissingTargetInRuleException(request, "Rule is missing a target.");
         }
 
         // Retrieve matching contract offers to compare the content.
         for (final var target : targetRuleMap.keySet()) {
-            final var valid = checkRule(target, request, messageId, issuer)
+            final var valid = checkRule(target, request, messageId, targetRuleMap);
             if (!valid) {
                 return rejectContract(issuer, messageId);
             }
@@ -89,32 +91,23 @@ public class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequ
         return acceptContract(request, issuer, messageId, new ArrayList<>(targetRuleMap.keySet()));
     }
 
-    private boolean checkRule(URI target, final ContractRequest request, final URI messageId, final URI issuer) {
-        final List<Contract> contracts;
-        try {
-            contracts = dependencyResolver.getContractOffersByArtifactId(target);
-        } catch (ResourceNotFoundException exception) {
-            return responseService.handleResourceNotFoundException(
-                    exception, target, issuer, messageId);
-        }
+    private boolean checkRule(final URI target, final ContractRequest request, final URI issuer,
+                              final Map<URI, List<Rule>> targetRuleMap) {
+        final var contracts = dependencyResolver.getContractOffersByArtifactId(target);
 
         // Abort negotiation if no contract offer could be found.
         if (contracts.isEmpty()) {
-            return responseService.handleMissingContractOffers(request, messageId, issuer);
+            throw new ContractListEmptyException(request, "List of contracts is empty.");
         }
 
         // Abort negotiation if no contract offer for the issuer connector could be found.
         final var validContracts =
                 ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
         if (validContracts.isEmpty()) {
-            return responseService.handleMissingContractOffers(request, messageId, issuer);
+            throw new ContractListEmptyException(request, "List of valid contracts is empty.");
         }
 
-        try {
-            return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
-        } catch (IllegalArgumentException e) {
-            return responseService.handleMalformedRules(e, payload, issuer, messageId);
-        }
+        return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
     }
 
     /**
@@ -143,18 +136,6 @@ public class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequ
 
         // Send ids response message.
         return new Response(header, agreement.toRdf());
-
-        // } catch (ConstraintViolationException | PersistenceException exception) {
-        //     return responseService.handleAgreementPersistenceException(exception, agreement,
-        //             issuer, messageId);
-        // }
-
-
-
-        // } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-        //         | RdfBuilderException e) {
-        //     return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
-        // }
     }
 
     /**
@@ -168,14 +149,8 @@ public class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequ
         // Build ids response message.
         final var desc = new ContractRejectionMessageDesc(issuer, messageId);
         final var header = (RejectionMessage) rejectionService.buildMessage(desc);
-        final var body = new JSONObject();
-        body.put("status", "rejected");
 
         // Send ids response message.
-        return new Response(header, body.toJSONString());
-        // } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException
-        //         | RdfBuilderException e) {
-        //     return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
-        // }
+        return new Response(header, "Contract rejected.");
     }
 }

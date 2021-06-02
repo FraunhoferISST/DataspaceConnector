@@ -207,6 +207,8 @@ public final class ResourceControllers {
          */
         private final @NonNull BlockingArtifactReceiver dataReceiver;
 
+        private final @NonNull AgreementService agreementService;
+
         /**
          * The verifier for the data access.
          */
@@ -220,7 +222,7 @@ public final class ResourceControllers {
          *
          * @param artifactId   Artifact id.
          * @param download     If the data should be forcefully downloaded.
-         * @param agreementUri The agreement which should be used for access control.
+         * @param agreementId The agreement which should be used for access control.
          * @param params       All request parameters.
          * @param headers      All request headers.
          * @param request      The current http request.
@@ -233,7 +235,7 @@ public final class ResourceControllers {
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
-                @RequestParam(required = false) final URI agreementUri,
+                @RequestParam(required = false) final URI agreementId,
                 @RequestParam final Map<String, String> params,
                 @RequestHeader final Map<String, String> headers,
                 final HttpServletRequest request) throws IOException {
@@ -258,11 +260,10 @@ public final class ResourceControllers {
              */
             // TODO: Check what happens when this connector is the provider and one of its provided
             //  agreements is passed.
-            final var data = (agreementUri == null)
+            final var data = (agreementId == null)
                     ? artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput)
                     : artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    new RetrievalInformation(agreementUri, download,
-                                             queryInput));
+                    new RetrievalInformation(agreementId, download, queryInput));
 
             final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;

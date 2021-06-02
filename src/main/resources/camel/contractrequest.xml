@@ -1,20 +1,49 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-<!-- } catch (MessageRequestException exception) {
-    return responseService.handleMessagePayloadException(exception, messageId, issuer);
-} -->
-<!-- catch (IllegalArgumentException e) { Deserialize Contract
-    return responseService.handleIllegalArgumentException(e, payload, issuer, messageId);
-} -->
-<!-- } catch (Exception e) {
-    // NOTE: Should not be reached.
-    return responseService.handleMessageProcessingFailed(e, payload, issuer, messageId);
-} -->
-
     <route id="contractRequestHandler">
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ContractListEmptyException</exception>
+            <to uri="direct:handleContractListEmptyException"/>
+        </onException>
+
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleMalformedRules"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MissingRulesException</exception>
+            <to uri="direct:handleMissingRulesException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MissingTargetInRuleException</exception>
+            <to uri="direct:handleMissingTargetInRuleException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
+            <exception>java.lang.IllegalStateException</exception>
+            <exception>javax.validation.ConstraintViolationException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
+        <onException>
+<!--            <exception>javax.validation.ConstraintViolationException</exception>-->
+            <exception>javax.persistence.PersistenceException</exception>
+            <to uri="direct:handleAgreementPersistenceException"/>
+        </onException>
+
         <from uri="direct:contractRequestHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="ContractDeserializer"/>
         <process ref="ContractRequest"/>
+
     </route>
 </routes>

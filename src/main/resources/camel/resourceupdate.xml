@@ -24,7 +24,7 @@
         <from uri="direct:resourceUpdateHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="AffectedResourceValidator"/>
-        <process ref="ResourceTransformer"/>
+        <process ref="ResourceDeserializer"/>
         <process ref="CorrectAffectedResourceValidator"/>
         <process ref="ResourceUpdateProcessor"/>
     </route>

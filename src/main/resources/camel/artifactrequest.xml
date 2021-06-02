@@ -1,8 +1,38 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="test-route">
+    <route id="artifactRequestHandler">
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.NoRequestedArtifactException</exception>
+            <to uri="direct:handleNoRequestedArtifactException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.InvalidInputException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
+            <exception>java.io.IOException</exception>
+            <exception>javax.validation.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <to uri="direct:handleDataRetrievalError"/>
+        </onException>
+
         <from uri="direct:artifactRequestHandler"/>
-        <!-- validate contract (merge with usage control?)-->
-        <!-- usage control -->
-        <!-- return data -->
+        <to uri="direct:ids-validation"/>
+        <process ref="RequestedArtifactValidator"/>
+        <choice>
+            <when>
+                <simple>${bean:connectorConfiguration.isPolicyNegotiation} == true</simple>
+                <to uri="direct:policyCheck"/>
+            </when>
+        </choice>
+        <process ref="DataRequestProcessor"/>
+
     </route>
 </routes>

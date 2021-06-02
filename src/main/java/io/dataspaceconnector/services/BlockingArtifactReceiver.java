@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.UUID;
+
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.services.messages.types.ArtifactRequestService;
@@ -26,11 +31,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.UUID;
 
 /**
  * Performs an artifact request for an artifact. All functions will block till the request is

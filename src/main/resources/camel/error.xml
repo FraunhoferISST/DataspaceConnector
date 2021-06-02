@@ -17,7 +17,7 @@
         <from uri="direct:handleResourceNotFoundException"/>
         <log message="Resource not found!"/>
         <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
-        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedElement()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
@@ -75,7 +75,7 @@
 
     <route id="contractException">
         <from uri="direct:handleContractException"/>
-        <log message="Contracts do not match!"/>
+        <log message="Error with contracts!"/>
         <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().toString()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
@@ -86,6 +86,117 @@
         <from uri="direct:handleUnconfirmedAgreementException"/>
         <log message="Could not confirm agreement!"/>
         <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception.getAgreement()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="noRequestedArtifactException">
+        <from uri="direct:handleNoRequestedArtifactException"/>
+        <log message="Requested artifact is missing!"/>
+        <to uri="bean:messageResponseService?method=handleMissingRequestedArtifact(
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidInputException">
+        <from uri="direct:handleInvalidInputException"/>
+        <log message="Invalid query input!"/>
+        <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="noTransferContractException">
+        <from uri="direct:handleNoTransferContractException"/>
+        <log message="Trasnfer contract is missing!"/>
+        <to uri="bean:messageResponseService?method=handleMissingTransferContract(
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailed">
+        <from uri="direct:handleMessageProcessingFailed"/>
+        <log message="Message processing failed!"/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="policyRestrictionException">
+        <from uri="direct:handlePolicyRestrictionException"/>
+        <log message="There is a policy restriction!"/>
+        <to uri="bean:messageResponseService?method=handlePolicyRestrictionException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="invalidTransferContract">
+        <from uri="direct:handleInvalidTransferContract"/>
+        <log message="Invalid transfer contract!"/>
+        <to uri="bean:messageResponseService?method=handleInvalidTransferContract(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="dataRetrievalError">
+        <from uri="direct:handleDataRetrievalError"/>
+        <log message="Failed to retrieve data!"/>
+        <to uri="bean:messageResponseService?method=handleFailedToRetrieveData(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="contractListEmpty">
+        <from uri="direct:handleContractListEmptyException"/>
+        <log message="List of contracts is empty!"/>
+        <to uri="bean:messageResponseService?method=handleMissingContractOffers(${exception.getContractRequest()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="malformedRules">
+        <from uri="direct:handleMalformedRules"/>
+        <log message="Rules are invalid!"/>
+        <to uri="bean:messageResponseService?method=handleMalformedRules(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().toRdf(),
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="missingRulesException">
+        <from uri="direct:handleMissingRulesException"/>
+        <log message="Rules are missing!"/>
+        <to uri="bean:messageResponseService?method=handleMissingRules(${exception.getContractRequest()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="missingTargetInRuleException">
+        <from uri="direct:handleMissingTargetInRuleException"/>
+        <log message="Rules are missing!"/>
+        <to uri="bean:messageResponseService?method=handleMissingTargetInRules(${exception.getContractRequest()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="AgreementPersistenceException">
+        <from uri="direct:handleAgreementPersistenceException"/>
+        <log message="Error persisting artifact!"/>
+        <to uri="bean:messageResponseService?method=handleAgreementPersistenceException(${exception},
+        null,
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
