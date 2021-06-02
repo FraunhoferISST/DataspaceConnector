@@ -65,4 +65,29 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
 
+    <route id="messageRequestException">
+        <from uri="direct:handleMessageRequestException"/>
+        <log message="Message payload is missing!"/>
+        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()})"/>
+    </route>
+
+    <route id="contractException">
+        <from uri="direct:handleContractException"/>
+        <log message="Contracts do not match!"/>
+        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="unconfirmedAgreementException">
+        <from uri="direct:handleUnconfirmedAgreementException"/>
+        <log message="Could not confirm agreement!"/>
+        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception.getAgreement()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
 </routes>

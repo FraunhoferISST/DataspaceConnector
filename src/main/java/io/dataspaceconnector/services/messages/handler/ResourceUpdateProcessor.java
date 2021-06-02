@@ -34,9 +34,9 @@ public class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdat
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
 
         final var desc = new MessageProcessedNotificationMessageDesc(issuer, messageId);
-        final var header = messageService.buildMessage(desc);
+        final var responseHeader = messageService.buildMessage(desc);
 
-        return new Response(header, "Message received.");
+        return new Response(responseHeader, "Message received.");
     }
 
 }

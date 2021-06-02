@@ -1,5 +1,5 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-    <route id="resourceUpdateMessageHandler">
+    <route id="resourceUpdateHandler">
 
         <onException>
             <exception>io.dataspaceconnector.exceptions.NoAffectedResourceException</exception>
