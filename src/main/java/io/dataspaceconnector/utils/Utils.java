@@ -118,6 +118,7 @@ public final class Utils {
      * @param size The page size.
      * @return The page request.
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public static PageRequest toPageRequest(final Integer page, final Integer size) {
         final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
         final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
@@ -202,6 +203,7 @@ public final class Utils {
         return output;
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
         return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
     }
