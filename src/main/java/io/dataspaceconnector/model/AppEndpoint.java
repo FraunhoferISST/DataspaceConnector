@@ -79,7 +79,7 @@ public class AppEndpoint extends Endpoint {
     /**
      * Default constructor.
      */
-    protected AppEndpoint() {
+    public AppEndpoint() {
         super();
     }
 }
