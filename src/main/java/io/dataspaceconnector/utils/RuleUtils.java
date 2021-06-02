@@ -88,8 +88,6 @@ public final class RuleUtils {
                     } else if (leftOperand == LeftOperand.SYSTEM
                             && operator == BinaryOperator.SAME_AS) {
                         detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
-                    } else {
-                        detectedPattern = null;
                     }
                 }
             } else {
@@ -99,8 +97,6 @@ public final class RuleUtils {
                         detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
                     } else if (action == Action.LOG) {
                         detectedPattern = PolicyPattern.USAGE_LOGGING;
-                    } else {
-                        detectedPattern = null;
                     }
                 } else {
                     detectedPattern = PolicyPattern.PROVIDE_ACCESS;
