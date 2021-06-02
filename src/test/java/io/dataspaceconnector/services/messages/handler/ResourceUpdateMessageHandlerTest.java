@@ -181,7 +181,7 @@ class ResourceUpdateMessageHandlerTest {
         // Mockito.doThrow(ResourceNotFoundException.class).when(updateService).updateResource(Mockito.any());
 
         /* ACT */
-        final var result = (BodyResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
+        final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
@@ -206,7 +206,7 @@ class ResourceUpdateMessageHandlerTest {
 
 
         /* ACT */
-        final var result = (BodyResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
+        final var result = (BodyResponse<?>) handler.handleMessage((ResourceUpdateMessageImpl) message,
                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT TODO*/

@@ -18,6 +18,7 @@ package io.dataspaceconnector.services;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -201,7 +202,7 @@ public class HttpService {
             return get(target, args);
         }
 
-        throw new RuntimeException("Not implemented.");
+        throw new NotImplementedError();
     }
 
     /**

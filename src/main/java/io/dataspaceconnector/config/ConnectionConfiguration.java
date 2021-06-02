@@ -67,15 +67,15 @@ public class ConnectionConfiguration {
      */
     @PostConstruct
     public void setTimeouts() {
-        if (connectTimeout != 0 && readTimeout != 0 && writeTimeout != 0) {
+        if (connectTimeout == 0 || readTimeout == 0 || writeTimeout == 0) {
+            httpService.setTimeouts(null, null, null,
+            Duration.ofMillis(callTimeout));
+        } else {
             httpService.setTimeouts(
                     Duration.ofMillis(connectTimeout),
                     Duration.ofMillis(readTimeout),
                     Duration.ofMillis(writeTimeout),
                     null);
-        } else {
-            httpService.setTimeouts(null, null, null,
-                    Duration.ofMillis(callTimeout));
         }
     }
 }

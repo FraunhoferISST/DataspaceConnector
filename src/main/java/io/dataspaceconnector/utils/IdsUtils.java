@@ -27,8 +27,8 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
+import lombok.SneakyThrows;
 
-import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.time.ZoneId;
@@ -246,14 +246,10 @@ public final class IdsUtils {
      * @param date the date object.
      * @return the XMLGregorianCalendar object or null.
      */
+    @SneakyThrows
     public static XMLGregorianCalendar getGregorianOf(final ZonedDateTime date) {
         final var calendar = GregorianCalendar.from(date);
         calendar.setTimeZone(TimeZone.getTimeZone(ZoneId.ofOffset("", ZoneOffset.UTC)));
-        try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-        } catch (DatatypeConfigurationException exception) {
-            // Rethrow but do not register in function header
-            throw new RuntimeException(exception);
-        }
+        return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 }

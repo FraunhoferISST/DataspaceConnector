@@ -338,6 +338,9 @@ public class RepresentationViewAssemblerTest {
     }
 
     private static class UnknownResource extends Resource {
+
+        private static final long serialVersionUID = 1L;
+
         public UnknownResource() {}
     }
 

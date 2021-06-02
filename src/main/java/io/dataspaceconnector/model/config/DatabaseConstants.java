@@ -13,18 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.ids.builder;
-
-import de.fraunhofer.iais.eis.Permission;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import org.springframework.stereotype.Component;
+package io.dataspaceconnector.model.config;
 
 /**
- * Converts DSC rule to ids permission.
+ * This class contains static constants for configuring database columns.
  */
-@Component
-public class IdsPermissionBuilder extends IdsRuleBuilder<Permission> {
-    IdsPermissionBuilder(final DeserializationService deserializer) {
-        super(deserializer, Permission.class);
-    }
+public final class DatabaseConstants {
+
+    /**
+     * The maximum length of database columns containing URIs.
+     */
+    public static final int URI_COLUMN_LENGTH = 2048;
+
+    /**
+     * Private constructor.
+     */
+    private DatabaseConstants() { }
+
 }

@@ -20,4 +20,8 @@
         <!-- TODO: Enable later. At the moment there are to many endpoint reported and the documentation on what finsecbugs expects is lacking -->
         <Bug pattern="SPRING_ENDPOINT"/>
     </Match>
+    <Match>
+        <!-- Way too many false positives and no easy way to satisfy spotbugs without modifing the code -->
+        <Bug pattern="BC_UNCONFIRMED_CAST_OF_RETURN_VALUE"/>
+    </Match>
 </FindBugsFilter>

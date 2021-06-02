@@ -33,7 +33,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * An artifact stores and encapsulates data.
@@ -94,13 +94,6 @@ public abstract class Artifact extends AbstractEntity {
     private long checkSum;
 
     /**
-     * Increment the data access counter.
-     */
-    public void incrementAccessCounter() {
-        numAccessed += 1;
-    }
-
-    /**
      * The representations in which this artifact is used.
      */
     @ManyToMany(mappedBy = "artifacts")
@@ -111,4 +104,11 @@ public abstract class Artifact extends AbstractEntity {
      */
     @ManyToMany(mappedBy = "artifacts")
     private List<Agreement> agreements;
+
+    /**
+     * Increment the data access counter.
+     */
+    public void incrementAccessCounter() {
+        numAccessed += 1;
+    }
 }

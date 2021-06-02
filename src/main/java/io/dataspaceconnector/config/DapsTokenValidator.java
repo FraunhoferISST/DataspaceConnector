@@ -45,7 +45,7 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(
             final Authentication auth, final Object targetDomainObject, final Object permission) {
-        if ((auth == null) || (targetDomainObject == null) || !(permission instanceof String)) {
+        if (auth == null || targetDomainObject == null || !(permission instanceof String)) {
             return false;
         }
 
@@ -55,7 +55,7 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(final Authentication auth, final Serializable targetId,
                                  final String targetType, final Object permission) {
-        if ((auth == null) || (targetType == null) || !(permission instanceof String)) {
+        if (auth == null || targetType == null || !(permission instanceof String)) {
             return false;
         }
 
@@ -63,27 +63,23 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege() {
-        if (tokenProvider == null) {
-            return false;
-        } else {
-            try {
-                return tokenProvider.getDAT() != null;
-            } catch (ConnectorMissingCertExtensionException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The Connector is missing a Cert Extension exception=({})]", e.getMessage());
-                }
-                return false;
-            } catch (DapsConnectionException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
-                };
-                return false;
-            } catch (DapsEmptyResponseException e) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
-                }
-                return false;
+        try{
+            return tokenProvider.getDAT() != null;
+        }catch (ConnectorMissingCertExtensionException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Connector is missing a Cert Extension exception=({})]", e.getMessage());
             }
+            return false;
+        } catch (DapsConnectionException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
+            };
+            return false;
+        } catch (DapsEmptyResponseException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
+            }
+            return false;
         }
     }
 }

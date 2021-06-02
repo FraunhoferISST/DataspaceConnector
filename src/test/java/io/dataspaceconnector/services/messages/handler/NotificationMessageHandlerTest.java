@@ -99,7 +99,7 @@ class NotificationMessageHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (BodyResponse) handler.handleMessage((NotificationMessageImpl) message, null);
+        final var result = (BodyResponse<?>) handler.handleMessage((NotificationMessageImpl) message, null);
 
         /* ASSERT */
         final var expected = (MessageProcessedNotificationMessage) notificationService.buildMessage(new MessageProcessedNotificationMessageDesc(

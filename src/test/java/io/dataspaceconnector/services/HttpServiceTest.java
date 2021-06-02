@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import io.dataspaceconnector.model.QueryInput;
+import kotlin.NotImplementedError;
 import kotlin.Pair;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -141,13 +142,13 @@ class HttpServiceTest {
     }
 
     @Test
-    public void request_null_throwRuntimeException() throws IOException {
+    public void request_null_throwNotImplementedError() throws IOException {
         /* ARRANGE */
         final var target = new URL("https://someTarget");
         final var args = new HttpService.HttpArgs();
 
         /* ACT && ASSERT */
-        assertThrows(RuntimeException.class, () -> service.request(null, target, args));
+        assertThrows(NotImplementedError.class, () -> service.request(null, target, args));
     }
 
     @Test
