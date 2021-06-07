@@ -539,14 +539,12 @@ public class BootstrapConfiguration {
      * @param <T>              either {@link OfferedResourceDesc}
      *                         or {@link RequestedResourceDesc}
      */
-    @SuppressWarnings("unchecked")
     private <T extends AbstractDescription<?>> void fillResourceTemplate(
-            final ResourceTemplate<T> resourceTemplate,
+            final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
             final Properties properties,
             final Resource resource) {
         // add ids id to additional fields
-        ((ResourceDesc<OfferedResource>) resourceTemplate.getDesc())
-                .setBootstrapId(resource.getId().toString());
+        resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
 
         // collect all artifact IDs from artifacts inside representations
         final var artifacts = new ArrayList<URI>();
@@ -561,7 +559,7 @@ public class BootstrapConfiguration {
                         resource,
                         artifacts,
                         properties.containsKey("resource.download.auto")
-                                && ((Set<String>) properties.get("resource.download.auto"))
+                                && (toSet(properties.get("resource.download.auto")))
                                 .contains(resource.getId().toString()),
                         null
                 )
@@ -610,7 +608,6 @@ public class BootstrapConfiguration {
      * @return properties which contain the merged content of all bootstrap
      * config files
      */
-    @SuppressWarnings("unchecked")
     private @NotNull Properties retrieveBootstrapConfig() {
         final Properties config = new Properties();
         final List<File> propertyFiles = findFilesByExtension(bootstrapPath, PROPERTIES_NAME,
@@ -634,8 +631,7 @@ public class BootstrapConfiguration {
                         final Set<String> multipleValues = Arrays.stream(
                                 ((String) property.getValue()).split(MULTI_VALUE_DELIM))
                                 .map(String::trim).collect(Collectors.toSet());
-                        final Set<String> existingValues =
-                                (Set<String>) config.get(property.getKey());
+                        final Set<String> existingValues = toSet(config.get(property.getKey()));
                         config.put(property.getKey(), existingValues.addAll(multipleValues));
                     } else {
                         if (log.isWarnEnabled()) {
@@ -715,4 +711,8 @@ public class BootstrapConfiguration {
         return files;
     }
 
+    @SuppressWarnings("unchecked")
+    private Set<String> toSet(Object obj) {
+        return (Set<String>)obj;
+    }
 }
