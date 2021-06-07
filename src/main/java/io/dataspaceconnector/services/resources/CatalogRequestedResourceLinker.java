@@ -13,18 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.ids.builder;
+package io.dataspaceconnector.services.resources;
 
-import de.fraunhofer.iais.eis.Permission;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import org.springframework.stereotype.Component;
+import java.util.List;
+
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.RequestedResource;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
- * Converts DSC rule to ids permission.
+ * Handles the relation between a catalog and its requested resources.
  */
-@Component
-public class IdsPermissionBuilder extends IdsRuleBuilder<Permission> {
-    IdsPermissionBuilder(final DeserializationService deserializer) {
-        super(deserializer, Permission.class);
+@Service
+@NoArgsConstructor
+public final class CatalogRequestedResourceLinker
+        extends AbstractCatalogResourceLinker<RequestedResource> {
+    @Override
+    protected List<RequestedResource> getInternal(final Catalog owner) {
+        return owner.getRequestedResources();
     }
 }

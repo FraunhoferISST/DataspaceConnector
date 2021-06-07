@@ -328,31 +328,11 @@ public class MappingUtilsTest {
                 .build();
     }
 
-    private Representation getRepresentationWithMediaTypeNull() {
-        return new RepresentationBuilder(URI.create("https://w3id.org/idsa/autogen/representation/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                ._created_(getDateAsXMLGregorianCalendar())
-                ._instance_(Util.asList(getArtifact()))
-                ._language_(Language.EN)
-                ._modified_(getDateAsXMLGregorianCalendar())
-                ._representationStandard_(URI.create("http://standard.com"))
-                ._shapesGraph_(URI.create("http://shapes-graph.com"))
-                .build();
-    }
-
     private Artifact getArtifact() {
         return new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._byteSize_(BigInteger.ONE)
                 ._checkSum_("check sum")
                 ._creationDate_(getDateAsXMLGregorianCalendar())
-                ._duration_(new BigDecimal("123.4"))
-                ._fileName_("file name")
-                .build();
-    }
-
-    private Artifact getArtifactWithCreationDateNull() {
-        return new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                ._byteSize_(BigInteger.ONE)
-                ._checkSum_("check sum")
                 ._duration_(new BigDecimal("123.4"))
                 ._fileName_("file name")
                 .build();
@@ -382,16 +362,6 @@ public class MappingUtilsTest {
     private Rule getRule() {
         return new PermissionBuilder(URI.create("https://w3id.org/idsa/autogen/permission/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(new TypedLiteral("usage-logging")))
-                ._action_(Util.asList(Action.USE))
-                ._postDuty_(Util.asList(new DutyBuilder(URI.create("https://w3id.org/idsa/autogen/duty/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                        ._action_(Util.asList(Action.LOG))
-                        .build()))
-                .build();
-    }
-
-    private Rule getRuleWithTitleNull() {
-        return new PermissionBuilder(URI.create("https://w3id.org/idsa/autogen/permission/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._description_(Util.asList(new TypedLiteral("usage-logging")))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder(URI.create("https://w3id.org/idsa/autogen/duty/591467af-9633-4a4e-8bcf-47ba4e6679ea"))

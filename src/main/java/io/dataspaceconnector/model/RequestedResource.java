@@ -30,7 +30,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import static io.dataspaceconnector.model.config.DatabaseConfig.URI_COLUMN_LENGTH;
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Describes resource requested by this connector.
@@ -56,17 +56,17 @@ public final class RequestedResource extends Resource {
     private URI remoteId;
 
     /**
+     * The catalogs in which this resource is used.
+     */
+    @ManyToMany(mappedBy = "requestedResources")
+    private List<Catalog> catalogs;
+
+    /**
      * Default constructor.
      */
     protected RequestedResource() {
         super();
     }
-
-    /**
-     * The catalogs in which this resource is used.
-     */
-    @ManyToMany(mappedBy = "requestedResources")
-    private List<Catalog> catalogs;
 
     /**
      * {@inheritDoc}

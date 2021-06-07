@@ -213,7 +213,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
             throws InvalidInputException {
         try {
             final var payload = MessageUtils.getStreamAsString(messagePayload);
-            if (payload.equals("")) {
+            if (payload.isEmpty()) {
                 // Query input is optional, so no rejection message will be sent. Query input will
                 // be checked for null value in HttpService.class.
                 return null;
