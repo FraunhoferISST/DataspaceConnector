@@ -147,8 +147,8 @@ public class HttpService {
         final var output = new Response();
         output.setCode(response.code());
         output.setBody(response.body() == null
-                               ? InputStream.nullInputStream()
-                               : new ByteArrayInputStream(response.body().bytes()));
+                ? InputStream.nullInputStream()
+                : new ByteArrayInputStream(response.body().bytes()));
         response.close();
 
         return output;

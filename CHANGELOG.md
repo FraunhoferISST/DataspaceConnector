@@ -1,36 +1,37 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.1.0] - XXXX-XX-XX
+## [5.1.0] - 2021-06-07
 
 ### Added
- - Add telemetry collection via Jaeger.
+- Add telemetry collection via Jaeger.
 
 ### Changed
- - Replace deprecated JPA calls (`getOne` -> `getById`).
- - Increase length restriction for URIs in database columns to 2048.
- - Increase modelmapper version to 2.4.4.
- - Increase equalsverifier version to 3.6.1.
- - Increase spring-ppenApi-security version to 1.5.9.
- - Increase spring-openapi-ui version to 1.5.9.
- - Increase maven-javadoc-plugin version to 3.3.0.
- - Increase spring-boot version to 2.5.0.
- - Increase checkstyle version to 8.43.
- - Increase pmd version to 6.35.0.
+- Replace deprecated JPA calls (`getOne` -> `getById`).
+- Increase length restriction for URIs in database columns to 2048.
+- Increase modelmapper version to 2.4.4.
+- Increase equalsverifier version to 3.6.1.
+- Increase spring-openApi-security version to 1.5.9.
+- Increase spring-openapi-ui version to 1.5.9.
+- Increase maven-javadoc-plugin version to 3.3.0.
+- Increase spring-boot version to 2.5.0.
+- Increase checkstyle version to 8.43.
+- Increase pmd version to 6.35.0.
+- Increase pitest version from 1.6.6 to 1.6.7.
 
 ### Fixed
- - Representations have now only one self-link.
- - Set Basic Auth Header on (provider) backend calls.
- - Remove appended `/**` from `GET **/artifacts/{id}/data`.
- - `GET **/artifacts/{id}/data` and `POST **/artifacts/{id}/data` will now return the same output.
+- Representations have now only one self-link.
+- Set Basic Auth Header on (provider) backend calls.
+- Ignore empty extension `/**` on `GET **/artifacts/{id}/data/**`.
+- `GET **/artifacts/{id}/data` and `POST **/artifacts/{id}/data` will now return the same output.
 
 ## [5.0.2] - 2021-05-25
 
 ### Changed
- - Make the Clearing House url setting optional in `application.properties`.
+- Make the Clearing House url setting optional in `application.properties`.
 
 ### Fixed
- - Persist URIs as strings in database.
+- Persist URIs as strings in database.
 
 ## [5.0.1] - 2021-05-19
 
