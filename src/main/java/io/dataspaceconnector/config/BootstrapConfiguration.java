@@ -472,7 +472,7 @@ public class BootstrapConfiguration {
 
             if (duplicate != null && duplicate) {
                 if (log.isInfoEnabled()) {
-                    log.info("Catlog with IDS id '{}' is already registered and will be"
+                    log.info("Catalog with IDS id '{}' is already registered and will be"
                             + " skipped.", catalog.getId());
                 }
                 continue;
