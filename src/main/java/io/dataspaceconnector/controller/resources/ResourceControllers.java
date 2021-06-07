@@ -228,7 +228,7 @@ public final class ResourceControllers {
          * @return The data object.
          * @throws IOException if the data cannot be received.
          */
-        @GetMapping("{id}/data")
+        @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
         @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
         public ResponseEntity<StreamingResponseBody> getData(
@@ -246,8 +246,11 @@ public final class ResourceControllers {
             queryInput.setHeaders(headers);
 
             final var searchString = request.getContextPath() + "/data";
-            final var optional = request.getRequestURI().substring(
+            var optional = request.getRequestURI().substring(
                     request.getRequestURI().indexOf(searchString) + searchString.length());
+            if("/**".equals(optional)) {
+                optional = null;
+            }
 
             if (!optional.isBlank()) {
                 queryInput.setOptional(optional);
