@@ -187,8 +187,7 @@ public class BootstrapConfiguration {
         }
 
         // try to retrieve data and properties
-        final List<File> jsonFiles =
-                findFilesByExtension(bootstrapPath, null, JSON_LD_EXTENSION);
+        final var jsonFiles = findFilesByExtension(bootstrapPath, null, JSON_LD_EXTENSION);
         if (jsonFiles.isEmpty() && log.isInfoEnabled()) {
             log.info("No catalog files for bootstrapping found.");
         }
@@ -233,7 +232,7 @@ public class BootstrapConfiguration {
                                      final Map<URI, Resource> idsResources) {
         final var knownBrokers = new HashSet<String>();
         // iterate over all registered resources
-        for (Map.Entry<URI, Resource> entry : idsResources.entrySet()) {
+        for (final var entry : idsResources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
             if (properties.containsKey(propertyKey)) {
                 final var brokerURL = (String) properties.get(propertyKey);
@@ -449,7 +448,7 @@ public class BootstrapConfiguration {
             }
         }
 
-        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        final var template = new TransactionTemplate(transactionManager);
         // iterate over all deserialized catalogs
         for (final ResourceCatalog catalog : catalogs) {
             // check for duplicates
@@ -558,7 +557,7 @@ public class BootstrapConfiguration {
                         resource,
                         artifacts,
                         properties.containsKey("resource.download.auto")
-                                && (toSet(properties.get("resource.download.auto")))
+                                && toSet(properties.get("resource.download.auto"))
                                 .contains(resource.getId().toString()),
                         null
                 )
@@ -711,7 +710,7 @@ public class BootstrapConfiguration {
     }
 
     @SuppressWarnings("unchecked")
-    private Set<String> toSet(Object obj) {
+    private Set<String> toSet(final Object obj) {
         return (Set<String>)obj;
     }
 }
