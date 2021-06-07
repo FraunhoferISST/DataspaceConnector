@@ -249,7 +249,7 @@ public final class ResourceControllers {
             var optional = request.getRequestURI().substring(
                     request.getRequestURI().indexOf(searchString) + searchString.length());
             if("/**".equals(optional)) {
-                optional = null;
+                optional = "";
             }
 
             if (!optional.isBlank()) {
