@@ -28,6 +28,7 @@ import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.jena.riot.RiotException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -94,7 +95,8 @@ public class DeserializationService {
     public Resource getResource(final String resource) throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(resource, Resource.class);
-        } catch (IOException e) {
+        } catch (IOException | RiotException e) {
+            // TODO make sure RiotException is sufficiently handled
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
             }

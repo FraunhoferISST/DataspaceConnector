@@ -19,7 +19,10 @@ import java.io.IOException;
 import java.net.URI;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.ResultMAP;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -33,6 +36,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.xml.datatype.DatatypeFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -60,13 +65,10 @@ public class QueryMessageControllerTest {
         final var recipient = URI.create("https://someBroker").toString();
         final var query = "QUERY";
 
+        ResultMessage resultMessage = new ResultMessageBuilder()._issuerConnector_(new URI("https://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
+
         final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(
-                                              Protocol.HTTP_1_1).code(200).message(query)
-                                      .body(ResponseBody.create("ANSWER", MediaType
-                                              .parse("application/text")))
-                                      .build();
+                new ResultMAP(resultMessage, "Some query result");
 
         Mockito.doReturn(response).when(brokerService)
                .queryBroker(Mockito.any(),
@@ -82,7 +84,7 @@ public class QueryMessageControllerTest {
                                   .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("ANSWER", result.getResponse().getContentAsString());
+        assertEquals("Success", result.getResponse().getContentAsString());
     }
 
     @Test

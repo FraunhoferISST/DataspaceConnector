@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -88,10 +89,13 @@ public class ConnectorUnavailableMessageController {
 
             // Send the connector unavailable message.
             final var response = brokerService.unregisterAtBroker(URI.create(recipient));
-            //final var responseToString = Objects.requireNonNull(response.body()).string();
-            final var responseToString = Objects.requireNonNull(response.getPayload());
-            //TODO: check if using the raw response leads to a sufficient output
-            return ResponseEntity.ok(responseToString);
+            if(response != null){
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.ok("Success");
+            }else{
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            }
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (NullPointerException | IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {

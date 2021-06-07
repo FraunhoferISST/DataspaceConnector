@@ -33,6 +33,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,10 +92,13 @@ public class ResourceUpdateMessageController {
 
             // Send the resource update message.
             final var response = brokerService.updateResourceAtBroker(recipient, resource.get());
-            //final var responseToString = Objects.requireNonNull(response.body()).string();
-            final var responseToString = Objects.requireNonNull(response.getPayload());
-            // TODO: check if this leads to the same output as the original code
-            return ResponseEntity.ok(responseToString);
+            if(response != null){
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.ok("Success");
+            }else{
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            }
         } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
             // TODO: should all exceptions be handled this way or should a differentiation be made?
             return ControllerUtils.respondIdsMessageFailed(exception);

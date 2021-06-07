@@ -20,10 +20,12 @@ import java.net.URI;
 import java.util.Objects;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,6 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,9 +94,13 @@ public class ResourceUnavailableMessageController {
 
             // Send the resource unavailable message.
             final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
-            final var responseToString = Objects.requireNonNull(response.getPayload());
-            // TODO: check if this leads to the same output as the original code
-            return ResponseEntity.ok(responseToString);
+            if(response != null){
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.ok("Success");
+            }else{
+                // TODO: check if this is a sufficient response
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            }
         } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
             // TODO: should all exceptions be handled this way or should a differentiation be made?
             return ControllerUtils.respondIdsMessageFailed(exception);

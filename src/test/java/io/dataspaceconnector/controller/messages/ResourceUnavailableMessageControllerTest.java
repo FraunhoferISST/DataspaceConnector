@@ -20,9 +20,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.*;
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
@@ -41,6 +39,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -144,12 +145,10 @@ public class ResourceUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
             throws Exception {
         /* ARRANGE */
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(Protocol.HTTP_1_1).code(200).message("").build();
 
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        Mockito.doReturn(response).when(brokerService).removeResourceFromBroker(Mockito.any(),
+        // TODO In case the Broker returns an Empty response Body, does the method return Null or does it throw an Exception? If it throws an exception this test has to be changed
+        Mockito.doReturn(null).when(brokerService).removeResourceFromBroker(Mockito.any(),
                                                                               Mockito.eq(resource));
 
         /* ACT */
@@ -169,13 +168,10 @@ public class ResourceUnavailableMessageControllerTest {
             throws Exception {
         /* ARRANGE */
 
+        MessageProcessedNotificationMessage message = new MessageProcessedNotificationMessageBuilder()._issuerConnector_(new URI("https://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
+
         final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(
-                                              Protocol.HTTP_1_1).code(200).message("")
-                                      .body(ResponseBody.create("ANSWER", MediaType
-                                              .parse("application/text")))
-                                      .build();
+                new MessageProcessedNotificationMAP(message);
 
 
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
@@ -188,8 +184,10 @@ public class ResourceUnavailableMessageControllerTest {
                                                    .param("resourceId", resourceId.toString()))
                                   .andExpect(status().isOk()).andReturn();
 
+
+
         /* ASSERT */
-        assertEquals("ANSWER", result.getResponse().getContentAsString());
+        assertEquals("Success", result.getResponse().getContentAsString());
     }
 
     private Resource getResource() {

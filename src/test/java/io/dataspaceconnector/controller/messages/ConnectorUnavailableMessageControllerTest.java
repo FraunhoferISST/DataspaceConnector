@@ -20,8 +20,13 @@ import java.net.URI;
 
 //import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 //import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -36,6 +41,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.xml.datatype.DatatypeFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -96,7 +103,7 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
             throws Exception {
         /* ARRANGE */
-        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
+        Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -112,10 +119,9 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
             throws Exception {
         /* ARRANGE */
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(Protocol.HTTP_1_1).code(200).message("").build();
-        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
+
+        // TODO In case the Broker returns an Empty response Body, does the method return Null or does it throw an Exception? If it throws an exception this test has to be changed
+        Mockito.doReturn(null).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -131,15 +137,13 @@ public class ConnectorUnavailableMessageControllerTest {
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
             throws Exception {
         /* ARRANGE */
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(
-                                              Protocol.HTTP_1_1).code(200).message("")
-                                      .body(ResponseBody.create("ANSWER", MediaType
-                                              .parse("application/text")))
-                                      .build();
 
-        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(URI.create(Mockito.eq(recipient)));
+        MessageProcessedNotificationMessage message = new MessageProcessedNotificationMessageBuilder()._issuerConnector_(new URI("https://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
+
+        final var response =
+                new MessageProcessedNotificationMAP(message);
+
+        Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
@@ -147,6 +151,6 @@ public class ConnectorUnavailableMessageControllerTest {
                                   .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("ANSWER", result.getResponse().getContentAsString());
+        assertEquals("Success", result.getResponse().getContentAsString());
     }
 }

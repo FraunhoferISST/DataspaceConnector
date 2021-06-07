@@ -36,6 +36,7 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import lombok.SneakyThrows;
+import org.apache.jena.riot.RiotException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -144,8 +145,12 @@ class ResourceUpdateMessageHandlerTest {
         final InputStream stream = new ByteArrayInputStream(invalidInput.getBytes(StandardCharsets.UTF_8));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
+        final ErrorResponse result;
+
+             result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
+                    new MessagePayloadInputstream(stream, new ObjectMapper()));
+
+
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
