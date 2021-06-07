@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>5.0.1</ids-framework.version>
+		<ids-framework.version>5.0.2</ids-framework.version>
 		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
@@ -151,18 +151,6 @@
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>java</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>validation-serialization-provider</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids</groupId>
-					<artifactId>infomodel-serializer</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -179,37 +167,7 @@
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>java</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>validation-serialization-provider</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids</groupId>
-					<artifactId>infomodel-serializer</artifactId>
-				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-			<artifactId>java</artifactId>
-			<version>4.0.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.fraunhofer.iais.eis.ids</groupId>
-			<artifactId>infomodel-serializer</artifactId>
-			<version>4.0.8</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-			<artifactId>validation-serialization-provider</artifactId>
-			<version>4.0.8</version>
 		</dependency>
 
 		<!-- Spring Boot -->
