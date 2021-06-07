@@ -227,8 +227,7 @@ public final class IdsUtils {
      * @param keywords List of typed literals.
      * @return List of strings.
      */
-    public static List<String> getKeywordsAsString(
-            final ArrayList<? extends TypedLiteral> keywords) {
+    public static List<String> getKeywordsAsString(final List<? extends TypedLiteral> keywords) {
 
         final var list = new ArrayList<String>();
         if (keywords != null) {

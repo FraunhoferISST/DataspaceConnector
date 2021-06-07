@@ -149,9 +149,8 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         final int nextDepth = currentDepth + 1;
 
         return !shouldGenerate(nextDepth, maxDepth) ? Optional.empty()
-                : Optional.of(new ArrayList<>(Utils.toStream(entityList)
-                .map(r -> builder
-                        .create(r, baseUri, nextDepth, maxDepth))
+                : Optional.of(Utils.toStream(entityList)
+                .map(r -> builder.create(r, baseUri, nextDepth, maxDepth))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList())));
     }
