@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.RepresentationInstance;
@@ -75,9 +76,14 @@ public final class IdsRepresentationBuilder
                 ._representationStandard_(standard);
 
         if (artifacts.isPresent()) {
-           builder._instance_((List<RepresentationInstance>)(List<?>)artifacts.get());
+           builder._instance_(getArtifacts(artifacts.get()));
         }
 
         return builder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<RepresentationInstance> getArtifacts(final List<Artifact> artifacts) {
+        return (List<RepresentationInstance>) (List<?>) artifacts;
     }
 }
