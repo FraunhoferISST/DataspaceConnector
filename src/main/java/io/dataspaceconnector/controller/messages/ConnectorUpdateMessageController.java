@@ -20,8 +20,6 @@ import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
-//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.swagger.v3.oas.annotations.Operation;

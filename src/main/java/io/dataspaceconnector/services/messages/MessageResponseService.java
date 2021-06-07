@@ -28,8 +28,6 @@ import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.MessageResponse;
 import lombok.NonNull;

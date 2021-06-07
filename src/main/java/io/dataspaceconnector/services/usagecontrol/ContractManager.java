@@ -32,7 +32,6 @@ import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-//import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.MessageResponseException;

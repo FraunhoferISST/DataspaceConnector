@@ -29,8 +29,6 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import org.junit.jupiter.api.Test;

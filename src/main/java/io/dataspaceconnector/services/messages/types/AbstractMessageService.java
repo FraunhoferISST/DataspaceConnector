@@ -29,8 +29,6 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-//import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-//import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import lombok.extern.log4j.Log4j2;

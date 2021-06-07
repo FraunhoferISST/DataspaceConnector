@@ -29,7 +29,6 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
-//import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

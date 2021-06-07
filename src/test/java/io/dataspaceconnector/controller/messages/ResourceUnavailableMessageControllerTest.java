@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.*;
-//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;

@@ -32,11 +32,6 @@ import io.dataspaceconnector.services.messages.types.MessageProcessedNotificatio
 import io.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
-//import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-//import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-//import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-//import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import de.fraunhofer.ids.messaging.handler.message.MessageHandler;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;

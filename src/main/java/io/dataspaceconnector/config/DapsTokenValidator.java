@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.config;
 
-//import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
 import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;

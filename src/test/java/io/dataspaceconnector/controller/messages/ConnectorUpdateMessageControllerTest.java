@@ -18,8 +18,6 @@ package io.dataspaceconnector.controller.messages;
 import java.io.IOException;
 import java.net.URI;
 
-//import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;

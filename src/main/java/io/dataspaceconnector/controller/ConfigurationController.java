@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller;
 
-//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;

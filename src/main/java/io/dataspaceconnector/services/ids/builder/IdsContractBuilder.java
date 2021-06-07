@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.Duty;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-//import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;

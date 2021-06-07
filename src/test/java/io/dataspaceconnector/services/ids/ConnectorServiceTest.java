@@ -37,8 +37,6 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-//import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-//import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.Catalog;
