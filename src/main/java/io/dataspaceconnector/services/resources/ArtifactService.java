@@ -32,6 +32,7 @@ import io.dataspaceconnector.services.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.services.usagecontrol.VerificationResult;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -73,6 +74,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     @Autowired
     public ArtifactService(final @NonNull DataRepository dataRepository,
                            final @NonNull HttpService httpService) {
+        super();
         this.dataRepo = dataRepository;
         this.httpSvc = httpService;
     }
@@ -93,14 +95,14 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             } else {
                 // The data element exists already, check if an update is
                 // required
-                final var storedCopy = dataRepo.getOne(tmp.getData().getId());
+                final var storedCopy = dataRepo.getById(tmp.getData().getId());
                 if (!storedCopy.equals(tmp.getData())) {
                     dataRepo.saveAndFlush(tmp.getData());
                 }
             }
 
             if (tmp.getData() instanceof LocalData) {
-                final var factory = ((ArtifactFactory) getFactory());
+                final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             }
         }
@@ -125,8 +127,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
-                               final QueryInput queryInput) throws PolicyRestrictionException {
-
+                               final QueryInput queryInput)
+            throws PolicyRestrictionException, IOException {
         // TODO: Parameter Null checks
 
         /*
@@ -188,7 +190,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
-            throws PolicyRestrictionException {
+            throws PolicyRestrictionException, IOException {
 
         // TODO: Parameter Null checks
 
@@ -227,9 +229,10 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifact   The artifact which data should be returned.
      * @param queryInput The query for the data backend. May be null.
      * @return The artifact's data.
+     * @throws IOException if the data cannot be received.
      */
     private InputStream getDataFromInternalDB(final ArtifactImpl artifact,
-                                              final QueryInput queryInput) {
+                                              final QueryInput queryInput) throws IOException {
         final var data = artifact.getData();
 
         InputStream rawData;
@@ -279,7 +282,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput The query for the backend.
      * @return The stored data.
      */
-    private InputStream getData(final RemoteData data, final QueryInput queryInput) {
+    private InputStream getData(final RemoteData data, final QueryInput queryInput)
+            throws IOException {
         try {
             InputStream backendData;
             if (data.getUsername() != null || data.getPassword() != null) {
@@ -296,7 +300,8 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 log.warn("Could not connect to data source. [exception=({})]",
                         exception.getMessage(), exception);
             }
-            throw new RuntimeException("Could not connect to data source.", exception);
+
+            throw new IOException("Could not connect to data source.", exception);
         }
     }
 
@@ -326,10 +331,11 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param artifactId The artifact which should be updated.
      * @param data       The new data.
      * @return The data stored in the artifact.
+     * @throws IOException if the data could not be stored.
      */
     @Transactional
-    public InputStream setData(final UUID artifactId, final InputStream data) {
-        var artifact = get(artifactId);
+    public InputStream setData(final UUID artifactId, final InputStream data) throws IOException {
+        final var artifact = get(artifactId);
         final var localData = ((ArtifactImpl) artifact).getData();
         if (localData instanceof LocalData) {
             try {
@@ -350,20 +356,17 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                 }
 
                 return new ByteArrayInputStream(bytes);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 if (log.isErrorEnabled()) {
                     log.error("Failed to store data. [artifactId=({}), exception=({})]",
                             artifactId, e.getMessage(), e);
                 }
 
-                // TODO This needs to be an expected exception. At the moment this should be fine
-                //  if the internal db in not reachable there will be a lot more problems.
-                // throw new IOException("Failed to store data");
-                throw new RuntimeException("Failed to store data.");
+                throw new IOException("Failed to store data.", e);
             }
         } else {
             // TODO Push data to remote backend. Missing concept.
-            throw new RuntimeException("Not implemented");
+            throw new NotImplementedError();
         }
     }
 

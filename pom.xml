@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.0.2</revision>
+		<revision>5.1.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -99,19 +99,20 @@
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
-		<modelmapper.version>2.4.3</modelmapper.version>
+		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
 		<postgres.version>42.2.20</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
 		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<jaeger.version>3.3.1</jaeger.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.6</pitest.version>
+		<pitest.version>1.6.7</pitest.version>
 		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
@@ -119,16 +120,15 @@
 		<spotbugs.version>4.2.3</spotbugs.version>
 		<findsecbugs-plugin.version>1.11.0</findsecbugs-plugin.version>
 		<checkstyle-plugin.version>3.1.2</checkstyle-plugin.version>
-		<checkstyle.version>8.42</checkstyle.version>
+		<checkstyle.version>8.43</checkstyle.version>
 		<jacoco.version>0.8.7</jacoco.version>
 		<pmd-plugin.version>3.14.0</pmd-plugin.version>
-		<pmd.version>6.34.0</pmd.version>
+		<pmd.version>6.35.0</pmd.version>
 		<versions-maven-plugin.version>2.8.1</versions-maven-plugin.version>
 		<license-plugin.version>4.1</license-plugin.version>
 		<dms.version>2.2.0</dms.version>
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
-		<jdepend.version>2.0</jdepend.version>
 
 		<!-- Licence -->
 		<licence_name>Apache License, Version 2.0</licence_name>
@@ -336,17 +336,23 @@
 		</dependency>
 
 		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgres.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- <dependency>
+		<dependency>
 			<groupId>io.opentracing.contrib</groupId>
 			<artifactId>opentracing-spring-jaeger-web-starter</artifactId>
-			<version>3.3.1</version>
-		</dependency> -->
+			<version>${jaeger.version}</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui -->
 		<dependency>
@@ -471,6 +477,7 @@
 					<configuration>
 						<!-- enable incremental analysis -->
 						<analysisCache>true</analysisCache>
+						<printFailingErrors>true</printFailingErrors>
 						<rulesets>
 							<ruleset>./scripts/ci/pmd-rules.xml</ruleset>
 						</rulesets>
@@ -585,7 +592,12 @@
 								<exclude>**/*.env</exclude>
 								<exclude>**/lombok.config</exclude>
 								<exclude>**/.dockerignore</exclude>
+								<exclude>charts/dataspace-connector/Chart.lock</exclude>
+								<exlcude>charts/dataspace-connector/.helmignore</exlcude>
+								<exclude>**/*.tgz</exclude>
+								<exclude>charts/**/*.tpl</exclude>
 								<exclude>docs/**</exclude>
+								<exclude>.editorconfig</exclude>
 							</excludes>
 						</licenseSet>
 					</licenseSets>
@@ -742,11 +754,10 @@
 					</reportSet>
 				</reportSets>
 			</plugin>
-			<!-- TODO: Enable code checks on verify, at the moment 2021-05-21 there are 1323 violations -->
-<!-- 			<plugin>
+ 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-			</plugin> -->
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -802,11 +813,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>${jxr.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jdepend-maven-plugin</artifactId>
-				<version>${jdepend.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

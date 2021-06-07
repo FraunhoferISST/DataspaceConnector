@@ -17,7 +17,6 @@ package io.dataspaceconnector.services.ids.builder;
 
 import de.fraunhofer.iais.eis.Permission;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class IdsPermissionBuilder extends IdsRuleBuilder<Permission> {
-    IdsPermissionBuilder(@NonNull final DeserializationService deserializer) {
+    IdsPermissionBuilder(final DeserializationService deserializer) {
         super(deserializer, Permission.class);
     }
 }

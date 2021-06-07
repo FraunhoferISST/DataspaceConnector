@@ -17,6 +17,7 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -34,6 +35,8 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.Version;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * A resource describes offered or requested data.
@@ -73,12 +76,14 @@ public class Resource extends AbstractEntity {
      * The publisher of the resource.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI publisher;
 
     /**
      * The owner of the resource.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI sovereign;
 
     /**
@@ -90,12 +95,14 @@ public class Resource extends AbstractEntity {
      * The licence of the resource.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI licence;
 
     /**
      * The endpoint of the resource.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI endpointDocumentation;
 
     /**

@@ -47,13 +47,6 @@ public class ContractRuleFactory implements AbstractFactory<ContractRule, Contra
     public static final String DEFAULT_RULE = "";
 
     /**
-     * Default constructor.
-     */
-    public ContractRuleFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new ContractRule.
      * @param desc The description of the new ContractRule.
      * @return The new ContractRule.

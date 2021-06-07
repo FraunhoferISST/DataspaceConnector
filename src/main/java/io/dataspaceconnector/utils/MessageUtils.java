@@ -261,7 +261,7 @@ public final class MessageUtils {
         }
 
         // If request is empty, return rejection message.
-        if (content.equals("")) {
+        if (content.isEmpty()) {
             throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
         }
 

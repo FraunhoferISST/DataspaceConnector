@@ -50,7 +50,7 @@ public final class UUIDUtils {
         final var matcher = pairRegex.matcher(input);
 
         // Extract all UUIDs
-        var output = new ArrayList<String>();
+        final var output = new ArrayList<String>();
         while (matcher.find()) {
             output.add(matcher.group(0));
         }
