@@ -25,77 +25,77 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 5.0.2
+  version: 5.1.0
 servers:
-  - url: http://localhost:8080
-    description: Generated server url
+- url: https://localhost:8080
+  description: Generated server url
 tags:
-  - name: Resources
-    description: Endpoints for linking contracts to resources
-  - name: Artifacts
-    description: Endpoints for CRUD operations on artifacts
-  - name: Contracts
-    description: Endpoints for CRUD operations on contracts
-  - name: Rules
-    description: Endpoints for linking rules to contracts
-  - name: Contracts
-    description: Endpoints for linking rules to contracts
-  - name: Agreements
-    description: Endpoints for linking agreements to artifacts
-  - name: Resources
-    description: Endpoints for CRUD operations on offered resources
-  - name: Resources
-    description: Endpoints for CRUD operations on requested resources
-  - name: Artifacts
-    description: Endpoints for linking artifacts to representations
-  - name: Contracts
-    description: Endpoints for linking contracts to requests
-  - name: Agreements
-    description: Endpoints for contract/policy handling
-  - name: Representations
-    description: Endpoints for linking representations to offered resources
-  - name: Rules
-    description: Endpoints for CRUD operations on rules
-  - name: Representations
-    description: Endpoints for linking representations to requested resources
-  - name: Resources
-    description: Endpoints for linking representations to resources
-  - name: Artifacts
-    description: Endpoints for linking artifacts to agreements
-  - name: Representations
-    description: Endpoints for linking artifacts to representations
-  - name: Catalogs
-    description: Endpoints for linking offered resources to catalogs
-  - name: Representations
-    description: Endpoints for CRUD operations on representations
-  - name: Catalogs
-    description: Endpoints for CRUD operations on catalogs
-  - name: Resources
-    description: Endpoints for linking requested resources to catalogs
-  - name: Usage Control
-    description: Endpoints for contract/policy handling
-  - name: Connector
-    description: Endpoints for connector information and configuration
-  - name: IDS Messages
-    description: Endpoints for invoke sending IDS messages
-  - name: Contracts
-    description: Endpoints for linking contracts to offers
-  - name: Resources
-    description: Endpoints for linking offered resources to catalogs
+- name: Resources
+  description: Endpoints for linking contracts to resources
+- name: Artifacts
+  description: Endpoints for CRUD operations on artifacts
+- name: Contracts
+  description: Endpoints for CRUD operations on contracts
+- name: Rules
+  description: Endpoints for linking rules to contracts
+- name: Contracts
+  description: Endpoints for linking rules to contracts
+- name: Agreements
+  description: Endpoints for linking agreements to artifacts
+- name: Resources
+  description: Endpoints for CRUD operations on offered resources
+- name: Resources
+  description: Endpoints for CRUD operations on requested resources
+- name: Artifacts
+  description: Endpoints for linking artifacts to representations
+- name: Contracts
+  description: Endpoints for linking contracts to requests
+- name: Agreements
+  description: Endpoints for contract/policy handling
+- name: Representations
+  description: Endpoints for linking representations to offered resources
+- name: Rules
+  description: Endpoints for CRUD operations on rules
+- name: Representations
+  description: Endpoints for linking representations to requested resources
+- name: Resources
+  description: Endpoints for linking representations to resources
+- name: Artifacts
+  description: Endpoints for linking artifacts to agreements
+- name: Representations
+  description: Endpoints for linking artifacts to representations
+- name: Catalogs
+  description: Endpoints for linking offered resources to catalogs
+- name: Representations
+  description: Endpoints for CRUD operations on representations
+- name: Catalogs
+  description: Endpoints for CRUD operations on catalogs
+- name: Resources
+  description: Endpoints for linking requested resources to catalogs
+- name: Usage Control
+  description: Endpoints for contract/policy handling
+- name: Connector
+  description: Endpoints for connector information and configuration
+- name: IDS Messages
+  description: Endpoints for invoke sending IDS messages
+- name: Contracts
+  description: Endpoints for linking contracts to offers
+- name: Resources
+  description: Endpoints for linking offered resources to catalogs
 paths:
   /api/rules/{id}:
     get:
       tags:
-        - Rules
+      - Rules
       summary: Get a base resource by id
       operationId: get
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -105,16 +105,16 @@ paths:
                 $ref: '#/components/schemas/ContractRuleView'
     put:
       tags:
-        - Rules
+      - Rules
       summary: Update a base resource by id
       operationId: update
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -136,46 +136,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Rules
+      - Rules
       summary: Delete a base resource by id
       operationId: delete
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/rules/{id}/contracts:
     get:
       tags:
-        - Rules
+      - Rules
       summary: Get all children of a base resource with pagination
       operationId: getResource
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -185,16 +185,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
-        - Rules
+      - Rules
       summary: Replace the children of a base resource
       operationId: replaceResources
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -209,16 +209,16 @@ paths:
           description: No content
     post:
       tags:
-        - Rules
+      - Rules
       summary: Add a list of children to a base resource
       operationId: addResources
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -237,16 +237,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
-        - Rules
+      - Rules
       summary: Remove a list of children from a base resource
       operationId: removeResources
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -262,16 +262,16 @@ paths:
   /api/requests/{id}:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get a base resource by id
       operationId: get_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -281,16 +281,16 @@ paths:
                 $ref: '#/components/schemas/RequestedResourceView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Update a base resource by id
       operationId: update_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -312,46 +312,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Delete a base resource by id
       operationId: delete_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/requests/{id}/representations:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -361,16 +361,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -385,16 +385,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -413,16 +413,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -438,30 +438,30 @@ paths:
   /api/requests/{id}/contracts:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -471,16 +471,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -495,16 +495,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -523,16 +523,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -548,30 +548,30 @@ paths:
   /api/requests/{id}/catalogs:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -581,16 +581,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -605,16 +605,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -633,16 +633,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -658,16 +658,16 @@ paths:
   /api/representations/{id}:
     get:
       tags:
-        - Representations
+      - Representations
       summary: Get a base resource by id
       operationId: get_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -677,16 +677,16 @@ paths:
                 $ref: '#/components/schemas/RepresentationView'
     put:
       tags:
-        - Representations
+      - Representations
       summary: Update a base resource by id
       operationId: update_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -708,46 +708,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Representations
+      - Representations
       summary: Delete a base resource by id
       operationId: delete_2
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/representations/{id}/requests:
     get:
       tags:
-        - Representations
+      - Representations
       summary: Get all children of a base resource with pagination
       operationId: getResource_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -757,16 +757,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRequestedResourceView'
     put:
       tags:
-        - Representations
+      - Representations
       summary: Replace the children of a base resource
       operationId: replaceResources_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -781,16 +781,16 @@ paths:
           description: No content
     post:
       tags:
-        - Representations
+      - Representations
       summary: Add a list of children to a base resource
       operationId: addResources_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -809,16 +809,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRequestedResourceView'
     delete:
       tags:
-        - Representations
+      - Representations
       summary: Remove a list of children from a base resource
       operationId: removeResources_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -834,30 +834,30 @@ paths:
   /api/representations/{id}/offers:
     get:
       tags:
-        - Representations
+      - Representations
       summary: Get all children of a base resource with pagination
       operationId: getResource_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -867,16 +867,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     put:
       tags:
-        - Representations
+      - Representations
       summary: Replace the children of a base resource
       operationId: replaceResources_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -891,16 +891,16 @@ paths:
           description: No content
     post:
       tags:
-        - Representations
+      - Representations
       summary: Add a list of children to a base resource
       operationId: addResources_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -919,16 +919,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     delete:
       tags:
-        - Representations
+      - Representations
       summary: Remove a list of children from a base resource
       operationId: removeResources_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -944,30 +944,30 @@ paths:
   /api/representations/{id}/artifacts:
     get:
       tags:
-        - Representations
+      - Representations
       summary: Get all children of a base resource with pagination
       operationId: getResource_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -977,16 +977,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelArtifactView'
     put:
       tags:
-        - Representations
+      - Representations
       summary: Replace the children of a base resource
       operationId: replaceResources_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1001,16 +1001,16 @@ paths:
           description: No content
     post:
       tags:
-        - Representations
+      - Representations
       summary: Add a list of children to a base resource
       operationId: addResources_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1029,16 +1029,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelArtifactView'
     delete:
       tags:
-        - Representations
+      - Representations
       summary: Remove a list of children from a base resource
       operationId: removeResources_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1054,16 +1054,16 @@ paths:
   /api/offers/{id}:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get a base resource by id
       operationId: get_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -1073,16 +1073,16 @@ paths:
                 $ref: '#/components/schemas/OfferedResourceView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Update a base resource by id
       operationId: update_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1104,46 +1104,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Delete a base resource by id
       operationId: delete_3
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/offers/{id}/representations:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_7
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1153,16 +1153,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_7
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1177,16 +1177,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_7
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1205,16 +1205,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_7
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1230,30 +1230,30 @@ paths:
   /api/offers/{id}/contracts:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_8
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1263,16 +1263,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_8
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1287,16 +1287,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_8
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1315,16 +1315,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_8
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1340,30 +1340,30 @@ paths:
   /api/offers/{id}/catalogs:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_9
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1373,16 +1373,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
-        - Resources
+      - Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_9
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1397,16 +1397,16 @@ paths:
           description: No content
     post:
       tags:
-        - Resources
+      - Resources
       summary: Add a list of children to a base resource
       operationId: addResources_9
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1425,16 +1425,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
-        - Resources
+      - Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_9
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1450,16 +1450,16 @@ paths:
   /api/contracts/{id}:
     get:
       tags:
-        - Contracts
+      - Contracts
       summary: Get a base resource by id
       operationId: get_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -1469,16 +1469,16 @@ paths:
                 $ref: '#/components/schemas/ContractView'
     put:
       tags:
-        - Contracts
+      - Contracts
       summary: Update a base resource by id
       operationId: update_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1500,46 +1500,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Contracts
+      - Contracts
       summary: Delete a base resource by id
       operationId: delete_4
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/contracts/{id}/rules:
     get:
       tags:
-        - Contracts
+      - Contracts
       summary: Get all children of a base resource with pagination
       operationId: getResource_10
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1549,16 +1549,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractRuleView'
     put:
       tags:
-        - Contracts
+      - Contracts
       summary: Replace the children of a base resource
       operationId: replaceResources_10
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1573,16 +1573,16 @@ paths:
           description: No content
     post:
       tags:
-        - Contracts
+      - Contracts
       summary: Add a list of children to a base resource
       operationId: addResources_10
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1601,16 +1601,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractRuleView'
     delete:
       tags:
-        - Contracts
+      - Contracts
       summary: Remove a list of children from a base resource
       operationId: removeResources_10
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1626,30 +1626,30 @@ paths:
   /api/contracts/{id}/requests:
     get:
       tags:
-        - Contracts
+      - Contracts
       summary: Get all children of a base resource with pagination
       operationId: getResource_11
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1659,16 +1659,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRequestedResourceView'
     put:
       tags:
-        - Contracts
+      - Contracts
       summary: Replace the children of a base resource
       operationId: replaceResources_11
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1683,16 +1683,16 @@ paths:
           description: No content
     post:
       tags:
-        - Contracts
+      - Contracts
       summary: Add a list of children to a base resource
       operationId: addResources_11
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1711,16 +1711,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRequestedResourceView'
     delete:
       tags:
-        - Contracts
+      - Contracts
       summary: Remove a list of children from a base resource
       operationId: removeResources_11
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1736,30 +1736,30 @@ paths:
   /api/contracts/{id}/offers:
     get:
       tags:
-        - Contracts
+      - Contracts
       summary: Get all children of a base resource with pagination
       operationId: getResource_12
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -1769,16 +1769,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     put:
       tags:
-        - Contracts
+      - Contracts
       summary: Replace the children of a base resource
       operationId: replaceResources_12
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1793,16 +1793,16 @@ paths:
           description: No content
     post:
       tags:
-        - Contracts
+      - Contracts
       summary: Add a list of children to a base resource
       operationId: addResources_12
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1821,16 +1821,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     delete:
       tags:
-        - Contracts
+      - Contracts
       summary: Remove a list of children from a base resource
       operationId: removeResources_12
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -1846,7 +1846,7 @@ paths:
   /api/configuration:
     get:
       tags:
-        - Connector
+      - Connector
       summary: Get current configuration.
       operationId: getConfiguration
       responses:
@@ -1864,7 +1864,7 @@ paths:
                 type: object
     put:
       tags:
-        - Connector
+      - Connector
       summary: Update current configuration.
       operationId: updateConfiguration
       requestBody:
@@ -1904,7 +1904,7 @@ paths:
   /api/configuration/pattern:
     get:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Get pattern validation status
       description: Return if unsupported patterns are ignored when requesting data.
       operationId: getPatternStatus
@@ -1922,17 +1922,17 @@ paths:
                   type: object
     put:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Allow unsupported patterns
       description: Allow requesting data without policy enforcement if an unsupported
         pattern is recognized.
       operationId: setPatternStatus
       parameters:
-        - name: status
-          in: query
-          required: true
-          schema:
-            type: boolean
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: boolean
       responses:
         "200":
           description: Ok
@@ -1948,7 +1948,7 @@ paths:
   /api/configuration/negotiation:
     get:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Get contract negotiation status
       operationId: getNegotiationStatus
       responses:
@@ -1965,15 +1965,15 @@ paths:
                   type: object
     put:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Set contract negotiation status
       operationId: setNegotiationStatus
       parameters:
-        - name: status
-          in: query
-          required: true
-          schema:
-            type: boolean
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: boolean
       responses:
         "200":
           description: Ok
@@ -1989,16 +1989,16 @@ paths:
   /api/catalogs/{id}:
     get:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Get a base resource by id
       operationId: get_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -2008,16 +2008,16 @@ paths:
                 $ref: '#/components/schemas/CatalogView'
     put:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Update a base resource by id
       operationId: update_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2039,46 +2039,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Delete a base resource by id
       operationId: delete_5
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/catalogs/{id}/offers:
     get:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Get all children of a base resource with pagination
       operationId: getResource_13
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2088,16 +2088,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     put:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Replace the children of a base resource
       operationId: replaceResources_13
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2112,16 +2112,16 @@ paths:
           description: No content
     post:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Add a list of children to a base resource
       operationId: addResources_13
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2140,16 +2140,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelOfferedResourceView'
     delete:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Remove a list of children from a base resource
       operationId: removeResources_13
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2165,16 +2165,16 @@ paths:
   /api/artifacts/{id}:
     get:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get a base resource by id
       operationId: get_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -2184,16 +2184,16 @@ paths:
                 $ref: '#/components/schemas/ArtifactView'
     put:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Update a base resource by id
       operationId: update_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2215,46 +2215,46 @@ paths:
                 type: object
     delete:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Delete a base resource by id
       operationId: delete_6
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "204":
           description: No Content
   /api/artifacts/{id}/representations:
     get:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get all children of a base resource with pagination
       operationId: getResource_14
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2264,16 +2264,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     put:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Replace the children of a base resource
       operationId: replaceResources_14
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2288,16 +2288,16 @@ paths:
           description: No content
     post:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Add a list of children to a base resource
       operationId: addResources_14
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2316,16 +2316,16 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     delete:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Remove a list of children from a base resource
       operationId: removeResources_14
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2341,15 +2341,15 @@ paths:
   /api/artifacts/{id}/data:
     put:
       tags:
-        - Artifacts
+      - Artifacts
       operationId: putData
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           '*/*':
@@ -2364,16 +2364,16 @@ paths:
           description: OK
     post:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get data by artifact id with query input
       operationId: getData
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       requestBody:
         content:
           application/json:
@@ -2385,28 +2385,28 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/StreamingResponseBody'
   /api/rules:
     get:
       tags:
-        - Rules
+      - Rules
       summary: Get a list of base resources with pagination
       operationId: getAll
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2416,7 +2416,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelContractRuleView'
     post:
       tags:
-        - Rules
+      - Rules
       summary: Create a base resource
       operationId: create
       requestBody:
@@ -2435,24 +2435,24 @@ paths:
   /api/representations:
     get:
       tags:
-        - Representations
+      - Representations
       summary: Get a list of base resources with pagination
       operationId: getAll_2
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2462,7 +2462,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelRepresentationView'
     post:
       tags:
-        - Representations
+      - Representations
       summary: Create a base resource
       operationId: create_1
       requestBody:
@@ -2481,24 +2481,24 @@ paths:
   /api/offers:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get a list of base resources with pagination
       operationId: getAll_3
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2508,7 +2508,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelOfferedResourceView'
     post:
       tags:
-        - Resources
+      - Resources
       summary: Create a base resource
       operationId: create_2
       requestBody:
@@ -2527,24 +2527,24 @@ paths:
   /api/ids/resource/update:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Resource update message
       description: Can be used for registering or updating a resource at an IDS broker.
       operationId: sendConnectorUpdateMessage
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
-        - name: resourceId
-          in: query
-          description: The resource id.
-          required: true
-          schema:
-            type: string
-            format: uri
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: query
+        description: The resource id.
+        required: true
+        schema:
+          type: string
+          format: uri
       responses:
         "401":
           description: Unauthorized
@@ -2573,24 +2573,24 @@ paths:
   /api/ids/resource/unavailable:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Resource unavailable message
       description: Can be used for unregistering a resource at an IDS broker.
       operationId: sendConnectorUpdateMessage_1
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
-        - name: resourceId
-          in: query
-          description: The resource id.
-          required: true
-          schema:
-            type: string
-            format: uri
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
+      - name: resourceId
+        in: query
+        description: The resource id.
+        required: true
+        schema:
+          type: string
+          format: uri
       responses:
         "401":
           description: Unauthorized
@@ -2619,26 +2619,30 @@ paths:
   /api/ids/query:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Query message
       description: Can be used for querying an IDS broker.
       operationId: sendConnectorUpdateMessage_2
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
-            format: uri
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
+          format: uri
       requestBody:
         content:
           application/json:
             schema:
               type: string
               description: Database query (SparQL)
-              example: "SELECT ?subject ?predicate ?object\nFROM <urn:x-arq:UnionGraph>\n\
-                WHERE {\n  ?subject ?predicate ?object\n};"
+              example: |-
+                SELECT ?subject ?predicate ?object
+                FROM <urn:x-arq:UnionGraph>
+                WHERE {
+                  ?subject ?predicate ?object
+                };
         required: true
       responses:
         "401":
@@ -2668,24 +2672,24 @@ paths:
   /api/ids/description:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Send ids description request message
       operationId: sendDescriptionRequestMessage
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
-            format: uri
-        - name: elementId
-          in: query
-          description: The id of the requested resource.
-          required: false
-          schema:
-            type: string
-            format: uri
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
+          format: uri
+      - name: elementId
+        in: query
+        description: The id of the requested resource.
+        required: false
+        schema:
+          type: string
+          format: uri
       responses:
         "401":
           description: Unauthorized
@@ -2714,42 +2718,42 @@ paths:
   /api/ids/contract:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Send ids description request message
       operationId: sendContractRequestMessage
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
+          format: uri
+      - name: resourceIds
+        in: query
+        description: List of ids resource that should be requested.
+        required: true
+        schema:
+          type: array
+          items:
             type: string
             format: uri
-        - name: resourceIds
-          in: query
-          description: List of ids resource that should be requested.
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
-              format: uri
-        - name: artifactIds
-          in: query
-          description: List of ids artifacts that should be requested.
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
-              format: uri
-        - name: download
-          in: query
-          description: Indicates whether the connector should automatically download
-            data of an artifact.
-          required: true
-          schema:
-            type: boolean
+      - name: artifactIds
+        in: query
+        description: List of ids artifacts that should be requested.
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+            format: uri
+      - name: download
+        in: query
+        description: Indicates whether the connector should automatically download
+          data of an artifact.
+        required: true
+        schema:
+          type: boolean
       requestBody:
         content:
           application/json:
@@ -2758,8 +2762,8 @@ paths:
               description: List of ids rules with an artifact id as target.
               items:
                 oneOf:
-                  - $ref: '#/components/schemas/Permission'
-                  - $ref: '#/components/schemas/Prohibition'
+                - $ref: '#/components/schemas/Permission'
+                - $ref: '#/components/schemas/Prohibition'
         required: true
       responses:
         "401":
@@ -2795,18 +2799,18 @@ paths:
   /api/ids/connector/update:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Connector update message
       description: Can be used for registering or updating the connector at an IDS
         broker.
       operationId: sendConnectorUpdateMessage_3
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
       responses:
         "401":
           description: Unauthorized
@@ -2835,17 +2839,17 @@ paths:
   /api/ids/connector/unavailable:
     post:
       tags:
-        - IDS Messages
+      - IDS Messages
       summary: Connector unavailable message
       description: Can be used for unregistering the connector at an IDS broker.
       operationId: sendConnectorUpdateMessage_4
       parameters:
-        - name: recipient
-          in: query
-          description: The recipient url.
-          required: true
-          schema:
-            type: string
+      - name: recipient
+        in: query
+        description: The recipient url.
+        required: true
+        schema:
+          type: string
       responses:
         "401":
           description: Unauthorized
@@ -2874,7 +2878,7 @@ paths:
   /api/examples/validation:
     post:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Get pattern of policy
       description: Get the policy pattern represented by a given JSON string.
       operationId: getPolicyPattern
@@ -2901,27 +2905,27 @@ paths:
   /api/examples/policy:
     post:
       tags:
-        - Usage Control
+      - Usage Control
       summary: Get example policy
       description: Get an example policy for a given policy pattern.
       operationId: getExampleUsagePolicy
       parameters:
-        - name: type
-          in: query
-          description: Selection of supported policy patterns.
-          required: true
-          schema:
-            type: string
-            enum:
-              - PROVIDE_ACCESS
-              - PROHIBIT_ACCESS
-              - N_TIMES_USAGE
-              - DURATION_USAGE
-              - USAGE_DURING_INTERVAL
-              - USAGE_UNTIL_DELETION
-              - USAGE_LOGGING
-              - USAGE_NOTIFICATION
-              - CONNECTOR_RESTRICTED_USAGE
+      - name: type
+        in: query
+        description: Selection of supported policy patterns.
+        required: true
+        schema:
+          type: string
+          enum:
+          - PROVIDE_ACCESS
+          - PROHIBIT_ACCESS
+          - N_TIMES_USAGE
+          - DURATION_USAGE
+          - USAGE_DURING_INTERVAL
+          - USAGE_UNTIL_DELETION
+          - USAGE_LOGGING
+          - USAGE_NOTIFICATION
+          - CONNECTOR_RESTRICTED_USAGE
       responses:
         "400":
           description: Bad Request
@@ -2938,24 +2942,24 @@ paths:
   /api/contracts:
     get:
       tags:
-        - Contracts
+      - Contracts
       summary: Get a list of base resources with pagination
       operationId: getAll_4
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -2965,7 +2969,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelContractView'
     post:
       tags:
-        - Contracts
+      - Contracts
       summary: Create a base resource
       operationId: create_3
       requestBody:
@@ -2984,24 +2988,24 @@ paths:
   /api/catalogs:
     get:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Get a list of base resources with pagination
       operationId: getAll_5
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3011,7 +3015,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelCatalogView'
     post:
       tags:
-        - Catalogs
+      - Catalogs
       summary: Create a base resource
       operationId: create_4
       requestBody:
@@ -3030,24 +3034,24 @@ paths:
   /api/artifacts:
     get:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get a list of base resources with pagination
       operationId: getAll_6
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3057,7 +3061,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelArtifactView'
     post:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Create a base resource
       operationId: create_5
       requestBody:
@@ -3076,24 +3080,24 @@ paths:
   /api/requests:
     get:
       tags:
-        - Resources
+      - Resources
       summary: Get a list of base resources with pagination
       operationId: getAll_1
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3104,7 +3108,7 @@ paths:
   /api/connector:
     get:
       tags:
-        - Connector
+      - Connector
       summary: Private IDS self-description
       operationId: getPrivateSelfDescription
       responses:
@@ -3123,34 +3127,27 @@ paths:
   /api/artifacts/{id}/data/**:
     get:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get data by artifact id with query input
       operationId: getData_1
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: download
-          in: query
-          required: false
-          schema:
-            type: boolean
-        - name: agreementUri
-          in: query
-          required: false
-          schema:
-            type: string
-            format: uri
-        - name: params
-          in: query
-          required: true
-          schema:
-            type: object
-            additionalProperties:
-              type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: download
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: agreementUri
+        in: query
+        required: false
+        schema:
+          type: string
+          format: uri
       responses:
         "200":
           description: Ok
@@ -3161,30 +3158,30 @@ paths:
   /api/artifacts/{id}/agreements:
     get:
       tags:
-        - Artifacts
+      - Artifacts
       summary: Get all children of a base resource with pagination
       operationId: getResource_15
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3195,24 +3192,24 @@ paths:
   /api/agreements:
     get:
       tags:
-        - Agreements
+      - Agreements
       summary: Get a list of base resources with pagination
       operationId: getAll_7
       parameters:
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3223,16 +3220,16 @@ paths:
   /api/agreements/{id}:
     get:
       tags:
-        - Agreements
+      - Agreements
       summary: Get a base resource by id
       operationId: get_7
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
       responses:
         "200":
           description: Ok
@@ -3243,30 +3240,30 @@ paths:
   /api/agreements/{id}/artifacts:
     get:
       tags:
-        - Agreements
+      - Agreements
       summary: Get all children of a base resource with pagination
       operationId: getResource_16
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-        - name: page
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 0
-        - name: size
-          in: query
-          required: false
-          schema:
-            type: integer
-            format: int32
-            default: 30
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 30
       responses:
         "200":
           description: Ok
@@ -3277,7 +3274,7 @@ paths:
   /:
     get:
       tags:
-        - Connector
+      - Connector
       summary: Public IDS self-description
       operationId: getPublicSelfDescription_1
       responses:
@@ -3751,8 +3748,8 @@ components:
           $ref: '#/components/schemas/PageMetadata'
     AbstractConstraint:
       required:
-        - '@id'
-        - '@type'
+      - '@id'
+      - '@type'
       type: object
       properties:
         properties:
@@ -3776,104 +3773,104 @@ components:
         propertyName: '@type'
     Constraint:
       required:
-        - '@id'
-        - '@type'
-        - ids:leftOperand
-        - ids:operator
+      - '@id'
+      - '@type'
+      - ids:leftOperand
+      - ids:operator
       type: object
       discriminator:
         propertyName: '@type'
       allOf:
-        - $ref: '#/components/schemas/AbstractConstraint'
-        - type: object
-          properties:
-            ids:unit:
-              type: string
-              format: uri
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
-            ids:leftOperand:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/PAYMENT
-                - https://w3id.org/idsa/code/PAY_AMOUNT
-                - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
-                - https://w3id.org/idsa/code/ELAPSED_TIME
-                - https://w3id.org/idsa/code/DELAY
-                - https://w3id.org/idsa/code/EVENT
-                - https://w3id.org/idsa/code/STATE
-                - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
-                - https://w3id.org/idsa/code/USER
-                - https://w3id.org/idsa/code/PURPOSE
-                - https://w3id.org/idsa/code/COUNT
-                - https://w3id.org/idsa/code/QUANTITY
-                - https://w3id.org/idsa/code/RECURRENCE_RATE
-                - https://w3id.org/idsa/code/SECURITY_LEVEL
-                - https://w3id.org/idsa/code/SYSTEM
-                - https://w3id.org/idsa/code/ENDPOINT
-                - https://w3id.org/idsa/code/PATH
-            ids:pipEndpoint:
-              type: string
-              format: uri
-            ids:operator:
-              type: string
-              enum:
-                - https://w3id.org/idsa/code/EQUALS
-                - https://w3id.org/idsa/code/SAME_AS
-                - https://w3id.org/idsa/code/NOT
-                - https://w3id.org/idsa/code/HAS_STATE
-                - https://w3id.org/idsa/code/GTEQ
-                - https://w3id.org/idsa/code/GT
-                - https://w3id.org/idsa/code/EQ
-                - https://w3id.org/idsa/code/LTEQ
-                - https://w3id.org/idsa/code/LT
-                - https://w3id.org/idsa/code/IN
-                - https://w3id.org/idsa/code/STRING_EQ
-                - https://w3id.org/idsa/code/STRING_CONTAINS
-                - https://w3id.org/idsa/code/STRING_IS_CONTAINED
-                - https://w3id.org/idsa/code/MATCHES
-                - https://w3id.org/idsa/code/AFTER
-                - https://w3id.org/idsa/code/BEFORE
-                - https://w3id.org/idsa/code/CONTAINS
-                - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
-                - https://w3id.org/idsa/code/DURING
-                - https://w3id.org/idsa/code/TEMPORAL_EQUALS
-                - https://w3id.org/idsa/code/FINISHED_BY
-                - https://w3id.org/idsa/code/FINISHES
-                - https://w3id.org/idsa/code/MEETS
-                - https://w3id.org/idsa/code/MET_BY
-                - https://w3id.org/idsa/code/OVERLAPS
-                - https://w3id.org/idsa/code/OVERLAPPED_BY
-                - https://w3id.org/idsa/code/STARTS
-                - https://w3id.org/idsa/code/STARTED_BY
-                - https://w3id.org/idsa/code/DURATION_EQ
-                - https://w3id.org/idsa/code/LONGER
-                - https://w3id.org/idsa/code/LONGER_EQ
-                - https://w3id.org/idsa/code/SHORTER_EQ
-                - https://w3id.org/idsa/code/SHORTER
-                - https://w3id.org/idsa/code/COVERED_BY
-                - https://w3id.org/idsa/code/COVERS
-                - https://w3id.org/idsa/code/INSIDE
-                - https://w3id.org/idsa/code/SPATIAL_CONTAINS
-                - https://w3id.org/idsa/code/SPATIAL_EQUALS
-                - https://w3id.org/idsa/code/SPATIAL_OVERLAP
-                - https://w3id.org/idsa/code/SPATIAL_MEET
-                - https://w3id.org/idsa/code/DISJOINT
-                - https://w3id.org/idsa/code/MEMBER_OF
-                - https://w3id.org/idsa/code/HAS_MEMBERSHIP
-                - https://w3id.org/idsa/code/HAS_SITE
-                - https://w3id.org/idsa/code/INSIDE_NETWORK
-                - https://w3id.org/idsa/code/DEFINES_AS
-            ids:rightOperandReference:
-              type: string
-              format: uri
-            '@type':
-              type: string
+      - $ref: '#/components/schemas/AbstractConstraint'
+      - type: object
+        properties:
+          ids:rightOperandReference:
+            type: string
+            format: uri
+          ids:pipEndpoint:
+            type: string
+            format: uri
+          ids:leftOperand:
+            type: string
+            enum:
+            - https://w3id.org/idsa/code/PAYMENT
+            - https://w3id.org/idsa/code/PAY_AMOUNT
+            - https://w3id.org/idsa/code/POLICY_EVALUATION_TIME
+            - https://w3id.org/idsa/code/ELAPSED_TIME
+            - https://w3id.org/idsa/code/DELAY
+            - https://w3id.org/idsa/code/EVENT
+            - https://w3id.org/idsa/code/STATE
+            - https://w3id.org/idsa/code/ABSOLUTE_SPATIAL_POSITION
+            - https://w3id.org/idsa/code/USER
+            - https://w3id.org/idsa/code/PURPOSE
+            - https://w3id.org/idsa/code/COUNT
+            - https://w3id.org/idsa/code/QUANTITY
+            - https://w3id.org/idsa/code/RECURRENCE_RATE
+            - https://w3id.org/idsa/code/SECURITY_LEVEL
+            - https://w3id.org/idsa/code/SYSTEM
+            - https://w3id.org/idsa/code/ENDPOINT
+            - https://w3id.org/idsa/code/PATH
+          ids:rightOperand:
+            $ref: '#/components/schemas/RdfResource'
+          ids:operator:
+            type: string
+            enum:
+            - https://w3id.org/idsa/code/EQUALS
+            - https://w3id.org/idsa/code/SAME_AS
+            - https://w3id.org/idsa/code/NOT
+            - https://w3id.org/idsa/code/HAS_STATE
+            - https://w3id.org/idsa/code/GTEQ
+            - https://w3id.org/idsa/code/GT
+            - https://w3id.org/idsa/code/EQ
+            - https://w3id.org/idsa/code/LTEQ
+            - https://w3id.org/idsa/code/LT
+            - https://w3id.org/idsa/code/IN
+            - https://w3id.org/idsa/code/STRING_EQ
+            - https://w3id.org/idsa/code/STRING_CONTAINS
+            - https://w3id.org/idsa/code/STRING_IS_CONTAINED
+            - https://w3id.org/idsa/code/MATCHES
+            - https://w3id.org/idsa/code/AFTER
+            - https://w3id.org/idsa/code/BEFORE
+            - https://w3id.org/idsa/code/CONTAINS
+            - https://w3id.org/idsa/code/TEMPORAL_DISJOINT
+            - https://w3id.org/idsa/code/DURING
+            - https://w3id.org/idsa/code/TEMPORAL_EQUALS
+            - https://w3id.org/idsa/code/FINISHED_BY
+            - https://w3id.org/idsa/code/FINISHES
+            - https://w3id.org/idsa/code/MEETS
+            - https://w3id.org/idsa/code/MET_BY
+            - https://w3id.org/idsa/code/OVERLAPS
+            - https://w3id.org/idsa/code/OVERLAPPED_BY
+            - https://w3id.org/idsa/code/STARTS
+            - https://w3id.org/idsa/code/STARTED_BY
+            - https://w3id.org/idsa/code/DURATION_EQ
+            - https://w3id.org/idsa/code/LONGER
+            - https://w3id.org/idsa/code/LONGER_EQ
+            - https://w3id.org/idsa/code/SHORTER_EQ
+            - https://w3id.org/idsa/code/SHORTER
+            - https://w3id.org/idsa/code/COVERED_BY
+            - https://w3id.org/idsa/code/COVERS
+            - https://w3id.org/idsa/code/INSIDE
+            - https://w3id.org/idsa/code/SPATIAL_CONTAINS
+            - https://w3id.org/idsa/code/SPATIAL_EQUALS
+            - https://w3id.org/idsa/code/SPATIAL_OVERLAP
+            - https://w3id.org/idsa/code/SPATIAL_MEET
+            - https://w3id.org/idsa/code/DISJOINT
+            - https://w3id.org/idsa/code/MEMBER_OF
+            - https://w3id.org/idsa/code/HAS_MEMBERSHIP
+            - https://w3id.org/idsa/code/HAS_SITE
+            - https://w3id.org/idsa/code/INSIDE_NETWORK
+            - https://w3id.org/idsa/code/DEFINES_AS
+          ids:unit:
+            type: string
+            format: uri
+          '@type':
+            type: string
     Duty:
       required:
-        - '@id'
-        - '@type'
-        - ids:action
+      - '@id'
+      - '@type'
+      - ids:action
       type: object
       properties:
         properties:
@@ -3894,11 +3891,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -3914,31 +3906,36 @@ components:
           items:
             type: string
             enum:
-              - https://w3id.org/idsa/code/ANONYMIZE
-              - https://w3id.org/idsa/code/USE
-              - https://w3id.org/idsa/code/AGGREGATE_BY_CONSUMER
-              - https://w3id.org/idsa/code/AGGREGATE_BY_PROVIDER
-              - https://w3id.org/idsa/code/COMPENSATE
-              - https://w3id.org/idsa/code/DELETE
-              - https://w3id.org/idsa/code/WRITE
-              - https://w3id.org/idsa/code/DISTRIBUTE
-              - https://w3id.org/idsa/code/GRANT_USE
-              - https://w3id.org/idsa/code/ENCRYPT
-              - https://w3id.org/idsa/code/LOG
-              - https://w3id.org/idsa/code/MODIFY
-              - https://w3id.org/idsa/code/NEXT_POLICY
-              - https://w3id.org/idsa/code/NOTIFY
-              - https://w3id.org/idsa/code/READ
-              - https://w3id.org/idsa/code/TRACK_PROVENANCE
+            - https://w3id.org/idsa/code/ANONYMIZE
+            - https://w3id.org/idsa/code/USE
+            - https://w3id.org/idsa/code/AGGREGATE_BY_CONSUMER
+            - https://w3id.org/idsa/code/AGGREGATE_BY_PROVIDER
+            - https://w3id.org/idsa/code/COMPENSATE
+            - https://w3id.org/idsa/code/DELETE
+            - https://w3id.org/idsa/code/WRITE
+            - https://w3id.org/idsa/code/DISTRIBUTE
+            - https://w3id.org/idsa/code/GRANT_USE
+            - https://w3id.org/idsa/code/ENCRYPT
+            - https://w3id.org/idsa/code/LOG
+            - https://w3id.org/idsa/code/MODIFY
+            - https://w3id.org/idsa/code/NEXT_POLICY
+            - https://w3id.org/idsa/code/NOTIFY
+            - https://w3id.org/idsa/code/READ
+            - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
+          - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:description:
+        ids:title:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        ids:title:
+        ids:description:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -3948,65 +3945,65 @@ components:
         propertyName: '@type'
     LogicalConstraint:
       required:
-        - '@id'
-        - '@type'
+      - '@id'
+      - '@type'
       type: object
       discriminator:
         propertyName: '@type'
       allOf:
-        - $ref: '#/components/schemas/AbstractConstraint'
-        - type: object
-          properties:
-            ids:or:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            ids:xone:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            ids:and:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            '@type':
-              type: string
+      - $ref: '#/components/schemas/AbstractConstraint'
+      - type: object
+        properties:
+          ids:and:
+            type: array
+            items:
+              $ref: '#/components/schemas/Constraint'
+          ids:or:
+            type: array
+            items:
+              $ref: '#/components/schemas/Constraint'
+          ids:xone:
+            type: array
+            items:
+              $ref: '#/components/schemas/Constraint'
+          '@type':
+            type: string
     Permission:
       required:
-        - '@id'
-        - '@type'
-        - ids:action
+      - '@id'
+      - '@type'
+      - ids:action
       type: object
       discriminator:
         propertyName: '@type'
       allOf:
-        - $ref: '#/components/schemas/Rule'
-        - type: object
-          properties:
-            ids:preDuty:
-              type: array
-              items:
-                $ref: '#/components/schemas/Duty'
-            ids:postDuty:
-              type: array
-              items:
-                $ref: '#/components/schemas/Duty'
-            '@type':
-              type: string
+      - $ref: '#/components/schemas/Rule'
+      - type: object
+        properties:
+          ids:postDuty:
+            type: array
+            items:
+              $ref: '#/components/schemas/Duty'
+          ids:preDuty:
+            type: array
+            items:
+              $ref: '#/components/schemas/Duty'
+          '@type':
+            type: string
     Prohibition:
       required:
-        - '@id'
-        - '@type'
-        - ids:action
+      - '@id'
+      - '@type'
+      - ids:action
       type: object
       discriminator:
         propertyName: '@type'
       allOf:
-        - $ref: '#/components/schemas/Rule'
-        - type: object
-          properties:
-            '@type':
-              type: string
+      - $ref: '#/components/schemas/Rule'
+      - type: object
+        properties:
+          '@type':
+            type: string
     RdfResource:
       type: object
       properties:
@@ -4016,9 +4013,9 @@ components:
           type: string
     Rule:
       required:
-        - '@id'
-        - '@type'
-        - ids:action
+      - '@id'
+      - '@type'
+      - ids:action
       type: object
       properties:
         properties:
@@ -4039,11 +4036,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -4059,31 +4051,36 @@ components:
           items:
             type: string
             enum:
-              - https://w3id.org/idsa/code/ANONYMIZE
-              - https://w3id.org/idsa/code/USE
-              - https://w3id.org/idsa/code/AGGREGATE_BY_CONSUMER
-              - https://w3id.org/idsa/code/AGGREGATE_BY_PROVIDER
-              - https://w3id.org/idsa/code/COMPENSATE
-              - https://w3id.org/idsa/code/DELETE
-              - https://w3id.org/idsa/code/WRITE
-              - https://w3id.org/idsa/code/DISTRIBUTE
-              - https://w3id.org/idsa/code/GRANT_USE
-              - https://w3id.org/idsa/code/ENCRYPT
-              - https://w3id.org/idsa/code/LOG
-              - https://w3id.org/idsa/code/MODIFY
-              - https://w3id.org/idsa/code/NEXT_POLICY
-              - https://w3id.org/idsa/code/NOTIFY
-              - https://w3id.org/idsa/code/READ
-              - https://w3id.org/idsa/code/TRACK_PROVENANCE
+            - https://w3id.org/idsa/code/ANONYMIZE
+            - https://w3id.org/idsa/code/USE
+            - https://w3id.org/idsa/code/AGGREGATE_BY_CONSUMER
+            - https://w3id.org/idsa/code/AGGREGATE_BY_PROVIDER
+            - https://w3id.org/idsa/code/COMPENSATE
+            - https://w3id.org/idsa/code/DELETE
+            - https://w3id.org/idsa/code/WRITE
+            - https://w3id.org/idsa/code/DISTRIBUTE
+            - https://w3id.org/idsa/code/GRANT_USE
+            - https://w3id.org/idsa/code/ENCRYPT
+            - https://w3id.org/idsa/code/LOG
+            - https://w3id.org/idsa/code/MODIFY
+            - https://w3id.org/idsa/code/NEXT_POLICY
+            - https://w3id.org/idsa/code/NOTIFY
+            - https://w3id.org/idsa/code/READ
+            - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
+          - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
-        ids:description:
+        ids:title:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
-        ids:title:
+        ids:description:
           type: array
           items:
             $ref: '#/components/schemas/TypedLiteral'
@@ -4139,7 +4136,9 @@ components:
         pathVariables:
           key: value
       oneOf:
-        - $ref: '#/components/schemas/QueryInput'
+      - $ref: '#/components/schemas/QueryInput'
+    StreamingResponseBody:
+      type: object
     CollectionModelContractRuleView:
       type: object
       properties:
@@ -4217,8 +4216,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ArtifactView'
-    StreamingResponseBody:
-      type: object
     AgreementView:
       type: object
       properties:
