@@ -248,7 +248,7 @@ public final class ResourceControllers {
             final var searchString = request.getContextPath() + "/data";
             var optional = request.getRequestURI().substring(
                     request.getRequestURI().indexOf(searchString) + searchString.length());
-            if("/**".equals(optional)) {
+            if ("/**".equals(optional)) {
                 optional = "";
             }
 
