@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController;
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController.DataSourceController;
+import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
+import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.DataSourceController;
 import io.dataspaceconnector.model.DataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -47,7 +47,7 @@ public class DataSourceViewAssembler
         view.add(getSelfLink(dataSource.getId()));
 
         final var genericEndpointsLink = WebMvcLinkBuilder
-                .linkTo(methodOn(ConfigmanagerController.DataSourceToGenericEndpoints.class)
+                .linkTo(methodOn(ConfigmanagerControllers.DataSourceToGenericEndpoints.class)
                         .getResource(dataSource.getId(), null, null))
                 .withRel("genericendpoints");
         view.add(genericEndpointsLink);

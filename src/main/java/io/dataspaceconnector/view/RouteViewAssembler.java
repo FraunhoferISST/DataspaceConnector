@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController;
+import io.dataspaceconnector.controller.configurations.RouteControllers;
 import io.dataspaceconnector.model.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -38,7 +38,7 @@ public class RouteViewAssembler
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigmanagerController.RouteController.class);
+                RouteControllers.RouteController.class);
     }
 
     @Override
@@ -49,13 +49,13 @@ public class RouteViewAssembler
         view.add(getSelfLink(route.getId()));
 
         final var subroutes = WebMvcLinkBuilder
-                .linkTo(methodOn(ConfigmanagerController.RoutesToSubroutes.class)
+                .linkTo(methodOn(RouteControllers.RoutesToSubroutes.class)
                         .getResource(route.getId(), null, null))
                 .withRel("routes");
         view.add(subroutes);
 
         final var offeredResources = WebMvcLinkBuilder
-                .linkTo(methodOn(ConfigmanagerController.RoutesToOfferedResources.class)
+                .linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
                         .getResource(route.getId(), null, null))
                 .withRel("resources");
         view.add(offeredResources);

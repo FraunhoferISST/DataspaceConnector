@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController;
+import io.dataspaceconnector.controller.configurations.EndpointControllers;
 import io.dataspaceconnector.model.IdsEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -34,7 +34,7 @@ public class IdsEndpointViewAssembler implements
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigmanagerController.IdsEndpointController.class);
+                EndpointControllers.IdsEndpointController.class);
     }
 
     @Override

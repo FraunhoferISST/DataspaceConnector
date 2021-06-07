@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController.AuthenticationController;
+import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.AuthenticationController;
 import io.dataspaceconnector.model.Authentication;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

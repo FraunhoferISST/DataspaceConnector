@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController.ClearingHouseController;
+import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ClearingHouseController;
 import io.dataspaceconnector.model.ClearingHouse;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

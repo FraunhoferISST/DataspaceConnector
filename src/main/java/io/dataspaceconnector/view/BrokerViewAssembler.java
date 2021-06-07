@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController;
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController.BrokerToOfferedResources;
+import io.dataspaceconnector.controller.configurations.BrokerControllers;
+import io.dataspaceconnector.controller.configurations.BrokerControllers.BrokerToOfferedResources;
 import io.dataspaceconnector.model.Broker;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -38,7 +38,7 @@ public class BrokerViewAssembler
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigmanagerController.BrokerController.class);
+                BrokerControllers.BrokerController.class);
     }
 
     @Override

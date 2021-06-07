@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerController.ConnectorController;
+import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConnectorController;
 import io.dataspaceconnector.model.Connector;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
