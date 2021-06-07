@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>4.0.7</ids-framework.version>
+		<ids-framework.version>5.0.2</ids-framework.version>
 		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
@@ -112,7 +112,7 @@
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.6</pitest.version>
+		<pitest.version>1.6.7</pitest.version>
 		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
