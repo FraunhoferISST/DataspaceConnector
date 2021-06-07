@@ -29,7 +29,6 @@ import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.ResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.services.ids.ConnectorService;
