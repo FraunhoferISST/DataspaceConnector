@@ -47,7 +47,7 @@ public class GenericEndpoint extends Endpoint {
     /**
      * Default constructor.
      */
-    protected GenericEndpoint() {
+    public GenericEndpoint() {
         super();
     }
 }

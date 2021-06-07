@@ -67,5 +67,4 @@ public class Proxy extends AbstractEntity {
      */
     @OneToOne
     private Authentication authentication;
-
 }
