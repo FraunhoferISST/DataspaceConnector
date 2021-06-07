@@ -24,17 +24,14 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
 import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
@@ -161,16 +158,6 @@ public class BootstrapConfiguration {
      * Service for the current connector configuration.
      */
     private final @NonNull ConnectorService connectorService;
-
-    /**
-     * Service for rules.
-     */
-    private final @NonNull RuleService ruleService;
-
-    /**
-     * Repository for artifacts.
-     */
-    private final @NonNull ArtifactRepository artifactRepository;
 
     /**
      * Bootstrap the connector.
@@ -537,7 +524,7 @@ public class BootstrapConfiguration {
      * @param <T>              either {@link OfferedResourceDesc}
      *                         or {@link RequestedResourceDesc}
      */
-    private <T extends AbstractDescription<?>> void fillResourceTemplate(
+    private void fillResourceTemplate(
             final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
             final Properties properties,
             final Resource resource) {
@@ -711,6 +698,6 @@ public class BootstrapConfiguration {
 
     @SuppressWarnings("unchecked")
     private Set<String> toSet(final Object obj) {
-        return (Set<String>)obj;
+        return (Set<String>) obj;
     }
 }
