@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.text.ParseException;
+import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.AbstractConstraint;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
@@ -32,15 +41,6 @@ import io.dataspaceconnector.exceptions.InvalidInputException;
 import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
-
-import java.net.URI;
-import java.text.ParseException;
-import java.time.Duration;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Contains utility methods for validating the content of ids rules.
@@ -88,8 +88,6 @@ public final class RuleUtils {
                     } else if (leftOperand == LeftOperand.SYSTEM
                             && operator == BinaryOperator.SAME_AS) {
                         detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
-                    } else {
-                        detectedPattern = null;
                     }
                 }
             } else {
@@ -99,8 +97,6 @@ public final class RuleUtils {
                         detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
                     } else if (action == Action.LOG) {
                         detectedPattern = PolicyPattern.USAGE_LOGGING;
-                    } else {
-                        detectedPattern = null;
                     }
                 } else {
                     detectedPattern = PolicyPattern.PROVIDE_ACCESS;
@@ -280,14 +276,14 @@ public final class RuleUtils {
      * @return The duration or null.
      * @throws DateTimeParseException If the duration cannot be parsed.
      */
-    public static java.time.Duration getDuration(final Rule rule)
+    public static Duration getDuration(final Rule rule)
             throws DateTimeParseException {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
-        if (type.equals("xsd:duration")) {
+        if ("xsd:duration".equals(type)) {
             final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
-            return java.time.Duration.parse(duration);
+            return Duration.parse(duration);
         } else {
             return null;
         }
@@ -315,7 +311,7 @@ public final class RuleUtils {
             throws InvalidInputException {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
-            if (target == null || target.toString().equals("")) {
+            if (target == null || target.toString().isBlank()) {
                 throw new InvalidInputException(ErrorMessages.MISSING_TARGET.toString());
             }
         }

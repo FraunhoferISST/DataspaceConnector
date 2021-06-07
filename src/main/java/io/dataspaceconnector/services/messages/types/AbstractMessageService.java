@@ -196,9 +196,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
         final var idsMessage = deserializationService.getResponseMessage(header);
-        final var responseMap = new HashMap<String, Object>() {{
-            put("type", idsMessage.getClass());
-        }};
+        final var responseMap = new HashMap<String, Object>();
+        responseMap.put("type", idsMessage.getClass());
 
         // If the message is of type exception, add the reason to the response object.
         if (idsMessage instanceof RejectionMessage) {

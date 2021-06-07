@@ -76,7 +76,7 @@ public class RuleValidator {
      * @param issuerConnector The issuer connector.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
-    void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
+    public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
                         final URI issuerConnector) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
