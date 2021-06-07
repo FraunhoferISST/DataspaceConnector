@@ -67,7 +67,7 @@ public class Broker extends AbstractEntity {
      * The status of registration.
      */
     @Enumerated(EnumType.STRING)
-    private RegisterStatus status;
+    private RegistrationStatus status;
 
     /**
      * The list of resources.

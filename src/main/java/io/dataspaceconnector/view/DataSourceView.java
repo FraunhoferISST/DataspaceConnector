@@ -22,7 +22,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.time.ZonedDateTime;
 
@@ -32,7 +31,6 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "datasources", itemRelation = "datasource")
 public class DataSourceView extends RepresentationModel<DataSourceView> {
 
     /**

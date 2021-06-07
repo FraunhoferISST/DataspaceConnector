@@ -47,11 +47,6 @@ public class RouteView extends RepresentationModel<RouteView> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
-//    /**
-//     * List of subroutes.
-//     */
-//    private List<Route> subRoutes;
-
     /**
      * The route configuration.
      */
@@ -76,9 +71,4 @@ public class RouteView extends RepresentationModel<RouteView> {
      * The possible last endpoint of the route.
      */
     private IdsEndpoint endIdsEndpoint;
-
-//    /**
-//     * List of offered resources.
-//     */
-//    private List<OfferedResource> offeredResources;
 }

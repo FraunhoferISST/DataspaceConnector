@@ -35,9 +35,17 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     private static final URI DEFAULT_URI = URI.create("https://documentation");
     /**
-     * The default string.
+     * The default outbound path.
      */
-    private static final String DEFAULT_STRING = "default";
+    private static final String DEFAULT_OUTBOUND_PATH = "default";
+    /**
+     * The default inbound path.
+     */
+    private static final String DEFAULT_INBOUND_PATH = "default";
+    /**
+     * The default information.
+     */
+    private static final String DEFAULT_INFORMATION = "information";
 
 
     /**
@@ -110,7 +118,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     private boolean updateOutboundPath(final Endpoint endpoint, final String outboundPath) {
         final var newOutboundPath = MetadataUtils.updateString(endpoint.getOutboundPath(),
-                outboundPath, DEFAULT_STRING);
+                outboundPath, DEFAULT_OUTBOUND_PATH);
         newOutboundPath.ifPresent(endpoint::setOutboundPath);
 
         return newOutboundPath.isPresent();
@@ -123,7 +131,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     private boolean updateInboundPath(final Endpoint endpoint, final String inboundPath) {
         final var newInboundPath = MetadataUtils.updateString(endpoint.getInboundPath(),
-                inboundPath, DEFAULT_STRING);
+                inboundPath, DEFAULT_INBOUND_PATH);
         newInboundPath.ifPresent(endpoint::setInboundPath);
 
         return newInboundPath.isPresent();
@@ -138,7 +146,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
                                               final String endpointInformation) {
         final var newEndpointInfo =
                 MetadataUtils.updateString(endpoint.getEndpointInformation(), endpointInformation,
-                        DEFAULT_STRING);
+                        DEFAULT_INFORMATION);
         newEndpointInfo.ifPresent(endpoint::setEndpointInformation);
 
         return newEndpointInfo.isPresent();

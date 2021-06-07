@@ -23,7 +23,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -34,7 +33,6 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "configurations", itemRelation = "configuration")
 public class ConfigurationView extends RepresentationModel<ConfigurationView> {
 
     /**

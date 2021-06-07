@@ -40,5 +40,5 @@ public class IdentityProviderDesc extends AbstractDescription<IdentityProvider> 
     /**
      * The registration status.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 }

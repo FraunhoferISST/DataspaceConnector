@@ -33,7 +33,7 @@ import java.util.List;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "proxies", itemRelation = "proxy")
+@Relation(collectionRelation = "proxies")
 public class ProxyView extends RepresentationModel<ProxyView> {
 
     /**

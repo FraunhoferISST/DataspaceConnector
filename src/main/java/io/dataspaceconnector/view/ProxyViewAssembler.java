@@ -40,8 +40,7 @@ public class ProxyViewAssembler implements
     @Override
     public final ProxyView toModel(final Proxy proxy) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(proxy,
-                ProxyView.class);
+        final var view = modelMapper.map(proxy, ProxyView.class);
         view.add(getSelfLink(proxy.getId()));
 
         return view;

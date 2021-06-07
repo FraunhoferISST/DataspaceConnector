@@ -30,7 +30,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "genericendpoints", itemRelation = "genericendpoint")
+@Relation(collectionRelation = "genericendpoints")
 public class GenericEndpointView extends RepresentationModel<GenericEndpointView> {
 
     /**

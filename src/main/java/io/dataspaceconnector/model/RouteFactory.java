@@ -31,7 +31,7 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
     /**
      * The default string.
      */
-    private static final String DEFAULT_STRING = "Default configuration";
+    private static final String DEFAULT_CONFIGURATION = "Default configuration";
 
     /**
      * @param desc The description of the entity.
@@ -95,7 +95,7 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
      */
     private boolean updateRouteConfiguration(final Route route, final String routeConfiguration) {
         final var newRouteConfig = MetadataUtils.updateString(route.getRouteConfiguration(),
-                routeConfiguration, DEFAULT_STRING);
+                routeConfiguration, DEFAULT_CONFIGURATION);
         newRouteConfig.ifPresent(route::setRouteConfiguration);
 
         return newRouteConfig.isPresent();

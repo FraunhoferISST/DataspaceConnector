@@ -18,7 +18,7 @@ package io.dataspaceconnector.model;
 /**
  * Enumeration for registration status.
  */
-public enum RegisterStatus {
+public enum RegistrationStatus {
 
     /**
      * Registered status.
@@ -37,7 +37,7 @@ public enum RegisterStatus {
     /**
      * @param enumValue The value of the enum.
      */
-    RegisterStatus(final String enumValue) {
+    RegistrationStatus(final String enumValue) {
         this.value = enumValue;
     }
 

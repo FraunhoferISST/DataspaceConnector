@@ -20,11 +20,11 @@ import io.dataspaceconnector.model.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -48,14 +48,13 @@ public class RouteViewAssembler
                 RouteView.class);
         view.add(getSelfLink(route.getId()));
 
-        final var subroutes = WebMvcLinkBuilder
-                .linkTo(methodOn(RouteControllers.RoutesToSubroutes.class)
+        final var subroutes = linkTo(methodOn(RouteControllers.RoutesToSubroutes.class)
                         .getResource(route.getId(), null, null))
                 .withRel("routes");
         view.add(subroutes);
 
-        final var offeredResources = WebMvcLinkBuilder
-                .linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
+        final var offeredResources =
+                linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
                         .getResource(route.getId(), null, null))
                 .withRel("resources");
         view.add(offeredResources);

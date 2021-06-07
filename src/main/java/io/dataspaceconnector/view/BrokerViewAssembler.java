@@ -21,11 +21,11 @@ import io.dataspaceconnector.model.Broker;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -47,9 +47,8 @@ public class BrokerViewAssembler
         final var view = modelMapper.map(broker, BrokerView.class);
         view.add(getSelfLink(broker.getId()));
 
-        final var offeredResourcesLink = WebMvcLinkBuilder
-                .linkTo(methodOn(BrokerToOfferedResources.class)
-                        .getResource(broker.getId(), null, null))
+        final var offeredResourcesLink = linkTo(methodOn(BrokerToOfferedResources.class)
+                .getResource(broker.getId(), null, null))
                 .withRel("resources");
         view.add(offeredResourcesLink);
 

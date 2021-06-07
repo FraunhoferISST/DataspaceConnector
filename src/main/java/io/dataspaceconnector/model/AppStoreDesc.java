@@ -41,7 +41,7 @@ public class AppStoreDesc extends AbstractDescription<AppStore> {
     /**
      * The registration status.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The list of apps.

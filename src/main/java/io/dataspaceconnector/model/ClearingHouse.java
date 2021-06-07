@@ -66,7 +66,7 @@ public class ClearingHouse extends AbstractEntity {
      * The status of registration.
      */
     @Enumerated(EnumType.STRING)
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The date specification.

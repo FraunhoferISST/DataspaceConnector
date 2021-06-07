@@ -65,7 +65,7 @@ public class Connector extends AbstractEntity {
      * The registration status of the connector.
      */
     @Enumerated(EnumType.STRING)
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The date specification.

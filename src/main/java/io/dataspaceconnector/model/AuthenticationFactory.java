@@ -27,6 +27,16 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFactory implements AbstractFactory<Authentication, AuthenticationDesc> {
 
     /**
+     * The default username.
+     */
+    private static final String DEFAULT_USERNAME = "ids";
+
+    /**
+     * The default password.
+     */
+    private static final String DEFAULT_PASSWORD = "ids";
+
+    /**
      * @param desc The description of the entity.
      * @return New authentication entity.
      */
@@ -63,7 +73,7 @@ public class AuthenticationFactory implements AbstractFactory<Authentication, Au
      */
     private boolean updatePassword(final Authentication auth, final String password) {
         final var newPassword = MetadataUtils.updateString(auth.getPassword(), password,
-                "password");
+                DEFAULT_PASSWORD);
         newPassword.ifPresent(auth::setPassword);
         return newPassword.isPresent();
 
@@ -76,7 +86,7 @@ public class AuthenticationFactory implements AbstractFactory<Authentication, Au
      */
     private boolean updateUsername(final Authentication auth, final String username) {
         final var newUsername = MetadataUtils.updateString(auth.getUsername(), username,
-                "username");
+                DEFAULT_USERNAME);
         newUsername.ifPresent(auth::setUsername);
         return newUsername.isPresent();
     }

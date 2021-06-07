@@ -258,14 +258,14 @@ public class ConfigurationServiceTest {
 
     private ConfigurationDesc getConfigurationDesc() {
         final var desc = new ConfigurationDesc();
-        desc.setDeployMode(ConnectorDeployMode.TEST_DEPLOYMENT);
+        desc.setDeployMode(ConnectorDeployMode.TEST);
 
         return desc;
     }
 
     private ConfigurationDesc getUpdatedConfigurationDesc() {
         final var desc = new ConfigurationDesc();
-        desc.setDeployMode(ConnectorDeployMode.PRODUCTIVE_DEPLOYMENT);
+        desc.setDeployMode(ConnectorDeployMode.PRODUCTIVE);
 
         return desc;
     }

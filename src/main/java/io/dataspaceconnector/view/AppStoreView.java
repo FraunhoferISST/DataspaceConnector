@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.RegisterStatus;
+import io.dataspaceconnector.model.RegistrationStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,7 +60,7 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
     /**
      * The registration status.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The date specification.

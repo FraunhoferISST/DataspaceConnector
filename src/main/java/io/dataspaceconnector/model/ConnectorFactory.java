@@ -31,12 +31,12 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_URI = URI.create("https://localhost:8080");
+    private static final URI DEFAULT_ACCESS_URI = URI.create("https://localhost:8080");
 
     /**
      * Default string value.
      */
-    private static final String DEFAULT_STRING = "unknown";
+    private static final String DEFAULT_TITLE = "unknown";
 
     /**
      * @param desc The description of the entity.
@@ -65,7 +65,8 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
 
         final var newAccessUrl = updateAccessUrl(connector, connector.getAccessUrl());
         final var newTitle = updateTitle(connector, connector.getTitle());
-        final var newStatus = updateRegisterStatus(connector, connector.getRegisterStatus());
+        final var newStatus = updateRegistrationStatus(connector,
+                connector.getRegistrationStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -75,12 +76,13 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      * @param status    The registration status of the connector.
      * @return True, if connector is updated.
      */
-    private boolean updateRegisterStatus(final Connector connector, final RegisterStatus status) {
+    private boolean updateRegistrationStatus(final Connector connector,
+                                             final RegistrationStatus status) {
         final boolean updated;
-        if (connector.getRegisterStatus().equals(status)) {
+        if (connector.getRegistrationStatus().equals(status)) {
             updated = false;
         } else {
-            connector.setRegisterStatus(status);
+            connector.setRegistrationStatus(status);
             updated = true;
         }
         return updated;
@@ -93,7 +95,7 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      */
     private boolean updateTitle(final Connector connector, final String title) {
         final var newTitle = MetadataUtils.updateString(connector.getTitle(), title,
-                DEFAULT_STRING);
+                DEFAULT_TITLE);
         newTitle.ifPresent(connector::setTitle);
         return newTitle.isPresent();
     }
@@ -105,7 +107,7 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      */
     private boolean updateAccessUrl(final Connector connector, final URI accessUrl) {
         final var newAccessUrl = MetadataUtils.updateUri(connector.getAccessUrl(), accessUrl,
-                DEFAULT_URI);
+                DEFAULT_ACCESS_URI);
         newAccessUrl.ifPresent(connector::setAccessUrl);
         return newAccessUrl.isPresent();
     }

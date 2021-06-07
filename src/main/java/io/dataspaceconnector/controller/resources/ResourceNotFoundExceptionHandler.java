@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.resources;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

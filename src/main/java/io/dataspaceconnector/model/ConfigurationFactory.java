@@ -29,6 +29,22 @@ import java.util.ArrayList;
 public class ConfigurationFactory implements AbstractFactory<Configuration, ConfigurationDesc> {
 
     /**
+     * Default password.
+     */
+    private static final String DEFAULT_PASSWORD = "password";
+
+    /**
+     * Default trust store.
+     */
+    private static final String DEFAULT_TRUSTSTORE = "https://truststore";
+
+    /**
+     * Default trust store.
+     */
+    private static final String DEFAULT_KEYSTORE = "https://keystore";
+
+
+    /**
      * @param desc The description of the entity.
      * @return The new configuration entity.
      */
@@ -54,7 +70,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         Utils.requireNonNull(desc, ErrorMessages.MESSAGE_NULL);
 
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
-        final var hasUpdatedDelpoyMode = updateDeployMode(config, config.getDeployMode());
+        final var hasUpdatedDeployMode = updateDeployMode(config, config.getDeployMode());
         final var hasUpdatedTrustStore = updateTrustStore(config, config.getTrustStore());
         final var hasUpdatedTrustPassword = updateTrustStorePassword(config,
                 config.getTrustStorePassword());
@@ -62,7 +78,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         final var hasUpdatedKeyStorePassword = updateKeyStorePassword(config,
                 config.getKeyStorePassword());
 
-        return hasUpdatedLogLevel || hasUpdatedDelpoyMode || hasUpdatedTrustStore
+        return hasUpdatedLogLevel || hasUpdatedDeployMode || hasUpdatedTrustStore
                 || hasUpdatedTrustPassword || hasUpdatedKeyStore || hasUpdatedKeyStorePassword;
     }
 
@@ -75,7 +91,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
                                            final String keyStorePassword) {
         final var newKeystorePassword =
                 MetadataUtils.updateString(config.getKeyStorePassword(), keyStorePassword,
-                        "password");
+                        DEFAULT_PASSWORD);
         newKeystorePassword.ifPresent(config::setKeyStore);
         return newKeystorePassword.isPresent();
     }
@@ -87,7 +103,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      */
     private boolean updateKeyStore(final Configuration config, final String keyStore) {
         final var newKeystore = MetadataUtils.updateString(config.getKeyStore(),
-                keyStore, "https://keystore");
+                keyStore, DEFAULT_KEYSTORE);
         newKeystore.ifPresent(config::setKeyStore);
         return newKeystore.isPresent();
     }
@@ -101,7 +117,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
                                              final String trustStorePassword) {
         final var newPassword =
                 MetadataUtils.updateString(config.getTrustStorePassword(), trustStorePassword,
-                        "password");
+                        DEFAULT_PASSWORD);
         newPassword.ifPresent(config::setTrustStorePassword);
         return newPassword.isPresent();
     }
@@ -113,7 +129,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      */
     private boolean updateTrustStore(final Configuration config, final String trustStore) {
         final var newTrustStore = MetadataUtils.updateString(config.getTrustStore(),
-                trustStore, "https://truststore");
+                trustStore, DEFAULT_TRUSTSTORE);
         newTrustStore.ifPresent(config::setTrustStore);
         return newTrustStore.isPresent();
     }

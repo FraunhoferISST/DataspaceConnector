@@ -67,7 +67,7 @@ public class AppStore extends AbstractEntity {
      * The registration status.
      */
     @Enumerated(EnumType.STRING)
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The list of apps.

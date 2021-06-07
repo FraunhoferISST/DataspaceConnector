@@ -31,7 +31,7 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
     /**
      * Default absolute path.
      */
-    private static final URI DEFAULT_URI = URI.create("https://path");
+    private static final URI DEFAULT_ACCESS_URL = URI.create("https://path");
 
     /**
      * @param idsEndpoint The ids endpoint.
@@ -53,7 +53,7 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
      */
     private boolean updateAccessURL(final IdsEndpoint idsEndpoint, final URI accessURL) {
         final var newAccessUrl = MetadataUtils.updateUri(idsEndpoint.getAccessURL(),
-                accessURL, DEFAULT_URI);
+                accessURL, DEFAULT_ACCESS_URL);
         newAccessUrl.ifPresent(idsEndpoint::setAccessURL);
 
         return newAccessUrl.isPresent();

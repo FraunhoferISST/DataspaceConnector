@@ -31,7 +31,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     /**
      * The default string.
      */
-    private static final String DEFAULT_STRING = "unknown";
+    private static final String DEFAULT_RELATIVE_PATH = "relativePath";
 
     /**
      * @param desc The description of the entity.
@@ -77,7 +77,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     private boolean updateRelativPath(final DataSource dataSource, final String relativePath) {
         final var newRelativePath =
                 MetadataUtils.updateString(dataSource.getRelativePath(), relativePath,
-                        DEFAULT_STRING);
+                        DEFAULT_RELATIVE_PATH);
         newRelativePath.ifPresent(dataSource::setRelativePath);
 
         return newRelativePath.isPresent();

@@ -36,7 +36,6 @@ public class ListUriConverter implements AttributeConverter<List<URI>, String> {
      */
     @Override
     public String convertToDatabaseColumn(final List<URI> uriList) {
-
         return uriList == null || uriList.isEmpty() ? "" : String.join(",", uriList.toString());
     }
 

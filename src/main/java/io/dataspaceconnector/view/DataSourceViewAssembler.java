@@ -21,11 +21,11 @@ import io.dataspaceconnector.model.DataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -46,8 +46,8 @@ public class DataSourceViewAssembler
         final var view = modelMapper.map(dataSource, DataSourceView.class);
         view.add(getSelfLink(dataSource.getId()));
 
-        final var genericEndpointsLink = WebMvcLinkBuilder
-                .linkTo(methodOn(ConfigmanagerControllers.DataSourceToGenericEndpoints.class)
+        final var genericEndpointsLink =
+                linkTo(methodOn(ConfigmanagerControllers.DataSourceToGenericEndpoints.class)
                         .getResource(dataSource.getId(), null, null))
                 .withRel("genericendpoints");
         view.add(genericEndpointsLink);

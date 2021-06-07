@@ -23,15 +23,15 @@ public enum EndpointType {
     /**
      * The generic endpoint.
      */
-    GENERIC_ENDPOINT("Generic endpoint"),
+    GENERIC("Generic endpoint"),
     /**
      * The app endpoint.
      */
-    APP_ENDPOINT("App endpoint"),
+    APP("App endpoint"),
     /**
      * The ids endpoint.
      */
-    IDS_ENDPOINT("IDS endpoint");
+    IDS("IDS endpoint");
 
     /**
      * The value of the enum.

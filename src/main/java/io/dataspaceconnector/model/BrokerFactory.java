@@ -66,7 +66,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
 
         final var newAccessUrl = updateAccessUrl(broker, broker.getAccessUrl());
         final var newTitle = updateTitle(broker, broker.getTitle());
-        final var newStatus = updateRegisterStatus(broker, broker.getStatus());
+        final var newStatus = updateRegistrationStatus(broker, broker.getStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -76,7 +76,7 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @param status The registration status of the broker.
      * @return True, if broker is updated.
      */
-    private boolean updateRegisterStatus(final Broker broker, final RegisterStatus status) {
+    private boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
         final boolean updated;
         if (broker.getStatus().equals(status)) {
             updated = false;

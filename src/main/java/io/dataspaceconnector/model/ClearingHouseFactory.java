@@ -66,8 +66,8 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
         final var newAccessUrl = updateAccessUrl(clearingHouse,
                 clearingHouse.getAccessUrl());
         final var newTitle = updateTitle(clearingHouse, clearingHouse.getTitle());
-        final var newStatus = updateRegisterStatus(clearingHouse,
-                clearingHouse.getRegisterStatus());
+        final var newStatus = updateRegistrationStatus(clearingHouse,
+                clearingHouse.getRegistrationStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -77,13 +77,13 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @param status        The registration status of the clearing house.
      * @return True, if clearing house is updated.
      */
-    private boolean updateRegisterStatus(final ClearingHouse clearingHouse,
-                                         final RegisterStatus status) {
+    private boolean updateRegistrationStatus(final ClearingHouse clearingHouse,
+                                         final RegistrationStatus status) {
         final boolean updated;
-        if (clearingHouse.getRegisterStatus().equals(status)) {
+        if (clearingHouse.getRegistrationStatus().equals(status)) {
             updated = false;
         } else {
-            clearingHouse.setRegisterStatus(status);
+            clearingHouse.setRegistrationStatus(status);
             updated = true;
         }
         return updated;

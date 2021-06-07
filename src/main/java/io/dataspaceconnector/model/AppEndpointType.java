@@ -41,11 +41,11 @@ public enum AppEndpointType {
      */
     SELF_DESCRIPTION_ENDPOINT("Self description Endpoint"),
     /**
-     * Endpoint is used to get app health / lifecycle status.
+     * Endpoint is used to get app lifecycle status.
      */
     STATUS_ENDPOINT("Status Endpoint"),
     /**
-     * Endpoint is used for usage policy / usage control related scenarios.
+     * Endpoint is used for usage control related scenarios.
      */
     USAGE_POLICY_ENDPOINT("Usage Policy Endpoint");
 

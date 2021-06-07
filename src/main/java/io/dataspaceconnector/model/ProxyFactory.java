@@ -21,6 +21,7 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
     private static final URI DEFAULT_URI = URI.create("https://access");
 
     /**
-     * The default uris assigned to all no proxy list..
+     * The default uris assigned to all no proxy list.
      */
     public static final List<URI> DEFAULT_URI_LIST = List.of(URI.create("https://noproxylist"));
 
@@ -49,6 +50,7 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
 
         final var proxy = new Proxy();
         proxy.setAuthentication(null);
+        proxy.setNoProxyURI(new ArrayList<>());
 
         update(proxy, desc);
 

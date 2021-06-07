@@ -67,7 +67,7 @@ public class IdentityProvider extends AbstractEntity {
      * The registration status.
      */
     @Enumerated(EnumType.STRING)
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
     /**
      * The date specification.

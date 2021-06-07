@@ -40,6 +40,6 @@ public class ConnectorDesc extends AbstractDescription<Connector> {
     /**
      * The registration status of the connector.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 
 }

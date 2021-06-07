@@ -32,12 +32,12 @@ public class IdentityProviderFactory
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_URI = URI.create("https://identityprovider.com");
+    private static final URI DEFAULT_IDENTITY_PROVIDER = URI.create("https://identityprovider.com");
 
     /**
      * Default string value.
      */
-    private static final String DEFAULT_STRING = "unknown";
+    private static final String DEFAULT_TITLE = "unknown";
 
     /**
      * @param desc The description of the entity.
@@ -68,8 +68,8 @@ public class IdentityProviderFactory
         final var newAccessUrl = updateAccessUrl(identityProvider,
                 identityProvider.getAccessUrl());
         final var newTitle = updateTitle(identityProvider, identityProvider.getTitle());
-        final var newStatus = updateRegisterStatus(identityProvider,
-                identityProvider.getRegisterStatus());
+        final var newStatus = updateRegistrationStatus(identityProvider,
+                identityProvider.getRegistrationStatus());
 
         return newAccessUrl || newTitle || newStatus;
     }
@@ -79,13 +79,13 @@ public class IdentityProviderFactory
      * @param status           The registration status of the identity provider.
      * @return True, if registration status is updated.
      */
-    private boolean updateRegisterStatus(final IdentityProvider identityProvider,
-                                         final RegisterStatus status) {
+    private boolean updateRegistrationStatus(final IdentityProvider identityProvider,
+                                             final RegistrationStatus status) {
         final boolean updated;
-        if (identityProvider.getRegisterStatus().equals(status)) {
+        if (identityProvider.getRegistrationStatus().equals(status)) {
             updated = false;
         } else {
-            identityProvider.setRegisterStatus(status);
+            identityProvider.setRegistrationStatus(status);
             updated = true;
         }
         return updated;
@@ -98,7 +98,7 @@ public class IdentityProviderFactory
      */
     private boolean updateTitle(final IdentityProvider identityProvider, final String title) {
         final var newTitle =
-                MetadataUtils.updateString(identityProvider.getTitle(), title, DEFAULT_STRING);
+                MetadataUtils.updateString(identityProvider.getTitle(), title, DEFAULT_TITLE);
         newTitle.ifPresent(identityProvider::setTitle);
         return newTitle.isPresent();
     }
@@ -110,7 +110,8 @@ public class IdentityProviderFactory
      */
     private boolean updateAccessUrl(final IdentityProvider identityProvider, final URI accessUrl) {
         final var newAccessUrl =
-                MetadataUtils.updateUri(identityProvider.getAccessUrl(), accessUrl, DEFAULT_URI);
+                MetadataUtils.updateUri(identityProvider.getAccessUrl(), accessUrl,
+                        DEFAULT_IDENTITY_PROVIDER);
         newAccessUrl.ifPresent(identityProvider::setAccessUrl);
         return newAccessUrl.isPresent();
     }

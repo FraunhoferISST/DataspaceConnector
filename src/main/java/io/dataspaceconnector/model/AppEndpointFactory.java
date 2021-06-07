@@ -39,6 +39,11 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     public static final String DEFAULT_STRING = "unknown";
 
     /**
+     *
+     */
+    public static final String DEFAULT_MEDIATYPE = "mediatype";
+
+    /**
      * @param appEndpoint The app endpoint.
      * @param desc        The description of the new entity.
      * @return True, if app endpoint is updated.
@@ -79,7 +84,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
                                    final String appEndpointProtocol) {
         final var newProtocol =
                 MetadataUtils.updateString(appEndpoint.getAppEndpointProtocol(),
-                appEndpointProtocol, DEFAULT_STRING);
+                        appEndpointProtocol, DEFAULT_STRING);
         newProtocol.ifPresent(appEndpoint::setAppEndpointProtocol);
         return newProtocol.isPresent();
     }
@@ -90,11 +95,14 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @return True, if app endpoint is updated.
      */
     private boolean updateEndpointPort(final AppEndpoint appEndpoint, final int appEndpointPort) {
-
         final var newPort = MetadataUtils.updateInteger(appEndpoint.getAppEndpointPort(),
                 appEndpointPort);
-        newPort.ifPresent(appEndpoint::setAppEndpointPort);
-        return newPort.isPresent();
+
+        if (newPort == appEndpointPort) {
+            appEndpoint.setAppEndpointPort(newPort);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -104,7 +112,7 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      */
     private boolean updateMediaType(final AppEndpoint appEndpoint, final String mediaType) {
         final var newMediaType = MetadataUtils.updateString(appEndpoint.getMediaType(), mediaType,
-                DEFAULT_STRING);
+                DEFAULT_MEDIATYPE);
         newMediaType.ifPresent(appEndpoint::setMediaType);
         return newMediaType.isPresent();
     }

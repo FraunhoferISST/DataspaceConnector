@@ -30,7 +30,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "apps", itemRelation = "app")
+@Relation(collectionRelation = "apps")
 public class AppView extends RepresentationModel<AppView> {
 
     /**

@@ -57,17 +57,16 @@ public final class MetadataUtils {
     /**
      * Update integer.
      *
-     * @param oldPort     Old port.
-     * @param newPort     New port.
-     * @return Optional with the new value or without a value.
+     * @param oldPort Old port.
+     * @param newPort New port.
+     * @return New port, if new port is different from the old port.
      */
-    public static Optional<Integer> updateInteger(final int oldPort,
-                                                  final int newPort) {
+    public static Integer updateInteger(final int oldPort, final int newPort) {
         if (oldPort != newPort) {
-            return Optional.of(newPort);
+            return newPort;
         }
 
-        return Optional.of(oldPort);
+        return oldPort;
     }
 
     /**
@@ -188,8 +187,7 @@ public final class MetadataUtils {
      * @return Cleared list.
      */
     public static List<URI> cleanUriList(final List<URI> list) {
-        var result = removeNullFromList(list);
-        return result;
+        return removeNullFromList(list);
     }
 
     /**

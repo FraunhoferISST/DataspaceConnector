@@ -16,12 +16,11 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.RegisterStatus;
+import io.dataspaceconnector.model.RegistrationStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URL;
 import java.time.ZonedDateTime;
@@ -32,7 +31,6 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "connectors", itemRelation = "connector")
 public class ConnectorView extends RepresentationModel<ConnectorView> {
 
     /**
@@ -61,5 +59,5 @@ public class ConnectorView extends RepresentationModel<ConnectorView> {
     /**
      * The registration status of the connector.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 }

@@ -39,5 +39,5 @@ public class ClearingHouseDesc extends AbstractDescription<ClearingHouse> {
     /**
      * The status of registration.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 }

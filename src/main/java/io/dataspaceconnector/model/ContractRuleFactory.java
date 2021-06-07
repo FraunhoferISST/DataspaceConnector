@@ -25,7 +25,6 @@ import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
-
 /**
  * Creates and updates a ContractRule.
  */

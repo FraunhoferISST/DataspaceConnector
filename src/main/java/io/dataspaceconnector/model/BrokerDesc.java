@@ -41,7 +41,7 @@ public class BrokerDesc extends AbstractDescription<Broker> {
     /**
      * The status of registration.
      */
-    private RegisterStatus status;
+    private RegistrationStatus status;
 
     /**
      * The list of resources.

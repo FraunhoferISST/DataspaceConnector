@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.utils;
 
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;

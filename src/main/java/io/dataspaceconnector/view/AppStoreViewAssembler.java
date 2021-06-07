@@ -21,11 +21,11 @@ import io.dataspaceconnector.model.AppStore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
@@ -46,9 +46,8 @@ public class AppStoreViewAssembler
         final var view = modelMapper.map(appStore, AppStoreView.class);
         view.add(getSelfLink(appStore.getId()));
 
-        final var appLink = WebMvcLinkBuilder
-                .linkTo(methodOn(AppStoreToApps.class)
-                        .getResource(appStore.getId(), null, null))
+        final var appLink = linkTo(methodOn(AppStoreToApps.class)
+                .getResource(appStore.getId(), null, null))
                 .withRel("apps");
         view.add(appLink);
 

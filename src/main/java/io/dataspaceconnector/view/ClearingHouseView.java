@@ -16,12 +16,11 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.RegisterStatus;
+import io.dataspaceconnector.model.RegistrationStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-import org.springframework.hateoas.server.core.Relation;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
@@ -32,7 +31,6 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "clearinghouses", itemRelation = "clearinghouse")
 public class ClearingHouseView extends RepresentationModel<ClearingHouseView> {
 
     /**
@@ -60,5 +58,5 @@ public class ClearingHouseView extends RepresentationModel<ClearingHouseView> {
     /**
      * The status of registration.
      */
-    private RegisterStatus registerStatus;
+    private RegistrationStatus registrationStatus;
 }
