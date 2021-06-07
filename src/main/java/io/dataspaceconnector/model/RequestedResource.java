@@ -56,17 +56,17 @@ public final class RequestedResource extends Resource {
     private URI remoteId;
 
     /**
+     * The catalogs in which this resource is used.
+     */
+    @ManyToMany(mappedBy = "requestedResources")
+    private List<Catalog> catalogs;
+
+    /**
      * Default constructor.
      */
     protected RequestedResource() {
         super();
     }
-
-    /**
-     * The catalogs in which this resource is used.
-     */
-    @ManyToMany(mappedBy = "requestedResources")
-    private List<Catalog> catalogs;
 
     /**
      * {@inheritDoc}
