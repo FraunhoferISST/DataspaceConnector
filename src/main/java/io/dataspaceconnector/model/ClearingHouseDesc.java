@@ -19,6 +19,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.net.URI;
+import java.util.Objects;
+
 /**
  * Describing the clearing house's properties.
  */
@@ -40,4 +42,33 @@ public class ClearingHouseDesc extends AbstractDescription<ClearingHouse> {
      * The status of registration.
      */
     private RegistrationStatus registrationStatus;
+
+    /**
+     * @param o The reference object with which to compare.
+     * @return True, if this object is the same as the obj argument.
+     */
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        ClearingHouseDesc that = (ClearingHouseDesc) o;
+        return Objects.equals(accessUrl, that.accessUrl)
+                && Objects.equals(title, that.title)
+                && registrationStatus == that.registrationStatus;
+    }
+
+    /**
+     * @return A hash code value for this object.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), accessUrl, title, registrationStatus);
+    }
 }
