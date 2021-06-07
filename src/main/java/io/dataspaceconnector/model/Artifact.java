@@ -94,13 +94,6 @@ public abstract class Artifact extends AbstractEntity {
     private long checkSum;
 
     /**
-     * Increment the data access counter.
-     */
-    public void incrementAccessCounter() {
-        numAccessed += 1;
-    }
-
-    /**
      * The representations in which this artifact is used.
      */
     @ManyToMany(mappedBy = "artifacts")
@@ -111,4 +104,11 @@ public abstract class Artifact extends AbstractEntity {
      */
     @ManyToMany(mappedBy = "artifacts")
     private List<Agreement> agreements;
+
+    /**
+     * Increment the data access counter.
+     */
+    public void incrementAccessCounter() {
+        numAccessed += 1;
+    }
 }
