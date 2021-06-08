@@ -521,8 +521,6 @@ public class BootstrapConfiguration {
      * @param properties       additional properties, required for
      *                         transformation
      * @param resource         the ids resource
-     * @param <T>              either {@link OfferedResourceDesc}
-     *                         or {@link RequestedResourceDesc}
      */
     private void fillResourceTemplate(
             final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
