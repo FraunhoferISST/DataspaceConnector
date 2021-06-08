@@ -77,10 +77,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This class allows to load JSON-LD files which contain infomodel representations
- * of entities which will be registered in the connector during start-up.
- * In addition an additional configuration file can be loaded which provides
- * information on e.g. broker usage and the used clearing house.
+ * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
+ * which will be registered at the connector during start-up. Furthermore, an additional
+ * configuration file can be loaded, that provides information on e.g. broker usage and the used
+ * clearing house.
  */
 @Component
 @Log4j2
@@ -91,7 +91,7 @@ public class BootstrapConfiguration {
     /**
      * File extension used for JSON-LD files.
      */
-    private static final String JSON_LD_EXTENSION = "jsonld";
+    private static final String FILE_EXT = "jsonld";
 
     /**
      * File name for bootstrap property files.
@@ -104,14 +104,13 @@ public class BootstrapConfiguration {
     private static final String PROPERTIES_EXT = "properties";
 
     /**
-     * Some entires in bootstrap property files allow multiple values.
-     * This is the delimiter which is used to separate the values.
+     * Some entries in bootstrap property files allow multiple values. This is the delimiter that is
+     * used to separate the values.
      */
     private static final String MULTI_VALUE_DELIM = ",";
 
     /**
-     * Set of entries in bootstrap property files which are allowed to have
-     * multiple values.
+     * Set of entries in bootstrap property files that are allowed to have multiple values.
      */
     private static final Set<String> MULTI_VALUE_PROPS = SetUtils.hashSet(
             "resource.download.auto"
@@ -136,8 +135,7 @@ public class BootstrapConfiguration {
     /**
      * The template builder.
      */
-    private final @NotNull TemplateBuilder<OfferedResource, OfferedResourceDesc>
-            templateBuilder;
+    private final @NotNull TemplateBuilder<OfferedResource, OfferedResourceDesc> templateBuilder;
 
     /**
      * The catalog service.
@@ -160,11 +158,10 @@ public class BootstrapConfiguration {
     private final @NonNull ConnectorService connectorService;
 
     /**
-     * Bootstrap the connector.
-     * Will load JSON-LD files which contain ids catalog entities and register
-     * them to the DSC. Additionally, property files will be loaded which can
-     * provide information on the clearing house and broker which shall be used
-     * and which resources needs to be registered at the broker.
+     * Bootstrap the connector. Will load JSON-LD files containing IDS catalog entities and register
+     * them in the DSC. Additionally, property files will be loaded and provide information on the
+     * clearing house and broker that should be used, and which resources need to be registered at
+     * what broker.
      */
     @PostConstruct
     @Transactional
@@ -173,8 +170,8 @@ public class BootstrapConfiguration {
             log.info("Start bootstrapping of Connector.");
         }
 
-        // try to retrieve data and properties
-        final var jsonFiles = findFilesByExtension(bootstrapPath, null, JSON_LD_EXTENSION);
+        // Try to retrieve data and properties.
+        final var jsonFiles = findFilesByExtension(bootstrapPath, null, FILE_EXT);
         if (jsonFiles.isEmpty() && log.isInfoEnabled()) {
             log.info("No catalog files for bootstrapping found.");
         }
@@ -188,8 +185,8 @@ public class BootstrapConfiguration {
 
         // register content of all found catalog files
         if (!processIdsFiles(jsonFiles, properties, idsResources)) {
-            if (log.isErrorEnabled()) {
-                log.error("An error occurred while bootstrapping IDS catalogs.");
+            if (log.isWarnEnabled()) {
+                log.warn("An error occurred while bootstrapping IDS catalogs.");
             }
             SpringApplication.exit(context, () -> -1);
         }
