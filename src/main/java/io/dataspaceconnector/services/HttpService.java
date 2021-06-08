@@ -18,6 +18,7 @@ package io.dataspaceconnector.services;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,9 +28,11 @@ import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -125,13 +128,14 @@ public class HttpService {
         final var targetUri = urlBuilder.build().uri();
 
         okhttp3.Response response;
-        if (args.getHeaders() == null) {
+        if (args.getHeaders() == null && args.getAuth() == null) {
             response = httpSvc.get(targetUri);
         } else {
             /*
                 Make a copy of the headers and insert sensitive data only into the copy.
              */
-            final var headerCopy = Map.copyOf(args.getHeaders());
+            final var headerCopy = args.getHeaders() == null
+                    ? new HashMap<String, String>() : new HashMap<>(args.getHeaders());
             if (args.getAuth() != null) {
                 headerCopy.put("Authorization",
                         Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
@@ -142,7 +146,10 @@ public class HttpService {
 
         final var output = new Response();
         output.setCode(response.code());
-        output.setBody(response.body().byteStream());
+        output.setBody(response.body() == null
+                ? InputStream.nullInputStream()
+                : new ByteArrayInputStream(response.body().bytes()));
+        response.close();
 
         return output;
     }
@@ -201,7 +208,7 @@ public class HttpService {
             return get(target, args);
         }
 
-        throw new RuntimeException("Not implemented.");
+        throw new NotImplementedError();
     }
 
     /**

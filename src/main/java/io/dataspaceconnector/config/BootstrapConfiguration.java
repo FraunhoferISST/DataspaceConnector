@@ -24,18 +24,14 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.ResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.services.resources.RuleService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
 import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
@@ -128,12 +124,6 @@ public class BootstrapConfiguration {
     private String bootstrapPath;
 
     /**
-     * Base URI.
-     */
-    @Value("${bootstrap.base.uri}")
-    private String baseUri;
-
-    /**
      * Spring application context. Needed for shutdowns in case of errors.
      */
     private final @NotNull ApplicationContext context;
@@ -170,16 +160,6 @@ public class BootstrapConfiguration {
     private final @NonNull ConnectorService connectorService;
 
     /**
-     * Service for rules.
-     */
-    private final @NonNull RuleService ruleService;
-
-    /**
-     * Repository for artifacts.
-     */
-    private final @NonNull ArtifactRepository artifactRepository;
-
-    /**
      * Bootstrap the connector.
      * Will load JSON-LD files which contain ids catalog entities and register
      * them to the DSC. Additionally, property files will be loaded which can
@@ -194,8 +174,7 @@ public class BootstrapConfiguration {
         }
 
         // try to retrieve data and properties
-        final List<File> jsonFiles =
-                findFilesByExtension(bootstrapPath, null, JSON_LD_EXTENSION);
+        final var jsonFiles = findFilesByExtension(bootstrapPath, null, JSON_LD_EXTENSION);
         if (jsonFiles.isEmpty() && log.isInfoEnabled()) {
             log.info("No catalog files for bootstrapping found.");
         }
@@ -240,7 +219,7 @@ public class BootstrapConfiguration {
                                      final Map<URI, Resource> idsResources) {
         final var knownBrokers = new HashSet<String>();
         // iterate over all registered resources
-        for (Map.Entry<URI, Resource> entry : idsResources.entrySet()) {
+        for (final var entry : idsResources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
             if (properties.containsKey(propertyKey)) {
                 final var brokerURL = (String) properties.get(propertyKey);
@@ -456,7 +435,7 @@ public class BootstrapConfiguration {
             }
         }
 
-        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        final var template = new TransactionTemplate(transactionManager);
         // iterate over all deserialized catalogs
         for (final ResourceCatalog catalog : catalogs) {
             // check for duplicates
@@ -478,7 +457,7 @@ public class BootstrapConfiguration {
 
             if (duplicate != null && duplicate) {
                 if (log.isInfoEnabled()) {
-                    log.info("Catlog with IDS id '{}' is already registered and will be"
+                    log.info("Catalog with IDS id '{}' is already registered and will be"
                             + " skipped.", catalog.getId());
                 }
                 continue;
@@ -525,56 +504,7 @@ public class BootstrapConfiguration {
         catalogTemplate.setRequestedResources(requestedResources);
 
         // perform registration
-        final var builtCatalog = templateBuilder.build(catalogTemplate);
-
-        // update target IDs from rules to match dsc IDs
-        /* for (OfferedResource resource : builtCatalog.getOfferedResources()) {
-            for (Contract contract : resource.getContracts()) {
-                for (ContractRule rule : contract.getRules()) {
-                    final var artifacts = artifactRepository.findAllByBootstrapId(
-                            deserializationService.getRule(rule.getValue()).getTarget());
-                    if (artifacts.size() != 1) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Failed to retrieve bootstrapped artifact. "
-                                    + "Expected 1 but found {}.", artifacts.size());
-                        }
-
-                        return false;
-                    }
-
-                    final var idsRule = deserializationService.getRule(rule.getValue());
-                    try {
-                        final var field =
-                                idsRule.getClass().getDeclaredField("_target");
-                        field.setAccessible(true);
-                        field.set(idsRule, URI.create(baseUri + SelfLinkHelper.getSelfLink(
-                                artifacts.get(0))));
-                        field.setAccessible(false);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Could not update target in IDS rule entity.", e);
-                        }
-
-                        return false;
-                    }
-
-                    final var newValue = idsRule.toRdf();
-
-                    TransactionTemplate template = new TransactionTemplate(transactionManager);
-
-                    template.execute(status -> {
-                        Hibernate.initialize(rule.getAdditional());
-
-                        final var desc = new ContractRuleDesc();
-                        desc.setValue(newValue);
-                        desc.setTitle(rule.getTitle());
-                        desc.setRemoteId(rule.getRemoteId());
-                        desc.setAdditional(rule.getAdditional());
-                        return ruleService.update(rule.getId(), desc);
-                    });
-                }
-            }
-        }*/
+        templateBuilder.build(catalogTemplate);
 
         if (log.isInfoEnabled()) {
             log.info("Bootstrapped catalog with IDS id '{}'.", catalog.getId());
@@ -591,17 +521,13 @@ public class BootstrapConfiguration {
      * @param properties       additional properties, required for
      *                         transformation
      * @param resource         the ids resource
-     * @param <T>              either {@link OfferedResourceDesc}
-     *                         or {@link RequestedResourceDesc}
      */
-    @SuppressWarnings("unchecked")
-    private <T extends AbstractDescription<?>> void fillResourceTemplate(
-            final ResourceTemplate<T> resourceTemplate,
+    private void fillResourceTemplate(
+            final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
             final Properties properties,
             final Resource resource) {
         // add ids id to additional fields
-        ((ResourceDesc<OfferedResource>) resourceTemplate.getDesc())
-                .setBootstrapId(resource.getId().toString());
+        resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
 
         // collect all artifact IDs from artifacts inside representations
         final var artifacts = new ArrayList<URI>();
@@ -616,7 +542,7 @@ public class BootstrapConfiguration {
                         resource,
                         artifacts,
                         properties.containsKey("resource.download.auto")
-                                && ((Set<String>) properties.get("resource.download.auto"))
+                                && toSet(properties.get("resource.download.auto"))
                                 .contains(resource.getId().toString()),
                         null
                 )
@@ -665,7 +591,6 @@ public class BootstrapConfiguration {
      * @return properties which contain the merged content of all bootstrap
      * config files
      */
-    @SuppressWarnings("unchecked")
     private @NotNull Properties retrieveBootstrapConfig() {
         final Properties config = new Properties();
         final List<File> propertyFiles = findFilesByExtension(bootstrapPath, PROPERTIES_NAME,
@@ -689,8 +614,7 @@ public class BootstrapConfiguration {
                         final Set<String> multipleValues = Arrays.stream(
                                 ((String) property.getValue()).split(MULTI_VALUE_DELIM))
                                 .map(String::trim).collect(Collectors.toSet());
-                        final Set<String> existingValues =
-                                (Set<String>) config.get(property.getKey());
+                        final Set<String> existingValues = toSet(config.get(property.getKey()));
                         config.put(property.getKey(), existingValues.addAll(multipleValues));
                     } else {
                         if (log.isWarnEnabled()) {
@@ -770,4 +694,8 @@ public class BootstrapConfiguration {
         return files;
     }
 
+    @SuppressWarnings("unchecked")
+    private Set<String> toSet(final Object obj) {
+        return (Set<String>) obj;
+    }
 }

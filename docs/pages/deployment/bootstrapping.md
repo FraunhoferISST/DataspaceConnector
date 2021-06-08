@@ -19,16 +19,22 @@ In this section, the registration of resources during the startup will be descri
 
 ### Registering Elements at the Connector
 
-During the startup of the Dataspace Connector, the bootstrapping path, which is specified in 
-`application.properties`will be scanned for `*.jsonld` and `bootstrap.properties` files. The search 
+During the startup of the Dataspace Connector, the bootstrapping path, which is specified in
+`application.properties`will be scanned for `*.jsonld` and `bootstrap.properties` files. The search
 includes all subdirectories found in the base path.
 
-Each `jsonld`-file contains the JSON-LD representation of an IDS catalog. These representations will 
-be loaded and registered at the connector. This includes all elements which are part of the catalog, 
-except requested resources. The IDs used for the IDS catalog are used to prevent duplicates among 
+Each `jsonld`-file contains the JSON-LD representation of an IDS catalog. These representations will
+be loaded and registered at the connector. This includes all elements which are part of the catalog,
+except requested resources. The IDs used for the IDS catalog are used to prevent duplicates among
 multiple startups.
 
-An example for a valid catalog that can be used for bootstrapping can be found below. Corresponding 
+The `bootstrap.properties` files contain additional data that is not present in the IDS Infomodel
+representations. This includes credentials, URLs, and values for artifacts as well as information on
+which resources should be registered at IDS Brokers. If multiple `bootstrap.properties` files are
+found, all of them will be loaded and merged. If there are collisions, these will be logged and the
+first found value will be kept.
+
+An example for a valid catalog that can be used for bootstrapping can be found below. Corresponding
 sample files are provided at `test/resources/bootstrap`.
 
 ```json
@@ -138,25 +144,23 @@ sample files are provided at `test/resources/bootstrap`.
 
 ```
 
-Since the IDS representation of catalogs does not contain information about the `remoteURL` for 
-resources, which is required for the registration of resources at the connector, this data has to be 
-provided in the `bootstrap.properties` file(s). For each resource, an entry with the key 
-`resource.remoteUrl.<RESOURCE_ID>` that defines the `remoteURL` for this resource must be present.
-
-An example that defines the `remoteURL` for the first resource of the example IDS catalog, can be 
-found below.
+An example for a valid `bootstrap.properties` file can be found below.
 
 ```properties
-resource.remoteUrl.https\://w3id.org/idsa/autogen/resource/a7d8c819-c7f7-49a1-9e0e-759fbd077a97=https://example.com
+#artifact.accessUrl.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=
+#artifact.username.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=
+#artifact.password.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=
+artifact.value.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=Example Value
+broker.register.https\://w3id.org/idsa/autogen/resource/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=https://broker.ids.isst.fraunhofer.de/infrastructure
 ```
 
 ### Registering Elements at the Broker
-Each resource that has been registered during the bootstrapping process can be registered at an 
-IDS Broker. It is possible to register different resources at different brokers, but each resource 
-can only be registered at one broker once. The registration of a resource at a broker implicitly 
+Each resource that has been registered during the bootstrapping process can be registered at an
+IDS Broker. It is possible to register different resources at different brokers, but each resource
+can only be registered at one broker once. The registration of a resource at a broker implicitly
 registers the connector itself at the broker.
 
-In order to register a resource at a broker, an entry with the following structure must be placed in 
+In order to register a resource at the broker, an entry with the following structure must be placed in
 a `bootstrap.properties` file:
 
 ```properties

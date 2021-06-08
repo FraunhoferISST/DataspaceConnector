@@ -133,7 +133,9 @@ public class EntityUpdateService {
     public void updateArtifact(final Artifact artifact) {
         try {
             final var updated = artifactUpdater.update(artifact);
-            log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+            if (log.isDebugEnabled()) {
+                log.debug("Updated artifact. [uri=({})]", SelfLinkHelper.getSelfLink(updated));
+            }
         } catch (ResourceNotFoundException exception) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to update artifact. [uri=({})]", artifact.getId());

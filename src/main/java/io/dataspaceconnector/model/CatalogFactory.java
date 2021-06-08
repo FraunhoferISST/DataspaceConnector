@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Creates and updates a catalog.
@@ -42,13 +43,6 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
     public static final String DEFAULT_DESCRIPTION = "";
 
     /**
-     * Default constructor.
-     */
-    public CatalogFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
-
-    /**
      * Create a new catalog.
      * @param desc The description of the new catalog.
      * @return The new catalog.
@@ -61,7 +55,9 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
         final var catalog = new Catalog();
         catalog.setOfferedResources(new ArrayList<>());
         catalog.setRequestedResources(new ArrayList<>());
-        catalog.setBootstrapId(URI.create(desc.getBootstrapId()));
+        if (desc.getBootstrapId() != null) {
+            catalog.setBootstrapId(URI.create(desc.getBootstrapId()));
+        }
 
         update(catalog, desc);
 
@@ -84,8 +80,14 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
                 this.updateTitle(catalog, desc.getTitle());
         final var hasUpdatedDesc =
                 this.updateDescription(catalog, desc.getDescription());
-        final var hasUpdatedBootstrapId =
-                this.updateBootstrapId(catalog, desc.getBootstrapId());
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
+
         final var hasUpdatedAdditional =
                 this.updateAdditional(catalog, desc.getAdditional());
 
@@ -116,13 +118,18 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
         return newAdditional.isPresent();
     }
 
-    private boolean updateBootstrapId(final Catalog catalog, final String bootstrapId) {
-        final var newBootstrapId =
-                MetadataUtils
-                        .updateUri(
-                                catalog.getBootstrapId(),
-                                URI.create(bootstrapId),
-                                catalog.getBootstrapId());
+    private boolean updateBootstrapId(final Catalog catalog, final URI bootstrapId) {
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && catalog.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            catalog.getBootstrapId(),
+                            bootstrapId,
+                            catalog.getBootstrapId());
+        }
+
         newBootstrapId.ifPresent(catalog::setBootstrapId);
 
         return newBootstrapId.isPresent();

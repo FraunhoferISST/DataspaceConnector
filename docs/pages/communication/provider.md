@@ -180,7 +180,7 @@ one resource (e.g. the data usage can be logged and the data should be deleted a
 
 ### Step 2: Add Local Data
 
-After we created created a contract offer and a resource offer and added the latter to a catalog, we 
+After we created a contract offer and a resource offer and added the latter to a catalog, we 
 have to create a representation and add it to the resource offer. Then, we have to create an 
 artifact and add it to the representation.
 
@@ -251,25 +251,25 @@ Currently, the Dataspace Connector can natively establish a connection via http,
 with basic authentication. To connect to other backends, take a look at how to integrate 
 routing frameworks as explained [here](../deployment/camel.md).
 
+---
+
+**Note**: While the connector has the ability to store data internally, it never duplicates data
+connected by external systems into its internal memory. Instead, the data is only forwarded when a
+request is received. In addition, the backend connection credentials are never passed on to another
+connector, but are only used for internal data handling.
+
+---
+
 In case an external REST API should be connected and this API usually expects query parameters from
 the user, e.g. to retrieve the raw data in various formats, multiple artifacts can be created
 for one representation, or multiple artifacts with one representation each. Each artifact can then 
 refer to one specified http request or database query with fix parameters. 
 
 If you want to leave it up to the consumer which part of the data should be retrieved, a reference 
-to the OpenApi description of the connected REST Api as "endpointDocumentation" may be supplied. 
-This is useful, for example, if the connected API is a generic Linked Data platform. The consumer 
+to the OpenApi description of the connected REST Api as `endpointDocumentation` may be provided. 
+This is useful, for example, if the connected API is a generic Linked Data Platform. The consumer 
 can then pass request parameters when retrieving data, which are automatically resolved at the 
 Dataspace Connector to the provider backend.
-
----
-
-**Note**: While the connector has the ability to store data internally, it never duplicates data 
-connected by external systems into its internal memory. Instead, the data is only forwarded when a 
-request is received. In addition, the backend connection credentials are never passed on to another 
-connector, but are only used for internal data handling.
-
----
 
 ### Step 4: Publish Resources at an IDS Broker (optional)
 

@@ -83,9 +83,9 @@ public final class MappingUtils {
     }
 
     private static Map<String, String> buildAdditionalForResource(final Resource resource) {
-        final var additional = propertiesToAdditional(resource.getProperties());
-
         Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var additional = propertiesToAdditional(resource.getProperties());
 
         final var periodicity = resource.getAccrualPeriodicity();
         final var contentPart = resource.getContentPart();
@@ -186,41 +186,30 @@ public final class MappingUtils {
         final var description = resource.getDescription();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
-        final var additional = buildAdditionalForResource(resource);
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var standardLicense = resource.getStandardLicense();
         final var title = resource.getTitle();
         final var resourceEndpoint = resource.getResourceEndpoint();
 
-        desc.setAdditional(additional);
+        desc.setAdditional(buildAdditionalForResource(resource));
         desc.setKeywords(keywords);
         desc.setPublisher(publisher);
         desc.setLicence(standardLicense);
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            if (description.size() == 1) {
-                desc.setDescription(description.get(0).toString());
-            } else {
-                desc.setDescription(description.toString());
-            }
+            desc.setDescription(description.size() == 1 ? description.get(0).toString()
+                                                        : description.toString());
         }
 
         if (title != null) {
-            if (title.size() == 1) {
-                desc.setTitle(title.get(0).toString());
-            } else {
-                desc.setTitle(title.toString());
-            }
+            desc.setTitle(title.size() == 1 ? title.get(0).toString() : title.toString());
         }
 
         if (language != null) {
-            if (language.size() == 1) {
-                desc.setLanguage(language.get(0).toString());
-            } else {
-                desc.setLanguage(language.toString());
-            }
+            desc.setLanguage(
+                    language.size() == 1 ? language.get(0).toString() : language.toString());
         }
 
         if (resourceEndpoint != null) {
@@ -271,13 +260,10 @@ public final class MappingUtils {
      * @param additional the map of additional properties.
      * @param key the map key to use.
      */
-    private static void addListToAdditional(final List list, final Map<String, String> additional,
+    private static void addListToAdditional(final List<?> list,
+                                            final Map<String, String> additional,
                                             final String key) {
-        if (list.size() == 1) {
-            additional.put(key, list.get(0).toString());
-        } else {
-            additional.put(key, list.toString());
-        }
+        additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
     }
 
     /**
@@ -414,16 +400,20 @@ public final class MappingUtils {
         desc.setProvider(provider);
         desc.setRemoteId(contractId);
 
-        try {
-            desc.setEnd(getDateOf(end.toXMLFormat()));
-        } catch (Exception ignored) {
-            // Default values don't need to be set here.
+        if (end != null) {
+            try {
+                desc.setEnd(getDateOf(end.toXMLFormat()));
+            } catch (DateTimeParseException ignored) {
+                // Default values don't need to be set here.
+            }
         }
 
-        try {
-            desc.setStart(getDateOf(start.toXMLFormat()));
-        } catch (Exception ignored) {
-            // Default values don't need to be set here.
+        if (start != null) {
+            try {
+                desc.setStart(getDateOf(start.toXMLFormat()));
+            } catch (DateTimeParseException ignored) {
+                // Default values don't need to be set here.
+            }
         }
 
         return new ContractTemplate(null, desc, null);
@@ -479,7 +469,6 @@ public final class MappingUtils {
      *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
-     * @throws DateTimeParseException if the string could not be converted.
      */
     public static ZonedDateTime getDateOf(final String calendar) {
         return ZonedDateTime.parse(calendar);

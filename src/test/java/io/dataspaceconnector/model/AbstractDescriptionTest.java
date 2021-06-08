@@ -29,7 +29,7 @@ public class AbstractDescriptionTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = new AbstractDescription();
+        final var result = new AbstractDescription<>();
 
         /* ASSERT */
         assertNull(result.getAdditional());
@@ -42,12 +42,12 @@ public class AbstractDescriptionTest {
         final var value = "Some value";
 
         /* ACT */
-        final var result = new AbstractDescription();
+        final var result = new AbstractDescription<>();
         result.addOverflow(key, value);
         result.addOverflow(key, value);
 
         /* ASSERT */
-        assertEquals(0, result.getAdditional().size());
+        assertEquals(1, result.getAdditional().size());
         assertTrue(result.getAdditional().keySet().contains(key));
         assertEquals(value, result.getAdditional().get(key));
     }
@@ -58,7 +58,7 @@ public class AbstractDescriptionTest {
         final var value = "Some value";
 
         /* ACT */
-        final var result = new AbstractDescription();
+        final var result = new AbstractDescription<>();
         result.addOverflow(null, value);
 
         /* ASSERT */
@@ -71,7 +71,7 @@ public class AbstractDescriptionTest {
         final var key = "Some key";
 
         /* ACT */
-        final var result = new AbstractDescription();
+        final var result = new AbstractDescription<>();
         result.addOverflow(key, null);
 
         /* ASSERT */
@@ -84,7 +84,7 @@ public class AbstractDescriptionTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = new AbstractDescription();
+        final var result = new AbstractDescription<>();
         result.addOverflow(null, null);
 
         /* ASSERT */

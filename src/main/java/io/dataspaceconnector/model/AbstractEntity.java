@@ -91,6 +91,6 @@ public class AbstractEntity implements Serializable {
      * Optional id which is used during bootstrapping.
      */
     @Column(name = "bootstrap_id")
-    @Setter()
+    @Setter
     private URI bootstrapId;
 }

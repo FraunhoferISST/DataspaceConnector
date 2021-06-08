@@ -69,9 +69,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "WHERE a.id = :artifactId "
             + "AND a.deleted = false "
             + "AND ag.deleted = false "
-            + "AND ag.remoteId <> 'aced00057372000c6a6176612e6e65742e555"
-                + "249ac01782e439e49ab0300014c0006737472696e677400124c6a"
-                + "6176612f6c616e672f537472696e673b787074000767656e6573697378' "
+            + "AND ag.remoteId <> 'genesis' "
             + "AND ag.archived = false "
             + "AND ag.confirmed = true "
             + "AND ag MEMBER OF a.agreements")
@@ -98,6 +96,7 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
      */
     @Query("SELECT a "
             + "FROM Artifact a "
-            + "WHERE a.bootstrapId = :bootstrapId ")
+            + "WHERE a.bootstrapId = :bootstrapId "
+            + "AND a.deleted = false")
     List<Artifact> findAllByBootstrapId(URI bootstrapId);
 }
