@@ -48,9 +48,4 @@ public class EndpointDesc<T extends Endpoint> extends AbstractDescription<T> {
      * The outbound path.
      */
     private String outboundPath;
-
-    /**
-     * The type of the endpoint.
-     */
-    private EndpointType endpointType;
 }

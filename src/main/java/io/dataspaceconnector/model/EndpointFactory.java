@@ -50,7 +50,6 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
     /**
      * Create a new endpoint.
-     *
      * @param desc The description of the new endpoint.
      * @return The new endpoint.
      * @throws IllegalArgumentException if desc is null.
@@ -67,11 +66,21 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
     /**
      * Create a new endpoint. Implement type specific stuff here.
-     *
      * @param desc The description passed to the factory.
      * @return The new resource.
      */
     protected abstract T createInternal(D desc);
+
+    /**
+     * Update an endpoint. Implement type specific stuff here.
+     *
+     * @param endpoint The endpoint to be updated.
+     * @param desc     The description passed to the factory.
+     * @return true if the endpoint has been modified.
+     */
+    protected boolean updateInternal(final T endpoint, final D desc) {
+        return false;
+    }
 
     /**
      * @param endpoint The entity to be updated.
@@ -86,29 +95,14 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         final var hasUpdatedDocumentation = updateEndpointDocumentation(endpoint,
                 desc.getEndpointDocumentation());
         final var hasUpdatedInformation = updateEndpointInformation(endpoint,
-                endpoint.getEndpointInformation());
-        final var hasUpdatedInboundPath = updateInboundPath(endpoint, endpoint.getInboundPath());
-        final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, endpoint.getOutboundPath());
-        final var hasUpdatedEndpointType = updateEndpointType(endpoint, endpoint.getEndpointType());
+                desc.getEndpointInformation());
+        final var hasUpdatedInboundPath = updateInboundPath(endpoint, desc.getInboundPath());
+        final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, desc.getOutboundPath());
+
+        final var updatedInternal = updateInternal(endpoint, desc);
 
         return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath
-                || hasUpdatedOutboundPath || hasUpdatedEndpointType;
-    }
-
-    /**
-     * @param endpoint     The endpoint.
-     * @param endpointType The endpoint type.
-     * @return True, if endpoint is updated.
-     */
-    private boolean updateEndpointType(final Endpoint endpoint, final EndpointType endpointType) {
-        final boolean updated;
-        if (endpoint.getEndpointType().equals(endpointType)) {
-            updated = false;
-        } else {
-            endpoint.setEndpointType(endpointType);
-            updated = true;
-        }
-        return updated;
+                || hasUpdatedOutboundPath || updatedInternal;
     }
 
     /**

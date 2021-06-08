@@ -44,12 +44,21 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
     public static final String DEFAULT_MEDIATYPE = "mediatype";
 
     /**
+     * @param desc The description passed to the factory.
+     * @return The app endpoint entity.
+     */
+    @Override
+    protected AppEndpoint createInternal(final AppEndpointDesc desc) {
+        return new AppEndpoint();
+    }
+
+    /**
      * @param appEndpoint The app endpoint.
      * @param desc        The description of the new entity.
      * @return True, if app endpoint is updated.
      */
     @Override
-    public boolean update(final AppEndpoint appEndpoint, final AppEndpointDesc desc) {
+    protected boolean updateInternal(final AppEndpoint appEndpoint, final AppEndpointDesc desc) {
         Utils.requireNonNull(appEndpoint, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -128,19 +137,5 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
 
         newUri.ifPresent(appEndpoint::setAccessURL);
         return newUri.isPresent();
-    }
-
-    /**
-     * @param desc The description passed to the factory.
-     * @return The app endpoint entity.
-     */
-    @Override
-    protected AppEndpoint createInternal(final AppEndpointDesc desc) {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
-        final var appEndpoint = new AppEndpoint();
-
-        update(appEndpoint, desc);
-        return appEndpoint;
     }
 }

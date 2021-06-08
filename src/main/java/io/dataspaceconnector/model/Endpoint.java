@@ -69,9 +69,4 @@ public class Endpoint extends AbstractEntity {
      * The outbound path.
      */
     private String outboundPath;
-
-    /**
-     * The type of the endpoint.
-     */
-    private EndpointType endpointType;
 }

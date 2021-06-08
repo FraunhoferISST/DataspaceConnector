@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -34,15 +32,21 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
     private static final URI DEFAULT_ACCESS_URL = URI.create("https://path");
 
     /**
+     * @param desc The description passed to the factory.
+     * @return The new ids endpoint.
+     */
+    @Override
+    protected IdsEndpoint createInternal(final IdsEndpointDesc desc) {
+        return new IdsEndpoint();
+    }
+
+    /**
      * @param idsEndpoint The ids endpoint.
      * @param desc        The description of the new entity.
      * @return True, if ids endpoint is updated.
      */
     @Override
-    public boolean update(final IdsEndpoint idsEndpoint, final IdsEndpointDesc desc) {
-        Utils.requireNonNull(idsEndpoint, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
+    protected boolean updateInternal(final IdsEndpoint idsEndpoint, final IdsEndpointDesc desc) {
         return updateAccessURL(idsEndpoint, desc.getAccessURL());
     }
 
@@ -57,20 +61,5 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
         newAccessUrl.ifPresent(idsEndpoint::setAccessURL);
 
         return newAccessUrl.isPresent();
-    }
-
-    /**
-     * @param desc The description passed to the factory.
-     * @return The new ids endpoint.
-     */
-    @Override
-    protected IdsEndpoint createInternal(final IdsEndpointDesc desc) {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
-        final var idsEndpoint = new IdsEndpoint();
-
-        update(idsEndpoint, desc);
-
-        return idsEndpoint;
     }
 }

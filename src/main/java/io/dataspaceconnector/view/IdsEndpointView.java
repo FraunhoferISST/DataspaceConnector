@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+//import io.dataspaceconnector.model.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +44,31 @@ public class IdsEndpointView extends RepresentationModel<IdsEndpointView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
+
+    /**
+     * The documentation for the endpoint.
+     */
+    private URI endpointDocumentation;
+
+    /**
+     * The information for the endpoint.
+     */
+    private String endpointInformation;
+
+    /**
+     * The inbound path.
+     */
+    private String inboundPath;
+
+    /**
+     * The outbound path.
+     */
+    private String outboundPath;
+
+//    /**
+//     * The type of the endpoint.
+//     */
+//    private EndpointType endpointType;
 
     /**
      * The absolute path of the generic endpoint.

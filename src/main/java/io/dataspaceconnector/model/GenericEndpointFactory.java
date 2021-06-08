@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,15 +30,22 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
     private static final String DEFAULT_PATH = "https://path";
 
     /**
-     * @param genericEndpoint The generic endpoint.
-     * @param desc            The description of the new entity.
-     * @return True, if generic endpoint is updated.
+     * @param desc The description passed to the factory.
+     * @return The app endpoint entity.
      */
     @Override
-    public boolean update(final GenericEndpoint genericEndpoint, final GenericEndpointDesc desc) {
-        Utils.requireNonNull(genericEndpoint, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+    protected GenericEndpoint createInternal(final GenericEndpointDesc desc) {
+        return new GenericEndpoint();
+    }
 
+    /**
+     * @param genericEndpoint The app endpoint.
+     * @param desc            The description of the new entity.
+     * @return True, if app endpoint is updated.
+     */
+    @Override
+    protected boolean updateInternal(final GenericEndpoint genericEndpoint,
+                                     final GenericEndpointDesc desc) {
         return updateAbsolutePath(genericEndpoint, desc.getAbsolutePath());
     }
 
@@ -57,20 +62,5 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
         newAbsolutePath.ifPresent(genericEndpoint::setAbsolutePath);
 
         return newAbsolutePath.isPresent();
-    }
-
-    /**
-     * @param desc The description passed to the factory.
-     * @return The new generic endpoint entity.
-     */
-    @Override
-    protected GenericEndpoint createInternal(final GenericEndpointDesc desc) {
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
-        final var genericEndpoint = new GenericEndpoint();
-
-        update(genericEndpoint, desc);
-
-        return genericEndpoint;
     }
 }
