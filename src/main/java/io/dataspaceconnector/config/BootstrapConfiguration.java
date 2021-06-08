@@ -15,29 +15,6 @@
  */
 package io.dataspaceconnector.config;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -56,16 +33,14 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
+import io.dataspaceconnector.utils.BootstrapUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.fileupload.MultipartStream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -76,6 +51,30 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
+
+import static io.dataspaceconnector.utils.BootstrapUtils.findFilesByExtension;
+import static io.dataspaceconnector.utils.BootstrapUtils.retrieveBootstrapConfig;
 
 /**
  * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
@@ -103,19 +102,6 @@ public class BootstrapConfiguration {
      * File extension used for bootstrap property files.
      */
     private static final String PROPERTIES_EXT = "properties";
-
-    /**
-     * Some entries in bootstrap property files allow multiple values. This is the delimiter that is
-     * used to separate the values.
-     */
-    private static final String MULTI_VALUE_DELIM = ",";
-
-    /**
-     * Set of entries in bootstrap property files that are allowed to have multiple values.
-     */
-    private static final Set<String> MULTI_VALUE_PROPS = SetUtils.hashSet(
-            "resource.download.auto"
-    );
 
     /**
      * Root where search for bootstrapping file starts.
@@ -172,14 +158,30 @@ public class BootstrapConfiguration {
         }
 
         // Try to retrieve data and properties.
-        final var jsonFiles = findFilesByExtension(bootstrapPath, null, FILE_EXT);
-        if (jsonFiles.isEmpty() && log.isInfoEnabled()) {
-            log.info("No catalog files for bootstrapping found.");
+        List<File> jsonFiles = null;
+        try {
+            jsonFiles = findFilesByExtension(bootstrapPath, null, FILE_EXT);
+            if (jsonFiles.isEmpty() && log.isWarnEnabled()) {
+                log.warn("Catalog files for bootstrapping could not be loaded.");
+            }
+        } catch (FileNotFoundException | NullPointerException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("No catalog files for bootstrapping found. [exception=({})]",
+                        e.getMessage());
+            }
         }
 
-        final Properties properties = retrieveBootstrapConfig();
-        if (properties.isEmpty() && log.isInfoEnabled()) {
-            log.info("No config files for bootstrapping found.");
+        var properties = new Properties();
+        try {
+            properties = retrieveBootstrapConfig(bootstrapPath, PROPERTIES_NAME, PROPERTIES_EXT);
+            if (properties.isEmpty() && log.isWarnEnabled()) {
+                log.warn("Config files for bootstrapping could not be loaded.");
+            }
+        } catch (FileNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("No config files for bootstrapping found. [exception=({})]",
+                        e.getMessage());
+            }
         }
 
         final Map<URI, Resource> idsResources = new ConcurrentHashMap<>();
@@ -413,8 +415,7 @@ public class BootstrapConfiguration {
      * @return true if all catalogs were loaded successfully or were already
      * registered, false otherwise
      */
-    private boolean processIdsFiles(final List<File> jsonFiles,
-                                    final Properties properties,
+    private boolean processIdsFiles(final List<File> jsonFiles, final Properties properties,
                                     final Map<URI, Resource> idsResources) {
         final Set<ResourceCatalog> catalogs = new HashSet<>();
 
@@ -540,7 +541,7 @@ public class BootstrapConfiguration {
                         resource,
                         artifacts,
                         properties.containsKey("resource.download.auto")
-                                && toSet(properties.get("resource.download.auto"))
+                                && BootstrapUtils.toSet(properties.get("resource.download.auto"))
                                 .contains(resource.getId().toString()),
                         null
                 )
@@ -579,128 +580,5 @@ public class BootstrapConfiguration {
 
             }
         }
-    }
-
-    /**
-     * Collect all bootstrap configuration files and merge them into a single
-     * {@link Properties} object. In case of conflicts for values which don't
-     * support multiple values, the first one found will be used.
-     *
-     * @return properties which contain the merged content of all bootstrap
-     * config files
-     */
-    private Properties retrieveBootstrapConfig() throws FileNotFoundException {
-        final Properties config = new Properties();
-
-        // iterate all bootstrap.properties files
-        for (final var propertyFile
-                : findFilesByExtension(bootstrapPath, PROPERTIES_NAME, PROPERTIES_EXT)) {
-            final var properties = new Properties();
-            try {
-                properties.load(FileUtils.openInputStream(propertyFile));
-            } catch (IOException e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Could not open properties file '{}'.", propertyFile.getPath(), e);
-                }
-
-                continue;
-            }
-
-
-            // iterate all properties from file and check for duplicates
-            for (final Map.Entry<Object, Object> property : properties.entrySet()) {
-                if (config.containsKey(property.getKey())) {
-                    if (MULTI_VALUE_PROPS.contains((String) property.getKey())) {
-                        final Set<String> multipleValues = Arrays.stream(
-                                ((String) property.getValue()).split(MULTI_VALUE_DELIM))
-                                .map(String::trim).collect(Collectors.toSet());
-                        final Set<String> existingValues = toSet(config.get(property.getKey()));
-                        config.put(property.getKey(), existingValues.addAll(multipleValues));
-                    } else {
-                        if (log.isWarnEnabled()) {
-                            log.warn("Collision for single-value property '{}' found. Going to"
-                                            + " keep the old value '{}'; new value '{}' will be "
-                                            + "ignored.",
-                                    property.getKey().toString(),
-                                    config.get(property.getKey()).toString(),
-                                    property.getValue().toString());
-                        }
-                    }
-                } else {
-                    if (MULTI_VALUE_PROPS.contains((String) property.getKey())) {
-                        final Set<String> multipleValues = Arrays.stream(
-                                ((String) property.getValue()).split(MULTI_VALUE_DELIM))
-                                .map(String::trim).collect(Collectors.toSet());
-                        config.put(property.getKey(), multipleValues);
-                    } else {
-                        config.put(property.getKey(), property.getValue());
-                    }
-                }
-            }
-        }
-
-        return config;
-    }
-
-    /**
-     * Find all files with given extension in a given path. Optionally a
-     * filename can be provided, too. If filename is set to null, all files
-     * with matching extension will be returned. The search includes
-     * subdirectories.
-     *
-     * @param path      the starting path for searching
-     * @param filename  optional filename which is searched, null for all
-     *                  files
-     * @param extension the searched file extension
-     * @return a list of all files which are stored at given path (and
-     * subdirectories) with required extension and optional required filename
-     * @throws FileNotFoundException if the given path does not exist
-     */
-    private List<File> findFilesByExtension(final String path, final String filename,
-                                                     final String extension)
-            throws FileNotFoundException {
-        // validate input
-        final var base = new File(path);
-        if (!base.exists()) {
-            throw new FileNotFoundException("File '" + path + "' does not exist.");
-        }
-
-        final var files = new ArrayList<File>();
-        if (base.isDirectory()) {
-            // if the base file is a directory iterate all child files
-            for (final var child : base.listFiles()) {
-                if (child.isDirectory()) {
-                    files.addAll(findFilesByExtension(child.getPath(), filename, extension));
-                } else {
-                    if (isSearchedFile(child, filename, extension)) {
-                        files.add(child);
-                    }
-                }
-            }
-        } else {
-            // check if the base file itself is a json-ld file <- TODO: JsonLd?
-            if (isSearchedFile(base, filename, extension)) {
-                files.add(base);
-            }
-        }
-
-        return files;
-    }
-
-    private boolean isSearchedFile(final File file, final String name, final String extension) {
-        return hasExtension(file, extension) && (name == null || doesMatchName(file, name));
-    }
-
-    private boolean hasExtension(final File file, final String extension) {
-        return FilenameUtils.getExtension(file.getName()).equals(extension);
-    }
-
-    private boolean doesMatchName(final File file, final String match) {
-        return FilenameUtils.removeExtension(file.getName()).equals(match);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Set<String> toSet(final Object obj) {
-        return (Set<String>) obj;
     }
 }
