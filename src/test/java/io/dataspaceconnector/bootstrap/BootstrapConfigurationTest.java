@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.configuration;
+package io.dataspaceconnector.bootstrap;
 
-import io.dataspaceconnector.config.BootstrapConfiguration;
 import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

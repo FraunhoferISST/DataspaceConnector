@@ -13,7 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.config;
+package io.dataspaceconnector.bootstrap;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
@@ -29,11 +51,11 @@ import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
+import io.dataspaceconnector.services.HttpService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.utils.BootstrapUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
 import lombok.NonNull;
@@ -52,29 +74,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-
-import static io.dataspaceconnector.utils.BootstrapUtils.findFilesByExtension;
-import static io.dataspaceconnector.utils.BootstrapUtils.retrieveBootstrapConfig;
+import static io.dataspaceconnector.bootstrap.BootstrapUtils.findFilesByExtension;
+import static io.dataspaceconnector.bootstrap.BootstrapUtils.retrieveBootstrapConfig;
 
 /**
  * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
@@ -287,34 +288,38 @@ public class BootstrapConfiguration {
 
             return false;
         }
+
         final var responseBody = response.body();
         if (responseBody == null) {
             if (log.isErrorEnabled()) {
                 log.error("Could not parse response after sending a request "
                         + "to a broker.");
             }
+
             return false;
         }
+
         final var body = responseBody.string();
         final var responseMessage = getMessage(body);
-        if (responseMessage == null) {
+        if (responseMessage.isPresent()) {
             if (log.isErrorEnabled()) {
                 log.error("Could not parse response after sending a request "
                         + "to a broker.");
             }
+
             return false;
         }
-        if (!(responseMessage instanceof MessageProcessedNotificationMessage)) {
 
-            if (responseMessage instanceof RejectionMessage) {
+        if (!(responseMessage.get() instanceof MessageProcessedNotificationMessage)) {
+            if (responseMessage.get() instanceof RejectionMessage) {
                 final var payload = getMultipartPart(body, "payload");
-                if (log.isErrorEnabled() && payload != null) {
+                if (log.isErrorEnabled() && payload.isPresent()) {
                     log.error("The broker rejected the message. Reason: {} - {}",
-                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage)
-                                    .toString(), payload);
+                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage.get())
+                                    .toString(), payload.get());
                 } else if (log.isErrorEnabled()) {
                     log.error("The broker rejected the message. Reason: {}",
-                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage)
+                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage.get())
                                     .toString());
                 }
             } else {
@@ -335,16 +340,17 @@ public class BootstrapConfiguration {
      * @param body a multipart message
      * @return The IDS message contained in the multipart message, null if any error occurs.
      */
-    private Message getMessage(final String body) {
+    private Optional<Message> getMessage(final String body) {
         final var part = getMultipartPart(body, "header");
-        if (part != null) {
-            return deserializationService.getMessage(part);
-        }
+        if (part.isPresent()) {
+            return Optional.of(deserializationService.getMessage(part.get()));
+        } else {
+            if (log.isErrorEnabled()) {
+                log.error("Could not find IDS message in multipart message.");
+            }
 
-        if (log.isErrorEnabled()) {
-            log.error("Could not find IDS message in multipart message.");
+            return Optional.empty();
         }
-        return null;
     }
 
     /**
@@ -354,40 +360,35 @@ public class BootstrapConfiguration {
      * @param partName the part name
      * @return part with given name, null if the part does not exist in given message
      */
-    private String getMultipartPart(final String message, final String partName) {
-        final String boundary;
-        if (message.contains("\r\n")) {
-            boundary = message.split("\r\n")[0];
-        } else {
-            boundary = message.split("\n")[0];
-        }
-        final var multipart = new MultipartStream(
-                new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)),
-                boundary.substring(2).getBytes(StandardCharsets.UTF_8),
-                4096,
-                null
-        );
-
+    private Optional<String> getMultipartPart(final String message, final String partName) {
         try {
-            boolean next = multipart.skipPreamble();
-            final var outputStream = new ByteArrayOutputStream();
+            // TODO: Can we get the original charset of the message?
+            final var multipart = new MultipartStream(
+                    new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)),
+                    getBoundaries(message)[0].substring(2).getBytes(StandardCharsets.UTF_8),
+                    4096,
+                    null
+            );
+
             final var pattern = Pattern.compile("name=\"([a-zA-Z]+)\"");
+            final var outputStream = new ByteArrayOutputStream();
+            boolean next = multipart.skipPreamble();
             while (next) {
-                final var header = multipart.readHeaders();
-                final var matcher = pattern.matcher(header);
+                final var matcher = pattern.matcher(multipart.readHeaders());
                 if (!matcher.find()) {
                     if (log.isErrorEnabled()) {
                         log.error("Could not find name of multipart part.");
                     }
-                    return null;
+                    return Optional.empty();
                 }
+
                 if (matcher.group().equals("name=\"" + partName + "\"")) {
                     multipart.readBodyData(outputStream);
-
-                    return outputStream.toString(StandardCharsets.UTF_8);
+                    return Optional.of(outputStream.toString(StandardCharsets.UTF_8));
                 } else {
                     multipart.discardBodyData();
                 }
+
                 next = multipart.readBoundary();
             }
 
@@ -395,13 +396,17 @@ public class BootstrapConfiguration {
             if (log.isErrorEnabled()) {
                 log.error("Failed to parse multipart message.", e);
             }
-            return null;
+            return Optional.empty();
         }
 
         if (log.isErrorEnabled()) {
             log.error("Could not find part '{}' in multipart message.", partName);
         }
-        return null;
+        return Optional.empty();
+    }
+
+    private String[] getBoundaries(final String msg) {
+        return msg.split(msg.contains("\r\n") ? "\r\n" : "\n");
     }
 
     /**
@@ -487,7 +492,7 @@ public class BootstrapConfiguration {
         final var catalogTemplate = TemplateUtils.getCatalogTemplate(catalog);
 
         final var offeredResources = new ArrayList<ResourceTemplate<OfferedResourceDesc>>();
-        for (final Resource resource : catalog.getOfferedResource()) {
+        for (final var resource : catalog.getOfferedResource()) {
             final var resourceTemplate =
                     TemplateUtils.getOfferedResourceTemplate(resource);
             fillResourceTemplate(resourceTemplate, properties, resource);
@@ -496,6 +501,7 @@ public class BootstrapConfiguration {
 
             idsResources.put(resource.getId(), resource);
         }
+
         catalogTemplate.setOfferedResources(offeredResources);
 
         // requested resources are skipped
@@ -529,20 +535,11 @@ public class BootstrapConfiguration {
         resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
 
         // collect all artifact IDs from artifacts inside representations
-        final var artifacts = new ArrayList<URI>();
-        for (final Representation representation : resource.getRepresentation()) {
-            for (final RepresentationInstance artifact : representation.getInstance()) {
-                artifacts.add(artifact.getId());
-            }
-        }
-
         resourceTemplate.setRepresentations(
                 TemplateUtils.getRepresentationTemplates(
                         resource,
-                        artifacts,
-                        properties.containsKey("resource.download.auto")
-                                && BootstrapUtils.toSet(properties.get("resource.download.auto"))
-                                .contains(resource.getId().toString()),
+                        collectArtifactUris(resource),
+                        shouldAutoDownload(properties, resource.getId()),
                         null
                 )
         );
@@ -568,17 +565,35 @@ public class BootstrapConfiguration {
                         }
                     }
                 }
+
                 if (username != null) {
                     artifactTemplate.getDesc().setUsername(username);
                 }
+
                 if (password != null) {
                     artifactTemplate.getDesc().setPassword(password);
                 }
+
                 if (value != null) {
                     artifactTemplate.getDesc().setValue(value);
                 }
-
             }
         }
+    }
+
+    private List<URI> collectArtifactUris(final Resource resource) {
+        final var artifacts = new ArrayList<URI>();
+        for (final var representation : resource.getRepresentation()) {
+            for (final var artifact : representation.getInstance()) {
+                artifacts.add(artifact.getId());
+            }
+        }
+
+        return artifacts;
+    }
+
+    private boolean shouldAutoDownload(final Properties properties, final URI resourceId) {
+        return properties.containsKey("resource.download.auto")
+                && properties.getProperty("resource.download.auto").contains(resourceId.toString());
     }
 }
