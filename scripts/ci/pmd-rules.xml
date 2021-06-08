@@ -32,6 +32,8 @@
         <exclude name="LongVariable"/>
         <!-- Conflicts quite often with unnecessary constructor rule -->
         <exclude name="AtLeastOneConstructor"/>
+        <!-- Clashes with the usage of var -->
+        <exclude name="UseDiamondOperator"/>
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling"/>

@@ -15,6 +15,29 @@
  */
 package io.dataspaceconnector.config;
 
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -53,28 +76,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This class allows to load JSON-LD files which contain infomodel representations
@@ -591,22 +592,24 @@ public class BootstrapConfiguration {
      * @return properties which contain the merged content of all bootstrap
      * config files
      */
-    private @NotNull Properties retrieveBootstrapConfig() {
+    private Properties retrieveBootstrapConfig() throws FileNotFoundException {
         final Properties config = new Properties();
-        final List<File> propertyFiles = findFilesByExtension(bootstrapPath, PROPERTIES_NAME,
-                PROPERTIES_EXT);
 
         // iterate all bootstrap.properties files
-        final Properties properties = new Properties();
-        for (final File propertyFile : propertyFiles) {
-            properties.clear();
+        for (final var propertyFile
+                : findFilesByExtension(bootstrapPath, PROPERTIES_NAME, PROPERTIES_EXT)) {
+            final var properties = new Properties();
             try {
                 properties.load(FileUtils.openInputStream(propertyFile));
             } catch (IOException e) {
                 if (log.isErrorEnabled()) {
                     log.error("Could not open properties file '{}'.", propertyFile.getPath(), e);
                 }
+
+                continue;
             }
+
+
             // iterate all properties from file and check for duplicates
             for (final Map.Entry<Object, Object> property : properties.entrySet()) {
                 if (config.containsKey(property.getKey())) {
@@ -654,44 +657,49 @@ public class BootstrapConfiguration {
      * @param extension the searched file extension
      * @return a list of all files which are stored at given path (and
      * subdirectories) with required extension and optional required filename
-     * @throws IllegalStateException if the given path does not exist
+     * @throws FileNotFoundException if the given path does not exist
      */
-    private @NotNull List<File> findFilesByExtension(final String path, final String filename,
-                                                     final String extension) {
+    private List<File> findFilesByExtension(final String path, final String filename,
+                                                     final String extension)
+            throws FileNotFoundException {
         // validate input
-        final File base = new File(path);
+        final var base = new File(path);
         if (!base.exists()) {
-            throw new IllegalStateException("File '" + path + "' does not exist.");
+            throw new FileNotFoundException("File '" + path + "' does not exist.");
         }
 
-        final List<File> files = new ArrayList<>();
+        final var files = new ArrayList<File>();
         if (base.isDirectory()) {
             // if the base file is a directory iterate all child files
-            final var parentFiles = base.listFiles();
-            if (parentFiles != null) {
-                for (final File child : parentFiles) {
-                    if (child.isDirectory()) {
-                        files.addAll(findFilesByExtension(child.getPath(), filename, extension));
-                    } else {
-                        if (FilenameUtils.getExtension(child.getName()).equals(extension)
-                                && (filename == null
-                                || FilenameUtils.removeExtension(
-                                FilenameUtils.getName(child.getName())).equals(filename))) {
-                            files.add(child);
-                        }
+            for (final var child : base.listFiles()) {
+                if (child.isDirectory()) {
+                    files.addAll(findFilesByExtension(child.getPath(), filename, extension));
+                } else {
+                    if (isSearchedFile(child, filename, extension)) {
+                        files.add(child);
                     }
                 }
             }
         } else {
-            // check if the base file itself is a json-ld file
-            if (FilenameUtils.getExtension(base.getName()).equals(extension)
-                    && (filename == null
-                    || FilenameUtils.getName(base.getName()).equals(filename))) {
+            // check if the base file itself is a json-ld file <- TODO: JsonLd?
+            if (isSearchedFile(base, filename, extension)) {
                 files.add(base);
             }
         }
 
         return files;
+    }
+
+    private boolean isSearchedFile(final File file, final String name, final String extension) {
+        return hasExtension(file, extension) && (name == null || doesMatchName(file, name));
+    }
+
+    private boolean hasExtension(final File file, final String extension) {
+        return FilenameUtils.getExtension(file.getName()).equals(extension);
+    }
+
+    private boolean doesMatchName(final File file, final String match) {
+        return FilenameUtils.removeExtension(file.getName()).equals(match);
     }
 
     @SuppressWarnings("unchecked")
