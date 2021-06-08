@@ -40,8 +40,6 @@ import java.util.regex.Pattern;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.Representation;
-import de.fraunhofer.iais.eis.RepresentationInstance;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
@@ -51,7 +49,6 @@ import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.services.HttpService;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
@@ -315,12 +312,13 @@ public class BootstrapConfiguration {
                 final var payload = getMultipartPart(body, "payload");
                 if (log.isErrorEnabled() && payload.isPresent()) {
                     log.error("The broker rejected the message. Reason: {} - {}",
-                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage.get())
-                                    .toString(), payload.get());
+                            MessageUtils.extractRejectionReason(
+                                    (RejectionMessage) responseMessage.get()).toString(),
+                                    payload.get());
                 } else if (log.isErrorEnabled()) {
                     log.error("The broker rejected the message. Reason: {}",
-                            MessageUtils.extractRejectionReason((RejectionMessage) responseMessage.get())
-                                    .toString());
+                            MessageUtils.extractRejectionReason(
+                                        (RejectionMessage) responseMessage.get()).toString());
                 }
             } else {
                 if (log.isErrorEnabled()) {

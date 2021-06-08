@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*
-    Package for bootstrapping data on start.
-*/
+/**
+ * Package for bootstrapping data on start.
+ */
 package io.dataspaceconnector.bootstrap;

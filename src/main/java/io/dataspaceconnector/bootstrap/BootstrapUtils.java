@@ -26,15 +26,20 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+/**
+ * Offers utility functions for bootstrapping data.
+ */
 @Log4j2
-@UtilityClass
 public final class BootstrapUtils {
+
+    private BootstrapUtils() {
+        // Nothing to do here.
+    }
 
     /**
      * Some entries in bootstrap property files allow multiple values. This is the delimiter that is
