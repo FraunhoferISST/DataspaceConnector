@@ -119,8 +119,7 @@ public class ConnectorUpdateMessageControllerTest {
             throws Exception {
         /* ARRANGE */
 
-        // TODO In case the Broker returns an Empty response Body, does the method return Null or does it throw an Exception? If it throws an exception this test has to be changed
-        Mockito.doReturn(null).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(URI.create(recipient)));
+        Mockito.doThrow(IOException.class).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")

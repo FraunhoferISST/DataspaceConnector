@@ -146,8 +146,7 @@ public class ResourceUnavailableMessageControllerTest {
         /* ARRANGE */
 
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        // TODO In case the Broker returns an Empty response Body, does the method return Null or does it throw an Exception? If it throws an exception this test has to be changed
-        Mockito.doReturn(null).when(brokerService).removeResourceFromBroker(Mockito.any(),
+        Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(Mockito.any(),
                                                                               Mockito.eq(resource));
 
         /* ACT */
