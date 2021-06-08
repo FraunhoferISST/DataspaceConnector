@@ -106,6 +106,8 @@
 		<springdoc-security.version>1.5.9</springdoc-security.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<hibernate.version>6.0.0.Alpha8</hibernate.version>
+		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 
 		<!-- Plugins -->
@@ -350,18 +352,18 @@
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>6.0.0.Alpha8</version>
-			<!-- TODO: Extract Version, is Repository needed? -->
+			<version>${hibernate.version}</version>
+			<!-- TODO: is Repository needed? -->
 		</dependency>
 
-
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-			<!-- TODO: Define Version, is Repository needed? -->
+			<version>${h2database.version}</version>
+			<scope>test</scope>
+			<!-- TODO: is Repository needed? -->
 		</dependency>
-
 
 	</dependencies>
 
