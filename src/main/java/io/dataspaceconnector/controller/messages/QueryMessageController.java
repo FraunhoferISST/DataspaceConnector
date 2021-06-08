@@ -87,11 +87,10 @@ public class QueryMessageController {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
-            if(response != null){
-                // TODO: check if this is a sufficient response
-                return ResponseEntity.ok("Success");
+            if(response != null && response.getPayload().isPresent()){
+                String responseAsString = response.getPayload().get();
+                return ResponseEntity.ok(responseAsString);
             }else{
-                // TODO: check if this is a sufficient response
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
             }
         } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {

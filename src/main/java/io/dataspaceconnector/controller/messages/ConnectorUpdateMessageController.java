@@ -88,10 +88,8 @@ public class ConnectorUpdateMessageController {
             // Send the connector update message.
             final var response = brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
             if(response != null){
-                // TODO: check if this is a sufficient response
                 return ResponseEntity.ok("Success");
             }else{
-                // TODO: check if this is a sufficient response
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
             }
         } catch (ConfigUpdateException exception) {

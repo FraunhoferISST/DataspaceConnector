@@ -83,7 +83,7 @@ public class QueryMessageControllerTest {
                                   .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("Success", result.getResponse().getContentAsString());
+        assertEquals("Some query result", result.getResponse().getContentAsString());
     }
 
     @Test

@@ -94,10 +94,8 @@ public class ResourceUnavailableMessageController {
             // Send the resource unavailable message.
             final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
             if(response != null){
-                // TODO: check if this is a sufficient response
                 return ResponseEntity.ok("Success");
             }else{
-                // TODO: check if this is a sufficient response
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
             }
         } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
