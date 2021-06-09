@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
@@ -30,6 +30,9 @@ import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
@@ -56,6 +59,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <T> The type of the entity operated on.
  * @param <V> The type of the view model produces.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
         T extends AbstractEntity, V extends RepresentationModel<V>> {
     /**
