@@ -45,6 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.NONE)
 @EqualsAndHashCode
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.ShortClassName")
 public class Data {
 
     /**
