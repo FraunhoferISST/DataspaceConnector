@@ -27,7 +27,7 @@ import javax.persistence.Entity;
 import java.net.URI;
 
 /**
- * Entity for managing ids endpoints.
+ * Entity for managing connector endpoints.
  */
 @SQLDelete(sql = "UPDATE endpoint SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -35,7 +35,7 @@ import java.net.URI;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class IdsEndpoint extends Endpoint {
+public class ConnectorEndpoint extends Endpoint {
 
     /**
      * Serial version uid.
@@ -51,7 +51,7 @@ public class IdsEndpoint extends Endpoint {
     /**
      * Default constructor.
      */
-    protected IdsEndpoint() {
+    protected ConnectorEndpoint() {
         super();
     }
 

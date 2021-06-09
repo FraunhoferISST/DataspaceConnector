@@ -13,14 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.repositories;
+package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.Proxy;
-import org.springframework.stereotype.Repository;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
- * Repository for proxies.
+ * Describing connector endpoints properties.
  */
-@Repository
-public interface ProxyRepository extends BaseEntityRepository<Proxy> {
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class ConnectorEndpointDesc extends EndpointDesc<ConnectorEndpoint> {
+
+    /**
+     * The absolute path of the generic endpoint.
+     */
+    private URI accessURL;
+
 }

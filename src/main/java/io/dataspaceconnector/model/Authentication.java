@@ -24,13 +24,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * The authentication is used for authorizing for example by the proxy or the data source.
  */
 @Entity
-@Table(name = "authentication")
 @SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter

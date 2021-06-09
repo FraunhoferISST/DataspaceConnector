@@ -22,7 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.net.URL;
+import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
@@ -49,7 +49,7 @@ public class ConnectorView extends RepresentationModel<ConnectorView> {
     /**
      * The access url of the connector.
      */
-    private URL accessUrl;
+    private URI accessUrl;
 
     /**
      * The title of the connector.

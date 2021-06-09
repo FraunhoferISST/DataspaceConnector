@@ -18,14 +18,12 @@ package io.dataspaceconnector.view;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.ConnectorDeployMode;
 import io.dataspaceconnector.model.LogLevel;
-import io.dataspaceconnector.model.Proxy;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * A DTO for controlled exposing of configuration information in API responses.
@@ -56,11 +54,6 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
      * The deploy mode of the connector.
      */
     private ConnectorDeployMode deployMode;
-
-    /**
-     * The proxy configuration.
-     */
-    private List<Proxy> proxy;
 
     /**
      * The trust store.

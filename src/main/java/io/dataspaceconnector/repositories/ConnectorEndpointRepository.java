@@ -13,18 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.configuration;
+package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Proxy;
-import io.dataspaceconnector.model.ProxyDesc;
-import io.dataspaceconnector.services.resources.BaseEntityService;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import io.dataspaceconnector.model.ConnectorEndpoint;
+import org.springframework.stereotype.Repository;
 
 /**
- * Service class for proxies.
+ * Repository for connector endpoints.
  */
-@Service
-@NoArgsConstructor
-public class ProxyService extends BaseEntityService<Proxy, ProxyDesc> {
+@Repository
+public interface ConnectorEndpointRepository extends BaseEntityRepository<ConnectorEndpoint> {
 }

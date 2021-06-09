@@ -21,10 +21,11 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 /**
- * Creates and updates ids endpoints.
+ * Creates and updates connector endpoints.
  */
 @Component
-public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpointDesc> {
+public class ConnectorEndpointFactory
+        extends EndpointFactory<ConnectorEndpoint, ConnectorEndpointDesc> {
 
     /**
      * Default absolute path.
@@ -33,32 +34,34 @@ public class IdsEndpointFactory extends EndpointFactory<IdsEndpoint, IdsEndpoint
 
     /**
      * @param desc The description passed to the factory.
-     * @return The new ids endpoint.
+     * @return The new connector endpoint.
      */
     @Override
-    protected IdsEndpoint createInternal(final IdsEndpointDesc desc) {
-        return new IdsEndpoint();
+    protected ConnectorEndpoint createInternal(final ConnectorEndpointDesc desc) {
+        return new ConnectorEndpoint();
     }
 
     /**
-     * @param idsEndpoint The ids endpoint.
-     * @param desc        The description of the new entity.
+     * @param connectorEndpoint The connector endpoint.
+     * @param desc              The description of the new entity.
      * @return True, if ids endpoint is updated.
      */
     @Override
-    protected boolean updateInternal(final IdsEndpoint idsEndpoint, final IdsEndpointDesc desc) {
-        return updateAccessURL(idsEndpoint, desc.getAccessURL());
+    protected boolean updateInternal(final ConnectorEndpoint connectorEndpoint,
+                                     final ConnectorEndpointDesc desc) {
+        return updateAccessURL(connectorEndpoint, desc.getAccessURL());
     }
 
     /**
-     * @param idsEndpoint The ids endpoint.
-     * @param accessURL   The access url of the ids endpoint.
-     * @return True, if ids endpoint is updated.
+     * @param connectorEndpoint The connector endpoint.
+     * @param accessURL         The access url of the connector endpoint.
+     * @return True, if connector endpoint is updated.
      */
-    private boolean updateAccessURL(final IdsEndpoint idsEndpoint, final URI accessURL) {
-        final var newAccessUrl = MetadataUtils.updateUri(idsEndpoint.getAccessURL(),
+    private boolean updateAccessURL(final ConnectorEndpoint connectorEndpoint,
+                                    final URI accessURL) {
+        final var newAccessUrl = MetadataUtils.updateUri(connectorEndpoint.getAccessURL(),
                 accessURL, DEFAULT_ACCESS_URL);
-        newAccessUrl.ifPresent(idsEndpoint::setAccessURL);
+        newAccessUrl.ifPresent(connectorEndpoint::setAccessURL);
 
         return newAccessUrl.isPresent();
     }

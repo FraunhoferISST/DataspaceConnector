@@ -17,7 +17,6 @@ package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.AppEndpointType;
-//import io.dataspaceconnector.model.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +32,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "appendpoints", itemRelation = "appendpoint")
+@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
 public class AppEndpointView extends RepresentationModel<AppEndpointView> {
 
     /**
@@ -67,11 +66,6 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
      * The outbound path.
      */
     private String outboundPath;
-
-//    /**
-//     * The type of the endpoint.
-//     */
-//    private EndpointType endpointType;
 
     /**
      * The access url of the endpoint.

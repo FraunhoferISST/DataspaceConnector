@@ -15,13 +15,24 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates and updates an app.
  */
 @Component
 public class AppFactory implements AbstractFactory<App, AppDesc> {
+
+    /**
+     * The default title.
+     */
+    private static final String DEFAULT_TITLE = "app";
 
     /**
      * Creates an app.
@@ -31,18 +42,56 @@ public class AppFactory implements AbstractFactory<App, AppDesc> {
      */
     @Override
     public App create(final AppDesc desc) {
-        return new App();
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final var app = new App();
+
+        update(app, desc);
+
+        return app;
     }
 
     /**
      * Updates an app with the description.
      *
-     * @param entity The entity to be updated.
-     * @param desc   The description of the new entity.
+     * @param app  The entity to be updated.
+     * @param desc The description of the new entity.
      * @return true, if app is updated
      */
     @Override
-    public boolean update(final App entity, final AppDesc desc) {
-        return false;
+    public boolean update(final App app, final AppDesc desc) {
+        Utils.requireNonNull(app, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final var hasUpdatedTitle = updateTitle(app, desc.getTitle());
+        final var hasUpdatedAdditional = updateAdditional(app, desc.getAdditional());
+
+        return hasUpdatedTitle || hasUpdatedAdditional;
+    }
+
+    /**
+     * @param app   The entity to be updated.
+     * @param title The new title.
+     * @return True, if title is updated.
+     */
+    private boolean updateTitle(final App app, final String title) {
+        final var newTitle = MetadataUtils.updateString(app.getTitle(), title,
+                DEFAULT_TITLE);
+        newTitle.ifPresent(app::setTitle);
+
+        return newTitle.isPresent();
+    }
+
+    /**
+     * @param app        The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final App app, final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                app.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(app::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

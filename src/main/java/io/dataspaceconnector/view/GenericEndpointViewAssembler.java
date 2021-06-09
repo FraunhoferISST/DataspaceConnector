@@ -24,6 +24,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 /**
  * Assembles the REST resource for a generic endpoint.
  */
@@ -43,6 +46,12 @@ public class GenericEndpointViewAssembler
         final var view = modelMapper.map(genericEndpoint,
                 GenericEndpointView.class);
         view.add(getSelfLink(genericEndpoint.getId()));
+
+        final var dataSourceLink = linkTo(
+                        methodOn(EndpointControllers.GenericEndpointToDataSourceController.class)
+                        .getResource(genericEndpoint.getId(), null, null))
+                        .withRel("datasource");
+        view.add(dataSourceLink);
 
         return view;
     }

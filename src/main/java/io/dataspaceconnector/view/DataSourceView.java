@@ -16,12 +16,12 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.DataSourceType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.time.ZonedDateTime;
 
@@ -31,6 +31,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@Relation(itemRelation = "datasource")
 public class DataSourceView extends RepresentationModel<DataSourceView> {
 
     /**
@@ -49,11 +50,6 @@ public class DataSourceView extends RepresentationModel<DataSourceView> {
      * The relative path of the data source.
      */
     private String relativePath;
-
-    /**
-     * The authentication for the data source.
-     */
-    private Authentication authentication;
 
     /**
      * The type of the data source.

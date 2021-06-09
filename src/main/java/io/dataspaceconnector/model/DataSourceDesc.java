@@ -18,8 +18,6 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
  * Describing data source's properties.
  */
@@ -41,9 +39,4 @@ public class DataSourceDesc extends AbstractDescription<DataSource> {
      * The type of the data source.
      */
     private DataSourceType dataSourceType;
-
-    /**
-     * The list of generic endpoints.
-     */
-    private List<GenericEndpoint> genericEndpoint;
 }

@@ -20,7 +20,9 @@ import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates data sources.
@@ -42,8 +44,6 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var dataSource = new DataSource();
-
-        dataSource.setGenericEndpoint(new ArrayList<>());
         dataSource.setAuthentication(null);
 
         update(dataSource, desc);
@@ -65,8 +65,10 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
                 desc.getRelativePath());
         final var hasUpdatedDataSourceType = updateDataSourceType(dataSource,
                 desc.getDataSourceType());
+        final var hasUpdatedAdditional = updateAdditional(dataSource,
+                desc.getAdditional());
 
-        return hasUpdatedRelativePath || hasUpdatedDataSourceType;
+        return hasUpdatedRelativePath || hasUpdatedDataSourceType || hasUpdatedAdditional;
     }
 
     /**
@@ -90,13 +92,22 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
      */
     private boolean updateDataSourceType(final DataSource dataSource,
                                          final DataSourceType dataSourceType) {
-        final boolean updated;
-        if (dataSource.getDataSourceType().equals(dataSourceType)) {
-            updated = false;
-        } else {
-            dataSource.setDataSourceType(dataSourceType);
-            updated = true;
-        }
-        return updated;
+        dataSource.setDataSourceType(
+                Objects.requireNonNullElse(dataSourceType, DataSourceType.DIVERSE));
+        return true;
+    }
+
+    /**
+     * @param dataSource        The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final DataSource dataSource,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                dataSource.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(dataSource::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

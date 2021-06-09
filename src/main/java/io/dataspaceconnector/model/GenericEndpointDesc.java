@@ -30,4 +30,9 @@ public class GenericEndpointDesc extends EndpointDesc<GenericEndpoint> {
      */
     private String absolutePath;
 
+    /**
+     * Data source to which the generic endpoint belongs.
+     */
+    private DataSource dataSource;
+
 }

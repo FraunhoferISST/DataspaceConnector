@@ -21,6 +21,9 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates a configuration.
@@ -70,16 +73,18 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         Utils.requireNonNull(desc, ErrorMessages.MESSAGE_NULL);
 
         final var hasUpdatedLogLevel = updateLogLevel(config, desc.getLogLevel());
-        final var hasUpdatedDeployMode = updateDeployMode(config, config.getDeployMode());
-        final var hasUpdatedTrustStore = updateTrustStore(config, config.getTrustStore());
+        final var hasUpdatedDeployMode = updateDeployMode(config, desc.getDeployMode());
+        final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTrustStore());
         final var hasUpdatedTrustPassword = updateTrustStorePassword(config,
-                config.getTrustStorePassword());
-        final var hasUpdatedKeyStore = updateKeyStore(config, config.getKeyStore());
+                desc.getTrustStorePassword());
+        final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeyStore());
         final var hasUpdatedKeyStorePassword = updateKeyStorePassword(config,
-                config.getKeyStorePassword());
+                desc.getKeyStorePassword());
+        final var hasUpdatedAdditional = updateAdditional(config, desc.getAdditional());
 
         return hasUpdatedLogLevel || hasUpdatedDeployMode || hasUpdatedTrustStore
-                || hasUpdatedTrustPassword || hasUpdatedKeyStore || hasUpdatedKeyStorePassword;
+                || hasUpdatedTrustPassword || hasUpdatedKeyStore || hasUpdatedKeyStorePassword
+                || hasUpdatedAdditional;
     }
 
     /**
@@ -92,7 +97,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         final var newKeystorePassword =
                 MetadataUtils.updateString(config.getKeyStorePassword(), keyStorePassword,
                         DEFAULT_PASSWORD);
-        newKeystorePassword.ifPresent(config::setKeyStore);
+        newKeystorePassword.ifPresent(config::setKeyStorePassword);
         return newKeystorePassword.isPresent();
     }
 
@@ -141,14 +146,8 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      */
     private boolean updateDeployMode(final Configuration config,
                                      final ConnectorDeployMode deployMode) {
-        final boolean updated;
-        if (config.getDeployMode().equals(deployMode)) {
-            updated = false;
-        } else {
-            config.setDeployMode(deployMode);
-            updated = true;
-        }
-        return updated;
+        config.setDeployMode(Objects.requireNonNullElse(deployMode, ConnectorDeployMode.TEST));
+        return true;
     }
 
     /**
@@ -157,13 +156,21 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      * @return True, if configuration is updated
      */
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
-        final boolean updated;
-        if (config.getLogLevel().equals(logLevel)) {
-            updated = false;
-        } else {
-            config.setLogLevel(logLevel);
-            updated = true;
-        }
-        return updated;
+        config.setLogLevel(Objects.requireNonNullElse(logLevel, LogLevel.NO));
+        return true;
+    }
+
+    /**
+     * @param configuration The entity to be updated.
+     * @param additional    The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final Configuration configuration,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                configuration.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(configuration::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

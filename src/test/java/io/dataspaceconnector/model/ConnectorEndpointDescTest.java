@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.repositories;
+package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.Authentication;
-import org.springframework.stereotype.Repository;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
-/**
- * Repository for the authentication.
- */
-@Repository
-public interface AuthenticationRepository extends BaseEntityRepository<Authentication> {
+public class ConnectorEndpointDescTest {
+
+    @Test
+    public void equals_verify() {
+        EqualsVerifier.simple().forClass(ConnectorEndpointDesc.class).verify();
+    }
 }

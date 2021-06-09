@@ -49,15 +49,27 @@ public class RouteViewAssembler
         view.add(getSelfLink(route.getId()));
 
         final var subroutes = linkTo(methodOn(RouteControllers.RoutesToSubroutes.class)
-                        .getResource(route.getId(), null, null))
+                .getResource(route.getId(), null, null))
                 .withRel("routes");
         view.add(subroutes);
 
         final var offeredResources =
                 linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
                         .getResource(route.getId(), null, null))
-                .withRel("resources");
+                        .withRel("resources");
         view.add(offeredResources);
+
+        final var startEndpoint =
+                linkTo(methodOn(RouteControllers.RoutesToStartEndpoint.class)
+                        .getResource(route.getId(), null, null))
+                        .withRel("endpoints");
+        view.add(startEndpoint);
+
+        final var lasEndpoint =
+                linkTo(methodOn(RouteControllers.RoutesToLastEndpoint.class)
+                        .getResource(route.getId(), null, null))
+                        .withRel("endpoints");
+        view.add(lasEndpoint);
 
         return view;
     }

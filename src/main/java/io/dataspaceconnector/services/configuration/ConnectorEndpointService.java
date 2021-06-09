@@ -13,33 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.services.configuration;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.net.URI;
-import java.util.List;
+import io.dataspaceconnector.model.ConnectorEndpoint;
+import io.dataspaceconnector.model.ConnectorEndpointDesc;
+import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Service;
 
 /**
- * Describing proxy's properties.
+ * Service class for connector endpoints.
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class ProxyDesc extends AbstractDescription<Proxy> {
-
-    /**
-     * The proxy uri.
-     */
-    private URI proxyURI;
-
-    /**
-     * List of no proxy uris.
-     */
-    private List<URI> noProxyURI;
-
-    /**
-     * The authentication for the proxy.
-     */
-    private Authentication authentication;
+@Service
+@NoArgsConstructor
+public class ConnectorEndpointService
+        extends EndpointService<ConnectorEndpoint, ConnectorEndpointDesc> {
 }

@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.utils.ListUriConverter;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -26,9 +25,9 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
@@ -36,7 +35,6 @@ import java.util.List;
  * Entity for managing proxies.
  */
 @Entity
-@Table(name = "proxy")
 @SQLDelete(sql = "UPDATE proxy SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
@@ -59,7 +57,7 @@ public class Proxy extends AbstractEntity {
     /**
      * List of no proxy uris.
      */
-    @Convert(converter = ListUriConverter.class)
+    @ElementCollection
     private List<URI> noProxyURI;
 
     /**

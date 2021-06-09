@@ -22,16 +22,17 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.net.URI;
 import java.time.ZonedDateTime;
 
 /**
- * A DTO for controlled exposing of authentication information in API responses.
+ * A DTO for controlled exposing of connector endpoint information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(itemRelation = "authentication")
-public class AuthenticationView extends RepresentationModel<AuthenticationView> {
+@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
+public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpointView> {
 
     /**
      * The creation date.
@@ -46,13 +47,27 @@ public class AuthenticationView extends RepresentationModel<AuthenticationView> 
     private ZonedDateTime modificationDate;
 
     /**
-     * The username for the authentication.
+     * The documentation for the endpoint.
      */
-    private String username;
+    private URI endpointDocumentation;
 
     /**
-     * The password for the authentication.
+     * The information for the endpoint.
      */
-    private String password;
+    private String endpointInformation;
 
+    /**
+     * The inbound path.
+     */
+    private String inboundPath;
+
+    /**
+     * The outbound path.
+     */
+    private String outboundPath;
+
+    /**
+     * The absolute path of the generic endpoint.
+     */
+    private URI accessURL;
 }

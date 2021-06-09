@@ -22,6 +22,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 
 /**
  * Entity for managing generic endpoints.
@@ -43,6 +44,12 @@ public class GenericEndpoint extends Endpoint {
      * The absolute path of the generic endpoint.
      */
     private String absolutePath;
+
+    /**
+     * Data source to which the generic endpoint belongs.
+     */
+    @OneToOne
+    private DataSource dataSource;
 
     /**
      * Default constructor.

@@ -22,6 +22,9 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates a broker.
@@ -67,8 +70,9 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
         final var newAccessUrl = updateAccessUrl(broker, broker.getAccessUrl());
         final var newTitle = updateTitle(broker, broker.getTitle());
         final var newStatus = updateRegistrationStatus(broker, broker.getStatus());
+        final var newAdditional = updateAdditional(broker, broker.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus;
+        return newAccessUrl || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -77,14 +81,8 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
      * @return True, if broker is updated.
      */
     private boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
-        final boolean updated;
-        if (broker.getStatus().equals(status)) {
-            updated = false;
-        } else {
-            broker.setStatus(status);
-            updated = true;
-        }
-        return updated;
+        broker.setStatus(Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
+        return true;
     }
 
     /**
@@ -109,5 +107,18 @@ public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
                 DEFAULT_URI);
         newAccessUrl.ifPresent(broker::setAccessUrl);
         return newAccessUrl.isPresent();
+    }
+
+    /**
+     * @param broker     The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final Broker broker, final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                broker.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(broker::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

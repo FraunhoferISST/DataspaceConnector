@@ -21,6 +21,9 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates a route.
@@ -42,10 +45,8 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var route = new Route();
-        route.setStartIdsEndpoint(null);
-        route.setStartGenericEndpoint(null);
-        route.setEndIdsEndpoint(null);
-        route.setEndGenericEndpoint(null);
+        route.setStartEndpoint(new ArrayList<>());
+        route.setLastEndpoint(new ArrayList<>());
         route.setSubRoutes(new ArrayList<>());
         route.setOfferedResources(new ArrayList<>());
 
@@ -66,10 +67,11 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
 
         final var hasUpdatedRouteConfig = updateRouteConfiguration(route,
                 desc.getRouteConfiguration());
-        final var hasUpatedDeployMethod = updateRouteDeployMethod(route,
+        final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
                 route.getDeployMethod());
+        final var hasUpdatedAdditional = updateAdditional(route, route.getAdditional());
 
-        return hasUpdatedRouteConfig || hasUpatedDeployMethod;
+        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedAdditional;
     }
 
     /**
@@ -78,14 +80,8 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
      * @return True, if route deploy method is updated.
      */
     private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
-        final boolean updated;
-        if (route.getDeployMethod().equals(deployMethod)) {
-            updated = false;
-        } else {
-            route.setDeployMethod(deployMethod);
-            updated = true;
-        }
-        return updated;
+        route.setDeployMethod(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
+        return true;
     }
 
     /**
@@ -99,5 +95,18 @@ public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
         newRouteConfig.ifPresent(route::setRouteConfiguration);
 
         return newRouteConfig.isPresent();
+    }
+
+    /**
+     * @param route      The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final Route route, final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                route.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(route::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

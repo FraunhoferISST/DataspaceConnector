@@ -21,6 +21,9 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates a connector.
@@ -63,12 +66,13 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
         Utils.requireNonNull(connector, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateAccessUrl(connector, connector.getAccessUrl());
-        final var newTitle = updateTitle(connector, connector.getTitle());
+        final var newAccessUrl = updateAccessUrl(connector, desc.getAccessUrl());
+        final var newTitle = updateTitle(connector, desc.getTitle());
         final var newStatus = updateRegistrationStatus(connector,
-                connector.getRegistrationStatus());
+                desc.getRegistrationStatus());
+        final var newAdditional = updateAdditional(connector, desc.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus;
+        return newAccessUrl || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -78,14 +82,9 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
      */
     private boolean updateRegistrationStatus(final Connector connector,
                                              final RegistrationStatus status) {
-        final boolean updated;
-        if (connector.getRegistrationStatus().equals(status)) {
-            updated = false;
-        } else {
-            connector.setRegistrationStatus(status);
-            updated = true;
-        }
-        return updated;
+        connector.setRegistrationStatus(
+                Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
+        return true;
     }
 
     /**
@@ -110,5 +109,19 @@ public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDes
                 DEFAULT_ACCESS_URI);
         newAccessUrl.ifPresent(connector::setAccessUrl);
         return newAccessUrl.isPresent();
+    }
+
+    /**
+     * @param connector  The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final Connector connector,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                connector.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(connector::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

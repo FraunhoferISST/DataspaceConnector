@@ -16,7 +16,6 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-//import io.dataspaceconnector.model.EndpointType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +31,7 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "genericendpoints")
+@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
 public class GenericEndpointView extends RepresentationModel<GenericEndpointView> {
 
     /**
@@ -67,14 +66,8 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
      */
     private String outboundPath;
 
-//    /**
-//     * The type of the endpoint.
-//     */
-//    private EndpointType endpointType;
-
     /**
      * The absolute path of the generic endpoint.
      */
     private String absolutePath;
-
 }

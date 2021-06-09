@@ -20,6 +20,8 @@ import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class for creating and updating endpoints.
@@ -50,6 +52,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
     /**
      * Create a new endpoint.
+     *
      * @param desc The description of the new endpoint.
      * @return The new endpoint.
      * @throws IllegalArgumentException if desc is null.
@@ -66,6 +69,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
     /**
      * Create a new endpoint. Implement type specific stuff here.
+     *
      * @param desc The description passed to the factory.
      * @return The new resource.
      */
@@ -98,11 +102,12 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
                 desc.getEndpointInformation());
         final var hasUpdatedInboundPath = updateInboundPath(endpoint, desc.getInboundPath());
         final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, desc.getOutboundPath());
+        final var hasUpdatedAdditional = updateAdditional(endpoint, endpoint.getAdditional());
 
         final var updatedInternal = updateInternal(endpoint, desc);
 
         return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath
-                || hasUpdatedOutboundPath || updatedInternal;
+                || hasUpdatedOutboundPath || hasUpdatedAdditional || updatedInternal;
     }
 
     /**
@@ -160,5 +165,19 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         newDocumentation.ifPresent(endpoint::setEndpointDocumentation);
 
         return newDocumentation.isPresent();
+    }
+
+    /**
+     * @param endpoint   The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final Endpoint endpoint,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                endpoint.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(endpoint::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

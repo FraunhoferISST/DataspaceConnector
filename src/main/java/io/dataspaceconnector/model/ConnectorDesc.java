@@ -18,7 +18,7 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Describing connector's properties.
@@ -30,7 +30,7 @@ public class ConnectorDesc extends AbstractDescription<Connector> {
     /**
      * The access url of the connector.
      */
-    private URL accessUrl;
+    private URI accessUrl;
 
     /**
      * The title of the connector.

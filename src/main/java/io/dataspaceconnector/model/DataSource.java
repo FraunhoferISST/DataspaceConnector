@@ -27,10 +27,8 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.util.List;
 
 /**
  * Entity which holds information about the data sources.
@@ -67,10 +65,4 @@ public class DataSource extends AbstractEntity {
      */
     @Enumerated(EnumType.STRING)
     private DataSourceType dataSourceType;
-
-    /**
-     * The list of generic endpoints.
-     */
-    @OneToMany
-    private List<GenericEndpoint> genericEndpoint;
 }

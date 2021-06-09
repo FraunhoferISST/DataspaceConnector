@@ -16,46 +16,19 @@
 package io.dataspaceconnector.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 /**
  * Describes an app's properties.
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class AppDesc extends AbstractDescription<App> {
 
     /**
      * The title of the app.
      */
     private String title;
-
-    /**
-     * @param o The reference object with which to compare.
-     * @return True, if this object is the same as the obj argument.
-     */
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        AppDesc appDesc = (AppDesc) o;
-        return Objects.equals(title, appDesc.title);
-    }
-
-    /**
-     * @return A hash code value for this object.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), title);
-    }
 }

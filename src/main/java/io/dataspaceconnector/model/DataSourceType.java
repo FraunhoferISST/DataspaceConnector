@@ -36,7 +36,12 @@ public enum DataSourceType {
     /**
      * File as data source type.
      */
-    FILE("File");
+    FILE("File"),
+
+    /**
+     * Data source type is something else.
+     */
+    DIVERSE("Diverse");
 
     /**
      * The value of the enum.

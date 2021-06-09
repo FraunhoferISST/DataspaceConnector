@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
-import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.controller.configurations.EndpointControllers;
+import io.dataspaceconnector.model.ConnectorEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -25,23 +25,24 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Assembles the REST resource for an proxy.
+ * Assembles the REST resource for an connector endpoint.
  */
 @Component
-public class ProxyViewAssembler implements
-        RepresentationModelAssembler<Proxy, ProxyView>, SelfLinking {
+public class ConnectorEndpointViewAssembler implements
+        RepresentationModelAssembler<ConnectorEndpoint, ConnectorEndpointView>, SelfLinking {
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
         return ViewAssemblerHelper.getSelfLink(entityId,
-                ConfigmanagerControllers.ProxyController.class);
+                EndpointControllers.ConnectorEndpointController.class);
     }
 
     @Override
-    public final ProxyView toModel(final Proxy proxy) {
+    public final ConnectorEndpointView toModel(final ConnectorEndpoint connectorEndpoint) {
         final var modelMapper = new ModelMapper();
-        final var view = modelMapper.map(proxy, ProxyView.class);
-        view.add(getSelfLink(proxy.getId()));
+        final var view = modelMapper.map(connectorEndpoint,
+                ConnectorEndpointView.class);
+        view.add(getSelfLink(connectorEndpoint.getId()));
 
         return view;
     }

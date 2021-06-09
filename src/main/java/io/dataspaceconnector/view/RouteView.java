@@ -16,8 +16,8 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.IdsEndpoint;
+import io.dataspaceconnector.model.DeployMethod;
+import io.dataspaceconnector.model.Endpoint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,22 +53,18 @@ public class RouteView extends RepresentationModel<RouteView> {
     private String routeConfiguration;
 
     /**
-     * The possible start endpoint of the route.
+     * The deploy method of the route.
      */
-    private GenericEndpoint startGenericEndpoint;
+    private DeployMethod deployMethod;
 
     /**
-     * The possible last endpoint of the route.
+     * The start endpoint of the route.
      */
-    private GenericEndpoint endGenericEndpoint;
+    private Endpoint startEndpoint;
 
     /**
-     * The possible start endpoint of the route.
+     * The last endpoint of the route.
      */
-    private IdsEndpoint startIdsEndpoint;
+    private Endpoint lastEndpoint;
 
-    /**
-     * The possible last endpoint of the route.
-     */
-    private IdsEndpoint endIdsEndpoint;
 }

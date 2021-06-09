@@ -17,14 +17,11 @@ package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.App;
 import io.dataspaceconnector.model.AppStore;
-import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.Broker;
-import io.dataspaceconnector.model.Configuration;
+import io.dataspaceconnector.model.ConnectorEndpoint;
 import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.IdsEndpoint;
 import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Proxy;
 import io.dataspaceconnector.model.Route;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
@@ -68,61 +65,17 @@ public final class EntityLinkerService {
     }
 
     /**
-     * Handles the relation between the configuration and the proxy.
+     * Handles the relation between generic endpoint and data sources.
      */
     @Service
     @NoArgsConstructor
-    public static class ConfigurationProxyLinker
-            extends OwningRelationService<Configuration, Proxy,
-            ConfigurationService, ProxyService> {
-        @Override
-        protected final List<Proxy> getInternal(final Configuration owner) {
-            return owner.getProxy();
-        }
-    }
-
-    /**
-     * Handles the relation between the data source and the authentication.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class DataSourceAuthenticationLinker
-            extends OwningRelationService<DataSource, Authentication, DataSourceService,
-            AuthenticationService> {
+    public static class GenericEndpointDataSourcesLinker
+            extends OwningRelationService<GenericEndpoint, DataSource, GenericEndpointService,
+            DataSourceService> {
 
         @Override
-        protected final List<Authentication> getInternal(final DataSource owner) {
-            return List.of(owner.getAuthentication());
-        }
-    }
-
-    /**
-     * Handles the relation between the data source and the generic endpoints.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class DataSourceGenericEndpointsLinker
-            extends OwningRelationService<DataSource, GenericEndpoint, DataSourceService,
-            GenericEndpointService> {
-
-        @Override
-        protected final List<GenericEndpoint> getInternal(final DataSource owner) {
-            return owner.getGenericEndpoint();
-        }
-    }
-
-    /**
-     * Handles the relation between proxy and authentication.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class ProxyAuthenticationLinker
-            extends OwningRelationService<Proxy, Authentication, ProxyService,
-            AuthenticationService> {
-
-        @Override
-        protected final List<Authentication> getInternal(final Proxy owner) {
-            return List.of(owner.getAuthentication());
+        protected final List<DataSource> getInternal(final GenericEndpoint owner) {
+            return List.of(owner.getDataSource());
         }
     }
 
@@ -141,64 +94,6 @@ public final class EntityLinkerService {
     }
 
     /**
-     * Handles the relation between the route and start endpoint.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class RouteStartGenericEndpointLinker
-            extends OwningRelationService<Route, GenericEndpoint, RouteService,
-            GenericEndpointService> {
-
-        @Override
-        protected final List<GenericEndpoint> getInternal(final Route owner) {
-            return List.of(owner.getStartGenericEndpoint());
-        }
-    }
-
-    /**
-     * Handles the relation between the route and last endpoint.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class RouteEndGenericEndpointLinker
-            extends OwningRelationService<Route, GenericEndpoint, RouteService,
-            GenericEndpointService> {
-
-        @Override
-        protected final List<GenericEndpoint> getInternal(final Route owner) {
-            return List.of(owner.getEndGenericEndpoint());
-        }
-    }
-
-    /**
-     * Handles the relation between the route and start endpoint.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class RouteStartIDSEndpointLinker
-            extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
-
-        @Override
-        protected final List<IdsEndpoint> getInternal(final Route owner) {
-            return List.of(owner.getStartIdsEndpoint());
-        }
-    }
-
-    /**
-     * Handles the relation between the route and last endpoint.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class RouteEndIDSEndpointLinker
-            extends OwningRelationService<Route, IdsEndpoint, RouteService, IdsEndpointService> {
-
-        @Override
-        protected final List<IdsEndpoint> getInternal(final Route owner) {
-            return List.of(owner.getEndIdsEndpoint());
-        }
-    }
-
-    /**
      * Handles the relation between the route and offered resources.
      */
     @Service
@@ -210,6 +105,36 @@ public final class EntityLinkerService {
         @Override
         protected final List<OfferedResource> getInternal(final Route owner) {
             return owner.getOfferedResources();
+        }
+    }
+
+    /**
+     * Handles the relation between the route and start endpoint.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RouteStartEndpointLinker
+            extends OwningRelationService<Route, GenericEndpoint, RouteService,
+            GenericEndpointService> {
+
+        @Override
+        protected final List<GenericEndpoint> getInternal(final Route owner) {
+            return (List<GenericEndpoint>) (List<?>) owner.getStartEndpoint();
+        }
+    }
+
+    /**
+     * Handles the relation between the route and last endpoint.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RouteLastEndpointLinker
+            extends OwningRelationService<Route, ConnectorEndpoint, RouteService,
+            ConnectorEndpointService> {
+
+        @Override
+        protected final List<ConnectorEndpoint> getInternal(final Route owner) {
+            return (List<ConnectorEndpoint>) (List<?>) owner.getLastEndpoint();
         }
     }
 

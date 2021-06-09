@@ -27,7 +27,6 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.List;
 
@@ -67,28 +66,16 @@ public class Route extends AbstractEntity {
     private String routeConfiguration;
 
     /**
-     * The possible start endpoint of the route.
+     * The start endpoint of the route.
      */
-    @OneToOne
-    private GenericEndpoint startGenericEndpoint;
+    @OneToMany
+    private List<Endpoint> startEndpoint;
 
     /**
-     * The possible last endpoint of the route.
+     * The last endpoint of the route.
      */
-    @OneToOne
-    private GenericEndpoint endGenericEndpoint;
-
-    /**
-     * The possible start endpoint of the route.
-     */
-    @OneToOne
-    private IdsEndpoint startIdsEndpoint;
-
-    /**
-     * The possible last endpoint of the route.
-     */
-    @OneToOne
-    private IdsEndpoint endIdsEndpoint;
+    @OneToMany
+    private List<Endpoint> lastEndpoint;
 
     /**
      * List of offered resources.

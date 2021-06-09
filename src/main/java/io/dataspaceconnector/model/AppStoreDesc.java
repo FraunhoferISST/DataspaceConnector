@@ -16,17 +16,17 @@
 package io.dataspaceconnector.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Describes a app store's properties.
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class AppStoreDesc extends AbstractDescription<AppStore> {
 
     /**
@@ -43,39 +43,4 @@ public class AppStoreDesc extends AbstractDescription<AppStore> {
      * The registration status.
      */
     private RegistrationStatus registrationStatus;
-
-    /**
-     * The list of apps.
-     */
-    private List<App> appList;
-
-    /**
-     * @param o The reference object with which to compare.
-     * @return True, if this object is the same as the obj argument.
-     */
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        AppStoreDesc that = (AppStoreDesc) o;
-        return Objects.equals(accessUrl, that.accessUrl)
-                && Objects.equals(title, that.title)
-                && registrationStatus == that.registrationStatus
-                && Objects.equals(appList, that.appList);
-    }
-
-    /**
-     * @return A hash code value for this object.
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), accessUrl, title, registrationStatus, appList);
-    }
 }

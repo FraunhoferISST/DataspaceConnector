@@ -19,7 +19,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.net.URI;
-import java.util.List;
 
 /**
  * Describing broker's properties.
@@ -42,9 +41,4 @@ public class BrokerDesc extends AbstractDescription<Broker> {
      * The status of registration.
      */
     private RegistrationStatus status;
-
-    /**
-     * The list of resources.
-     */
-    private List<OfferedResource> offeredResources;
 }

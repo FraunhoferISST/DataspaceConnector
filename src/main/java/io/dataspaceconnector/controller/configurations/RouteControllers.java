@@ -17,11 +17,15 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
+import io.dataspaceconnector.model.ConnectorEndpoint;
+import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Route;
 import io.dataspaceconnector.model.RouteDesc;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.RouteService;
+import io.dataspaceconnector.view.ConnectorEndpointView;
+import io.dataspaceconnector.view.GenericEndpointView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RouteView;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,7 +53,7 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/subroutes")
-    @Tag(name = "Data Source", description = "Endpoints for CRUD operations on subroutes")
+    @Tag(name = "Route", description = "Endpoints for linking routes to subroutes")
     public static class RoutesToSubroutes
             extends BaseResourceChildController<EntityLinkerService.RouteSubrouteLinker,
             Route, RouteView> {
@@ -60,9 +64,31 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes/{id}/resources")
-    @Tag(name = "Data Source", description = "Endpoints for CRUD operations on subroutes")
+    @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
     public static class RoutesToOfferedResources
             extends BaseResourceChildController<EntityLinkerService.RouteOfferedResourceLinker,
             OfferedResource, OfferedResourceView> {
+    }
+
+    /**
+     * Offers the endpoints for managing start endpoint of the route.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/start/endpoints")
+    @Tag(name = "Route", description = "Endpoints for linking routes to start endpoint.")
+    public static class RoutesToStartEndpoint
+            extends BaseResourceChildController<EntityLinkerService.RouteStartEndpointLinker,
+            GenericEndpoint, GenericEndpointView> {
+    }
+
+    /**
+     * Offers the endpoints for managing last endpoint of the route.
+     */
+    @RestController
+    @RequestMapping("/api/routes/{id}/last/endpoints")
+    @Tag(name = "Route", description = "Endpoints for linking routes to start endpoint.")
+    public static class RoutesToLastEndpoint
+            extends BaseResourceChildController<EntityLinkerService.RouteLastEndpointLinker,
+            ConnectorEndpoint, ConnectorEndpointView> {
     }
 }

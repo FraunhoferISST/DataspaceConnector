@@ -21,6 +21,9 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates clearing houses.
@@ -64,12 +67,13 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var newAccessUrl = updateAccessUrl(clearingHouse,
-                clearingHouse.getAccessUrl());
-        final var newTitle = updateTitle(clearingHouse, clearingHouse.getTitle());
+                desc.getAccessUrl());
+        final var newTitle = updateTitle(clearingHouse, desc.getTitle());
         final var newStatus = updateRegistrationStatus(clearingHouse,
-                clearingHouse.getRegistrationStatus());
+                desc.getRegistrationStatus());
+        final var newAdditional = updateAdditional(clearingHouse, desc.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus;
+        return newAccessUrl || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -78,15 +82,10 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      * @return True, if clearing house is updated.
      */
     private boolean updateRegistrationStatus(final ClearingHouse clearingHouse,
-                                         final RegistrationStatus status) {
-        final boolean updated;
-        if (clearingHouse.getRegistrationStatus().equals(status)) {
-            updated = false;
-        } else {
-            clearingHouse.setRegistrationStatus(status);
-            updated = true;
-        }
-        return updated;
+                                             final RegistrationStatus status) {
+        clearingHouse.setRegistrationStatus(
+                Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
+        return true;
     }
 
     /**
@@ -111,5 +110,19 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
                 MetadataUtils.updateUri(clearingHouse.getAccessUrl(), accessUrl, DEFAULT_URI);
         newAccessUrl.ifPresent(clearingHouse::setAccessUrl);
         return newAccessUrl.isPresent();
+    }
+
+    /**
+     * @param clearingHouse        The entity to be updated.
+     * @param additional The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final ClearingHouse clearingHouse,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                clearingHouse.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(clearingHouse::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

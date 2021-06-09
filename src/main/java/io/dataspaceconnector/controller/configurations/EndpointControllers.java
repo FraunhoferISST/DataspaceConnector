@@ -15,19 +15,23 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
+import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
 import io.dataspaceconnector.model.AppEndpoint;
 import io.dataspaceconnector.model.AppEndpointDesc;
+import io.dataspaceconnector.model.ConnectorEndpoint;
+import io.dataspaceconnector.model.ConnectorEndpointDesc;
+import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.GenericEndpointDesc;
-import io.dataspaceconnector.model.IdsEndpoint;
-import io.dataspaceconnector.model.IdsEndpointDesc;
 import io.dataspaceconnector.services.configuration.AppEndpointService;
+import io.dataspaceconnector.services.configuration.ConnectorEndpointService;
+import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
-import io.dataspaceconnector.services.configuration.IdsEndpointService;
 import io.dataspaceconnector.view.AppEndpointView;
+import io.dataspaceconnector.view.ConnectorEndpointView;
+import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.GenericEndpointView;
-import io.dataspaceconnector.view.IdsEndpointView;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,15 +54,27 @@ public final class EndpointControllers {
     }
 
     /**
-     * Offers the endpoints for managing ids endpoints.
+     * Offers the endpoints for managing the relations between generic endpoints to data sources.
      */
     @RestController
-    @RequestMapping("/api/idsendpoints")
-    @Tag(name = "Ids Endpoint", description = "Endpoints for CRUD operations on"
-            + " ids endpoints")
-    public static class IdsEndpointController
-            extends BaseResourceController<IdsEndpoint, IdsEndpointDesc,
-            IdsEndpointView, IdsEndpointService> {
+    @RequestMapping("/api/genericendpoints{id}/datasource")
+    @Tag(name = "Generic Endpoint", description = "Endpoints for linking generic endpoints to "
+            + "data sources.")
+    public static class GenericEndpointToDataSourceController extends
+            BaseResourceChildController<EntityLinkerService.GenericEndpointDataSourcesLinker,
+                                        DataSource, DataSourceView> {
+    }
+
+    /**
+     * Offers the endpoints for managing connector endpoints.
+     */
+    @RestController
+    @RequestMapping("/api/connectorendpoints")
+    @Tag(name = "Connector Endpoint", description = "Endpoints for CRUD operations on"
+            + " connector endpoints")
+    public static class ConnectorEndpointController
+            extends BaseResourceController<ConnectorEndpoint, ConnectorEndpointDesc,
+            ConnectorEndpointView, ConnectorEndpointService> {
 
     }
 

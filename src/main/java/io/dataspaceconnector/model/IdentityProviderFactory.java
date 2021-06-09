@@ -21,6 +21,9 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Creates and updates identity providers.
@@ -66,12 +69,13 @@ public class IdentityProviderFactory
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var newAccessUrl = updateAccessUrl(identityProvider,
-                identityProvider.getAccessUrl());
-        final var newTitle = updateTitle(identityProvider, identityProvider.getTitle());
+                desc.getAccessUrl());
+        final var newTitle = updateTitle(identityProvider, desc.getTitle());
         final var newStatus = updateRegistrationStatus(identityProvider,
-                identityProvider.getRegistrationStatus());
+                desc.getRegistrationStatus());
+        final var newAdditional = updateAdditional(identityProvider, desc.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus;
+        return newAccessUrl || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -81,14 +85,9 @@ public class IdentityProviderFactory
      */
     private boolean updateRegistrationStatus(final IdentityProvider identityProvider,
                                              final RegistrationStatus status) {
-        final boolean updated;
-        if (identityProvider.getRegistrationStatus().equals(status)) {
-            updated = false;
-        } else {
-            identityProvider.setRegistrationStatus(status);
-            updated = true;
-        }
-        return updated;
+        identityProvider.setRegistrationStatus(
+                Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
+        return true;
     }
 
     /**
@@ -114,5 +113,19 @@ public class IdentityProviderFactory
                         DEFAULT_IDENTITY_PROVIDER);
         newAccessUrl.ifPresent(identityProvider::setAccessUrl);
         return newAccessUrl.isPresent();
+    }
+
+    /**
+     * @param identityProvider The entity to be updated.
+     * @param additional       The updated additional.
+     * @return True, if additional is updated.
+     */
+    private boolean updateAdditional(final IdentityProvider identityProvider,
+                                     final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                identityProvider.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(identityProvider::setAdditional);
+
+        return newAdditional.isPresent();
     }
 }

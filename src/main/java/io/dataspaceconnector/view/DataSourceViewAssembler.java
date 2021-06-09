@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.DataSourceController;
 import io.dataspaceconnector.model.DataSource;
 import org.modelmapper.ModelMapper;
@@ -24,9 +23,6 @@ import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Assembles the REST resource for a data source.
@@ -45,12 +41,6 @@ public class DataSourceViewAssembler
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(dataSource, DataSourceView.class);
         view.add(getSelfLink(dataSource.getId()));
-
-        final var genericEndpointsLink =
-                linkTo(methodOn(ConfigmanagerControllers.DataSourceToGenericEndpoints.class)
-                        .getResource(dataSource.getId(), null, null))
-                .withRel("genericendpoints");
-        view.add(genericEndpointsLink);
 
         return view;
     }
