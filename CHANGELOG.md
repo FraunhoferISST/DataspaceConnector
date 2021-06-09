@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [5.1.1] - 2021-06-09
+
+### Fixed
+- Add missing hateoas information in openapi schema.
+
 ## [5.1.0] - 2021-06-07
 
 ### Added
