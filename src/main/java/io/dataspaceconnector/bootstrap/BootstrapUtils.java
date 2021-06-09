@@ -37,10 +37,6 @@ import org.apache.commons.io.FilenameUtils;
 @Log4j2
 public final class BootstrapUtils {
 
-    private BootstrapUtils() {
-        // Nothing to do here.
-    }
-
     /**
      * Some entries in bootstrap property files allow multiple values. This is the delimiter that is
      * used to separate the values.
@@ -53,6 +49,10 @@ public final class BootstrapUtils {
     private static final Set<String> MULTI_VALUE_PROPS = SetUtils.hashSet(
             "resource.download.auto"
     );
+
+    private BootstrapUtils() {
+        // Nothing to do here.
+    }
 
     /**
      * Collect all bootstrap configuration files and merge them into a single {@link Properties}
@@ -119,6 +119,21 @@ public final class BootstrapUtils {
                 config.put(key, value);
             }
         }
+    }
+
+    /**
+     * Find all files with given extension in a given path. All files with matching extension will
+     * be returned. The search includes subdirectories.
+     *
+     * @param path      The starting path for searching.
+     * @param extension The searched file extension.
+     * @return A list of all files that are stored at given path (and subdirectories) with required
+     * extension and optional required filename.
+     * @throws FileNotFoundException if the given path does not exist.
+     */
+    public static List<File> findFilesByExtension(final String path, final String extension)
+            throws FileNotFoundException {
+        return findFilesByExtension(path, null, extension);
     }
 
     /**

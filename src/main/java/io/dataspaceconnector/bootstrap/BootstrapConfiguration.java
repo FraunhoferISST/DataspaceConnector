@@ -44,6 +44,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -155,37 +156,10 @@ public class BootstrapConfiguration {
             log.info("Start bootstrapping of Connector.");
         }
 
-        // Try to retrieve data and properties.
-        List<File> jsonFiles = null;
-        try {
-            jsonFiles = findFilesByExtension(bootstrapPath, null, FILE_EXT);
-            if (jsonFiles.isEmpty() && log.isWarnEnabled()) {
-                log.warn("Catalog files for bootstrapping could not be loaded.");
-            }
-        } catch (FileNotFoundException | NullPointerException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No catalog files for bootstrapping found. [exception=({})]",
-                        e.getMessage());
-            }
-        }
-
-        var properties = new Properties();
-        try {
-            properties = retrieveBootstrapConfig(bootstrapPath, PROPERTIES_NAME, PROPERTIES_EXT);
-            if (properties.isEmpty() && log.isWarnEnabled()) {
-                log.warn("Config files for bootstrapping could not be loaded.");
-            }
-        } catch (FileNotFoundException e) {
-            if (log.isDebugEnabled()) {
-                log.debug("No config files for bootstrapping found. [exception=({})]",
-                        e.getMessage());
-            }
-        }
-
-        final Map<URI, Resource> idsResources = new ConcurrentHashMap<>();
-
         // register content of all found catalog files
-        if (!processIdsFiles(jsonFiles, properties, idsResources)) {
+        final var properties = loadProperties();
+        final Map<URI, Resource> idsResources = new ConcurrentHashMap<>();
+        if (!processIdsFiles(loadBootstrapData(), properties, idsResources)) {
             if (log.isWarnEnabled()) {
                 log.warn("An error occurred while bootstrapping IDS catalogs.");
             }
@@ -211,6 +185,41 @@ public class BootstrapConfiguration {
         if (log.isInfoEnabled()) {
             log.info("Finished bootstrapping of connector.");
         }
+    }
+
+    private List<File> loadBootstrapData() {
+        try {
+            final var files = findFilesByExtension(bootstrapPath, FILE_EXT);
+            if (files.isEmpty() && log.isWarnEnabled()) {
+                log.warn("Catalog files for bootstrapping could not be loaded.");
+            }
+
+            return files;
+        } catch (FileNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("No catalog files for bootstrapping found. [exception=({})]",
+                        e.getMessage());
+            }
+        }
+
+        return new ArrayList<>();
+    }
+
+    private Properties loadProperties() {
+        var properties = new Properties();
+        try {
+            properties = retrieveBootstrapConfig(bootstrapPath, PROPERTIES_NAME, PROPERTIES_EXT);
+            if (properties.isEmpty() && log.isWarnEnabled()) {
+                log.warn("Config files for bootstrapping could not be loaded.");
+            }
+        } catch (FileNotFoundException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("No config files for bootstrapping found. [exception=({})]",
+                        e.getMessage());
+            }
+        }
+
+        return properties;
     }
 
     private boolean registerAtBroker(final Properties properties,
@@ -547,35 +556,39 @@ public class BootstrapConfiguration {
         // add additional information from properties to artifact descriptions
         for (final var representationTemplate : resourceTemplate.getRepresentations()) {
             for (final var artifactTemplate : representationTemplate.getArtifacts()) {
-                final var bootstrapId = artifactTemplate.getDesc().getBootstrapId();
-                final var accessUrl = properties.getProperty("artifact.accessUrl." + bootstrapId);
-                final var username = properties.getProperty("artifact.username." + bootstrapId);
-                final var password = properties.getProperty("artifact.password." + bootstrapId);
-                final var value = properties.getProperty("artifact.value." + bootstrapId);
+                updateArtifactDesc(artifactTemplate.getDesc(), properties);
+            }
+        }
+    }
 
-                if (accessUrl != null) {
-                    try {
-                        artifactTemplate.getDesc().setAccessUrl(new URL(accessUrl));
-                    } catch (MalformedURLException e) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Could not parse accessUrl '{}' for artifact with "
-                                    + "IDS id '{}'.", accessUrl, bootstrapId, e);
-                        }
-                    }
-                }
+    private void updateArtifactDesc(final ArtifactDesc desc, final Properties properties) {
+        final var bootstrapId = desc.getBootstrapId();
+        final var accessUrl = properties.getProperty("artifact.accessUrl." + bootstrapId);
+        final var username = properties.getProperty("artifact.username." + bootstrapId);
+        final var password = properties.getProperty("artifact.password." + bootstrapId);
+        final var value = properties.getProperty("artifact.value." + bootstrapId);
 
-                if (username != null) {
-                    artifactTemplate.getDesc().setUsername(username);
-                }
-
-                if (password != null) {
-                    artifactTemplate.getDesc().setPassword(password);
-                }
-
-                if (value != null) {
-                    artifactTemplate.getDesc().setValue(value);
+        if (accessUrl != null) {
+            try {
+                desc.setAccessUrl(new URL(accessUrl));
+            } catch (MalformedURLException e) {
+                if (log.isErrorEnabled()) {
+                    log.error("Could not parse accessUrl '{}' for artifact with "
+                              + "IDS id '{}'.", accessUrl, bootstrapId, e);
                 }
             }
+        }
+
+        if (username != null) {
+            desc.setUsername(username);
+        }
+
+        if (password != null) {
+            desc.setPassword(password);
+        }
+
+        if (value != null) {
+            desc.setValue(value);
         }
     }
 
