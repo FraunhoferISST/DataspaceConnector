@@ -15,16 +15,18 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.Authentication;
-import io.dataspaceconnector.model.AuthenticationDesc;
+import io.dataspaceconnector.model.Endpoint;
+import io.dataspaceconnector.model.EndpointDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
- * Service class for authentications.
+ * Handles the basic logic for endpoints.
+ *
+ * @param <T> The endpoint type.
+ * @param <D> The endpoint description type.
  */
-@Service
 @NoArgsConstructor
-public class AuthenticationService extends BaseEntityService<Authentication, AuthenticationDesc> {
+public class EndpointService<T extends Endpoint, D extends EndpointDesc<T>>
+        extends BaseEntityService<T, D> {
 }
