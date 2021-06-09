@@ -54,6 +54,7 @@ public class AbstractEntity implements Serializable {
     @Setter(AccessLevel.PACKAGE)
     @Column(name = "id", unique = true, nullable = false)
     @EqualsAndHashCode.Exclude
+    @SuppressWarnings("PMD.ShortVariable")
     private UUID id;
 
     /**

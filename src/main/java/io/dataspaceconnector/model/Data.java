@@ -54,6 +54,7 @@ public class Data {
     @GeneratedValue
     @JsonIgnore
     @ToString.Exclude
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     /**
