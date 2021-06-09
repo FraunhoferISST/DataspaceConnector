@@ -50,11 +50,6 @@ the issue. They map the structure of the roadmap.
 
 ## Branches
 
-This repository has a `dev` branch in addition to the `master` branch. The idea is to always
-merge other branches into the `dev` branch (as SNAPSHOT version) and to push the changes from
-there into the `master` only for releases. This way, the `dev` branch is always up to date,
-with the risk of small issues, while the `master` only contains official releases.
-
 After creating an issue yourself or if you want to address an existing issue, you have to create a
 branch with a unique number and name that assigns it to an issue. Therefore, follow the guidelines
 at https://deepsource.io/blog/git-branch-naming-conventions/. After your changes, update the
