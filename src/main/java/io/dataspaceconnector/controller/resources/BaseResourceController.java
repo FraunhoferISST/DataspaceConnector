@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import java.util.UUID;
 import javax.validation.Valid;
+import java.util.UUID;
 
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -25,6 +25,9 @@ import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -52,6 +55,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <V> The type of the view produces by this controller.
  * @param <S> The underlying service for handling the resource logic.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
         extends RepresentationModel<V>, S
         extends BaseEntityService<T, D>> {
@@ -161,7 +166,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *          if the resourceId is unknown.
      */
-    @PutMapping(value = "{id}")
+    @PutMapping("{id}")
     @Operation(summary = "Update a base resource by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -192,20 +197,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 204 (No_Content).
      * @throws IllegalArgumentException if the resourceId is null.
      */
-    @DeleteMapping(value = "{id}")
+    @DeleteMapping("{id}")
     @Operation(summary = "Delete a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
     public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    /**
-     * Get the service responsible for the resource's logic handling.
-     *
-     * @return The service.
-     */
-    protected S getService() {
-        return service;
     }
 }

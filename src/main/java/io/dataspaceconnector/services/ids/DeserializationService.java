@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.services.ids;
 
+import java.io.IOException;
+
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -28,8 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 /**
  * Service class for ids object deserialization.
@@ -185,7 +185,7 @@ public class DeserializationService {
         try {
             serializerProvider.getSerializer().deserialize(policy, tClass);
             isType = true;
-        } catch (IOException ignore) {
+        } catch (IOException expected) {
             // Intentionally empty
         }
 

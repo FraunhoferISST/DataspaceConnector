@@ -126,7 +126,7 @@ public class ContractRequestMessageController {
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping(value = "/contract")
+    @PostMapping("/contract")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -140,14 +140,14 @@ public class ContractRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "List of ids resource that should be requested.")
-            @RequestParam(value = "resourceIds") final List<URI> resources,
+            @RequestParam("resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
-            @RequestParam(value = "artifactIds") final List<URI> artifacts,
+            @RequestParam("artifactIds") final List<URI> artifacts,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
 //                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
-            @RequestParam(value = "download") final boolean download,
+            @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
         UUID agreementId;
