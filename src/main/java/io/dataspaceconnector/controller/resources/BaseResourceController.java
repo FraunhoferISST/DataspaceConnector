@@ -166,7 +166,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *          if the resourceId is unknown.
      */
-    @PutMapping(value = "{id}")
+    @PutMapping("{id}")
     @Operation(summary = "Update a base resource by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -197,7 +197,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 204 (No_Content).
      * @throws IllegalArgumentException if the resourceId is null.
      */
-    @DeleteMapping(value = "{id}")
+    @DeleteMapping("{id}")
     @Operation(summary = "Delete a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
     public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
