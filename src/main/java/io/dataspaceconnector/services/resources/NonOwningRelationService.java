@@ -20,6 +20,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import io.dataspaceconnector.model.AbstractEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 
@@ -46,6 +49,8 @@ import org.springframework.data.domain.Pageable;
  * @param <T> The service type for the parent resource.
  * @param <X> The service type for the child resource.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public abstract class NonOwningRelationService<
         K extends AbstractEntity,
         W extends AbstractEntity,

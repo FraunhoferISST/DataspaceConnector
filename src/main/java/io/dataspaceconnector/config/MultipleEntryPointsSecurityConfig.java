@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.config;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +34,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
  */
 @Configuration
 @EnableWebSecurity
+@Getter(AccessLevel.NONE)
+@Setter(AccessLevel.NONE)
 public class MultipleEntryPointsSecurityConfig {
 
     /**

@@ -45,6 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.NONE)
 @EqualsAndHashCode
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.ShortClassName")
 public class Data {
 
     /**
@@ -54,6 +55,7 @@ public class Data {
     @GeneratedValue
     @JsonIgnore
     @ToString.Exclude
+    @SuppressWarnings("PMD.ShortVariable")
     private Long id;
 
     /**

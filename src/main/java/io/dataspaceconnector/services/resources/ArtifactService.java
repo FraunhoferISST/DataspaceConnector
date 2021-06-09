@@ -34,7 +34,10 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +56,8 @@ import java.util.UUID;
  */
 @Log4j2
 @Service
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.NONE)
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
     /**

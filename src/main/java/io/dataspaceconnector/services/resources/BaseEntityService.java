@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -22,11 +24,12 @@ import io.dataspaceconnector.model.AbstractFactory;
 import io.dataspaceconnector.repositories.BaseEntityRepository;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.UUID;
 
 /**
  * The base service implements base logic for persistent entities.
@@ -34,6 +37,8 @@ import java.util.UUID;
  * @param <T> The entity type.
  * @param <D> The description for the passed entity type.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescription<T>> {
     /**
      * Persists all entities of type T.
@@ -153,23 +158,5 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      */
     protected T persist(final T entity) {
         return repository.saveAndFlush(entity);
-    }
-
-    /**
-     * Returns the repository so it can be accessed in subclasses.
-     *
-     * @return the repository
-     */
-    protected BaseEntityRepository<T> getRepository() {
-        return repository;
-    }
-
-    /**
-     * Returns the factory so it can be accessed in subclasses.
-     *
-     * @return the factory
-     */
-    protected AbstractFactory<T, D> getFactory() {
-        return factory;
     }
 }
