@@ -1,4 +1,4 @@
-package io.dataspaceconnector.services.messages.handler;
+package io.dataspaceconnector.services.messages.handler.camel;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -15,13 +15,13 @@ public class Request<H, B> implements RouteMsg<H, B> {
 
 
 class IdsRequest<H extends de.fraunhofer.iais.eis.Message, B> extends Request<H , B>{
-    public IdsRequest(H header, B body) {
+    public IdsRequest(final H header, final B body) {
         super(header, body);
     }
 }
 
 class IdsRawRequest<H extends Message> extends IdsRequest<H, MessagePayload> {
-    public IdsRawRequest(H header, MessagePayload body) {
+    public IdsRawRequest(final H header, final MessagePayload body) {
         super(header, body);
     }
 }

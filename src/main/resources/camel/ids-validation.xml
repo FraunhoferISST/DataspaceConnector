@@ -12,7 +12,7 @@
         </onException>
 
         <from uri="direct:ids-validation"/>
-        <process ref="VersionValidator"/>
+        <process ref="MessageHeaderValidator"/>
 
     </route>
 </routes>

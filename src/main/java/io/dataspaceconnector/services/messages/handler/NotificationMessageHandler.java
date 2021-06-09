@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import io.dataspaceconnector.services.messages.handler.camel.Request;
+import io.dataspaceconnector.services.messages.handler.camel.Response;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;

@@ -1,4 +1,4 @@
-package io.dataspaceconnector.services.messages.handler;
+package io.dataspaceconnector.services.messages.handler.camel;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
