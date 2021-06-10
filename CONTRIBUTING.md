@@ -54,8 +54,8 @@ After creating an issue yourself or if you want to address an existing issue, yo
 branch with a unique number and name that assigns it to an issue. Therefore, follow the guidelines
 at https://deepsource.io/blog/git-branch-naming-conventions/. After your changes, update the
 `README.md`, Wiki, and `CHANGELOG.md` with necessary details. Then, create a pull request and note
-that **committing to the master is not allowed**. Please use the feature `linked issues` to link
-issues and pull requests.
+that **committing to the main branch is not allowed**. Please use the feature `linked issues` to
+link issues and pull requests.
 
 ## Commits
 
