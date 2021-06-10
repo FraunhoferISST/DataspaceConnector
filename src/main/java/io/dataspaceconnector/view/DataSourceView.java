@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.DataSourceType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -50,6 +51,11 @@ public class DataSourceView extends RepresentationModel<DataSourceView> {
      * The relative path of the data source.
      */
     private String relativePath;
+
+    /**
+     * The data source authentication.
+     */
+    private Authentication authentication;
 
     /**
      * The type of the data source.

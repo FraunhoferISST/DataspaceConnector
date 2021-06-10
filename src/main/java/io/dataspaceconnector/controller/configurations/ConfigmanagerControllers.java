@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceController;
+import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.ClearingHouse;
 import io.dataspaceconnector.model.ClearingHouseDesc;
 import io.dataspaceconnector.model.Configuration;
@@ -37,8 +38,19 @@ import io.dataspaceconnector.view.ConnectorView;
 import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.IdentityProviderView;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Controller for the Configuration Manager.
@@ -84,10 +96,42 @@ public final class ConfigmanagerControllers {
      */
     @RestController
     @RequestMapping("/api/datasources")
+    @RequiredArgsConstructor
     @Tag(name = "Data Source", description = "Endpoints for CRUD operations on data sources")
     public static class DataSourceController
             extends BaseResourceController<DataSource, DataSourceDesc, DataSourceView,
             DataSourceService> {
+
+        /**
+         * The service managing data sources.
+         */
+        private final @NonNull DataSourceService dataSourceService;
+
+        /**
+         * Replace the authentication of a data source.
+         * @param dataSourceId   The data source whose authentication should be replaced.
+         * @param authentication The new authentication.
+         * @return Http Status ok.
+         */
+        @PutMapping(value = "{id}/authentication")
+        public ResponseEntity<Void> putAuthentication(
+                @Valid @PathVariable(name = "id") final UUID dataSourceId,
+                @RequestBody final Authentication authentication) throws IOException {
+            dataSourceService.setDataSourceAuthentication(dataSourceId, authentication);
+            return ResponseEntity.ok().build();
+        }
+
+        /**
+         * Deletes the authentication from the data source.
+         * @param dataSourceId The data source whose authentication should be deleted.
+         * @return Http Status ok.
+         */
+        @DeleteMapping(value = "{id}/authentication")
+        public ResponseEntity<Void> deleteAuthentication(
+                @Valid @PathVariable(name = "id") final UUID dataSourceId) throws IOException {
+            dataSourceService.deleteDataSourceAuthentication(dataSourceId);
+            return ResponseEntity.ok().build();
+        }
     }
 
     /**

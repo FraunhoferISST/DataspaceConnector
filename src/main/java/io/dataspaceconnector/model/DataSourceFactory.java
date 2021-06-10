@@ -44,7 +44,6 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var dataSource = new DataSource();
-        dataSource.setAuthentication(null);
 
         update(dataSource, desc);
 
@@ -98,7 +97,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     }
 
     /**
-     * @param dataSource        The entity to be updated.
+     * @param dataSource The entity to be updated.
      * @param additional The updated additional.
      * @return True, if additional is updated.
      */
@@ -109,5 +108,25 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         newAdditional.ifPresent(dataSource::setAdditional);
 
         return newAdditional.isPresent();
+    }
+
+    /**
+     * @param dataSource     The entity to be updated.
+     * @param authentication The updated authentication.
+     * @return updated entity.
+     */
+    public DataSource updateAuthentication(final DataSource dataSource,
+                                           final Authentication authentication) {
+        dataSource.setAuthentication(authentication);
+        return dataSource;
+    }
+
+    /**
+     * @param dataSource The entity to be updated.
+     * @return updated entity without authentication.
+     */
+    public DataSource deleteAuthentication(final DataSource dataSource) {
+        dataSource.setAuthentication(null);
+        return dataSource;
     }
 }

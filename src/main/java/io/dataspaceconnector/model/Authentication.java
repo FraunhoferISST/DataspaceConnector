@@ -15,32 +15,34 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import lombok.ToString;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * The authentication is used for authorizing for example by the proxy or the data source.
  */
 @Entity
-@SQLDelete(sql = "UPDATE authentication SET deleted=true WHERE id=?")
-@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Authentication extends AbstractEntity {
-
+public class Authentication {
     /**
-     * Serial version uid.
-     **/
-    private static final long serialVersionUID = 1L;
+     * The primary key of the authentication.
+     */
+    @Id
+    @GeneratedValue
+    @JsonIgnore
+    @ToString.Exclude
+    @SuppressWarnings("PMD.ShortVariable")
+    private Long id;
 
     /**
      * The username for the authentication.
@@ -51,5 +53,4 @@ public class Authentication extends AbstractEntity {
      * The password for the authentication.
      */
     private String password;
-
 }

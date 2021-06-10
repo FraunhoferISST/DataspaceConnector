@@ -31,11 +31,6 @@ public class DataSourceDesc extends AbstractDescription<DataSource> {
     private String relativePath;
 
     /**
-     * The authentication for the data source.
-     */
-    private Authentication authentication;
-
-    /**
      * The type of the data source.
      */
     private DataSourceType dataSourceType;

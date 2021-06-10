@@ -23,6 +23,7 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -57,7 +58,7 @@ public class DataSource extends AbstractEntity {
     /**
      * The authentication for the data source.
      */
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Authentication authentication;
 
     /**
