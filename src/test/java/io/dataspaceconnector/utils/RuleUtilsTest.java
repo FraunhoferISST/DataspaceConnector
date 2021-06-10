@@ -15,6 +15,15 @@
  */
  package io.dataspaceconnector.utils;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.text.ParseException;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -32,15 +41,6 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.Contract;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.text.ParseException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -1040,6 +1040,24 @@ class RuleUtilsTest {
          /*ASSERT*/
          assertNull(result);
      }
+
+    @Test
+    public void isExpired_dateBefore_returnTrue() {
+        /* ARRANGE */
+        final var expiration = ZonedDateTime.parse("2021-02-14T12:13:14+01:00");
+
+        /* ACT && ASSERT */
+        assertTrue(RuleUtils.isExpired(expiration));
+    }
+
+    @Test
+    public void isExpired_dateAfter_returnFalse() {
+        /* ARRANGE */
+        final var expiration = ZonedDateTime.parse("2051-02-14T12:13:14+01:00");
+
+        /* ACT && ASSERT */
+        assertFalse(RuleUtils.isExpired(expiration));
+    }
 
      /**
       * Utilities
