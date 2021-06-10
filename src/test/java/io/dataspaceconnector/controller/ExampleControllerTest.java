@@ -46,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest( classes = { ExampleController.class })
 public class ExampleControllerTest {
 
     @MockBean
@@ -108,7 +108,8 @@ public class ExampleControllerTest {
                 .build();
 
         /* ACT && ASSERT */
-        final var result = mockMvc.perform(get("/api/examples/configuration")).andExpect(status().isOk()).andReturn();
+        final var result = mockMvc.perform(get("/api/examples/configuration"))
+                                  .andExpect(status().isOk()).andReturn();
         assertEquals(expect.toRdf(), result.getResponse().getContentAsString());
     }
 

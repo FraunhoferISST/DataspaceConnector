@@ -19,7 +19,7 @@ Get an example setup running without diving into the code.
 **We provide Docker images. These can be found [here](https://github.com/orgs/International-Data-Spaces-Association/packages/container/package/dataspace-connector).
 The GitHub Container Registry (GHCR) allows to download Docker images without credentials.
 You will find an image for each release tag with the corresponding version. In addition, an image of
-the master branch is automatically provided as soon as changes are identified.**
+the main branch is automatically provided as soon as changes are identified.**
 
 If you want to build and run locally, ensure that at least Java 11 is installed. Then, follow these
 steps:
