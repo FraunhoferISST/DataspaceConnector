@@ -95,7 +95,6 @@ public class DeserializationService {
         try {
             return serializerProvider.getSerializer().deserialize(resource, Resource.class);
         } catch (IOException | RiotException e) {
-            // TODO make sure RiotException is sufficiently handled
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
             }

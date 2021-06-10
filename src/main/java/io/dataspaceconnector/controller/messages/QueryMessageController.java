@@ -88,13 +88,12 @@ public class QueryMessageController {
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
             if(response != null && response.getPayload().isPresent()){
-                String responseAsString = response.getPayload().get();
+                final var responseAsString = response.getPayload().get();
                 return ResponseEntity.ok(responseAsString);
             }else{
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
             }
         } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
-            // TODO: should all exceptions be handled this way or should a differentiation be made?
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

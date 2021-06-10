@@ -332,6 +332,16 @@
 			<groupId>de.fraunhofer.ids.messaging</groupId>
 			<artifactId>broker</artifactId>
 			<version>4.1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- https://github.com/jsonld-java/jsonld-java -->
@@ -353,7 +363,6 @@
 			<groupId>org.hibernate.orm</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>${hibernate.version}</version>
-			<!-- TODO: is Repository needed? -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
@@ -361,8 +370,6 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>${h2database.version}</version>
-			<scope>test</scope>
-			<!-- TODO: is Repository needed? -->
 		</dependency>
 
 	</dependencies>
@@ -399,11 +406,6 @@
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</repository>
-		<repository>
-			<id>isst-nexus-public</id>
-			<name>isst-public</name>
-			<url>https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/</url>
 		</repository>
 	</repositories>
 

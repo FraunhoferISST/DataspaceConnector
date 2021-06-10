@@ -94,8 +94,7 @@ public class ConnectorUpdateMessageController {
             }
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (NullPointerException | IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
-            //TODO: as the Messaging services added  DapsTokenManagerException, ClaimsException and MultipartParseException as ne Eceptions, check if a new type of Response Message is needed
+        } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

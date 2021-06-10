@@ -137,7 +137,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                 log.warn("Message could not be parsed. [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
-            //TODO: Check if a more specific Error Message should be used instead
         }
     }
 

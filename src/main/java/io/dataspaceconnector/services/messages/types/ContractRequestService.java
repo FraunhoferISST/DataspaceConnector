@@ -33,7 +33,6 @@ import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**

@@ -18,7 +18,10 @@ package io.dataspaceconnector.controller.messages;
 import java.io.IOException;
 import java.net.URI;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.ResultMessage;
+import de.fraunhofer.iais.eis.ResultMessageBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.ResultMAP;

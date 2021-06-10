@@ -98,8 +98,7 @@ public class ResourceUnavailableMessageController {
             }else{
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
             }
-        } catch (NullPointerException | IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
-            // TODO: should all exceptions be handled this way or should a differentiation be made?
+        } catch (IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }
