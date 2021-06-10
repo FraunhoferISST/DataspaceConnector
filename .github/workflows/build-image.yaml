@@ -2,7 +2,7 @@ name: docker-image
 
 on:
    push:
-    branches: [ master ]
+    branches: [ main ]
     tags: 'v*'
    release:
      types: [published]
