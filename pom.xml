@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.0.2</revision>
+		<revision>5.1.1</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -95,7 +95,6 @@
 
 		<!-- Dependencies -->
 		<ids-framework.version>5.0.2</ids-framework.version>
-		<!-- <springframework.boot>2.4.3</springframework.boot> -->
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
@@ -104,6 +103,7 @@
 		<postgres.version>42.2.20</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
 		<springdoc-security.version>1.5.9</springdoc-security.version>
+		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
 		<jaeger.version>3.3.1</jaeger.version>
@@ -112,7 +112,7 @@
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
 		<maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-		<pitest.version>1.6.6</pitest.version>
+		<pitest.version>1.6.7</pitest.version>
 		<pitest-junit5-plugin.version>0.14</pitest-junit5-plugin.version>
 		<tidy.version>1.1.0</tidy.version>
 		<maven-site-plugin.version>3.9.1</maven-site-plugin.version>
@@ -357,6 +357,13 @@
 			<version>${springdoc-security.version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-hateoas -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-hateoas</artifactId>
+			<version>${springdoc-hateoas.version}</version>
+		</dependency>
+
 		<!-- https://github.com/jsonld-java/jsonld-java -->
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
@@ -566,6 +573,19 @@
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>

@@ -25,9 +25,9 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 5.0.2
+  version: 5.1.1
 servers:
-  - url: http://localhost:8080
+  - url: https://localhost:8080
     description: Generated server url
 tags:
   - name: Resources
@@ -2385,7 +2385,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: object
+                $ref: '#/components/schemas/StreamingResponseBody'
   /api/rules:
     get:
       tags:
@@ -2637,8 +2637,12 @@ paths:
             schema:
               type: string
               description: Database query (SparQL)
-              example: "SELECT ?subject ?predicate ?object\nFROM <urn:x-arq:UnionGraph>\n\
-                WHERE {\n  ?subject ?predicate ?object\n};"
+              example: |-
+                SELECT ?subject ?predicate ?object
+                FROM <urn:x-arq:UnionGraph>
+                WHERE {
+                  ?subject ?predicate ?object
+                };
         required: true
       responses:
         "401":
@@ -3144,13 +3148,6 @@ paths:
           schema:
             type: string
             format: uri
-        - name: params
-          in: query
-          required: true
-          schema:
-            type: object
-            additionalProperties:
-              type: string
       responses:
         "200":
           description: Ok
@@ -3438,31 +3435,12 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-    Link:
+        _links:
+          $ref: '#/components/schemas/Links'
+    Links:
       type: object
-      properties:
-        rel:
-          type: string
-        href:
-          type: string
-        hreflang:
-          type: string
-        media:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-        deprecation:
-          type: string
-        profile:
-          type: string
-        name:
-          type: string
+      additionalProperties:
+        $ref: '#/components/schemas/Link'
     ContractView:
       type: object
       properties:
@@ -3487,10 +3465,8 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     PageMetadata:
       type: object
       properties:
@@ -3509,27 +3485,29 @@ components:
     PagedModelContractView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContractView'
+        _embedded:
+          type: object
+          properties:
+            contract:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContractView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     PagedModelRepresentationView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/RepresentationView'
+        _embedded:
+          type: object
+          properties:
+            representations:
+              type: array
+              items:
+                $ref: '#/components/schemas/RepresentationView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     RepresentationView:
@@ -3554,10 +3532,8 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     CatalogView:
       type: object
       properties:
@@ -3575,34 +3551,34 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     PagedModelCatalogView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/CatalogView'
+        _embedded:
+          type: object
+          properties:
+            catalogs:
+              type: array
+              items:
+                $ref: '#/components/schemas/CatalogView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     PagedModelRequestedResourceView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/RequestedResourceView'
+        _embedded:
+          type: object
+          properties:
+            requested:
+              type: array
+              items:
+                $ref: '#/components/schemas/RequestedResourceView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     RequestedResourceView:
@@ -3646,10 +3622,8 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     OfferedResourceView:
       type: object
       properties:
@@ -3688,21 +3662,20 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     PagedModelOfferedResourceView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/OfferedResourceView'
+        _embedded:
+          type: object
+          properties:
+            resources:
+              type: array
+              items:
+                $ref: '#/components/schemas/OfferedResourceView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     ArtifactView:
@@ -3732,21 +3705,20 @@ components:
           type: object
           additionalProperties:
             type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     PagedModelArtifactView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ArtifactView'
+        _embedded:
+          type: object
+          properties:
+            artifacts:
+              type: array
+              items:
+                $ref: '#/components/schemas/ArtifactView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     AbstractConstraint:
@@ -3787,11 +3759,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:rightOperandReference:
+              type: string
+              format: uri
+            ids:pipEndpoint:
+              type: string
+              format: uri
             ids:unit:
               type: string
               format: uri
-            ids:rightOperand:
-              $ref: '#/components/schemas/RdfResource'
             ids:leftOperand:
               type: string
               enum:
@@ -3812,9 +3788,8 @@ components:
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/ENDPOINT
                 - https://w3id.org/idsa/code/PATH
-            ids:pipEndpoint:
-              type: string
-              format: uri
+            ids:rightOperand:
+              $ref: '#/components/schemas/RdfResource'
             ids:operator:
               type: string
               enum:
@@ -3864,9 +3839,6 @@ components:
                 - https://w3id.org/idsa/code/HAS_SITE
                 - https://w3id.org/idsa/code/INSIDE_NETWORK
                 - https://w3id.org/idsa/code/DEFINES_AS
-            ids:rightOperandReference:
-              type: string
-              format: uri
             '@type':
               type: string
     Duty:
@@ -3957,15 +3929,15 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:and:
+              type: array
+              items:
+                $ref: '#/components/schemas/Constraint'
             ids:or:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
             ids:xone:
-              type: array
-              items:
-                $ref: '#/components/schemas/Constraint'
-            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -3983,11 +3955,11 @@ components:
         - $ref: '#/components/schemas/Rule'
         - type: object
           properties:
-            ids:preDuty:
+            ids:postDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
-            ids:postDuty:
+            ids:preDuty:
               type: array
               items:
                 $ref: '#/components/schemas/Duty'
@@ -4103,14 +4075,15 @@ components:
     PagedModelContractRuleView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContractRuleView'
+        _embedded:
+          type: object
+          properties:
+            rules:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContractRuleView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     QueryInput:
@@ -4140,85 +4113,92 @@ components:
           key: value
       oneOf:
         - $ref: '#/components/schemas/QueryInput'
+    StreamingResponseBody:
+      type: object
     CollectionModelContractRuleView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContractRuleView'
+        _embedded:
+          type: object
+          properties:
+            rules:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContractRuleView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelRequestedResourceView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/RequestedResourceView'
+        _embedded:
+          type: object
+          properties:
+            requested:
+              type: array
+              items:
+                $ref: '#/components/schemas/RequestedResourceView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelRepresentationView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/RepresentationView'
+        _embedded:
+          type: object
+          properties:
+            representations:
+              type: array
+              items:
+                $ref: '#/components/schemas/RepresentationView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelOfferedResourceView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/OfferedResourceView'
+        _embedded:
+          type: object
+          properties:
+            resources:
+              type: array
+              items:
+                $ref: '#/components/schemas/OfferedResourceView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelContractView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ContractView'
+        _embedded:
+          type: object
+          properties:
+            contract:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContractView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelCatalogView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/CatalogView'
+        _embedded:
+          type: object
+          properties:
+            catalogs:
+              type: array
+              items:
+                $ref: '#/components/schemas/CatalogView'
+        _links:
+          $ref: '#/components/schemas/Links'
     CollectionModelArtifactView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/ArtifactView'
-    StreamingResponseBody:
-      type: object
+        _embedded:
+          type: object
+          properties:
+            artifacts:
+              type: array
+              items:
+                $ref: '#/components/schemas/ArtifactView'
+        _links:
+          $ref: '#/components/schemas/Links'
     AgreementView:
       type: object
       properties:
@@ -4235,31 +4215,50 @@ components:
           type: boolean
         value:
           type: string
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
+        _links:
+          $ref: '#/components/schemas/Links'
     PagedModelAgreementView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgreementView'
+        _embedded:
+          type: object
+          properties:
+            agreements:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgreementView'
+        _links:
+          $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
     CollectionModelAgreementView:
       type: object
       properties:
-        links:
-          type: array
-          items:
-            $ref: '#/components/schemas/Link'
-        content:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgreementView'
+        _embedded:
+          type: object
+          properties:
+            agreements:
+              type: array
+              items:
+                $ref: '#/components/schemas/AgreementView'
+        _links:
+          $ref: '#/components/schemas/Links'
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+        hreflang:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        deprecation:
+          type: string
+        profile:
+          type: string
+        name:
+          type: string
+        templated:
+          type: boolean

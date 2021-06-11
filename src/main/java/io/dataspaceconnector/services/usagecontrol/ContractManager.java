@@ -169,13 +169,13 @@ public class ContractManager {
      * Build contract agreement from contract request. Sign all rules as assigner.
      *
      * @param request The contract request.
-     * @param id      ID to use when creating the contract agreement.
+     * @param agreementId      ID to use when creating the contract agreement.
      * @param issuer  The issuer connector id.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
     public ContractAgreement buildContractAgreement(
-            final ContractRequest request, final URI id, final URI issuer)
+            final ContractRequest request, final URI agreementId, final URI issuer)
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
@@ -200,7 +200,7 @@ public class ContractManager {
         }
 
         // Return contract request.
-        return new ContractAgreementBuilder(id)
+        return new ContractAgreementBuilder(agreementId)
                 ._consumer_(issuer)
                 ._contractDate_(IDSUtils.getGregorianNow())
                 ._contractStart_(IDSUtils.getGregorianNow())

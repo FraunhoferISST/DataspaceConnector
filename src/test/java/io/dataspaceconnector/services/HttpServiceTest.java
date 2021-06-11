@@ -130,12 +130,21 @@ class HttpServiceTest {
                                               "someBody", MediaType.parse("application/text")))
                                       .build();
 
+        // The first response will be consumed by the first request, duplicate
+        final var response2 =
+                new Response.Builder().request(new Request.Builder().url(target).build()).protocol(
+                        Protocol.HTTP_1_1).code(200).message("Some message")
+                                      .body(ResponseBody.create(
+                                              "someBody", MediaType.parse("application/text")))
+                                      .build();
+
         Mockito.doReturn(response).when(httpSvc).get(Mockito.any());
 
         /* ACT */
         final var result = service.request(HttpService.Method.GET, target, args);
 
         /* ASSERT */
+        Mockito.doReturn(response2).when(httpSvc).get(Mockito.any());
         final var expected = service.get(target, args);
         assertEquals(expected.getCode(), result.getCode());
         assertTrue(Arrays.areEqual("someBody".getBytes(StandardCharsets.UTF_8), result.getBody().readAllBytes()));

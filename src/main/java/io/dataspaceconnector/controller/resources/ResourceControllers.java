@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -72,14 +81,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -245,8 +246,11 @@ public final class ResourceControllers {
             queryInput.setHeaders(headers);
 
             final var searchString = request.getContextPath() + "/data";
-            final var optional = request.getRequestURI().substring(
+            var optional = request.getRequestURI().substring(
                     request.getRequestURI().indexOf(searchString) + searchString.length());
+            if ("/**".equals(optional)) {
+                optional = "";
+            }
 
             if (!optional.isBlank()) {
                 queryInput.setOptional(optional);
@@ -264,6 +268,33 @@ public final class ResourceControllers {
                     new RetrievalInformation(agreementUri, download,
                                              queryInput));
 
+            return returnData(artifactId, data);
+        }
+
+        /**
+         * Returns data from the local database or a remote data source. In case of a remote data
+         * source, the headers, query parameters and path variables from the request body will be
+         * used when fetching the data.
+         *
+         * @param artifactId Artifact id.
+         * @param queryInput Query input containing headers, query parameters, and path variables.
+         * @return The data object.
+         * @throws IOException if the data could not be stored.
+         */
+        @PostMapping("{id}/data")
+        @Operation(summary = "Get data by artifact id with query input")
+        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        public ResponseEntity<StreamingResponseBody> getData(
+                @Valid @PathVariable(name = "id") final UUID artifactId,
+                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
+            ValidationUtils.validateQueryInput(queryInput);
+            final var data =
+                    artifactSvc.getData(accessVerifier, dataReceiver, artifactId, queryInput);
+            return returnData(artifactId, data);
+        }
+
+        private ResponseEntity<StreamingResponseBody> returnData(
+                final UUID artifactId, final InputStream data) {
             final StreamingResponseBody body = outputStream -> {
                 final int blockSize = 1024;
                 int numBytesToWrite;
@@ -282,27 +313,6 @@ public final class ResourceControllers {
                     .headers(outputHeader)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(body);
-        }
-
-        /**
-         * Returns data from the local database or a remote data source. In case of a remote data
-         * source, the headers, query parameters and path variables from the request body will be
-         * used when fetching the data.
-         *
-         * @param artifactId Artifact id.
-         * @param queryInput Query input containing headers, query parameters, and path variables.
-         * @return The data object.
-         * @throws IOException if the data could not be stored.
-         */
-        @PostMapping("{id}/data")
-        @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public ResponseEntity<Object> getData(
-                @Valid @PathVariable(name = "id") final UUID artifactId,
-                @RequestBody(required = false) final QueryInput queryInput) throws IOException {
-            ValidationUtils.validateQueryInput(queryInput);
-            return ResponseEntity.ok(artifactSvc.getData(accessVerifier, dataReceiver, artifactId,
-                    queryInput));
         }
 
         /**
