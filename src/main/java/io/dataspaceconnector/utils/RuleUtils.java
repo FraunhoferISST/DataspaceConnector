@@ -141,6 +141,7 @@ public final class RuleUtils {
                 }
             }
         }
+
         return false;
     }
 

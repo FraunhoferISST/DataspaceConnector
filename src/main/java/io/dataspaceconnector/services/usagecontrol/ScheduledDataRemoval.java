@@ -101,12 +101,9 @@ public class ScheduledDataRemoval {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
             final var idsAgreement = deserializationService.getContractAgreement(value);
-            final var rules = ContractUtils.extractRulesFromContract(idsAgreement);
-            for (final var rule : rules) {
-                final var delete = RuleUtils.checkRuleForPostDuties(rule);
-                if (delete) {
-                    final var target = rule.getTarget();
-                    removeDataFromArtifact(target);
+            for (final var rule : ContractUtils.extractRulesFromContract(idsAgreement)) {
+                if (RuleUtils.checkRuleForPostDuties(rule)) {
+                    removeDataFromArtifact(rule.getTarget());
                 }
             }
         }
