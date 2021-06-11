@@ -42,12 +42,12 @@ public final class ResourceNames {
     /**
      * Tag name for offered resources.
      */
-    public static final String OFFERS = "Resources";
+    public static final String OFFERS = "Offered Resources";
 
     /**
      * Tag name for requested resources.
      */
-    public static final String REQUESTS = "Resources";
+    public static final String REQUESTS = "Requested Resources";
 
     /**
      * Tag name for agreements.

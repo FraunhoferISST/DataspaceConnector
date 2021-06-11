@@ -1,19 +1,3 @@
-#
-# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-
 openapi: 3.0.1
 info:
   title: Dataspace Connector
@@ -34,6 +18,10 @@ tags:
   description: Endpoints for contract/policy handling
 - name: Representations
   description: Endpoints for operations on representations
+- name: Requested Resources
+  description: Endpoints for operations on requested resources
+- name: Offered Resources
+  description: Endpoints for operations on offered resources
 - name: Catalogs
   description: Endpoints for operations on catalogs
 - name: Artifacts
@@ -44,12 +32,8 @@ tags:
   description: Endpoints for operations on rules
 - name: Contracts
   description: Endpoints for operations on contracts
-- name: Resources
-  description: Endpoints for operations on offered resources
 - name: Usage Control
   description: Endpoints for contract/policy handling
-- name: Resources
-  description: Endpoints for operations on requested resources
 - name: Connector
   description: Endpoints for connector information and configuration
 paths:
@@ -232,7 +216,7 @@ paths:
   /api/requests/{id}:
     get:
       tags:
-      - Resources
+      - Requested Resources
       summary: Get a base resource by id
       operationId: get_1
       parameters:
@@ -251,7 +235,7 @@ paths:
                 $ref: '#/components/schemas/RequestedResourceView'
     put:
       tags:
-      - Resources
+      - Requested Resources
       summary: Update a base resource by id
       operationId: update_1
       parameters:
@@ -282,7 +266,7 @@ paths:
                 type: object
     delete:
       tags:
-      - Resources
+      - Requested Resources
       summary: Delete a base resource by id
       operationId: delete_1
       parameters:
@@ -298,7 +282,7 @@ paths:
   /api/requests/{id}/representations:
     get:
       tags:
-      - Resources
+      - Requested Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_1
       parameters:
@@ -331,7 +315,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     put:
       tags:
-      - Resources
+      - Requested Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_1
       parameters:
@@ -355,7 +339,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Requested Resources
       summary: Add a list of children to a base resource
       operationId: addResources_1
       parameters:
@@ -383,7 +367,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     delete:
       tags:
-      - Resources
+      - Requested Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_1
       parameters:
@@ -408,7 +392,7 @@ paths:
   /api/requests/{id}/contracts:
     get:
       tags:
-      - Resources
+      - Requested Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_2
       parameters:
@@ -441,7 +425,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
-      - Resources
+      - Requested Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_2
       parameters:
@@ -465,7 +449,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Requested Resources
       summary: Add a list of children to a base resource
       operationId: addResources_2
       parameters:
@@ -493,7 +477,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
-      - Resources
+      - Requested Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_2
       parameters:
@@ -518,7 +502,7 @@ paths:
   /api/requests/{id}/catalogs:
     get:
       tags:
-      - Resources
+      - Requested Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_3
       parameters:
@@ -551,7 +535,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
-      - Resources
+      - Requested Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_3
       parameters:
@@ -575,7 +559,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Requested Resources
       summary: Add a list of children to a base resource
       operationId: addResources_3
       parameters:
@@ -603,7 +587,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
-      - Resources
+      - Requested Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_3
       parameters:
@@ -1024,7 +1008,7 @@ paths:
   /api/offers/{id}:
     get:
       tags:
-      - Resources
+      - Offered Resources
       summary: Get a base resource by id
       operationId: get_3
       parameters:
@@ -1043,7 +1027,7 @@ paths:
                 $ref: '#/components/schemas/OfferedResourceView'
     put:
       tags:
-      - Resources
+      - Offered Resources
       summary: Update a base resource by id
       operationId: update_3
       parameters:
@@ -1074,7 +1058,7 @@ paths:
                 type: object
     delete:
       tags:
-      - Resources
+      - Offered Resources
       summary: Delete a base resource by id
       operationId: delete_3
       parameters:
@@ -1090,7 +1074,7 @@ paths:
   /api/offers/{id}/representations:
     get:
       tags:
-      - Resources
+      - Offered Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_7
       parameters:
@@ -1123,7 +1107,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     put:
       tags:
-      - Resources
+      - Offered Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_7
       parameters:
@@ -1147,7 +1131,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Offered Resources
       summary: Add a list of children to a base resource
       operationId: addResources_7
       parameters:
@@ -1175,7 +1159,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelRepresentationView'
     delete:
       tags:
-      - Resources
+      - Offered Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_7
       parameters:
@@ -1200,7 +1184,7 @@ paths:
   /api/offers/{id}/contracts:
     get:
       tags:
-      - Resources
+      - Offered Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_8
       parameters:
@@ -1233,7 +1217,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     put:
       tags:
-      - Resources
+      - Offered Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_8
       parameters:
@@ -1257,7 +1241,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Offered Resources
       summary: Add a list of children to a base resource
       operationId: addResources_8
       parameters:
@@ -1285,7 +1269,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelContractView'
     delete:
       tags:
-      - Resources
+      - Offered Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_8
       parameters:
@@ -1310,7 +1294,7 @@ paths:
   /api/offers/{id}/catalogs:
     get:
       tags:
-      - Resources
+      - Offered Resources
       summary: Get all children of a base resource with pagination
       operationId: getResource_9
       parameters:
@@ -1343,7 +1327,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     put:
       tags:
-      - Resources
+      - Offered Resources
       summary: Replace the children of a base resource
       operationId: replaceResources_9
       parameters:
@@ -1367,7 +1351,7 @@ paths:
           description: No content
     post:
       tags:
-      - Resources
+      - Offered Resources
       summary: Add a list of children to a base resource
       operationId: addResources_9
       parameters:
@@ -1395,7 +1379,7 @@ paths:
                 $ref: '#/components/schemas/PagedModelCatalogView'
     delete:
       tags:
-      - Resources
+      - Offered Resources
       summary: Remove a list of children from a base resource
       operationId: removeResources_9
       parameters:
@@ -2451,7 +2435,7 @@ paths:
   /api/offers:
     get:
       tags:
-      - Resources
+      - Offered Resources
       summary: Get a list of base resources with pagination
       operationId: getAll_3
       parameters:
@@ -2478,7 +2462,7 @@ paths:
                 $ref: '#/components/schemas/CollectionModelOfferedResourceView'
     post:
       tags:
-      - Resources
+      - Offered Resources
       summary: Create a base resource
       operationId: create_2
       requestBody:
@@ -3050,7 +3034,7 @@ paths:
   /api/requests:
     get:
       tags:
-      - Resources
+      - Requested Resources
       summary: Get a list of base resources with pagination
       operationId: getAll_1
       parameters:
@@ -3735,6 +3719,9 @@ components:
           ids:pipEndpoint:
             type: string
             format: uri
+          ids:unit:
+            type: string
+            format: uri
           ids:leftOperand:
             type: string
             enum:
@@ -3806,9 +3793,6 @@ components:
             - https://w3id.org/idsa/code/HAS_SITE
             - https://w3id.org/idsa/code/INSIDE_NETWORK
             - https://w3id.org/idsa/code/DEFINES_AS
-          ids:unit:
-            type: string
-            format: uri
           '@type':
             type: string
     Duty:
@@ -3836,6 +3820,11 @@ components:
         ids:target:
           type: string
           format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -3867,11 +3856,6 @@ components:
             - https://w3id.org/idsa/code/NOTIFY
             - https://w3id.org/idsa/code/READ
             - https://w3id.org/idsa/code/TRACK_PROVENANCE
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
           - $ref: '#/components/schemas/Constraint'
@@ -3981,6 +3965,11 @@ components:
         ids:target:
           type: string
           format: uri
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -4012,11 +4001,6 @@ components:
             - https://w3id.org/idsa/code/NOTIFY
             - https://w3id.org/idsa/code/READ
             - https://w3id.org/idsa/code/TRACK_PROVENANCE
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assetRefinement:
           oneOf:
           - $ref: '#/components/schemas/Constraint'
