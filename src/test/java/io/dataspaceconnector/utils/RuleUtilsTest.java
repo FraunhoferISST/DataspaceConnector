@@ -1111,7 +1111,7 @@ class RuleUtilsTest {
                         .build();
 
         /* ACT && ASSERT */
-        assertTrue(RuleUtils.checkRuleForDeletion(expiredRule));
+        assertTrue(RuleUtils.checkRuleForDeletion(expiredRule.getPostDuty().get(0)));
     }
 
     @Test
@@ -1143,7 +1143,7 @@ class RuleUtilsTest {
                         .build();
 
         /* ACT && ASSERT */
-        assertFalse(RuleUtils.checkRuleForDeletion(expiredRule));
+        assertFalse(RuleUtils.checkRuleForDeletion(expiredRule.getPostDuty().get(0)));
     }
 
     @Test
