@@ -17,6 +17,7 @@ package io.dataspaceconnector.view;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
@@ -50,5 +51,10 @@ public class SubscriberView extends RepresentationModel<SubscriberView> {
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
+
+    /**
+     * Additional properties.
+     */
+    private Map<String, String> additional;
 
 }
