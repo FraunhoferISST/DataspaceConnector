@@ -31,7 +31,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -124,7 +123,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<CollectionModel<V>> getAll(
+    public PagedModel<V> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
@@ -136,7 +135,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
-        return ResponseEntity.ok(model);
+        return model;
     }
 
     /**
@@ -150,9 +149,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
-        final var view = assembler.toModel(service.get(resourceId));
-        return ResponseEntity.ok(view);
+    public V get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+        return assembler.toModel(service.get(resourceId));
     }
 
     /**

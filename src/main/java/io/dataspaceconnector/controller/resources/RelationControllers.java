@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
 import io.dataspaceconnector.controller.resources.tags.ResourceNames;
 import io.dataspaceconnector.model.Agreement;
@@ -48,8 +49,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -157,10 +156,10 @@ public final class RelationControllers {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final HttpEntity<PagedModel<AgreementView>> addResources(
+        public final PagedModel<AgreementView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -169,7 +168,7 @@ public final class RelationControllers {
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -178,7 +177,7 @@ public final class RelationControllers {
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 
@@ -193,10 +192,10 @@ public final class RelationControllers {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
-        public final HttpEntity<PagedModel<ArtifactView>> addResources(
+        public final PagedModel<ArtifactView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -205,7 +204,7 @@ public final class RelationControllers {
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -214,7 +213,7 @@ public final class RelationControllers {
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 
