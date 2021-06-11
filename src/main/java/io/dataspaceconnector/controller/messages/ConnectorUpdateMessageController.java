@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.messages;
 
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
-import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;

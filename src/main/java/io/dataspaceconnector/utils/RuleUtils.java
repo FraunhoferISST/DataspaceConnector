@@ -42,6 +42,8 @@ import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 
+import javax.validation.constraints.NotEmpty;
+
 /**
  * Contains utility methods for validating the content of ids rules.
  */
@@ -118,7 +120,7 @@ public final class RuleUtils {
         if (rule instanceof PermissionImpl || rule instanceof DutyImpl) {
             final var postDuties = ((Permission) rule).getPostDuty();
             if (postDuties != null && !postDuties.isEmpty()) {
-                return checkDutiesForDeletion(postDuties);
+                return checkDutiesForDeletion((ArrayList<? extends Duty>) postDuties);
             }
         }
 
@@ -349,9 +351,9 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean comparePermissions(final ArrayList<? extends Permission> lList,
-                                             final ArrayList<? extends Permission> rList) {
-        return compareDuties(lList, rList) && compareRules(lList, rList);
+    public static boolean comparePermissions(final List<Permission> lList,
+                                             final List<Permission> rList) {
+        return compareDuties(lList, rList) && compareRules((List<Rule>)(List<?>)lList, (List<Rule>)(List<?>)rList);
     }
 
     /**
@@ -361,9 +363,9 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
-                                              final ArrayList<? extends Prohibition> rList) {
-        return compareRules(lList, rList);
+    public static boolean compareProhibitions(final List<Prohibition> lList,
+                                              final List<Prohibition> rList) {
+        return compareRules((List<Rule>)(List<?>)lList, (List<Rule>)(List<?>)rList);
     }
 
     /**
@@ -373,9 +375,9 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean compareObligations(final ArrayList<? extends Duty> lList,
-                                             final ArrayList<? extends Duty> rList) {
-        return compareRules(lList, rList);
+    public static boolean compareObligations(final List<Duty> lList,
+                                             final List<Duty> rList) {
+        return compareRules((List<Rule>)(List<?>)lList, (List<Rule>)(List<?>)rList);
     }
 
     /**
@@ -385,8 +387,8 @@ public final class RuleUtils {
      * @param rList List of rules from the contract that should be compared.
      * @return true if both rules are the same.
      */
-    private static boolean compareDuties(final ArrayList<? extends Permission> lList,
-                                         final ArrayList<? extends Permission> rList) {
+    private static boolean compareDuties(final List<Permission> lList,
+                                         final List<Permission> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareDuties);
     }
 
@@ -397,8 +399,8 @@ public final class RuleUtils {
      * @param newRules List of rules from the contract that should be compared.
      * @return true if both rules are the same.
      */
-    public static boolean compareRules(final ArrayList<? extends Rule> oldRules,
-                                       final ArrayList<? extends Rule> newRules) {
+    public static boolean compareRules(final List<Rule> oldRules,
+                                       final List<Rule> newRules) {
         return Utils.compareList(oldRules, newRules, RuleUtils::compareRule);
     }
 
@@ -410,8 +412,8 @@ public final class RuleUtils {
      * @return true if both rules are the same.
      */
     private static boolean compareConstraints(
-            final ArrayList<? extends AbstractConstraint> lList,
-            final ArrayList<? extends AbstractConstraint> rList) {
+            final List<AbstractConstraint> lList,
+            final List<AbstractConstraint> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareConstraint);
     }
 
@@ -422,14 +424,14 @@ public final class RuleUtils {
      * @param rList List of rules from the contract that should be compared.
      * @return true if the actions are the same.
      */
-    private static boolean compareActions(final ArrayList<? extends Action> lList,
-                                          final ArrayList<? extends Action> rList) {
+    private static boolean compareActions(final @NotEmpty List<Action> lList,
+                                          final @NotEmpty List<Action> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareAction);
     }
 
     private static <T extends Permission> boolean compareDuties(final T lObj, final T rObj) {
-        return compareRules(lObj.getPreDuty(), rObj.getPreDuty())
-                && compareRules(lObj.getPostDuty(), rObj.getPostDuty());
+        return compareRules((List<Rule>)(List<?>)lObj.getPreDuty(), (List<Rule>)(List<?>)rObj.getPreDuty())
+                && compareRules((List<Rule>)(List<?>)lObj.getPostDuty(), (List<Rule>)(List<?>)rObj.getPostDuty());
     }
 
     private static <T extends Rule> boolean compareRule(final T lObj, final T rObj) {

@@ -23,7 +23,7 @@ import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
-import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;

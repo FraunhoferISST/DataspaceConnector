@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.messages.types;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.ids.messaging.core.util.MultipartParseException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
