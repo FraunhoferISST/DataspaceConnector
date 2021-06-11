@@ -15,17 +15,18 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
-import io.dataspaceconnector.controller.resources.tags.ResourceNames;
+import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
+import io.dataspaceconnector.controller.resources.tags.ResourceNames;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -70,7 +71,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -155,7 +155,7 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 
@@ -171,7 +171,7 @@ public final class ResourceControllers {
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -179,14 +179,14 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Object> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 

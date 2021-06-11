@@ -2383,7 +2383,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelContractRuleView'
+                $ref: '#/components/schemas/PagedModelContractRuleView'
     post:
       tags:
       - Rules
@@ -2429,7 +2429,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelRepresentationView'
+                $ref: '#/components/schemas/PagedModelRepresentationView'
     post:
       tags:
       - Representations
@@ -2475,7 +2475,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelOfferedResourceView'
+                $ref: '#/components/schemas/PagedModelOfferedResourceView'
     post:
       tags:
       - Offered Resources
@@ -2936,7 +2936,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelContractView'
+                $ref: '#/components/schemas/PagedModelContractView'
     post:
       tags:
       - Contracts
@@ -2982,7 +2982,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelCatalogView'
+                $ref: '#/components/schemas/PagedModelCatalogView'
     post:
       tags:
       - Catalogs
@@ -3028,7 +3028,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelArtifactView'
+                $ref: '#/components/schemas/PagedModelArtifactView'
     post:
       tags:
       - Artifacts
@@ -3074,7 +3074,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelRequestedResourceView'
+                $ref: '#/components/schemas/PagedModelRequestedResourceView'
   /api/connector:
     get:
       tags:
@@ -3186,7 +3186,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CollectionModelAgreementView'
+                $ref: '#/components/schemas/PagedModelAgreementView'
   /api/agreements/{id}:
     get:
       tags:
@@ -3836,11 +3836,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -3874,8 +3869,13 @@ components:
             - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
-          - $ref: '#/components/schemas/Constraint'
           - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:title:
           type: array
           items:
@@ -3981,11 +3981,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-            - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -4019,8 +4014,13 @@ components:
             - https://w3id.org/idsa/code/TRACK_PROVENANCE
         ids:assetRefinement:
           oneOf:
-          - $ref: '#/components/schemas/Constraint'
           - $ref: '#/components/schemas/LogicalConstraint'
+        ids:constraint:
+          type: array
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Constraint'
+            - $ref: '#/components/schemas/LogicalConstraint'
         ids:title:
           type: array
           items:
@@ -4085,90 +4085,6 @@ components:
       - $ref: '#/components/schemas/QueryInput'
     StreamingResponseBody:
       type: object
-    CollectionModelContractRuleView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            rules:
-              type: array
-              items:
-                $ref: '#/components/schemas/ContractRuleView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelRequestedResourceView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            requested:
-              type: array
-              items:
-                $ref: '#/components/schemas/RequestedResourceView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelRepresentationView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            representations:
-              type: array
-              items:
-                $ref: '#/components/schemas/RepresentationView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelOfferedResourceView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            resources:
-              type: array
-              items:
-                $ref: '#/components/schemas/OfferedResourceView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelContractView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            contract:
-              type: array
-              items:
-                $ref: '#/components/schemas/ContractView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelCatalogView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            catalogs:
-              type: array
-              items:
-                $ref: '#/components/schemas/CatalogView'
-        _links:
-          $ref: '#/components/schemas/Links'
-    CollectionModelArtifactView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            artifacts:
-              type: array
-              items:
-                $ref: '#/components/schemas/ArtifactView'
-        _links:
-          $ref: '#/components/schemas/Links'
     AgreementView:
       type: object
       properties:
@@ -4201,18 +4117,6 @@ components:
           $ref: '#/components/schemas/Links'
         page:
           $ref: '#/components/schemas/PageMetadata'
-    CollectionModelAgreementView:
-      type: object
-      properties:
-        _embedded:
-          type: object
-          properties:
-            agreements:
-              type: array
-              items:
-                $ref: '#/components/schemas/AgreementView'
-        _links:
-          $ref: '#/components/schemas/Links'
     Link:
       type: object
       properties:

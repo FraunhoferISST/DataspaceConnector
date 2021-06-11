@@ -112,7 +112,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<PagedModel<V>> getResource(
+    public PagedModel<V> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
@@ -126,7 +126,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
             model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
-        return ResponseEntity.ok(model);
+        return model;
     }
 
     /**
@@ -139,7 +139,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<PagedModel<V>> addResources(
+    public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         Utils.requireNonNull(resources, ErrorMessages.LIST_NULL);

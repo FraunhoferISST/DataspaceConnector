@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fixed deletion of artifact data before the set time.
 - Fixed tags with different descriptions in openapi schema.
+- Fixed missing paging information in openapi schema.
 
 ### Changed
 - Increase postgresql version to 42.2.20.
