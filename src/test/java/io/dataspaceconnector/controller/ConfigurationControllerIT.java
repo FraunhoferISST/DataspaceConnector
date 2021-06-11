@@ -35,13 +35,13 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class ConfigurationControllerTest {
+public class ConfigurationControllerIT {
 
     @MockBean
     private ConfigContainer configContainer;
@@ -53,7 +53,7 @@ public class ConfigurationControllerTest {
     private DeserializationService idsService;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Test
     @WithMockUser("ADMIN")
@@ -205,7 +205,7 @@ public class ConfigurationControllerTest {
     }
 
     @Test
-    public void updateConfiguration_unauthorized_return500() throws Exception {
+    public void updateConfiguration_unauthorized_return401() throws Exception {
         /* ARRANGE */
         final var model = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
@@ -228,7 +228,7 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getConfiguration_unauthorized_return500() throws Exception {
+    public void getConfiguration_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration"))
                .andExpect(status().isUnauthorized());
@@ -289,7 +289,7 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void setNegotiationStatus_unauthorized_return500() throws Exception {
+    public void setNegotiationStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration/negotiation")
                                 .param("status", "true"))
@@ -298,7 +298,7 @@ public class ConfigurationControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void setNegotiationStatus_noStatusParam_return401() throws Exception {
+    public void setNegotiationStatus_noStatusParam_return400() throws Exception {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/negotiation"))
                .andExpect(status().is4xxClientError()).andReturn();
@@ -359,7 +359,7 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getNegotiationStatus_unauthorized_return500() throws Exception {
+    public void getNegotiationStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration/negotiation"))
                .andExpect(status().isUnauthorized());
@@ -398,9 +398,7 @@ public class ConfigurationControllerTest {
     @Test
     @WithMockUser("ADMIN")
     public void getNegotiationStatus_any_returnJson() throws Exception {
-        final var body = new JSONObject();
-        body.put("status", false);
-
+        /* ARRANGE */
         Mockito.doReturn(false).when(connectorConfig).isPolicyNegotiation();
 
         /* ACT && ASSERT */
@@ -415,7 +413,7 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void setPatternStatus_unauthorized_return500() throws Exception {
+    public void setPatternStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration/pattern")
                                 .param("status", "true"))
@@ -484,7 +482,7 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getPatternStatus_unauthorized_return500() throws Exception {
+    public void getPatternStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration/pattern"))
                .andExpect(status().isUnauthorized());
@@ -523,9 +521,7 @@ public class ConfigurationControllerTest {
     @Test
     @WithMockUser("ADMIN")
     public void getPatternStatus_any_returnJson() throws Exception {
-        final var body = new JSONObject();
-        body.put("status", false);
-
+        /* ARRANGE */
         Mockito.doReturn(false).when(connectorConfig).isAllowUnsupported();
 
         /* ACT && ASSERT */

@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
-import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.utils.SelfLinkHelper;
-import io.dataspaceconnector.utils.Utils;
-import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -32,6 +24,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.utils.SelfLinkHelper;
+import io.dataspaceconnector.utils.Utils;
+import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * The base class for constructing an ids object from DSC objects.
@@ -182,7 +182,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         for (int i = 0; i < MAX_DEPTH; i++) {
             try {
                 return tClass.getMethod("setProperty", String.class, Object.class);
-            } catch (NoSuchMethodException ignore) {
+            } catch (NoSuchMethodException ignored) {
                 // Intentionally empty
             }
             if (i < MAX_DEPTH - 1) {
