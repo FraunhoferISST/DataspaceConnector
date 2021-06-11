@@ -17,10 +17,9 @@ package io.dataspaceconnector.services.resources;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.model.Subscriber;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -37,45 +36,7 @@ public class SubscriberNotificationService {
     /**
      * The service for managing requested resources.
      */
-    private final @NonNull RequestedResourceService requestedResourceService;
-
-    /**
-     * Adds a URL to the list of subscribers for a given resource.
-     *
-     * @param resourceId the UUID of the resource.
-     * @param uri the URL.
-     */
-    public void addSubscription(final UUID resourceId, final URI uri) {
-        Utils.requireNonNull(uri, ErrorMessages.URI_NULL);
-        final var requestedResource = requestedResourceService.get(resourceId);
-
-        var subscribers = requestedResource.getSubscribers();
-        if (subscribers == null) {
-            subscribers = new ArrayList<>();
-        }
-
-        if (!subscribers.contains(uri)) {
-            subscribers.add(uri);
-            requestedResourceService.updateSubscriptions(resourceId, subscribers);
-        }
-    }
-
-    /**
-     * Removes a URL from the list of subscribers to a given resource.
-     *
-     * @param resourceId the UUID of the resource.
-     * @param uri the URL.
-     */
-    public void removeSubscription(final UUID resourceId, final URI uri) {
-        Utils.requireNonNull(uri, ErrorMessages.URI_NULL);
-        final var requestedResource = requestedResourceService.get(resourceId);
-
-        var subscribers = requestedResource.getSubscribers();
-        if (subscribers != null && subscribers.contains(uri)) {
-            subscribers.remove(uri);
-            requestedResourceService.updateSubscriptions(resourceId, subscribers);
-        }
-    }
+    private final @NonNull RequestedResourceService resourceService;
 
     /**
      * Notifies all backend systems subscribed for updates to a requested resource using a
@@ -86,7 +47,7 @@ public class SubscriberNotificationService {
      * @param remoteId the remote ID of the requested resource that was updated.
      */
     public void notifySubscribers(final URI remoteId) {
-        final var resourceId = requestedResourceService.identifyByRemoteId(remoteId);
+        final var resourceId = resourceService.identifyByRemoteId(remoteId);
         if (resourceId.isEmpty()) {
             if (log.isErrorEnabled()) {
                 log.error("Could not notify backends about updated resource with remote ID {}: "
@@ -95,9 +56,12 @@ public class SubscriberNotificationService {
             return;
         }
 
-        final var resource = requestedResourceService.get(resourceId.get());
-        final var subscribers = resource.getSubscribers() != null
-                ? new ArrayList<>(resource.getSubscribers()) : new ArrayList<URI>();
+        final var resource = resourceService.get(resourceId.get());
+        final var subscribers = (resource.getSubscribers() != null
+                ? new ArrayList<>(resource.getSubscribers()) : new ArrayList<Subscriber>())
+                .stream()
+                .map(Subscriber::getUrl)
+                .collect(Collectors.toList());
 
         if (!subscribers.isEmpty()) {
             new Thread(new SubscriberNotificationRunner(resource.getId(), subscribers)).start();

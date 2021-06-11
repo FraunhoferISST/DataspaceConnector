@@ -28,6 +28,7 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.Subscriber;
 import io.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceContractLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
@@ -40,6 +41,7 @@ import io.dataspaceconnector.view.ContractView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RepresentationView;
 import io.dataspaceconnector.view.RequestedResourceView;
+import io.dataspaceconnector.view.SubscriberView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -294,5 +296,29 @@ public final class RelationControllers {
     public static class RequestedResourcesToRepresentations
             extends BaseResourceChildController<AbstractResourceRepresentationLinker<
             RequestedResource>, Representation, RepresentationView> {
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between requested resources and subscribers.
+     */
+    @RestController
+    @RequestMapping("/api/requests/{id}/subscribers")
+    @Tag(name = "Resources", description = "Endpoints for linking subscribers to resources")
+    public static class RequestedResourcesToSubscribers
+            extends BaseResourceChildController<RelationServices.RequestedResourceSubscriberLinker,
+            Subscriber, SubscriberView> {
+
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between subscribers and requested resources.
+     */
+    @RestController
+    @RequestMapping("/api/subscribers/{id}/requests")
+    @Tag(name = "Subscribers", description = "Endpoints for linking resources to subscribers")
+    public static class SubscribersToRequestedResources
+            extends BaseResourceChildController<RelationServices.SubscriberRequestedResourceLinker,
+            RequestedResource, RequestedResourceView> {
+
     }
 }

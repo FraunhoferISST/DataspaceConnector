@@ -25,6 +25,7 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.Subscriber;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -154,6 +155,27 @@ public final class RelationServices {
     }
 
     /**
+     * Handles the relation between subscribers and requested resources.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class SubscriberRequestedResourceLinker
+            extends NonOwningRelationService<Subscriber, RequestedResource, SubscriberService,
+            RequestedResourceService> {
+
+        /**
+         * Returns the list of requested resources owning a given subscriber.
+         *
+         * @param owner the subscriber whose requested resources should be received.
+         * @return the list of requested resources.
+         */
+        @Override
+        protected List<RequestedResource> getInternal(final Subscriber owner) {
+            return owner.getResources();
+        }
+    }
+
+    /**
      * Handles the relation between agreements and artifacts.
      */
     @Service
@@ -215,6 +237,27 @@ public final class RelationServices {
         @Override
         protected List<ContractRule> getInternal(final Contract owner) {
             return owner.getRules();
+        }
+    }
+
+    /**
+     * Handles the relation between requested resources and subscribers.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RequestedResourceSubscriberLinker
+            extends OwningRelationService<RequestedResource, Subscriber,
+            RequestedResourceService, SubscriberService> {
+
+        /**
+         * Returns the list of subscribers owned by a given requested resource.
+         *
+         * @param owner the requested resource whose subscribers should be received.
+         * @return the list of owned subscribers.
+         */
+        @Override
+        protected List<Subscriber> getInternal(final RequestedResource owner) {
+            return owner.getSubscribers();
         }
     }
 }

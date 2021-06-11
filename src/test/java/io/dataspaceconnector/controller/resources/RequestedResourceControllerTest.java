@@ -34,12 +34,6 @@ import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @SpringBootTest(classes = {ResourceControllers.RequestedResourceController.class})
 class RequestedResourceControllerTest {
@@ -91,77 +85,4 @@ class RequestedResourceControllerTest {
         Mockito.verifyNoInteractions(service);
     }
 
-    @Test
-    public void subscribe_resourceIdNull_throwIllegalArgumentException() {
-        /* ARRANGE */
-        doThrow(IllegalArgumentException.class).when(subscriberNotificationService)
-                .addSubscription(eq(null), eq(subscriberUrl));
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> controller.subscribe(null, subscriberUrl));
-    }
-
-    @Test
-    public void subscribe_urlNull_throwIllegalArgumentException() {
-        /* ARRANGE */
-        doThrow(IllegalArgumentException.class)
-                .when(subscriberNotificationService).addSubscription(eq(resourceId), eq(null));
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> controller.subscribe(resourceId, null));
-    }
-
-    @Test
-    public void subscribe_validInput_addSubscription() {
-        /* ARRANGE */
-        doNothing().when(subscriberNotificationService)
-                .addSubscription(eq(resourceId), eq(subscriberUrl));
-
-        /* ACT */
-        final var result = controller.subscribe(resourceId, subscriberUrl);
-
-        /* ASSERT */
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        verify(subscriberNotificationService, times(1))
-                .addSubscription(resourceId, subscriberUrl);
-    }
-
-    @Test
-    public void unsubscribe_resourceIdNull_throwIllegalArgumentException() {
-        /* ARRANGE */
-        doThrow(IllegalArgumentException.class).when(subscriberNotificationService)
-                .removeSubscription(eq(null), eq(subscriberUrl));
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> controller.unsubscribe(null, subscriberUrl));
-    }
-
-    @Test
-    public void unsubscribe_urlNull_throwIllegalArgumentException() {
-        /* ARRANGE */
-        doThrow(IllegalArgumentException.class).when(subscriberNotificationService)
-                .removeSubscription(eq(resourceId), eq(null));
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> controller.unsubscribe(resourceId, null));
-    }
-
-    @Test
-    public void unsubscribe_validInput_removeSubscription() {
-        /* ARRANGE */
-        doNothing().when(subscriberNotificationService)
-                .removeSubscription(eq(resourceId), eq(subscriberUrl));
-
-        /* ACT */
-        final var result = controller.unsubscribe(resourceId, subscriberUrl);
-
-        /* ASSERT */
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        verify(subscriberNotificationService, times(1))
-                .removeSubscription(resourceId, subscriberUrl);
-    }
 }

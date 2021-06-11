@@ -39,6 +39,8 @@ import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.Subscriber;
+import io.dataspaceconnector.model.SubscriberDesc;
 import io.dataspaceconnector.services.BlockingArtifactReceiver;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
@@ -48,7 +50,7 @@ import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RetrievalInformation;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.services.resources.SubscriberNotificationService;
+import io.dataspaceconnector.services.resources.SubscriberService;
 import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.utils.ValidationUtils;
 import io.dataspaceconnector.view.AgreementView;
@@ -59,6 +61,7 @@ import io.dataspaceconnector.view.ContractView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RepresentationView;
 import io.dataspaceconnector.view.RequestedResourceView;
+import io.dataspaceconnector.view.SubscriberView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -66,12 +69,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -140,6 +141,16 @@ public final class ResourceControllers {
     }
 
     /**
+     * Offers the endpoints for managing subscribers.
+     */
+    @RestController
+    @RequestMapping("/api/subscribers")
+    @Tag(name = "Subscribers", description = "Endpoints for CRUD operations on subscribers")
+    public static class SubscriberController extends BaseResourceController<Subscriber,
+            SubscriberDesc, SubscriberView, SubscriberService> {
+    }
+
+    /**
      * Offers the endpoints for managing requested resources.
      */
     @RestController
@@ -149,44 +160,6 @@ public final class ResourceControllers {
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
             RequestedResourceView,
             ResourceService<RequestedResource, RequestedResourceDesc>> {
-
-        /**
-         * The service for managing subscriptions for resource updates.
-         */
-        @Autowired
-        private SubscriberNotificationService subscriberNotificationService;
-
-        /**
-         * Subscribes a given URL for updates to a specific resource.
-         *
-         * @param uri the URL.
-         * @param resourceId the resource ID.
-         * @return Http Status ok.
-         */
-        @PutMapping("{id}/subscriptions")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public final ResponseEntity<Void> subscribe(
-                @Valid @PathVariable("id") final UUID resourceId,
-                @RequestParam final URI uri) {
-            subscriberNotificationService.addSubscription(resourceId, uri);
-            return ResponseEntity.ok().build();
-        }
-
-        /**
-         * Removes a given URL from the subscriptions for a specific resource.
-         *
-         * @param uri the URL.
-         * @param resourceId the resource ID.
-         * @return Http Status ok.
-         */
-        @DeleteMapping("{id}/subscriptions")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-        public final ResponseEntity<Void> unsubscribe(
-                @Valid @PathVariable("id") final UUID resourceId,
-                @RequestParam final URI uri) {
-            subscriberNotificationService.removeSubscription(resourceId, uri);
-            return ResponseEntity.ok().build();
-        }
 
         @Override
         @Hidden

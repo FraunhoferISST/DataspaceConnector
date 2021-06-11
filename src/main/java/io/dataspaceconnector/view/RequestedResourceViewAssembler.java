@@ -69,6 +69,12 @@ public class RequestedResourceViewAssembler
                         .withRel("catalogs");
         view.add(catalogLink);
 
+        final var subscribersLink =
+                linkTo(methodOn(RelationControllers.RequestedResourcesToSubscribers.class)
+                                .getResource(resource.getId(), null, null))
+                        .withRel("subscribers");
+        view.add(subscribersLink);
+
         return view;
     }
 

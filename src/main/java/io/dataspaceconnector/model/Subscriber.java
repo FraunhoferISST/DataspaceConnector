@@ -19,24 +19,28 @@ import java.net.URI;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 /**
- * Describes resource requested by this connector.
+ * Represents a backend subscribed for updates to a requested resource.
  */
 @Entity
+@Table(name = "subscriber")
 @SQLDelete(sql = "UPDATE resource SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
-public final class RequestedResource extends Resource {
+@RequiredArgsConstructor
+public class Subscriber extends AbstractEntity {
 
     /**
      * Serial version uid.
@@ -44,43 +48,14 @@ public final class RequestedResource extends Resource {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The resource id on provider side.
+     * The URL to use when notifying the subscriber about updates to a resource.
      */
-    private URI remoteId;
+    private URI url;
 
     /**
-     * List of subscribers subscribed to updates for this resource.
+     * List of requested resource this subscriber is subscribed to.
      */
-    @ManyToMany
-    private List<Subscriber> subscribers;
-
-    /**
-     * Default constructor.
-     */
-    protected RequestedResource() {
-        super();
-    }
-
-    /**
-     * The catalogs in which this resource is used.
-     */
-    @ManyToMany(mappedBy = "requestedResources")
-    private List<Catalog> catalogs;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setCatalogs(final List<Catalog> catalogList) {
-        this.catalogs = catalogList;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Catalog> getCatalogs() {
-        return catalogs;
-    }
+    @ManyToMany(mappedBy = "subscribers")
+    private List<RequestedResource> resources;
 
 }

@@ -183,7 +183,12 @@ public enum ErrorMessages {
     /**
      * A policy restriction has been detected.
      */
-    POLICY_RESTRICTION("Policy restriction detected.");
+    POLICY_RESTRICTION("Policy restriction detected."),
+
+    /**
+     * No valid entity could be created from a given input.
+     */
+    INVALID_ENTITY_INPUT("Could not create valid entity with given input.");
 
 
     /**

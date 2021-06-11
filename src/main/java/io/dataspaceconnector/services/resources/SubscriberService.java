@@ -15,30 +15,15 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.repositories.RequestedResourcesRepository;
+import io.dataspaceconnector.model.Subscriber;
+import io.dataspaceconnector.model.SubscriberDesc;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Handles the basic logic for requested resources.
+ * Handles the basic logic for subscribers.
  */
 @Service
 @NoArgsConstructor
-public final class RequestedResourceService extends ResourceService<RequestedResource,
-        RequestedResourceDesc> implements RemoteResolver {
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<UUID> identifyByRemoteId(final URI remoteId) {
-        final var repo = (RequestedResourcesRepository) getRepository();
-        return repo.identifyByRemoteId(remoteId);
-    }
-
+public class SubscriberService extends BaseEntityService<Subscriber, SubscriberDesc> {
 }
