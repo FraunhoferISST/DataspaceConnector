@@ -94,7 +94,7 @@ public class DeserializationService {
     public Resource getResource(final String resource) throws IllegalArgumentException {
         try {
             return serializerProvider.getSerializer().deserialize(resource, Resource.class);
-        } catch (IOException | RiotException e) {
+        } catch (IOException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Could not deserialize resource. [exception=({})]", e.getMessage(), e);
             }
