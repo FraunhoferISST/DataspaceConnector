@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.1.2] - 2021-06-09
+## [5.1.2] - 2021-06-14
 
 ### Fixed
 - Fixed deletion of artifact data before the set time.
