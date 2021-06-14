@@ -48,10 +48,9 @@ public final class PageUtils {
      * @param size The page size.
      * @return The page request.
      */
-    @SuppressWarnings("PMD.UselessParentheses")
     public static PageRequest toPageRequest(final Integer page, final Integer size) {
-        final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
-        final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
+        final int pageIndex = page != null && page > 0 ? page : DEFAULT_FIRST_PAGE;
+        final int sizeValue = size != null && size > 0 ? Math.min(size, MAX_PAGE_SIZE)
                 : DEFAULT_PAGE_SIZE;
 
         return PageRequest.of(pageIndex, sizeValue);
