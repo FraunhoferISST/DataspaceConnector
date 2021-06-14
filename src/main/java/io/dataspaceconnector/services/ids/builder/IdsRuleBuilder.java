@@ -52,7 +52,7 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
 
         // Note: Infomodel deserializer sets autogen ID, when ID is missing in original rule value.
         // If autogen ID not present in original rule value, it's equal to rule not having ID
-        if (idsRule.getId() == null || rule.getValue().indexOf(idsRule.getId().toString()) == -1) {
+        if (idsRule.getId() == null || !rule.getValue().contains(idsRule.getId().toString())) {
             // No id has been set for this rule. Thus, no references can be found.
             // Inject the real id.
             newRule = newRule.substring(0, newRule.indexOf("{") + 1)
