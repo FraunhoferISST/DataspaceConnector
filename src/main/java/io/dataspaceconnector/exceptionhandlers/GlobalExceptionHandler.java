@@ -13,48 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller;
+package io.dataspaceconnector.exceptionhandlers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.log4j.Log4j2;
-
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * This class handles exceptions of type {@link JsonProcessingException}.
+ * Controller for global handling of runtime exceptions.
  */
-@RestControllerAdvice
 @Log4j2
-@Order(1)
-public class JsonProcessingExceptionHandler {
-
+@ControllerAdvice
+@Order
+public final class GlobalExceptionHandler {
     /**
-     * Handles thrown {@link JsonProcessingException}.
+     * Handle runtime exceptions with response code 500.
      *
      * @param exception The thrown exception.
-     * @return A http response.
+     * @return Response entity with code 500.
      */
-    @ExceptionHandler(JsonProcessingException.class)
-    public ResponseEntity<JSONObject> handleJsonProcessingException(
-            final JsonProcessingException exception) {
-        if (log.isWarnEnabled()) {
-            log.warn("Invalid input. [exception=({})]", exception == null ? ""
-                    : exception.getMessage());
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<JSONObject> handleAnyException(final RuntimeException exception) {
+        if (log.isErrorEnabled()) {
+            log.error("An unhandled exception has been caught. [exception=({})]",
+                    exception == null ? "Passed null as exception" : exception.getMessage(),
+                    exception);
         }
 
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-Error", "true");
 
         final var body = new JSONObject();
-        body.put("message", "Invalid input.");
+        body.put("message", "An error occurred. Please try again later.");
 
-        return new ResponseEntity<>(body, headers, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, headers, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

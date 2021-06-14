@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller;
+package io.dataspaceconnector.exceptionhandlers;
 
+import io.dataspaceconnector.exceptionhandlers.GlobalExceptionHandler;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

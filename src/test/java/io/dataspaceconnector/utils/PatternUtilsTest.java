@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
+import io.dataspaceconnector.controller.examples.util.PatternUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.ExampleController;
+import io.dataspaceconnector.controller.examples.ExampleController;
 import io.dataspaceconnector.controller.MainController;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;

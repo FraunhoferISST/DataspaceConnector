@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller;
+package io.dataspaceconnector.controller.examples;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +37,7 @@ import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import io.dataspaceconnector.utils.ControllerUtils;
-import io.dataspaceconnector.utils.PatternUtils;
+import io.dataspaceconnector.controller.examples.util.PatternUtils;
 import io.dataspaceconnector.utils.RuleUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;

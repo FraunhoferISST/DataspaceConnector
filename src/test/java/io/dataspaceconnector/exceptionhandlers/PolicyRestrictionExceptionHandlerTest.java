@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller;
+package io.dataspaceconnector.exceptionhandlers;
 
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PolicyRestrictionExceptionHandlerTest {
 

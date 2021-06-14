@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller;
+package io.dataspaceconnector.exceptionhandlers;
 
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import lombok.extern.log4j.Log4j2;
