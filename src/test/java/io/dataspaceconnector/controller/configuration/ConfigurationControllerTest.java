@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class ConfigurationControllerIT {
+public class ConfigurationControllerTest {
 
     @MockBean
     private ConfigurationContainer configContainer;
