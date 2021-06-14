@@ -22,7 +22,6 @@ import java.util.UUID;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.utils.Utils;
-import io.dataspaceconnector.view.CatalogView;
 import io.dataspaceconnector.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,12 +31,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedModel;
-import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -71,19 +66,6 @@ class CatalogControllerTest_getAll {
      * getAll
      */
     @Test
-    public void getAll_noElements_returnStatusCode200() {
-        /* ARRANGE */
-        final var request = PageRequest.of(0, 1, Sort.unsorted());
-        Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(Page.empty());
-
-        /* ACT */
-        final var result = controller.getAll(null, 1);
-
-        /* ASSERT */
-        assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
-    }
-
-    @Test
     public void getAll_nullPage_returnFirstPage() {
         /* ARRANGE */
         final var pageSize = 1;
@@ -95,11 +77,10 @@ class CatalogControllerTest_getAll {
         final var result = controller.getAll(null, pageSize);
 
         /* ASSERT */
-        final var body = (PagedModel<CatalogView>) result.getBody();
-        assertEquals(body.getLink("self").get().getHref(), body.getLink("first").get().getHref());
-        assertEquals(1, body.getContent().size());
+        assertEquals(result.getLink("self").get().getHref(), result.getLink("first").get().getHref());
+        assertEquals(1, result.getContent().size());
         assertEquals(new CatalogViewAssembler().toModel(catalogList.get(0)),
-                body.getContent().stream().findFirst().get());
+                     result.getContent().stream().findFirst().get());
     }
 
     @Test
@@ -115,8 +96,7 @@ class CatalogControllerTest_getAll {
         final var result = controller.getAll(page, pageSize);
 
         /* ASSERT */
-        final var body = (PagedModel<CatalogView>) result.getBody();
-        assertEquals(page, body.getMetadata().getNumber());
+        assertEquals(page, result.getMetadata().getNumber());
     }
 
     @Test
@@ -132,8 +112,7 @@ class CatalogControllerTest_getAll {
         final var result = controller.getAll(page, pageSize);
 
         /* ASSERT */
-        final var body = (PagedModel<CatalogView>) result.getBody();
-        assertEquals(page, body.getMetadata().getNumber());
+        assertEquals(page, result.getMetadata().getNumber());
     }
 
     @Test
@@ -149,8 +128,7 @@ class CatalogControllerTest_getAll {
         final var result = controller.getAll(toFar, pageSize);
 
         /* ASSERT */
-        final var body = (PagedModel<CatalogView>) result.getBody();
-        assertEquals(1, body.getContent().size());
+        assertEquals(1, result.getContent().size());
     }
 
     @Test
@@ -166,9 +144,7 @@ class CatalogControllerTest_getAll {
         final var result = controller.getAll(toEarly, pageSize);
 
         /* ASSERT */
-
-        final var body = (PagedModel<CatalogView>) result.getBody();
-        assertEquals(0, body.getMetadata().getNumber());
+        assertEquals(0, result.getMetadata().getNumber());
     }
 
     /**
