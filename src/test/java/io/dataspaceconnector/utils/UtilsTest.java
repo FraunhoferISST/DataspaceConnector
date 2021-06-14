@@ -15,18 +15,14 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilsTest {
 
@@ -104,152 +100,5 @@ class UtilsTest {
 
         /* ASSERT */
         assertEquals(list, result.collect(Collectors.toList()));
-    }
-
-    /**************************************************************************
-    * toPage.
-    *************************************************************************/
-
-    @Test
-    public void toPage_nullList_throwIllegalArgumentException() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> Utils.toPage(null, Pageable.unpaged()));
-    }
-
-    @Test
-    public void toPage_nullPageable_throwIllegalArgumentException() {
-        /* ARRANGE */
-        final var list = new ArrayList<Integer>();
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> Utils.toPage(list, null));
-    }
-
-    @Test
-    public void toPage_null_throwIllegalArgumentException() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> Utils.toPage(null, null));
-    }
-
-    @Test
-    public void toPage_unpaged_returnAllElements() {
-        /* ARRANGE */
-        final var list = List.of(5, 4, 3, 2);
-
-        /* ACT */
-        final var result = Utils.toPage(list, Pageable.unpaged());
-
-        /* ASSERT */
-        assertEquals(list, result.toList());
-    }
-
-    @Test
-    public void toPage_paged_returnOnlyPage() {
-        /* ARRANGE */
-        final var list = List.of(5, 4, 3, 2, 1);
-        final var pageable = PageRequest.of(1, 2);
-
-        /* ACT */
-        final var result = Utils.toPage(list, pageable);
-
-        /* ASSERT */
-        assertEquals(2, result.getSize());
-        assertTrue(result.toList().contains(2));
-        assertTrue(result.toList().contains(3));
-    }
-
-    /**************************************************************************
-     * toPageRequest.
-     *************************************************************************/
-
-    @Test
-    public void toPageRequest_null_defaultRequest() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT */
-        final var result = Utils.toPageRequest(null, null);
-
-        /* ASSERT */
-        assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.DEFAULT_PAGE_SIZE), result);
-    }
-
-    @Test
-    public void toPageRequest_negativeValues_defaultRequest() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT */
-        final var result = Utils.toPageRequest(-500, -3);
-
-        /* ASSERT */
-        assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.DEFAULT_PAGE_SIZE), result);
-    }
-
-    @Test
-    public void toPageRequest_sizeBiggerThenMaxSize_PageLimitedToMaxSize() {
-        /* ARRANGE */
-        // Nothing to arrange.
-
-        /* ACT */
-        final var result = Utils.toPageRequest(Utils.DEFAULT_FIRST_PAGE, Utils.MAX_PAGE_SIZE + 20);
-
-        /* ASSERT */
-        assertEquals(PageRequest.of(Utils.DEFAULT_FIRST_PAGE, Utils.MAX_PAGE_SIZE), result);
-    }
-
-    @Test
-    public void toPageRequest_validValues_returnRequestWithRandomValues() {
-        /* ARRANGE */
-        final var page = 21;
-        final var size = 50;
-
-        /* ACT */
-        final var result = Utils.toPageRequest(page, size);
-
-        /* ASSERT */
-        assertEquals(PageRequest.of(page, size), result);
-    }
-
-    /**************************************************************************
-     * DEFAULT_PAGE_SIZE.
-     *************************************************************************/
-    @Test
-    public void DEFAULT_PAGE_SIZE_IS_30() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        assertEquals(30, Utils.DEFAULT_PAGE_SIZE);
-    }
-
-    /**************************************************************************
-     * DEFAULT_FIRST_PAGE.
-     *************************************************************************/
-    @Test
-    public void DEFAULT_FIRST_PAGE_IS_0() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        assertEquals(0, Utils.DEFAULT_FIRST_PAGE);
-    }
-
-    /**************************************************************************
-     * MAX_PAGE_SIZE.
-     *************************************************************************/
-    @Test
-    public void MAX_PAGE_SIZE_IS_100() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT && ASSERT */
-        assertEquals(100, Utils.MAX_PAGE_SIZE);
     }
 }

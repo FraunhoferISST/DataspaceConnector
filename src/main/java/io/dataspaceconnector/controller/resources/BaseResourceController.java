@@ -18,10 +18,10 @@ package io.dataspaceconnector.controller.resources;
 import javax.validation.Valid;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.util.PageUtils;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
-import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -126,7 +126,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     public PagedModel<V> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
-        final var pageable = Utils.toPageRequest(page, size);
+        final var pageable = PageUtils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {

@@ -23,7 +23,7 @@ import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.services.resources.RelationServices;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.services.resources.util.PageUtils;
 import io.dataspaceconnector.view.ArtifactView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +94,8 @@ class RepresentationsToArtifactsTest {
     public void getResource_knownIdNoChildren_returnEmptyPage() {
         /* ARRANGE */
         final UUID knownUUID = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
-        Mockito.when(linker.get(Mockito.eq(knownUUID), Mockito.any())).thenReturn(Utils.toPage(new ArrayList<>(), Pageable.unpaged()));
+        Mockito.when(linker.get(Mockito.eq(knownUUID), Mockito.any())).thenReturn(
+                PageUtils.toPage(new ArrayList<>(), Pageable.unpaged()));
 
         /* ACT */
         final var result = controller.getResource(knownUUID, null, null);

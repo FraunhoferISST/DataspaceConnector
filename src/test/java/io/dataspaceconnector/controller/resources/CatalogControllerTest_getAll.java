@@ -21,7 +21,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.services.resources.util.PageUtils;
 import io.dataspaceconnector.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +71,7 @@ class CatalogControllerTest_getAll {
         final var pageSize = 1;
         final var request = PageRequest.of(0, pageSize);
         Mockito.when(service.getAll(Mockito.eq(request)))
-                .thenReturn(Utils.toPage(catalogList, request));
+                .thenReturn(PageUtils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(null, pageSize);
@@ -90,7 +90,7 @@ class CatalogControllerTest_getAll {
         final var page = 0;
         final var request = PageRequest.of(page, pageSize);
         Mockito.when(service.getAll(Mockito.eq(request)))
-                .thenReturn(Utils.toPage(catalogList, request));
+                .thenReturn(PageUtils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(page, pageSize);
@@ -106,7 +106,7 @@ class CatalogControllerTest_getAll {
         final var page = 3;
         final var request = PageRequest.of(page, pageSize);
         Mockito.when(service.getAll(Mockito.eq(request)))
-                .thenReturn(Utils.toPage(catalogList, request));
+                .thenReturn(PageUtils.toPage(catalogList, request));
 
         /* ACT */
         final var result = controller.getAll(page, pageSize);
@@ -121,7 +121,7 @@ class CatalogControllerTest_getAll {
         final var pageSize = 1;
         final var toFar = catalogList.size() + 1;
         final var request = PageRequest.of(toFar, pageSize);
-        final var returnPage = Utils.toPage(catalogList, request);
+        final var returnPage = PageUtils.toPage(catalogList, request);
         Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(returnPage);
 
         /* ACT */
@@ -137,7 +137,7 @@ class CatalogControllerTest_getAll {
         final var pageSize = 1;
         final var toEarly = -1;
         final var request = PageRequest.of(0, pageSize);
-        final var returnPage = Utils.toPage(catalogList, request);
+        final var returnPage = PageUtils.toPage(catalogList, request);
         Mockito.when(service.getAll(Mockito.eq(request))).thenReturn(returnPage);
 
         /* ACT */

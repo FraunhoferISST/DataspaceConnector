@@ -22,6 +22,7 @@ import java.util.function.Function;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.services.resources.util.PageUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import lombok.AccessLevel;
@@ -95,7 +96,7 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
      */
     protected Page<W> getInternal(final K owner, final Pageable pageable) {
         final var entities = getInternal(owner);
-        return Utils.toPage(entities, pageable);
+        return PageUtils.toPage(entities, pageable);
     }
 
     /**

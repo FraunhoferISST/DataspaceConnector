@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import io.dataspaceconnector.controller.resources.util.PageUtils;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -116,7 +117,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
-        final var pageable = Utils.toPageRequest(page, size);
+        final var pageable = PageUtils.toPageRequest(page, size);
         final var entities = linker.get(ownerId, pageable);
 
         PagedModel<V> model;

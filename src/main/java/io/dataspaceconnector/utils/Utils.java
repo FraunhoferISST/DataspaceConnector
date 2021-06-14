@@ -22,30 +22,10 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-
 /**
  * This utility class contains general purpose functions.
  */
 public final class Utils {
-
-    /**
-     * Default page size.
-     */
-    public static final int DEFAULT_PAGE_SIZE = 30;
-
-    /**
-     * Max page size.
-     */
-    public static final int MAX_PAGE_SIZE = 100;
-
-    /**
-     * Default first page.
-     */
-    public static final int DEFAULT_FIRST_PAGE = 0;
 
     /**
      * Default constructor.
@@ -84,34 +64,6 @@ public final class Utils {
     }
 
     /**
-     * Get a page from a list.
-     *
-     * @param list     The list the page  should be constructed from.
-     * @param pageable The page information.
-     * @param <T>      The type of the list elements.
-     * @return The new page.
-     */
-    public static <T> Page<T> toPage(final List<T> list, final Pageable pageable) {
-        Utils.requireNonNull(list, ErrorMessages.LIST_NULL);
-        Utils.requireNonNull(pageable, ErrorMessages.PAGEABLE_NULL);
-
-        if (pageable.equals(Pageable.unpaged())) {
-            // All elements should be returned.
-            return new PageImpl<>(list, pageable, list.size());
-        }
-
-        final var start = (int) pageable.getOffset();
-
-        if (start > pageable.getPageSize()) {
-            // There are no more list elements.
-            return new PageImpl<>(new ArrayList<>(), pageable, list.size());
-        }
-
-        final var end = Math.min(start + pageable.getPageSize(), list.size());
-        return new PageImpl<>(list.subList(start, end), pageable, list.size());
-    }
-
-    /**
      * Check if a parameter is empty.
      *
      * @param <T>   Type of input parameter.
@@ -124,22 +76,6 @@ public final class Utils {
         } else {
             return param.toString().isEmpty();
         }
-    }
-
-    /**
-     * Creates a page request based on page, size, and sort inputs.
-     *
-     * @param page The page index.
-     * @param size The page size.
-     * @return The page request.
-     */
-    @SuppressWarnings("PMD.UselessParentheses")
-    public static PageRequest toPageRequest(final Integer page, final Integer size) {
-        final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
-        final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
-                : DEFAULT_PAGE_SIZE;
-
-        return PageRequest.of(pageIndex, sizeValue);
     }
 
     /**
