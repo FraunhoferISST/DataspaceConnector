@@ -17,9 +17,7 @@ package io.dataspaceconnector.controller;
 
 import java.net.URI;
 
-import de.fraunhofer.iais.eis.BaseConnector;
-import de.fraunhofer.iais.eis.BaseConnectorBuilder;
-import de.fraunhofer.iais.eis.SecurityProfile;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
@@ -60,12 +58,16 @@ class MainControllerIT {
     }
 
     private BaseConnector getConnectorWithoutResources() {
+
         return new BaseConnectorBuilder()
                 ._curator_(URI.create("https://someBody"))
                 ._maintainer_(URI.create("https:://someoneElse"))
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                        ._accessURL_(URI.create("/api/ids/data"))
+                        .build())
                 .build();
     }
 }
