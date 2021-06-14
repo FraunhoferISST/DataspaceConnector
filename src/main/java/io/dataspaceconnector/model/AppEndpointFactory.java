@@ -21,6 +21,7 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Objects;
 
 /**
  * Creates and updates an app endpoint.
@@ -67,9 +68,23 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
         final var hasUpdatedPort = updateEndpointPort(appEndpoint, desc.getAppEndpointPort());
         final var hasUpdatedProtocol = updateProtocol(appEndpoint, desc.getAppEndpointProtocol());
         final var hasUpdatedLanguage = updateLanguage(appEndpoint, desc.getLanguage());
+        final var hasUpdatedAppEndpointType = updateAppEndpointType(appEndpoint,
+                desc.getAppEndpointType());
 
         return hasUpdatedAccessUrl || hasUpdatedMediaType || hasUpdatedPort
-                || hasUpdatedProtocol || hasUpdatedLanguage;
+                || hasUpdatedProtocol || hasUpdatedLanguage || hasUpdatedAppEndpointType;
+    }
+
+    /**
+     * @param appEndpoint     The app endpoint.
+     * @param appEndpointType The new app endpoint type.
+     * @return True, if app endpoint is updated.
+     */
+    private boolean updateAppEndpointType(final AppEndpoint appEndpoint,
+                                          final AppEndpointType appEndpointType) {
+        appEndpoint.setAppEndpointType(Objects.requireNonNullElse(appEndpointType,
+                AppEndpointType.DEFAULT_ENDPOINT));
+        return true;
     }
 
     /**

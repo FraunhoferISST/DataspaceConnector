@@ -15,26 +15,33 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
 import io.dataspaceconnector.model.AppEndpoint;
 import io.dataspaceconnector.model.AppEndpointDesc;
 import io.dataspaceconnector.model.ConnectorEndpoint;
 import io.dataspaceconnector.model.ConnectorEndpointDesc;
-import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.GenericEndpointDesc;
 import io.dataspaceconnector.services.configuration.AppEndpointService;
 import io.dataspaceconnector.services.configuration.ConnectorEndpointService;
-import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.view.AppEndpointView;
 import io.dataspaceconnector.view.ConnectorEndpointView;
-import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.GenericEndpointView;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Controller for management of different endpoints.
@@ -46,23 +53,43 @@ public final class EndpointControllers {
      */
     @RestController
     @RequestMapping("/api/genericendpoints")
+    @RequiredArgsConstructor
     @Tag(name = "Generic Endpoint", description = "Endpoints for CRUD operations on"
             + " generic endpoints")
     public static class GenericEndpointController
             extends BaseResourceController<GenericEndpoint, GenericEndpointDesc,
             GenericEndpointView, GenericEndpointService> {
-    }
 
-    /**
-     * Offers the endpoints for managing the relations between generic endpoints to data sources.
-     */
-    @RestController
-    @RequestMapping("/api/genericendpoints{id}/datasource")
-    @Tag(name = "Generic Endpoint", description = "Endpoints for linking generic endpoints to "
-            + "data sources.")
-    public static class GenericEndpointToDataSourceController extends
-            BaseResourceChildController<EntityLinkerService.GenericEndpointDataSourcesLinker,
-                                        DataSource, DataSourceView> {
+        /**
+         * The service managing data sources.
+         */
+        private final @NonNull GenericEndpointService genericEndpointService;
+
+        /**
+         * Replace the data source of a generic endpoint.
+         * @param genericEndpointId The generic endpoint whose data source should be replaced.
+         * @param dataSourceId      The new data source.
+         * @return Http Status ok.
+         */
+        @PutMapping(value = "{id}/datasource")
+        public ResponseEntity<Void> putDataSource(
+                @Valid @PathVariable(name = "id") final UUID genericEndpointId,
+                @RequestParam(name = "dataSourceId") final UUID dataSourceId) throws IOException {
+            genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
+            return ResponseEntity.ok().build();
+        }
+
+        /**
+         * Delete the data source from a generic endpoint.
+         * @param genericEndpointId The generic endpoint whose data source should be deleted.
+         * @return Http Status ok.
+         */
+        @DeleteMapping(value = "{id}/datasource")
+        public ResponseEntity<Void> deleteDataSource(
+                @Valid @PathVariable(name = "id") final UUID genericEndpointId) throws IOException {
+            genericEndpointService.deleteGenericEndpointDataSource(genericEndpointId);
+            return ResponseEntity.ok().build();
+        }
     }
 
     /**

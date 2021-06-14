@@ -19,7 +19,6 @@ import io.dataspaceconnector.model.App;
 import io.dataspaceconnector.model.AppStore;
 import io.dataspaceconnector.model.Broker;
 import io.dataspaceconnector.model.ConnectorEndpoint;
-import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.GenericEndpoint;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Route;
@@ -61,21 +60,6 @@ public final class EntityLinkerService {
         @Override
         protected final List<OfferedResource> getInternal(final Broker owner) {
             return owner.getOfferedResources();
-        }
-    }
-
-    /**
-     * Handles the relation between generic endpoint and data sources.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class GenericEndpointDataSourcesLinker
-            extends OwningRelationService<GenericEndpoint, DataSource, GenericEndpointService,
-            DataSourceService> {
-
-        @Override
-        protected final List<DataSource> getInternal(final GenericEndpoint owner) {
-            return List.of(owner.getDataSource());
         }
     }
 

@@ -25,6 +25,10 @@ public enum AppEndpointType {
      */
     CONFIG_ENDPOINT("Configuration Endpoint"),
     /**
+     * The default endpoint.
+     */
+    DEFAULT_ENDPOINT("Default Endpoint"),
+    /**
      * Endpoint is used for data input.
      */
     INPUT_ENDPOINT("Input Endpoint"),

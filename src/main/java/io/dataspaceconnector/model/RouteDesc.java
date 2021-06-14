@@ -18,8 +18,6 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
  * Describing route's properties.
  */
@@ -36,9 +34,4 @@ public class RouteDesc extends AbstractDescription<Route> {
      * The route configuration.
      */
     private String routeConfiguration;
-
-    /**
-     * List of offered resources.
-     */
-    private List<OfferedResource> offeredResources;
 }

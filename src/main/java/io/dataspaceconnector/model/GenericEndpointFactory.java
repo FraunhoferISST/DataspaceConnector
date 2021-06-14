@@ -63,4 +63,24 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
 
         return newAbsolutePath.isPresent();
     }
+
+    /**
+     * @param genericEndpoint The generic endpoint which is updated.
+     * @param dataSource      The new data source.
+     * @return Updated Generic Endpoint.
+     */
+    public GenericEndpoint updateDataSource(final GenericEndpoint genericEndpoint,
+                                            final DataSource dataSource) {
+        genericEndpoint.setDataSource(dataSource);
+        return genericEndpoint;
+    }
+
+    /**
+     * @param genericEndpoint The generic endpoint which is updated.
+     * @return Updated generic endpoint.
+     */
+    public GenericEndpoint deleteDataSource(final GenericEndpoint genericEndpoint) {
+        genericEndpoint.setDataSource(null);
+        return genericEndpoint;
+    }
 }

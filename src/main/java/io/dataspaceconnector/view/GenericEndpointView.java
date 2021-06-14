@@ -16,6 +16,7 @@
 package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.dataspaceconnector.model.DataSource;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,4 +71,9 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
      * The absolute path of the generic endpoint.
      */
     private String absolutePath;
+
+    /**
+     * Data source to which the generic endpoint belongs.
+     */
+    private DataSource dataSource;
 }
