@@ -15,15 +15,18 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
+import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
+import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
+import io.dataspaceconnector.controller.resources.tags.ResourceNames;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -68,7 +71,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -92,7 +94,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/catalogs")
-    @Tag(name = "Catalogs", description = "Endpoints for CRUD operations on catalogs")
+    @Tag(name = ResourceNames.CATALOGS, description = ResourceDescriptions.CATALOGS)
     public static class CatalogController
             extends BaseResourceController<Catalog, CatalogDesc, CatalogView, CatalogService> {
     }
@@ -102,7 +104,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/rules")
-    @Tag(name = "Rules", description = "Endpoints for CRUD operations on rules")
+    @Tag(name = ResourceNames.RULES, description = ResourceDescriptions.RULES)
     public static class RuleController extends BaseResourceController<ContractRule,
             ContractRuleDesc, ContractRuleView, RuleService> {
     }
@@ -112,7 +114,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/representations")
-    @Tag(name = "Representations", description = "Endpoints for CRUD operations on representations")
+    @Tag(name = ResourceNames.REPRESENTATIONS, description = ResourceDescriptions.REPRESENTATIONS)
     public static class RepresentationController extends BaseResourceController<Representation,
             RepresentationDesc, RepresentationView, RepresentationService> {
     }
@@ -122,7 +124,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/contracts")
-    @Tag(name = "Contracts", description = "Endpoints for CRUD operations on contracts")
+    @Tag(name = ResourceNames.CONTRACTS, description = ResourceDescriptions.CONTRACTS)
     public static class ContractController
             extends BaseResourceController<Contract, ContractDesc, ContractView, ContractService> {
     }
@@ -132,7 +134,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/offers")
-    @Tag(name = "Resources", description = "Endpoints for CRUD operations on offered resources")
+    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
     public static class OfferedResourceController
             extends BaseResourceController<OfferedResource, OfferedResourceDesc,
             OfferedResourceView, ResourceService<OfferedResource, OfferedResourceDesc>> {
@@ -143,7 +145,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/requests")
-    @Tag(name = "Resources", description = "Endpoints for CRUD operations on requested resources")
+    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
     public static class RequestedResourceController
             extends BaseResourceController<RequestedResource, RequestedResourceDesc,
             RequestedResourceView,
@@ -153,7 +155,7 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 
@@ -162,14 +164,14 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/agreements")
-    @Tag(name = "Agreements", description = "Endpoints for contract/policy handling")
+    @Tag(name = ResourceNames.AGREEMENTS, description = ResourceDescriptions.AGREEMENTS)
     public static class AgreementController extends BaseResourceController<Agreement, AgreementDesc,
             AgreementView, AgreementService> {
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
@@ -177,14 +179,14 @@ public final class ResourceControllers {
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Object> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
         @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
-            return new ResponseEntity<>(HttpStatus.METHOD_NOT_ALLOWED);
+            throw new MethodNotAllowed();
         }
     }
 
@@ -193,7 +195,7 @@ public final class ResourceControllers {
      */
     @RestController
     @RequestMapping("/api/artifacts")
-    @Tag(name = "Artifacts", description = "Endpoints for CRUD operations on artifacts")
+    @Tag(name = ResourceNames.ARTIFACTS, description = ResourceDescriptions.ARTIFACTS)
     @RequiredArgsConstructor
     public static class ArtifactController
             extends BaseResourceController<Artifact, ArtifactDesc, ArtifactView, ArtifactService> {
