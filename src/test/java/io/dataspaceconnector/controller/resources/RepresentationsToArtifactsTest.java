@@ -23,8 +23,8 @@ import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.services.resources.RelationServices;
-import io.dataspaceconnector.view.ArtifactView;
 import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.view.ArtifactView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,14 +33,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {RelationControllers.RepresentationsToArtifacts.class})
@@ -52,7 +50,7 @@ class RepresentationsToArtifactsTest {
     @MockBean
     RepresentationModelAssembler<Artifact, ArtifactView> assembler;
 
-    @MockBean
+    @SpyBean
     PagedResourcesAssembler<Artifact> pagedResourcesAssembler;
 
     @Autowired
@@ -102,9 +100,10 @@ class RepresentationsToArtifactsTest {
         final var result = controller.getResource(knownUUID, null, null);
 
         /* ASSERT */
-        assertNotNull(result);
-        assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
-        assertNull(result.getBody());
+        assertEquals(0, result.getMetadata().getNumber());
+        assertEquals(0, result.getMetadata().getSize());
+        assertEquals(0, result.getMetadata().getTotalElements());
+        assertEquals(1, result.getMetadata().getTotalPages());
     }
 
     /**
@@ -138,24 +137,6 @@ class RepresentationsToArtifactsTest {
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> controller.addResources(unknownUUid, new ArrayList<>()));
     }
-
-//    @Test
-//    public void addResources_validInput_returnModifiedResource() {
-//        /* ARRANGE */
-//        final UUID knownUUID = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
-//        final var validIdList = new ArrayList<URI>();
-//        validIdList.add(URI.create("https://randompath/363730ec-dcea-45a0-9469-296b868e6a4b"));
-//        validIdList.add(URI.create("https://rando/path/acb249b6-7e51-4d50-a162-0bb71ecd9c2c"));
-//        validIdList.add(URI.create("https://6c0a6b4e-5713-4264-98c2-adab3a6b8782"));
-//
-//        Mockito.when(linker.get(knownUUID, Pageable.unpaged())).thenReturn(validIdList);
-//
-//        /* ACT */
-//        final var result = controller.addResources(knownUUID, validIdList);
-//
-//        /* ASSERT */
-//
-//    }
 
     /**
      * Utilities
