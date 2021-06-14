@@ -140,6 +140,7 @@ public final class RuleUtils {
                 }
             }
         }
+
         return false;
     }
 
@@ -152,23 +153,18 @@ public final class RuleUtils {
      * @throws DateTimeParseException if a duration cannot be parsed.
      */
     public static boolean checkRuleForDeletion(final Rule rule) throws DateTimeParseException {
-        final var max = getDate(rule);
-        if (max != null) {
-            return checkDate(ZonedDateTime.now(ZoneOffset.UTC), max);
-        } else {
-            return false;
-        }
+        final var expiration = getDate(rule);
+        return expiration != null && isExpired(expiration);
     }
 
     /**
-     * Checks whether the current date is later than the specified one.
+     * Checks whether a given date has already passed.
      *
-     * @param dateNow   the current date.
-     * @param maxAccess the target date.
-     * @return true, if the current date is later than the target date; false otherwise.
+     * @param expiration the expiration date.
+     * @return true, if the current date is after the expiration date; false otherwise.
      */
-    public static boolean checkDate(final ZonedDateTime dateNow, final ZonedDateTime maxAccess) {
-        return !dateNow.isAfter(maxAccess);
+    public static boolean isExpired(final ZonedDateTime expiration) {
+        return getCurrentDate().isAfter(expiration);
     }
 
     /**
