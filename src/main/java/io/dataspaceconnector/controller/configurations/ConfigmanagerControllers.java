@@ -27,6 +27,7 @@ import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.DataSourceDesc;
 import io.dataspaceconnector.model.IdentityProvider;
 import io.dataspaceconnector.model.IdentityProviderDesc;
+import io.dataspaceconnector.model.Proxy;
 import io.dataspaceconnector.services.configuration.ClearingHouseService;
 import io.dataspaceconnector.services.configuration.ConfigurationService;
 import io.dataspaceconnector.services.configuration.ConnectorsService;
@@ -73,10 +74,31 @@ public final class ConfigmanagerControllers {
      */
     @RestController
     @RequestMapping("/api/configurations")
+    @RequiredArgsConstructor
     @Tag(name = "Configuration", description = "Endpoints for CRUD operations on configurations")
     public static class ConfigurationController
             extends BaseResourceController<Configuration, ConfigurationDesc,
             ConfigurationView, ConfigurationService> {
+
+        /**
+         * The configuration service.
+         */
+        private final @NonNull ConfigurationService configurationService;
+
+        /**
+         *
+         * @param configurationId The id of the configuration
+         * @param proxy The new proxy
+         * @return HttpStatus Ok.
+         * @throws IOException Exception occurs, if proxy can not be set at configuration.
+         */
+        @PutMapping(value = "{id}/proxy")
+        public ResponseEntity<Void> putProxy(
+                @Valid @PathVariable(name = "id") final UUID configurationId,
+                @RequestBody final Proxy proxy) throws IOException {
+            configurationService.setConfigurationProxyInformation(configurationId, proxy);
+            return ResponseEntity.ok().build();
+        }
     }
 
     /**

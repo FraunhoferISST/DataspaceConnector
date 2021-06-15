@@ -15,10 +15,13 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +47,14 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
      */
     @Override
     public AppStore create(final AppStoreDesc desc) {
-        return new AppStore();
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final var appStore = new AppStore();
+        appStore.setAppList(new ArrayList<>());
+
+        update(appStore, desc);
+
+        return appStore;
     }
 
     /**
@@ -54,6 +64,8 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
      */
     @Override
     public boolean update(final AppStore appStore, final AppStoreDesc desc) {
+        Utils.requireNonNull(appStore, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var hasUpdatedTitle = updateTitle(appStore, desc.getTitle());
         final var hasUpdatedAccessUrl = updateAccessUrl(appStore, desc.getAccessUrl());

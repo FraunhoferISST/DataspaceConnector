@@ -18,8 +18,6 @@ package io.dataspaceconnector.model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
  * Describing the configuration's properties.
  */
@@ -36,11 +34,6 @@ public class ConfigurationDesc extends AbstractDescription<Configuration> {
      * The deploy mode of the connector.
      */
     private ConnectorDeployMode deployMode;
-
-    /**
-     * The proxy configuration.
-     */
-    private List<Proxy> proxy;
 
     /**
      * The trust store.

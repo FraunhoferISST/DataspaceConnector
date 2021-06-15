@@ -15,18 +15,21 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import lombok.ToString;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import java.net.URI;
 import java.util.List;
@@ -35,18 +38,20 @@ import java.util.List;
  * Entity for managing proxies.
  */
 @Entity
-@SQLDelete(sql = "UPDATE proxy SET deleted=true WHERE id=?")
-@Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
-@EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Proxy extends AbstractEntity {
+public class Proxy {
 
     /**
-     * Serial version uid.
-     **/
-    private static final long serialVersionUID = 1L;
+     * The primary key of the authentication.
+     */
+    @Id
+    @GeneratedValue
+    @JsonIgnore
+    @ToString.Exclude
+    @SuppressWarnings("PMD.ShortVariable")
+    private Long id;
 
     /**
      * The proxy uri.
@@ -61,8 +66,10 @@ public class Proxy extends AbstractEntity {
     private List<URI> noProxyURI;
 
     /**
-     * The authentication for the proxy.
+     * The authentication information for the proxy.
      */
-    @OneToOne
+    @OneToOne(cascade = { CascadeType.ALL })
+    @JsonInclude
+    @ToString.Exclude
     private Authentication authentication;
 }

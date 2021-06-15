@@ -31,7 +31,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -74,10 +73,5 @@ public class AppStore extends AbstractEntity {
      */
     @OneToMany
     private List<App> appList;
-
-    /**
-     * The date specification.
-     */
-    private ZonedDateTime lastSeen;
 
 }

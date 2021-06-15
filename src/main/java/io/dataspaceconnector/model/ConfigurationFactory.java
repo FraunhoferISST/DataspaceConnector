@@ -20,7 +20,6 @@ import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -56,7 +55,6 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         Utils.requireNonNull(desc, ErrorMessages.MESSAGE_NULL);
 
         final var config = new Configuration();
-        config.setProxy(new ArrayList<>());
 
         update(config, desc);
         return config;
@@ -172,5 +170,17 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
         newAdditional.ifPresent(configuration::setAdditional);
 
         return newAdditional.isPresent();
+    }
+
+    /**
+     *
+     * @param configuration The entity to be updated.
+     * @param proxy The new proxy.
+     * @return Updated configuration.
+     */
+    public Configuration updateProxy(final Configuration configuration,
+                                     final Proxy proxy) {
+        configuration.setProxy(proxy);
+        return configuration;
     }
 }
