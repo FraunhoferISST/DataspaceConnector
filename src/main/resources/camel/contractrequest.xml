@@ -1,5 +1,4 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
-
     <route id="contractRequestHandler">
 
         <onException>
@@ -18,6 +17,11 @@
         </onException>
 
         <onException>
+            <exception>io.dataspaceconnector.exceptions.MessageRequestException</exception>
+            <to uri="direct:handleMessagePayloadException"/>
+        </onException>
+
+        <onException>
             <exception>io.dataspaceconnector.exceptions.MissingRulesException</exception>
             <to uri="direct:handleMissingRulesException"/>
         </onException>
@@ -30,14 +34,20 @@
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
             <exception>java.lang.IllegalStateException</exception>
-            <exception>javax.validation.ConstraintViolationException</exception>
-            <to uri="direct:handleResourceNotFoundException"/>
+<!--            <exception>javax.validation.ConstraintViolationException</exception>-->
+            <exception>io.dataspaceconnector.exceptions.RdfBuilderException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
         <onException>
-<!--            <exception>javax.validation.ConstraintViolationException</exception>-->
+            <exception>javax.validation.ConstraintViolationException</exception>
             <exception>javax.persistence.PersistenceException</exception>
             <to uri="direct:handleAgreementPersistenceException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ContractListEmptyException</exception>
+            <to uri="direct:handleContractListEmptyException"/>
         </onException>
 
         <from uri="direct:contractRequestHandler"/>

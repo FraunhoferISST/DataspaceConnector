@@ -1,19 +1,19 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-    <route id="versionNotSupportedException-route">
+    <route id="versionNotSupportedException">
         <from uri="direct:handleVersionNotSupportedException"/>
         <log message="Version not supported!"/>
         <to uri="bean:messageResponseService?method=handleInfoModelNotSupportedException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getModelVersion()})"/>
     </route>
 
-    <route id="messageEmptyException-route">
+    <route id="messageEmptyException">
         <from uri="direct:handleMessageEmptyException"/>
         <log message="Message empty!"/>
         <to uri="bean:messageResponseService?method=handleMessageEmptyException(${exception})"/>
     </route>
 
-    <route id="resourceNotFoundException-route">
+    <route id="resourceNotFoundException">
         <from uri="direct:handleResourceNotFoundException"/>
         <log message="Resource not found!"/>
         <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
@@ -22,7 +22,7 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
 
-    <route id="responseMessageBuilderException-route">
+    <route id="responseMessageBuilderException">
         <from uri="direct:handleResponseMessageBuilderException"/>
         <log message="Error building response message!"/>
         <to uri="bean:messageResponseService?method=handleResponseMessageBuilderException(${exception},
@@ -30,14 +30,14 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
 
-    <route id="selfLinkCreationException-route">
+    <route id="selfLinkCreationException">
         <from uri="direct:handleSelfLinkCreationException"/>
         <log message="Error in self link creation!"/>
         <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedArtifact()})"/>
     </route>
 
-    <route id="noAffectedResourceException-route">
+    <route id="noAffectedResourceException">
         <from uri="direct:handleNoAffectedResourceException"/>
         <log message="Affected resource is missing!"/>
         <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
@@ -49,7 +49,7 @@
     <route id="invalidAffectedResourceException">
         <from uri="direct:handleInvalidAffectedResourceException"/>
         <log message="Mismatch between affected resource from header and payload!"/>
-        <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
+        <to uri="bean:messageResponseService?method=handleInvalidAffectedResource(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getAffectedResource()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
@@ -65,8 +65,8 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
 
-    <route id="messageRequestException">
-        <from uri="direct:handleMessageRequestException"/>
+    <route id="messagePayloadException">
+        <from uri="direct:handleMessagePayloadException"/>
         <log message="Message payload is missing!"/>
         <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()},
@@ -76,7 +76,7 @@
     <route id="contractException">
         <from uri="direct:handleContractException"/>
         <log message="Error with contracts!"/>
-        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
+        <to uri="bean:messageResponseService?method=handleContractException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getBody().toString()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
@@ -85,7 +85,7 @@
     <route id="unconfirmedAgreementException">
         <from uri="direct:handleUnconfirmedAgreementException"/>
         <log message="Could not confirm agreement!"/>
-        <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception.getAgreement()},
+        <to uri="bean:messageResponseService?method=handleUnconfirmedAgreement(${exception.getAgreement()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>
@@ -192,11 +192,20 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()})"/>
     </route>
 
-    <route id="AgreementPersistenceException">
+    <route id="agreementPersistenceException">
         <from uri="direct:handleAgreementPersistenceException"/>
         <log message="Error persisting artifact!"/>
         <to uri="bean:messageResponseService?method=handleAgreementPersistenceException(${exception},
         null,
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="missingPayloadException">
+        <from uri="direct:handleMissingPayloadException"/>
+        <log message="Payload is empty"/>
+        <to uri="bean:messageResponseService?method=handleMissingPayload(
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getAffectedResource()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getId()})"/>
     </route>

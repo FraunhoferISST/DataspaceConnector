@@ -3,7 +3,7 @@
 
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageRequestException</exception>
-            <to uri="direct:handleMessageRequestException"/>
+            <to uri="direct:handleMessagePayloadException"/>
         </onException>
 
         <onException>
@@ -16,10 +16,27 @@
             <to uri="direct:handleUnconfirmedAgreementException"/>
         </onException>
 
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
+            <to uri="direct:handleResourceNotFoundException"/>
+        </onException>
+
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleIllegalArgumentException"/>
+        </onException>
+
+        <onException>
+            <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
+            <exception>javax.validation.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
         <from uri="direct:contractAgreementHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="AgreementDeserializer"/>
         <process ref="AgreementComparisonProcessor"/>
         <!-- TODO send agreement to clearing house -->
+
     </route>
 </routes>

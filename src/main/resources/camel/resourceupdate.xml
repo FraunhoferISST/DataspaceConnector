@@ -21,11 +21,23 @@
             <to uri="direct:handleIllegalArgumentException"/>
         </onException>
 
+<!--        <onException>-->
+<!--            <exception>java.lang.IllegalArgumentException</exception>-->
+<!--            <to uri="direct:handleMissingPayloadException"/>-->
+<!--        </onException>-->
+
+        <onException>
+            <exception>java.io.IOException</exception>
+<!--            <exception>java.lang.IllegalArgumentException</exception>-->
+            <to uri="direct:handleMessagePayloadException"/>
+        </onException>
+
         <from uri="direct:resourceUpdateHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="AffectedResourceValidator"/>
         <process ref="ResourceDeserializer"/>
         <process ref="CorrectAffectedResourceValidator"/>
         <process ref="ResourceUpdateProcessor"/>
+
     </route>
 </routes>
