@@ -54,16 +54,40 @@ import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
+/**
+ * Superclass for Camel processors that execute the final logic to generate a response to an
+ * incoming message, e.g. generating a description or providing data.
+ *
+ * @param <I> the expected input type (body of the Camel {@link Exchange}).
+ */
 public abstract class IdsProcessor<I> implements Processor {
 
+    /**
+     * Override of the the {@link Processor}'s process method. Calls the implementing class's
+     * processInternal method and sets the result as the {@link Exchange}'s body.
+     *
+     * @param exchange the input.
+     * @throws Exception if an error occurs.
+     */
     @Override
     public void process(final Exchange exchange) throws Exception {
         exchange.getIn().setBody(processInternal((I)exchange.getIn().getBody(Request.class)));
     }
 
+    /**
+     * Contains the logic to generate a response to an incoming message.
+     *
+     * @param msg the incoming message.
+     * @return the generated response.
+     * @throws Exception if an error occurs.
+     */
     protected abstract Response processInternal(I msg) throws Exception;
 }
 
+/**
+ * Generates a resource description as the response to a DescriptionRequestMessage, if a requested
+ * element was given.
+ */
 @Component("ResourceDescription")
 @RequiredArgsConstructor
 class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
@@ -78,6 +102,15 @@ class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequ
      */
     private final @NonNull EntityResolver entityResolver;
 
+    /**
+     * Generates the description of the requested element as the response payload and creates
+     * a DescriptionResponseMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a DescriptionResponseMessage as header and the resource
+     *         description as payload.
+     * @throws Exception if the resource cannot be found or an error occurs building the response.
+     */
     @Override
     protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl, MessagePayload> msg) throws Exception {
         // Read relevant parameters for message processing.
@@ -96,6 +129,10 @@ class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequ
     }
 }
 
+/**
+ * Generates the connector's self-description as the response to a DescriptionRequestMessage,
+ * if no requested element was given.
+ */
 @Component("SelfDescription")
 @RequiredArgsConstructor
 class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
@@ -110,6 +147,15 @@ class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestM
      */
     private final @NonNull DescriptionResponseService messageService;
 
+    /**
+     * Generates the self-description as the response payload and creates a
+     * DescriptionResponseMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a DescriptionResponseMessage as header and the
+     *         self-description as payload.
+     * @throws Exception if an error occurs building the response.
+     */
     @Override
     protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl, MessagePayload> msg) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
@@ -125,6 +171,9 @@ class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestM
     }
 }
 
+/**
+ * Fetches the data of an artifact as the response to an ArtifactRequestMessage.
+ */
 @Log4j2
 @Component("DataRequestProcessor")
 @RequiredArgsConstructor
@@ -140,6 +189,16 @@ class DataRequestProcessor extends IdsProcessor<RouteMsg<ArtifactRequestMessageI
      */
     private final @NonNull EntityResolver entityResolver;
 
+    /**
+     * Fetches the data of the requested artifact as the response payload and creates an
+     * ArtifactResponseMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with an ArtifactResponseMessage as header and the data as payload.
+     * @throws Exception if the {@link QueryInput} given in the request's payload is invalid or
+     *                   there is an error fetching the data or an error occurs building the
+     *                   response.
+     */
     @Override
     protected Response processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg) throws Exception {
         final var requestedArtifact = msg.getHeader().getRequestedArtifact();
@@ -184,6 +243,9 @@ class DataRequestProcessor extends IdsProcessor<RouteMsg<ArtifactRequestMessageI
 
 }
 
+/**
+ * Generates the response to a NotificationMessage.
+ */
 @Component("ProcessedNotification")
 @RequiredArgsConstructor
 class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessageImpl, ?>> {
@@ -193,6 +255,13 @@ class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessag
      */
     private final @NonNull MessageProcessedNotificationService messageService;
 
+    /**
+     * Creates a MessageProcessedNotificationMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a MessageProcessedNotificationMessage as header.
+     * @throws Exception if an error occurs building the response.
+     */
     @Override
     protected Response processInternal(RouteMsg<NotificationMessageImpl, ?> msg) throws Exception {
         // Build the ids response.
@@ -205,6 +274,9 @@ class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessag
     }
 }
 
+/**
+ * Updates a requested resource when a ResourceUpdateMessage is received and generates the response.
+ */
 @Log4j2
 @Component("ResourceUpdateProcessor")
 @RequiredArgsConstructor
@@ -220,6 +292,14 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
      */
     private final @NonNull MessageProcessedNotificationService messageService;
 
+    /**
+     * Updates the local copy of the resource given in the ResourceUpdateMessage and creates a
+     * MessageProcessedNotificationMessage as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a MessageProcessedNotificationMessage as header.
+     * @throws Exception if the resource cannot be updated or an error occurs building the response.
+     */
     @Override
     protected Response processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg) throws Exception {
         updateService.updateResource(msg.getBody());
@@ -235,6 +315,10 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
 
 }
 
+/**
+ * Checks a consumer's contract request from a ContractRequestMessage and generates a contract
+ * agreement as the response.
+ */
 @Log4j2
 @RequiredArgsConstructor
 @Component("ContractRequest")
@@ -255,10 +339,28 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
      */
     private final @NonNull ContractRejectionService rejectionService;
 
+    /**
+     * Service for resolving entities.
+     */
     private final @NonNull EntityDependencyResolver dependencyResolver;
 
+    /**
+     * Service for validating the rules from a contract.
+     */
     private final @NonNull RuleValidator ruleValidator;
 
+    /**
+     * Compares the contract requested by the consumer to the contract offered by the provider
+     * and checks whether the contract is applicable for the requesting consumer. If the contracts
+     * comply a ContractAgreement is generated as the response payload and a
+     * ContractAgreementMessage is created as the response header.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a ContractAgreementMessage as header and the generated
+     *         ContractAgreement as payload.
+     * @throws Exception if the contracts do not match, if there is a policy restriction or if an
+     *         error occurs building the response.
+     */
     @Override
     protected Response processInternal(RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
@@ -275,7 +377,7 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
      * @param issuer    The issuer connector extracted from the incoming message.
      * @return A message response to the requesting connector.
      */
-    public Response processContractRequest(final ContractRequest request, final URI messageId,
+    private Response processContractRequest(final ContractRequest request, final URI messageId,
                                            final URI issuer) throws RuntimeException {
         // Get all rules of the contract request.
         final var rules = ContractUtils.extractRulesFromContract(request);
@@ -299,6 +401,16 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
         return acceptContract(request, issuer, messageId, new ArrayList<>(targetRuleMap.keySet()));
     }
 
+    /**
+     * Checks whether there is an applicable contract offer for the requesting consumer and the
+     * desired artifact.
+     *
+     * @param target URI of the desired artifact.
+     * @param request the contract request.
+     * @param issuer the issuer connector of the request.
+     * @param targetRuleMap the list of rules from the contract request.
+     * @return true, if there is a valid offer; false otherwise.
+     */
     private boolean checkRule(final URI target, final ContractRequest request, final URI issuer,
                               final Map<URI, List<Rule>> targetRuleMap) {
         final var contracts = dependencyResolver.getContractOffersByArtifactId(target);
@@ -363,6 +475,10 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
     }
 }
 
+/**
+ * Compares the contract agreement given in a ContractAgreementMessage to the locally stored
+ * agreement and generates the response.
+ */
 @Log4j2
 @Component("AgreementComparisonProcessor")
 @RequiredArgsConstructor
@@ -393,6 +509,14 @@ class AgreementComparisonProcessor extends IdsProcessor<RouteMsg<ContractAgreeme
      */
     private final @NonNull MessageProcessedNotificationService messageService;
 
+    /**
+     * Compares the contract agreement given by the consumer to the one stored in the database
+     * and saves it as confirmed if they match.
+     *
+     * @param msg the incoming message.
+     * @return a Response object with a MessageProcessedNotificationMessage as header.
+     * @throws Exception if the contracts do not match or the confirmed agreement cannot be stored.
+     */
     @Override
     protected Response processInternal(RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
         final var agreement = msg.getBody();
