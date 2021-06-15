@@ -157,7 +157,11 @@ public final class Utils {
         var isSame = true;
 
         if (isOnlyOneNull(lList, rList)) {
-            isSame = false;
+            final var cond1 = lList == null && rList.size() == 0;
+            final var cond2 = rList == null && lList.size() == 0;
+            if (!cond1 && !cond2) {
+                isSame = false;
+            }
         } else if (lList != null /* && rList != null*/) {
             final var lSet = makeUnique(lList, compare);
             final var rSet = makeUnique(rList, compare);
