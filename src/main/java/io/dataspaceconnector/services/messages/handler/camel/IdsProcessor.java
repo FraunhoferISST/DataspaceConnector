@@ -71,7 +71,7 @@ public abstract class IdsProcessor<I> implements Processor {
      */
     @Override
     public void process(final Exchange exchange) throws Exception {
-        exchange.getIn().setBody(processInternal((I)exchange.getIn().getBody(Request.class)));
+        exchange.getIn().setBody(processInternal((I) exchange.getIn().getBody(Request.class)));
     }
 
     /**
@@ -90,7 +90,8 @@ public abstract class IdsProcessor<I> implements Processor {
  */
 @Component("ResourceDescription")
 @RequiredArgsConstructor
-class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
+class ResourceDescriptionProcessor extends IdsProcessor<
+        RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
 
     /**
      * Service for handling response messages.
@@ -112,7 +113,8 @@ class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequ
      * @throws Exception if the resource cannot be found or an error occurs building the response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl, MessagePayload> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl,
+            MessagePayload> msg) throws Exception {
         // Read relevant parameters for message processing.
         final var requested = MessageUtils.extractRequestedElement(msg.getHeader());
         final var entity = entityResolver.getEntityById(requested);
@@ -135,7 +137,8 @@ class ResourceDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequ
  */
 @Component("SelfDescription")
 @RequiredArgsConstructor
-class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
+class SelfDescriptionProcessor extends IdsProcessor<
+        RouteMsg<DescriptionRequestMessageImpl, MessagePayload>> {
 
     /**
      * Service for the current connector configuration.
@@ -157,7 +160,8 @@ class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestM
      * @throws Exception if an error occurs building the response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl, MessagePayload> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<DescriptionRequestMessageImpl,
+            MessagePayload> msg) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
         final var connector = connectorService.getConnectorWithOfferedResources();
@@ -177,7 +181,8 @@ class SelfDescriptionProcessor extends IdsProcessor<RouteMsg<DescriptionRequestM
 @Log4j2
 @Component("DataRequestProcessor")
 @RequiredArgsConstructor
-class DataRequestProcessor extends IdsProcessor<RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
+class DataRequestProcessor extends IdsProcessor<
+        RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
 
     /**
      * Service for handling artifact response messages.
@@ -200,14 +205,16 @@ class DataRequestProcessor extends IdsProcessor<RouteMsg<ArtifactRequestMessageI
      *                   response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<ArtifactRequestMessageImpl,
+            MessagePayload> msg) throws Exception {
         final var requestedArtifact = msg.getHeader().getRequestedArtifact();
         final var issuer = msg.getHeader().getIssuerConnector();
         final var messageId = msg.getHeader().getId();
         final var transferContract = msg.getHeader().getTransferContract();
 
         final var queryInput = getQueryInputFromPayload(msg.getBody());
-        final var data = entityResolver.getDataByArtifactId(requestedArtifact, queryInput);
+        final var data = entityResolver
+                .getDataByArtifactId(requestedArtifact, queryInput);
 
         final var desc = new ArtifactResponseMessageDesc(issuer, messageId, transferContract);
         final var responseHeader = messageService.buildMessage(desc);
@@ -263,7 +270,8 @@ class MessageProcessedProcessor extends IdsProcessor<RouteMsg<NotificationMessag
      * @throws Exception if an error occurs building the response.
      */
     @Override
-    protected Response processInternal(RouteMsg<NotificationMessageImpl, ?> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<NotificationMessageImpl, ?> msg)
+            throws Exception {
         // Build the ids response.
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
@@ -301,7 +309,8 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
      * @throws Exception if the resource cannot be updated or an error occurs building the response.
      */
     @Override
-    protected Response processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg) throws Exception {
+    protected Response processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg)
+            throws Exception {
         updateService.updateResource(msg.getBody());
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
@@ -322,7 +331,8 @@ class ResourceUpdateProcessor extends IdsProcessor<RouteMsg<ResourceUpdateMessag
 @Log4j2
 @RequiredArgsConstructor
 @Component("ContractRequest")
-class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
+class ContractRequestProcessor extends IdsProcessor<
+        RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
 
     /**
      * Service for persisting entities.
@@ -362,7 +372,8 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
      *         error occurs building the response.
      */
     @Override
-    protected Response processInternal(RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
+    protected Response processInternal(
+            final RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());
         return processContractRequest(msg.getBody(), messageId, issuer);
@@ -482,7 +493,8 @@ class ContractRequestProcessor extends IdsProcessor<RouteMsg<ContractRequestMess
 @Log4j2
 @Component("AgreementComparisonProcessor")
 @RequiredArgsConstructor
-class AgreementComparisonProcessor extends IdsProcessor<RouteMsg<ContractAgreementMessageImpl, ContractAgreement>> {
+class AgreementComparisonProcessor extends IdsProcessor<
+        RouteMsg<ContractAgreementMessageImpl, ContractAgreement>> {
 
     /**
      * Service for resolving entities.
@@ -518,7 +530,8 @@ class AgreementComparisonProcessor extends IdsProcessor<RouteMsg<ContractAgreeme
      * @throws Exception if the contracts do not match or the confirmed agreement cannot be stored.
      */
     @Override
-    protected Response processInternal(RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
+    protected Response processInternal(
+            final RouteMsg<ContractAgreementMessageImpl, ContractAgreement> msg) throws Exception {
         final var agreement = msg.getBody();
         final var storedAgreement = entityResolver.getAgreementByUri(agreement.getId());
         final var storedIdsAgreement = deserializationService
@@ -529,7 +542,8 @@ class AgreementComparisonProcessor extends IdsProcessor<RouteMsg<ContractAgreeme
         }
 
         if (!updateService.confirmAgreement(storedAgreement)) {
-            throw new UnconfirmedAgreementException(storedAgreement, "Could not confirm agreement.");
+            throw new UnconfirmedAgreementException(storedAgreement,
+                    "Could not confirm agreement.");
         }
 
         //TODO move to own processor?

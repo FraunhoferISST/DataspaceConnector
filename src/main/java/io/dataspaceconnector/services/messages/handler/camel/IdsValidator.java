@@ -41,7 +41,7 @@ public abstract class IdsValidator<I> implements Processor {
     @Override
     @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
-        processInternal((I)exchange.getIn().getBody(Request.class));
+        processInternal((I) exchange.getIn().getBody(Request.class));
     }
 
     /**
@@ -58,7 +58,8 @@ public abstract class IdsValidator<I> implements Processor {
  */
 @Log4j2
 @Component("CorrectAffectedResourceValidator")
-class CorrectAffectedResourceValidator extends IdsValidator<RouteMsg<ResourceUpdateMessageImpl, Resource>> {
+class CorrectAffectedResourceValidator extends IdsValidator<
+        RouteMsg<ResourceUpdateMessageImpl, Resource>> {
 
     /**
      * Checks whether the resource ID given in a ResourceUpdateMessage matches the resource ID in
@@ -68,10 +69,12 @@ class CorrectAffectedResourceValidator extends IdsValidator<RouteMsg<ResourceUpd
      * @throws Exception if the IDs do not match.
      */
     @Override
-    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg) throws Exception {
+    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl, Resource> msg)
+            throws Exception {
         final var affected = MessageUtils.extractAffectedResource(msg.getHeader());
         if (!msg.getBody().getId().equals(affected)) {
-            throw new InvalidAffectedResourceException("Resource in message payload does not match affected resource from message header.");
+            throw new InvalidAffectedResourceException("Resource in message payload does not "
+                    + "match affected resource from message header.");
         }
     }
 
@@ -83,7 +86,8 @@ class CorrectAffectedResourceValidator extends IdsValidator<RouteMsg<ResourceUpd
  */
 @Log4j2
 @Component("AffectedResourceValidator")
-class AffectedResourceValidator extends IdsValidator<RouteMsg<ResourceUpdateMessageImpl, MessagePayload>> {
+class AffectedResourceValidator extends IdsValidator<
+        RouteMsg<ResourceUpdateMessageImpl, MessagePayload>> {
 
     /**
      * Checks whether the resource ID given in a ResourceUpdateMessage is null or empty.
@@ -92,7 +96,8 @@ class AffectedResourceValidator extends IdsValidator<RouteMsg<ResourceUpdateMess
      * @throws Exception if the ID is null or empty.
      */
     @Override
-    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> message) throws Exception {
+    protected void processInternal(
+            final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> message) throws Exception {
         final var affected = MessageUtils
                 .extractAffectedResource(message.getHeader());
 
@@ -130,7 +135,8 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
      * @throws Exception if the contract is null or empty or if data provision is denied.
      */
     @Override
-    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg) throws Exception {
+    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg)
+            throws Exception {
         final var transferContract = MessageUtils.extractTransferContract(msg.getHeader());
         final var requestedArtifact = MessageUtils.extractRequestedArtifact(msg.getHeader());
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
@@ -154,7 +160,8 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
  */
 @Log4j2
 @Component("RequestedArtifactValidator")
-class RequestedArtifactValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
+class RequestedArtifactValidator extends IdsValidator<
+        RouteMsg<ArtifactRequestMessageImpl, MessagePayload>> {
 
     /**
      * Checks whether the requested artifact given in an ArtifactRequestMessage is null or empty.
@@ -163,7 +170,8 @@ class RequestedArtifactValidator extends IdsValidator<RouteMsg<ArtifactRequestMe
      * @throws Exception if the requested artifact is null or empty.
      */
     @Override
-    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg) throws Exception {
+    protected void processInternal(final RouteMsg<ArtifactRequestMessageImpl, MessagePayload> msg)
+            throws Exception {
         final var requestedArtifact = MessageUtils.extractRequestedArtifact(msg.getHeader());
         if (requestedArtifact == null || requestedArtifact.toString().equals("")) {
             throw new NoRequestedArtifactException("Requested artifact is missing.");

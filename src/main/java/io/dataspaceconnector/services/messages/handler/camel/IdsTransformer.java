@@ -34,7 +34,7 @@ public abstract class IdsTransformer<I, O> implements Processor {
     @Override
     @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
-        exchange.getIn().setBody(processInternal((I)exchange.getIn().getBody(RouteMsg.class)));
+        exchange.getIn().setBody(processInternal((I) exchange.getIn().getBody(RouteMsg.class)));
     }
 
     /**
@@ -53,8 +53,9 @@ public abstract class IdsTransformer<I, O> implements Processor {
  */
 @Component("ContractDeserializer")
 @RequiredArgsConstructor
-class ContractTransformer extends IdsTransformer<RouteMsg<ContractRequestMessageImpl, MessagePayload>,
-                                                 RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
+class ContractTransformer extends IdsTransformer<
+        RouteMsg<ContractRequestMessageImpl, MessagePayload>,
+        RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
 
     /**
      * Service for ids deserialization.
@@ -69,8 +70,10 @@ class ContractTransformer extends IdsTransformer<RouteMsg<ContractRequestMessage
      * @throws Exception if the payload cannot be deserialized.
      */
     @Override
-    protected RouteMsg<ContractRequestMessageImpl, ContractRequest> processInternal(RouteMsg<ContractRequestMessageImpl, MessagePayload> msg) throws Exception {
-        final var contract = deserializationService.getContractRequest(MessageUtils.getPayloadAsString(msg.getBody()));
+    protected RouteMsg<ContractRequestMessageImpl, ContractRequest> processInternal(
+            final RouteMsg<ContractRequestMessageImpl, MessagePayload> msg) throws Exception {
+        final var contract = deserializationService
+                .getContractRequest(MessageUtils.getPayloadAsString(msg.getBody()));
         return new Request<>(msg.getHeader(), contract);
     }
 
@@ -82,8 +85,9 @@ class ContractTransformer extends IdsTransformer<RouteMsg<ContractRequestMessage
  */
 @Component("ResourceDeserializer")
 @RequiredArgsConstructor
-class ResourceTransformer extends IdsTransformer<RouteMsg<ResourceUpdateMessageImpl, MessagePayload>,
-                                                 RouteMsg<ResourceUpdateMessageImpl, Resource>> {
+class ResourceTransformer extends IdsTransformer<
+        RouteMsg<ResourceUpdateMessageImpl, MessagePayload>,
+        RouteMsg<ResourceUpdateMessageImpl, Resource>> {
 
     /**
      * Service for ids deserialization.
@@ -98,8 +102,10 @@ class ResourceTransformer extends IdsTransformer<RouteMsg<ResourceUpdateMessageI
      * @throws Exception if the payload cannot be deserialized.
      */
     @Override
-    protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
-        final var resource = deserializationService.getResource(MessageUtils.getStreamAsString(msg.getBody()));
+    protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(
+            final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
+        final var resource = deserializationService
+                .getResource(MessageUtils.getStreamAsString(msg.getBody()));
         return new Request<>(msg.getHeader(), resource);
     }
 
@@ -111,8 +117,9 @@ class ResourceTransformer extends IdsTransformer<RouteMsg<ResourceUpdateMessageI
  */
 @Component("AgreementDeserializer")
 @RequiredArgsConstructor
-class ContractAgreementTransformer extends IdsTransformer<RouteMsg<ContractAgreementMessageImpl, MessagePayload>,
-                                                          RouteMsg<ContractAgreementMessageImpl, ContractAgreement>> {
+class ContractAgreementTransformer extends IdsTransformer<
+        RouteMsg<ContractAgreementMessageImpl, MessagePayload>,
+        RouteMsg<ContractAgreementMessageImpl, ContractAgreement>> {
 
     /**
      * Service for ids deserialization.
@@ -127,8 +134,10 @@ class ContractAgreementTransformer extends IdsTransformer<RouteMsg<ContractAgree
      * @throws Exception if the payload cannot be deserialized.
      */
     @Override
-    protected RouteMsg<ContractAgreementMessageImpl, ContractAgreement> processInternal(final RouteMsg<ContractAgreementMessageImpl, MessagePayload> msg) throws Exception {
-        final var agreement = deserializationService.getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
+    protected RouteMsg<ContractAgreementMessageImpl, ContractAgreement> processInternal(
+            final RouteMsg<ContractAgreementMessageImpl, MessagePayload> msg) throws Exception {
+        final var agreement = deserializationService
+                .getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
         return new Request<>(msg.getHeader(), agreement);
     }
 
