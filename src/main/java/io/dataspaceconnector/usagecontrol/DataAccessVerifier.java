@@ -21,12 +21,12 @@ import java.util.List;
 
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.messages.types.exceptions.PolicyExecutionException;
-import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
-import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.commons.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
-import io.dataspaceconnector.utils.SelfLinkHelper;
+import io.dataspaceconnector.commons.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

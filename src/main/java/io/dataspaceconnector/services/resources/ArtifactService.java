@@ -16,8 +16,8 @@
 package io.dataspaceconnector.services.resources;
 
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
+import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.commons.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
@@ -31,8 +31,8 @@ import io.dataspaceconnector.services.ArtifactRetriever;
 import io.dataspaceconnector.services.HttpService;
 import io.dataspaceconnector.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.usagecontrol.VerificationResult;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.AccessLevel;

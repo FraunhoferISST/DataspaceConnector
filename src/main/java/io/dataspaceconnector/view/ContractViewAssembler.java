@@ -19,11 +19,11 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.ContractController;
-import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
+import io.dataspaceconnector.commons.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.commons.ErrorMessages;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

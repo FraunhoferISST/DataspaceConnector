@@ -26,7 +26,7 @@ import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.ids.util.IdsUtils;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

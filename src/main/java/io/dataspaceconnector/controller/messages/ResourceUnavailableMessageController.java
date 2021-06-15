@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.utils.ControllerUtils;
+import io.dataspaceconnector.commons.controller.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

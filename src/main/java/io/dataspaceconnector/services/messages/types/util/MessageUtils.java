@@ -33,8 +33,8 @@ import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupp
 import io.dataspaceconnector.services.messages.types.exceptions.MessageBuilderException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageRequestException;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;

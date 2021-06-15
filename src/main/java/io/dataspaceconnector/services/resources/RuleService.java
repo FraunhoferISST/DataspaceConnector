@@ -18,8 +18,8 @@ package io.dataspaceconnector.services.resources;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.repositories.RuleRepository;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -32,7 +32,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.services.EntityResolver;

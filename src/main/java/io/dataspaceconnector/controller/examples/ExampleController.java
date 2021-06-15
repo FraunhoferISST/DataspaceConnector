@@ -36,7 +36,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.usagecontrol.PolicyPattern;
-import io.dataspaceconnector.utils.ControllerUtils;
+import io.dataspaceconnector.commons.controller.ControllerUtils;
 import io.dataspaceconnector.controller.examples.util.PatternUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import io.swagger.v3.oas.annotations.Hidden;

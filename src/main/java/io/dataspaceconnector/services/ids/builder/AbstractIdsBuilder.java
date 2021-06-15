@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.utils.SelfLinkHelper;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.SelfLinkHelper;
+import io.dataspaceconnector.commons.Utils;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

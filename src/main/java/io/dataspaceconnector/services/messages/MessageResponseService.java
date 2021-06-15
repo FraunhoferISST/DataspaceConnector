@@ -28,9 +28,9 @@ import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyExce
 import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
-import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

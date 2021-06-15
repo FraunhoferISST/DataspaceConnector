@@ -26,7 +26,7 @@ import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundExcep
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
-import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.commons.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

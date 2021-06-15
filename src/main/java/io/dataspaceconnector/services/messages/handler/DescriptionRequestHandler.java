@@ -35,7 +35,7 @@ import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageBuilderException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
 import io.dataspaceconnector.services.messages.types.util.MessageUtils;
-import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.commons.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

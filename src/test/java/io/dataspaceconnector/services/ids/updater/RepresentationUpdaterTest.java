@@ -25,7 +25,7 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.templates.RepresentationTemplate;
+import io.dataspaceconnector.services.ids.templates.RepresentationTemplate;
 import io.dataspaceconnector.services.resources.RepresentationService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

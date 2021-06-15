@@ -30,7 +30,7 @@ import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import io.dataspaceconnector.usagecontrol.PolicyExecutionService;
-import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.commons.ContractUtils;
 import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;

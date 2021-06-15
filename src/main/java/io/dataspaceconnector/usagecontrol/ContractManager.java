@@ -40,7 +40,7 @@ import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
-import io.dataspaceconnector.utils.ContractUtils;
+import io.dataspaceconnector.commons.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

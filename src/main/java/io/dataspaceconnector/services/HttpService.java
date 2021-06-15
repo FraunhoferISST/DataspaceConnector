@@ -16,8 +16,8 @@
 package io.dataspaceconnector.services;
 
 import io.dataspaceconnector.model.QueryInput;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;

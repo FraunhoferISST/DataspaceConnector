@@ -34,15 +34,15 @@ import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.templates.ArtifactTemplate;
-import io.dataspaceconnector.model.templates.ContractTemplate;
-import io.dataspaceconnector.model.templates.RepresentationTemplate;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.model.templates.RuleTemplate;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.RdfUtils;
-import io.dataspaceconnector.utils.Utils;
-import io.dataspaceconnector.utils.exceptions.RdfBuilderException;
+import io.dataspaceconnector.services.ids.templates.ArtifactTemplate;
+import io.dataspaceconnector.services.ids.templates.ContractTemplate;
+import io.dataspaceconnector.services.ids.templates.RepresentationTemplate;
+import io.dataspaceconnector.services.ids.templates.ResourceTemplate;
+import io.dataspaceconnector.services.ids.templates.RuleTemplate;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.RdfUtils;
+import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.commons.exceptions.RdfBuilderException;
 
 /**
  * Maps ids resources to internal resources.

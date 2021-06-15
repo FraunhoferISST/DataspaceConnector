@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.model.utils.MetadataUtils;
+import io.dataspaceconnector.commons.Utils;
 import org.springframework.stereotype.Component;
 
 /**

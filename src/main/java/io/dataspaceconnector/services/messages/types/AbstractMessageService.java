@@ -32,7 +32,7 @@ import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupp
 import io.dataspaceconnector.model.messages.MessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.commons.ErrorMessages;
 import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -19,8 +19,8 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;

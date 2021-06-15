@@ -40,8 +40,8 @@ import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.ids.util.MappingUtils;
 import io.dataspaceconnector.usagecontrol.PolicyPattern;
 import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.commons.Utils;
 import lombok.extern.log4j.Log4j2;
 
 /**
