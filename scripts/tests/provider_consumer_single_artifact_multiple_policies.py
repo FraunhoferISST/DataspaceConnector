@@ -46,6 +46,10 @@ def create_contract():
 
 def create_usage_notification_rule():
     return s.post("https://localhost:8080/api/rules", json={'value': """{
+      "@context" : {
+          "ids" : "https://w3id.org/idsa/core/",
+          "idsc" : "https://w3id.org/idsa/code/"
+      },
       "@type": "ids:Permission",
       "@id": "https://w3id.org/idsa/autogen/permission/c0bdb9d5-e86a-4bb3-86d2-2b1dc9d226f5",
       "ids:description": [
@@ -96,6 +100,10 @@ def create_usage_notification_rule():
 
 def create_n_times_usage_rule():
     return s.post("https://localhost:8080/api/rules", json={'value': """{
+      "@context" : {
+          "ids" : "https://w3id.org/idsa/core/",
+          "idsc" : "https://w3id.org/idsa/code/"
+      },
       "@type": "ids:Permission",
       "@id": "https://w3id.org/idsa/autogen/permission/154df1cf-557b-4f44-b839-4b68056606a2",
       "ids:description": [
