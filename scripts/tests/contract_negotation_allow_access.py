@@ -53,10 +53,6 @@ def create_contract():
 
 def create_rule_allow_access():
     response = s.post("https://localhost:8080/api/rules", json={'value': """{
-        "@context" : {
-            "ids" : "https://w3id.org/idsa/core/",
-            "idsc" : "https://w3id.org/idsa/code/"
-        },
         "@type": "ids:Permission",
         "@id": "https://w3id.org/idsa/autogen/permission/cf1cb758-b96d-4486-b0a7-f3ac0e289588",
         "ids:action": [
