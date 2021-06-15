@@ -70,7 +70,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/14af94cf-2a29-4ddd-8595-945d9a16be4f",
@@ -93,7 +94,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Prohibition",
   "@id" : "https://w3id.org/idsa/autogen/prohibition/a838e2a5-d3e8-4891-af73-0f3bf39381ce",
@@ -116,7 +118,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/4ad88c11-a00c-4479-94f6-2a68cce005ea",
@@ -152,7 +155,8 @@ runtime.
 ### Duration Usage
 ```{
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/3b1439a1-4136-4675-b5a0-798ec3148996",
@@ -189,7 +193,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/1fcac0c3-8946-4880-a8cc-a7eab0543204",
@@ -239,7 +244,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/98d47a9d-d4e2-4048-97c2-9c632f5e235f",
@@ -310,7 +316,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/cbc802b1-03a7-4563-b6a3-688e9dd4ccdf",
@@ -340,7 +347,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/75050633-0762-47d2-8a06-6a318eaf4b76",
@@ -384,7 +392,8 @@ runtime.
 ```
 {
   "@context" : {
-    "ids" : "https://w3id.org/idsa/core/"
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
   },
   "@type" : "ids:Permission",
   "@id" : "https://w3id.org/idsa/autogen/permission/d504b82f-79dd-4c93-969d-937ab6a1d676",
