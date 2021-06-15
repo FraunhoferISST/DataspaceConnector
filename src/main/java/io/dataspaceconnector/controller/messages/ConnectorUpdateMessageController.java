@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Objects;
 
 /**
  * Controller for sending ids connector update messages.
@@ -87,14 +86,16 @@ public class ConnectorUpdateMessageController {
 
             // Send the connector update message.
             final var response = brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
-            if(response != null){
+            if (response != null) {
                 return ResponseEntity.ok("Success");
-            }else{
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Ids message handling failed. null");
             }
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
+        } catch (IOException | DapsTokenManagerException | ClaimsException
+                | MultipartParseException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

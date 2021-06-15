@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.messages;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Objects;
 
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
@@ -87,13 +86,15 @@ public class QueryMessageController {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
-            if(response != null && response.getPayload().isPresent()){
+            if (response != null && response.getPayload().isPresent()) {
                 final var responseAsString = response.getPayload().get();
                 return ResponseEntity.ok(responseAsString);
-            }else{
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Ids message handling failed. null");
             }
-        } catch (IOException | DapsTokenManagerException | ClaimsException | MultipartParseException exception) {
+        } catch (IOException | DapsTokenManagerException | ClaimsException
+                | MultipartParseException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

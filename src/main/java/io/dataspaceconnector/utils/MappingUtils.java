@@ -73,7 +73,8 @@ public final class MappingUtils {
         final var representation = resource.getDefaultRepresentation();
         final var description = resource.getDescription();
         final var resourceId = resource.getId();
-        final var keywords = IdsUtils.getKeywordsAsString((ArrayList<? extends TypedLiteral>) resource.getKeyword());
+        final var keywords = IdsUtils.getKeywordsAsString(
+                (ArrayList<? extends TypedLiteral>) resource.getKeyword());
         final var language = resource.getLanguage();
         final var modified = resource.getModified();
         final var publisher = resource.getPublisher();

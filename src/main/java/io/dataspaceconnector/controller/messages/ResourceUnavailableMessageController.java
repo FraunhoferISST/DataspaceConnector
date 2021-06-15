@@ -17,14 +17,11 @@ package io.dataspaceconnector.controller.messages;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Objects;
 
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,12 +90,14 @@ public class ResourceUnavailableMessageController {
 
             // Send the resource unavailable message.
             final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
-            if(response != null){
+            if (response != null) {
                 return ResponseEntity.ok("Success");
-            }else{
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ids message handling failed. null");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Ids message handling failed. null");
             }
-        } catch (IOException | DapsTokenManagerException | MultipartParseException | ClaimsException exception) {
+        } catch (IOException | DapsTokenManagerException | MultipartParseException
+                | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

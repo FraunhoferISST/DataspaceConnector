@@ -27,8 +27,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Converts DSC resource to ids resource.

@@ -62,11 +62,12 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege() {
-        try{
+        try {
             return tokenProvider.getDAT() != null;
-        }catch (ConnectorMissingCertExtensionException e) {
+        } catch (ConnectorMissingCertExtensionException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Certificate of the Connector is missing aki/ski extensions! exception=({})]", e.getMessage());
+                log.warn("Certificate of the Connector is missing aki/ski extensions!"
+                        + " exception=({})]", e.getMessage());
             }
             return false;
         } catch (DapsConnectionException e) {

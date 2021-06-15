@@ -76,7 +76,8 @@ public final class IdsRepresentationBuilder
                 ._modified_(modified)
                 ._representationStandard_(standard);
 
-        artifacts.ifPresent(_instance_ -> builder._instance_(Collections.unmodifiableList(_instance_)));
+        artifacts.ifPresent(_instance_ -> builder._instance_(Collections
+                .unmodifiableList(_instance_)));
 
         return builder.build();
     }

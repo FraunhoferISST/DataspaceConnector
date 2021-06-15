@@ -15,7 +15,14 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import de.fraunhofer.iais.eis.*;
+import de.fraunhofer.iais.eis.BaseConnector;
+import de.fraunhofer.iais.eis.BaseConnectorImpl;
+import de.fraunhofer.iais.eis.ConfigurationModelImpl;
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
@@ -115,7 +122,7 @@ public class ConnectorService {
      * @return The connector's DAT.
      */
     public DynamicAttributeToken getCurrentDat() {
-        DynamicAttributeToken invalid_token = new DynamicAttributeTokenBuilder()
+        DynamicAttributeToken invalidToken = new DynamicAttributeTokenBuilder()
                 ._tokenFormat_(TokenFormat.JWT)
                 ._tokenValue_("INVALID_TOKEN")
                 .build();
@@ -123,19 +130,20 @@ public class ConnectorService {
             return tokenProvider.getDAT();
         } catch (ConnectorMissingCertExtensionException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Certificate of the Connector is missing aki/ski extensions! exception=({})]", e.getMessage());
+                log.warn("Certificate of the Connector is missing aki/ski extensions!"
+                        + " exception=({})]", e.getMessage());
             }
-            return invalid_token;
+            return invalidToken;
         } catch (DapsConnectionException e) {
             if (log.isWarnEnabled()) {
                 log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
             }
-            return invalid_token;
+            return invalidToken;
         } catch (DapsEmptyResponseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
             }
-            return invalid_token;
+            return invalidToken;
         }
     }
 
@@ -178,7 +186,8 @@ public class ConnectorService {
     public void updateConfigModel() throws ConfigUpdateException {
         try {
             final var connector = getConnectorWithOfferedResources();
-            final var configModel = (ConfigurationModelImpl) configContainer.getConfigurationModel();
+            final var configModel = (ConfigurationModelImpl) configContainer
+                    .getConfigurationModel();
             configModel.setConnectorDescription(connector);
 
             // Handled at a higher level.
