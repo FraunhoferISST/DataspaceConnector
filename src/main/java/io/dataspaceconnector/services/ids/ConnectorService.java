@@ -15,12 +15,7 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import de.fraunhofer.iais.eis.BaseConnector;
-import de.fraunhofer.iais.eis.BaseConnectorImpl;
-import de.fraunhofer.iais.eis.ConfigurationModelImpl;
-import de.fraunhofer.iais.eis.DynamicAttributeToken;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.iais.eis.*;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
