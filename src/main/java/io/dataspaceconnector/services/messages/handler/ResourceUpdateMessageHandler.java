@@ -16,14 +16,14 @@
 package io.dataspaceconnector.services.messages.handler;
 
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
+import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.EntityUpdateService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-import io.dataspaceconnector.utils.MessageUtils;
+import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;

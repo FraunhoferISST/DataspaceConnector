@@ -21,7 +21,7 @@ import java.net.URI;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 

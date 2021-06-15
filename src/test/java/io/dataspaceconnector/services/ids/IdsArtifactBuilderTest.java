@@ -25,7 +25,7 @@ import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

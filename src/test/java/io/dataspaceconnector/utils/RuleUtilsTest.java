@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
+import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

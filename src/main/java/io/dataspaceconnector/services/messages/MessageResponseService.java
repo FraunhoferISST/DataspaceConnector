@@ -15,27 +15,26 @@
  */
 package io.dataspaceconnector.services.messages;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
-import io.dataspaceconnector.exceptions.ContractException;
-import io.dataspaceconnector.exceptions.InvalidInputException;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.SelfLinkCreationException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
+import io.dataspaceconnector.usagecontrol.exceptions.InvalidInputException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
+import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This class handles message responses.
@@ -592,26 +591,6 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
                 "Invalid rules in message payload.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
-    }
-
-    /**
-     * Handle exception when creating self links for the requested element and its children.
-     *
-     * @param exception        Exception that was thrown when the self links could not be created.
-     * @param requestedElement The requested element that could not be constructed.
-     * @return A message response.
-     */
-    public MessageResponse handleSelfLinkCreationException(
-            final SelfLinkCreationException exception, final URI requestedElement) {
-        if (log.isDebugEnabled()) {
-            log.debug("Could not construct self links for requested element and its "
-                            + "children. [exception=({}), requestedElement=({})]",
-                    exception.getMessage(), requestedElement, exception);
-        }
-        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Internal error when constructing requested element.",
                 connectorService.getConnectorId(),
                 connectorService.getOutboundModelVersion());
     }

@@ -28,7 +28,7 @@ import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsProhibitionBuilder;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

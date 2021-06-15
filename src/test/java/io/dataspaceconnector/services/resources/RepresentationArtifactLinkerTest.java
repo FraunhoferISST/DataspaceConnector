@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.model.Representation;

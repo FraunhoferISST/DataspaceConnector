@@ -24,12 +24,12 @@ import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.exceptions.MessageException;
-import io.dataspaceconnector.exceptions.MessageResponseException;
-import io.dataspaceconnector.exceptions.RdfBuilderException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
+import io.dataspaceconnector.utils.exceptions.RdfBuilderException;
 import io.dataspaceconnector.model.messages.ContractRequestMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.utils.RdfUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +87,7 @@ public final class ContractRequestService
             throws MessageException, RdfBuilderException {
         Utils.requireNonNull(request, ErrorMessages.ENTITY_NULL);
 
-        final var contractRdf = IdsUtils.toRdf(request);
+        final var contractRdf = RdfUtils.toRdf(request);
         return send(new ContractRequestMessageDesc(recipient, request.getId()), contractRdf);
     }
 

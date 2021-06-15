@@ -29,6 +29,7 @@ import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
+import io.dataspaceconnector.services.ids.util.MappingUtils;
 import lombok.extern.log4j.Log4j2;
 
 /**

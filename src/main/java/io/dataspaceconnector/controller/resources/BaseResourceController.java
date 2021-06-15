@@ -22,6 +22,7 @@ import io.dataspaceconnector.controller.resources.util.PageUtils;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -143,7 +144,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @param resourceId The id of the resource.
      * @return The resource.
      * @throws IllegalArgumentException if the resourceId is null.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *          if the resourceId is unknown.
      */
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -161,7 +162,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code (No_Content) when the resource has been updated or response with
      * code (201) if the resource has been updated and been moved to a new endpoint.
      * @throws IllegalArgumentException if the any of the parameters is null.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *          if the resourceId is unknown.
      */
     @PutMapping("{id}")

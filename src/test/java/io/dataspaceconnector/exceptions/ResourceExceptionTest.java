@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
+import io.dataspaceconnector.model.exceptions.ResourceException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

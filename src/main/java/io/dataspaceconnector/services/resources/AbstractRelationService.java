@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.util.PageUtils;
 import io.dataspaceconnector.utils.ErrorMessages;

@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.exceptionhandlers;
 
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
 import org.springframework.core.annotation.Order;
@@ -28,7 +29,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
  * Controller for handling {@link
- * io.dataspaceconnector.exceptions.ResourceNotFoundException}.
+ * ResourceNotFoundException}.
  */
 @ControllerAdvice
 @Log4j2

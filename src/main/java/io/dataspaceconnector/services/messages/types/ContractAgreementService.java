@@ -24,12 +24,13 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.exceptions.MessageException;
-import io.dataspaceconnector.exceptions.MessageResponseException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.utils.RdfUtils;
 import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.utils.exceptions.RdfBuilderException;
 import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
@@ -79,7 +80,7 @@ public final class ContractAgreementService
      * @param agreement The contract agreement.
      * @return The response map.
      * @throws MessageException         if message handling failed.
-     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
+     * @throws RdfBuilderException
      *         if the contract agreement rdf string could not be built.
      * @throws IllegalArgumentException if contract agreement is null.
      */
@@ -87,7 +88,7 @@ public final class ContractAgreementService
             throws MessageException, ConstraintViolationException {
         Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
 
-        final var contractRdf = IdsUtils.toRdf(agreement);
+        final var contractRdf = RdfUtils.toRdf(agreement);
         return send(new ContractAgreementMessageDesc(recipient, agreement.getId()), contractRdf);
     }
 

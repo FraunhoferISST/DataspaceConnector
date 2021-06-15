@@ -25,7 +25,7 @@ import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

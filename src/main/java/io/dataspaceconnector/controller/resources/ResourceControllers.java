@@ -53,7 +53,7 @@ import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RetrievalInformation;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
+import io.dataspaceconnector.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.controller.resources.util.ValidationUtils;
 import io.dataspaceconnector.view.AgreementView;
 import io.dataspaceconnector.view.ArtifactView;

@@ -18,8 +18,8 @@ package io.dataspaceconnector.services.messages;
 import java.net.URI;
 
 import de.fraunhofer.iais.eis.RejectionReason;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
+import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import org.junit.jupiter.api.Assertions;

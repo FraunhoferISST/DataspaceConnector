@@ -16,6 +16,7 @@
 package io.dataspaceconnector.exceptions;
 
 import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

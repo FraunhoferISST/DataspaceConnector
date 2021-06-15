@@ -21,7 +21,7 @@ import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.RepresentationInstance;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.utils.IdsUtils;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

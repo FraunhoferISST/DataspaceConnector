@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import io.dataspaceconnector.controller.resources.util.PageUtils;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.UUIDUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -106,7 +107,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @param size The page size.
      * @return The children of the resource.
      * @throws IllegalArgumentException if the ownerId is null.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *          if the ownerId is not known.
      */
     @SuppressWarnings("unchecked")

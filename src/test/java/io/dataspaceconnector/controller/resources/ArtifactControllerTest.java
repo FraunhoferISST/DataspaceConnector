@@ -18,14 +18,14 @@
 //import java.net.URI;
 //import java.util.UUID;
 //
-//import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+//import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 //import io.dataspaceconnector.model.Artifact;
 //import io.dataspaceconnector.model.QueryInput;
 //import io.dataspaceconnector.services.ArtifactRetriever;
 //import io.dataspaceconnector.services.BlockingArtifactReceiver;
 //import io.dataspaceconnector.services.resources.ArtifactService;
-//import io.dataspaceconnector.services.usagecontrol.PolicyVerifier;
-//import io.dataspaceconnector.services.usagecontrol.VerificationResult;
+//import io.dataspaceconnector.usagecontrol.PolicyVerifier;
+//import io.dataspaceconnector.usagecontrol.VerificationResult;
 //import io.dataspaceconnector.view.ArtifactViewAssembler;
 //import org.junit.jupiter.api.Test;
 //import org.mockito.InjectMocks;

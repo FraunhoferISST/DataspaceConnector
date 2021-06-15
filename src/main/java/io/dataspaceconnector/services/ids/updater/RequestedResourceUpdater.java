@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.services.ids.updater;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.services.resources.RequestedResourceService;
-import io.dataspaceconnector.utils.MappingUtils;
+import io.dataspaceconnector.services.ids.util.MappingUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

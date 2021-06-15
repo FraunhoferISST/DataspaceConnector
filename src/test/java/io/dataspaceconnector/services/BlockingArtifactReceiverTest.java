@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
 import io.dataspaceconnector.services.messages.types.ArtifactRequestService;

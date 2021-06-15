@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.utils;
 
-import io.dataspaceconnector.exceptions.UUIDCreationException;
-import io.dataspaceconnector.exceptions.UUIDFormatException;
+import io.dataspaceconnector.utils.exceptions.UUIDCreationException;
+import io.dataspaceconnector.utils.exceptions.UUIDFormatException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

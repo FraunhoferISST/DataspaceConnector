@@ -17,7 +17,7 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.AbstractFactory;

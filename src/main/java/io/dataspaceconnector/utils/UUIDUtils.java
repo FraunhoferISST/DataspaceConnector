@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.utils;
 
-import io.dataspaceconnector.exceptions.UUIDCreationException;
-import io.dataspaceconnector.exceptions.UUIDFormatException;
+import io.dataspaceconnector.utils.exceptions.UUIDCreationException;
+import io.dataspaceconnector.utils.exceptions.UUIDFormatException;
 
 import java.net.URI;
 import java.util.ArrayList;

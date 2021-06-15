@@ -21,8 +21,8 @@
 //import java.util.Optional;
 //import java.util.UUID;
 //
-//import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-//import io.dataspaceconnector.exceptions.UnreachableLineException;
+//import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+//import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
 //import io.dataspaceconnector.model.Artifact;
 //import io.dataspaceconnector.model.ArtifactDesc;
 //import io.dataspaceconnector.model.ArtifactFactory;

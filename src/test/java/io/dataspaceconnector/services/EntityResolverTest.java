@@ -18,7 +18,7 @@ package io.dataspaceconnector.services;
 import java.net.URI;
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactImpl;
@@ -41,7 +41,7 @@ import io.dataspaceconnector.services.resources.ContractService;
 import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.usagecontrol.AllowAccessVerifier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

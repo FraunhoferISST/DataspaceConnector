@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.services;
 
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MessageUtils;
+import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

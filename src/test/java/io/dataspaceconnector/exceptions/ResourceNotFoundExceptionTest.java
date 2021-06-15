@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

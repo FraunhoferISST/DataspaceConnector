@@ -15,8 +15,9 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.exceptions.UnreachableLineException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.utils.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactFactory;
@@ -28,8 +29,8 @@ import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.repositories.DataRepository;
 import io.dataspaceconnector.services.ArtifactRetriever;
 import io.dataspaceconnector.services.HttpService;
-import io.dataspaceconnector.services.usagecontrol.PolicyVerifier;
-import io.dataspaceconnector.services.usagecontrol.VerificationResult;
+import io.dataspaceconnector.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.usagecontrol.VerificationResult;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import kotlin.NotImplementedError;
@@ -125,7 +126,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param queryInput     The query for the backend.
      * @return The artifacts data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */
@@ -187,7 +188,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param information    Information for pulling the data from a remote source.
      * @return The artifact's data.
      * @throws PolicyRestrictionException if the data access has been denied.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
      */

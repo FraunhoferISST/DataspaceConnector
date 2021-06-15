@@ -59,7 +59,8 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.exceptions.RdfBuilderException;
+import io.dataspaceconnector.utils.exceptions.RdfBuilderException;
+import io.dataspaceconnector.services.ids.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -78,49 +79,49 @@ public class IdsUtilsTest {
         Rule rule = null;
 
         /* ACT && ASSERT */
-        assertThrows(RdfBuilderException.class, () -> IdsUtils.toRdf(rule));
+        assertThrows(RdfBuilderException.class, () -> RdfUtils.toRdf(rule));
     }
 
     @Test
     public void toRdf_baseConnector_returnBaseConnectorInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getBaseConnector().toRdf(), IdsUtils.toRdf(getBaseConnector()));
+        assertEquals(getBaseConnector().toRdf(), RdfUtils.toRdf(getBaseConnector()));
     }
 
     @Test
     public void toRdf_resource_returnResourceInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getResource().toRdf(), IdsUtils.toRdf(getResource()));
+        assertEquals(getResource().toRdf(), RdfUtils.toRdf(getResource()));
     }
 
     @Test
     public void toRdf_artifact_returnArtifactInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getArtifact().toRdf(), IdsUtils.toRdf(getArtifact()));
+        assertEquals(getArtifact().toRdf(), RdfUtils.toRdf(getArtifact()));
     }
 
     @Test
     public void toRdf_representation_returnRepresentationInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getRepresentation().toRdf(), IdsUtils.toRdf(getRepresentation()));
+        assertEquals(getRepresentation().toRdf(), RdfUtils.toRdf(getRepresentation()));
     }
 
     @Test
     public void toRdf_contractRequest_returnContractRequestInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getContractRequest().toRdf(), IdsUtils.toRdf(getContractRequest()));
+        assertEquals(getContractRequest().toRdf(), RdfUtils.toRdf(getContractRequest()));
     }
 
     @Test
     public void toRdf_contractAgreement_returnContractAgreementInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getContractAgreement().toRdf(), IdsUtils.toRdf(getContractAgreement()));
+        assertEquals(getContractAgreement().toRdf(), RdfUtils.toRdf(getContractAgreement()));
     }
 
     @Test
     public void toRdf_rule_returnRuleInRdf() {
         /* ACT && ASSERT */
-        assertEquals(getRule().toRdf(), IdsUtils.toRdf(getRule()));
+        assertEquals(getRule().toRdf(), RdfUtils.toRdf(getRule()));
     }
 
     @Test

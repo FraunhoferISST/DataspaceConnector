@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.services.resources.RepresentationService;

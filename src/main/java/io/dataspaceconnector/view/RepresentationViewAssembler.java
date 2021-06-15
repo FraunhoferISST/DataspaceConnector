@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.RepresentationController;
-import io.dataspaceconnector.exceptions.UnreachableLineException;
+import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;

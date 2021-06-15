@@ -18,6 +18,7 @@ package io.dataspaceconnector.services.resources;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.repositories.AgreementRepository;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ public class AgreementService extends BaseEntityService<Agreement, AgreementDesc
      * will be confirmed.
      * @param agreement The agreement that should be confirmed.
      * @return true - if the was unconfirmed and has been changed to confirmed.
-     * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
+     * @throws ResourceNotFoundException
      *         if the agreement does no longer exist.
      */
     public boolean confirmAgreement(final Agreement agreement) {

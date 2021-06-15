@@ -28,8 +28,8 @@ import java.util.UUID;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
-import io.dataspaceconnector.exceptions.MessageResponseException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
@@ -38,10 +38,10 @@ import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.services.resources.RelationServices;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.services.usagecontrol.ContractManager;
+import io.dataspaceconnector.usagecontrol.ContractManager;
 import io.dataspaceconnector.utils.EndpointUtils;
-import io.dataspaceconnector.utils.IdsUtils;
-import io.dataspaceconnector.utils.MessageUtils;
+import io.dataspaceconnector.services.messages.types.util.MessageUtils;
+import io.dataspaceconnector.utils.RdfUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -101,7 +101,7 @@ public class EntityPersistenceService {
             throws PersistenceException {
         try {
             final var agreementId = agreement.getId();
-            final var rdf = IdsUtils.toRdf(agreement);
+            final var rdf = RdfUtils.toRdf(agreement);
 
             final var desc = new AgreementDesc(agreementId, true, rdf, null);
 
@@ -153,7 +153,7 @@ public class EntityPersistenceService {
                 artifactList.add(uuid);
             }
 
-            final var rdf = IdsUtils.toRdf(agreement);
+            final var rdf = RdfUtils.toRdf(agreement);
 
             final var desc = new AgreementDesc();
             desc.setConfirmed(false);

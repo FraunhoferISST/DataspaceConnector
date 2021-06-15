@@ -25,7 +25,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import io.dataspaceconnector.exceptions.ResourceException;
+import io.dataspaceconnector.model.exceptions.ResourceException;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

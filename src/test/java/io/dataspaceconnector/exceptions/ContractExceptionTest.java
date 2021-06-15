@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
+import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

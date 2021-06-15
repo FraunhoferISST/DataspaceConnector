@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.CatalogFactory;

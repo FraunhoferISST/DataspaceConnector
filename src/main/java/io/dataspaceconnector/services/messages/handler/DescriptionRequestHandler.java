@@ -15,31 +15,30 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.DescriptionRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.exceptions.InvalidResourceException;
-import io.dataspaceconnector.exceptions.MessageBuilderException;
-import io.dataspaceconnector.exceptions.MessageEmptyException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.exceptions.SelfLinkCreationException;
-import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
-import io.dataspaceconnector.services.EntityResolver;
-import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.services.messages.MessageResponseService;
-import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MessageUtils;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
+import io.dataspaceconnector.services.EntityResolver;
+import io.dataspaceconnector.services.exceptions.InvalidResourceException;
+import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.MessageResponseService;
+import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageBuilderException;
+import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
+import io.dataspaceconnector.services.messages.types.util.MessageUtils;
+import io.dataspaceconnector.utils.ErrorMessages;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This @{@link DescriptionRequestHandler} handles all incoming messages that have a
@@ -135,8 +134,6 @@ public class DescriptionRequestHandler implements MessageHandler<DescriptionRequ
             return responseService.handleResourceNotFoundException(e, requested, issuer, messageId);
         } catch (MessageBuilderException | IllegalStateException | ConstraintViolationException e) {
             return responseService.handleResponseMessageBuilderException(e, issuer, messageId);
-        } catch (SelfLinkCreationException exception) {
-            return responseService.handleSelfLinkCreationException(exception, requested);
         }
     }
 

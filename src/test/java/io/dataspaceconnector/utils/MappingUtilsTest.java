@@ -39,6 +39,7 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.TemporalEntityBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.services.ids.util.MappingUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 

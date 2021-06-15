@@ -17,8 +17,8 @@ package io.dataspaceconnector.utils;
 
 import java.net.URI;
 
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.exceptions.UnreachableLineException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.utils.exceptions.UnreachableLineException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;

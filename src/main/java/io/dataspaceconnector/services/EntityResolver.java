@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
-import io.dataspaceconnector.exceptions.InvalidResourceException;
-import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.exceptions.SelfLinkCreationException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
@@ -36,6 +34,7 @@ import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.services.exceptions.InvalidResourceException;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
@@ -49,7 +48,7 @@ import io.dataspaceconnector.services.resources.ContractService;
 import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.services.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.usagecontrol.AllowAccessVerifier;
 import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
@@ -220,12 +219,6 @@ public class EntityResolver {
                 final var rule = (ContractRule) entity;
                 return rule.getValue();
             }
-        } catch (SelfLinkCreationException exception) {
-            if (log.isWarnEnabled()) {
-                log.warn("Could not provide ids object. [entity=({}), exception=({})]",
-                        entity, exception.getMessage(), exception);
-            }
-            throw exception;
         } catch (Exception exception) {
             // If we do not allow requesting an object type, respond with exception.
             if (log.isWarnEnabled()) {
