@@ -43,8 +43,14 @@ import org.springframework.stereotype.Component;
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
 public class DescriptionRequestHandler implements MessageHandler<DescriptionRequestMessageImpl> {
 
+    /**
+     * Template for triggering Camel routes.
+     */
     private final @NonNull ProducerTemplate template;
 
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
     private final @NonNull CamelContext context;
 
     /**

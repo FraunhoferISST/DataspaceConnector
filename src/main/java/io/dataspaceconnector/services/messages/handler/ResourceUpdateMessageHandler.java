@@ -43,8 +43,14 @@ import org.springframework.stereotype.Component;
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
 public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
 
+    /**
+     * Template for triggering Camel routes.
+     */
     private final @NonNull ProducerTemplate template;
 
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
     private final @NonNull CamelContext context;
 
     /**

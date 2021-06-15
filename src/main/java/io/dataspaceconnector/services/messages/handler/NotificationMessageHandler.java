@@ -42,8 +42,15 @@ import lombok.RequiredArgsConstructor;
 @SupportedMessageType(NotificationMessageImpl.class)
 @RequiredArgsConstructor
 public class NotificationMessageHandler implements MessageHandler<NotificationMessageImpl> {
+
+    /**
+     * Template for triggering Camel routes.
+     */
     private final @NonNull ProducerTemplate template;
 
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
     private final @NonNull CamelContext context;
 
     /**

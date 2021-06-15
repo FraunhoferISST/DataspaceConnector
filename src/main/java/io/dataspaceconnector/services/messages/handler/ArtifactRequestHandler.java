@@ -44,8 +44,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMessageImpl> {
 
+    /**
+     * Template for triggering Camel routes.
+     */
     private final @NonNull ProducerTemplate template;
 
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
     private final @NonNull CamelContext context;
 
     /**

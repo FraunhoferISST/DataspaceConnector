@@ -42,8 +42,14 @@ import org.springframework.stereotype.Component;
 @SupportedMessageType(ContractAgreementMessageImpl.class)
 public class ContractAgreementHandler implements MessageHandler<ContractAgreementMessageImpl> {
 
+    /**
+     * Template for triggering Camel routes.
+     */
     private final @NonNull ProducerTemplate template;
 
+    /**
+     * The CamelContext required for constructing the {@link ProducerTemplate}.
+     */
     private final @NonNull CamelContext context;
 
     /**
