@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [5.X.X] - XXXX-XX-XX
+
+### Fixed
+- Fixed missing IDS context in `/api/examples/policy`.
+
 ## [5.1.2] - 2021-06-14
 
 ### Fixed
