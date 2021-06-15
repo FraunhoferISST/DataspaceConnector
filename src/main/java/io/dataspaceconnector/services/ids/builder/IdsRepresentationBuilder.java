@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.RepresentationInstance;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Converts DSC representation to ids representation.
@@ -77,5 +79,10 @@ public final class IdsRepresentationBuilder
         artifacts.ifPresent(_instance_ -> builder._instance_(Collections.unmodifiableList(_instance_)));
 
         return builder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<RepresentationInstance> getArtifacts(final List<Artifact> artifacts) {
+        return (List<RepresentationInstance>) (List<?>) artifacts;
     }
 }

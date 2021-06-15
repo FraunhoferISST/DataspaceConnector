@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
+import javax.validation.ConstraintViolationException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import javax.validation.ConstraintViolationException;
 
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
@@ -57,8 +57,8 @@ public class MainControllerTest {
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                        ._accessURL_(URI.create("/api/ids/data"))
-                        .build())
+                                              ._accessURL_(URI.create("https://accessUrl"))
+                                              .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithoutResources();
 
@@ -97,8 +97,8 @@ public class MainControllerTest {
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                        ._accessURL_(URI.create("/api/ids/data"))
-                        .build())
+                                              ._accessURL_(URI.create("https://accessUrl"))
+                                              .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 

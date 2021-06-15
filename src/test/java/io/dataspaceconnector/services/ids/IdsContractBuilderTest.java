@@ -170,6 +170,10 @@ public class IdsContractBuilderTest {
     @SneakyThrows
     private ContractRule getRule() {
         final var value = "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Permission\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
                 + "-89a7-73e7c560f3de\",\n"
