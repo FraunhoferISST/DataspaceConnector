@@ -15,6 +15,6 @@
  */
 
 /**
- * This package contains all components for collecting telementry.
+ * This package contains all components for collecting telemetry.
  */
 package io.dataspaceconnector.telemetry;

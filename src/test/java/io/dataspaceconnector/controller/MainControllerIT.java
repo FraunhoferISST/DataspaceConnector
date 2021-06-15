@@ -19,6 +19,7 @@ import java.net.URI;
 
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.dataspaceconnector.services.ids.ConnectorService;
@@ -66,6 +67,9 @@ class MainControllerIT {
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                                              ._accessURL_(URI.create("https://accessUrl"))
+                                              .build())
                 .build();
     }
 }
