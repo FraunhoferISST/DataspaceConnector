@@ -207,6 +207,9 @@ public final class ResourceControllers {
          */
         private final @NonNull BlockingArtifactReceiver dataReceiver;
 
+        /**
+         * The service managing agreements.
+         */
         private final @NonNull AgreementService agreementService;
 
         /**
