@@ -219,6 +219,5 @@ class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>
     @Override
     protected void processInternal(final RouteMsg<? extends Message, ?> msg) throws Exception {
         messageService.validateIncomingMessage(msg.getHeader());
-        log.info("Validating and stuff!");
     }
 }
