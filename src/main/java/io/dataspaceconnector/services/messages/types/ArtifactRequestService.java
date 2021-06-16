@@ -35,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**

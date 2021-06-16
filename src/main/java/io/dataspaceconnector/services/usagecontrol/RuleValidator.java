@@ -154,7 +154,7 @@ public class RuleValidator {
             idsRuleList.add(idsRule);
         }
 
-        if (!RuleUtils.compareRules(idsRuleList, ((ArrayList<Rule>) requestRules))) {
+        if (!RuleUtils.compareRules(idsRuleList, (requestRules))) {
             if (log.isDebugEnabled()) {
                 log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
                         requestRules);

@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
-//import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
