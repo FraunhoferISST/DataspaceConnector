@@ -194,21 +194,6 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondGlobalException_validException_returnValidResponseEntity() {
-        /* ARRANGE */
-        final var exception = new Exception("Some exception.");
-        final var expectedResponse = new ResponseEntity<>("Something else went wrong.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-
-        /* ACT */
-        final var response = ControllerUtils.respondGlobalException(exception);
-
-        /* ARRANGE */
-        assertEquals(ResponseEntity.class, response.getClass());
-        assertEquals(expectedResponse, response);
-    }
-
-    @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
         final var exception = new Exception("Some exception.");

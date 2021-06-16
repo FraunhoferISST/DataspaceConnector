@@ -208,22 +208,6 @@ public final class ControllerUtils {
     }
 
     /**
-     * Creates a ResponseEntity with status code 500 and a message indicating that something went
-     * wrong. Note: Should never be thrown.
-     *
-     * @param exception The exception that was thrown.
-     * @return ResponseEntity with status code 500.
-     */
-    public static ResponseEntity<Object> respondGlobalException(final Exception exception) {
-        if (log.isWarnEnabled()) {
-            log.warn("Something else went wrong. [exception=({})]", exception.getMessage(),
-                    exception);
-        }
-        return new ResponseEntity<>("Something else went wrong.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
      * Creates a ResponseEntity with status code 500 and a message indicating that saving an entity
      * has failed.
      *

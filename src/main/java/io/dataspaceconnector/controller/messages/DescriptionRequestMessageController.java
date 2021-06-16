@@ -108,8 +108,6 @@ public class DescriptionRequestMessageController {
         } catch (IllegalArgumentException exception) {
             // If the response is not of type base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);
-        } catch (Exception exception) {
-            return ControllerUtils.respondGlobalException(exception);
         }
     }
 }
