@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.model.utils.MetadataUtils;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;

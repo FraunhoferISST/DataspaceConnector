@@ -18,8 +18,8 @@ package io.dataspaceconnector.services.resources.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

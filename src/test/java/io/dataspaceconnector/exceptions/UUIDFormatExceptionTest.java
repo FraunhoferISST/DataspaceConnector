@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
-import io.dataspaceconnector.commons.exceptions.UUIDFormatException;
+import io.dataspaceconnector.common.exceptions.UUIDFormatException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

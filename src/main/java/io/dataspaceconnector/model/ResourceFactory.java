@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.model.utils.MetadataUtils;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.Utils;
 
 /**
  * Base class for creating and updating resources.

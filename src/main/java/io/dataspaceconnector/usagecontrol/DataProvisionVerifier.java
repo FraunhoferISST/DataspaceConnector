@@ -21,8 +21,8 @@ import java.util.List;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.commons.ContractUtils;
+import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -26,11 +26,11 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
-import io.dataspaceconnector.commons.exceptions.RdfBuilderException;
+import io.dataspaceconnector.common.exceptions.RdfBuilderException;
 import io.dataspaceconnector.model.messages.ContractRequestMessageDesc;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.RdfUtils;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.RdfUtils;
+import io.dataspaceconnector.common.Utils;
 import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;

@@ -29,8 +29,8 @@ import io.dataspaceconnector.services.messages.types.exceptions.MessageException
 import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.messages.ArtifactRequestMessageDesc;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

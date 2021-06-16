@@ -34,7 +34,7 @@ import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.types.LogMessageService;
 import io.dataspaceconnector.services.messages.types.NotificationService;
-import io.dataspaceconnector.commons.RdfUtils;
+import io.dataspaceconnector.common.RdfUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

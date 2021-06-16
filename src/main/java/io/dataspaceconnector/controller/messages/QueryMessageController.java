@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.Objects;
 
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import io.dataspaceconnector.commons.controller.ControllerUtils;
+import io.dataspaceconnector.common.controller.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

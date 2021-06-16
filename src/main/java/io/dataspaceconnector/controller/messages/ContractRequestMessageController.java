@@ -37,7 +37,7 @@ import io.dataspaceconnector.services.messages.types.ContractRequestService;
 import io.dataspaceconnector.services.messages.types.DescriptionRequestService;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.usagecontrol.ContractManager;
-import io.dataspaceconnector.commons.controller.ControllerUtils;
+import io.dataspaceconnector.common.controller.ControllerUtils;
 import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import io.dataspaceconnector.view.AgreementViewAssembler;

@@ -30,7 +30,7 @@ import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.util.IDSUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

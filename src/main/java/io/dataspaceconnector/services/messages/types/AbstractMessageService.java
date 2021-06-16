@@ -28,11 +28,11 @@ import io.dataspaceconnector.services.messages.types.exceptions.MessageBuilderEx
 import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
-import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.controller.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.messages.MessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.services.messages.types.util.MessageUtils;
 import lombok.AccessLevel;
 import lombok.Getter;

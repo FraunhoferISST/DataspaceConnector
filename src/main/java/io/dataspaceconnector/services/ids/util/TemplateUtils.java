@@ -29,9 +29,9 @@ import io.dataspaceconnector.services.ids.templates.ContractTemplate;
 import io.dataspaceconnector.services.ids.templates.RepresentationTemplate;
 import io.dataspaceconnector.services.ids.templates.ResourceTemplate;
 import io.dataspaceconnector.services.ids.templates.RuleTemplate;
-import io.dataspaceconnector.commons.ContractUtils;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import lombok.extern.log4j.Log4j2;
 
 /**

@@ -25,12 +25,12 @@ import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageRespons
 import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 import io.dataspaceconnector.usagecontrol.exceptions.InvalidInputException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
-import io.dataspaceconnector.services.messages.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.controller.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
-import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

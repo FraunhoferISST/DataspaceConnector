@@ -26,8 +26,8 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
 import io.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;

@@ -16,13 +16,13 @@
 package io.dataspaceconnector.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.commons.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
-import io.dataspaceconnector.commons.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

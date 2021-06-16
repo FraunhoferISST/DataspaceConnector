@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
-import io.dataspaceconnector.commons.exceptions.UUIDCreationException;
+import io.dataspaceconnector.common.exceptions.UUIDCreationException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

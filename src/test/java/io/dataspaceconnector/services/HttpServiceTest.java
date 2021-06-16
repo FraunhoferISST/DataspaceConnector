@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.services.resources.net.HttpService;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import okhttp3.MediaType;

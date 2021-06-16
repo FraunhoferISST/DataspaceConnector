@@ -24,8 +24,8 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
 import io.dataspaceconnector.services.messages.types.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.model.messages.LogMessageDesc;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 

@@ -33,7 +33,7 @@
 //import io.dataspaceconnector.model.RemoteData;
 //import io.dataspaceconnector.repositories.ArtifactRepository;
 //import io.dataspaceconnector.repositories.DataRepository;
-//import io.dataspaceconnector.services.HttpService;
+//import io.dataspaceconnector.services.resources.http.HttpService;
 //import lombok.SneakyThrows;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;

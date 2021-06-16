@@ -20,8 +20,8 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
-import io.dataspaceconnector.commons.ErrorMessages;
-import io.dataspaceconnector.commons.Utils;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.Utils;
 import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
