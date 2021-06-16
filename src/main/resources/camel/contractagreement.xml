@@ -28,7 +28,7 @@
 
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
-            <exception>javax.validation.ConstraintViolationException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 

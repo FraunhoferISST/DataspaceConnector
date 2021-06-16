@@ -1,59 +1,72 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="contractRequestHandler">
 
+        <!-- target artifact cannot be found -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
             <to uri="direct:handleResourceNotFoundException"/>
         </onException>
 
+        <!-- there are no contract offers for the target artifact or none for the requesting consumer -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.ContractListEmptyException</exception>
             <to uri="direct:handleContractListEmptyException"/>
         </onException>
 
+        <!-- at least one rule in the contract is malformed -->
         <onException>
-            <exception>java.lang.IllegalArgumentException</exception>
+            <exception>io.dataspaceconnector.exceptions.MalformedRuleException</exception>
             <to uri="direct:handleMalformedRules"/>
         </onException>
 
+        <!-- any required input parameter is missing -->
+        <onException>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <to uri="direct:handleIllegalArgumentException"/>
+        </onException>
+
+        <!-- payload stream cannot be read -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageRequestException</exception>
             <to uri="direct:handleMessagePayloadException"/>
         </onException>
 
+        <!-- contract request does not contain any rules -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.MissingRulesException</exception>
             <to uri="direct:handleMissingRulesException"/>
         </onException>
 
+        <!-- at least on rule in the contract is missing a target -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.MissingTargetInRuleException</exception>
             <to uri="direct:handleMissingTargetInRuleException"/>
         </onException>
 
+        <!-- the response cannot be built -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
             <exception>java.lang.IllegalStateException</exception>
-<!--            <exception>javax.validation.ConstraintViolationException</exception>-->
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <exception>io.dataspaceconnector.exceptions.RdfBuilderException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
+        <!-- the agreement cannot be built or persisted -->
         <onException>
-            <exception>javax.validation.ConstraintViolationException</exception>
-            <exception>javax.persistence.PersistenceException</exception>
+            <exception>io.dataspaceconnector.exceptions.AgreementPersistenceException</exception>
             <to uri="direct:handleAgreementPersistenceException"/>
-        </onException>
-
-        <onException>
-            <exception>io.dataspaceconnector.exceptions.ContractListEmptyException</exception>
-            <to uri="direct:handleContractListEmptyException"/>
         </onException>
 
         <from uri="direct:contractRequestHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="ContractDeserializer"/>
-        <process ref="ContractRequest"/>
+        <process ref="ContractRuleListTransformer"/>
+        <process ref="RuleListValidator"/>
+        <process ref="ContractTargetRuleMapTransformer"/>
+        <process ref="TargetRuleMapValidator"/>
+        <process ref="RuleValidator"/>
+        <process ref="AcceptContractProcessor"/>
 
     </route>
 </routes>

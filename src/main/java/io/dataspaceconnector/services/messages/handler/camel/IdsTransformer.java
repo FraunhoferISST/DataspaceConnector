@@ -25,6 +25,11 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import io.dataspaceconnector.exceptions.DeserializationException;
 import io.dataspaceconnector.exceptions.MissingPayloadException;
 import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
+import io.dataspaceconnector.services.messages.handler.camel.dto.RouteMsg;
+import io.dataspaceconnector.services.messages.handler.camel.dto.payload.ContractRuleListContainer;
+import io.dataspaceconnector.services.messages.handler.camel.dto.payload.ContractTargetRuleMapContainer;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +75,7 @@ public abstract class IdsTransformer<I, O> implements Processor {
  */
 @Component("ContractDeserializer")
 @RequiredArgsConstructor
-class ContractTransformer extends IdsTransformer<
+class ContractRequestTransformer extends IdsTransformer<
         RouteMsg<ContractRequestMessageImpl, MessagePayload>,
         RouteMsg<ContractRequestMessageImpl, ContractRequest>> {
 
@@ -166,6 +171,62 @@ class ContractAgreementTransformer extends IdsTransformer<
         final var agreement = deserializationService
                 .getContractAgreement(MessageUtils.getPayloadAsString(msg.getBody()));
         return new Request<>(msg.getHeader(), agreement);
+    }
+
+}
+
+/**
+ * Transforms the payload of a contract request from a ContractRequest object to a container object
+ * for the ContractRequest and the list of rules it contains.
+ */
+@Component("ContractRuleListTransformer")
+class ContractRuleListTransformer extends IdsTransformer<
+        RouteMsg<ContractRequestMessageImpl, ContractRequest>,
+        RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>> {
+
+    /**
+     * Transforms the payload of the incoming RouteMsg from a ContractRequest to a container object
+     * for the ContractRequest and the list of rules it contains.
+     *
+     * @param msg the incoming message.
+     * @return a RouteMsg object with the initial header and the container object as payload.
+     * @throws Exception if the contract request is null.
+     */
+    @Override
+    protected RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer> processInternal(
+            final RouteMsg<ContractRequestMessageImpl, ContractRequest> msg) throws Exception {
+        final var request = msg.getBody();
+        final var rules = ContractUtils.extractRulesFromContract(request);
+        return new Request<>(msg.getHeader(), new ContractRuleListContainer(request, rules));
+    }
+
+}
+
+/**
+ * Transforms the payload of a contract request from a container containing a ContractRequest and
+ * its list of rules to a container containing the ContractRequest and its target-rule-map, that
+ * links rules to their target artifact.
+ */
+@Component("ContractTargetRuleMapTransformer")
+class ContractTargetRuleMapTransformer extends IdsTransformer<
+        RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>,
+        RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
+
+    /**
+     *
+     * @param msg the incoming message.
+     * @return a RouteMsg object with the initial header and the new container object as payload.
+     * @throws Exception
+     */
+    @Override
+    protected RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer> processInternal(
+            final RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer> msg)
+            throws Exception {
+        final var targetRuleMap = ContractUtils
+                .getTargetRuleMap(msg.getBody().getRules());
+        final var container = new ContractTargetRuleMapContainer(msg.getBody().getContractRequest(),
+                targetRuleMap);
+        return new Request<>(msg.getHeader(), container);
     }
 
 }

@@ -3,7 +3,7 @@
 
         <onException>
             <exception>java.lang.IllegalStateException</exception>
-            <exception>javax.validation.ConstraintViolationException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 

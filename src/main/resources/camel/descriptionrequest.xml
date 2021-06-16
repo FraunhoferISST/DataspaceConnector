@@ -10,7 +10,7 @@
         <onException>
             <exception>io.dataspaceconnector.exceptions.MessageBuilderException</exception>
             <exception>java.lang.IllegalStateException</exception>
-            <exception>javax.validation.ConstraintViolationException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
@@ -23,7 +23,7 @@
         <to uri="direct:ids-validation"/>
         <choice>
             <when>
-                <simple>${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.Request).getHeader().getRequestedElement()} ==
+                <simple>${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedElement()} ==
                     null</simple>
                 <process ref="SelfDescription"/>
             </when>

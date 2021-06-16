@@ -20,7 +20,7 @@
             <to uri="direct:handlePolicyRestrictionException"/>
         </onException>
 
-        <!-- Tranfer contract is invalid -->
+        <!-- Transfer contract is invalid -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.ContractException</exception>
             <to uri="direct:handleInvalidTransferContract"/>

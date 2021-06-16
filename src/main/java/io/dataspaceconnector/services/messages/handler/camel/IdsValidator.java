@@ -15,21 +15,39 @@
  */
 package io.dataspaceconnector.services.messages.handler.camel;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
+import de.fraunhofer.iais.eis.ContractRequest;
+import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
+import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import io.dataspaceconnector.exceptions.ContractListEmptyException;
+import io.dataspaceconnector.exceptions.ContractRejectedException;
 import io.dataspaceconnector.exceptions.InvalidAffectedResourceException;
+import io.dataspaceconnector.exceptions.MalformedRuleException;
+import io.dataspaceconnector.exceptions.MissingRulesException;
+import io.dataspaceconnector.exceptions.MissingTargetInRuleException;
 import io.dataspaceconnector.exceptions.NoAffectedResourceException;
 import io.dataspaceconnector.exceptions.NoRequestedArtifactException;
 import io.dataspaceconnector.exceptions.NoTransferContractException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
+import io.dataspaceconnector.services.messages.handler.camel.dto.RouteMsg;
+import io.dataspaceconnector.services.messages.handler.camel.dto.payload.ContractRuleListContainer;
+import io.dataspaceconnector.services.messages.handler.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
+import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.services.usagecontrol.ContractManager;
 import io.dataspaceconnector.services.usagecontrol.DataProvisionVerifier;
 import io.dataspaceconnector.services.usagecontrol.VerificationInput;
 import io.dataspaceconnector.services.usagecontrol.VerificationResult;
+import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
@@ -220,4 +238,136 @@ class MessageHeaderValidator extends IdsValidator<RouteMsg<? extends Message, ?>
     protected void processInternal(final RouteMsg<? extends Message, ?> msg) throws Exception {
         messageService.validateIncomingMessage(msg.getHeader());
     }
+}
+
+/**
+ * Validates the rules from a contract request.
+ */
+@Component("RuleListValidator")
+class RuleListValidator extends
+        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer>> {
+
+    /**
+     * Checks whether the list of rules from a contract request is empty.
+     *
+     * @param msg the incoming message.
+     * @throws Exception if the list of rules is empty.
+     */
+    @Override
+    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
+            ContractRuleListContainer> msg) throws Exception {
+        if (msg.getBody().getRules().isEmpty()) {
+            throw new MissingRulesException(msg.getBody().getContractRequest(),
+                    "Rule list is empty.");
+        }
+    }
+
+}
+
+/**
+ * Validates the target rule map for a contract request, that links target artifacts to a list of
+ * rules.
+ */
+@Component("TargetRuleMapValidator")
+class TargetRuleMapValidator extends
+        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
+
+    /**
+     * Validates the target rule map for a contract request, that links target artifacts to a
+     * list of rules.
+     *
+     * @param msg the incoming message.
+     * @throws Exception if the target is missing for any rules.
+     */
+    @Override
+    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
+            ContractTargetRuleMapContainer> msg) throws Exception {
+        if (msg.getBody().getTargetRuleMap().containsKey(null)) {
+            throw new MissingTargetInRuleException(msg.getBody().getContractRequest(),
+                    "Rule is missing a target.");
+        }
+    }
+
+}
+
+/**
+ * Validates the rules from a contract request by comparing them to the corresponding contract
+ * offer.
+ */
+@Component("RuleValidator")
+@RequiredArgsConstructor
+class RuleValidator extends
+        IdsValidator<RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
+
+    /**
+     * Service for resolving entities.
+     */
+    private final @NonNull EntityDependencyResolver dependencyResolver;
+
+    /**
+     * Service for validating the rules from a contract.
+     */
+    private final @NonNull io.dataspaceconnector.services.usagecontrol.RuleValidator ruleValidator;
+
+    /**
+     * Compares the rules from the contract request to the rules from the contract offers for
+     * the artifact for each given target.
+     *
+     * @param msg the incoming message.
+     * @throws Exception if there are no contract offers for the artifact or the rules do not match.
+     */
+    @Override
+    protected void processInternal(final RouteMsg<ContractRequestMessageImpl,
+            ContractTargetRuleMapContainer> msg) throws Exception {
+        final var targetRuleMap = msg.getBody().getTargetRuleMap();
+        final var request = msg.getBody().getContractRequest();
+        final var messageId = MessageUtils.extractMessageId(msg.getHeader());
+        final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
+
+        // Retrieve matching contract offers to compare the content.
+        for (final var target : targetRuleMap.keySet()) {
+            final var valid = checkRule(target, request, messageId, targetRuleMap);
+            if (!valid) {
+                throw new ContractRejectedException(issuer, messageId, "Contract rejected.");
+            }
+        }
+    }
+
+    /**
+     * Checks whether there is an applicable contract offer for the requesting consumer and the
+     * target artifact and if there is, compares the rules from the request to the ones from the
+     * contract offer.
+     *
+     * @param target URI of the target artifact.
+     * @param request the contract request.
+     * @param issuer the issuer connector of the request.
+     * @param targetRuleMap the list of rules from the contract request.
+     * @return true, if there is a valid offer; false otherwise.
+     * @throws ContractListEmptyException if there are no contract offers for the artifact.
+     */
+    private boolean checkRule(final URI target, final ContractRequest request, final URI issuer,
+                              final Map<URI, List<Rule>> targetRuleMap) {
+        final var contracts = dependencyResolver.getContractOffersByArtifactId(target);
+
+        // Abort negotiation if no contract offer could be found.
+        if (contracts.isEmpty()) {
+            throw new ContractListEmptyException(request, "List of contracts is empty.");
+        }
+
+        // Abort negotiation if no contract offer for the issuer connector could be found.
+        final var validContracts =
+                ContractUtils.removeContractsWithInvalidConsumer(contracts, issuer);
+        if (validContracts.isEmpty()) {
+            throw new ContractListEmptyException(request, "List of valid contracts is empty.");
+        }
+
+        boolean valid;
+        try {
+            valid = ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
+        } catch (IllegalArgumentException e) {
+            throw new MalformedRuleException("Malformed rule.", e);
+        }
+        return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
+    }
+
 }

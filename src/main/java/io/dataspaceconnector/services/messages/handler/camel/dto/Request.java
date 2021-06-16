@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.messages.handler.camel;
+package io.dataspaceconnector.services.messages.handler.camel.dto;
 
 import de.fraunhofer.iais.eis.Message;
 import lombok.Data;

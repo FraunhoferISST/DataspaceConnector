@@ -22,8 +22,8 @@ import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessag
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
-import io.dataspaceconnector.services.messages.handler.camel.Request;
-import io.dataspaceconnector.services.messages.handler.camel.Response;
+import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
+import io.dataspaceconnector.services.messages.handler.camel.dto.Response;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
