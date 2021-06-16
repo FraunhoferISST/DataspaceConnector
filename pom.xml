@@ -106,7 +106,6 @@
 		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
-		<hibernate.version>6.0.0.Alpha8</hibernate.version>
 		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 
@@ -363,13 +362,6 @@
 			<artifactId>equalsverifier</artifactId>
 			<version>${equalsverifier.version}</version>
 			<scope>test</scope>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-core -->
-		<dependency>
-			<groupId>org.hibernate.orm</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
