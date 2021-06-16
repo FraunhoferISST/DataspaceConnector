@@ -1,6 +1,7 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="notification-handler-route">
 
+        <!-- the response could not be built -->
         <onException>
             <exception>java.lang.IllegalStateException</exception>
             <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>

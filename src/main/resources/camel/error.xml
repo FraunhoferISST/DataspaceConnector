@@ -120,12 +120,21 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>
 
-    <route id="messageProcessingFailed">
-        <from uri="direct:handleMessageProcessingFailed"/>
+    <route id="messageProcessingFailedForArtifact">
+        <from uri="direct:handleMessageProcessingFailedForArtifact"/>
         <log message="Message processing failed!"/>
         <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
+    <route id="messageProcessingFailedForAgreement">
+        <from uri="direct:handleMessageProcessingFailedForAgreement"/>
+        <log message="Message processing failed!"/>
+        <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toRdf(),
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>

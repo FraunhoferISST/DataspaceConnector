@@ -11,7 +11,7 @@
         <onException>
             <exception>io.dataspaceconnector.exceptions.ResourceNotFoundException</exception>
             <exception>java.lang.IllegalArgumentException</exception>
-            <to uri="direct:handleMessageProcessingFailed"/>
+            <to uri="direct:handleMessageProcessingFailedForArtifact"/>
         </onException>
 
         <!-- Policy conditions are not fulfilled, data provision is not allowed -->
