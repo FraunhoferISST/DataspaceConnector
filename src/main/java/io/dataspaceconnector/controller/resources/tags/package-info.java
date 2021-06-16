@@ -15,6 +15,6 @@
  */
 
 /**
- * This package contains the telemetry configurations.
+ * Contains information for swagger tags.
  */
-package io.dataspaceconnector.telemetry.config;
+package io.dataspaceconnector.controller.resources.tags;

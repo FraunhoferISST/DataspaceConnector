@@ -78,7 +78,7 @@ public class ResourceUpdateMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final String recipient,
             @Parameter(description = "The resource id.", required = true)
-            @RequestParam(value = "resourceId") final URI resourceId) {
+            @RequestParam("resourceId") final URI resourceId) {
         try {
             final var resource = connectorService.getOfferedResourceById(resourceId);
             if (resource.isEmpty()) {

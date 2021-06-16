@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.controller.resources.exceptions;
 
 /**
- * This package contains the telemetry configurations.
+ * Thrown to indicate that access to a method is not allowed.
  */
-package io.dataspaceconnector.telemetry.config;
+public class MethodNotAllowed extends RuntimeException {
+    /**
+     * Default serial version uid.
+     */
+    private static final long serialVersionUID = 1L;
+}

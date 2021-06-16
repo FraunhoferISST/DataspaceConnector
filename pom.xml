@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.0</version>
+		<version>2.5.1</version>
 		<relativePath/>
 		<!-- lookup parent from repository -->
 	</parent>
@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.1.0</revision>
+		<revision>5.1.2</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -94,16 +94,16 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>4.0.7</ids-framework.version>
-		<!-- <springframework.boot>2.4.3</springframework.boot> -->
+		<ids-framework.version>5.0.3</ids-framework.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
 		<modelmapper.version>2.4.4</modelmapper.version>
 		<jackson.version>2.12.3</jackson.version>
-		<postgres.version>42.2.20</postgres.version>
+		<postgres.version>42.2.21</postgres.version>
 		<springdoc-ui.version>1.5.9</springdoc-ui.version>
 		<springdoc-security.version>1.5.9</springdoc-security.version>
+		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
 		<jaeger.version>3.3.1</jaeger.version>
@@ -151,17 +151,7 @@
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-					<artifactId>java</artifactId>
-				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
-			<artifactId>java</artifactId>
-			<version>4.0.4</version>
 		</dependency>
 
 		<dependency>
@@ -365,6 +355,13 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
 			<version>${springdoc-security.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-hateoas -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-hateoas</artifactId>
+			<version>${springdoc-hateoas.version}</version>
 		</dependency>
 
 		<!-- https://github.com/jsonld-java/jsonld-java -->
@@ -576,6 +573,19 @@
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
 			</plugin>
 			<plugin>
 				<groupId>com.mycila</groupId>

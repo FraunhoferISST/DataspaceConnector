@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
+
 /**
- * This package contains the telemetry configurations.
+ * Contains exceptions thrown by resource controllers.
  */
-package io.dataspaceconnector.telemetry.config;
+package io.dataspaceconnector.controller.resources.exceptions;

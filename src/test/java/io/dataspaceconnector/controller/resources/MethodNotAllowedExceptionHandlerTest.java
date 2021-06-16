@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.controller.resources;
 
-/**
- * This package contains the telemetry configurations.
- */
-package io.dataspaceconnector.telemetry.config;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class MethodNotAllowedExceptionHandlerTest {
+
+    @Test
+    public void handlePolicyRestrictionException_nothing_returnMethodNotAllowed() {
+        /* ARRANGE */
+        final var handler = new MethodNotAllowedExceptionHandler();
+
+        /* ACT && ASSERT */
+        assertEquals(HttpStatus.METHOD_NOT_ALLOWED, handler.handlePolicyRestrictionException().getStatusCode());
+    }
+}

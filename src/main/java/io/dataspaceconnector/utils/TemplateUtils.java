@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
@@ -29,10 +33,6 @@ import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
 import lombok.extern.log4j.Log4j2;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides methods for building entity templates.
@@ -140,10 +140,8 @@ public final class TemplateUtils {
 
         try {
             for (final var artifact : Utils.requireNonNull(artifactList, ErrorMessages.LIST_NULL)) {
-                final var id = artifact.getId();
-
                 // Artifact is only saved if it has been requested.
-                if (requestedArtifacts.contains(id)) {
+                if (requestedArtifacts.contains(artifact.getId())) {
                     final var template = MappingUtils.fromIdsArtifact((Artifact) artifact,
                             download, remoteUrl);
                     list.add(template);

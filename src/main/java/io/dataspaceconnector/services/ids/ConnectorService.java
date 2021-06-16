@@ -44,6 +44,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * This service offers different methods related to the connector configuration, like e.g. getting
  * configuration properties or updating the configuration model.
@@ -139,7 +145,7 @@ public class ConnectorService {
 
         // Create a connector with a list of offered resources.
         final var connectorImpl = (BaseConnectorImpl) connector;
-        connectorImpl.setResourceCatalog((ArrayList<? extends ResourceCatalog>) catalogs);
+        connectorImpl.setResourceCatalog(catalogs);
         return connectorImpl;
     }
 

@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -50,13 +57,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This service offers methods for finding entities by their identifying URI.
@@ -274,13 +274,12 @@ public class EntityResolver {
     /**
      * Get agreement by remote id.
      *
-     * @param id The remote id (at provider side).
+     * @param agreementUri The remote id (at provider side).
      * @return The artifact of the database.
      * @throws ResourceNotFoundException If the resource could not be found.
      */
-    public Agreement getAgreementByUri(final URI id) throws ResourceNotFoundException {
-        final var uuid = EndpointUtils.getUUIDFromPath(id);
-        return agreementService.get(uuid);
+    public Agreement getAgreementByUri(final URI agreementUri) throws ResourceNotFoundException {
+        return agreementService.get(EndpointUtils.getUUIDFromPath(agreementUri));
     }
 
     /**

@@ -14,6 +14,29 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Change `ConnectorService` to use the connector's ID from `config.json` when `getAllCatalogsWithOfferedResources` is called.
 
+### Fixed
+- Fixed missing IDS context in `/api/examples/policy`.
+
+### Changed
+- Increase IDS Framework version to 5.0.3.
+- Update default Infomodel version to 4.0.9.
+
+## [5.1.2] - 2021-06-14
+
+### Fixed
+- Fixed deletion of artifact data before the set time.
+- Fixed tags with different descriptions in openapi schema.
+- Fixed missing paging information in openapi schema.
+
+### Changed
+- Increase postgresql version to 42.2.20.
+- Increase spring-boot version to 2.5.1.
+
+## [5.1.1] - 2021-06-09
+
+### Fixed
+- Add missing hateoas information in openapi schema.
+
 ## [5.1.0] - 2021-06-07
 
 ### Added

@@ -222,10 +222,7 @@ public class RuleValidator {
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
 
-        final var maxTime = RuleUtils.getCalculatedDate(created, duration);
-        final var validDate = RuleUtils.checkDate(RuleUtils.getCurrentDate(), maxTime);
-
-        if (!validDate) {
+        if (RuleUtils.isExpired(RuleUtils.getCalculatedDate(created, duration))) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid date time. [target=({})]", target);
             }

@@ -15,9 +15,15 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
@@ -28,15 +34,12 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Abstract class for building, sending, and processing ids messages.
@@ -44,6 +47,8 @@ import java.util.Map;
  * @param <D> The type of the message description.
  */
 @Log4j2
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public abstract class AbstractMessageService<D extends MessageDesc> {
 
     /**
@@ -62,7 +67,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Service for ids deserialization.
      */
     @Autowired
-    private DeserializationService deserializationService;
+    private DeserializationService deserializer;
 
     /**
      * Build ids message with params.
@@ -195,7 +200,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        final var idsMessage = deserializationService.getResponseMessage(header);
+        final var idsMessage = deserializer.getResponseMessage(header);
         final var responseMap = new HashMap<String, Object>();
         responseMap.put("type", idsMessage.getClass());
 
@@ -208,23 +213,5 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
         responseMap.put("payload", payload);
         return responseMap;
-    }
-
-    /**
-     * Getter for ids connector service.
-     *
-     * @return The service class.
-     */
-    public ConnectorService getConnectorService() {
-        return connectorService;
-    }
-
-    /**
-     * Getter for ids deserialization service.
-     *
-     * @return The service class.
-     */
-    public DeserializationService getDeserializer() {
-        return deserializationService;
     }
 }
