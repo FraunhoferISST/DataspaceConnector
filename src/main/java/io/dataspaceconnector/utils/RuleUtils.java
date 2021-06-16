@@ -436,7 +436,7 @@ public final class RuleUtils {
         return lObj.toRdf().equals(rObj.toRdf());
     }
 
-    private static <T extends Action> boolean compareAction(final T lObj, final T rObj) {
+    private static boolean compareAction(final Action lObj, final Action rObj) {
         return lObj.equals(rObj);
     }
 
