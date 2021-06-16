@@ -11,7 +11,7 @@
   <a href="mailto:info@dataspace-connector.de">Contact</a> •
   <a href="#contributing">Contribute</a> •
   <a href="https://international-data-spaces-association.github.io/DataspaceConnector/">Docs</a> •
-  <a href="https://github.com/FraunhoferISST/DataspaceConnector/issues">Issues</a> •
+  <a href="https://github.com/International-Data-Spaces-Association/DataspaceConnector/issues">Issues</a> •
   <a href="#license">License</a>
 </p>
 
