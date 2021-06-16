@@ -22,6 +22,8 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import io.dataspaceconnector.exceptions.DeserializationException;
+import io.dataspaceconnector.exceptions.MissingPayloadException;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
@@ -114,13 +116,23 @@ class ResourceTransformer extends IdsTransformer<
      *
      * @param msg the incoming message.
      * @return a RouteMsg object with the initial header and the Resource as payload.
-     * @throws Exception if the payload cannot be deserialized.
+     * @throws Exception if the payload cannot be read or deserialized.
      */
     @Override
     protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(
             final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
-        final var resource = deserializationService
-                .getResource(MessageUtils.getStreamAsString(msg.getBody()));
+        final var payloadString = MessageUtils.getStreamAsString(msg.getBody());
+        if (payloadString.isBlank()) {
+            throw new MissingPayloadException("Payload is missing from ResourceUpdateMessage.");
+        }
+
+        final Resource resource;
+        try {
+            resource = deserializationService.getResource(payloadString);
+        } catch (IllegalArgumentException e) {
+            throw new DeserializationException("Deserialization failed.", e);
+        }
+
         return new Request<>(msg.getHeader(), resource);
     }
 
