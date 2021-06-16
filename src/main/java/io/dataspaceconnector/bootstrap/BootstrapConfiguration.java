@@ -72,8 +72,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static io.dataspaceconnector.bootstrap.BootstrapUtils.findFilesByExtension;
-import static io.dataspaceconnector.bootstrap.BootstrapUtils.retrieveBootstrapConfig;
+import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.findFilesByExtension;
+import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootstrapConfig;
 
 /**
  * This class allows to load JSON-LD files that contain IDS Infomodel representations of entities
