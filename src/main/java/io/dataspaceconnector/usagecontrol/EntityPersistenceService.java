@@ -27,27 +27,26 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
-import io.dataspaceconnector.controller.resources.ResourceControllers;
+import io.dataspaceconnector.common.BasePath;
+import io.dataspaceconnector.common.RdfUtils;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import io.dataspaceconnector.ids.messages.exceptions.MessageResponseException;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.ids.messages.util.MessageUtils;
+import io.dataspaceconnector.ids.templates.TemplateUtils;
 import io.dataspaceconnector.model.core.AgreementDesc;
 import io.dataspaceconnector.model.core.RequestedResource;
 import io.dataspaceconnector.model.core.RequestedResourceDesc;
-import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
+import io.dataspaceconnector.model.utils.EndpointUtils;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.services.resources.RelationServices;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.model.utils.EndpointUtils;
-import io.dataspaceconnector.ids.messages.util.MessageUtils;
-import io.dataspaceconnector.common.RdfUtils;
-import io.dataspaceconnector.ids.templates.TemplateUtils;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jose4j.base64url.Base64;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
@@ -132,8 +131,7 @@ public class EntityPersistenceService {
         try {
             // Get base URL of application and path to agreements API.
             final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
-            final var path = ResourceControllers.AgreementController.class.getAnnotation(
-                    RequestMapping.class).value()[0];
+            final var path = BasePath.AGREEMENTS;
 
             // Persist empty agreement to generate UUID.
             agreementUuid = agreementService.create(new AgreementDesc()).getId();

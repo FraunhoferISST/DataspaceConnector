@@ -19,17 +19,17 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import io.dataspaceconnector.common.BasePath;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
 import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
 import io.dataspaceconnector.common.usagecontrol.VerificationResult;
-import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
-import io.dataspaceconnector.ids.messages.exceptions.PolicyExecutionException;
-import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.ids.EntityResolver;
+import io.dataspaceconnector.ids.messages.exceptions.PolicyExecutionException;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
 import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
-import io.dataspaceconnector.controller.resources.view.SelfLinkHelper;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -75,7 +75,8 @@ public final class DataAccessVerifier implements PolicyVerifier<Artifact> {
                 PolicyPattern.USAGE_NOTIFICATION);
 
         try {
-            final var artifactId = SelfLinkHelper.getSelfLink(target);
+            // TODO CHECK IF URI.create(BasePath.AGREEMENTS.toString() + target) is equals SelfLinkHelper.getSelfLink(target)
+            final var artifactId = URI.create(BasePath.AGREEMENTS.toString() + target);
             checkForAccess(patternsToCheck, artifactId, target.getRemoteId());
         } catch (PolicyRestrictionException exception) {
             // Unknown patterns cause an exception. Ignore if unsupported patterns are allowed.

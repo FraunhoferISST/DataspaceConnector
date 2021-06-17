@@ -49,7 +49,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {DataAccessVerifier.class})
+@SpringBootTest(classes = { DataAccessVerifier.class})
 public class DataAccessVerifierTest {
 
     @MockBean
