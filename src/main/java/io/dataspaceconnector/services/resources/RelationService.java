@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.resources;
 import java.util.Set;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

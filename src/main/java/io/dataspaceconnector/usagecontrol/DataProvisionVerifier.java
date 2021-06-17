@@ -20,9 +20,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
+import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

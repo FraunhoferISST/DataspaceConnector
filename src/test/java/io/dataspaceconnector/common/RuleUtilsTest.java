@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 
+import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +52,7 @@ import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.core.Contract;
 import lombok.SneakyThrows;
 
 class RuleUtilsTest {

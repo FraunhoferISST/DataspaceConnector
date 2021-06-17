@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import io.dataspaceconnector.services.messages.types.exceptions.MessageException;
-import io.dataspaceconnector.services.messages.types.exceptions.MessageResponseException;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.services.messages.types.DescriptionRequestService;
+import io.dataspaceconnector.ids.messages.exceptions.MessageException;
+import io.dataspaceconnector.ids.messages.exceptions.MessageResponseException;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
+import io.dataspaceconnector.ids.messages.DescriptionRequestService;
 import io.dataspaceconnector.common.controller.ControllerUtils;
-import io.dataspaceconnector.services.messages.types.util.MessageUtils;
+import io.dataspaceconnector.ids.messages.util.MessageUtils;
 import io.dataspaceconnector.common.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

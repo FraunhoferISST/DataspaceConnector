@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
-import io.dataspaceconnector.controller.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -19,10 +19,11 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.services.messages.types.ArtifactRequestService;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.ids.BlockingArtifactReceiver;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.ids.messages.ArtifactRequestService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;

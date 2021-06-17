@@ -19,6 +19,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.dataspaceconnector.model.core.ContractRuleDesc;
+import io.dataspaceconnector.model.core.ContractRuleFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

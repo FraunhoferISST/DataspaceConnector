@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.usagecontrol;
 
-import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.core.AllowAccessVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
+import io.dataspaceconnector.model.core.ArtifactImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

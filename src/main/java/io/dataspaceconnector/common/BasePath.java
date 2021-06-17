@@ -16,6 +16,7 @@
 package io.dataspaceconnector.common;
 
 import io.dataspaceconnector.common.exceptions.UnreachableLineException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * The list of the api's paths.
@@ -73,8 +74,18 @@ public enum BasePath {
 
     @Override
     public String toString() {
-        final var host = EndpointUtils.getCurrentBasePathString();
-        return host + basePath;
+        return getCurrentBasePathString() + basePath;
+    }
+
+    /**
+     * Get current base path as string.
+     *
+     * @return Base path as string.
+     */
+    private static String getCurrentBasePathString() {
+        final var currentPath = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+        return currentPath.toString().substring(
+                0, currentPath.toString().indexOf(currentPath.getPath()));
     }
 
     /**

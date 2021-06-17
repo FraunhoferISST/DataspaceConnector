@@ -24,7 +24,7 @@ import java.util.Map;
 
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.common.QueryInput;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;

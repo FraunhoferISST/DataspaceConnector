@@ -17,7 +17,7 @@ package io.dataspaceconnector.controller.resources.util;
 
 import java.util.Map;
 
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.common.QueryInput;
 
 /**
  * This class provides methods to validate values.

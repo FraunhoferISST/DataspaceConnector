@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.core.Catalog;
+import io.dataspaceconnector.model.core.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

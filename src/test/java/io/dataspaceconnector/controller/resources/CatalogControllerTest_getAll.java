@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.core.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.util.PageUtils;
-import io.dataspaceconnector.view.CatalogViewAssembler;
+import io.dataspaceconnector.controller.resources.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -60,7 +60,7 @@ import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.common.exceptions.RdfBuilderException;
-import io.dataspaceconnector.services.ids.util.IdsUtils;
+import io.dataspaceconnector.ids.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 

@@ -17,8 +17,9 @@ package io.dataspaceconnector.repositories;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.core.Agreement;
 
+import io.dataspaceconnector.repositories.core.base.BaseEntityRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

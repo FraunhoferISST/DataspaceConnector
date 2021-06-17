@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.core.ContractRule;
+import io.dataspaceconnector.repositories.core.base.BaseEntityRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 

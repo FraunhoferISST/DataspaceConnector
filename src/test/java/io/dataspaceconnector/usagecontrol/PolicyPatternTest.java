@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.usagecontrol;
 
+import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

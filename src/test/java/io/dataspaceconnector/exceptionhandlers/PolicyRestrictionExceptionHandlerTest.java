@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptionhandlers;
 
-import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;

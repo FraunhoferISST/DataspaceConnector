@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.core.Catalog;
+import io.dataspaceconnector.repositories.core.base.BaseEntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**

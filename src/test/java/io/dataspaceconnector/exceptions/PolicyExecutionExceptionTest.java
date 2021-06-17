@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
-import io.dataspaceconnector.services.messages.types.exceptions.PolicyExecutionException;
+import io.dataspaceconnector.ids.messages.exceptions.PolicyExecutionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

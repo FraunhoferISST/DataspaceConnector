@@ -18,10 +18,10 @@ package io.dataspaceconnector.services.resources;
 import java.util.UUID;
 
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.AbstractDescription;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.AbstractFactory;
-import io.dataspaceconnector.repositories.BaseEntityRepository;
+import io.dataspaceconnector.model.core.AbstractDescription;
+import io.dataspaceconnector.model.core.AbstractEntity;
+import io.dataspaceconnector.model.core.AbstractFactory;
+import io.dataspaceconnector.repositories.core.base.BaseEntityRepository;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.Utils;
 import lombok.AccessLevel;

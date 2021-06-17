@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.ids.ConnectorService;
 import io.dataspaceconnector.common.controller.ControllerUtils;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;

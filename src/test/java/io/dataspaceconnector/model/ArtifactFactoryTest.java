@@ -23,6 +23,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.dataspaceconnector.model.core.ArtifactDesc;
+import io.dataspaceconnector.model.core.ArtifactFactory;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.LocalData;
+import io.dataspaceconnector.model.core.RemoteData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

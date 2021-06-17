@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.core.ArtifactDesc;
+import io.dataspaceconnector.model.core.ArtifactFactory;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

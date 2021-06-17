@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.core.RequestedResource;
+import io.dataspaceconnector.repositories.core.RemoteEntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**

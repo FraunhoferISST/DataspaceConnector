@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptions;
 
-import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
+import io.dataspaceconnector.ids.messages.exceptions.MessageEmptyException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

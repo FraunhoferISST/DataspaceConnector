@@ -28,9 +28,9 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessage;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.services.messages.types.exceptions.MessageEmptyException;
-import io.dataspaceconnector.controller.handler.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.services.messages.types.util.MessageUtils;
+import io.dataspaceconnector.ids.messages.exceptions.MessageEmptyException;
+import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.ids.messages.util.MessageUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

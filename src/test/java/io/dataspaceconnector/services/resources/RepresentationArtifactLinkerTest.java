@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.Representation;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.Representation;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

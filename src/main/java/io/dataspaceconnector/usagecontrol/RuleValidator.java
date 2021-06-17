@@ -16,11 +16,12 @@
 package io.dataspaceconnector.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.common.usagecontrol.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.TimeInterval;
-import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
+import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.ContractRule;
+import io.dataspaceconnector.model.core.TimeInterval;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
@@ -77,7 +78,7 @@ public class RuleValidator {
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
     public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
-                        final URI issuerConnector) throws PolicyRestrictionException {
+                               final URI issuerConnector) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
                 break;

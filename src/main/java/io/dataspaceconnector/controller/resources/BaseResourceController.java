@@ -19,8 +19,8 @@ import javax.validation.Valid;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.util.PageUtils;
-import io.dataspaceconnector.model.AbstractDescription;
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.core.AbstractDescription;
+import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;

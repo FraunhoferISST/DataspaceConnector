@@ -19,7 +19,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.repositories.core.RemoteEntityRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

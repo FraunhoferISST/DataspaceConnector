@@ -21,9 +21,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.CatalogFactory;
+import io.dataspaceconnector.model.core.Catalog;
+import io.dataspaceconnector.model.core.CatalogDesc;
+import io.dataspaceconnector.model.core.CatalogFactory;
 import io.dataspaceconnector.repositories.CatalogRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

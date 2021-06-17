@@ -18,22 +18,24 @@ package io.dataspaceconnector.services;
 import java.net.URI;
 import java.util.UUID;
 
+import io.dataspaceconnector.ids.BlockingArtifactReceiver;
+import io.dataspaceconnector.ids.EntityResolver;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsContractBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
-import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
+import io.dataspaceconnector.model.core.Agreement;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.Catalog;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.ContractRule;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.model.core.OfferedResourceDesc;
+import io.dataspaceconnector.model.core.Representation;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
+import io.dataspaceconnector.ids.builder.IdsArtifactBuilder;
+import io.dataspaceconnector.ids.builder.IdsCatalogBuilder;
+import io.dataspaceconnector.ids.builder.IdsContractBuilder;
+import io.dataspaceconnector.ids.builder.IdsRepresentationBuilder;
+import io.dataspaceconnector.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.services.resources.CatalogService;
@@ -41,7 +43,7 @@ import io.dataspaceconnector.services.resources.ContractService;
 import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.usagecontrol.AllowAccessVerifier;
+import io.dataspaceconnector.model.core.AllowAccessVerifier;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -53,7 +55,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest(classes = {EntityResolver.class})
+@SpringBootTest(classes = { EntityResolver.class})
 public class EntityResolverTest {
 
     @MockBean

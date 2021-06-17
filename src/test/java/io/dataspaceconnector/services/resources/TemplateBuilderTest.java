@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.services.ids.templates.ArtifactTemplate;
-import io.dataspaceconnector.services.ids.templates.ResourceTemplate;
-import io.dataspaceconnector.services.ids.templates.RuleTemplate;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.ArtifactDesc;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.ContractRuleDesc;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.model.core.OfferedResourceDesc;
+import io.dataspaceconnector.model.core.RequestedResource;
+import io.dataspaceconnector.ids.templates.ArtifactTemplate;
+import io.dataspaceconnector.ids.templates.ResourceTemplate;
+import io.dataspaceconnector.ids.templates.RuleTemplate;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

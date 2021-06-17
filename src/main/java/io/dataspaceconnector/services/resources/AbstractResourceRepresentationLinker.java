@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.Resource;
+import io.dataspaceconnector.model.core.Representation;
+import io.dataspaceconnector.model.core.Resource;
 import lombok.NoArgsConstructor;
 
 /**
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class AbstractResourceRepresentationLinker<T extends Resource>
         extends OwningRelationService<T, Representation, ResourceService<T, ?>,
-                        RepresentationService> {
+                                RepresentationService> {
     /**
      * Get the list of representations owned by the resource.
      * @param owner The owner of the representations.

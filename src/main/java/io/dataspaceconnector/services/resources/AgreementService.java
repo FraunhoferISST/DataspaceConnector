@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.AgreementDesc;
+import io.dataspaceconnector.model.core.Agreement;
+import io.dataspaceconnector.model.core.AgreementDesc;
 import io.dataspaceconnector.repositories.AgreementRepository;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import lombok.NoArgsConstructor;

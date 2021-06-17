@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.model.core.OfferedResourceDesc;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

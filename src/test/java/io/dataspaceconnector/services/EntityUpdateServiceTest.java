@@ -30,15 +30,16 @@ import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.ids.EntityUpdateService;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceFactory;
-import io.dataspaceconnector.services.ids.updater.ArtifactUpdater;
-import io.dataspaceconnector.services.ids.updater.RepresentationUpdater;
-import io.dataspaceconnector.services.ids.updater.RequestedResourceUpdater;
+import io.dataspaceconnector.model.core.Agreement;
+import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.RequestedResource;
+import io.dataspaceconnector.model.core.RequestedResourceDesc;
+import io.dataspaceconnector.model.core.RequestedResourceFactory;
+import io.dataspaceconnector.ids.updater.ArtifactUpdater;
+import io.dataspaceconnector.ids.updater.RepresentationUpdater;
+import io.dataspaceconnector.ids.updater.RequestedResourceUpdater;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.services.resources.RelationServices;
@@ -59,7 +60,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {EntityUpdateService.class, RequestedResourceFactory.class})
+@SpringBootTest(classes = { EntityUpdateService.class, RequestedResourceFactory.class})
 public class EntityUpdateServiceTest {
 
     @MockBean
@@ -104,7 +105,7 @@ public class EntityUpdateServiceTest {
 
         when(requestedResourceUpdater.update(any())).thenReturn(getRequestedResource());
         when(representationUpdater.update(any()))
-                .thenReturn(new io.dataspaceconnector.model.Representation());
+                .thenReturn(new io.dataspaceconnector.model.core.Representation());
         when(artifactUpdater.update(any())).thenReturn(new ArtifactImpl());
 
         /* ACT */

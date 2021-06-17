@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.Resource;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.Resource;
 import lombok.NoArgsConstructor;
 
 /**
@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class AbstractResourceContractLinker<T extends Resource>
         extends OwningRelationService<T, Contract, ResourceService<T, ?>,
-                        ContractService> {
+                                ContractService> {
     /**
      * Get the list of contracts owned by the resource.
      * @param owner The owner of the contracts.

@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import io.dataspaceconnector.controller.resources.util.PageUtils;
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;

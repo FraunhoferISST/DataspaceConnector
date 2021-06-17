@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
+import io.dataspaceconnector.usagecontrol.config.UsageControlFramework;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

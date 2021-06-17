@@ -17,14 +17,14 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.core.Agreement;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.Catalog;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.ContractRule;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.model.core.Representation;
+import io.dataspaceconnector.model.core.RequestedResource;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

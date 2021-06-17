@@ -20,13 +20,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.time.format.DateTimeParseException;
 
-import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.config.UsageControlFramework;
+import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
+import io.dataspaceconnector.usagecontrol.config.UsageControlFramework;
 import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
-import io.dataspaceconnector.common.ContractUtils;
+import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

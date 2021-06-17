@@ -18,11 +18,11 @@ package io.dataspaceconnector.services.resources;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.common.EndpointUtils;
+import io.dataspaceconnector.model.core.Agreement;
+import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.Contract;
+import io.dataspaceconnector.model.core.ContractRule;
+import io.dataspaceconnector.model.utils.EndpointUtils;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.Utils;
 import lombok.NonNull;

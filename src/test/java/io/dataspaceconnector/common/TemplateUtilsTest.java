@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.services.ids.util.TemplateUtils;
+import io.dataspaceconnector.ids.templates.TemplateUtils;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

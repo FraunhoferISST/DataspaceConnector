@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.core.AbstractEntity;
 
 /**
  * Creates a parent-children relationship between two types of resources.

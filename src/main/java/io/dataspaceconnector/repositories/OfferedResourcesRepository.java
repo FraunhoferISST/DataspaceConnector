@@ -15,7 +15,8 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.repositories.core.base.BaseEntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**

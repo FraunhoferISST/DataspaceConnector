@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
