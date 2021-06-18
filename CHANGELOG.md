@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Fixed missing IDS context in `/api/examples/policy`.
 - Disable autocommit on database transactions.
+- Remove encoding from optional path segment in `HttpService`.
 
 ### Changed
 - Increase IDS Framework version to 5.0.3.
