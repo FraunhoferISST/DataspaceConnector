@@ -17,15 +17,12 @@ package io.dataspaceconnector.bootstrap;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,16 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
-import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -52,13 +46,10 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.utils.MessageUtils;
 import io.dataspaceconnector.utils.TemplateUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import okhttp3.Response;
-import org.apache.commons.fileupload.MultipartStream;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -131,14 +122,14 @@ public class BootstrapConfiguration {
     private final @NotNull PlatformTransactionManager transactionManager;
 
     /**
-     * The service for communication with the ids broker.
-     */
-    private final @NotNull IDSBrokerService brokerService;
-
-    /**
      * Service for the current connector configuration.
      */
     private final @NonNull ConnectorService connectorService;
+
+    /**
+     * Service for interacting with a broker.
+     */
+    private final @NonNull BrokerService brokerService;
 
     /**
      * Bootstrap the connector. Will load JSON-LD files containing IDS catalog entities and register
@@ -171,7 +162,7 @@ public class BootstrapConfiguration {
         }
 
         // register resources at broker
-        if (!registerAtBroker(properties, idsResources)) {
+        if (!brokerService.registerAtBroker(properties, idsResources)) {
             if (log.isErrorEnabled()) {
                 log.error("An error occurred while registering resources at the broker.");
             }
@@ -218,202 +209,6 @@ public class BootstrapConfiguration {
         return properties;
     }
 
-    private boolean registerAtBroker(final Properties properties,
-                                     final Map<URI, Resource> idsResources) {
-        final var knownBrokers = new HashSet<String>();
-        // iterate over all registered resources
-        for (final var entry : idsResources.entrySet()) {
-            final var propertyKey = "broker.register." + entry.getKey().toString();
-            if (properties.containsKey(propertyKey)) {
-                final var brokerURL = (String) properties.get(propertyKey);
-
-                try {
-                    if (!knownBrokers.contains(brokerURL)) {
-                        knownBrokers.add(brokerURL);
-                        final var response = brokerService.updateSelfDescriptionAtBroker(brokerURL);
-                        if (validateBrokerResponse(response, brokerURL)) {
-                            if (log.isInfoEnabled()) {
-                                log.info("Registered connector at broker '{}'.", brokerURL);
-                            }
-                        } else {
-                            return false;
-                        }
-                    }
-
-                    final var response = brokerService.updateResourceAtBroker(brokerURL,
-                                                                              entry.getValue());
-                    if (!response.isSuccessful()) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Failed to update resource description for resource '{}'"
-                                            + " at broker '{}'.",
-                                    entry.getValue().getId().toString(), brokerURL);
-                        }
-
-                        return false;
-                    }
-                    if (validateBrokerResponse(response, brokerURL)) {
-                        if (log.isInfoEnabled()) {
-                            log.info("Registered resource with IDS ID '{}' at broker '{}'.",
-                                    entry.getKey().toString(), brokerURL);
-                        }
-                    } else {
-                        return false;
-                    }
-
-                    response.close();
-                } catch (IOException e) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Could not register resource with IDS id '{}' at the "
-                                + "broker '{}'.", entry.getKey().toString(), brokerURL, e);
-                    }
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Check if a broker request was successfully processed by a broker.
-     *
-     * @param response  the broker response
-     * @param brokerURL the URL of the called broker
-     * @return true if the broker successfully processed the message, false otherwise
-     * @throws IOException if the response's body cannot be extracted as string.
-     */
-    private boolean validateBrokerResponse(final Response response, final String brokerURL)
-            throws IOException {
-        if (!response.isSuccessful()) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to sent message to a broker '{}'.", brokerURL);
-            }
-
-            return false;
-        }
-
-        final var responseBody = response.body();
-        if (responseBody == null) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not parse response after sending a request "
-                        + "to a broker.");
-            }
-
-            return false;
-        }
-
-        final var body = responseBody.string();
-        final var responseMessage = getMessage(body);
-        if (responseMessage.isPresent()) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not parse response after sending a request "
-                        + "to a broker.");
-            }
-
-            return false;
-        }
-
-        if (!(responseMessage.get() instanceof MessageProcessedNotificationMessage)) {
-            if (responseMessage.get() instanceof RejectionMessage) {
-                final var payload = getMultipartPart(body, "payload");
-                if (log.isErrorEnabled() && payload.isPresent()) {
-                    log.error("The broker rejected the message. Reason: {} - {}",
-                            MessageUtils.extractRejectionReason(
-                                    (RejectionMessage) responseMessage.get()).toString(),
-                                    payload.get());
-                } else if (log.isErrorEnabled()) {
-                    log.error("The broker rejected the message. Reason: {}",
-                            MessageUtils.extractRejectionReason(
-                                        (RejectionMessage) responseMessage.get()).toString());
-                }
-            } else {
-                if (log.isErrorEnabled()) {
-                    log.error("An error occurred while registering the "
-                            + "connector at the broker.");
-                }
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Extract the IDS message from a multipart message string.
-     *
-     * @param body a multipart message
-     * @return The IDS message contained in the multipart message, null if any error occurs.
-     */
-    private Optional<Message> getMessage(final String body) {
-        final var part = getMultipartPart(body, "header");
-        if (part.isPresent()) {
-            return Optional.of(deserializationService.getMessage(part.get()));
-        } else {
-            if (log.isErrorEnabled()) {
-                log.error("Could not find IDS message in multipart message.");
-            }
-
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Extract a part with given name from a multipart message.
-     *
-     * @param message  the multipart message
-     * @param partName the part name
-     * @return part with given name, null if the part does not exist in given message
-     */
-    private Optional<String> getMultipartPart(final String message, final String partName) {
-        try {
-            // TODO: Can we get the original charset of the message?
-            final var multipart = new MultipartStream(
-                    new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)),
-                    getBoundaries(message)[0].substring(2).getBytes(StandardCharsets.UTF_8),
-                    4096,
-                    null
-            );
-
-            final var pattern = Pattern.compile("name=\"([a-zA-Z]+)\"");
-            final var outputStream = new ByteArrayOutputStream();
-            boolean next = multipart.skipPreamble();
-            while (next) {
-                final var matcher = pattern.matcher(multipart.readHeaders());
-                if (!matcher.find()) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Could not find name of multipart part.");
-                    }
-                    return Optional.empty();
-                }
-
-                if (matcher.group().equals("name=\"" + partName + "\"")) {
-                    multipart.readBodyData(outputStream);
-                    return Optional.of(outputStream.toString(StandardCharsets.UTF_8));
-                } else {
-                    multipart.discardBodyData();
-                }
-
-                next = multipart.readBoundary();
-            }
-
-        } catch (IOException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to parse multipart message.", e);
-            }
-            return Optional.empty();
-        }
-
-        if (log.isErrorEnabled()) {
-            log.error("Could not find part '{}' in multipart message.", partName);
-        }
-        return Optional.empty();
-    }
-
-    private String[] getBoundaries(final String msg) {
-        return msg.split(msg.contains("\r\n") ? "\r\n" : "\n");
-    }
-
     /**
      * Load a list of JSON-LD files which contain ids catalog entities and
      * register them at the connector.
@@ -421,12 +216,54 @@ public class BootstrapConfiguration {
      * @param jsonFiles    List of JSON-LD files to load
      * @param properties   additional properties which are required but not
      *                     present in ids representations
-     * @param idsResources (IDS ID, IDS-Resource) map that cointains bootstrapped elements
+     * @param idsResources (IDS ID, IDS-Resource) map that contains bootstrapped elements
      * @return true if all catalogs were loaded successfully or were already
      * registered, false otherwise
      */
     private boolean processIdsFiles(final List<File> jsonFiles, final Properties properties,
                                     final Map<URI, Resource> idsResources) {
+        final var catalogs = deserializeAllCatalogs(jsonFiles);
+        if (catalogs.isEmpty()) {
+            return false;
+        }
+
+        final var template = new TransactionTemplate(transactionManager);
+        // iterate over all deserialized catalogs
+        for (final var catalog : catalogs.get()) {
+            // check for duplicates
+            // get all known catalogs for every bootstrap
+            // processor to detect duplicated bootstrap files
+            final var duplicate = template.execute(x -> isDuplicate(catalog));
+
+            if (duplicate != null && duplicate) {
+                if (log.isInfoEnabled()) {
+                    log.info("Catalog with IDS id '{}' is already registered and will be"
+                            + " skipped.", catalog.getId());
+                }
+
+                continue;
+            }
+
+            if (!registerCatalog(catalog, properties, idsResources)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isDuplicate(final ResourceCatalog catalog) {
+        for (final var knownCatalog : catalogService.getAll(Pageable.unpaged())) {
+            Hibernate.initialize(knownCatalog.getAdditional());
+            if (catalog.getId().equals(knownCatalog.getBootstrapId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Optional<Set<ResourceCatalog>> deserializeAllCatalogs(final List<File> jsonFiles) {
         final var catalogs = new HashSet<ResourceCatalog>();
 
         // deserialize all files
@@ -438,45 +275,14 @@ public class BootstrapConfiguration {
             } catch (IOException e) {
                 if (log.isErrorEnabled()) {
                     log.error("Could not deserialize ids catalog file '{}'.",
-                            jsonFile.getPath(), e);
+                              jsonFile.getPath(), e);
                 }
-                return false;
+
+                return Optional.empty();
             }
         }
 
-        final var template = new TransactionTemplate(transactionManager);
-        // iterate over all deserialized catalogs
-        for (final var catalog : catalogs) {
-            // check for duplicates
-            // get all known catalogs for every bootstrap
-            // processor to detect duplicated bootstrap files
-            final var duplicate = template.execute(transactionStatus -> {
-                var catalogDuplicate = false;
-                for (final var knownCatalog : catalogService.getAll(Pageable.unpaged())) {
-                    Hibernate.initialize(knownCatalog.getAdditional());
-                    if (catalog.getId()
-                            .equals(knownCatalog.getBootstrapId())) {
-                        catalogDuplicate = true;
-                        break;
-                    }
-                }
-                return catalogDuplicate;
-            });
-
-            if (duplicate != null && duplicate) {
-                if (log.isInfoEnabled()) {
-                    log.info("Catalog with IDS id '{}' is already registered and will be"
-                            + " skipped.", catalog.getId());
-                }
-                continue;
-            }
-
-            if (!registerCatalog(catalog, properties, idsResources)) {
-                return false;
-            }
-        }
-
-        return true;
+        return Optional.of(catalogs);
     }
 
     /**
