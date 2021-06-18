@@ -150,7 +150,6 @@ public class BootstrapConfiguration {
      * what broker.
      */
     @PostConstruct
-    @Transactional
     public void bootstrap() {
         if (log.isInfoEnabled()) {
             log.info("Start bootstrapping of Connector.");
