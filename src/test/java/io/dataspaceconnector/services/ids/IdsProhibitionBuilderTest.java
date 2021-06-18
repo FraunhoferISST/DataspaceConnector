@@ -153,6 +153,10 @@ public class IdsProhibitionBuilderTest {
 
     private String getRuleWithId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Prohibition\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
                 + "-a826-2efccc199a76\",\n"
@@ -172,6 +176,10 @@ public class IdsProhibitionBuilderTest {
 
     private String getRuleWithoutId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Prohibition\",\n"
                 + "    \"ids:description\" : [ {\n"
                 + "      \"@value\" : \"prohibit-access\",\n"
@@ -189,6 +197,10 @@ public class IdsProhibitionBuilderTest {
 
     private String getRuleWithInvalidType() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Representation\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
                 + "-a826-2efccc199a76\",\n"
@@ -208,6 +220,10 @@ public class IdsProhibitionBuilderTest {
 
     private String getRuleWithMissingAction() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Prohibition\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
                 + "-a826-2efccc199a76\",\n"
@@ -221,5 +237,4 @@ public class IdsProhibitionBuilderTest {
                 + "    } ]\n"
                 + "  }";
     }
-
 }

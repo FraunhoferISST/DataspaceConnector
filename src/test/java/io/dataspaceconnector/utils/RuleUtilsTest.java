@@ -257,15 +257,15 @@ class RuleUtilsTest {
     }
 
     @Test
-    public void compareRules_leftNull_returnFalse() {
+    public void compareRules_leftNull_returnTrue() {
         /* ACT && ASSERT */
-        assertFalse(RuleUtils.compareRules(null, new ArrayList<>()));
+        assertTrue(RuleUtils.compareRules(null, new ArrayList<>()));
     }
 
     @Test
-    public void compareRules_rightNull_returnFalse() {
+    public void compareRules_rightNull_returnTrue() {
         /* ACT && ASSERT */
-        assertFalse(RuleUtils.compareRules(new ArrayList<>(), null));
+        assertTrue(RuleUtils.compareRules(new ArrayList<>(), null));
     }
 
     @Test

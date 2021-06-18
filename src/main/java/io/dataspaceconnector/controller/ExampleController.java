@@ -172,23 +172,23 @@ public class ExampleController {
             @RequestParam("type") final PolicyPattern pattern) {
         switch (pattern) {
             case PROVIDE_ACCESS:
-                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule());
+                return ResponseEntity.ok(PatternUtils.buildProvideAccessRule().toRdf());
             case PROHIBIT_ACCESS:
-                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule());
+                return ResponseEntity.ok(PatternUtils.buildProhibitAccessRule().toRdf());
             case N_TIMES_USAGE:
-                return ResponseEntity.ok(PatternUtils.buildNTimesUsageRule());
+                return ResponseEntity.ok(PatternUtils.buildNTimesUsageRule().toRdf());
             case DURATION_USAGE:
-                return ResponseEntity.ok(PatternUtils.buildDurationUsageRule());
+                return ResponseEntity.ok(PatternUtils.buildDurationUsageRule().toRdf());
             case USAGE_DURING_INTERVAL:
-                return ResponseEntity.ok(PatternUtils.buildIntervalUsageRule());
+                return ResponseEntity.ok(PatternUtils.buildIntervalUsageRule().toRdf());
             case USAGE_UNTIL_DELETION:
-                return ResponseEntity.ok(PatternUtils.buildUsageUntilDeletionRule());
+                return ResponseEntity.ok(PatternUtils.buildUsageUntilDeletionRule().toRdf());
             case USAGE_LOGGING:
-                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule());
+                return ResponseEntity.ok(PatternUtils.buildUsageLoggingRule().toRdf());
             case USAGE_NOTIFICATION:
-                return ResponseEntity.ok(PatternUtils.buildUsageNotificationRule());
+                return ResponseEntity.ok(PatternUtils.buildUsageNotificationRule().toRdf());
             case CONNECTOR_RESTRICTED_USAGE:
-                return ResponseEntity.ok(PatternUtils.buildConnectorRestrictedUsageRule());
+                return ResponseEntity.ok(PatternUtils.buildConnectorRestrictedUsageRule().toRdf());
             default:
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

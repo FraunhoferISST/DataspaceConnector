@@ -20,12 +20,14 @@ import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.repositories.AgreementRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Handles the basic logic for contracts.
  */
 @Service
 @NoArgsConstructor
+@Transactional
 public class AgreementService extends BaseEntityService<Agreement, AgreementDesc> {
 
     /**
