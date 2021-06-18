@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.ids.messages.exceptions;
 
 import io.dataspaceconnector.ids.messages.exceptions.MessageEmptyException;
 import org.junit.jupiter.api.Test;

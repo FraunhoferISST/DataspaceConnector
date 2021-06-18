@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.ids;
+package io.dataspaceconnector.ids.builder;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.iais.eis.PermissionImpl;
+import de.fraunhofer.iais.eis.ProhibitionImpl;
+import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.model.core.ContractRuleDesc;
 import io.dataspaceconnector.model.core.ContractRuleFactory;
-import io.dataspaceconnector.ids.builder.IdsPermissionBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,22 +37,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {ContractRuleFactory.class, IdsPermissionBuilder.class,
+@SpringBootTest(classes = {ContractRuleFactory.class, IdsProhibitionBuilder.class,
         DeserializationService.class, SerializerProvider.class})
-public class IdsPermissionBuilderTest {
+public class IdsProhibitionBuilderTest {
 
     @Autowired
     private ContractRuleFactory contractRuleFactory;
 
     @Autowired
-    private IdsPermissionBuilder idsPermissionBuilder;
+    private IdsProhibitionBuilder idsProhibitionBuilder;
 
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Test
     public void create_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> idsPermissionBuilder.create(null));
+        assertThrows(NullPointerException.class, () -> idsProhibitionBuilder.create(null));
     }
 
     @Test
@@ -62,10 +61,10 @@ public class IdsPermissionBuilderTest {
         final var rule = getContractRule(getRuleWithoutId());
 
         /* ACT */
-        final var idsRule = idsPermissionBuilder.create(rule);
+        final var idsRule = idsProhibitionBuilder.create(rule);
 
         /* ASSERT */
-        assertEquals(PermissionImpl.class, idsRule.getClass());
+        assertEquals(ProhibitionImpl.class, idsRule.getClass());
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
 
@@ -73,7 +72,7 @@ public class IdsPermissionBuilderTest {
         assertEquals(Action.USE, idsRule.getAction().get(0));
         assertNull(idsRule.getConstraint());
         assertEquals(1, idsRule.getDescription().size());
-        assertEquals("provide-access", idsRule.getDescription().get(0).getValue());
+        assertEquals("prohibit-access", idsRule.getDescription().get(0).getValue());
     }
 
     @Test
@@ -82,10 +81,10 @@ public class IdsPermissionBuilderTest {
         final var rule = getContractRule(getRuleWithId());
 
         /* ACT */
-        final var idsRule = idsPermissionBuilder.create(rule);
+        final var idsRule = idsProhibitionBuilder.create(rule);
 
         /* ASSERT */
-        assertEquals(PermissionImpl.class, idsRule.getClass());
+        assertEquals(ProhibitionImpl.class, idsRule.getClass());
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
 
@@ -93,7 +92,7 @@ public class IdsPermissionBuilderTest {
         assertEquals(Action.USE, idsRule.getAction().get(0));
         assertNull(idsRule.getConstraint());
         assertEquals(1, idsRule.getDescription().size());
-        assertEquals("provide-access", idsRule.getDescription().get(0).getValue());
+        assertEquals("prohibit-access", idsRule.getDescription().get(0).getValue());
     }
 
     @Test
@@ -103,7 +102,7 @@ public class IdsPermissionBuilderTest {
         final var rule = getContractRule(json);
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> idsPermissionBuilder.create(rule));
+        assertThrows(IllegalArgumentException.class, () -> idsProhibitionBuilder.create(rule));
     }
 
     @Test
@@ -112,7 +111,7 @@ public class IdsPermissionBuilderTest {
         final var rule = getContractRule(getRuleWithInvalidType());
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> idsPermissionBuilder.create(rule));
+        assertThrows(IllegalArgumentException.class, () -> idsProhibitionBuilder.create(rule));
     }
 
     @Test
@@ -121,10 +120,10 @@ public class IdsPermissionBuilderTest {
         final var rule = getContractRule(getRuleWithMissingAction());
 
         /* ACT */
-        final var idsRule = idsPermissionBuilder.create(rule);
+        final var idsRule = idsProhibitionBuilder.create(rule);
 
         /* ASSERT */
-        assertEquals(PermissionImpl.class, idsRule.getClass());
+        assertEquals(ProhibitionImpl.class, idsRule.getClass());
         assertTrue(idsRule.getId().isAbsolute());
         assertTrue(idsRule.getId().toString().contains(rule.getId().toString()));
         assertNull(idsRule.getAction());
@@ -158,11 +157,11 @@ public class IdsPermissionBuilderTest {
                 + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
                 + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
                 + "      },"
-                + "    \"@type\" : \"ids:Permission\",\n"
-                + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
-                + "-89a7-73e7c560f3de\",\n"
+                + "    \"@type\" : \"ids:Prohibition\",\n"
+                + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
+                + "-a826-2efccc199a76\",\n"
                 + "    \"ids:description\" : [ {\n"
-                + "      \"@value\" : \"provide-access\",\n"
+                + "      \"@value\" : \"prohibit-access\",\n"
                 + "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n"
                 + "    } ],\n"
                 + "    \"ids:action\" : [ {\n"
@@ -181,9 +180,9 @@ public class IdsPermissionBuilderTest {
                 + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
                 + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
                 + "      },"
-                + "    \"@type\" : \"ids:Permission\",\n"
+                + "    \"@type\" : \"ids:Prohibition\",\n"
                 + "    \"ids:description\" : [ {\n"
-                + "      \"@value\" : \"provide-access\",\n"
+                + "      \"@value\" : \"prohibit-access\",\n"
                 + "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n"
                 + "    } ],\n"
                 + "    \"ids:action\" : [ {\n"
@@ -203,10 +202,10 @@ public class IdsPermissionBuilderTest {
                 + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
                 + "      },"
                 + "    \"@type\" : \"ids:Representation\",\n"
-                + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
-                + "-89a7-73e7c560f3de\",\n"
+                + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
+                + "-a826-2efccc199a76\",\n"
                 + "    \"ids:description\" : [ {\n"
-                + "      \"@value\" : \"provide-access\",\n"
+                + "      \"@value\" : \"prohibit-access\",\n"
                 + "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n"
                 + "    } ],\n"
                 + "    \"ids:action\" : [ {\n"
@@ -225,11 +224,11 @@ public class IdsPermissionBuilderTest {
                 + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
                 + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
                 + "      },"
-                + "    \"@type\" : \"ids:Permission\",\n"
-                + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
-                + "-89a7-73e7c560f3de\",\n"
+                + "    \"@type\" : \"ids:Prohibition\",\n"
+                + "    \"@id\" : \"https://w3id.org/idsa/autogen/prohibition/ff1b43b9-f3b1-44b1"
+                + "-a826-2efccc199a76\",\n"
                 + "    \"ids:description\" : [ {\n"
-                + "      \"@value\" : \"provide-access\",\n"
+                + "      \"@value\" : \"prohibit-access\",\n"
                 + "      \"@type\" : \"http://www.w3.org/2001/XMLSchema#string\"\n"
                 + "    } ],\n"
                 + "    \"ids:title\" : [ {\n"
@@ -238,5 +237,4 @@ public class IdsPermissionBuilderTest {
                 + "    } ]\n"
                 + "  }";
     }
-
 }

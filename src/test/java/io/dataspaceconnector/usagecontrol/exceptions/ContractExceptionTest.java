@@ -13,37 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.usagecontrol.exceptions;
 
-import io.dataspaceconnector.ids.messages.exceptions.MessageResponseException;
+import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageResponseExceptionTest {
+public class ContractExceptionTest {
+
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new MessageResponseException(msg);
+        final var exception = new ContractException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
-    }
-
-    @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
-
-        /* ACT */
-        final var exception = new MessageResponseException(msg, someError);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
     }
 }

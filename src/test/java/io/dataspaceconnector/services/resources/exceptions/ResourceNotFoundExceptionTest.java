@@ -13,24 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.services.resources.exceptions;
 
-import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ContractExceptionTest {
-
+public class ResourceNotFoundExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new ContractException(msg);
+        final var exception = new ResourceNotFoundException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
+    }
+
+    @Test
+    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
+        /* ARRANGE */
+        final var msg = "Some msg";
+        final var someError = new RuntimeException("WELL?");
+
+        /* ACT */
+        final var exception = new ResourceNotFoundException(msg, someError);
+
+        /* ASSERT */
+        assertEquals(msg, exception.getMessage());
+        assertEquals(someError, exception.getCause());
     }
 }

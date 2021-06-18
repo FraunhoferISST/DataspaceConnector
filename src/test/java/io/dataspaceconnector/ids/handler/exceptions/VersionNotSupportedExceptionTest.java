@@ -13,37 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.ids.handler.exceptions;
 
-import io.dataspaceconnector.usagecontrol.exceptions.InvalidInputException;
+import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class InvalidInputExceptionTest {
+public class VersionNotSupportedExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new InvalidInputException(msg);
+        final var exception = new VersionNotSupportedException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
-    }
-
-    @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
-
-        /* ACT */
-        final var exception = new InvalidInputException(msg, someError);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
     }
 }

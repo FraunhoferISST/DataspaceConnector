@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.ids.messages.exceptions;
 
-import io.dataspaceconnector.ids.messages.exceptions.MessageRequestException;
+import io.dataspaceconnector.ids.messages.exceptions.MessageBuilderException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MessageRequestExceptionTest {
-    @Test
-    public void constructor_someMsg_holdsMsg() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-
-        /* ACT */
-        final var exception = new MessageRequestException(msg);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-    }
-
+public class MessageBuilderExceptionTest {
     @Test
     public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
@@ -40,7 +28,7 @@ public class MessageRequestExceptionTest {
         final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new MessageRequestException(msg, someError);
+        final var exception = new MessageBuilderException(msg, someError);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

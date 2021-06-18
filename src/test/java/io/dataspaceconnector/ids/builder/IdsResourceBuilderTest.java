@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.ids;
+package io.dataspaceconnector.ids.builder;
 
+import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactDesc;
 import io.dataspaceconnector.model.core.ArtifactFactory;
-import io.dataspaceconnector.model.core.Catalog;
-import io.dataspaceconnector.model.core.CatalogDesc;
-import io.dataspaceconnector.model.core.CatalogFactory;
 import io.dataspaceconnector.model.core.Contract;
 import io.dataspaceconnector.model.core.ContractDesc;
 import io.dataspaceconnector.model.core.ContractFactory;
@@ -38,7 +36,6 @@ import io.dataspaceconnector.model.core.RepresentationDesc;
 import io.dataspaceconnector.model.core.RepresentationFactory;
 import io.dataspaceconnector.model.core.Resource;
 import io.dataspaceconnector.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.ids.builder.IdsContractBuilder;
 import io.dataspaceconnector.ids.builder.IdsDutyBuilder;
 import io.dataspaceconnector.ids.builder.IdsPermissionBuilder;
@@ -63,16 +60,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { CatalogFactory.class, OfferedResourceFactory.class,
-        RepresentationFactory.class, ArtifactFactory.class, ContractFactory.class,
-        ContractRuleFactory.class, IdsCatalogBuilder.class, IdsResourceBuilder.class,
-        IdsRepresentationBuilder.class, IdsArtifactBuilder.class, IdsContractBuilder.class,
-        IdsPermissionBuilder.class, IdsProhibitionBuilder.class, IdsDutyBuilder.class,
-        DeserializationService.class, SerializerProvider.class})
-public class IdsCatalogBuilderTest {
-
-    @Autowired
-    private CatalogFactory catalogFactory;
+@SpringBootTest(classes = {OfferedResourceFactory.class, RepresentationFactory.class,
+        ArtifactFactory.class, ContractFactory.class, ContractRuleFactory.class,
+        IdsResourceBuilder.class, IdsRepresentationBuilder.class, IdsArtifactBuilder.class,
+        IdsContractBuilder.class, IdsPermissionBuilder.class, IdsProhibitionBuilder.class,
+        IdsDutyBuilder.class, DeserializationService.class, SerializerProvider.class})
+public class IdsResourceBuilderTest {
 
     @Autowired
     private OfferedResourceFactory resourceFactory;
@@ -90,43 +83,60 @@ public class IdsCatalogBuilderTest {
     private ContractRuleFactory ruleFactory;
 
     @Autowired
-    private IdsCatalogBuilder idsCatalogBuilder;
+    private IdsResourceBuilder<OfferedResource> idsResourceBuilder;
 
     private final ZonedDateTime date = ZonedDateTime.now(ZoneOffset.UTC);
+
+    private final Language language = Language.EN;
 
     private final String title = "title";
 
     private final String description = "description";
 
+    private final String keyword = "keyword";
+
+    private final URI endpointDocumentation = URI.create("http://endpoint-doc.com");
+
+    private final URI license = URI.create("http://license.com");
+
+    private final URI publisher = URI.create("http://publisher.com");
+
+    private final URI sovereign = URI.create("http://sovereign.com");
+
     @Test
     public void create_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> idsCatalogBuilder.create(null));
+        assertThrows(NullPointerException.class, () -> idsResourceBuilder.create(null));
     }
 
     @Test
-    public void create_defaultDepth_returnCompleteCatalog() {
+    public void create_defaultDepth_returnCompleteResource() {
         /* ARRANGE */
-        final var catalog = getCatalog();
+        final var resource = getOfferedResource();
 
         /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog);
+        final var idsResource = idsResourceBuilder.create(resource);
 
         /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
-        assertNull(idsCatalog.getProperties());
+        assertTrue(idsResource.getId().isAbsolute());
+        assertTrue(idsResource.getId().toString().contains(idsResource.getId().toString()));
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertEquals(publisher, idsResource.getPublisher());
+        assertEquals(sovereign, idsResource.getSovereign());
+        assertEquals(license, idsResource.getStandardLicense());
+        assertEquals(1, idsResource.getDescription().size());
+        assertEquals(description, idsResource.getDescription().get(0).getValue());
+        assertEquals(1, idsResource.getKeyword().size());
+        assertEquals(keyword, idsResource.getKeyword().get(0).getValue());
+        assertEquals(1, idsResource.getTitle().size());
+        assertEquals(title, idsResource.getTitle().get(0).getValue());
+        assertNull(idsResource.getProperties());
 
-        final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(1, offeredResources.size());
-
-        final var representations = offeredResources.get(0).getRepresentation();
+        final var representations = idsResource.getRepresentation();
         assertEquals(1, representations.size());
         assertEquals(1, representations.get(0).getInstance().size());
 
-        final var contracts = offeredResources.get(0).getContractOffer();
+        final var contracts = idsResource.getContractOffer();
         assertEquals(1, contracts.size());
         assertEquals(1, contracts.get(0).getPermission().size());
         assertTrue(contracts.get(0).getProhibition().isEmpty());
@@ -134,31 +144,36 @@ public class IdsCatalogBuilderTest {
     }
 
     @Test
-    public void create_defaultDepthWithAdditional_returnCompleteCatalog() {
+    public void create_defaultDepthWithAdditional_returnCompleteResource() {
         /* ARRANGE */
-        final var catalog = getCatalogWithAdditional();
+        final var resource = getOfferedResourceWithAdditional();
 
         /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog);
+        final var idsResource = idsResourceBuilder.create(resource);
 
         /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
+        assertTrue(idsResource.getId().isAbsolute());
+        assertTrue(idsResource.getId().toString().contains(idsResource.getId().toString()));
 
-        assertNotNull(idsCatalog.getProperties());
-        assertEquals(1, idsCatalog.getProperties().size());
-        assertEquals("value", idsCatalog.getProperties().get("key"));
+        assertEquals(publisher, idsResource.getPublisher());
+        assertEquals(sovereign, idsResource.getSovereign());
+        assertEquals(license, idsResource.getStandardLicense());
+        assertEquals(1, idsResource.getDescription().size());
+        assertEquals(description, idsResource.getDescription().get(0).getValue());
+        assertEquals(1, idsResource.getKeyword().size());
+        assertEquals(keyword, idsResource.getKeyword().get(0).getValue());
+        assertEquals(1, idsResource.getTitle().size());
+        assertEquals(title, idsResource.getTitle().get(0).getValue());
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertNotNull(idsResource.getProperties());
+        assertEquals(1, idsResource.getProperties().size());
+        assertEquals("value", idsResource.getProperties().get("key"));
 
-        final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(1, offeredResources.size());
-
-        final var representations = offeredResources.get(0).getRepresentation();
+        final var representations = idsResource.getRepresentation();
         assertEquals(1, representations.size());
         assertEquals(1, representations.get(0).getInstance().size());
 
-        final var contracts = offeredResources.get(0).getContractOffer();
+        final var contracts = idsResource.getContractOffer();
         assertEquals(1, contracts.size());
         assertEquals(1, contracts.get(0).getPermission().size());
         assertTrue(contracts.get(0).getProhibition().isEmpty());
@@ -166,83 +181,57 @@ public class IdsCatalogBuilderTest {
     }
 
     @Test
-    public void create_maxDepth0_returnCatalogWithoutResources() {
+    public void create_maxDepth0_returnNull() {
         /* ARRANGE */
-        final var catalog = getCatalog();
+        final var resource = getOfferedResource();
 
         /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog, 0);
+        final var idsResource = idsResourceBuilder.create(resource, 0);
 
         /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
-        assertNull(idsCatalog.getProperties());
-
-        assertNull(idsCatalog.getRequestedResource());
-        assertNull(idsCatalog.getOfferedResource());
+        assertNull(idsResource);
     }
 
     @Test
-    public void create_maxDepth1_returnCatalogWithoutRepresentationsAndContracts() {
+    public void create_maxDepth1_returnNull() {
         /* ARRANGE */
-        final var catalog = getCatalog();
+        final var resource = getOfferedResource();
 
         /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog, 1);
+        final var idsResource = idsResourceBuilder.create(resource, 1);
 
         /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
-        assertNull(idsCatalog.getProperties());
-
-        assertNull(idsCatalog.getRequestedResource());
-
-        final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(0, offeredResources.size());
+        assertNull(idsResource);
     }
 
     @Test
-    public void create_maxDepth2_returnCatalogWithoutResources() {
+    public void create_maxDepth5_returnCompleteResource() {
         /* ARRANGE */
-        final var catalog = getCatalog();
+        final var resource = getOfferedResource();
 
         /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog, 2);
+        final var idsResource = idsResourceBuilder.create(resource, 5);
 
         /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
-        assertNull(idsCatalog.getProperties());
+        assertTrue(idsResource.getId().isAbsolute());
+        assertTrue(idsResource.getId().toString().contains(idsResource.getId().toString()));
 
-        assertNull(idsCatalog.getRequestedResource());
+        assertEquals(publisher, idsResource.getPublisher());
+        assertEquals(sovereign, idsResource.getSovereign());
+        assertEquals(license, idsResource.getStandardLicense());
+        assertEquals(1, idsResource.getDescription().size());
+        assertEquals(description, idsResource.getDescription().get(0).getValue());
+        assertEquals(1, idsResource.getKeyword().size());
+        assertEquals(keyword, idsResource.getKeyword().get(0).getValue());
+        assertEquals(1, idsResource.getTitle().size());
+        assertEquals(title, idsResource.getTitle().get(0).getValue());
+        assertNull(idsResource.getProperties());
 
-        final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(0, offeredResources.size());
-    }
-
-    @Test
-    public void create_maxDepth5_returnCompleteCatalog() {
-        /* ARRANGE */
-        final var catalog = getCatalog();
-
-        /* ACT */
-        final var idsCatalog = idsCatalogBuilder.create(catalog, 5);
-
-        /* ASSERT */
-        assertTrue(idsCatalog.getId().isAbsolute());
-        assertTrue(idsCatalog.getId().toString().contains(idsCatalog.getId().toString()));
-        assertNull(idsCatalog.getProperties());
-
-        assertNull(idsCatalog.getRequestedResource());
-
-        final var offeredResources = idsCatalog.getOfferedResource();
-        assertEquals(1, offeredResources.size());
-
-        final var representations = offeredResources.get(0).getRepresentation();
+        final var representations = idsResource.getRepresentation();
         assertEquals(1, representations.size());
         assertEquals(1, representations.get(0).getInstance().size());
 
-        final var contracts = offeredResources.get(0).getContractOffer();
+        final var contracts = idsResource.getContractOffer();
         assertEquals(1, contracts.size());
         assertEquals(1, contracts.get(0).getPermission().size());
         assertTrue(contracts.get(0).getProhibition().isEmpty());
@@ -276,7 +265,7 @@ public class IdsCatalogBuilderTest {
     private Representation getRepresentation() {
         final var representationDesc = new RepresentationDesc();
         representationDesc.setTitle(title);
-        representationDesc.setLanguage("EN");
+        representationDesc.setLanguage(language.name());
         representationDesc.setMediaType("plain/text");
         representationDesc.setStandard("http://standard.com");
 
@@ -369,14 +358,14 @@ public class IdsCatalogBuilderTest {
     @SneakyThrows
     private OfferedResource getOfferedResource() {
         final var resourceDesc = new OfferedResourceDesc();
-        resourceDesc.setLanguage("EN");
+        resourceDesc.setLanguage(language.name());
         resourceDesc.setTitle(title);
         resourceDesc.setDescription(description);
-        resourceDesc.setKeywords(Collections.singletonList("keyword"));
-        resourceDesc.setEndpointDocumentation(URI.create("http://endpoint-doc.com"));
-        resourceDesc.setLicence(URI.create("http://license.com"));
-        resourceDesc.setPublisher(URI.create("http://publisher.com"));
-        resourceDesc.setSovereign(URI.create("http://sovereign.com"));
+        resourceDesc.setKeywords(Collections.singletonList(keyword));
+        resourceDesc.setEndpointDocumentation(endpointDocumentation);
+        resourceDesc.setLicence(license);
+        resourceDesc.setPublisher(publisher);
+        resourceDesc.setSovereign(sovereign);
 
         final var resource = resourceFactory.create(resourceDesc);
 
@@ -404,42 +393,16 @@ public class IdsCatalogBuilderTest {
     }
 
     @SneakyThrows
-    private Catalog getCatalog() {
-        final var catalogDesc = new CatalogDesc();
-        catalogDesc.setTitle(title);
-        catalogDesc.setDescription(description);
-        final var catalog = catalogFactory.create(catalogDesc);
-
-        final var idField = AbstractEntity.class.getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.randomUUID());
-
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
-        creationDateField.setAccessible(true);
-        creationDateField.set(catalog, date);
-
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
-        modificationDateField.setAccessible(true);
-        modificationDateField.set(catalog, date);
-
-        final var offeredResourcesField = Catalog.class.getDeclaredField("offeredResources");
-        offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));;
-
-        return catalog;
-    }
-
-    @SneakyThrows
-    private Catalog getCatalogWithAdditional() {
-        final var catalog = getCatalog();
+    private OfferedResource getOfferedResourceWithAdditional() {
+        final var resource = getOfferedResource();
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
         final var additionalField = AbstractEntity.class.getDeclaredField("additional");
         additionalField.setAccessible(true);
-        additionalField.set(catalog, additional);
+        additionalField.set(resource, additional);
 
-        return catalog;
+        return resource;
     }
 
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.ids;
+package io.dataspaceconnector.ids.builder;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;

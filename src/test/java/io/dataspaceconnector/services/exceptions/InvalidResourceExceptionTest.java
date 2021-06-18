@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.services.exceptions;
 
-import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
+import io.dataspaceconnector.services.exceptions.InvalidResourceException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class VersionNotSupportedExceptionTest {
+public class InvalidResourceExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new VersionNotSupportedException(msg);
+        final var exception = new InvalidResourceException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());

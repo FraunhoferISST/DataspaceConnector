@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.ids;
+package io.dataspaceconnector.ids.builder;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;

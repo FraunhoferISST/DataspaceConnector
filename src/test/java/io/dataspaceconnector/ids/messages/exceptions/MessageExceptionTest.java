@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.ids.messages.exceptions;
 
-import io.dataspaceconnector.ids.messages.exceptions.PolicyExecutionException;
+import io.dataspaceconnector.ids.messages.exceptions.MessageException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PolicyExecutionExceptionTest {
+public class MessageExceptionTest {
     @Test
-    public void constructor_someMsg_holdsMsg() {
+    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
         final var msg = "Some msg";
+        final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var exception = new PolicyExecutionException(msg);
+        final var exception = new MessageException(msg, someError);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
+        assertEquals(someError, exception.getCause());
     }
 }

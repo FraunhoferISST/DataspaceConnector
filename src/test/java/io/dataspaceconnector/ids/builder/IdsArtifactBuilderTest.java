@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.ids;
+package io.dataspaceconnector.ids.builder;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
+import io.dataspaceconnector.ids.util.IdsUtils;
 import io.dataspaceconnector.model.core.AbstractEntity;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactDesc;
 import io.dataspaceconnector.model.core.ArtifactFactory;
-import io.dataspaceconnector.ids.builder.IdsArtifactBuilder;
-import io.dataspaceconnector.ids.util.IdsUtils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
