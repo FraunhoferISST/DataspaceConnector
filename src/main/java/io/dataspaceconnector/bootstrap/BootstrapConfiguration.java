@@ -145,11 +145,12 @@ public class BootstrapConfiguration {
 
         // register content of all found catalog files
         final var properties = loadProperties();
-        final Map<URI, Resource> idsResources = new ConcurrentHashMap<>();
+        final var idsResources = new ConcurrentHashMap<URI, Resource>();
         if (!processIdsFiles(loadBootstrapData(), properties, idsResources)) {
             if (log.isWarnEnabled()) {
                 log.warn("An error occurred while bootstrapping IDS catalogs.");
             }
+
             SpringApplication.exit(context, () -> -1);
         }
 

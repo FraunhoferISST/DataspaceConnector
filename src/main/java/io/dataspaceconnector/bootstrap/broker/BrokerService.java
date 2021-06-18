@@ -4,7 +4,9 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,9 +24,13 @@ import io.dataspaceconnector.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.apache.commons.fileupload.MultipartStream;
 import org.springframework.stereotype.Service;
 
+/**
+ * Register resources at the broker.
+ */
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -33,61 +39,53 @@ public class BrokerService {
     /**
      * The service for communication with the ids broker.
      */
-    private final @NotNull IDSBrokerService brokerService;
-
+    private final @NotNull IDSBrokerService idsBrokerSvc;
 
     /**
      * Service for deserializing ids entities.
      */
     private final @NotNull DeserializationService deserializationService;
 
+    /**
+     * Register resources at the broker.
+     * @param properties Bootstrap properties.
+     * @param idsResources The ids resources to register.
+     * @return true if all resources could be registered.
+     */
     public boolean registerAtBroker(final Properties properties,
                                      final Map<URI, Resource> idsResources) {
-        final var knownBrokers = new HashSet<String>();
+        final var knownBrokers = new HashSet<URL>();
         // iterate over all registered resources
         for (final var entry : idsResources.entrySet()) {
             final var propertyKey = "broker.register." + entry.getKey().toString();
             if (properties.containsKey(propertyKey)) {
-                final var brokerURL = (String) properties.get(propertyKey);
+                final var brokerURL = toBrokerUrl(properties.getProperty(propertyKey));
+                if (brokerURL.isEmpty()) {
+                    if (log.isErrorEnabled()) {
+                        log.error("Skipping broker '{}'. Not a valid URL.",
+                                  properties.getProperty(propertyKey));
+                    }
+
+                    return false;
+                }
+
+                final var broker = brokerURL.get();
 
                 try {
-                    if (!knownBrokers.contains(brokerURL)) {
-                        knownBrokers.add(brokerURL);
-                        final var response = brokerService.updateSelfDescriptionAtBroker(brokerURL);
-                        if (validateBrokerResponse(response, brokerURL)) {
-                            if (log.isInfoEnabled()) {
-                                log.info("Registered connector at broker '{}'.", brokerURL);
-                            }
-                        } else {
+                    if (!knownBrokers.contains(broker)) {
+                        knownBrokers.add(broker);
+                        if (!registerAtBroker(broker)) {
                             return false;
                         }
                     }
 
-                    final var response = brokerService.updateResourceAtBroker(brokerURL,
-                                                                              entry.getValue());
-                    if (!response.isSuccessful()) {
-                        if (log.isErrorEnabled()) {
-                            log.error("Failed to update resource description for resource '{}'"
-                                      + " at broker '{}'.",
-                                      entry.getValue().getId().toString(), brokerURL);
-                        }
-
+                    if (!updateAtBroker(broker, entry.getKey(), entry.getValue())) {
                         return false;
                     }
-                    if (validateBrokerResponse(response, brokerURL)) {
-                        if (log.isInfoEnabled()) {
-                            log.info("Registered resource with IDS ID '{}' at broker '{}'.",
-                                     entry.getKey().toString(), brokerURL);
-                        }
-                    } else {
-                        return false;
-                    }
-
-                    response.close();
                 } catch (IOException e) {
                     if (log.isErrorEnabled()) {
                         log.error("Could not register resource with IDS id '{}' at the "
-                                  + "broker '{}'.", entry.getKey().toString(), brokerURL, e);
+                                  + "broker '{}'.", entry.getKey().toString(), broker, e);
                     }
 
                     return false;
@@ -98,6 +96,56 @@ public class BrokerService {
         return true;
     }
 
+    private boolean registerAtBroker(final URL broker) throws IOException {
+        final var response = idsBrokerSvc.updateSelfDescriptionAtBroker(broker.toString());
+        if (validateBrokerResponse(response, broker)) {
+            if (log.isInfoEnabled()) {
+                log.info("Registered connector at broker '{}'.", broker);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean updateAtBroker(final URL broker, final URI key, final Resource value)
+            throws IOException {
+        final var response = idsBrokerSvc.updateResourceAtBroker(broker.toString(), value);
+        if (!response.isSuccessful()) {
+            if (log.isErrorEnabled()) {
+                log.error("Failed to update resource description for resource '{}'"
+                          + " at broker '{}'.", value.getId().toString(), broker);
+            }
+
+            return false;
+        }
+
+        if (validateBrokerResponse(response, broker)) {
+            if (log.isInfoEnabled()) {
+                log.info("Registered resource with IDS ID '{}' at broker '{}'.",
+                         key.toString(), broker);
+            }
+        } else {
+            return false;
+        }
+
+        response.close();
+        return true;
+    }
+
+
+    private Optional<URL> toBrokerUrl(final String broker) {
+        try {
+            return Optional.of(new URL(broker));
+        } catch (MalformedURLException ignored) {
+            // Nothing to do here.
+        }
+
+        return Optional.empty();
+    }
+
+
     /**
      * Check if a broker request was successfully processed by a broker.
      *
@@ -106,7 +154,7 @@ public class BrokerService {
      * @return true if the broker successfully processed the message, false otherwise
      * @throws IOException if the response's body cannot be extracted as string.
      */
-    private boolean validateBrokerResponse(final Response response, final String brokerURL)
+    private boolean validateBrokerResponse(final Response response, final URL brokerURL)
             throws IOException {
         if (!response.isSuccessful()) {
             if (log.isErrorEnabled()) {
@@ -117,12 +165,7 @@ public class BrokerService {
         }
 
         final var responseBody = response.body();
-        if (responseBody == null) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not parse response after sending a request "
-                          + "to a broker.");
-            }
-
+        if (!validateResponseBody(responseBody)) {
             return false;
         }
 
@@ -137,7 +180,7 @@ public class BrokerService {
             return false;
         }
 
-        if (!(responseMessage.get() instanceof MessageProcessedNotificationMessage )) {
+        if (!(responseMessage.get() instanceof MessageProcessedNotificationMessage)) {
             if (responseMessage.get() instanceof RejectionMessage) {
                 final var payload = getMultipartPart(body, "payload");
                 if (log.isErrorEnabled() && payload.isPresent()) {
@@ -156,6 +199,19 @@ public class BrokerService {
                               + "connector at the broker.");
                 }
             }
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean validateResponseBody(final ResponseBody body) {
+        if (body == null) {
+            if (log.isErrorEnabled()) {
+                log.error("Could not parse response after sending a request "
+                          + "to a broker.");
+            }
+
             return false;
         }
 
