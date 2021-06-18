@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
 
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 
 /**
  * Performs an artifact request for an artifact.

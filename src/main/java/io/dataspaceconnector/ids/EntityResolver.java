@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.ids.builder.IdsArtifactBuilder;

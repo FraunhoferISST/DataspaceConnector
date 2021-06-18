@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.common;
+package io.dataspaceconnector.common.usagecontrol;
 
-import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ErrorMessagesTest {
+class PolicyPatternTest {
 
     @Test
-    void toString_nothing_correctMsg() {
+    public void toString_nothing_correctMsg() {
         /* ARRANGE */
-        final var input = ErrorMessages.DESC_NULL;
+        final var input = PolicyPattern.PROVIDE_ACCESS;
 
         /* ACT */
         final var msg = input.toString();
 
         /* ASSERT */
-        assertEquals("The description parameter may not be null.", msg);
+        assertEquals("PROVIDE_ACCESS", msg);
     }
+
 }

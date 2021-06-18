@@ -13,24 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.common.exceptions.messages;
 
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
-import io.dataspaceconnector.common.exceptions.RdfBuilderException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RdfBuilderExceptionTest {
+class ErrorMessagesTest {
+
     @Test
-    public void constructor_someMsg_holdsMsg() {
+    void toString_nothing_correctMsg() {
         /* ARRANGE */
-        final var msg = ErrorMessages.CONTRACT_NULL;
+        final var input = ErrorMessages.DESC_NULL;
 
         /* ACT */
-        final var exception = new RdfBuilderException(msg);
+        final var msg = input.toString();
 
         /* ASSERT */
-        assertEquals(msg.toString(), exception.getMessage());
+        assertEquals("The description parameter may not be null.", msg);
     }
 }

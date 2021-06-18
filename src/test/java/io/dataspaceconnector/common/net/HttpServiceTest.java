@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services;
+package io.dataspaceconnector.common.net;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,8 +21,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import io.dataspaceconnector.common.QueryInput;
-import io.dataspaceconnector.services.resources.net.HttpService;
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.net.HttpService;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import okhttp3.MediaType;

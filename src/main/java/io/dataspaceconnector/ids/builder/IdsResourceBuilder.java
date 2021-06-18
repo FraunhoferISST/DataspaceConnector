@@ -15,19 +15,20 @@
  */
 package io.dataspaceconnector.ids.builder;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.common.BasePath;
 import io.dataspaceconnector.ids.builder.core.base.AbstractIdsBuilder;
-import io.dataspaceconnector.model.core.Resource;
 import io.dataspaceconnector.ids.util.IdsUtils;
+import io.dataspaceconnector.model.core.Resource;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Converts DSC resource to ids resource.
@@ -51,19 +52,18 @@ public final class IdsResourceBuilder<T extends Resource>
 
     @Override
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
-                                                             final URI baseUri,
                                                              final int currentDepth,
                                                              final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var representations =
-                create(repBuilder, resource.getRepresentations(), baseUri, currentDepth,
+                create(repBuilder, resource.getRepresentations(), currentDepth,
                         maxDepth);
         final var contracts =
-                create(contractBuilder, resource.getContracts(), baseUri, currentDepth, maxDepth);
+                create(contractBuilder, resource.getContracts(), currentDepth, maxDepth);
 
         // Prepare resource attributes.
-        final var selfLink = getAbsoluteSelfLink(resource, baseUri);
+        final var selfLink = URI.create(BasePath.OFFERS + "/" + resource.getId());
         final var created = IdsUtils.getGregorianOf(resource.getCreationDate());
         final var modified = IdsUtils.getGregorianOf(resource.getModificationDate());
         final var description = resource.getDescription();

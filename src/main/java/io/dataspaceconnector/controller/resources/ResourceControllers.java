@@ -39,7 +39,7 @@ import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.model.core.ContractRuleDesc;
 import io.dataspaceconnector.model.core.OfferedResource;
 import io.dataspaceconnector.model.core.OfferedResourceDesc;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.model.core.Representation;
 import io.dataspaceconnector.model.core.RepresentationDesc;
 import io.dataspaceconnector.model.core.RequestedResource;

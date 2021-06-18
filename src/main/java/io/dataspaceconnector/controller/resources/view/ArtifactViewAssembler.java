@@ -20,7 +20,7 @@ import java.util.UUID;
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.ArtifactController;
 import io.dataspaceconnector.model.core.Artifact;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;

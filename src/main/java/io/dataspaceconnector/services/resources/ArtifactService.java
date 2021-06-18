@@ -15,24 +15,32 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import io.dataspaceconnector.common.net.QueryInput;
+import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.common.exceptions.UnreachableLineException;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.net.HttpService;
+import io.dataspaceconnector.common.usagecontrol.ArtifactRetriever;
+import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
+import io.dataspaceconnector.common.usagecontrol.VerificationResult;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactDesc;
 import io.dataspaceconnector.model.core.ArtifactFactory;
 import io.dataspaceconnector.model.core.ArtifactImpl;
 import io.dataspaceconnector.model.core.LocalData;
-import io.dataspaceconnector.common.QueryInput;
 import io.dataspaceconnector.model.core.RemoteData;
 import io.dataspaceconnector.repositories.ArtifactRepository;
 import io.dataspaceconnector.repositories.DataRepository;
-import io.dataspaceconnector.common.usagecontrol.ArtifactRetriever;
-import io.dataspaceconnector.services.resources.net.HttpService;
-import io.dataspaceconnector.common.usagecontrol.PolicyVerifier;
-import io.dataspaceconnector.common.usagecontrol.VerificationResult;
-import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
-import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.AccessLevel;
@@ -43,14 +51,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Handles the basic logic for artifacts.

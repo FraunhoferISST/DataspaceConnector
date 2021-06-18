@@ -13,36 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.common.exceptions;
 
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
-import io.dataspaceconnector.common.exceptions.UnreachableLineException;
+import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UnreachableLineExceptionTest {
+public class PolicyRestrictionExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
-        /* ARRANGE */
-        final var msg = "Some msg";
-
-        /* ACT */
-        final var exception = new UnreachableLineException(msg);
-
-        /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-    }
-
-    @Test
-    public void constructor_someErrorMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = ErrorMessages.CONTRACT_NULL;
 
         /* ACT */
-        final var exception = new UnreachableLineException(msg);
+        final var exception = new PolicyRestrictionException(msg);
 
         /* ASSERT */
         assertEquals(msg.toString(), exception.getMessage());
+    }
+
+    @Test
+    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
+        /* ARRANGE */
+        final var msg = ErrorMessages.CONTRACT_NULL;
+        final var someError = new RuntimeException("WELL?");
+
+        /* ACT */
+        final var exception = new PolicyRestrictionException(msg, someError);
+
+        /* ASSERT */
+        assertEquals(msg.toString(), exception.getMessage());
+        assertEquals(someError, exception.getCause());
     }
 }

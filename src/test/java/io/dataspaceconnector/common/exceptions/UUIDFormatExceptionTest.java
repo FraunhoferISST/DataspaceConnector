@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.usagecontrol;
+package io.dataspaceconnector.common.exceptions;
 
-import io.dataspaceconnector.common.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.common.exceptions.UUIDFormatException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PolicyPatternTest {
-
+public class UUIDFormatExceptionTest {
     @Test
-    public void toString_nothing_correctMsg() {
+    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
         /* ARRANGE */
-        final var input = PolicyPattern.PROVIDE_ACCESS;
+        final var msg = "Some msg";
+        final var someError = new RuntimeException("WELL?");
 
         /* ACT */
-        final var msg = input.toString();
+        final var exception = new UUIDFormatException(msg, someError);
 
         /* ASSERT */
-        assertEquals("PROVIDE_ACCESS", msg);
+        assertEquals(msg, exception.getMessage());
+        assertEquals(someError, exception.getCause());
     }
-
 }

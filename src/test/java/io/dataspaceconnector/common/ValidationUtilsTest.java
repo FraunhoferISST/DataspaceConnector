@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.controller.resources.util.ValidationUtils;
 import org.junit.jupiter.api.Test;
 

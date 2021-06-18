@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.resources.net;
+package io.dataspaceconnector.common.net;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,7 +24,6 @@ import java.util.Map;
 
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.Utils;
-import io.dataspaceconnector.common.QueryInput;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
 import lombok.Data;

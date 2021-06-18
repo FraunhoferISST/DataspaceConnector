@@ -27,7 +27,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.ids.messages.exceptions.MessageException;
 import io.dataspaceconnector.ids.messages.exceptions.MessageResponseException;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.ids.messages.dto.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.Utils;

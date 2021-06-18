@@ -25,12 +25,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.core.AbstractEntity;
-import io.dataspaceconnector.controller.resources.view.SelfLinkHelper;
 import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.model.core.AbstractEntity;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * The base class for constructing an ids object from DSC objects.
@@ -72,12 +70,12 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @return The ids object.
      */
     public X create(final T entity, final int maxDepth) throws ConstraintViolationException {
-        return create(entity, getBaseUri(), 0, maxDepth);
+        return create(entity, 0, maxDepth);
     }
 
-    private X create(final T entity, final URI baseUri, final int currentDepth,
+    private X create(final T entity, final int currentDepth,
                      final int maxDepth) throws ConstraintViolationException {
-        final var resource = createInternal(entity, baseUri, currentDepth, maxDepth);
+        final var resource = createInternal(entity, currentDepth, maxDepth);
         if (resource != null) {
             return addAdditionals(resource, entity.getAdditional());
         } else {
@@ -90,36 +88,12 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * additional field will be set automatically.
      *
      * @param entity       The entity to be converted.
-     * @param baseUri      The hostname of the system.
      * @param currentDepth The current distance to the original call.
      * @param maxDepth     The max depth to the original call.
      * @return The ids object.
      */
-    protected abstract X createInternal(T entity, URI baseUri, int currentDepth, int maxDepth)
+    protected abstract X createInternal(T entity, int currentDepth, int maxDepth)
             throws ConstraintViolationException;
-
-    private URI getBaseUri() {
-        return URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
-    }
-
-    /**
-     * Use this function to construct the absolute path to this entity.
-     *
-     * @param entity  The entity.
-     * @param baseUri The hostname.
-     * @param <K>     The entity type.
-     * @return The absolute path to this entity.
-     */
-    protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity,
-                                                                 final URI baseUri) {
-        var uri = SelfLinkHelper.getSelfLink(entity);
-
-        if (!uri.isAbsolute()) {
-            uri = URI.create(baseUri.toString() + uri);
-        }
-
-        return uri;
-    }
 
     private static boolean shouldGenerate(final int currentDepth, final int maxDepth) {
         return currentDepth <= maxDepth || maxDepth < 0;
@@ -131,7 +105,6 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *
      * @param builder      The builder applied to all objects.
      * @param entityList   The entities that need to be converted.
-     * @param baseUri      The hostname of the system.
      * @param currentDepth The current distance to the original call.
      * @param maxDepth     The distance to the original call.
      * @param <V>          The type of the DSC entity.
@@ -139,13 +112,13 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @return The converted ids objects. Null if the distance is to far to the original call.
      */
     protected <V extends AbstractEntity, W> Optional<List<W>> create(
-            final AbstractIdsBuilder<V, W> builder, final List<V> entityList, final URI baseUri,
+            final AbstractIdsBuilder<V, W> builder, final List<V> entityList,
             final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;
 
         return !shouldGenerate(nextDepth, maxDepth) ? Optional.empty()
                 : Optional.of(Utils.toStream(entityList)
-                .map(r -> builder.create(r, baseUri, nextDepth, maxDepth))
+                .map(r -> builder.create(r, nextDepth, maxDepth))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
     }

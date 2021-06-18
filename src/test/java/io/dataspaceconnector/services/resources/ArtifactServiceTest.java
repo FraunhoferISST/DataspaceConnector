@@ -29,7 +29,7 @@
 //import io.dataspaceconnector.model.core.ArtifactImpl;
 //import io.dataspaceconnector.model.core.Data;
 //import io.dataspaceconnector.model.core.LocalData;
-//import io.dataspaceconnector.common.QueryInput;
+//import io.dataspaceconnector.common.net.QueryInput;
 //import io.dataspaceconnector.model.core.RemoteData;
 //import io.dataspaceconnector.repositories.ArtifactRepository;
 //import io.dataspaceconnector.repositories.DataRepository;

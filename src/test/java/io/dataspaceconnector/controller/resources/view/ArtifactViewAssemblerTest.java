@@ -26,7 +26,7 @@ import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactDesc;
 import io.dataspaceconnector.model.core.ArtifactFactory;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -24,7 +24,7 @@ import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.ids.messages.ArtifactRequestService;
 import io.dataspaceconnector.ids.messages.util.MessageUtils;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.usagecontrol.ArtifactRetriever;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import lombok.NonNull;

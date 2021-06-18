@@ -20,7 +20,7 @@
 //
 //import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
 //import io.dataspaceconnector.model.core.Artifact;
-//import io.dataspaceconnector.common.QueryInput;
+//import io.dataspaceconnector.common.net.QueryInput;
 //import io.dataspaceconnector.common.usagecontrol.ArtifactRetriever;
 //import io.dataspaceconnector.ids.BlockingArtifactReceiver;
 //import io.dataspaceconnector.services.resources.ArtifactService;

@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.common.exceptions;
 
-import io.dataspaceconnector.common.exceptions.UUIDFormatException;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.RdfBuilderException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class UUIDFormatExceptionTest {
+public class RdfBuilderExceptionTest {
     @Test
-    public void constructor_someMsgAndsSomeException_holdsMsgAndException() {
+    public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
-        final var msg = "Some msg";
-        final var someError = new RuntimeException("WELL?");
+        final var msg = ErrorMessages.CONTRACT_NULL;
 
         /* ACT */
-        final var exception = new UUIDFormatException(msg, someError);
+        final var exception = new RdfBuilderException(msg);
 
         /* ASSERT */
-        assertEquals(msg, exception.getMessage());
-        assertEquals(someError, exception.getCause());
+        assertEquals(msg.toString(), exception.getMessage());
     }
 }

@@ -13,23 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.exceptions;
+package io.dataspaceconnector.common.exceptions;
 
-import io.dataspaceconnector.common.exceptions.UUIDCreationException;
+import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
+import io.dataspaceconnector.common.exceptions.UnreachableLineException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UUIDCreationExceptionTest {
+public class UnreachableLineExceptionTest {
     @Test
     public void constructor_someMsg_holdsMsg() {
         /* ARRANGE */
         final var msg = "Some msg";
 
         /* ACT */
-        final var exception = new UUIDCreationException(msg);
+        final var exception = new UnreachableLineException(msg);
 
         /* ASSERT */
         assertEquals(msg, exception.getMessage());
+    }
+
+    @Test
+    public void constructor_someErrorMsg_holdsMsg() {
+        /* ARRANGE */
+        final var msg = ErrorMessages.CONTRACT_NULL;
+
+        /* ACT */
+        final var exception = new UnreachableLineException(msg);
+
+        /* ASSERT */
+        assertEquals(msg.toString(), exception.getMessage());
     }
 }

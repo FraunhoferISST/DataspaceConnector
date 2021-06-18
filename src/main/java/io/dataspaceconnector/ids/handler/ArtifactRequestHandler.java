@@ -30,7 +30,7 @@ import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
 import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.common.QueryInput;
+import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.ids.messages.dto.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.ids.EntityResolver;
 import io.dataspaceconnector.ids.messages.MessageResponseService;
