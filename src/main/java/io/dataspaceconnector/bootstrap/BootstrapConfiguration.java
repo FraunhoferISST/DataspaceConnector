@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -45,7 +44,6 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
@@ -65,7 +63,6 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -231,10 +228,9 @@ public class BootstrapConfiguration {
                 final var brokerURL = (String) properties.get(propertyKey);
 
                 try {
-                    Response response;
                     if (!knownBrokers.contains(brokerURL)) {
                         knownBrokers.add(brokerURL);
-                        response = brokerService.updateSelfDescriptionAtBroker(brokerURL);
+                        final var response = brokerService.updateSelfDescriptionAtBroker(brokerURL);
                         if (validateBrokerResponse(response, brokerURL)) {
                             if (log.isInfoEnabled()) {
                                 log.info("Registered connector at broker '{}'.", brokerURL);
@@ -244,7 +240,8 @@ public class BootstrapConfiguration {
                         }
                     }
 
-                    response = brokerService.updateResourceAtBroker(brokerURL, entry.getValue());
+                    final var response = brokerService.updateResourceAtBroker(brokerURL,
+                                                                              entry.getValue());
                     if (!response.isSuccessful()) {
                         if (log.isErrorEnabled()) {
                             log.error("Failed to update resource description for resource '{}'"
@@ -262,6 +259,8 @@ public class BootstrapConfiguration {
                     } else {
                         return false;
                     }
+
+                    response.close();
                 } catch (IOException e) {
                     if (log.isErrorEnabled()) {
                         log.error("Could not register resource with IDS id '{}' at the "
@@ -428,7 +427,7 @@ public class BootstrapConfiguration {
      */
     private boolean processIdsFiles(final List<File> jsonFiles, final Properties properties,
                                     final Map<URI, Resource> idsResources) {
-        final Set<ResourceCatalog> catalogs = new HashSet<>();
+        final var catalogs = new HashSet<ResourceCatalog>();
 
         // deserialize all files
         for (final var jsonFile : jsonFiles) {
@@ -447,14 +446,13 @@ public class BootstrapConfiguration {
 
         final var template = new TransactionTemplate(transactionManager);
         // iterate over all deserialized catalogs
-        for (final ResourceCatalog catalog : catalogs) {
+        for (final var catalog : catalogs) {
             // check for duplicates
             // get all known catalogs for every bootstrap
             // processor to detect duplicated bootstrap files
-            final Boolean duplicate = template.execute(transactionStatus -> {
-                Page<Catalog> knownCatalogs = catalogService.getAll(Pageable.unpaged());
-                boolean catalogDuplicate = false;
-                for (Catalog knownCatalog : knownCatalogs) {
+            final var duplicate = template.execute(transactionStatus -> {
+                var catalogDuplicate = false;
+                for (final var knownCatalog : catalogService.getAll(Pageable.unpaged())) {
                     Hibernate.initialize(knownCatalog.getAdditional());
                     if (catalog.getId()
                             .equals(knownCatalog.getBootstrapId())) {
