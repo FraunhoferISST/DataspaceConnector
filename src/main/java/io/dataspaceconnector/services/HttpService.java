@@ -187,7 +187,7 @@ public class HttpService {
     private URL buildTargetUrl(final URL target, final String optional) {
         final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
         if (optional != null) {
-            urlBuilder.addEncodedPathSegment(optional);
+            urlBuilder.addPathSegments(optional.startsWith("/") ? optional.substring(1) : optional);
         }
 
         return urlBuilder.build().url();
