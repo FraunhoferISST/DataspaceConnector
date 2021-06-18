@@ -1,4 +1,8 @@
 {
+    "@context" : {
+        "ids" : "https://w3id.org/idsa/core/",
+        "idsc" : "https://w3id.org/idsa/code/"
+    },
   "@type": "ids:ResourceCatalog",
   "@id": "https://w3id.org/idsa/autogen/resourceCatalog/12548e90-c094-424a-a207-6c736f817492",
   "ids:offeredResource": [
