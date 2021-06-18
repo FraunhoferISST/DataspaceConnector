@@ -7,19 +7,15 @@
       "@id": "https://w3id.org/idsa/autogen/resource/a7d8c819-c7f7-49a1-9e0e-759fbd077a97",
       "ids:language": [
         {
-          "properties": null,
           "@id": "idsc:EN"
         }
       ],
-      "ids:contentType": null,
-      "ids:variant": null,
       "ids:description": [
         {
           "@value": "This is an example resource",
           "@language": "EN"
         }
       ],
-      "ids:created": null,
       "ids:version": "1",
       "ids:title": [
         {
@@ -29,7 +25,6 @@
       ],
       "ids:publisher": "https://example.com",
       "ids:sovereign": "https://example.com",
-      "ids:theme": null,
       "ids:representation": [
         {
           "@type": "ids:Representation",
@@ -55,7 +50,6 @@
             }
           ],
           "ids:language": {
-            "properties": null,
             "@id": "idsc:EN"
           },
           "ids:created": "2016-10-03T15:10:40.000Z",
@@ -73,25 +67,16 @@
         {
           "@type": "ids:ConnectorEndpoint",
           "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/c02d9dd2-9ab6-41d6-80f1-1844d64ba6ff",
-          "ids:path": null,
-          "ids:endpointInformation": null,
           "ids:accessURL": "https://example.com"
         }
       ],
-      "ids:temporalResolution": null,
-      "ids:temporalCoverage": null,
-      "ids:accrualPeriodicity": null,
-      "ids:defaultRepresentation": null,
-      "ids:shapesGraph": null,
-      "ids:contentStandard": null,
       "ids:standardLicense": "https://example.com",
-      "ids:spatialCoverage": null,
-      "ids:customLicense": null,
-      "ids:resourcePart": null,
-      "ids:sample": null,
-      "ids:contentPart": null,
       "ids:contractOffer": [
         {
+          "@context" : {
+              "ids" : "https://w3id.org/idsa/core/",
+              "idsc" : "https://w3id.org/idsa/code/"
+          },
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/57c89dfa-1dc6-430c-a6ba-9b8d9af2d8b1",
           "ids:permission": [
@@ -128,27 +113,22 @@
           "@value": "DATA",
           "@language": "EN"
         }
-      ],
-      "ids:modified": null
+      ]
     },
     {
       "@type": "ids:Resource",
       "@id": "https://w3id.org/idsa/autogen/resource/5ef66d83-d69f-4c3d-9b75-ae0f569576e8",
       "ids:language": [
         {
-          "properties": null,
           "@id": "idsc:EN"
         }
       ],
-      "ids:contentType": null,
-      "ids:variant": null,
       "ids:description": [
         {
           "@value": "This is an example resource",
           "@language": "EN"
         }
       ],
-      "ids:created": null,
       "ids:version": "1",
       "ids:title": [
         {
@@ -158,7 +138,6 @@
       ],
       "ids:publisher": "https://example.com",
       "ids:sovereign": "https://example.com",
-      "ids:theme": null,
       "ids:representation": [
         {
           "@type": "ids:Representation",
@@ -184,7 +163,6 @@
             }
           ],
           "ids:language": {
-            "properties": null,
             "@id": "idsc:EN"
           },
           "ids:created": "2016-10-03T15:10:40.000Z",
@@ -202,25 +180,16 @@
         {
           "@type": "ids:ConnectorEndpoint",
           "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/755d877e-94aa-49e0-90d8-bec2a5186b48",
-          "ids:path": null,
-          "ids:endpointInformation": null,
           "ids:accessURL": "https://example.com"
         }
       ],
-      "ids:temporalResolution": null,
-      "ids:temporalCoverage": null,
-      "ids:accrualPeriodicity": null,
-      "ids:defaultRepresentation": null,
-      "ids:shapesGraph": null,
-      "ids:contentStandard": null,
       "ids:standardLicense": "https://example.com",
-      "ids:spatialCoverage": null,
-      "ids:customLicense": null,
-      "ids:resourcePart": null,
-      "ids:sample": null,
-      "ids:contentPart": null,
       "ids:contractOffer": [
         {
+          "@context" : {
+              "ids" : "https://w3id.org/idsa/core/",
+              "idsc" : "https://w3id.org/idsa/code/"
+          },
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/d2232122-776c-4a5d-b2a9-c3c69fe30e83",
           "ids:permission": [
@@ -257,10 +226,7 @@
           "@value": "DOCUMENT",
           "@language": "EN"
         }
-      ],
-      "ids:modified": null
+      ]
     }
-  ],
-  "ids:requestedResource": [
   ]
 }

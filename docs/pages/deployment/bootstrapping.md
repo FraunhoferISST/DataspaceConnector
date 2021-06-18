@@ -15,7 +15,7 @@ Load resources during startup and register them at an IDS Broker.
 
 ---
 
-In this section, the registration of resources during the startup will be described.
+In this section, the registration of resources during the startup is described.
 
 ### Registering Elements at the Connector
 
@@ -24,17 +24,17 @@ During the startup of the Dataspace Connector, the bootstrapping path, which is 
 includes all subdirectories found in the base path.
 
 Each `jsonld`-file contains the JSON-LD representation of an IDS catalog. These representations will
-be loaded and registered at the connector. This includes all elements which are part of the catalog,
+be loaded and registered at the connector. This includes all elements that are part of the catalog,
 except requested resources. The IDs used for the IDS catalog are used to prevent duplicates among
 multiple startups.
 
-The `bootstrap.properties` files contain additional data that is not present in the IDS Infomodel
-representations. This includes credentials, URLs, and values for artifacts as well as information on
-which resources should be registered at IDS Brokers. If multiple `bootstrap.properties` files are
-found, all of them will be loaded and merged. If there are collisions, these will be logged and the
-first found value will be kept.
+The `bootstrap.properties` files contain additional data that is not present in the IDS Information
+Model representations. This includes credentials, URLs, and values for artifacts as well as
+information on which resources should be registered at IDS Brokers. If multiple
+`bootstrap.properties` files are found, all of them will be loaded and merged. If there are
+collisions, these will be logged and the first found value will be kept.
 
-An example for a valid catalog that can be used for bootstrapping can be found below. Corresponding
+An example for a valid catalog, that can be used for bootstrapping, is shown below. Corresponding
 sample files are provided at `test/resources/bootstrap`.
 
 ```json
@@ -154,14 +154,14 @@ artifact.value.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-0
 broker.register.https\://w3id.org/idsa/autogen/resource/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=https://broker.ids.isst.fraunhofer.de/infrastructure
 ```
 
-### Registering Elements at the Broker
+### Registering Elements at the IDS Broker
 Each resource that has been registered during the bootstrapping process can be registered at an
 IDS Broker. It is possible to register different resources at different brokers, but each resource
 can only be registered at one broker once. The registration of a resource at a broker implicitly
 registers the connector itself at the broker.
 
-In order to register a resource at the broker, an entry with the following structure must be placed in
-a `bootstrap.properties` file:
+In order to register a resource at the broker, an entry with the following structure must be placed
+in a `bootstrap.properties` file:
 
 ```properties
 broker.register.<RESOURCE_ID>=<BROKER_ENDPOINT>

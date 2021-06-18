@@ -7,19 +7,15 @@
       "@id": "https://w3id.org/idsa/autogen/resource/e32c5397-f71c-47b5-a384-c9c4cf568117",
       "ids:language": [
         {
-          "properties": null,
           "@id": "idsc:EN"
         }
       ],
-      "ids:contentType": null,
-      "ids:variant": null,
       "ids:description": [
         {
           "@value": "This is an example resource",
           "@language": "EN"
         }
       ],
-      "ids:created": null,
       "ids:version": "3",
       "ids:title": [
         {
@@ -29,7 +25,6 @@
       ],
       "ids:publisher": "https://example.com",
       "ids:sovereign": "https://example.com",
-      "ids:theme": null,
       "ids:representation": [
         {
           "@type": "ids:Representation",
@@ -46,7 +41,6 @@
             }
           ],
           "ids:language": {
-            "properties": null,
             "@id": "idsc:EN"
           },
           "ids:created": "2016-10-03T15:10:40.000Z",
@@ -64,25 +58,16 @@
         {
           "@type": "ids:ConnectorEndpoint",
           "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/4458078e-c2f2-4d9f-afbe-54e9daa4c1b8",
-          "ids:path": null,
-          "ids:endpointInformation": null,
           "ids:accessURL": "https://example.com"
         }
       ],
-      "ids:temporalResolution": null,
-      "ids:temporalCoverage": null,
-      "ids:accrualPeriodicity": null,
-      "ids:defaultRepresentation": null,
-      "ids:shapesGraph": null,
-      "ids:contentStandard": null,
       "ids:standardLicense": "https://example.com",
-      "ids:spatialCoverage": null,
-      "ids:customLicense": null,
-      "ids:resourcePart": null,
-      "ids:sample": null,
-      "ids:contentPart": null,
       "ids:contractOffer": [
         {
+          "@context" : {
+              "ids" : "https://w3id.org/idsa/core/",
+              "idsc" : "https://w3id.org/idsa/code/"
+          },
           "@type": "ids:ContractOffer",
           "@id": "https://w3id.org/idsa/autogen/contractOffer/1d982c8a-c5ae-4c19-9a26-6815e9540fc8",
           "ids:permission": [
@@ -115,10 +100,7 @@
           "@value": "EXAMPLE",
           "@language": "EN"
         }
-      ],
-      "ids:modified": null
+      ]
     }
-  ],
-  "ids:requestedResource": [
   ]
 }
