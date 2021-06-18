@@ -433,7 +433,7 @@ public final class RuleUtils {
 
     private static <T extends AbstractConstraint> boolean compareConstraint(final T lObj,
                                                                             final T rObj) {
-        return lObj.toRdf().equals(rObj.toRdf());
+        return lObj.equals(rObj);
     }
 
     private static boolean compareAction(final Action lObj, final Action rObj) {
