@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.services.ids;
 
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.BaseConnector;
 import de.fraunhofer.iais.eis.BaseConnectorImpl;
 import de.fraunhofer.iais.eis.ConfigurationModelImpl;
@@ -36,19 +42,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This service offers different methods related to the connector configuration, like e.g. getting
@@ -88,11 +81,6 @@ public class ConnectorService {
      * Service for offered resources.
      */
     private final @NonNull OfferedResourceService offeredResourceService;
-
-    /**
-     * Service for deserialization.
-     */
-    private final @NonNull DeserializationService deserializationService;
 
     /**
      * Get a local copy of the current connector and extract its id.
