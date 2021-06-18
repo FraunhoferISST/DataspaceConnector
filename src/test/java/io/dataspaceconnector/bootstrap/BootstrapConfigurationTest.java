@@ -41,7 +41,6 @@ public class BootstrapConfigurationTest {
     }
 
     @SneakyThrows
-    @SuppressWarnings("unchecked")
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
