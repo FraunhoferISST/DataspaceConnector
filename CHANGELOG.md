@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Increase IDS Framework version to 5.0.3.
 - Update default Infomodel version to 4.0.9.
+- Increase postgres version to 42.2.22.
 
 ## [5.1.2] - 2021-06-14
 
@@ -31,7 +32,7 @@ All notable changes to this project will be documented in this file.
 - Fixed missing paging information in openapi schema.
 
 ### Changed
-- Increase postgresql version to 42.2.20.
+- Increase postgresql version to 42.2.21.
 - Increase spring-boot version to 2.5.1.
 
 ## [5.1.1] - 2021-06-09
