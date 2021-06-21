@@ -15,20 +15,6 @@
  */
 package io.dataspaceconnector.bootstrap.broker;
 
-import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.regex.Pattern;
-
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -42,6 +28,20 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.fileupload.MultipartStream;
 import org.springframework.stereotype.Service;
+
+import javax.validation.constraints.NotNull;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 /**
  * Register resources at the broker.
@@ -186,7 +186,7 @@ public class BrokerService {
 
         final var body = responseBody.string();
         final var responseMessage = getMessage(body);
-        if (responseMessage.isPresent()) {
+        if (responseMessage.isEmpty()) {
             if (log.isErrorEnabled()) {
                 log.error("Could not parse response after sending a request "
                           + "to a broker.");
