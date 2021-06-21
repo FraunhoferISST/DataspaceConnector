@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Enumeration for connector deploy modes.
  */
@@ -23,31 +25,11 @@ public enum ConnectorDeployMode {
     /**
      * Connector is in productive deployment.
      */
-    PRODUCTIVE("Productive"),
+    @JsonProperty("Productive")
+    PRODUCTIVE,
     /**
      * Connector is in test deployment.
      */
-    TEST("Test");
-
-    /**
-     * The value of the enum.
-     */
-    private final String value;
-
-    /**
-     *
-     * @param enumValue The value of the enum.
-     */
-    ConnectorDeployMode(final String enumValue) {
-        this.value = enumValue;
-    }
-
-    /**
-     * @return The value.
-     */
-    @Override
-    public String toString() {
-        return value;
-    }
-
+    @JsonProperty("Test")
+    TEST;
 }

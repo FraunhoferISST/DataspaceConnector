@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.resources.BaseResourceController;
 import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.ClearingHouse;
@@ -27,7 +31,6 @@ import io.dataspaceconnector.model.DataSource;
 import io.dataspaceconnector.model.DataSourceDesc;
 import io.dataspaceconnector.model.IdentityProvider;
 import io.dataspaceconnector.model.IdentityProviderDesc;
-import io.dataspaceconnector.model.Proxy;
 import io.dataspaceconnector.services.configuration.ClearingHouseService;
 import io.dataspaceconnector.services.configuration.ConfigurationService;
 import io.dataspaceconnector.services.configuration.ConnectorsService;
@@ -49,10 +52,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.UUID;
-
 /**
  * Controller for the Configuration Manager.
  */
@@ -66,8 +65,7 @@ public final class ConfigmanagerControllers {
     @Tag(name = "Clearing House", description = "Endpoints for CRUD operations on clearing houses")
     public static class ClearingHouseController
             extends BaseResourceController<ClearingHouse, ClearingHouseDesc,
-            ClearingHouseView, ClearingHouseService> {
-    }
+            ClearingHouseView, ClearingHouseService> { }
 
     /**
      * Offers the endpoints for managing configurations.
@@ -78,28 +76,7 @@ public final class ConfigmanagerControllers {
     @Tag(name = "Configuration", description = "Endpoints for CRUD operations on configurations")
     public static class ConfigurationController
             extends BaseResourceController<Configuration, ConfigurationDesc,
-            ConfigurationView, ConfigurationService> {
-
-        /**
-         * The configuration service.
-         */
-        private final @NonNull ConfigurationService configurationService;
-
-        /**
-         *
-         * @param configurationId The id of the configuration
-         * @param proxy The new proxy
-         * @return HttpStatus Ok.
-         * @throws IOException Exception occurs, if proxy can not be set at configuration.
-         */
-        @PutMapping(value = "{id}/proxy")
-        public ResponseEntity<Void> putProxy(
-                @Valid @PathVariable(name = "id") final UUID configurationId,
-                @RequestBody final Proxy proxy) throws IOException {
-            configurationService.setConfigurationProxyInformation(configurationId, proxy);
-            return ResponseEntity.ok().build();
-        }
-    }
+            ConfigurationView, ConfigurationService> { }
 
     /**
      * Offers the endpoints for managing connectors.
@@ -110,8 +87,7 @@ public final class ConfigmanagerControllers {
             description = "Endpoints for CRUD operations on connectors")
     public static class ConnectorController
             extends BaseResourceController<Connector, ConnectorDesc, ConnectorView,
-            ConnectorsService> {
-    }
+            ConnectorsService> { }
 
     /**
      * Offers the endpoints for managing data sources.

@@ -36,22 +36,17 @@ public class ConfigurationDesc extends AbstractDescription<Configuration> {
     private ConnectorDeployMode deployMode;
 
     /**
-     * The trust store.
+     * The truststore settings.
      */
-    private String trustStore;
+    private TruststoreDesc truststoreSettings;
 
     /**
-     * The password of the trust store.
+     * The proxy settings.
      */
-    private String trustStorePassword;
+    private ProxyDesc proxySettings;
 
     /**
-     * The key store.
+     * The keystore settings.
      */
-    private String keyStore;
-
-    /**
-     * The key store password.
-     */
-    private String keyStorePassword;
+    private KeystoreDesc keystoreSettings;
 }

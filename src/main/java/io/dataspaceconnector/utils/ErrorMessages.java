@@ -39,7 +39,6 @@ public enum ErrorMessages {
      * The passed contract may not be null.
      */
     CONTRACT_NULL("The contract may not be null."),
-
     /**
      * The passed entity id may not be null.
      */

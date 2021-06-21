@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,12 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * The configuration describes the configuration of a connector.
@@ -74,20 +74,12 @@ public class Configuration extends AbstractEntity {
     /**
      * The trust store.
      */
-    private String trustStore;
-
-    /**
-     * The password of the trust store.
-     */
-    private String trustStorePassword;
+    @OneToOne
+    private Truststore truststore;
 
     /**
      * The key store.
      */
-    private String keyStore;
-
-    /**
-     * The key store password.
-     */
-    private String keyStorePassword;
+    @OneToOne
+    private Keystore keystore;
 }

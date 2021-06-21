@@ -15,41 +15,28 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Enumeration for log level.
  */
 public enum LogLevel {
 
-    /**
-     * Log level is debugging.
-     */
-    DEBUG("Debug"),
-    /**
-     * Log level is minimal.
-     */
-    MINIMAL("Minimal"),
-    /**
-     * No logging is used.
-     */
-    OFF("None");
+    @JsonProperty("Off")
+    OFF,
 
-    /**
-     * The value of the enum.
-     */
-    private final String value;
+    @JsonProperty("Trace")
+    TRACE,
 
-    /**
-     * @param enumValue The value of the enum.
-     */
-    LogLevel(final String enumValue) {
-        this.value = enumValue;
-    }
+    @JsonProperty("Debug")
+    DEBUG,
 
-    /**
-     * @return Enum value.
-     */
-    @Override
-    public String toString() {
-        return value;
-    }
+    @JsonProperty("Info")
+    INFO,
+
+    @JsonProperty("Warn")
+    WARN,
+
+    @JsonProperty("Error")
+    ERROR;
 }

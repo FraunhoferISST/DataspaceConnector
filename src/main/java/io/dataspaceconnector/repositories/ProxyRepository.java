@@ -16,12 +16,11 @@
 package io.dataspaceconnector.repositories;
 
 import io.dataspaceconnector.model.Proxy;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link Proxy}.
  */
 @Repository
-public interface ProxyRepository extends JpaRepository<Proxy, Long> {
+public interface ProxyRepository extends BaseEntityRepository<Proxy> {
 }

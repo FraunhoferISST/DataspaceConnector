@@ -15,16 +15,17 @@
  */
 package io.dataspaceconnector.view;
 
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.ConnectorDeployMode;
 import io.dataspaceconnector.model.LogLevel;
-import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-
-import java.time.ZonedDateTime;
+import org.springframework.hateoas.server.core.Relation;
 
 /**
  * A DTO for controlled exposing of configuration information in API responses.
@@ -32,18 +33,19 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = "configurations", itemRelation = "configuration")
 public class ConfigurationView extends RepresentationModel<ConfigurationView> {
 
     /**
      * The creation date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime creationDate;
 
     /**
      * The last modification date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
     /**
@@ -59,25 +61,15 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
     /**
      * The proxy configuration.
      */
-    private Proxy proxy;
+    private ProxyView proxy;
 
     /**
      * The trust store.
      */
-    private String trustStore;
-
-    /**
-     * The password of the trust store.
-     */
-    private String trustStorePassword;
+    private TruststoreView trustStore;
 
     /**
      * The key store.
      */
-    private String keyStore;
-
-    /**
-     * The key store password.
-     */
-    private String keyStorePassword;
+    private KeystoreView keyStore;
 }

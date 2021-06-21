@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.view;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConfigurationController;
 import io.dataspaceconnector.model.Configuration;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 /**
  * Assembles the REST resource for a configuration.
@@ -41,6 +41,18 @@ public class ConfigurationViewAssembler implements
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(configuration, ConfigurationView.class);
         view.add(getSelfLink(configuration.getId()));
+
+        if (configuration.getProxy() != null) {
+            view.setProxy(new ProxyViewAssembler().toModel(configuration.getProxy()));
+        }
+
+        if (configuration.getTruststore() != null) {
+            view.setTrustStore(new TruststoreViewAssembler().toModel(configuration.getTruststore()));
+        }
+
+        if (configuration.getKeystore() != null) {
+            view.setKeyStore(new KeystoreViewAssembler().toModel(configuration.getKeystore()));
+        }
 
         return view;
     }

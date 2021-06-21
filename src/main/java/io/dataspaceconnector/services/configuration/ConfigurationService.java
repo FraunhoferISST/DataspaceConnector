@@ -17,21 +17,17 @@ package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.Configuration;
 import io.dataspaceconnector.model.ConfigurationDesc;
-import io.dataspaceconnector.model.ConfigurationFactory;
-import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.repositories.KeystoreRepository;
 import io.dataspaceconnector.repositories.ProxyRepository;
+import io.dataspaceconnector.repositories.TruststoreRepository;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Service class for the configuration.
@@ -40,6 +36,7 @@ import java.util.UUID;
 @Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)
+@RequiredArgsConstructor
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
 
     /**
@@ -47,14 +44,9 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      **/
     private final @NonNull ProxyRepository proxyRepo;
 
-    /**
-     * Constructor for ConfigurationService.
-     * @param proxyRepository The proxy repository.
-     */
-    @Autowired
-    public ConfigurationService(final @NonNull ProxyRepository proxyRepository) {
-        this.proxyRepo = proxyRepository;
-    }
+    private final @NonNull TruststoreRepository trustStoreRepo;
+
+    private final @NonNull KeystoreRepository keystoreRepo;
 
     /**
      * Persist the configuration with the proxy.
@@ -63,32 +55,15 @@ public class ConfigurationService extends BaseEntityService<Configuration, Confi
      */
     @Override
     protected Configuration persist(final Configuration configuration) {
-        if (configuration.getProxy() != null) {
+        if(configuration.getProxy() != null)
             proxyRepo.saveAndFlush(configuration.getProxy());
-        }
+
+        if(configuration.getTruststore() != null)
+            trustStoreRepo.saveAndFlush(configuration.getTruststore());
+
+        if(configuration.getKeystore() != null)
+            keystoreRepo.saveAndFlush(configuration.getKeystore());
 
         return super.persist(configuration);
-    }
-
-    /**
-     *
-     * @param configurationId The id of the configuration which is update.
-     * @param proxy The new proxy.
-     * @throws IOException Exception occurs, if proxy can not be set at configuration.
-     */
-    @Transactional
-    public void setConfigurationProxyInformation(final UUID configurationId,
-                                                 final Proxy proxy)
-            throws IOException {
-        final var configurationRepository = getRepository();
-        final var configuration = configurationRepository.findById(configurationId).orElse(null);
-        if (configuration != null && proxy != null) {
-
-            final var updatedConfiguration = ((ConfigurationFactory) getFactory())
-                    .updateProxy(configuration, proxy);
-            persist(updatedConfiguration);
-        } else {
-            throw new IOException("Failed to update the configuration");
-        }
     }
 }

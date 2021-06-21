@@ -15,7 +15,14 @@
  */
 package io.dataspaceconnector.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.CascadeType;
+import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.OneToOne;
+import java.net.URI;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
@@ -24,16 +31,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Convert;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import java.net.URI;
-import java.util.List;
-
 /**
  * Entity for managing proxies.
  */
@@ -41,18 +38,7 @@ import java.util.List;
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
-public class Proxy {
-
-    /**
-     * The primary key of the authentication.
-     */
-    @Id
-    @GeneratedValue
-    @JsonIgnore
-    @ToString.Exclude
-    @SuppressWarnings("PMD.ShortVariable")
-    private Long id;
-
+public class Proxy extends AbstractEntity {
     /**
      * The proxy uri.
      */
