@@ -54,7 +54,6 @@ import io.dataspaceconnector.services.messages.types.ContractAgreementService;
 import io.dataspaceconnector.services.messages.types.ContractRejectionService;
 import io.dataspaceconnector.services.messages.types.DescriptionResponseService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
-import io.dataspaceconnector.services.usagecontrol.PolicyExecutionService;
 import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
@@ -62,6 +61,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 
@@ -456,9 +456,9 @@ class AgreementComparisonProcessor extends IdsProcessor<
     private final @NonNull EntityUpdateService updateService;
 
     /**
-     * Policy execution point.
+     * The global event publisher used for publishing agreements.
      */
-    private final @NonNull PolicyExecutionService executionService;
+    private final @NonNull ApplicationEventPublisher publisher;
 
     /**
      * Service for handling notification messages.
@@ -490,8 +490,9 @@ class AgreementComparisonProcessor extends IdsProcessor<
                     "Could not confirm agreement.");
         }
 
-        //TODO move to own processor?
-        executionService.sendAgreement(agreement);
+        // Publish the agreement so that the designated event handler sends it to the CH.
+        publisher.publishEvent(agreement);
+
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());

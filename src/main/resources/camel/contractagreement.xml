@@ -42,7 +42,6 @@
         <to uri="direct:ids-validation"/>
         <process ref="AgreementDeserializer"/>
         <process ref="AgreementComparisonProcessor"/>
-        <!-- TODO send agreement to clearing house -->
 
     </route>
 </routes>
