@@ -107,6 +107,7 @@
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
 		<jaeger.version>3.3.1</jaeger.version>
+		<idscp2.version>0.4.3</idscp2.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
@@ -393,6 +394,12 @@
 			<groupId>org.apache.camel.springboot</groupId>
 			<artifactId>camel-http-starter</artifactId>
 			<version>${camel.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.fhg.aisec.ids</groupId>
+			<artifactId>camel-idscp2</artifactId>
+			<version>${idscp2.version}</version>
 		</dependency>
 	</dependencies>
 

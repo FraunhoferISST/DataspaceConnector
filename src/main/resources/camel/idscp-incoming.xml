@@ -1,6 +1,7 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route id="idscp-server">
         <from uri="idscp2server://0.0.0.0:29292?sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
+        <log message="${body}"/>
         <process ref="TypeExtractionProcessor"/>
         <process ref="idscpWrapperProcessorIncoming"/>
         <choice>
