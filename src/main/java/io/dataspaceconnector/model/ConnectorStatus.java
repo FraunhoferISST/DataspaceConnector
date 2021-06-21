@@ -23,15 +23,15 @@ public enum ConnectorStatus {
     /**
      * Connector is badly configured.
      */
-    CONNECTOR_BADLY_CONFIGURED("Connector badly configured"),
+    BADLY_CONFIGURED("Connector badly configured"),
     /**
      * Connector is offline.
      */
-    CONNECTOR_OFFLINE("Connector offline"),
+    OFFLINE("Connector offline"),
     /**
      * Connector is online.
      */
-    CONNECTOR_ONLINE("Connector online");
+    ONLINE("Connector online");
 
     /**
      * The value of the enum.

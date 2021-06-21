@@ -23,15 +23,15 @@ public enum LogLevel {
     /**
      * Log level is debugging.
      */
-    DEBUG_LEVEL("Debug Level Logging"),
+    DEBUG("Debug"),
     /**
      * Log level is minimal.
      */
-    MINIMAL("Minimal Logging"),
+    MINIMAL("Minimal"),
     /**
      * No logging is used.
      */
-    NO("No Logging");
+    OFF("None");
 
     /**
      * The value of the enum.

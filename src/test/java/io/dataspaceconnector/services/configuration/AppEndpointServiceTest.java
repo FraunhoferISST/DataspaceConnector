@@ -15,11 +15,9 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import com.jayway.jsonpath.internal.function.json.Append;
 import io.dataspaceconnector.model.AppEndpoint;
 import io.dataspaceconnector.model.AppEndpointDesc;
 import io.dataspaceconnector.model.AppEndpointFactory;
-import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.repositories.AppEndpointRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

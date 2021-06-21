@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.model;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Creates and updates a configuration.
@@ -154,7 +154,7 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
      * @return True, if configuration is updated
      */
     private boolean updateLogLevel(final Configuration config, final LogLevel logLevel) {
-        config.setLogLevel(Objects.requireNonNullElse(logLevel, LogLevel.NO));
+        config.setLogLevel(Objects.requireNonNullElse(logLevel, LogLevel.OFF));
         return true;
     }
 

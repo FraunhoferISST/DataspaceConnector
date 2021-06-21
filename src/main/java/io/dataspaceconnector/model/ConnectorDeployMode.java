@@ -23,11 +23,11 @@ public enum ConnectorDeployMode {
     /**
      * Connector is in productive deployment.
      */
-    PRODUCTIVE("Productive Deployment"),
+    PRODUCTIVE("Productive"),
     /**
      * Connector is in test deployment.
      */
-    TEST("Test Deployment");
+    TEST("Test");
 
     /**
      * The value of the enum.
