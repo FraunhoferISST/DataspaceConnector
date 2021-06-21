@@ -34,7 +34,6 @@
                 <process ref="ResourceDescription"/>
             </otherwise>
         </choice>
-        <log message="DOOM! ${body}"/>
 
     </route>
 </routes>
