@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.exceptionhandlers;
 
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.common.exceptions.PolicyRestrictionException;
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;

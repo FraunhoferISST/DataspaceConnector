@@ -41,7 +41,7 @@
 // import de.fraunhofer.iais.eis.SecurityProfile;
 // import de.fraunhofer.iais.eis.TokenFormat;
 // import de.fraunhofer.iais.eis.util.Util;
-// import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+// import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 // import io.dataspaceconnector.model.core.ArtifactDesc;
 // import io.dataspaceconnector.model.core.ArtifactFactory;
 // import io.dataspaceconnector.ids.EntityResolver;

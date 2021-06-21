@@ -35,7 +35,7 @@ import io.dataspaceconnector.model.core.ContractFactory;
 import io.dataspaceconnector.model.core.ContractRuleDesc;
 import io.dataspaceconnector.model.core.ContractRuleFactory;
 import io.dataspaceconnector.usagecontrol.EntityPersistenceService;
-import io.dataspaceconnector.services.resources.EntityDependencyResolver;
+import io.dataspaceconnector.resources.EntityDependencyResolver;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;

@@ -16,8 +16,8 @@
 package io.dataspaceconnector.ids.updater;
 
 import de.fraunhofer.iais.eis.Representation;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.services.resources.RepresentationService;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.RepresentationService;
 import io.dataspaceconnector.ids.templates.MappingUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

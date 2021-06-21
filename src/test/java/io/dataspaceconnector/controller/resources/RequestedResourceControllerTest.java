@@ -19,7 +19,7 @@ import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.model.core.RequestedResource;
 import io.dataspaceconnector.model.core.RequestedResourceDesc;
 import io.dataspaceconnector.controller.resources.view.RequestedResourceViewAssembler;
-import io.dataspaceconnector.services.resources.ResourceService;
+import io.dataspaceconnector.resources.ResourceService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;

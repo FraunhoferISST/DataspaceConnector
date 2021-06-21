@@ -22,7 +22,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactImpl;
-import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

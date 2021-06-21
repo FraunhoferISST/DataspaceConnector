@@ -18,11 +18,11 @@ package io.dataspaceconnector.controller.resources;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.core.Catalog;
 import io.dataspaceconnector.model.core.CatalogDesc;
 import io.dataspaceconnector.model.core.OfferedResource;
-import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.resources.CatalogService;
 import io.dataspaceconnector.controller.resources.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

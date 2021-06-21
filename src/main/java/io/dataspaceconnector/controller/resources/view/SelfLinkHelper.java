@@ -28,7 +28,7 @@ import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.model.core.OfferedResource;
 import io.dataspaceconnector.model.core.Representation;
 import io.dataspaceconnector.model.core.RequestedResource;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 
 /**
  * This is a helper class for retrieving self-links of a database entity.

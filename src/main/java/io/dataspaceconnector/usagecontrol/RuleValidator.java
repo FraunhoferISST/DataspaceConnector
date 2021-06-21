@@ -22,7 +22,7 @@ import io.dataspaceconnector.model.core.Contract;
 import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.model.core.TimeInterval;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
-import io.dataspaceconnector.services.resources.EntityDependencyResolver;
+import io.dataspaceconnector.resources.EntityDependencyResolver;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;

@@ -21,7 +21,7 @@ import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 import io.dataspaceconnector.ids.messages.exceptions.MessageBuilderException;
 import io.dataspaceconnector.ids.messages.exceptions.MessageEmptyException;
 import io.dataspaceconnector.ids.messages.exceptions.MessageRequestException;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.ids.handler.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.ids.messages.dto.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.ids.EntityResolver;

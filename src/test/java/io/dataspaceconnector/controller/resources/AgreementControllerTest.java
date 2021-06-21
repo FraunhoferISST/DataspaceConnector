@@ -19,7 +19,7 @@ import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.model.core.Agreement;
 import io.dataspaceconnector.model.core.AgreementDesc;
 import io.dataspaceconnector.controller.resources.view.AgreementViewAssembler;
-import io.dataspaceconnector.services.resources.AgreementService;
+import io.dataspaceconnector.resources.AgreementService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;

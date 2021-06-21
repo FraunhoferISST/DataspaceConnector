@@ -38,7 +38,7 @@ import io.dataspaceconnector.ids.messages.ArtifactResponseService;
 import io.dataspaceconnector.ids.messages.exceptions.MessageBuilderException;
 import io.dataspaceconnector.ids.messages.exceptions.MessageEmptyException;
 import io.dataspaceconnector.ids.messages.util.MessageUtils;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.usagecontrol.ContractManager;
 import io.dataspaceconnector.usagecontrol.DataProvisionVerifier;
 import io.dataspaceconnector.usagecontrol.VerificationInput;

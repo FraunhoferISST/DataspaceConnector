@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactImpl;
-import io.dataspaceconnector.services.resources.RelationServices;
-import io.dataspaceconnector.services.resources.util.PageUtils;
+import io.dataspaceconnector.resources.RelationServices;
+import io.dataspaceconnector.resources.util.PageUtils;
 import io.dataspaceconnector.controller.resources.view.ArtifactView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

@@ -22,10 +22,10 @@ import java.time.format.DateTimeParseException;
 
 import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
 import io.dataspaceconnector.usagecontrol.config.UsageControlFramework;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
-import io.dataspaceconnector.services.resources.AgreementService;
-import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.resources.AgreementService;
+import io.dataspaceconnector.resources.ArtifactService;
 import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.usagecontrol.util.RuleUtils;
 import lombok.NonNull;

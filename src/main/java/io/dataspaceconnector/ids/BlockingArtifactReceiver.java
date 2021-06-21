@@ -26,7 +26,7 @@ import io.dataspaceconnector.ids.messages.ArtifactRequestService;
 import io.dataspaceconnector.ids.messages.util.MessageUtils;
 import io.dataspaceconnector.common.net.QueryInput;
 import io.dataspaceconnector.common.usagecontrol.ArtifactRetriever;
-import io.dataspaceconnector.services.resources.ArtifactService;
+import io.dataspaceconnector.resources.ArtifactService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

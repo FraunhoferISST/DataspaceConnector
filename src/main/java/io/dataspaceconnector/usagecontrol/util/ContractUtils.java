@@ -28,7 +28,7 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.common.Utils;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
 import io.dataspaceconnector.model.core.Artifact;
-import io.dataspaceconnector.services.resources.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.resources.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.usagecontrol.exceptions.ContractException;
 
 import static io.dataspaceconnector.usagecontrol.util.RuleUtils.compareObligations;
