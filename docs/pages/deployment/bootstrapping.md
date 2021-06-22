@@ -19,8 +19,8 @@ In this section, the registration of resources during the startup is described.
 
 ### Registering Elements at the Connector
 
-During the startup of the Dataspace Connector, the bootstrapping path, which is specified in
-`application.properties`will be scanned for `*.jsonld` and `bootstrap.properties` files. The search
+During the startup of the Dataspace Connector, the bootstrapping path that is specified in
+`application.properties` will be scanned for `*.jsonld` and `bootstrap.properties` files. The search
 includes all subdirectories found in the base path.
 
 Each `jsonld`-file contains the JSON-LD representation of an IDS catalog. These representations will
@@ -34,7 +34,7 @@ information on which resources should be registered at IDS Brokers. If multiple
 `bootstrap.properties` files are found, all of them will be loaded and merged. If there are
 collisions, these will be logged and the first found value will be kept.
 
-An example for a valid catalog, that can be used for bootstrapping, is shown below. Corresponding
+An example for a valid catalog that can be used for bootstrapping is shown below. Corresponding
 sample files are provided at `test/resources/bootstrap`.
 
 ```json

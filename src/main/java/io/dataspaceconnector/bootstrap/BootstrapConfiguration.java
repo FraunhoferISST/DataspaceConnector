@@ -150,22 +150,21 @@ public class BootstrapConfiguration {
             if (log.isWarnEnabled()) {
                 log.warn("An error occurred while bootstrapping IDS catalogs.");
             }
-
             SpringApplication.exit(context, () -> -1);
         }
 
         try {
             connectorService.updateConfigModel();
         } catch (ConfigurationUpdateException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to update config model.", e);
+            if (log.isWarnEnabled()) {
+                log.warn("Failed to update config model. [exception=({})]", e.getMessage(), e);
             }
         }
 
         // register resources at broker
         if (!brokerService.registerAtBroker(properties, idsResources)) {
-            if (log.isErrorEnabled()) {
-                log.error("An error occurred while registering resources at the broker.");
+            if (log.isInfoEnabled()) {
+                log.info("An error occurred while registering resources at the broker.");
             }
         }
 
@@ -185,10 +184,9 @@ public class BootstrapConfiguration {
         } catch (FileNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("No catalog files for bootstrapping found. [exception=({})]",
-                        e.getMessage());
+                        e.getMessage(), e);
             }
         }
-
         return new ArrayList<>();
     }
 
@@ -202,7 +200,7 @@ public class BootstrapConfiguration {
         } catch (FileNotFoundException e) {
             if (log.isDebugEnabled()) {
                 log.debug("No config files for bootstrapping found. [exception=({})]",
-                        e.getMessage());
+                        e.getMessage(), e);
             }
         }
 
@@ -237,10 +235,9 @@ public class BootstrapConfiguration {
 
             if (duplicate != null && duplicate) {
                 if (log.isInfoEnabled()) {
-                    log.info("Catalog with IDS id '{}' is already registered and will be"
-                            + " skipped.", catalog.getId());
+                    log.info("Catalog is already registered and will be skipped. "
+                            + "[catalogId=({})]", catalog.getId());
                 }
-
                 continue;
             }
 
@@ -273,15 +270,13 @@ public class BootstrapConfiguration {
                         Files.readString(jsonFile.toPath()))
                 );
             } catch (IOException e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Could not deserialize ids catalog file '{}'.",
-                              jsonFile.getPath(), e);
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not deserialize ids catalog file. [path=({})]",
+                            jsonFile.getPath(), e);
                 }
-
                 return Optional.empty();
             }
         }
-
         return Optional.of(catalogs);
     }
 
@@ -322,7 +317,7 @@ public class BootstrapConfiguration {
         templateBuilder.build(catalogTemplate);
 
         if (log.isInfoEnabled()) {
-            log.info("Bootstrapped catalog with IDS id '{}'.", catalog.getId());
+            log.info("Bootstrapped catalog. [catalogId=({})]", catalog.getId());
         }
 
         return true;
@@ -375,9 +370,10 @@ public class BootstrapConfiguration {
             try {
                 desc.setAccessUrl(new URL(accessUrl));
             } catch (MalformedURLException e) {
-                if (log.isErrorEnabled()) {
-                    log.error("Could not parse accessUrl '{}' for artifact with "
-                              + "IDS id '{}'.", accessUrl, bootstrapId, e);
+                if (log.isWarnEnabled()) {
+                    log.warn("Could not parse accessUrl for artifact. [accessUrl=({}), "
+                                    + "artifactId=({}), exception=({})]", accessUrl, bootstrapId,
+                            e.getMessage(), e);
                 }
             }
         }
