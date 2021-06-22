@@ -26,22 +26,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.apache.commons.fileupload.MultipartStream;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
-import java.util.regex.Pattern;
+
+import static de.fraunhofer.isst.ids.framework.util.MultipartStringParser.stringToMultipart;
 
 /**
  * Register resources at the broker.
@@ -63,12 +61,13 @@ public class BrokerService {
 
     /**
      * Register resources at the broker.
-     * @param properties Bootstrap properties.
+     *
+     * @param properties   Bootstrap properties.
      * @param idsResources The ids resources to register.
      * @return true if all resources could be registered.
      */
     public boolean registerAtBroker(final Properties properties,
-                                     final Map<URI, Resource> idsResources) {
+                                    final Map<URI, Resource> idsResources) {
         final var knownBrokers = new HashSet<URL>();
         // iterate over all registered resources
         for (final var entry : idsResources.entrySet()) {
@@ -76,11 +75,10 @@ public class BrokerService {
             if (properties.containsKey(propertyKey)) {
                 final var brokerURL = toBrokerUrl(properties.getProperty(propertyKey));
                 if (brokerURL.isEmpty()) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Skipping broker '{}'. Not a valid URL.",
-                                  properties.getProperty(propertyKey));
+                    if (log.isWarnEnabled()) {
+                        log.warn("Skipping broker due to invalid URL. [broker=({})]",
+                                properties.getProperty(propertyKey));
                     }
-
                     return false;
                 }
 
@@ -97,49 +95,44 @@ public class BrokerService {
                     if (!updateAtBroker(broker, entry.getKey(), entry.getValue())) {
                         return false;
                     }
-                } catch (IOException e) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Could not register resource with IDS id '{}' at the "
-                                  + "broker '{}'.", entry.getKey().toString(), broker, e);
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Could not register resource at broker [resourceId=({}), "
+                                + "broker=({})].", entry.getKey().toString(), broker, e);
                     }
-
                     return false;
                 }
             }
         }
-
         return true;
     }
 
-    private boolean registerAtBroker(final URL broker) throws IOException {
+    private boolean registerAtBroker(final URL broker) throws Exception {
         final var response = idsBrokerSvc.updateSelfDescriptionAtBroker(broker.toString());
         if (validateBrokerResponse(response, broker)) {
             if (log.isInfoEnabled()) {
-                log.info("Registered connector at broker '{}'.", broker);
+                log.info("Registered connector at broker. [broker=({})]", broker);
             }
-
             return true;
         }
-
         return false;
     }
 
     private boolean updateAtBroker(final URL broker, final URI key, final Resource value)
-            throws IOException {
+            throws Exception {
         final var response = idsBrokerSvc.updateResourceAtBroker(broker.toString(), value);
         if (!response.isSuccessful()) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to update resource description for resource '{}'"
-                          + " at broker '{}'.", value.getId().toString(), broker);
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to update resource at broker. [resourceId=({}), "
+                        + "broker=({})]", value.getId().toString(), broker);
             }
-
             return false;
         }
 
         if (validateBrokerResponse(response, broker)) {
             if (log.isInfoEnabled()) {
-                log.info("Registered resource with IDS ID '{}' at broker '{}'.",
-                         key.toString(), broker);
+                log.info("Registered resource at broker. [resourceId=({}), broker=({})]",
+                        key.toString(), broker);
             }
         } else {
             return false;
@@ -156,7 +149,6 @@ public class BrokerService {
         } catch (MalformedURLException ignored) {
             // Nothing to do here.
         }
-
         return Optional.empty();
     }
 
@@ -170,12 +162,11 @@ public class BrokerService {
      * @throws IOException if the response's body cannot be extracted as string.
      */
     private boolean validateBrokerResponse(final Response response, final URL brokerURL)
-            throws IOException {
+            throws Exception {
         if (!response.isSuccessful()) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to sent message to a broker '{}'.", brokerURL);
+            if (log.isDebugEnabled()) {
+                log.debug("Failed to sent message to broker. [broker=({})]", brokerURL);
             }
-
             return false;
         }
 
@@ -184,52 +175,45 @@ public class BrokerService {
             return false;
         }
 
-        final var body = responseBody.string();
+        final var body = Objects.requireNonNull(responseBody).string();
         final var responseMessage = getMessage(body);
-        if (responseMessage.isEmpty()) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not parse response after sending a request "
-                          + "to a broker.");
-            }
 
+        if (responseMessage.isEmpty()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Could not parse response after sending request to broker.");
+            }
             return false;
         }
 
         if (!(responseMessage.get() instanceof MessageProcessedNotificationMessage)) {
             if (responseMessage.get() instanceof RejectionMessage) {
-                final var payload = getMultipartPart(body, "payload");
-                if (log.isErrorEnabled() && payload.isPresent()) {
-                    log.error("The broker rejected the message. Reason: {} - {}",
-                              MessageUtils.extractRejectionReason(
-                                      (RejectionMessage) responseMessage.get()).toString(),
-                              payload.get());
-                } else if (log.isErrorEnabled()) {
-                    log.error("The broker rejected the message. Reason: {}",
-                              MessageUtils.extractRejectionReason(
-                                      (RejectionMessage) responseMessage.get()).toString());
+                final var payload = stringToMultipart(body).get("payload");
+                if (log.isDebugEnabled()) {
+                    log.debug("Broker rejected the message. [reason=({}), payload=({})]",
+                            MessageUtils.extractRejectionReason(
+                                    (RejectionMessage) responseMessage.get()).toString(), payload);
+                } else if (log.isDebugEnabled()) {
+                    log.debug("Broker rejected the message. [reason=({})]",
+                            MessageUtils.extractRejectionReason(
+                                    (RejectionMessage) responseMessage.get()).toString());
                 }
             } else {
-                if (log.isErrorEnabled()) {
-                    log.error("An error occurred while registering the "
-                              + "connector at the broker.");
+                if (log.isWarnEnabled()) {
+                    log.warn("An error occurred while registering the connector at the broker.");
                 }
             }
             return false;
         }
-
         return true;
     }
 
     private boolean validateResponseBody(final ResponseBody body) {
         if (body == null) {
-            if (log.isErrorEnabled()) {
-                log.error("Could not parse response after sending a request "
-                          + "to a broker.");
+            if (log.isDebugEnabled()) {
+                log.debug("Could not parse response after sending a request to the broker.");
             }
-
             return false;
         }
-
         return true;
     }
 
@@ -239,78 +223,8 @@ public class BrokerService {
      * @param body a multipart message
      * @return The IDS message contained in the multipart message, null if any error occurs.
      */
-    private Optional<Message> getMessage(final String body) {
-        final var part = getMultipartPart(body, "header");
-        if (part.isPresent()) {
-            return Optional.of(deserializationService.getMessage(part.get()));
-        } else {
-            if (log.isErrorEnabled()) {
-                log.error("Could not find IDS message in multipart message.");
-            }
-
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Extract a part with given name from a multipart message.
-     *
-     * @param message  the multipart message
-     * @param partName the part name
-     * @return part with given name, null if the part does not exist in given message
-     */
-    private Optional<String> getMultipartPart(final String message, final String partName) {
-        var preProcessedMessage = message;
-        if (message.startsWith("Success:")) {
-            preProcessedMessage = message.split("Body: ")[1];
-        }
-        try {
-            // TODO: Can we get the original charset of the message?
-            final var multipart = new MultipartStream(
-                    new ByteArrayInputStream(preProcessedMessage.getBytes(StandardCharsets.UTF_8)),
-                    getBoundaries(preProcessedMessage)[0]
-                            .substring(2).getBytes(StandardCharsets.UTF_8),
-                    4096,
-                    null
-            );
-
-            final var pattern = Pattern.compile("name=\"([a-zA-Z]+)\"");
-            final var outputStream = new ByteArrayOutputStream();
-            boolean next = multipart.skipPreamble();
-            while (next) {
-                final var matcher = pattern.matcher(multipart.readHeaders());
-                if (!matcher.find()) {
-                    if (log.isErrorEnabled()) {
-                        log.error("Could not find name of multipart part.");
-                    }
-                    return Optional.empty();
-                }
-
-                if (matcher.group().equals("name=\"" + partName + "\"")) {
-                    multipart.readBodyData(outputStream);
-                    return Optional.of(outputStream.toString(StandardCharsets.UTF_8));
-                } else {
-                    multipart.discardBodyData();
-                }
-
-                next = multipart.readBoundary();
-            }
-
-        } catch (IOException e) {
-            if (log.isErrorEnabled()) {
-                log.error("Failed to parse multipart message.", e);
-            }
-            return Optional.empty();
-        }
-
-        if (log.isErrorEnabled()) {
-            log.error("Could not find part '{}' in multipart message.", partName);
-        }
-
-        return Optional.empty();
-    }
-
-    private String[] getBoundaries(final String msg) {
-        return msg.split(msg.contains("\r\n") ? "\r\n" : "\n");
+    private Optional<Message> getMessage(final String body) throws Exception {
+        final var header = stringToMultipart(body).get("header");
+        return Optional.of(deserializationService.getMessage(header));
     }
 }

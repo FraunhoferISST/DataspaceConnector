@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.bootstrap.util;
 
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,11 +30,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.SetUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * Offers utility functions for bootstrapping data.
@@ -59,9 +59,9 @@ public final class BootstrapUtils {
      * object. In case of conflicts for values that don't support multiple values, the first one
      * found will be used.
      *
-     * @param path The path of the bootstrapping file.
-     * @param name The (optional) name of the bootstrapping file.
-     * @param extension  The extension of the bootstrapping file.
+     * @param path      The path of the bootstrapping file.
+     * @param name      The (optional) name of the bootstrapping file.
+     * @param extension The extension of the bootstrapping file.
      * @return Properties that contain the merged content of all bootstrap config files.
      */
     public static Properties retrieveBootstrapConfig(final String path,
@@ -82,7 +82,8 @@ public final class BootstrapUtils {
                 }
             } catch (IOException e) {
                 if (log.isErrorEnabled()) {
-                    log.error("Could not open properties file '{}'.", propertyFile.getPath(), e);
+                    log.error("Could not open properties file. [name=({})]",
+                            propertyFile.getPath(), e);
                 }
             }
         }
@@ -98,8 +99,8 @@ public final class BootstrapUtils {
         if (config.containsKey(key)) {
             if (MULTI_VALUE_PROPS.contains(key)) {
                 final var multipleValues = Arrays.stream(value.split(MULTI_VALUE_DELIM))
-                                                   .map(String::trim)
-                                                   .collect(Collectors.toSet());
+                        .map(String::trim)
+                        .collect(Collectors.toSet());
                 config.put(key, multipleValues.add((String) config.get(key)));
             } else {
                 if (log.isWarnEnabled()) {
@@ -112,8 +113,8 @@ public final class BootstrapUtils {
         } else {
             if (MULTI_VALUE_PROPS.contains(key)) {
                 final var multipleValues = Arrays.stream(value.split(MULTI_VALUE_DELIM))
-                                                   .map(String::trim)
-                                                   .collect(Collectors.toSet());
+                        .map(String::trim)
+                        .collect(Collectors.toSet());
                 config.put(key, multipleValues);
             } else {
                 config.put(key, value);
