@@ -9,8 +9,8 @@ All notable changes to this project will be documented in this file.
 - Remove encoding from optional path segment in `HttpService`.
 
 ### Changed
-- Increase IDS Framework version to 5.0.3.
-- Update default Infomodel version to 4.0.9.
+- Increase IDS Framework version to 5.0.4.
+- Update default Infomodel version to 4.0.10.
 
 ## [5.1.2] - 2021-06-14
 
