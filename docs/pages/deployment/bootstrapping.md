@@ -39,6 +39,10 @@ sample files are provided at `test/resources/bootstrap`.
 
 ```json
 {
+  "@context" : {
+    "ids" : "https://w3id.org/idsa/core/",
+    "idsc" : "https://w3id.org/idsa/code/"
+  },
   "@type": "ids:ResourceCatalog",
   "@id": "https://w3id.org/idsa/autogen/resourceCatalog/4a1fbd8c-8f23-4cc0-871d-9d26596b00c9",
   "ids:offeredResource": [
