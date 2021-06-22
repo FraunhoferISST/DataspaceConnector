@@ -260,11 +260,16 @@ public class BrokerService {
      * @return part with given name, null if the part does not exist in given message
      */
     private Optional<String> getMultipartPart(final String message, final String partName) {
+        var preProcessedMessage = message;
+        if (message.startsWith("Success:")) {
+            preProcessedMessage = message.split("Body: ")[1];
+        }
         try {
             // TODO: Can we get the original charset of the message?
             final var multipart = new MultipartStream(
-                    new ByteArrayInputStream(message.getBytes(StandardCharsets.UTF_8)),
-                    getBoundaries(message)[0].substring(2).getBytes(StandardCharsets.UTF_8),
+                    new ByteArrayInputStream(preProcessedMessage.getBytes(StandardCharsets.UTF_8)),
+                    getBoundaries(preProcessedMessage)[0]
+                            .substring(2).getBytes(StandardCharsets.UTF_8),
                     4096,
                     null
             );

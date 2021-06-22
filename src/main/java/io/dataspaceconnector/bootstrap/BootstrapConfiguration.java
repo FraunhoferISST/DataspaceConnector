@@ -15,24 +15,6 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
@@ -59,6 +41,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.findFilesByExtension;
 import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootstrapConfig;
@@ -167,7 +167,6 @@ public class BootstrapConfiguration {
             if (log.isErrorEnabled()) {
                 log.error("An error occurred while registering resources at the broker.");
             }
-            SpringApplication.exit(context, () -> -1);
         }
 
         if (log.isInfoEnabled()) {

@@ -15,18 +15,24 @@
  */
 package io.dataspaceconnector.bootstrap;
 
+import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class BootstrapConfigurationTest {
+
+    @MockBean
+    BrokerService brokerService;
 
     @Autowired
     CatalogService catalogService;
@@ -44,7 +50,8 @@ public class BootstrapConfigurationTest {
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
-        // nothing to arrange
+        Mockito.doReturn(true)
+                .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
 
         /* ACT */
         bootstrapConfiguration.bootstrap();
