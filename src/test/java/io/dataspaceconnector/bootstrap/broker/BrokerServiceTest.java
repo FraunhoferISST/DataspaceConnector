@@ -80,8 +80,7 @@ class BrokerServiceTest {
     }
 
     public static String getBrokerRegisterResponse() {
-        return "Success: true\r\n" +
-                "Body: --WIYDyVfIpHRCN9WIgaUOLPHIQ9Uu107L7k5qbQ\r\n" +
+        return  "--WIYDyVfIpHRCN9WIgaUOLPHIQ9Uu107L7k5qbQ\r\n" +
                 "Content-Disposition: form-data; name=\"header\"\r\n" +
                 "Content-Type: text/plain;charset=UTF-8\r\n" +
                 "Content-Length: 2446\r\n" +
