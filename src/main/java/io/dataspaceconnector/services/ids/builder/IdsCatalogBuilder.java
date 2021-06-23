@@ -24,8 +24,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-
 /**
  * Converts DSC artifacts to ids artifacts.
  */
@@ -39,14 +37,14 @@ public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, Resourc
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     @Override
-    protected ResourceCatalog createInternal(final Catalog catalog, final URI baseUri,
-                                             final int currentDepth, final int maxDepth)
+    protected ResourceCatalog createInternal(final Catalog catalog, final int currentDepth,
+                                             final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var resources = create(resourceBuilder,
-                catalog.getOfferedResources(), baseUri, currentDepth, maxDepth);
+                catalog.getOfferedResources(), currentDepth, maxDepth);
 
-        final var builder = new ResourceCatalogBuilder(getAbsoluteSelfLink(catalog, baseUri));
+        final var builder = new ResourceCatalogBuilder(getAbsoluteSelfLink(catalog));
         resources.ifPresent(builder::_offeredResource_);
 
         return builder.build();

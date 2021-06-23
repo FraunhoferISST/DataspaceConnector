@@ -26,8 +26,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-
 /**
  * Converts DSC resource to ids resource.
  *
@@ -50,19 +48,17 @@ public final class IdsResourceBuilder<T extends Resource>
 
     @Override
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
-                                                             final URI baseUri,
                                                              final int currentDepth,
                                                              final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var representations =
-                create(repBuilder, resource.getRepresentations(), baseUri, currentDepth,
-                        maxDepth);
+                create(repBuilder, resource.getRepresentations(), currentDepth, maxDepth);
         final var contracts =
-                create(contractBuilder, resource.getContracts(), baseUri, currentDepth, maxDepth);
+                create(contractBuilder, resource.getContracts(), currentDepth, maxDepth);
 
         // Prepare resource attributes.
-        final var selfLink = getAbsoluteSelfLink(resource, baseUri);
+        final var selfLink = getAbsoluteSelfLink(resource);
         final var created = IdsUtils.getGregorianOf(resource.getCreationDate());
         final var modified = IdsUtils.getGregorianOf(resource.getModificationDate());
         final var description = resource.getDescription();
