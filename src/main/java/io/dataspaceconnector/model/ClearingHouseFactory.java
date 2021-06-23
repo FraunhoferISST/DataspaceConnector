@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates clearing houses.
@@ -34,12 +34,12 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_URI = URI.create("https://clearinghouse.com");
+    private static final URI DEFAULT_LOCATION = URI.create("");
 
     /**
      * Default string value.
      */
-    private static final String DEFAULT_STRING = "unknown";
+    private static final String DEFAULT_TITLE = "";
 
     /**
      * @param desc The description of the entity.
@@ -66,11 +66,9 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
         Utils.requireNonNull(clearingHouse, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateAccessUrl(clearingHouse,
-                desc.getAccessUrl());
+        final var newAccessUrl = updateLocation(clearingHouse, desc.getLocation());
         final var newTitle = updateTitle(clearingHouse, desc.getTitle());
-        final var newStatus = updateRegistrationStatus(clearingHouse,
-                desc.getRegistrationStatus());
+        final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
         final var newAdditional = updateAdditional(clearingHouse, desc.getAdditional());
 
         return newAccessUrl || newTitle || newStatus || newAdditional;
@@ -83,7 +81,7 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      */
     private boolean updateRegistrationStatus(final ClearingHouse clearingHouse,
                                              final RegistrationStatus status) {
-        clearingHouse.setRegistrationStatus(
+        clearingHouse.setStatus(
                 Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
     }
@@ -95,20 +93,20 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
      */
     private boolean updateTitle(final ClearingHouse clearingHouse, final String title) {
         final var newTitle = MetadataUtils.updateString(clearingHouse.getTitle(),
-                title, DEFAULT_STRING);
+                                                        title, DEFAULT_TITLE);
         newTitle.ifPresent(clearingHouse::setTitle);
         return newTitle.isPresent();
     }
 
     /**
      * @param clearingHouse The entity to be updated.
-     * @param accessUrl     The new access url of the entity.
+     * @param location     The new access url of the entity.
      * @return True, if clearing house is updated.
      */
-    private boolean updateAccessUrl(final ClearingHouse clearingHouse, final URI accessUrl) {
+    private boolean updateLocation(final ClearingHouse clearingHouse, final URI location) {
         final var newAccessUrl =
-                MetadataUtils.updateUri(clearingHouse.getAccessUrl(), accessUrl, DEFAULT_URI);
-        newAccessUrl.ifPresent(clearingHouse::setAccessUrl);
+                MetadataUtils.updateUri(clearingHouse.getLocation(), location, DEFAULT_LOCATION);
+        newAccessUrl.ifPresent(clearingHouse::setLocation);
         return newAccessUrl.isPresent();
     }
 

@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.net.URI;
 
 /**
  * Describing the clearing house's properties.
@@ -32,7 +33,7 @@ public class ClearingHouseDesc extends AbstractDescription<ClearingHouse> {
     /**
      * The access url of the clearing house.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the clearing house.
@@ -42,5 +43,6 @@ public class ClearingHouseDesc extends AbstractDescription<ClearingHouse> {
     /**
      * The status of registration.
      */
-    private RegistrationStatus registrationStatus;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private RegistrationStatus status;
 }

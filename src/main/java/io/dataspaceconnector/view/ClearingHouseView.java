@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.view;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.RegistrationStatus;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
 
 /**
  * A DTO for controlled exposing of clearing house information in API responses.
@@ -48,7 +48,7 @@ public class ClearingHouseView extends RepresentationModel<ClearingHouseView> {
     /**
      * The access url of the clearing house.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the clearing house.
