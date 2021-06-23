@@ -29,7 +29,6 @@ import okhttp3.ResponseBody;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -159,7 +158,7 @@ public class BrokerService {
      * @param response  the broker response
      * @param brokerURL the URL of the called broker
      * @return true if the broker successfully processed the message, false otherwise
-     * @throws IOException if the response's body cannot be extracted as string.
+     * @throws Exception if the response's body cannot be extracted as string.
      */
     private boolean validateBrokerResponse(final Response response, final URL brokerURL)
             throws Exception {
