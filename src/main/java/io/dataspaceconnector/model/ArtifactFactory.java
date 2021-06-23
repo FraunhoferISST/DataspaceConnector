@@ -15,18 +15,19 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
+
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.CRC32C;
-
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an artifact.
@@ -67,6 +68,9 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var artifact = new ArtifactImpl();
         artifact.setAgreements(new ArrayList<>());
         artifact.setRepresentations(new ArrayList<>());
+        if (desc.getBootstrapId() != null) {
+            artifact.setBootstrapId(URI.create(desc.getBootstrapId()));
+        }
 
         update(artifact, desc);
 
@@ -91,9 +95,17 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
         final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
         return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle
-               || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional;
+               || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional
+               || hasUpdatedBootstrapId;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
@@ -219,6 +231,23 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         }
 
         return hasChanged;
+    }
+
+    private boolean updateBootstrapId(final Artifact artifact, final URI bootstrapId) {
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && artifact.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            artifact.getBootstrapId(),
+                            bootstrapId,
+                            artifact.getBootstrapId());
+        }
+
+        newBootstrapId.ifPresent(artifact::setBootstrapId);
+
+        return newBootstrapId.isPresent();
     }
 
     private long calculateChecksum(final byte[] bytes) {

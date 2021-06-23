@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.1.2</revision>
+		<revision>5.2.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>5.0.3</ids-framework.version>
+		<ids-framework.version>5.0.4</ids-framework.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>

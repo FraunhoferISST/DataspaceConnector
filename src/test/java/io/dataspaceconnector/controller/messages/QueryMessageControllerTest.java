@@ -15,10 +15,8 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -33,6 +31,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,6 +47,9 @@ public class QueryMessageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_rejectUnauthorized() throws Exception {

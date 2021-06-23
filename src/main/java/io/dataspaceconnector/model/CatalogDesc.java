@@ -33,4 +33,9 @@ public class CatalogDesc extends AbstractDescription<Catalog> {
      * The description of the catalog.
      */
     private String description;
+
+    /**
+     * Optional id which is used during bootstrapping.
+     */
+    private String bootstrapId;
 }
