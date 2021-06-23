@@ -171,7 +171,7 @@ public final class BootstrapUtils {
                 }
             }
         } else {
-            // Check if the base file itself is a json-ld file <- TODO: JsonLd?
+            // Check if the file matches the search parameters
             if (isSearchedFile(base, filename, extension)) {
                 files.add(base);
             }
