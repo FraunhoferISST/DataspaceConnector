@@ -17,4 +17,4 @@
 /**
  * Contains information for swagger tags.
  */
-package io.dataspaceconnector.controller.resources.tags;
+package io.dataspaceconnector.controller.resources.swagger.tags;

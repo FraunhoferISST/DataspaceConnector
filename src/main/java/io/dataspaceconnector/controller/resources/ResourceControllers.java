@@ -25,8 +25,10 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
-import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
-import io.dataspaceconnector.controller.resources.tags.ResourceNames;
+import io.dataspaceconnector.controller.resources.swagger.tags.ResourceDescriptions;
+import io.dataspaceconnector.controller.resources.swagger.tags.ResourceNames;
+import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
+import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementDesc;
 import io.dataspaceconnector.model.Artifact;
@@ -152,7 +154,8 @@ public final class ResourceControllers {
             ResourceService<RequestedResource, RequestedResourceDesc>> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<RequestedResourceView> create(
                 final RequestedResourceDesc desc) {
             throw new MethodNotAllowed();
@@ -169,14 +172,16 @@ public final class ResourceControllers {
             AgreementView, AgreementService> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<AgreementView> create(final AgreementDesc desc) {
             throw new MethodNotAllowed();
         }
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<Object> update(@Valid final UUID resourceId,
                                                    final AgreementDesc desc) {
             throw new MethodNotAllowed();
@@ -184,7 +189,8 @@ public final class ResourceControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = ResponseDescriptions.METHOD_NOT_ALLOWED)})
         public final ResponseEntity<Void> delete(@Valid final UUID resourceId) {
             throw new MethodNotAllowed();
         }
@@ -232,7 +238,8 @@ public final class ResourceControllers {
          */
         @GetMapping("{id}/data/**")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK,
+                description = ResponseDescriptions.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestParam(required = false) final Boolean download,
@@ -285,7 +292,8 @@ public final class ResourceControllers {
          */
         @PostMapping("{id}/data")
         @Operation(summary = "Get data by artifact id with query input")
-        @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK,
+                description = ResponseDescriptions.OK)})
         public ResponseEntity<StreamingResponseBody> getData(
                 @Valid @PathVariable(name = "id") final UUID artifactId,
                 @RequestBody(required = false) final QueryInput queryInput) throws IOException {

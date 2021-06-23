@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resources.tags;
+package io.dataspaceconnector.controller.resources.swagger.tags;
 
 /**
  * The names of tags for resources.

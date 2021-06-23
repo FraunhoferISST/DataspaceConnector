@@ -18,6 +18,8 @@ package io.dataspaceconnector.controller.resources;
 import javax.validation.Valid;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
+import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
@@ -101,7 +103,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      */
     @PostMapping
     @Operation(summary = "Create a base resource")
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Created")})
+    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.CREATED,
+            description = ResponseDescriptions.CREATED)})
     public ResponseEntity<V> create(@RequestBody final D desc) {
         final var obj = service.create(desc);
         final var entity = assembler.toModel(obj);
@@ -122,7 +125,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
-    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
+    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK,
+            description = ResponseDescriptions.OK)})
     public PagedModel<V> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
@@ -167,8 +171,10 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @PutMapping("{id}")
     @Operation(summary = "Update a base resource by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Created"),
-            @ApiResponse(responseCode = "204", description = "No Content")})
+            @ApiResponse(responseCode = ResponseCodes.CREATED,
+                    description = ResponseDescriptions.CREATED),
+            @ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+                    description = ResponseDescriptions.NO_CONTENT)})
     public ResponseEntity<Object> update(
             @Valid @PathVariable(name = "id") final UUID resourceId, @RequestBody final D desc) {
         final var resource = service.update(resourceId, desc);
@@ -197,7 +203,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      */
     @DeleteMapping("{id}")
     @Operation(summary = "Delete a base resource by id")
-    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
+    @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.NO_CONTENT,
+            description = ResponseDescriptions.NO_CONTENT)})
     public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

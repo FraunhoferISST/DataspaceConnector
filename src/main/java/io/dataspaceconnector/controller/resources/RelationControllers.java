@@ -21,8 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
-import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
-import io.dataspaceconnector.controller.resources.tags.ResourceNames;
+import io.dataspaceconnector.controller.resources.swagger.tags.ResourceDescriptions;
+import io.dataspaceconnector.controller.resources.swagger.tags.ResourceNames;
+import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -155,7 +156,8 @@ public final class RelationControllers {
             RelationServices.ArtifactAgreementLinker, Agreement, AgreementView> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "Not allowed")})
         public final PagedModel<AgreementView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -164,7 +166,8 @@ public final class RelationControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "No content")})
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -173,7 +176,8 @@ public final class RelationControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "No content")})
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -191,7 +195,8 @@ public final class RelationControllers {
             RelationServices.AgreementArtifactLinker, Artifact, ArtifactView> {
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "Not allowed")})
         public final PagedModel<ArtifactView> addResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -200,7 +205,8 @@ public final class RelationControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "No content")})
         public final HttpEntity<Void> replaceResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
@@ -209,7 +215,8 @@ public final class RelationControllers {
 
         @Override
         @Hidden
-        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.METHOD_NOT_ALLOWED,
+                description = "No content")})
         public final HttpEntity<Void> removeResources(
                 @Valid @PathVariable(name = "id") final UUID ownerId,
                 @Valid @RequestBody final List<URI> resources) {
