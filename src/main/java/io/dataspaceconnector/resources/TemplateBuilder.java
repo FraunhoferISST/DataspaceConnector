@@ -18,6 +18,7 @@ package io.dataspaceconnector.resources;
 import java.util.stream.Collectors;
 
 import io.dataspaceconnector.model.core.Artifact;
+import io.dataspaceconnector.model.core.Catalog;
 import io.dataspaceconnector.model.core.Contract;
 import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.model.core.OfferedResource;
@@ -28,6 +29,7 @@ import io.dataspaceconnector.model.core.RequestedResourceDesc;
 import io.dataspaceconnector.model.core.Resource;
 import io.dataspaceconnector.model.core.ResourceDesc;
 import io.dataspaceconnector.ids.templates.ArtifactTemplate;
+import io.dataspaceconnector.ids.templates.CatalogTemplate;
 import io.dataspaceconnector.ids.templates.ContractTemplate;
 import io.dataspaceconnector.ids.templates.RepresentationTemplate;
 import io.dataspaceconnector.ids.templates.ResourceTemplate;
@@ -37,15 +39,25 @@ import io.dataspaceconnector.common.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Builds and links entities from templates.
+ *
  * @param <T> The resource type.
  * @param <D> The resource description type.
  */
 @RequiredArgsConstructor
+@Transactional
 public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
+
+    /**
+     * Spring application context.
+     */
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * The service for resources.
@@ -79,6 +91,12 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     private final @NonNull ContractService contractService;
 
     /**
+     * The service for catalogs.
+     */
+    @Autowired
+    private CatalogService catalogService;
+
+    /**
      * The linker for contract-rule relations.
      */
     private final @NonNull RelationServices.ContractRuleLinker contractRuleLinker;
@@ -96,7 +114,53 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
     private RuleService ruleService;
 
     /**
+     * The linker for catalog-offeredResource relations.
+     */
+    @Autowired
+    private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
+
+    /**
+     * The linker for catalog-requestedResource relations.
+     */
+    @Autowired
+    private CatalogRequestedResourceLinker catalogRequestedResourceLinker;
+
+    /**
+     * Build a catalog and dependencies from a template.
+     *
+     * @param template The catalog template.
+     * @return The new resource.
+     * @throws IllegalArgumentException if the passed template is null.
+     */
+    public Catalog build(final CatalogTemplate template) {
+        Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
+
+        final var templateBuilderOfferedResource = (TemplateBuilderOfferedResource)
+                applicationContext.getBean("templateBuilderOfferedResource");
+
+        final var templateBuilderRequestedResource = (TemplateBuilderRequestedResource)
+                        applicationContext.getBean("templateBuilderRequestedResource");
+
+        final var offeredIds =
+                Utils.toStream(template.getOfferedResources()).map(x ->
+                        templateBuilderOfferedResource.build(x).getId())
+                        .collect(Collectors.toSet());
+
+        final var requestedIds =
+                Utils.toStream(template.getRequestedResources()).map(x ->
+                        templateBuilderRequestedResource.build(x).getId())
+                        .collect(Collectors.toSet());
+        final var catalog = catalogService.create(template.getDesc());
+
+        catalogOfferedResourceLinker.replace(catalog.getId(), offeredIds);
+        catalogRequestedResourceLinker.replace(catalog.getId(), requestedIds);
+
+        return catalog;
+    }
+
+    /**
      * Build a resource and dependencies from a template.
+     *
      * @param template The resource template.
      * @return The new resource.
      * @throws IllegalArgumentException if the passed template is null.
@@ -106,9 +170,9 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
         final var representationIds =
                 Utils.toStream(template.getRepresentations()).map(x -> build(x).getId())
-                     .collect(Collectors.toSet());
+                        .collect(Collectors.toSet());
         final var contractIds = Utils.toStream(template.getContracts()).map(x -> build(x).getId())
-                                     .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         final var resource = buildResource(template);
 
         resourceRepresentationLinker.add(resource.getId(), representationIds);
@@ -127,6 +191,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a representation and dependencies from template.
+     *
      * @param template The representation template.
      * @return The new representation.
      * @throws IllegalArgumentException if the passed template is null.
@@ -135,7 +200,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var artifactIds = Utils.toStream(template.getArtifacts()).map(x -> build(x).getId())
-                                     .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         Representation representation;
         final var repId =
                 representationService.identifyByRemoteId(template.getDesc().getRemoteId());
@@ -152,6 +217,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a contract and dependencies from a template.
+     *
      * @param template The contract template.
      * @return The new contract.
      * @throws IllegalArgumentException if the passed template is null.
@@ -160,7 +226,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
         Utils.requireNonNull(template, ErrorMessages.ENTITY_NULL);
 
         final var ruleIds = Utils.toStream(template.getRules()).map(x -> build(x).getId())
-                                 .collect(Collectors.toSet());
+                .collect(Collectors.toSet());
         final var contract = contractService.create(template.getDesc());
         contractRuleLinker.add(contract.getId(), ruleIds);
 
@@ -169,6 +235,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build an artifact and dependencies from a template.
+     *
      * @param template The artifact template.
      * @return The new artifact.
      * @throws IllegalArgumentException if the passed template is null.
@@ -189,6 +256,7 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Build a rule and dependencies from a template.
+     *
      * @param template The rule template.
      * @return The new rule.
      * @throws IllegalArgumentException if the passed template is null.
@@ -200,8 +268,10 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
 
     /**
      * Return the resource service for subclasses.
+     *
      * @return The resource service.
      */
+    @NonNull
     protected ResourceService<T, D> getResourceService() {
         return resourceService;
     }
@@ -212,17 +282,18 @@ public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc
  * Template builder for offered resources.
  */
 @Service
-final class TemplateBuilderOfferedResource
+class TemplateBuilderOfferedResource
         extends TemplateBuilder<OfferedResource, OfferedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService              The resource service.
-     * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker       The resource-contract service.
-     * @param representationService        The representation service.
-     * @param representationArtifactLinker The representation-artifact service.
-     * @param contractService              The contract service.
-     * @param contractRuleLinker           The contract-rule service.
+     *
+     * @param resourceService                The resource service.
+     * @param resourceRepresentationLinker   The resource-representation service.
+     * @param resourceContractLinker         The resource-contract service.
+     * @param representationService          The representation service.
+     * @param representationArtifactLinker   The representation-artifact service.
+     * @param contractService                The contract service.
+     * @param contractRuleLinker             The contract-rule service.
      */
     @Autowired
     TemplateBuilderOfferedResource(
@@ -234,9 +305,9 @@ final class TemplateBuilderOfferedResource
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
             final RelationServices.ContractRuleLinker contractRuleLinker) {
-        super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationService, representationArtifactLinker, contractService,
-              contractRuleLinker);
+        super(resourceService, resourceRepresentationLinker,
+                resourceContractLinker, representationService, representationArtifactLinker,
+                contractService, contractRuleLinker);
     }
 
     @Override
@@ -250,17 +321,18 @@ final class TemplateBuilderOfferedResource
  * Template builder for requested resources.
  */
 @Service
-final class TemplateBuilderRequestedResource
+class TemplateBuilderRequestedResource
         extends TemplateBuilder<RequestedResource, RequestedResourceDesc> {
     /**
      * Default constructor.
-     * @param resourceService              The resource service.
-     * @param resourceRepresentationLinker The resource-representation service.
-     * @param resourceContractLinker       The resource-contract service.
-     * @param representationService        The representation service.
-     * @param representationArtifactLinker The representation-artifact service.
-     * @param contractService              The contract service.
-     * @param contractRuleLinker           The contract-rule service.
+     *
+     * @param resourceService                The resource service.
+     * @param resourceRepresentationLinker   The resource-representation service.
+     * @param resourceContractLinker         The resource-contract service.
+     * @param representationService          The representation service.
+     * @param representationArtifactLinker   The representation-artifact service.
+     * @param contractService                The contract service.
+     * @param contractRuleLinker             The contract-rule service.
      */
     @Autowired
     TemplateBuilderRequestedResource(
@@ -272,9 +344,9 @@ final class TemplateBuilderRequestedResource
             final RelationServices.RepresentationArtifactLinker representationArtifactLinker,
             final ContractService contractService,
             final RelationServices.ContractRuleLinker contractRuleLinker) {
-        super(resourceService, resourceRepresentationLinker, resourceContractLinker,
-              representationService, representationArtifactLinker, contractService,
-              contractRuleLinker);
+        super(resourceService, resourceRepresentationLinker,
+                resourceContractLinker, representationService, representationArtifactLinker,
+                contractService, contractRuleLinker);
     }
 
     @Override

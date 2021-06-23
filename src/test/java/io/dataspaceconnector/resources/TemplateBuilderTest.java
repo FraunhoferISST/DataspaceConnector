@@ -18,11 +18,14 @@ package io.dataspaceconnector.resources;
 import io.dataspaceconnector.model.core.Artifact;
 import io.dataspaceconnector.model.core.ArtifactDesc;
 import io.dataspaceconnector.model.core.ArtifactImpl;
+import io.dataspaceconnector.model.core.CatalogDesc;
 import io.dataspaceconnector.model.core.ContractRuleDesc;
 import io.dataspaceconnector.model.core.OfferedResource;
 import io.dataspaceconnector.model.core.OfferedResourceDesc;
 import io.dataspaceconnector.model.core.RequestedResource;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.ids.templates.ArtifactTemplate;
+import io.dataspaceconnector.ids.templates.CatalogTemplate;
 import io.dataspaceconnector.ids.templates.ResourceTemplate;
 import io.dataspaceconnector.ids.templates.RuleTemplate;
 import lombok.SneakyThrows;
@@ -52,10 +55,41 @@ class TemplateBuilderTest {
     private OfferedResourceContractLinker offeredResourceContractLinker;
 
     @MockBean
-    private RequestedResourceContractLinker requestedResourceContractLinker;
+    private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
+
+    /**
+     * ContractTemplate.
+     */
+
+    @Test
+    public void build_ContractTemplateNull_throwIllegalArgumentException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> builder.build((CatalogTemplate) null));
+    }
+
+    @Test
+    public void build_CatalogTemplateOnlyDesc_returnOnlyResource() {
+        /* ARRANGE */
+        final var desc = new CatalogDesc();
+        final var template = new CatalogTemplate(desc);
+
+        /* ACT */
+        final var result = builder.build(template);
+
+        /* ASSERT */
+        assertNotNull(result);
+        Mockito.verify(catalogOfferedResourceLinker, Mockito.atLeastOnce()).replace(Mockito.any(), Mockito.any());
+    }
+
+    /**
+     * ResourceTemplate.
+     */
 
     @Test
     public void build_ResourceTemplateNull_throwIllegalArgumentException() {

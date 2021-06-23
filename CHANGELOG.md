@@ -1,7 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.X.X] - XXXX-XX-XX
+## [5.2.0] - 2021-06-23
+
+### Added
+- Add `BootstrapConfiguration`.
+  * Allow registering ids catalogs, offered resources, representations, artifacts, and contract
+    offers during start up.
+  * Allow registering offered resources as part of the catalogs to brokers.
+- Add `CatalogTemplate` and matching mapping/build functions.
+- Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
+- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data
+  can be found.
+
+### Changed
+- Change `ConnectorService` to use the connector's ID from `config.json` when
+  `getAllCatalogsWithOfferedResources` is called.
 
 ### Fixed
 - Fixed missing IDS context in `/api/examples/policy`.
@@ -9,8 +23,9 @@ All notable changes to this project will be documented in this file.
 - Remove encoding from optional path segment in `HttpService`.
 
 ### Changed
-- Increase IDS Framework version to 5.0.3.
-- Update default Infomodel version to 4.0.9.
+- Increase IDS Framework version to 5.0.4.
+- Update default Infomodel version to 4.0.10.
+- Increase postgres version to 42.2.22.
 
 ## [5.1.2] - 2021-06-14
 
@@ -20,7 +35,7 @@ All notable changes to this project will be documented in this file.
 - Fixed missing paging information in openapi schema.
 
 ### Changed
-- Increase postgresql version to 42.2.20.
+- Increase postgresql version to 42.2.21.
 - Increase spring-boot version to 2.5.1.
 
 ## [5.1.1] - 2021-06-09

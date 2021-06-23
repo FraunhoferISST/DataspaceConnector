@@ -29,6 +29,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.model.core.Contract;
 import io.dataspaceconnector.model.core.ContractDesc;
 import io.dataspaceconnector.model.core.ContractFactory;
@@ -44,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -62,6 +64,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ContractRequestHandlerTest {
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @SpyBean
     EntityPersistenceService persistenceService;

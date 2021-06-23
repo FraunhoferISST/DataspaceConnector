@@ -89,7 +89,7 @@ def create_usage_notification_rule():
               "@id": "https://w3id.org/idsa/autogen/constraint/c91e64ce-1fc1-44fd-bec1-6c6778603919",
               "ids:rightOperand": {
                 "@value": "https://localhost:8080/api/ids/data",
-                "@type": "xsd:anyURI"
+                "@type": "http://www.w3.org/2001/XMLSchema#anyURI"
               },
               "ids:leftOperand": {
                 "@id": "idsc:ENDPOINT"
@@ -134,7 +134,7 @@ def create_n_times_usage_rule():
           "@id": "https://w3id.org/idsa/autogen/constraint/4ae656d1-2a73-44e3-a168-b1cbe49d4622",
           "ids:rightOperand": {
             "@value": "5",
-            "@type": "xsd:double"
+            "@type": "http://www.w3.org/2001/XMLSchema#double"
           },
           "ids:leftOperand": {
             "@id": "idsc:COUNT"

@@ -15,16 +15,6 @@
  */
 package io.dataspaceconnector.model.core;
 
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import java.io.Serializable;
-import java.time.ZonedDateTime;
-import java.util.Map;
-import java.util.UUID;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,6 +23,17 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import java.io.Serializable;
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Base type for all entities.
@@ -86,4 +87,11 @@ public class AbstractEntity implements Serializable {
      */
     @Column(name = "deleted")
     private boolean deleted;
+
+    /**
+     * Optional id which is used during bootstrapping.
+     */
+    @Column(name = "bootstrap_id")
+    @Setter
+    private URI bootstrapId;
 }

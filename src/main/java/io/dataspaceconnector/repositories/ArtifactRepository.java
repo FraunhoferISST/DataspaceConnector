@@ -88,4 +88,16 @@ public interface ArtifactRepository extends RemoteEntityRepository<Artifact> {
             + "WHERE a.id = :artifactId "
             + "AND a.deleted = false")
     void setArtifactData(UUID artifactId, long checkSum, long size);
+
+    /**
+     * Finds all artifacts with a specific bootstrap ID.
+     *
+     * @param bootstrapId bootstrap ID of the artifact
+     * @return list of all artifacts with given bootstrap ID
+     */
+    @Query("SELECT a "
+            + "FROM Artifact a "
+            + "WHERE a.bootstrapId = :bootstrapId "
+            + "AND a.deleted = false")
+    List<Artifact> findAllByBootstrapId(URI bootstrapId);
 }

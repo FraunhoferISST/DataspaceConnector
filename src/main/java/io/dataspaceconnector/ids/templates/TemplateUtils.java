@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import io.dataspaceconnector.model.core.OfferedResourceDesc;
 import io.dataspaceconnector.model.core.RequestedResourceDesc;
 import io.dataspaceconnector.usagecontrol.util.ContractUtils;
 import io.dataspaceconnector.common.exceptions.messages.ErrorMessages;
@@ -43,6 +45,17 @@ public final class TemplateUtils {
     }
 
     /**
+     * Build catalog template from ids catalog.
+     *
+     * @param catalog The ids catalog.
+     * @return The catalog template.
+     */
+    public static CatalogTemplate getCatalogTemplate(
+            final Catalog catalog) {
+        return MappingUtils.fromIdsCatalog(catalog);
+    }
+
+    /**
      * Build resource template from ids resource.
      *
      * @param resource The ids resource.
@@ -51,6 +64,17 @@ public final class TemplateUtils {
     public static ResourceTemplate<RequestedResourceDesc> getResourceTemplate(
             final Resource resource) {
         return MappingUtils.fromIdsResource(resource);
+    }
+
+    /**
+     * Build offered resource template from ids resource.
+     *
+     * @param resource The ids resource.
+     * @return The resource template.
+     */
+    public static ResourceTemplate<OfferedResourceDesc> getOfferedResourceTemplate(
+            final Resource resource) {
+        return MappingUtils.fromIdsOfferedResource(resource);
     }
 
     /**
@@ -132,12 +156,11 @@ public final class TemplateUtils {
 
     /**
      * Build a list of contract templates from ids resource.
-     * NOTE: Keep method for later usage.
      *
      * @param resource The ids resource.
      * @return List of contract templates.
      */
-    private static List<ContractTemplate> getContractTemplates(final Resource resource) {
+    public static List<ContractTemplate> getContractTemplates(final Resource resource) {
         final var list = new ArrayList<ContractTemplate>();
 
         // Iterate over all contract offers.

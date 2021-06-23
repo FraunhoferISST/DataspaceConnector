@@ -18,6 +18,7 @@ package io.dataspaceconnector.common;
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ContentType;
 import de.fraunhofer.iais.eis.Contract;
@@ -35,6 +36,7 @@ import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.TemporalEntityBuilder;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
@@ -62,6 +64,73 @@ public class MappingUtilsTest {
 
     private final ZonedDateTime date =
             ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
+
+    @Test
+    public void fromIdsCatalog_inputNull_throwIllegalArgumentExceptionException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsCatalog(null));
+    }
+
+    @Test
+    public void fromIdsCatalog_validInput_returnCatalogTemplate() {
+        /* ARRANGE */
+        final var catalog = getCatalog();
+        catalog.setProperty("test", "test");
+
+        /* ACT */
+        final var result = MappingUtils.fromIdsCatalog(catalog);
+
+        /* ASSERT */
+        assertEquals(catalog.getProperties().get("test"),
+                result.getDesc().getAdditional().get("test"));
+    }
+
+    @Test
+    public void fromIdsOfferedResource_inputNull_throwIllegalArgumentExceptionException() {
+        /* ACT && ASSERT */
+        assertThrows(IllegalArgumentException.class, () -> MappingUtils.fromIdsOfferedResource(null));
+    }
+
+    @Test
+    public void fromIdsOfferedResource_validInput_returnResourceTemplate() {
+        /* ARRANGE */
+        final var resource = getResource();
+        resource.setProperty("test", "test");
+
+        /* ACT */
+        final var result = MappingUtils.fromIdsOfferedResource(resource);
+
+        /* ASSERT */
+        assertEquals(resource.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
+        assertEquals(resource.getDescription().get(0).toString(), result.getDesc().getDescription());
+        assertEquals(resource.getPublisher(), result.getDesc().getPublisher());
+        assertEquals(resource.getStandardLicense(), result.getDesc().getLicence());
+        assertEquals(resource.getLanguage().get(0).toString(), result.getDesc().getLanguage());
+        assertEquals(resource.getTitle().get(0).toString(), result.getDesc().getTitle());
+        assertEquals(resource.getSovereign(), result.getDesc().getSovereign());
+        assertEquals(resource.getResourceEndpoint().get(0).getEndpointDocumentation().get(0), result.getDesc().getEndpointDocumentation());
+
+        final var additional = result.getDesc().getAdditional();
+        assertEquals(resource.getAccrualPeriodicity().toRdf(), additional.get("ids:accrualPeriodicity"));
+        assertEquals(resource.getContentPart().get(0).toString(), additional.get("ids:contentPart"));
+        assertEquals(resource.getContentStandard().toString(), additional.get("ids:contentStandard"));
+        assertEquals(resource.getContentType().toRdf(), additional.get("ids:contentType"));
+        assertEquals(resource.getCreated().toXMLFormat(), additional.get("ids:created"));
+        assertEquals(resource.getCustomLicense().toString(), additional.get("ids:customLicense"));
+        assertEquals(resource.getDefaultRepresentation().get(0).toString(), additional.get("ids:defaultRepresentation"));
+        assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
+        // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
+        assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
+        assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
+        assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
+        assertEquals(resource.getSpatialCoverage().get(0).toString(), additional.get("ids:spatialCoverage"));
+        assertEquals(resource.getTemporalCoverage().get(0).toString(), additional.get("ids:temporalCoverage"));
+        assertEquals(resource.getTemporalResolution().toString(), additional.get("ids:temporalResolution"));
+        assertEquals(resource.getTheme().get(0).toString(), additional.get("ids:theme"));
+        assertEquals(resource.getVariant().toString(), additional.get("ids:variant"));
+        assertEquals(resource.getVersion(), additional.get("ids:version"));
+        assertEquals("test", additional.get("test"));
+    }
 
     @Test
     public void fromIdsResource_inputNull_throwIllegalArgumentExceptionException() {
@@ -98,7 +167,7 @@ public class MappingUtilsTest {
         assertEquals(resource.getCustomLicense().toString(), additional.get("ids:customLicense"));
         assertEquals(resource.getDefaultRepresentation().get(0).toString(), additional.get("ids:defaultRepresentation"));
         assertEquals(resource.getModified().toXMLFormat(), additional.get("ids:modified"));
-        assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
+        // assertEquals(resource.getResourceEndpoint().get(0).toString(), additional.get("ids:resourceEndpoint"));
         assertEquals(resource.getResourcePart().get(0).toString(), additional.get("ids:resourcePart"));
         assertEquals(resource.getSample().get(0).toString(), additional.get("ids:sample"));
         assertEquals(resource.getShapesGraph().toString(), additional.get("ids:shapesGraph"));
@@ -199,15 +268,6 @@ public class MappingUtilsTest {
     }
 
     @Test
-    public void fromIdsContract_contractEndNull_throwNullPointerException() {
-        /* ARRANGE */
-        final var contract = getContractWithEndDateNull();
-
-        /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> MappingUtils.fromIdsContract(contract));
-    }
-
-    @Test
     public void fromIdsRule_validInput_returnRuleTemplate() {
         /* ARRANGE */
         final var rule = getRule();
@@ -224,6 +284,12 @@ public class MappingUtilsTest {
     /**************************************************************************
      * Utilities.
      *************************************************************************/
+
+    @SneakyThrows
+    private Catalog getCatalog() {
+        return new ResourceCatalogBuilder()
+                .build();
+    }
 
     @SneakyThrows
     private Resource getResource() {
@@ -347,16 +413,6 @@ public class MappingUtilsTest {
                 ._contractDate_(getDateAsXMLGregorianCalendar())
                 ._contractStart_(getDateAsXMLGregorianCalendar())
                 ._contractEnd_(getDateAsXMLGregorianCalendar())
-                .build();
-    }
-
-    private Contract getContractWithEndDateNull() {
-        return new ContractAgreementBuilder(URI.create("https://w3id.org/idsa/autogen/contractAgreement/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                ._provider_(URI.create("http://provider.com"))
-                ._consumer_(URI.create("http://consumer.com"))
-                ._permission_(Util.asList((Permission) getRule()))
-                ._contractDate_(getDateAsXMLGregorianCalendar())
-                ._contractStart_(getDateAsXMLGregorianCalendar())
                 .build();
     }
 

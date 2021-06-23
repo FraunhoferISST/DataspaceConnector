@@ -95,8 +95,8 @@ public final class Utils {
         var isSame = true;
 
         if (isOnlyOneNull(lList, rList)) {
-            final var cond1 = lList == null && rList.size() == 0;
-            final var cond2 = rList == null && lList.size() == 0;
+            final var cond1 = lList == null && rList.isEmpty();
+            final var cond2 = rList == null && lList.isEmpty();
             if (!cond1 && !cond2) {
                 isSame = false;
             }

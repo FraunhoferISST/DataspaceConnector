@@ -15,14 +15,10 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -38,7 +34,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,6 +52,9 @@ public class ResourceUnavailableMessageControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     private MockMvc mockMvc;

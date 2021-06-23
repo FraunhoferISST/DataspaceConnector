@@ -21,6 +21,7 @@ import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.usagecontrol.config.ConnectorConfiguration;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import net.minidev.json.JSONObject;
@@ -51,6 +52,12 @@ public class ConfigurationControllerTest {
 
     @MockBean
     private DeserializationService idsService;
+
+    /**
+     * Required to disable bootstrapping.
+     */
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     private MockMvc mockMvc;

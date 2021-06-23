@@ -139,7 +139,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/a5d77dcd-f838-48e9-bdc1-4b219946f8ac",
     "ids:rightOperand" : {
       "@value" : "5",
-      "@type" : "xsd:double"
+      "@type" : "http://www.w3.org/2001/XMLSchema#double"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:COUNT"
@@ -176,7 +176,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/b7d8beaf-0765-4d40-b2e9-4eddeda1c89b",
     "ids:rightOperand" : {
       "@value" : "PT1M30.5S",
-      "@type" : "xsd:duration"
+      "@type" : "http://www.w3.org/2001/XMLSchema#duration"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:ELAPSED_TIME"
@@ -214,7 +214,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/28653654-3024-4435-8626-f1878de39c22",
     "ids:rightOperand" : {
       "@value" : "2020-07-11T00:00:00Z",
-      "@type" : "xsd:dateTimeStamp"
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:POLICY_EVALUATION_TIME"
@@ -227,7 +227,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/c8408f4a-8c65-4894-a17d-4e3999bc0669",
     "ids:rightOperand" : {
       "@value" : "2020-07-11T00:00:00Z",
-      "@type" : "xsd:dateTimeStamp"
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:POLICY_EVALUATION_TIME"
@@ -268,7 +268,7 @@ runtime.
       "@id" : "https://w3id.org/idsa/autogen/constraint/90abcfe4-9901-4128-b787-c077a9bd363b",
       "ids:rightOperand" : {
         "@value" : "2020-07-11T00:00:00Z",
-        "@type" : "xsd:dateTimeStamp"
+        "@type" : "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
       },
       "ids:leftOperand" : {
         "@id" : "idsc:POLICY_EVALUATION_TIME"
@@ -286,7 +286,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/3c218b76-7c32-4fd3-930f-69f728161096",
     "ids:rightOperand" : {
       "@value" : "2020-07-11T00:00:00Z",
-      "@type" : "xsd:dateTimeStamp"
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:POLICY_EVALUATION_TIME"
@@ -299,7 +299,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/937684bd-0e81-44a5-b4e3-02664a1bf4c9",
     "ids:rightOperand" : {
       "@value" : "2020-07-11T00:00:00Z",
-      "@type" : "xsd:dateTimeStamp"
+      "@type" : "http://www.w3.org/2001/XMLSchema#dateTimeStamp"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:POLICY_EVALUATION_TIME"
@@ -371,7 +371,7 @@ runtime.
       "@id" : "https://w3id.org/idsa/autogen/constraint/0f940426-d83e-4d2c-a59f-9d5f17ad5f4d",
       "ids:rightOperand" : {
         "@value" : "https://localhost:8080/api/ids/data",
-        "@type" : "xsd:anyURI"
+        "@type" : "http://www.w3.org/2001/XMLSchema#anyURI"
       },
       "ids:leftOperand" : {
         "@id" : "idsc:ENDPOINT"
@@ -413,7 +413,7 @@ runtime.
     "@id" : "https://w3id.org/idsa/autogen/constraint/572c96ec-dd86-4b20-a849-a0ce8c255eee",
     "ids:rightOperand" : {
       "@value" : "https://example.com",
-      "@type" : "xsd:anyURI"
+      "@type" : "http://www.w3.org/2001/XMLSchema#anyURI"
     },
     "ids:leftOperand" : {
       "@id" : "idsc:SYSTEM"

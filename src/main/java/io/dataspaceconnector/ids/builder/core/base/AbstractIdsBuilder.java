@@ -17,7 +17,6 @@ package io.dataspaceconnector.ids.builder.core.base;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,14 +61,14 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
     }
 
     /**
-     * Convert an DSC object to an ids object.
-     *
+     * Convert an DSC object to an Infomodel object with given baseUri.
      * @param entity   The entity to be converted.
      * @param maxDepth The depth determines when to stop following dependencies. Set this value to a
      *                 negative number to follow all dependencies.
-     * @return The ids object.
+     * @return The Infomodel object.
      */
-    public X create(final T entity, final int maxDepth) throws ConstraintViolationException {
+    public X create(final T entity, final int maxDepth)
+            throws ConstraintViolationException {
         return create(entity, 0, maxDepth);
     }
 

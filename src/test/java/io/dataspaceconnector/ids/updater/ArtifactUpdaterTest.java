@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.ids.updater;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.model.core.ArtifactImpl;
@@ -33,6 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -119,6 +119,7 @@ public class ArtifactUpdaterTest {
         output.getDesc().setRemoteId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
         output.getDesc().setAutomatedDownload(false);
         output.getDesc().setAdditional(new ConcurrentHashMap<>());
+        output.getDesc().setBootstrapId("550e8400-e29b-11d4-a716-446655440000");
 
         return output;
     }

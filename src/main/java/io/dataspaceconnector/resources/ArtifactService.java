@@ -129,14 +129,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
-        // TODO: Parameter Null checks
-
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -191,15 +190,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
-
-        // TODO: Parameter Null checks
-
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
@@ -287,6 +284,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
+     * @throws IOException if IO errors occurr.
      */
     private InputStream getData(final RemoteData data, final QueryInput queryInput)
             throws IOException {
