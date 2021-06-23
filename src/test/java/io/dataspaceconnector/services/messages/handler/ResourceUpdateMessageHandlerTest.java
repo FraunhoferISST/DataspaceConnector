@@ -27,10 +27,13 @@ import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import io.dataspaceconnector.services.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import javax.xml.datatype.DatatypeFactory;
@@ -46,6 +49,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ResourceUpdateMessageHandlerTest {
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @SpyBean
     EntityUpdateService updateService;

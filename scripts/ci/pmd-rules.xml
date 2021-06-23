@@ -24,7 +24,10 @@
             Rules for the Dataspace Connector
     </description>
 
-    <rule ref="category/java/bestpractices.xml"></rule>
+    <rule ref="category/java/bestpractices.xml">
+        <!-- Too many false positives, seems to be broken when using var -->
+        <exclude name="UnusedPrivateMethod"/>
+    </rule>
     <rule ref="category/java/codestyle.xml">
         <!-- Small methods are only bloated, big methods should raise eyebrows in code review -->
         <exclude name="OnlyOneReturn"/>
@@ -32,6 +35,8 @@
         <exclude name="LongVariable"/>
         <!-- Conflicts quite often with unnecessary constructor rule -->
         <exclude name="AtLeastOneConstructor"/>
+        <!-- Clashes with the usage of var -->
+        <exclude name="UseDiamondOperator"/>
     </rule>
     <rule ref="category/java/design.xml">
         <exclude name="LoosePackageCoupling"/>

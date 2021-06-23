@@ -307,6 +307,15 @@ opentracing.jaeger.udp-sender.port=6831
 opentracing.jaeger.log-spans=true
 ```
 
+### Bootstrapping
+
+If you want to change the base path, which will be used to find properties and catalogs for bootstrapping,
+you can customize the following line:
+
+```properties
+bootstrap.path=.
+```
+
 ### IDS Settings
 
 URLs of the DAPS for IDS identity management and the Clearing House for contract agreement and data 

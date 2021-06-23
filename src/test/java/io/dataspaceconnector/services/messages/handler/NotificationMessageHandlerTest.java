@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
@@ -31,15 +25,26 @@ import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageD
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class NotificationMessageHandlerTest {
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @SpyBean
     MessageProcessedNotificationService notificationService;

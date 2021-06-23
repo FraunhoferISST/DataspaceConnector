@@ -121,7 +121,6 @@ public class RuleValidator {
     public boolean validateRulesOfRequest(final List<Contract> contractOffers,
                                           final Map<URI, List<Rule>> map,
                                           final URI target) {
-        boolean valid = false;
         for (final var contract : contractOffers) {
             // Get rule list from contract offer.
             final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
@@ -130,12 +129,11 @@ public class RuleValidator {
 
             // Compare rules
             if (compareRulesOfOfferToRequest(ruleList, values)) {
-                valid = true;
-                break;
+                return true;
             }
         }
 
-        return valid;
+        return false;
     }
 
     /**
@@ -149,12 +147,10 @@ public class RuleValidator {
                                                 final List<Rule> requestRules) {
         final var idsRuleList = new ArrayList<Rule>();
         for (final var rule : offerRules) {
-            final var value = rule.getValue();
-            final var idsRule = deserializationService.getRule(value);
-            idsRuleList.add(idsRule);
+            idsRuleList.add(deserializationService.getRule(rule.getValue()));
         }
 
-        if (!RuleUtils.compareRules(idsRuleList, (requestRules))) {
+        if (!RuleUtils.compareRules(idsRuleList, requestRules)) {
             if (log.isDebugEnabled()) {
                 log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
                         requestRules);

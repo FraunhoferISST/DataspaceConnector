@@ -50,6 +50,9 @@ public class ResourceUpdateMessageControllerTest {
     @MockBean
     private ConnectorService connectorService;
 
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
+
     @Autowired
     private MockMvc mockMvc;
 

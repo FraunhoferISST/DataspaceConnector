@@ -24,6 +24,7 @@ import de.fraunhofer.iais.eis.ResultMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.ResultMAP;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class QueryMessageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_rejectUnauthorized() throws Exception {

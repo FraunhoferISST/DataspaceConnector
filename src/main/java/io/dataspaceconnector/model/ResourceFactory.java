@@ -15,15 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
+import java.util.Optional;
 
 /**
  * Base class for creating and updating resources.
@@ -122,13 +123,20 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
                                || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs
-                               || hasUpdatedAdditional;
+                               || hasUpdatedAdditional || hasUpdatedBootstrapId;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -256,6 +264,23 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
+    }
+
+    private boolean updateBootstrapId(final Resource resource, final URI bootstrapId) {
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && resource.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            resource.getBootstrapId(),
+                            bootstrapId,
+                            resource.getBootstrapId());
+        }
+
+        newBootstrapId.ifPresent(resource::setBootstrapId);
+
+        return newBootstrapId.isPresent();
     }
 
     private boolean updateAdditional(

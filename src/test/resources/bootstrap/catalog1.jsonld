@@ -1,0 +1,236 @@
+{
+    "@context" : {
+        "ids" : "https://w3id.org/idsa/core/",
+        "idsc" : "https://w3id.org/idsa/code/"
+    },
+  "@type": "ids:ResourceCatalog",
+  "@id": "https://w3id.org/idsa/autogen/resourceCatalog/12548e90-c094-424a-a207-6c736f817492",
+  "ids:offeredResource": [
+    {
+      "@type": "ids:Resource",
+      "@id": "https://w3id.org/idsa/autogen/resource/a7d8c819-c7f7-49a1-9e0e-759fbd077a97",
+      "ids:language": [
+        {
+          "@id": "idsc:EN"
+        }
+      ],
+      "ids:description": [
+        {
+          "@value": "This is an example resource",
+          "@language": "EN"
+        }
+      ],
+      "ids:version": "1",
+      "ids:title": [
+        {
+          "@value": "Example Resource",
+          "@language": "EN"
+        }
+      ],
+      "ids:publisher": "https://example.com",
+      "ids:sovereign": "https://example.com",
+      "ids:representation": [
+        {
+          "@type": "ids:Representation",
+          "@id": "https://w3id.org/idsa/autogen/representation/842693b1-80d1-4d24-8923-b82ce3937cf6",
+          "ids:instance": [
+            {
+              "@type": "ids:Artifact",
+              "@id": "https://w3id.org/idsa/autogen/artifact/5c96b6f0-a698-4329-9f15-4913bf4e86f5",
+              "ids:fileName": "exampleFile.xml",
+              "ids:duration": 12551,
+              "ids:creationDate": "2016-10-03T15:10:40.000Z",
+              "ids:byteSize": 4214,
+              "ids:checkSum": "120EA8A25E5D487BF68B5F7096440019"
+            },
+            {
+              "@type": "ids:Artifact",
+              "@id": "https://w3id.org/idsa/autogen/artifact/570d3831-0186-42ac-b323-d60fc207d71a",
+              "ids:fileName": "anotherFile.xml",
+              "ids:duration": 7552,
+              "ids:creationDate": "2016-12-03T15:10:40.000Z",
+              "ids:byteSize": 6441,
+              "ids:checkSum": "1E0EA8A25E5D487BF68A5F7026440079"
+            }
+          ],
+          "ids:language": {
+            "@id": "idsc:EN"
+          },
+          "ids:created": "2016-10-03T15:10:40.000Z",
+          "ids:mediaType": {
+            "@type": "ids:IANAMediaType",
+            "@id": "https://w3id.org/idsa/autogen/iANAMediaType/eb710d80-4a75-48ab-b34a-734ab9009af0",
+            "ids:filenameExtension": "xml"
+          },
+          "ids:representationStandard": "https://example.com",
+          "ids:shapesGraph": "https://example.com",
+          "ids:modified": "2017-10-03T15:10:40.000Z"
+        }
+      ],
+      "ids:resourceEndpoint": [
+        {
+          "@type": "ids:ConnectorEndpoint",
+          "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/c02d9dd2-9ab6-41d6-80f1-1844d64ba6ff",
+          "ids:accessURL": "https://example.com"
+        }
+      ],
+      "ids:standardLicense": "https://example.com",
+      "ids:contractOffer": [
+        {
+          "@context" : {
+              "ids" : "https://w3id.org/idsa/core/",
+              "idsc" : "https://w3id.org/idsa/code/"
+          },
+          "@type": "ids:ContractOffer",
+          "@id": "https://w3id.org/idsa/autogen/contractOffer/57c89dfa-1dc6-430c-a6ba-9b8d9af2d8b1",
+          "ids:permission": [
+            {
+              "@type": "ids:Permission",
+              "@id": "https://w3id.org/idsa/autogen/permission/a3c57cd0-5022-484d-8fb0-0676351de2da",
+              "ids:description": [
+                {
+                  "@value": "provide-access",
+                  "@type": "http://www.w3.org/2001/XMLSchema#string"
+                }
+              ],
+              "ids:title": [
+                {
+                  "@value": "Allow Data Usage",
+                  "@type": "http://www.w3.org/2001/XMLSchema#string"
+                }
+              ],
+              "ids:action": [
+                {
+                  "@id": "idsc:USE"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "ids:keyword": [
+        {
+          "@value": "EXAMPLE",
+          "@language": "EN"
+        },
+        {
+          "@value": "DATA",
+          "@language": "EN"
+        }
+      ]
+    },
+    {
+      "@type": "ids:Resource",
+      "@id": "https://w3id.org/idsa/autogen/resource/5ef66d83-d69f-4c3d-9b75-ae0f569576e8",
+      "ids:language": [
+        {
+          "@id": "idsc:EN"
+        }
+      ],
+      "ids:description": [
+        {
+          "@value": "This is an example resource",
+          "@language": "EN"
+        }
+      ],
+      "ids:version": "1",
+      "ids:title": [
+        {
+          "@value": "Second Example Resource",
+          "@language": "EN"
+        }
+      ],
+      "ids:publisher": "https://example.com",
+      "ids:sovereign": "https://example.com",
+      "ids:representation": [
+        {
+          "@type": "ids:Representation",
+          "@id": "https://w3id.org/idsa/autogen/representation/d141e149-e7d2-48cb-b5fc-aafbd191f2f6",
+          "ids:instance": [
+            {
+              "@type": "ids:Artifact",
+              "@id": "https://w3id.org/idsa/autogen/artifact/405aff0f-a154-4ecc-8e59-c3c942ad4ba0",
+              "ids:fileName": "exampleFile.pdf",
+              "ids:duration": 127899,
+              "ids:creationDate": "2016-10-03T15:10:40.000Z",
+              "ids:byteSize": 64167,
+              "ids:checkSum": "120EA8A25E5D487BF6AB2684DD440019"
+            },
+            {
+              "@type": "ids:Artifact",
+              "@id": "https://w3id.org/idsa/autogen/artifact/6b9c9add-03f0-44da-b185-4f24c7f13e27",
+              "ids:fileName": "anotherFile.pdf",
+              "ids:duration": 21677,
+              "ids:creationDate": "2016-10-03T15:10:40.000Z",
+              "ids:byteSize": 98783,
+              "ids:checkSum": "1E0EA8A25E2421BF68A5F7026440079"
+            }
+          ],
+          "ids:language": {
+            "@id": "idsc:EN"
+          },
+          "ids:created": "2016-10-03T15:10:40.000Z",
+          "ids:mediaType": {
+            "@type": "ids:IANAMediaType",
+            "@id": "https://w3id.org/idsa/autogen/iANAMediaType/ce22d1c0-e546-4066-a0e8-4a4e7620f883",
+            "ids:filenameExtension": "pdf"
+          },
+          "ids:representationStandard": "https://example.com",
+          "ids:shapesGraph": "https://example.com",
+          "ids:modified": "2016-10-03T15:10:40.000Z"
+        }
+      ],
+      "ids:resourceEndpoint": [
+        {
+          "@type": "ids:ConnectorEndpoint",
+          "@id": "https://w3id.org/idsa/autogen/connectorEndpoint/755d877e-94aa-49e0-90d8-bec2a5186b48",
+          "ids:accessURL": "https://example.com"
+        }
+      ],
+      "ids:standardLicense": "https://example.com",
+      "ids:contractOffer": [
+        {
+          "@context" : {
+              "ids" : "https://w3id.org/idsa/core/",
+              "idsc" : "https://w3id.org/idsa/code/"
+          },
+          "@type": "ids:ContractOffer",
+          "@id": "https://w3id.org/idsa/autogen/contractOffer/d2232122-776c-4a5d-b2a9-c3c69fe30e83",
+          "ids:permission": [
+            {
+              "@type": "ids:Permission",
+              "@id": "https://w3id.org/idsa/autogen/permission/a3c57cd0-5022-484d-8fb0-0676351de2da",
+              "ids:description": [
+                {
+                  "@value": "provide-access",
+                  "@type": "http://www.w3.org/2001/XMLSchema#string"
+                }
+              ],
+              "ids:title": [
+                {
+                  "@value": "Allow Data Usage",
+                  "@type": "http://www.w3.org/2001/XMLSchema#string"
+                }
+              ],
+              "ids:action": [
+                {
+                  "@id": "idsc:USE"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "ids:keyword": [
+        {
+          "@value": "EXAMPLE",
+          "@language": "EN"
+        },
+        {
+          "@value": "DOCUMENT",
+          "@language": "EN"
+        }
+      ]
+    }
+  ]
+}

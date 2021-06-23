@@ -15,14 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Creates and updates a catalog.
@@ -53,6 +55,9 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
         final var catalog = new Catalog();
         catalog.setOfferedResources(new ArrayList<>());
         catalog.setRequestedResources(new ArrayList<>());
+        if (desc.getBootstrapId() != null) {
+            catalog.setBootstrapId(URI.create(desc.getBootstrapId()));
+        }
 
         update(catalog, desc);
 
@@ -71,11 +76,22 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
         Utils.requireNonNull(catalog, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedTitle = this.updateTitle(catalog, desc.getTitle());
-        final var hasUpdatedDesc = this.updateDescription(catalog, desc.getDescription());
-        final var hasUpdatedAdditional = this.updateAdditional(catalog, desc.getAdditional());
+        final var hasUpdatedTitle =
+                this.updateTitle(catalog, desc.getTitle());
+        final var hasUpdatedDesc =
+                this.updateDescription(catalog, desc.getDescription());
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(catalog, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
-        return hasUpdatedTitle || hasUpdatedDesc || hasUpdatedAdditional;
+        final var hasUpdatedAdditional =
+                this.updateAdditional(catalog, desc.getAdditional());
+
+        return hasUpdatedTitle || hasUpdatedDesc || hasUpdatedBootstrapId || hasUpdatedAdditional;
     }
 
     private boolean updateTitle(final Catalog catalog, final String title) {
@@ -101,4 +117,22 @@ public class CatalogFactory implements AbstractFactory<Catalog, CatalogDesc> {
 
         return newAdditional.isPresent();
     }
+
+    private boolean updateBootstrapId(final Catalog catalog, final URI bootstrapId) {
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && catalog.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            catalog.getBootstrapId(),
+                            bootstrapId,
+                            catalog.getBootstrapId());
+        }
+
+        newBootstrapId.ifPresent(catalog::setBootstrapId);
+
+        return newBootstrapId.isPresent();
+    }
+
 }

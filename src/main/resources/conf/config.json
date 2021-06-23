@@ -34,8 +34,8 @@
         "@id" : "https://localhost:8080/api/ids/data"
       }
     },
-    "ids:outboundModelVersion" : "4.0.9",
-    "ids:inboundModelVersion" : [ "4.0.0", "4.0.9" ],
+    "ids:outboundModelVersion" : "4.0.10",
+    "ids:inboundModelVersion" : [ "4.0.0", "4.0.10" ],
     "ids:title" : [ {
       "@value" : "Dataspace Connector",
       "@type" : "http://www.w3.org/2001/XMLSchema#string"
