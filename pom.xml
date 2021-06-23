@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>5.0.3</ids-framework.version>
+		<ids-messaging-services.version>4.1.1.0</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
@@ -138,6 +138,23 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services -->
+		<dependency>
+			<groupId>de.fraunhofer.ids.messaging</groupId>
+			<artifactId>broker</artifactId>
+			<version>${ids-messaging-services.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<!-- Spring Boot -->
 		<dependency>
@@ -324,23 +341,6 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-security</artifactId>
 			<version>${springdoc-security.version}</version>
-		</dependency>
-
-		<!-- https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services -->
-		<dependency>
-			<groupId>de.fraunhofer.ids.messaging</groupId>
-			<artifactId>broker</artifactId>
-			<version>4.1.1.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-hateoas -->
