@@ -15,6 +15,14 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.Table;
+import java.net.URI;
+
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -23,15 +31,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.Table;
-import java.net.URI;
-import java.time.ZonedDateTime;
 
 /**
  * Entity class for the identity provider.
@@ -56,7 +55,7 @@ public class IdentityProvider extends AbstractEntity {
      * The access url of the identity provider.
      */
     @Convert(converter = UriConverter.class)
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the identity provider.
@@ -67,10 +66,5 @@ public class IdentityProvider extends AbstractEntity {
      * The registration status.
      */
     @Enumerated(EnumType.STRING)
-    private RegistrationStatus registrationStatus;
-
-    /**
-     * The date specification.
-     */
-    private ZonedDateTime lastSeen;
+    private RegistrationStatus status;
 }

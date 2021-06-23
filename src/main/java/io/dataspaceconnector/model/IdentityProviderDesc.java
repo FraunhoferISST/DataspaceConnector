@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
 
 /**
  * Describing identity provider's properties.
@@ -30,7 +31,7 @@ public class IdentityProviderDesc extends AbstractDescription<IdentityProvider> 
     /**
      * The access url of the identity provider.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the identity provider.
@@ -40,5 +41,6 @@ public class IdentityProviderDesc extends AbstractDescription<IdentityProvider> 
     /**
      * The registration status.
      */
-    private RegistrationStatus registrationStatus;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private RegistrationStatus status;
 }

@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates identity providers.
@@ -35,12 +35,12 @@ public class IdentityProviderFactory
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_IDENTITY_PROVIDER = URI.create("https://identityprovider.com");
+    private static final URI DEFAULT_IDENTITY_PROVIDER = URI.create("");
 
     /**
      * Default string value.
      */
-    private static final String DEFAULT_TITLE = "unknown";
+    private static final String DEFAULT_TITLE = "";
 
     /**
      * @param desc The description of the entity.
@@ -68,11 +68,9 @@ public class IdentityProviderFactory
         Utils.requireNonNull(identityProvider, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateAccessUrl(identityProvider,
-                desc.getAccessUrl());
+        final var newAccessUrl = updateLocation(identityProvider, desc.getLocation());
         final var newTitle = updateTitle(identityProvider, desc.getTitle());
-        final var newStatus = updateRegistrationStatus(identityProvider,
-                desc.getRegistrationStatus());
+        final var newStatus = updateRegistrationStatus(identityProvider, desc.getStatus());
         final var newAdditional = updateAdditional(identityProvider, desc.getAdditional());
 
         return newAccessUrl || newTitle || newStatus || newAdditional;
@@ -85,7 +83,7 @@ public class IdentityProviderFactory
      */
     private boolean updateRegistrationStatus(final IdentityProvider identityProvider,
                                              final RegistrationStatus status) {
-        identityProvider.setRegistrationStatus(
+        identityProvider.setStatus(
                 Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
     }
@@ -104,15 +102,15 @@ public class IdentityProviderFactory
 
     /**
      * @param identityProvider The entity to be updated.
-     * @param accessUrl        The new access url of the entity.
+     * @param location        The new access url of the entity.
      * @return True, if access url is updated.
      */
-    private boolean updateAccessUrl(final IdentityProvider identityProvider, final URI accessUrl) {
-        final var newAccessUrl =
-                MetadataUtils.updateUri(identityProvider.getAccessUrl(), accessUrl,
+    private boolean updateLocation(final IdentityProvider identityProvider, final URI location) {
+        final var newLocation =
+                MetadataUtils.updateUri(identityProvider.getLocation(), location,
                         DEFAULT_IDENTITY_PROVIDER);
-        newAccessUrl.ifPresent(identityProvider::setAccessUrl);
-        return newAccessUrl.isPresent();
+        newLocation.ifPresent(identityProvider::setLocation);
+        return newLocation.isPresent();
     }
 
     /**

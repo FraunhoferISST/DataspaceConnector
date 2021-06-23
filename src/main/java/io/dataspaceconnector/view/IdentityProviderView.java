@@ -15,15 +15,16 @@
  */
 package io.dataspaceconnector.view;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.RegistrationStatus;
+import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
 
 /**
  * A DTO for controlled exposing of identity provider information in API responses.
@@ -36,19 +37,19 @@ public class IdentityProviderView extends RepresentationModel<IdentityProviderVi
     /**
      * The creation date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime creationDate;
 
     /**
      * The last modification date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
     /**
      * The access url of the identity provider.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the identity provider.
@@ -58,5 +59,5 @@ public class IdentityProviderView extends RepresentationModel<IdentityProviderVi
     /**
      * The registration status.
      */
-    private RegistrationStatus registrationStatus;
+    private RegistrationStatus status;
 }
