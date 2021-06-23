@@ -220,6 +220,7 @@ public final class RuleUtils {
      *
      * @param rule the policy rule object.
      * @return the time interval.
+     * @throws ParseException if the parsing fails.
      */
     public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
         final var interval = new TimeInterval();
@@ -436,7 +437,7 @@ public final class RuleUtils {
         return lObj.toRdf().equals(rObj.toRdf());
     }
 
-    private static <T extends Action> boolean compareAction(final T lObj, final T rObj) {
+    private static boolean compareAction(final Action lObj, final Action rObj) {
         return lObj.equals(rObj);
     }
 
