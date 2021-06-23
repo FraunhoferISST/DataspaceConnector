@@ -15,10 +15,11 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
 
 /**
  * Describing broker's properties.
@@ -40,5 +41,6 @@ public class BrokerDesc extends AbstractDescription<Broker> {
     /**
      * The status of registration.
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private RegistrationStatus status;
 }

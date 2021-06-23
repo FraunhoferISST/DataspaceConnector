@@ -33,7 +33,7 @@ public class ConfigurationDesc extends AbstractDescription<Configuration> {
     /**
      * The deploy mode of the connector.
      */
-    private ConnectorDeployMode deployMode;
+    private DeployMode deployMode;
 
     /**
      * The truststore settings.

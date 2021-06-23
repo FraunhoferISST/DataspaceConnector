@@ -15,51 +15,21 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Enumeration for data source type.
  */
 public enum DataSourceType {
-
     /**
      * The database.
      */
-    DATABASE("Database"),
+    @JsonProperty("Database")
+    DATABASE,
+
     /**
      * REST as data source type.
      */
-    REST("REST"),
-    /**
-     * Directory as data source type.
-     */
-    DIRECTORY("Directory"),
-
-    /**
-     * File as data source type.
-     */
-    FILE("File"),
-
-    /**
-     * Data source type is something else.
-     */
-    DIVERSE("Diverse");
-
-    /**
-     * The value of the enum.
-     */
-    private final String value;
-
-    /**
-     * @param enumValue The value of the enum.
-     */
-    DataSourceType(final String enumValue) {
-        this.value = enumValue;
-    }
-
-    /**
-     * @return Enum value.
-     */
-    @Override
-    public String toString() {
-        return value;
-    }
+    @JsonProperty("REST")
+    REST;
 }

@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.utils.UriConverter;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -33,6 +24,15 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import io.dataspaceconnector.model.utils.UriConverter;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * The entity where connectors and resources can be registered.
@@ -84,5 +84,4 @@ public class Broker extends AbstractEntity {
      * The date specification.
      */
     private ZonedDateTime lastSeen;
-
 }

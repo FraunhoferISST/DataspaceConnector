@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.services.configuration;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.model.Broker;
 import io.dataspaceconnector.model.BrokerDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +31,14 @@ import org.springframework.stereotype.Service;
 @Service
 @NoArgsConstructor
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
+
+    @Override
+    public void delete(final UUID entityId) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
+        if (!getRepository().getById(entityId).getOfferedResources().isEmpty()) {
+           return;
+        }
+
+        super.delete(entityId);
+    }
 }

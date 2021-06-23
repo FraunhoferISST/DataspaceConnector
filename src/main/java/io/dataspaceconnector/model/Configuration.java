@@ -63,7 +63,7 @@ public class Configuration extends AbstractEntity {
      * The deploy mode of the connector.
      */
     @Enumerated(EnumType.STRING)
-    private ConnectorDeployMode deployMode;
+    private DeployMode deployMode;
 
     /**
      * The proxy configuration.

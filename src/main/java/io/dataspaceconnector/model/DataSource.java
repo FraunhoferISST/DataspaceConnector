@@ -15,6 +15,17 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Inheritance;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.net.URI;
+
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,14 +33,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Inheritance;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 /**
  * Entity which holds information about the data sources.
@@ -53,7 +56,8 @@ public class DataSource extends AbstractEntity {
     /**
      * The relative path of the data source.
      */
-    private String relativePath;
+    @Convert(converter = UriConverter.class)
+    private URI location;
 
     /**
      * The authentication for the data source.
@@ -65,5 +69,5 @@ public class DataSource extends AbstractEntity {
      * The type of the data source.
      */
     @Enumerated(EnumType.STRING)
-    private DataSourceType dataSourceType;
+    private DataSourceType type;
 }

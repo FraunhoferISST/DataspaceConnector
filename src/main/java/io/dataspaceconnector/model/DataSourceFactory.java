@@ -15,14 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Creates and updates data sources.
@@ -33,7 +34,9 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     /**
      * The default string.
      */
-    private static final String DEFAULT_RELATIVE_PATH = "relativePath";
+    private static final URI DEFAULT_LOCATION = URI.create("");
+
+    private static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
 
     /**
      * @param desc The description of the entity.
@@ -60,26 +63,22 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         Utils.requireNonNull(dataSource, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedRelativePath = updateRelativPath(dataSource,
-                desc.getRelativePath());
-        final var hasUpdatedDataSourceType = updateDataSourceType(dataSource,
-                desc.getDataSourceType());
-        final var hasUpdatedAdditional = updateAdditional(dataSource,
-                desc.getAdditional());
+        final var hasUpdatedRelativePath = updateLocation(dataSource, desc.getLocation());
+        final var hasUpdatedDataSourceType = updateDataSourceType(dataSource, desc.getType());
+        final var hasUpdatedAdditional = updateAdditional(dataSource, desc.getAdditional());
 
         return hasUpdatedRelativePath || hasUpdatedDataSourceType || hasUpdatedAdditional;
     }
 
     /**
-     * @param dataSource   The data source entity.
-     * @param relativePath The relative path of the data source.
+     * @param dataSource The data source entity.
+     * @param location   The relative path of the data source.
      * @return True, if data source type is updated.
      */
-    private boolean updateRelativPath(final DataSource dataSource, final String relativePath) {
+    private boolean updateLocation(final DataSource dataSource, final URI location) {
         final var newRelativePath =
-                MetadataUtils.updateString(dataSource.getRelativePath(), relativePath,
-                        DEFAULT_RELATIVE_PATH);
-        newRelativePath.ifPresent(dataSource::setRelativePath);
+                MetadataUtils.updateUri(dataSource.getLocation(), location, DEFAULT_LOCATION);
+        newRelativePath.ifPresent(dataSource::setLocation);
 
         return newRelativePath.isPresent();
     }
@@ -91,8 +90,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
      */
     private boolean updateDataSourceType(final DataSource dataSource,
                                          final DataSourceType dataSourceType) {
-        dataSource.setDataSourceType(
-                Objects.requireNonNullElse(dataSourceType, DataSourceType.DIVERSE));
+        dataSource.setType(Objects.requireNonNullElse(dataSourceType, DEFAULT_SOURCE_TYPE));
         return true;
     }
 

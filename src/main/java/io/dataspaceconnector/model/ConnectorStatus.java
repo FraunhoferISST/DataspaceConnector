@@ -15,6 +15,8 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Enumeration for connector status.
  */
@@ -23,33 +25,16 @@ public enum ConnectorStatus {
     /**
      * Connector is badly configured.
      */
-    BADLY_CONFIGURED("Connector badly configured"),
+    @JsonProperty("Failing")
+    FAILING,
     /**
      * Connector is offline.
      */
-    OFFLINE("Connector offline"),
+    @JsonProperty("Offline")
+    OFFLINE,
     /**
      * Connector is online.
      */
-    ONLINE("Connector online");
-
-    /**
-     * The value of the enum.
-     */
-    private final String value;
-
-    /**
-     * @param enumValue The value of the enum.
-     */
-    ConnectorStatus(final String enumValue) {
-        this.value = enumValue;
-    }
-
-    /**
-     * @return The value.
-     */
-    @Override
-    public String toString() {
-        return value;
-    }
+    @JsonProperty("Online")
+    ONLINE;
 }

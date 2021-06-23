@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.configuration;
 import io.dataspaceconnector.model.Configuration;
 import io.dataspaceconnector.model.ConfigurationDesc;
 import io.dataspaceconnector.model.ConfigurationFactory;
-import io.dataspaceconnector.model.ConnectorDeployMode;
+import io.dataspaceconnector.model.DeployMode;
 import io.dataspaceconnector.repositories.ConfigurationRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -258,14 +258,14 @@ public class ConfigurationServiceTest {
 
     private ConfigurationDesc getConfigurationDesc() {
         final var desc = new ConfigurationDesc();
-        desc.setDeployMode(ConnectorDeployMode.TEST);
+        desc.setDeployMode(DeployMode.TEST);
 
         return desc;
     }
 
     private ConfigurationDesc getUpdatedConfigurationDesc() {
         final var desc = new ConfigurationDesc();
-        desc.setDeployMode(ConnectorDeployMode.PRODUCTIVE);
+        desc.setDeployMode(DeployMode.PRODUCTIVE);
 
         return desc;
     }

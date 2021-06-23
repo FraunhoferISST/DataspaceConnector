@@ -15,37 +15,22 @@
  */
 package io.dataspaceconnector.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Enumeration for registration status.
  */
 public enum RegistrationStatus {
 
     /**
-     * Registered status.
-     */
-    REGISTERED("Registered"),
-    /**
      * Unregistered status.
      */
-    UNREGISTERED("Unregistered");
+    @JsonProperty("Unregistered")
+    UNREGISTERED,
 
     /**
-     * The value of the enum.
+     * Registered status.
      */
-    private final String value;
-
-    /**
-     * @param enumValue The value of the enum.
-     */
-    RegistrationStatus(final String enumValue) {
-        this.value = enumValue;
-    }
-
-    /**
-     * @return Enum value.
-     */
-    @Override
-    public String toString() {
-        return value;
-    }
+    @JsonProperty("Registered")
+    REGISTERED;
 }

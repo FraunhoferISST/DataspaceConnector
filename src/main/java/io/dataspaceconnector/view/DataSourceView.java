@@ -15,16 +15,17 @@
  */
 package io.dataspaceconnector.view;
 
+import java.net.URL;
+import java.time.ZonedDateTime;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.Authentication;
 import io.dataspaceconnector.model.DataSourceType;
+import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
-
-import java.time.ZonedDateTime;
 
 /**
  * A DTO for controlled exposing of data source information in API responses.
@@ -32,34 +33,28 @@ import java.time.ZonedDateTime;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(itemRelation = "datasource")
+@Relation(collectionRelation = "datasources", itemRelation = "datasource")
 public class DataSourceView extends RepresentationModel<DataSourceView> {
 
     /**
      * The creation date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime creationDate;
 
     /**
      * The last modification date.
      */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
 
     /**
      * The relative path of the data source.
      */
-    private String relativePath;
-
-    /**
-     * The data source authentication.
-     */
-    private Authentication authentication;
+    private URL location;
 
     /**
      * The type of the data source.
      */
-    private DataSourceType dataSourceType;
-
+    private DataSourceType type;
 }

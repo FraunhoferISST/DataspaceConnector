@@ -87,9 +87,9 @@ public class ConfigurationFactory implements AbstractFactory<Configuration, Conf
     }
 
     private boolean updateDeployMode(final Configuration config,
-                                     final ConnectorDeployMode deployMode) {
+                                     final DeployMode deployMode) {
         // TODO
-        config.setDeployMode(Objects.requireNonNullElse(deployMode, ConnectorDeployMode.TEST));
+        config.setDeployMode(Objects.requireNonNullElse(deployMode, DeployMode.TEST));
         return true;
     }
 

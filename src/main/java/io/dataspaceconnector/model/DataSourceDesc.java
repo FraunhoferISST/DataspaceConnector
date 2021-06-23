@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.net.URL;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,10 +31,10 @@ public class DataSourceDesc extends AbstractDescription<DataSource> {
     /**
      * The relative path of the data source.
      */
-    private String relativePath;
+    private URI location;
 
     /**
      * The type of the data source.
      */
-    private DataSourceType dataSourceType;
+    private DataSourceType type;
 }

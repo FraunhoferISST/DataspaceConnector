@@ -26,13 +26,11 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 /**
  * Service class for the configuration.
  */
-@Log4j2
 @Service
 @Getter(AccessLevel.PACKAGE)
 @Setter(AccessLevel.NONE)

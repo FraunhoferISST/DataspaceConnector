@@ -18,7 +18,7 @@ package io.dataspaceconnector.view;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.dataspaceconnector.model.ConnectorDeployMode;
+import io.dataspaceconnector.model.DeployMode;
 import io.dataspaceconnector.model.LogLevel;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
@@ -56,7 +56,7 @@ public class ConfigurationView extends RepresentationModel<ConfigurationView> {
     /**
      * The deploy mode of the connector.
      */
-    private ConnectorDeployMode deployMode;
+    private DeployMode deployMode;
 
     /**
      * The proxy configuration.

@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Enumeration for connector deploy modes.
  */
-public enum ConnectorDeployMode {
+public enum DeployMode {
 
     /**
      * Connector is in productive deployment.
