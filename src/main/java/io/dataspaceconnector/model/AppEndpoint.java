@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.model;
 
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import java.net.URI;
+
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.net.URI;
 
 /**
  * The app endpoint can be used and connected to other endpoints to perform operations on the data.
@@ -48,7 +48,7 @@ public class AppEndpoint extends Endpoint {
      * The access url of the endpoint.
      */
     @Convert(converter = UriConverter.class)
-    private URI accessURL;
+    private URI name;
 
     /**
      * The file name extension of the data.

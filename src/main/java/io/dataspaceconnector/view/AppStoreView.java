@@ -62,5 +62,4 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
      * The registration status.
      */
     private RegistrationStatus status;
-
 }

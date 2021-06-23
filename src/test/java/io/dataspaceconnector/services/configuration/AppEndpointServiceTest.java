@@ -136,7 +136,7 @@ public class AppEndpointServiceTest {
 
         /* ASSERT */
         assertEquals(appEndpoint.getId(), result.getId());
-        assertEquals(appEndpoint.getAccessURL(), result.getAccessURL());
+        assertEquals(appEndpoint.getName(), result.getName());
     }
 
     /**********************************************************************
@@ -232,7 +232,7 @@ public class AppEndpointServiceTest {
         idField.setAccessible(true);
         idField.set(appEndpoint, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
-        final var accessUrlField = appEndpoint.getClass().getDeclaredField("accessURL");
+        final var accessUrlField = appEndpoint.getClass().getDeclaredField("name");
         accessUrlField.setAccessible(true);
         accessUrlField.set(appEndpoint, desc.getAccessURL());
 

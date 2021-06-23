@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Creates and updates an app.
@@ -32,7 +32,7 @@ public class AppFactory implements AbstractFactory<App, AppDesc> {
     /**
      * The default title.
      */
-    private static final String DEFAULT_TITLE = "app";
+    private static final String DEFAULT_TITLE = "";
 
     /**
      * Creates an app.

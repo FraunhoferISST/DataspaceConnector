@@ -147,10 +147,10 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
      * @return true, if access url is updated
      */
     private boolean updateAccessUrl(final AppEndpoint appEndpoint, final URI accessURL) {
-        final var newUri = MetadataUtils.updateUri(appEndpoint.getAccessURL(), accessURL,
-                URI.create(DEFAULT_ACCESS_URL));
+        final var newUri = MetadataUtils.updateUri(appEndpoint.getName(), accessURL,
+                                                   URI.create(DEFAULT_ACCESS_URL));
 
-        newUri.ifPresent(appEndpoint::setAccessURL);
+        newUri.ifPresent(appEndpoint::setName);
         return newUri.isPresent();
     }
 }
