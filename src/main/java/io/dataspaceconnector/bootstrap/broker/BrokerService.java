@@ -15,19 +15,6 @@
  */
 package io.dataspaceconnector.bootstrap.broker;
 
-import de.fraunhofer.iais.eis.Message;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
-import de.fraunhofer.iais.eis.RejectionMessage;
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.utils.MessageUtils;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import org.springframework.stereotype.Service;
-
 import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -37,6 +24,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+
+import de.fraunhofer.iais.eis.Message;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.RejectionMessage;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
+import io.dataspaceconnector.ids.messages.util.MessageUtils;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import org.springframework.stereotype.Service;
 
 import static de.fraunhofer.isst.ids.framework.util.MultipartStringParser.stringToMultipart;
 
@@ -193,7 +193,7 @@ public class BrokerService {
                                     (RejectionMessage) responseMessage.get()).toString(), payload);
                 } else if (log.isDebugEnabled()) {
                     log.debug("Broker rejected the message. [reason=({})]",
-                            MessageUtils.extractRejectionReason(
+                              MessageUtils.extractRejectionReason(
                                     (RejectionMessage) responseMessage.get()).toString());
                 }
             } else {

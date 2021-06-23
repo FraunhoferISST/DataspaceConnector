@@ -15,11 +15,16 @@
  */
 package io.dataspaceconnector.bootstrap.broker;
 
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Properties;
+
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -30,11 +35,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.bootstrap;
 
 import io.dataspaceconnector.bootstrap.broker.BrokerService;
-import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

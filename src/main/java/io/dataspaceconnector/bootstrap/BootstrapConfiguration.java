@@ -15,33 +15,6 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import io.dataspaceconnector.bootstrap.broker.BrokerService;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.services.ids.DeserializationService;
-import io.dataspaceconnector.services.resources.CatalogService;
-import io.dataspaceconnector.services.resources.TemplateBuilder;
-import io.dataspaceconnector.utils.TemplateUtils;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.hibernate.Hibernate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
-
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.File;
@@ -59,6 +32,33 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceCatalog;
+import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import io.dataspaceconnector.bootstrap.broker.BrokerService;
+import io.dataspaceconnector.ids.ConnectorService;
+import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
+import io.dataspaceconnector.ids.templates.ResourceTemplate;
+import io.dataspaceconnector.ids.templates.TemplateUtils;
+import io.dataspaceconnector.model.core.ArtifactDesc;
+import io.dataspaceconnector.model.core.OfferedResource;
+import io.dataspaceconnector.model.core.OfferedResourceDesc;
+import io.dataspaceconnector.model.core.RequestedResourceDesc;
+import io.dataspaceconnector.resources.CatalogService;
+import io.dataspaceconnector.resources.TemplateBuilder;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.hibernate.Hibernate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.findFilesByExtension;
 import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootstrapConfig;

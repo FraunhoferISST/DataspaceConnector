@@ -180,11 +180,9 @@ public class ConnectorService {
      * @return List of resource catalogs.
      */
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
-        final var baseUri = configContainer.getConnector().getId();
-
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
-                .map(x -> catalogBuilder.create(x, baseUri, 0))
+                .map(x -> catalogBuilder.create(x,0))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
