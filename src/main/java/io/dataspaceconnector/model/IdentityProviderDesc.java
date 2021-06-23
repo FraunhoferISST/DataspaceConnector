@@ -31,7 +31,7 @@ public class IdentityProviderDesc extends AbstractDescription<IdentityProvider> 
     /**
      * The access url of the identity provider.
      */
-    private URI location;
+    private URI name;
 
     /**
      * The title of the identity provider.

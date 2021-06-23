@@ -34,7 +34,7 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
     /**
      * The default string.
      */
-    private static final URI DEFAULT_LOCATION = URI.create("");
+    private static final URI DEFAULT_NAME = URI.create("");
 
     private static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
 
@@ -63,24 +63,24 @@ public class DataSourceFactory implements AbstractFactory<DataSource, DataSource
         Utils.requireNonNull(dataSource, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedRelativePath = updateLocation(dataSource, desc.getLocation());
+        final var hasUpdatedName = updateName(dataSource, desc.getName());
         final var hasUpdatedDataSourceType = updateDataSourceType(dataSource, desc.getType());
         final var hasUpdatedAdditional = updateAdditional(dataSource, desc.getAdditional());
 
-        return hasUpdatedRelativePath || hasUpdatedDataSourceType || hasUpdatedAdditional;
+        return hasUpdatedName || hasUpdatedDataSourceType || hasUpdatedAdditional;
     }
 
     /**
      * @param dataSource The data source entity.
-     * @param location   The relative path of the data source.
+     * @param name   The relative path of the data source.
      * @return True, if data source type is updated.
      */
-    private boolean updateLocation(final DataSource dataSource, final URI location) {
-        final var newRelativePath =
-                MetadataUtils.updateUri(dataSource.getLocation(), location, DEFAULT_LOCATION);
-        newRelativePath.ifPresent(dataSource::setLocation);
+    private boolean updateName(final DataSource dataSource, final URI name) {
+        final var newName =
+                MetadataUtils.updateUri(dataSource.getName(), name, DEFAULT_NAME);
+        newName.ifPresent(dataSource::setName);
 
-        return newRelativePath.isPresent();
+        return newName.isPresent();
     }
 
     /**

@@ -34,7 +34,7 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_LOCATION = URI.create("");
+    private static final URI DEFAULT_NAME = URI.create("");
 
     /**
      * Default string value.
@@ -66,12 +66,12 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
         Utils.requireNonNull(clearingHouse, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateLocation(clearingHouse, desc.getLocation());
+        final var hasUpdatedName = updateName(clearingHouse, desc.getName());
         final var newTitle = updateTitle(clearingHouse, desc.getTitle());
         final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
         final var newAdditional = updateAdditional(clearingHouse, desc.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus || newAdditional;
+        return hasUpdatedName || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -100,13 +100,13 @@ public class ClearingHouseFactory implements AbstractFactory<ClearingHouse, Clea
 
     /**
      * @param clearingHouse The entity to be updated.
-     * @param location     The new access url of the entity.
+     * @param name     The new access url of the entity.
      * @return True, if clearing house is updated.
      */
-    private boolean updateLocation(final ClearingHouse clearingHouse, final URI location) {
+    private boolean updateName(final ClearingHouse clearingHouse, final URI name) {
         final var newAccessUrl =
-                MetadataUtils.updateUri(clearingHouse.getLocation(), location, DEFAULT_LOCATION);
-        newAccessUrl.ifPresent(clearingHouse::setLocation);
+                MetadataUtils.updateUri(clearingHouse.getName(), name, DEFAULT_NAME);
+        newAccessUrl.ifPresent(clearingHouse::setName);
         return newAccessUrl.isPresent();
     }
 

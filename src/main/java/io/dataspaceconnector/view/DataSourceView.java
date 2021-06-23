@@ -51,7 +51,7 @@ public class DataSourceView extends RepresentationModel<DataSourceView> {
     /**
      * The relative path of the data source.
      */
-    private URL location;
+    private URL name;
 
     /**
      * The type of the data source.

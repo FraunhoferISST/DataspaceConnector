@@ -68,12 +68,12 @@ public class IdentityProviderFactory
         Utils.requireNonNull(identityProvider, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var newAccessUrl = updateLocation(identityProvider, desc.getLocation());
+        final var hasUpdatedName = updateName(identityProvider, desc.getName());
         final var newTitle = updateTitle(identityProvider, desc.getTitle());
         final var newStatus = updateRegistrationStatus(identityProvider, desc.getStatus());
         final var newAdditional = updateAdditional(identityProvider, desc.getAdditional());
 
-        return newAccessUrl || newTitle || newStatus || newAdditional;
+        return hasUpdatedName || newTitle || newStatus || newAdditional;
     }
 
     /**
@@ -102,14 +102,14 @@ public class IdentityProviderFactory
 
     /**
      * @param identityProvider The entity to be updated.
-     * @param location        The new access url of the entity.
+     * @param name        The new access url of the entity.
      * @return True, if access url is updated.
      */
-    private boolean updateLocation(final IdentityProvider identityProvider, final URI location) {
+    private boolean updateName(final IdentityProvider identityProvider, final URI name) {
         final var newLocation =
-                MetadataUtils.updateUri(identityProvider.getLocation(), location,
-                        DEFAULT_IDENTITY_PROVIDER);
-        newLocation.ifPresent(identityProvider::setLocation);
+                MetadataUtils.updateUri(identityProvider.getName(), name,
+                                        DEFAULT_IDENTITY_PROVIDER);
+        newLocation.ifPresent(identityProvider::setName);
         return newLocation.isPresent();
     }
 

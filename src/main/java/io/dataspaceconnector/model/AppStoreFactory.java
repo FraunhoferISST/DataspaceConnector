@@ -15,16 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
-import org.springframework.stereotype.Component;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an app store.
@@ -35,11 +35,11 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
     /**
      * The default uri.
      */
-    private static final URI DEFAULT_URI = URI.create("https://defaultregistry");
+    private static final URI DEFAULT_LOCATION = URI.create("");
     /**
      * The default title.
      */
-    private static final String DEFAULT_TITLE = "App Store";
+    private static final String DEFAULT_TITLE = "";
 
     /**
      * @param desc The description of the entity.
@@ -68,37 +68,37 @@ public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> 
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var hasUpdatedTitle = updateTitle(appStore, desc.getTitle());
-        final var hasUpdatedAccessUrl = updateAccessUrl(appStore, desc.getAccessUrl());
+        final var hasUpdatedName = updateName(appStore, desc.getName());
         final var hasUpdatedRegistrationStatus =
-                updateRegistrationStatus(appStore, desc.getRegistrationStatus());
+                updateRegistrationStatus(appStore, desc.getStatus());
         final var hasUpdatedAdditional = updateAdditional(appStore, desc.getAdditional());
 
-        return hasUpdatedTitle || hasUpdatedAccessUrl || hasUpdatedRegistrationStatus
+        return hasUpdatedTitle || hasUpdatedName || hasUpdatedRegistrationStatus
                 || hasUpdatedAdditional;
     }
 
     /**
      * @param appStore           The entity to be updated.
-     * @param registrationStatus The new registration status.
+     * @param status The new registration status.
      * @return True after updating the registration status.
      */
     private boolean updateRegistrationStatus(final AppStore appStore,
-                                             final RegistrationStatus registrationStatus) {
-        appStore.setRegistrationStatus(
-                Objects.requireNonNullElse(registrationStatus, RegistrationStatus.UNREGISTERED));
+                                             final RegistrationStatus status) {
+        appStore.setStatus(
+                Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
     }
 
     /**
      * @param appStore  The entity to be updated.
-     * @param accessUrl The new access url.
+     * @param name The new access url.
      * @return True, if access url is updated.
      */
-    private boolean updateAccessUrl(final AppStore appStore, final URI accessUrl) {
-        final var newAccessUrl = MetadataUtils.updateUri(appStore.getAccessUrl(),
-                accessUrl, DEFAULT_URI);
-        newAccessUrl.ifPresent(appStore::setAccessUrl);
-        return newAccessUrl.isPresent();
+    private boolean updateName(final AppStore appStore, final URI name) {
+        final var newName = MetadataUtils.updateUri(appStore.getName(),
+                                                         name, DEFAULT_LOCATION);
+        newName.ifPresent(appStore::setName);
+        return newName.isPresent();
     }
 
     /**

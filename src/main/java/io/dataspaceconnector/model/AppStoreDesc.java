@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.net.URI;
 
 /**
  * Describes a app store's properties.
@@ -32,7 +33,7 @@ public class AppStoreDesc extends AbstractDescription<AppStore> {
     /**
      * The access url of the app store.
      */
-    private URI accessUrl;
+    private URI name;
 
     /**
      * The title of the app store.
@@ -42,5 +43,6 @@ public class AppStoreDesc extends AbstractDescription<AppStore> {
     /**
      * The registration status.
      */
-    private RegistrationStatus registrationStatus;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private RegistrationStatus status;
 }

@@ -57,7 +57,7 @@ public class DataSource extends AbstractEntity {
      * The relative path of the data source.
      */
     @Convert(converter = UriConverter.class)
-    private URI location;
+    private URI name;
 
     /**
      * The authentication for the data source.

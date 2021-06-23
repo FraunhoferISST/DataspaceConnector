@@ -9,7 +9,7 @@ public class TruststoreDesc extends AbstractDescription<Truststore> {
     /**
      * The trust store.
      */
-    private URI location;
+    private URI name;
 
     /**
      * The password of the trust store.

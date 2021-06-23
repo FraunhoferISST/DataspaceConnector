@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.utils.UriConverter;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,6 +23,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
+
+import io.dataspaceconnector.model.utils.UriConverter;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Apps can be downloaded from an app store to perform data operations on the data.
@@ -55,7 +55,7 @@ public class AppStore extends AbstractEntity {
      * The access url of the app store.
      */
     @Convert(converter = UriConverter.class)
-    private URI accessUrl;
+    private URI name;
 
     /**
      * The title of the app store.
@@ -66,12 +66,11 @@ public class AppStore extends AbstractEntity {
      * The registration status.
      */
     @Enumerated(EnumType.STRING)
-    private RegistrationStatus registrationStatus;
+    private RegistrationStatus status;
 
     /**
      * The list of apps.
      */
     @OneToMany
     private List<App> appList;
-
 }

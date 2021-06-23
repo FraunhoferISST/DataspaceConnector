@@ -48,7 +48,7 @@ public class ClearingHouseView extends RepresentationModel<ClearingHouseView> {
     /**
      * The access url of the clearing house.
      */
-    private URI location;
+    private URI name;
 
     /**
      * The title of the clearing house.

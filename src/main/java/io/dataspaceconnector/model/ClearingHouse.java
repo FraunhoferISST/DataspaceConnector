@@ -54,7 +54,7 @@ public class ClearingHouse extends AbstractEntity {
      * The access url of the clearing house.
      */
     @Convert(converter = UriConverter.class)
-    private URI location;
+    private URI name;
 
     /**
      * The title of the clearing house.
