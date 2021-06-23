@@ -135,8 +135,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
-        // TODO: Parameter Null checks
-
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -198,9 +196,6 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
-
-        // TODO: Parameter Null checks
-
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {

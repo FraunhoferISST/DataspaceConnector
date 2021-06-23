@@ -415,16 +415,6 @@ public class MappingUtilsTest {
                 .build();
     }
 
-    private Contract getContractWithEndDateNull() {
-        return new ContractAgreementBuilder(URI.create("https://w3id.org/idsa/autogen/contractAgreement/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                ._provider_(URI.create("http://provider.com"))
-                ._consumer_(URI.create("http://consumer.com"))
-                ._permission_(Util.asList((Permission) getRule()))
-                ._contractDate_(getDateAsXMLGregorianCalendar())
-                ._contractStart_(getDateAsXMLGregorianCalendar())
-                .build();
-    }
-
     private Rule getRule() {
         return new PermissionBuilder(URI.create("https://w3id.org/idsa/autogen/permission/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
