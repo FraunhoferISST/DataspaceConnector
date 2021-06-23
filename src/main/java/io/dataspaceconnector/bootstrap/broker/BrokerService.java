@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Resource;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 
-import static de.fraunhofer.isst.ids.framework.util.MultipartStringParser.stringToMultipart;
+import static de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParser.stringToMultipart;
 
 /**
  * Register resources at the broker.
@@ -107,7 +107,7 @@ public class BrokerService {
     }
 
     private boolean registerAtBroker(final URL broker) throws Exception {
-        final var response = idsBrokerSvc.updateSelfDescriptionAtBroker(broker.toString());
+        final var response = idsBrokerSvc.updateSelfDescriptionAtBroker(broker.toURI());
         if (validateBrokerResponse(response, broker)) {
             if (log.isInfoEnabled()) {
                 log.info("Registered connector at broker. [broker=({})]", broker);
@@ -119,7 +119,7 @@ public class BrokerService {
 
     private boolean updateAtBroker(final URL broker, final URI key, final Resource value)
             throws Exception {
-        final var response = idsBrokerSvc.updateResourceAtBroker(broker.toString(), value);
+        final var response = idsBrokerSvc.updateResourceAtBroker(broker.toURI(), value);
         if (!response.isSuccessful()) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to update resource at broker. [resourceId=({}), "

@@ -17,7 +17,7 @@ package io.dataspaceconnector.bootstrap;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
@@ -155,7 +155,7 @@ public class BootstrapConfiguration {
 
         try {
             connectorService.updateConfigModel();
-        } catch (ConfigurationUpdateException e) {
+        } catch (ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to update config model. [exception=({})]", e.getMessage(), e);
             }
