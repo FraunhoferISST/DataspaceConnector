@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.bootstrap.broker;
 
+import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.RejectionMessage;
@@ -28,23 +38,13 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-
 import static de.fraunhofer.isst.ids.framework.util.MultipartStringParser.stringToMultipart;
 
 /**
  * Register resources at the broker.
  */
 @Log4j2
-@Service
+@Service("io.dataspaceconnector.bootstrap.broker.brokerService")
 @RequiredArgsConstructor
 public class BrokerService {
 
