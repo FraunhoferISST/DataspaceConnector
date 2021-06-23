@@ -10,7 +10,7 @@ public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
     @Override
     public Proxy create(final ProxyDesc desc) {
         final var proxy = new Proxy();
-        proxy.setNoProxyURI(new ArrayList<>());
+        proxy.setExclusions(new ArrayList<>());
 
         update(proxy, desc);
 

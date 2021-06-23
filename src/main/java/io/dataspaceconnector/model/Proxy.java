@@ -43,13 +43,13 @@ public class Proxy extends AbstractEntity {
      * The proxy uri.
      */
     @Convert(converter = UriConverter.class)
-    private URI proxyURI;
+    private URI name;
 
     /**
      * List of no proxy uris.
      */
     @ElementCollection
-    private List<URI> noProxyURI;
+    private List<URI> exclusions;
 
     /**
      * The authentication information for the proxy.
