@@ -238,6 +238,19 @@ public final class ControllerUtils {
     }
 
     /**
+     * Creates a ResponseEntity with status code 502 and a message indicating that the client
+     * received an invalid response.
+     *
+     * @return ResponseEntity with status code 502.
+     */
+    public static ResponseEntity<Object> respondReceivedInvalidResponse() {
+        if (log.isWarnEnabled()) {
+            log.warn("Received invalid or no response from recipient.");
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+    }
+
+    /**
      * Show response message that was not expected.
      *
      * @param response The response map.

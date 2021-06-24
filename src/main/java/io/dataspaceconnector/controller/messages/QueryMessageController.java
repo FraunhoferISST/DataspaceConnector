@@ -28,7 +28,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,7 +69,8 @@ public class QueryMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
-            @ApiResponse(responseCode = "504", description = "Gateway Timeout")})
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
@@ -86,17 +86,18 @@ public class QueryMessageController {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient, query,
                     null, null, null);
+
             if (response != null && response.getPayload().isPresent()) {
                 final var responseAsString = response.getPayload().get();
                 return ResponseEntity.ok(responseAsString);
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Ids message handling failed. null");
+                return ControllerUtils.respondReceivedInvalidResponse();
             }
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException
-                | MultipartParseException exception) {
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

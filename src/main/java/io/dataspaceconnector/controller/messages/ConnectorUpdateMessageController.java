@@ -74,7 +74,8 @@ public class ConnectorUpdateMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
-            @ApiResponse(responseCode = "504", description = "Gateway Timeout")})
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
@@ -85,19 +86,20 @@ public class ConnectorUpdateMessageController {
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            final var response = brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
-            if (response != null) {
-                return ResponseEntity.ok("Success");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Ids message handling failed. null");
+            final var response =
+                    brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
+            if (response == null) {
+                return ControllerUtils.respondReceivedInvalidResponse();
             }
+
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (IOException | DapsTokenManagerException | ClaimsException
-                | MultipartParseException exception) {
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

@@ -75,7 +75,8 @@ public class ResourceUnavailableMessageController {
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
-            @ApiResponse(responseCode = "504", description = "Gateway Timeout")})
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
@@ -90,17 +91,18 @@ public class ResourceUnavailableMessageController {
             }
 
             // Send the resource unavailable message.
-            final var response = brokerService.removeResourceFromBroker(recipient, resource.get());
-            if (response != null) {
-                return ResponseEntity.ok("Success");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Ids message handling failed. null");
+            final var response =
+                    brokerService.removeResourceFromBroker(recipient, resource.get());
+            if (response == null) {
+                return ControllerUtils.respondReceivedInvalidResponse();
             }
+
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
-        } catch (IOException | DapsTokenManagerException | MultipartParseException
-                | ClaimsException exception) {
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }
