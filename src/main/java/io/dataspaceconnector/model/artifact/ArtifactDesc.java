@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.base.AbstractDescription;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.net.URI;
 import java.net.URL;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.base.Description;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * A description of an artifact.
@@ -29,7 +29,7 @@ import java.net.URL;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ArtifactDesc extends AbstractDescription<Artifact> {
+public class ArtifactDesc extends Description {
 
     /**
      * The agreement id on provider side.

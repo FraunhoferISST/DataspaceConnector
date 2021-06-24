@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +32,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class AgreementDesc extends AbstractDescription<Agreement> {
+public class AgreementDesc extends Description {
 
     /**
      * The agreement id on provider side.

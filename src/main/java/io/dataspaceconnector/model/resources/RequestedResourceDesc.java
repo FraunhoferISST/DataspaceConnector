@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RequestedResourceDesc extends ResourceDesc<RequestedResource> {
+public class RequestedResourceDesc extends ResourceDesc {
 
     /**
      * The resource id on provider side.

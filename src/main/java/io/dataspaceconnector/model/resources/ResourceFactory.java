@@ -28,7 +28,7 @@ import io.dataspaceconnector.utils.MetadataUtils;
  * @param <T> The resource type.
  * @param <D> The description type.
  */
-public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc<T>>
+public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc>
         extends AbstractFactory<T, D> {
 
     /**

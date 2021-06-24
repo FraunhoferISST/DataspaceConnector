@@ -17,18 +17,17 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoints.GenericEndpoint;
 import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.routes.Route;
 import io.dataspaceconnector.model.routes.RouteDesc;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.RouteService;
-import io.dataspaceconnector.view.ConnectorEndpointView;
-import io.dataspaceconnector.view.GenericEndpointView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RouteView;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,53 +41,38 @@ public final class RouteControllers {
      */
     @RestController
     @RequestMapping("/api/routes")
-    @Tag(name = "Route", description = "Endpoints for CRUD operations on"
-            + " routes")
+    @Tag(name = "Route", description = "Endpoints for CRUD operations on routes")
     public static class RouteController
             extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
+
+        @Autowired
+        private RouteService service;
+
+        @Override
+        public ResponseEntity<RouteView> create(@RequestBody final RouteDesc desc) {
+            final var x = desc.getStart();
+            final var y = desc.getEnd();
+
+            return super.create(desc);
+        }
+
+
     }
 
     /**
-     * Offers the endpoints for managing subroutes.
+     * Offers the endpoints for managing steps.
      */
     @RestController
-    @RequestMapping("/api/routes/{id}/subroutes")
-    @Tag(name = "Route", description = "Endpoints for linking routes to subroutes")
-    public static class RoutesToSubroutes
-            extends BaseResourceChildController<EntityLinkerService.RouteSubrouteLinker,
-            Route, RouteView> {
-    }
+    @RequestMapping("/api/routes/{id}/steps")
+    @Tag(name = "Route", description = "Endpoints for linking routes to steps")
+    public static class RoutesToSteps
+            extends BaseResourceChildController<EntityLinkerService.RouteStepsLinker,
+            Route, RouteView> { }
 
-    /**
-     * Offers the endpoints for managing subroutes.
-     */
     @RestController
     @RequestMapping("/api/routes/{id}/resources")
     @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
     public static class RoutesToOfferedResources
             extends BaseResourceChildController<EntityLinkerService.RouteOfferedResourceLinker,
-            OfferedResource, OfferedResourceView> {
-    }
-
-    /**
-     * Offers the endpoints for managing start endpoint of the route.
-     */
-    @RestController
-    @RequestMapping("/api/routes/{id}/start/endpoints")
-    @Tag(name = "Route", description = "Endpoints for linking routes to start endpoint.")
-    public static class RoutesToStartEndpoint
-            extends BaseResourceChildController<EntityLinkerService.RouteStartEndpointLinker,
-            GenericEndpoint, GenericEndpointView> {
-    }
-
-    /**
-     * Offers the endpoints for managing last endpoint of the route.
-     */
-    @RestController
-    @RequestMapping("/api/routes/{id}/last/endpoints")
-    @Tag(name = "Route", description = "Endpoints for linking routes to start endpoint.")
-    public static class RoutesToLastEndpoint
-            extends BaseResourceChildController<EntityLinkerService.RouteLastEndpointLinker,
-            ConnectorEndpoint, ConnectorEndpointView> {
-    }
+            OfferedResource, OfferedResourceView> { }
 }

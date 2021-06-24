@@ -15,6 +15,15 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
@@ -25,26 +34,17 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
 import io.dataspaceconnector.model.contracts.ContractDesc;
-import io.dataspaceconnector.model.rules.ContractRuleDesc;
-import io.dataspaceconnector.model.resources.OfferedResourceDesc;
 import io.dataspaceconnector.model.representations.RepresentationDesc;
+import io.dataspaceconnector.model.resources.OfferedResourceDesc;
 import io.dataspaceconnector.model.resources.RequestedResourceDesc;
 import io.dataspaceconnector.model.resources.ResourceDesc;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
-
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Maps ids resources to internal resources.
@@ -181,8 +181,7 @@ public final class MappingUtils {
         return additional;
     }
 
-    private static <T extends io.dataspaceconnector.model.resources.Resource> void
-            fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
+    private static void fillResourceDesc(final ResourceDesc desc, final Resource resource) {
         final var description = resource.getDescription();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();

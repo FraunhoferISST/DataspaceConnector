@@ -20,9 +20,9 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
-import io.dataspaceconnector.model.base.AbstractDescription;
 import io.dataspaceconnector.model.base.AbstractEntity;
-import io.dataspaceconnector.services.resources.BaseEntityService;
+import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.services.resources.EntityService;
 import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -58,9 +58,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
-        extends RepresentationModel<V>, S
-        extends BaseEntityService<T, D>> {
+public class BaseResourceController<T extends AbstractEntity, D extends Description, V
+        extends RepresentationModel<V>, S extends EntityService<T, D>> {
     /**
      * The service for the resource logic.
      **/

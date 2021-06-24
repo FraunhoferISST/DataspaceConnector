@@ -25,7 +25,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AppEndpointDesc extends EndpointDesc<AppEndpoint> {
+public class AppEndpointDesc extends EndpointDesc {
 
     /**
      * The access url of the endpoint.

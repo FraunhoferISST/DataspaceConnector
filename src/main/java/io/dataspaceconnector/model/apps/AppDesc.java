@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.apps;
 
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AppDesc extends AbstractDescription<App> {
+public class AppDesc extends Description {
 
     /**
      * The title of the app.

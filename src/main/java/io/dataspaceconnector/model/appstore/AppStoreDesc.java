@@ -19,7 +19,7 @@ import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AppStoreDesc extends AbstractDescription<AppStore> {
+public class AppStoreDesc extends Description {
 
     /**
      * The access url of the app store.

@@ -25,7 +25,7 @@ import io.dataspaceconnector.model.base.AbstractFactory;
  * @param <T> The endpoint type.
  * @param <D> The description type.
  */
-public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc<T>>
+public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc>
         extends AbstractFactory<T, D> {
 
     /**

@@ -9,7 +9,7 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 
-public abstract class AbstractFactory<T extends AbstractEntity, D extends AbstractDescription<T>> {
+public abstract class AbstractFactory<T extends AbstractEntity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
 

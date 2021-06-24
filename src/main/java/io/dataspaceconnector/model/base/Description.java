@@ -25,10 +25,9 @@ import lombok.Data;
 
 /**
  * The base class for all descriptions.
- * @param <T> The type of the class described by the description.
  */
 @Data
-public class AbstractDescription<T> {
+public class Description {
     /**
      * The overflow for all elements that cannot be mapped.
      */

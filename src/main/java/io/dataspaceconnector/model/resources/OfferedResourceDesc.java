@@ -24,5 +24,5 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class OfferedResourceDesc extends ResourceDesc<OfferedResource> {
+public class OfferedResourceDesc extends ResourceDesc {
 }

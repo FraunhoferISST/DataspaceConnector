@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.catalog;
 
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class CatalogDesc extends AbstractDescription<Catalog> {
+public class CatalogDesc extends Description {
     /**
      * The title of the catalog.
      */

@@ -68,7 +68,7 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class RouteSubrouteLinker
+    public static class RouteStepsLinker
             extends OwningRelationService<Route, Route, RouteService, RouteService> {
 
         @Override

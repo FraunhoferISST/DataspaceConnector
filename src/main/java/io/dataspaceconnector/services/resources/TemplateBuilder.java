@@ -15,17 +15,19 @@
  */
 package io.dataspaceconnector.services.resources;
 
+import java.util.stream.Collectors;
+
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contracts.Contract;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.representations.Representation;
 import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.resources.OfferedResourceDesc;
-import io.dataspaceconnector.model.representations.Representation;
 import io.dataspaceconnector.model.resources.RequestedResource;
 import io.dataspaceconnector.model.resources.RequestedResourceDesc;
 import io.dataspaceconnector.model.resources.Resource;
 import io.dataspaceconnector.model.resources.ResourceDesc;
+import io.dataspaceconnector.model.rules.ContractRule;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
@@ -41,8 +43,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.stream.Collectors;
-
 /**
  * Builds and links entities from templates.
  *
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Transactional
-public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc<T>> {
+public abstract class TemplateBuilder<T extends Resource, D extends ResourceDesc> {
 
     /**
      * Spring application context.

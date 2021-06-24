@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.base;
 
-import io.dataspaceconnector.model.base.AbstractDescription;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
@@ -23,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AbstractDescriptionTest {
+public class DescriptionTest {
     @Test
     public void defaultConstructor_nothing_nullAdditional() {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = new AbstractDescription<>();
+        final var result = new Description();
 
         /* ASSERT */
         assertNull(result.getAdditional());
@@ -43,7 +42,7 @@ public class AbstractDescriptionTest {
         final var value = "Some value";
 
         /* ACT */
-        final var result = new AbstractDescription<>();
+        final var result = new Description();
         result.addOverflow(key, value);
         result.addOverflow(key, value);
 
@@ -59,7 +58,7 @@ public class AbstractDescriptionTest {
         final var value = "Some value";
 
         /* ACT */
-        final var result = new AbstractDescription<>();
+        final var result = new Description();
         result.addOverflow(null, value);
 
         /* ASSERT */
@@ -72,7 +71,7 @@ public class AbstractDescriptionTest {
         final var key = "Some key";
 
         /* ACT */
-        final var result = new AbstractDescription<>();
+        final var result = new Description();
         result.addOverflow(key, null);
 
         /* ASSERT */
@@ -85,7 +84,7 @@ public class AbstractDescriptionTest {
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = new AbstractDescription<>();
+        final var result = new Description();
         result.addOverflow(null, null);
 
         /* ASSERT */
@@ -94,6 +93,6 @@ public class AbstractDescriptionTest {
 
     @Test
     public void equals_everything_valid() {
-        EqualsVerifier.simple().forClass(AbstractDescription.class).verify();
+        EqualsVerifier.simple().forClass(Description.class).verify();
     }
 }

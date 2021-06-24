@@ -19,7 +19,7 @@ import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,7 +28,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IdentityProviderDesc extends AbstractDescription<IdentityProvider> {
+public class IdentityProviderDesc extends Description {
 
     /**
      * The access url of the identity provider.

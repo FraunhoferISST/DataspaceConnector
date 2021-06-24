@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.rules;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ContractRuleDesc extends AbstractDescription<ContractRule> {
+public class ContractRuleDesc extends Description {
 
     /**
      * The rule id on provider side.

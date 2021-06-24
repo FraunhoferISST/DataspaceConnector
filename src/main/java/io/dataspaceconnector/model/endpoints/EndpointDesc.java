@@ -17,18 +17,16 @@ package io.dataspaceconnector.model.endpoints;
 
 import java.net.URI;
 
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Base class for describing ednpoints.
- *
- * @param <T> The type of the endpoint.
+ * Base class for describing endpoints.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class EndpointDesc<T extends Endpoint> extends AbstractDescription<T> {
+public class EndpointDesc extends Description {
     private EndpointType type;
     private URI location;
     private URI docs;

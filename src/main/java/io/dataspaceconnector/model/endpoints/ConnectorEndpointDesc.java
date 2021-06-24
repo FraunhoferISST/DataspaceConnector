@@ -15,17 +15,17 @@
  */
 package io.dataspaceconnector.model.endpoints;
 
+import java.net.URI;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.net.URI;
 
 /**
  * Describing connector endpoints properties.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ConnectorEndpointDesc extends EndpointDesc<ConnectorEndpoint> {
+public class ConnectorEndpointDesc extends EndpointDesc {
 
     /**
      * The absolute path of the generic endpoint.

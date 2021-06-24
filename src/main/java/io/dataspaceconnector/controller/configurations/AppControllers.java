@@ -43,6 +43,9 @@ public final class AppControllers {
     @Tag(name = "Apps", description = "Endpoints for CRUD operations on apps")
     public static class AppController
             extends BaseResourceController<App, AppDesc, AppView, AppService> {
+
+
+
     }
 
     /**

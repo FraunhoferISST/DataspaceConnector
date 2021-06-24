@@ -27,6 +27,6 @@ import lombok.NoArgsConstructor;
  * @param <D> The endpoint description type.
  */
 @NoArgsConstructor
-public class EndpointService<T extends Endpoint, D extends EndpointDesc<T>>
+public class EndpointService<T extends Endpoint, D extends EndpointDesc>
         extends BaseEntityService<T, D> {
 }

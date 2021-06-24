@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.datasources;
 import java.net.URI;
 
 import io.dataspaceconnector.model.DataSourceType;
-import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,7 +27,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DataSourceDesc extends AbstractDescription<DataSource> {
+public class DataSourceDesc extends Description {
 
     /**
      * The relative path of the data source.

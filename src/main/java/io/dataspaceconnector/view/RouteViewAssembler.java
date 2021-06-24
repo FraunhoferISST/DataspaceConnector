@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.view;
 
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.configurations.RouteControllers;
 import io.dataspaceconnector.model.routes.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -33,7 +33,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @Component
 public class RouteViewAssembler
         implements RepresentationModelAssembler<Route, RouteView>, SelfLinking {
-
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
@@ -48,7 +47,7 @@ public class RouteViewAssembler
                 RouteView.class);
         view.add(getSelfLink(route.getId()));
 
-        final var subroutes = linkTo(methodOn(RouteControllers.RoutesToSubroutes.class)
+        final var subroutes = linkTo(methodOn(RouteControllers.RoutesToSteps.class)
                 .getResource(route.getId(), null, null))
                 .withRel("routes");
         view.add(subroutes);
@@ -58,18 +57,6 @@ public class RouteViewAssembler
                         .getResource(route.getId(), null, null))
                         .withRel("resources");
         view.add(offeredResources);
-
-        final var startEndpoint =
-                linkTo(methodOn(RouteControllers.RoutesToStartEndpoint.class)
-                        .getResource(route.getId(), null, null))
-                        .withRel("endpoints");
-        view.add(startEndpoint);
-
-        final var lasEndpoint =
-                linkTo(methodOn(RouteControllers.RoutesToLastEndpoint.class)
-                        .getResource(route.getId(), null, null))
-                        .withRel("endpoints");
-        view.add(lasEndpoint);
 
         return view;
     }
