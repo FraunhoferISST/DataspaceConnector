@@ -15,11 +15,8 @@
  */
 package io.dataspaceconnector.ids.builder.core;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.BasePath;
 import io.dataspaceconnector.ids.builder.core.base.AbstractIdsBuilder;
 import io.dataspaceconnector.model.core.ContractRule;
 import io.dataspaceconnector.ids.builder.core.base.DeserializationService;
@@ -45,11 +42,11 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
     private final @NonNull Class<T> ruleType;
 
     @Override
-    protected final T createInternal(final ContractRule rule,
-                                     final int currentDepth, final int maxDepth)
+    protected final T createInternal(final ContractRule rule, final int currentDepth,
+                                     final int maxDepth)
             throws ConstraintViolationException {
         final var idsRule = deserializer.getRule(rule.getValue());
-        final var selfLink = URI.create(BasePath.RULES + "/" + rule.getId());
+        final var selfLink = getAbsoluteSelfLink(rule);
         var newRule = rule.getValue();
 
         // Note: Infomodel deserializer sets autogen ID, when ID is missing in original rule value.

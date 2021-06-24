@@ -19,6 +19,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;

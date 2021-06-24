@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.RepresentationInstance;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.BasePath;
 import io.dataspaceconnector.ids.builder.core.base.AbstractIdsBuilder;
 import io.dataspaceconnector.ids.util.IdsUtils;
 import io.dataspaceconnector.model.core.Representation;
@@ -68,8 +67,7 @@ public final class IdsRepresentationBuilder
                         .build();
         final var standard = URI.create(representation.getStandard());
 
-        final var builder = new RepresentationBuilder(URI.create(
-                BasePath.REPRESENTATIONS + "/" + representation.getId()))
+        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation))
                 ._created_(created)
                 ._language_(language)
                 ._mediaType_(mediaType)

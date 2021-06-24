@@ -17,6 +17,7 @@ package io.dataspaceconnector.ids.builder.core.base;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.common.Utils;
+import io.dataspaceconnector.controller.resources.view.SelfLinkHelper;
 import io.dataspaceconnector.model.core.AbstractEntity;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -61,14 +63,14 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
     }
 
     /**
-     * Convert an DSC object to an Infomodel object with given baseUri.
+     * Convert an DSC object to an ids object.
+     *
      * @param entity   The entity to be converted.
      * @param maxDepth The depth determines when to stop following dependencies. Set this value to a
      *                 negative number to follow all dependencies.
-     * @return The Infomodel object.
+     * @return The ids object.
      */
-    public X create(final T entity, final int maxDepth)
-            throws ConstraintViolationException {
+    public X create(final T entity, final int maxDepth) throws ConstraintViolationException {
         return create(entity, 0, maxDepth);
     }
 
@@ -93,6 +95,17 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      */
     protected abstract X createInternal(T entity, int currentDepth, int maxDepth)
             throws ConstraintViolationException;
+
+    /**
+     * Use this function to construct the absolute path to this entity.
+     *
+     * @param entity  The entity.
+     * @param <K>     The entity type.
+     * @return The absolute path to this entity.
+     */
+    protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity) {
+        return SelfLinkHelper.getSelfLink(entity);
+    }
 
     private static boolean shouldGenerate(final int currentDepth, final int maxDepth) {
         return currentDepth <= maxDepth || maxDepth < 0;

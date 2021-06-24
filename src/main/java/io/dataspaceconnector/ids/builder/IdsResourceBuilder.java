@@ -15,14 +15,11 @@
  */
 package io.dataspaceconnector.ids.builder;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.common.BasePath;
 import io.dataspaceconnector.ids.builder.core.base.AbstractIdsBuilder;
 import io.dataspaceconnector.ids.util.IdsUtils;
 import io.dataspaceconnector.model.core.Resource;
@@ -57,13 +54,12 @@ public final class IdsResourceBuilder<T extends Resource>
             throws ConstraintViolationException {
         // Build children.
         final var representations =
-                create(repBuilder, resource.getRepresentations(), currentDepth,
-                        maxDepth);
+                create(repBuilder, resource.getRepresentations(), currentDepth, maxDepth);
         final var contracts =
                 create(contractBuilder, resource.getContracts(), currentDepth, maxDepth);
 
         // Prepare resource attributes.
-        final var selfLink = URI.create(BasePath.OFFERS + "/" + resource.getId());
+        final var selfLink = getAbsoluteSelfLink(resource);
         final var created = IdsUtils.getGregorianOf(resource.getCreationDate());
         final var modified = IdsUtils.getGregorianOf(resource.getModificationDate());
         final var description = resource.getDescription();

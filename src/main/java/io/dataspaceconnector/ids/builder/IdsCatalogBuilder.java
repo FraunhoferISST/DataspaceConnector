@@ -15,12 +15,9 @@
  */
 package io.dataspaceconnector.ids.builder;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.common.BasePath;
 import io.dataspaceconnector.ids.builder.core.base.AbstractIdsBuilder;
 import io.dataspaceconnector.model.core.Catalog;
 import io.dataspaceconnector.model.core.OfferedResource;
@@ -41,15 +38,14 @@ public final class IdsCatalogBuilder extends AbstractIdsBuilder<Catalog, Resourc
     private final @NonNull IdsResourceBuilder<OfferedResource> resourceBuilder;
 
     @Override
-    protected ResourceCatalog createInternal(final Catalog catalog,
-                                             final int currentDepth, final int maxDepth)
+    protected ResourceCatalog createInternal(final Catalog catalog, final int currentDepth,
+                                             final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var resources = create(resourceBuilder,
                 catalog.getOfferedResources(), currentDepth, maxDepth);
 
-        final var builder = new ResourceCatalogBuilder(URI.create(
-                BasePath.CATALOGS + "/" + catalog.getId()));
+        final var builder = new ResourceCatalogBuilder(getAbsoluteSelfLink(catalog));
         resources.ifPresent(builder::_offeredResource_);
 
         return builder.build();

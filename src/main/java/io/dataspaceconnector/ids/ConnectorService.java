@@ -182,7 +182,7 @@ public class ConnectorService {
     private List<ResourceCatalog> getAllCatalogsWithOfferedResources() {
         return catalogService.getAll(Pageable.unpaged())
                 .stream()
-                .map(x -> catalogBuilder.create(x,0))
+                .map(x -> catalogBuilder.create(x, 0))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

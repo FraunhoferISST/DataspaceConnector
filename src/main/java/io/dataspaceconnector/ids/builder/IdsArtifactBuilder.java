@@ -16,7 +16,6 @@
 package io.dataspaceconnector.ids.builder;
 
 import java.math.BigInteger;
-import java.net.URI;
 
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -44,7 +43,7 @@ public final class IdsArtifactBuilder
         final var created = IdsUtils.getGregorianOf(artifact
                                                             .getCreationDate());
 
-        return new ArtifactBuilder(URI.create(BasePath.ARTIFACTS + "/" + artifact.getId()))
+        return new ArtifactBuilder(getAbsoluteSelfLink(artifact))
                 ._byteSize_(BigInteger.valueOf(artifact.getByteSize()))
                 ._checkSum_(BigInteger.valueOf(artifact.getCheckSum()).toString())
                 ._creationDate_(created)
