@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.configuration;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Broker;
-import io.dataspaceconnector.model.BrokerDesc;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.broker.BrokerDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.Configuration;
-import io.dataspaceconnector.model.ConfigurationDesc;
+import io.dataspaceconnector.model.configurations.Configuration;
+import io.dataspaceconnector.model.configurations.ConfigurationDesc;
 import io.dataspaceconnector.repositories.KeystoreRepository;
 import io.dataspaceconnector.repositories.ProxyRepository;
 import io.dataspaceconnector.repositories.TruststoreRepository;

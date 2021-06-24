@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
 import io.dataspaceconnector.repositories.RuleRepository;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;

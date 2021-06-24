@@ -18,10 +18,10 @@ package io.dataspaceconnector.services.resources;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.Contract;
-import io.dataspaceconnector.model.ContractRule;
+import io.dataspaceconnector.model.agreements.Agreement;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.contracts.Contract;
+import io.dataspaceconnector.model.rules.ContractRule;
 import io.dataspaceconnector.utils.EndpointUtils;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;

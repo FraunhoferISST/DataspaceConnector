@@ -19,7 +19,7 @@ import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.DeployMode;
-import io.dataspaceconnector.model.LogLevel;
+import io.dataspaceconnector.model.configurations.LogLevel;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

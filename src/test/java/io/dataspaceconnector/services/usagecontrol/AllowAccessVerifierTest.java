@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

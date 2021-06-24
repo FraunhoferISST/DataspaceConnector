@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.RepresentationFactory;
+import io.dataspaceconnector.model.representations.RepresentationFactory;
 import io.dataspaceconnector.repositories.RepresentationRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

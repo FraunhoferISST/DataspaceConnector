@@ -26,7 +26,7 @@ import io.dataspaceconnector.exceptions.MessageRequestException;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
 import io.dataspaceconnector.services.EntityPersistenceService;

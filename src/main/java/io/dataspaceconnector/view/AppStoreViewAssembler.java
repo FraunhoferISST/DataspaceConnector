@@ -17,7 +17,7 @@ package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.AppControllers.AppStoreController;
 import io.dataspaceconnector.controller.configurations.AppControllers.AppStoreToApps;
-import io.dataspaceconnector.model.AppStore;
+import io.dataspaceconnector.model.appstore.AppStore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers;
-import io.dataspaceconnector.model.IdentityProvider;
+import io.dataspaceconnector.model.identifyprovider.IdentityProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

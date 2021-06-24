@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.AbstractEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

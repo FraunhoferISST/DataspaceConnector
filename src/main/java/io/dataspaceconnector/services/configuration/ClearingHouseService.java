@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.ClearingHouse;
-import io.dataspaceconnector.model.ClearingHouseDesc;
+import io.dataspaceconnector.model.clearinghouse.ClearingHouse;
+import io.dataspaceconnector.model.clearinghouse.ClearingHouseDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

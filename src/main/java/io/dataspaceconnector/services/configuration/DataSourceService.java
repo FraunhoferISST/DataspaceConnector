@@ -16,9 +16,9 @@
 package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.Authentication;
-import io.dataspaceconnector.model.DataSource;
-import io.dataspaceconnector.model.DataSourceDesc;
-import io.dataspaceconnector.model.DataSourceFactory;
+import io.dataspaceconnector.model.datasources.DataSource;
+import io.dataspaceconnector.model.datasources.DataSourceDesc;
+import io.dataspaceconnector.model.datasources.DataSourceFactory;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

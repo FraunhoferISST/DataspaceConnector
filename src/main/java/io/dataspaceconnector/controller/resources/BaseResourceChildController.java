@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.UUIDUtils;

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.ConnectorEndpoint;
-import io.dataspaceconnector.model.ConnectorEndpointDesc;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpointDesc;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 

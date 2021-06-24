@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resources.OfferedResource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

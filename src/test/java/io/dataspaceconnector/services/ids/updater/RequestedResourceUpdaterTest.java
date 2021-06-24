@@ -26,8 +26,8 @@ import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.resources.RequestedResource;
+import io.dataspaceconnector.model.resources.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.services.resources.RequestedResourceService;
 import lombok.SneakyThrows;
@@ -50,10 +50,10 @@ public class RequestedResourceUpdaterTest {
     private RequestedResourceUpdater updater;
 
     private final UUID resourceId  = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Resource resource = getResource();
-    private final io.dataspaceconnector.model.RequestedResource dscResource = getDscResource();
-    private final io.dataspaceconnector.model.RequestedResource dscUpdatedResource = getUpdatedDscResource();
-    private final ResourceTemplate<RequestedResourceDesc>       template           = getTemplate();
+    private final Resource                                resource           = getResource();
+    private final RequestedResource                       dscResource        = getDscResource();
+    private final RequestedResource                       dscUpdatedResource = getUpdatedDscResource();
+    private final ResourceTemplate<RequestedResourceDesc> template           = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -106,7 +106,7 @@ public class RequestedResourceUpdaterTest {
     }
 
     @SneakyThrows
-    private io.dataspaceconnector.model.RequestedResource getDscResource() {
+    private RequestedResource getDscResource() {
         final var resourceConstructor = RequestedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
         final var output =  resourceConstructor.newInstance();
@@ -115,7 +115,7 @@ public class RequestedResourceUpdaterTest {
     }
 
     @SneakyThrows
-    private io.dataspaceconnector.model.RequestedResource getUpdatedDscResource() {
+    private RequestedResource getUpdatedDscResource() {
         final var resourceConstructor = RequestedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
         final var output = resourceConstructor.newInstance();

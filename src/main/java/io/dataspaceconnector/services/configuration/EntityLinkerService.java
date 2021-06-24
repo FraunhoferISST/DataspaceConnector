@@ -15,19 +15,19 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.App;
-import io.dataspaceconnector.model.AppStore;
-import io.dataspaceconnector.model.Broker;
-import io.dataspaceconnector.model.ConnectorEndpoint;
-import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Route;
+import java.util.List;
+
+import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.broker.Broker;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.routes.Route;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * This class contains all implementations of {@link OwningRelationService}.
@@ -73,7 +73,7 @@ public final class EntityLinkerService {
 
         @Override
         protected final List<Route> getInternal(final Route owner) {
-            return owner.getSubRoutes();
+            return owner.getSteps();
         }
     }
 
@@ -88,7 +88,7 @@ public final class EntityLinkerService {
 
         @Override
         protected final List<OfferedResource> getInternal(final Route owner) {
-            return owner.getOfferedResources();
+            throw new RuntimeException("Not implemented");
         }
     }
 
@@ -103,7 +103,7 @@ public final class EntityLinkerService {
 
         @Override
         protected final List<GenericEndpoint> getInternal(final Route owner) {
-            return (List<GenericEndpoint>) (List<?>) owner.getStartEndpoint();
+            throw new RuntimeException("Not implemented");
         }
     }
 
@@ -118,7 +118,7 @@ public final class EntityLinkerService {
 
         @Override
         protected final List<ConnectorEndpoint> getInternal(final Route owner) {
-            return (List<ConnectorEndpoint>) (List<?>) owner.getLastEndpoint();
+            throw new RuntimeException("Not implemented");
         }
     }
 

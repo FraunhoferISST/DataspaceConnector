@@ -24,7 +24,7 @@ import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.RepresentationDesc;
+import io.dataspaceconnector.model.representations.RepresentationDesc;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.services.resources.RepresentationService;
 import org.junit.jupiter.api.Test;
@@ -47,10 +47,11 @@ public class RepresentationUpdaterTest {
     private RepresentationUpdater updater;
 
     private final UUID           representationId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Representation representation   = getRepresentation();
-    private final io.dataspaceconnector.model.Representation dscRepresentation        = getDscRepresentation();
-    private final io.dataspaceconnector.model.Representation dscUpdatedRepresentation = getUpdatedDscRepresentation();
-    private final RepresentationTemplate                     template           = getTemplate();
+    private final Representation                                             representation           = getRepresentation();
+    private final io.dataspaceconnector.model.representations.Representation dscRepresentation        = getDscRepresentation();
+    private final io.dataspaceconnector.model.representations.Representation
+                                                                             dscUpdatedRepresentation = getUpdatedDscRepresentation();
+    private final RepresentationTemplate                                     template                 = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -100,14 +101,14 @@ public class RepresentationUpdaterTest {
                 ._language_(Language.DE).build();
     }
 
-    private io.dataspaceconnector.model.Representation getDscRepresentation() {
-        final var output = new io.dataspaceconnector.model.Representation();
+    private io.dataspaceconnector.model.representations.Representation getDscRepresentation() {
+        final var output = new io.dataspaceconnector.model.representations.Representation();
         ReflectionTestUtils.setField(output, "language", "SOME Language");
         return output;
     }
 
-    private io.dataspaceconnector.model.Representation getUpdatedDscRepresentation() {
-        final var output = new io.dataspaceconnector.model.Representation();
+    private io.dataspaceconnector.model.representations.Representation getUpdatedDscRepresentation() {
+        final var output = new io.dataspaceconnector.model.representations.Representation();
         ReflectionTestUtils.setField(output, "language", "https://w3id.org/idsa/code/DE");
         return output;
     }

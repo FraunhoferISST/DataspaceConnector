@@ -1,6 +1,6 @@
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.model.Keystore;
+import io.dataspaceconnector.model.keystore.Keystore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 

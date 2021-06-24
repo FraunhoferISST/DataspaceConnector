@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.utils.Utils;
 import io.dataspaceconnector.view.CatalogViewAssembler;

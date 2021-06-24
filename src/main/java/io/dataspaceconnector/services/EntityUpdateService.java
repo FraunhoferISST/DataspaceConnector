@@ -24,7 +24,7 @@ import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.model.agreements.Agreement;
 import io.dataspaceconnector.services.ids.updater.ArtifactUpdater;
 import io.dataspaceconnector.services.ids.updater.RepresentationUpdater;
 import io.dataspaceconnector.services.ids.updater.RequestedResourceUpdater;

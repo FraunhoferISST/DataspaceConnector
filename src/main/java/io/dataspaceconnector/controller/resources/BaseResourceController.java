@@ -20,8 +20,8 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
-import io.dataspaceconnector.model.AbstractDescription;
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.model.proxy.Proxy;
 import org.springframework.stereotype.Repository;
 
 /**

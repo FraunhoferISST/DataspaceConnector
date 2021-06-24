@@ -27,7 +27,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 
 import static io.dataspaceconnector.utils.RuleUtils.compareObligations;
 import static io.dataspaceconnector.utils.RuleUtils.comparePermissions;
@@ -153,8 +153,8 @@ public final class ContractUtils {
      * @return Cleaned list of contracts.
      * @throws IllegalArgumentException if any of the arguments is null.
      */
-    public static List<io.dataspaceconnector.model.Contract> removeContractsWithInvalidConsumer(
-            final List<io.dataspaceconnector.model.Contract> contracts,
+    public static List<io.dataspaceconnector.model.contracts.Contract> removeContractsWithInvalidConsumer(
+            final List<io.dataspaceconnector.model.contracts.Contract> contracts,
             final URI issuerConnector) {
         Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);
         Utils.requireNonNull(issuerConnector, ErrorMessages.URI_NULL);

@@ -1,6 +1,6 @@
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Truststore;
+import io.dataspaceconnector.model.truststore.Truststore;
 import org.springframework.stereotype.Repository;
 
 @Repository

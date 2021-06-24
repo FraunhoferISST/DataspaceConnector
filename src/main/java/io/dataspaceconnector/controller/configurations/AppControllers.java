@@ -17,10 +17,10 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.App;
-import io.dataspaceconnector.model.AppDesc;
-import io.dataspaceconnector.model.AppStore;
-import io.dataspaceconnector.model.AppStoreDesc;
+import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.services.configuration.AppService;
 import io.dataspaceconnector.services.configuration.AppStoreService;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;

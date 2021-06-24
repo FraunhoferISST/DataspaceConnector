@@ -20,8 +20,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactImpl;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

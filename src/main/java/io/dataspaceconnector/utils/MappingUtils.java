@@ -22,14 +22,14 @@ import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.ContractDesc;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.ResourceDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.contracts.ContractDesc;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
+import io.dataspaceconnector.model.resources.OfferedResourceDesc;
+import io.dataspaceconnector.model.representations.RepresentationDesc;
+import io.dataspaceconnector.model.resources.RequestedResourceDesc;
+import io.dataspaceconnector.model.resources.ResourceDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
@@ -181,7 +181,7 @@ public final class MappingUtils {
         return additional;
     }
 
-    private static <T extends io.dataspaceconnector.model.Resource> void
+    private static <T extends io.dataspaceconnector.model.resources.Resource> void
             fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
         final var description = resource.getDescription();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());

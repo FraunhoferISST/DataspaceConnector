@@ -50,7 +50,7 @@ import de.fraunhofer.iais.eis.ProhibitionBuilder;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.model.Contract;
+import io.dataspaceconnector.model.contracts.Contract;
 import lombok.SneakyThrows;
 
 class RuleUtilsTest {

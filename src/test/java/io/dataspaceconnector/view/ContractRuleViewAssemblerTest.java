@@ -22,9 +22,9 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
+import io.dataspaceconnector.model.rules.ContractRuleFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

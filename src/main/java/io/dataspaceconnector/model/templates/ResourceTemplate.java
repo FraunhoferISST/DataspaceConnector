@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.templates;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.AbstractDescription;
+import io.dataspaceconnector.model.base.AbstractDescription;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

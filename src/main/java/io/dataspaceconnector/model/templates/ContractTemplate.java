@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model.templates;
 
-import io.dataspaceconnector.model.ContractDesc;
+import io.dataspaceconnector.model.contracts.ContractDesc;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

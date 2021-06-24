@@ -18,9 +18,9 @@ package io.dataspaceconnector.services.resources;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.CatalogFactory;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.catalog.CatalogFactory;
 import io.dataspaceconnector.repositories.CatalogRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

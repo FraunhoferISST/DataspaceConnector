@@ -16,24 +16,20 @@
 package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.ClearingHouse;
-import io.dataspaceconnector.model.ClearingHouseDesc;
-import io.dataspaceconnector.model.Configuration;
-import io.dataspaceconnector.model.ConfigurationDesc;
-import io.dataspaceconnector.model.Connector;
-import io.dataspaceconnector.model.ConnectorDesc;
-import io.dataspaceconnector.model.DataSource;
-import io.dataspaceconnector.model.DataSourceDesc;
-import io.dataspaceconnector.model.IdentityProvider;
-import io.dataspaceconnector.model.IdentityProviderDesc;
+import io.dataspaceconnector.model.clearinghouse.ClearingHouse;
+import io.dataspaceconnector.model.clearinghouse.ClearingHouseDesc;
+import io.dataspaceconnector.model.configurations.Configuration;
+import io.dataspaceconnector.model.configurations.ConfigurationDesc;
+import io.dataspaceconnector.model.datasources.DataSource;
+import io.dataspaceconnector.model.datasources.DataSourceDesc;
+import io.dataspaceconnector.model.identifyprovider.IdentityProvider;
+import io.dataspaceconnector.model.identifyprovider.IdentityProviderDesc;
 import io.dataspaceconnector.services.configuration.ClearingHouseService;
 import io.dataspaceconnector.services.configuration.ConfigurationService;
-import io.dataspaceconnector.services.configuration.ConnectorsService;
 import io.dataspaceconnector.services.configuration.DataSourceService;
 import io.dataspaceconnector.services.configuration.IdentityProviderService;
 import io.dataspaceconnector.view.ClearingHouseView;
 import io.dataspaceconnector.view.ConfigurationView;
-import io.dataspaceconnector.view.ConnectorView;
 import io.dataspaceconnector.view.DataSourceView;
 import io.dataspaceconnector.view.IdentityProviderView;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,17 +62,6 @@ public final class ConfigmanagerControllers {
     public static class ConfigurationController
             extends BaseResourceController<Configuration, ConfigurationDesc,
             ConfigurationView, ConfigurationService> { }
-
-    /**
-     * Offers the endpoints for managing connectors.
-     */
-    @RestController
-    @RequestMapping("/api/connectors")
-    @Tag(name = "Connector Configuration",
-            description = "Endpoints for CRUD operations on connectors")
-    public static class ConnectorController
-            extends BaseResourceController<Connector, ConnectorDesc, ConnectorView,
-            ConnectorsService> { }
 
     /**
      * Offers the endpoints for managing data sources.

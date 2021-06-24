@@ -18,7 +18,8 @@ package io.dataspaceconnector.services.ids.updater;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
@@ -46,10 +47,10 @@ public class ArtifactUpdaterTest {
     private ArtifactUpdater updater;
 
     private final UUID artifactId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Artifact artifact = getArtifact();
-    private final io.dataspaceconnector.model.Artifact dscArtifact = getDscArtifact();
-    private final io.dataspaceconnector.model.Artifact dscUpdatedArtifact = getUpdatedDscArtifact();
-    private final ArtifactTemplate template = getTemplate();
+    private final Artifact                                      artifact           = getArtifact();
+    private final io.dataspaceconnector.model.artifact.Artifact dscArtifact        = getDscArtifact();
+    private final io.dataspaceconnector.model.artifact.Artifact dscUpdatedArtifact = getUpdatedDscArtifact();
+    private final ArtifactTemplate                              template           = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -100,14 +101,14 @@ public class ArtifactUpdaterTest {
                 ._fileName_("HELLO").build();
     }
 
-    private io.dataspaceconnector.model.Artifact getDscArtifact() {
-        final var output = new io.dataspaceconnector.model.ArtifactImpl();
+    private io.dataspaceconnector.model.artifact.Artifact getDscArtifact() {
+        final var output = new ArtifactImpl();
         ReflectionTestUtils.setField(output, "title", "SOME TITLE");
         return output;
     }
 
-    private io.dataspaceconnector.model.Artifact getUpdatedDscArtifact() {
-        final var output = new io.dataspaceconnector.model.ArtifactImpl();
+    private io.dataspaceconnector.model.artifact.Artifact getUpdatedDscArtifact() {
+        final var output = new ArtifactImpl();
         ReflectionTestUtils.setField(output, "title",  "HELLO");
         return output;
     }

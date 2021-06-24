@@ -31,7 +31,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.services.resources.CatalogService;

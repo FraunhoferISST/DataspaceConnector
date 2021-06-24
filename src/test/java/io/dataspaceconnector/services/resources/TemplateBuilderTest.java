@@ -16,14 +16,14 @@
 package io.dataspaceconnector.services.resources;
 
 import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
+import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.resources.OfferedResourceDesc;
+import io.dataspaceconnector.model.resources.RequestedResource;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;

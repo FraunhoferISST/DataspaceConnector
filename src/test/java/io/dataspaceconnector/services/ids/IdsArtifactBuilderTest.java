@@ -20,10 +20,10 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
+import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.utils.IdsUtils;
 import lombok.SneakyThrows;

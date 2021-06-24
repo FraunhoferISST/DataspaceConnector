@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resources;
 
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.resources.RequestedResource;
+import io.dataspaceconnector.model.resources.RequestedResourceDesc;
 import io.dataspaceconnector.view.RequestedResourceViewAssembler;
 import io.dataspaceconnector.services.resources.ResourceService;
 import org.junit.jupiter.api.Test;

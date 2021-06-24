@@ -1,6 +1,6 @@
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.model.Truststore;
+import io.dataspaceconnector.model.truststore.Truststore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 

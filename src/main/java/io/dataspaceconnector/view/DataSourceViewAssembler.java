@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.DataSourceController;
-import io.dataspaceconnector.model.DataSource;
+import io.dataspaceconnector.model.datasources.DataSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -17,7 +17,7 @@ package io.dataspaceconnector.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.DeployMethod;
-import io.dataspaceconnector.model.Endpoint;
+import io.dataspaceconnector.model.endpoints.Endpoint;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

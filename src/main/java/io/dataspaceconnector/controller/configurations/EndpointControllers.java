@@ -16,12 +16,12 @@
 package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.AppEndpoint;
-import io.dataspaceconnector.model.AppEndpointDesc;
-import io.dataspaceconnector.model.ConnectorEndpoint;
-import io.dataspaceconnector.model.ConnectorEndpointDesc;
-import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.GenericEndpointDesc;
+import io.dataspaceconnector.model.endpoints.AppEndpoint;
+import io.dataspaceconnector.model.endpoints.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpointDesc;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.endpoints.GenericEndpointDesc;
 import io.dataspaceconnector.services.configuration.AppEndpointService;
 import io.dataspaceconnector.services.configuration.ConnectorEndpointService;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;

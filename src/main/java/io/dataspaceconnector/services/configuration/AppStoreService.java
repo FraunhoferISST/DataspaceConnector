@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.AppStore;
-import io.dataspaceconnector.model.AppStoreDesc;
+import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

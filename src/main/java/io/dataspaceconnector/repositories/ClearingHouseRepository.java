@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.ClearingHouse;
+import io.dataspaceconnector.model.clearinghouse.ClearingHouse;
 import org.springframework.stereotype.Repository;
 
 /**

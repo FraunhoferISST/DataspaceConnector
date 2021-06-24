@@ -16,13 +16,13 @@
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.Artifact;
-import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.ArtifactFactory;
-import io.dataspaceconnector.model.Representation;
-import io.dataspaceconnector.model.RepresentationDesc;
-import io.dataspaceconnector.model.RepresentationFactory;
+import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactFactory;
+import io.dataspaceconnector.model.representations.Representation;
+import io.dataspaceconnector.model.representations.RepresentationDesc;
+import io.dataspaceconnector.model.representations.RepresentationFactory;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsRepresentationBuilder;
 import io.dataspaceconnector.utils.IdsUtils;

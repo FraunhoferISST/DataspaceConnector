@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.CatalogDesc;
-import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.view.CatalogViewAssembler;
 import lombok.SneakyThrows;

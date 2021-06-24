@@ -15,9 +15,9 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.GenericEndpointDesc;
-import io.dataspaceconnector.model.GenericEndpointFactory;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.endpoints.GenericEndpointDesc;
+import io.dataspaceconnector.model.endpoints.GenericEndpointFactory;
 import io.dataspaceconnector.repositories.GenericEndpointRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

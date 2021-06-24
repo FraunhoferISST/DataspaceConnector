@@ -18,7 +18,7 @@ package io.dataspaceconnector.view;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConfigurationController;
-import io.dataspaceconnector.model.Configuration;
+import io.dataspaceconnector.model.configurations.Configuration;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

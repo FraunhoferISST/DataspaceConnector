@@ -17,11 +17,11 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.ConnectorEndpoint;
-import io.dataspaceconnector.model.GenericEndpoint;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.Route;
-import io.dataspaceconnector.model.RouteDesc;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.routes.Route;
+import io.dataspaceconnector.model.routes.RouteDesc;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.RouteService;
 import io.dataspaceconnector.view.ConnectorEndpointView;

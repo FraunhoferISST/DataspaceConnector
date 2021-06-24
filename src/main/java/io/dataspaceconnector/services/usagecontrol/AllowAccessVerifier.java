@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 import org.springframework.stereotype.Component;
 
 /**

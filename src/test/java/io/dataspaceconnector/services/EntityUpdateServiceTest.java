@@ -31,11 +31,11 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.Agreement;
-import io.dataspaceconnector.model.ArtifactImpl;
-import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.RequestedResourceFactory;
+import io.dataspaceconnector.model.agreements.Agreement;
+import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.resources.RequestedResource;
+import io.dataspaceconnector.model.resources.RequestedResourceDesc;
+import io.dataspaceconnector.model.resources.RequestedResourceFactory;
 import io.dataspaceconnector.services.ids.updater.ArtifactUpdater;
 import io.dataspaceconnector.services.ids.updater.RepresentationUpdater;
 import io.dataspaceconnector.services.ids.updater.RequestedResourceUpdater;
@@ -104,7 +104,7 @@ public class EntityUpdateServiceTest {
 
         when(requestedResourceUpdater.update(any())).thenReturn(getRequestedResource());
         when(representationUpdater.update(any()))
-                .thenReturn(new io.dataspaceconnector.model.Representation());
+                .thenReturn(new io.dataspaceconnector.model.representations.Representation());
         when(artifactUpdater.update(any())).thenReturn(new ArtifactImpl());
 
         /* ACT */

@@ -18,9 +18,9 @@ package io.dataspaceconnector.services.resources;
 import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.AbstractDescription;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.base.Factory;
+import io.dataspaceconnector.model.base.AbstractDescription;
+import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.repositories.BaseEntityRepository;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
@@ -50,7 +50,7 @@ public class BaseEntityService<T extends AbstractEntity, D extends AbstractDescr
      * Contains creation and update logic for entities of type T.
      **/
     @Autowired
-    private Factory<T, D> factory;
+    private AbstractFactory<T, D> factory;
 
     /**
      * Default constructor.

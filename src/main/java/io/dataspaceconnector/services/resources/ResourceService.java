@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.model.Resource;
-import io.dataspaceconnector.model.ResourceDesc;
+import io.dataspaceconnector.model.resources.Resource;
+import io.dataspaceconnector.model.resources.ResourceDesc;
 import lombok.NoArgsConstructor;
 
 /**

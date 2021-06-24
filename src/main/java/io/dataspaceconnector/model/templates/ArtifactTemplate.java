@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.templates;
 
 import java.net.URI;
 
-import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

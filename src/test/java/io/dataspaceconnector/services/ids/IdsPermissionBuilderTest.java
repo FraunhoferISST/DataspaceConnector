@@ -21,10 +21,10 @@ import java.util.UUID;
 
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.PermissionImpl;
-import io.dataspaceconnector.model.AbstractEntity;
-import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.model.ContractRuleDesc;
-import io.dataspaceconnector.model.ContractRuleFactory;
+import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.rules.ContractRuleDesc;
+import io.dataspaceconnector.model.rules.ContractRuleFactory;
 import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;

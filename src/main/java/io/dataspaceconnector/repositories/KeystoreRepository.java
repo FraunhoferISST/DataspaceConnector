@@ -1,6 +1,6 @@
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Keystore;
+import io.dataspaceconnector.model.keystore.Keystore;
 import org.springframework.stereotype.Repository;
 
 @Repository

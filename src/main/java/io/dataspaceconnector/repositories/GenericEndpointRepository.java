@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.GenericEndpoint;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
 import org.springframework.stereotype.Repository;
 
 /**

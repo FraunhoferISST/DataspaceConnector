@@ -17,7 +17,7 @@ package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.BrokerControllers;
 import io.dataspaceconnector.controller.configurations.BrokerControllers.BrokerToOfferedResources;
-import io.dataspaceconnector.model.Broker;
+import io.dataspaceconnector.model.broker.Broker;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

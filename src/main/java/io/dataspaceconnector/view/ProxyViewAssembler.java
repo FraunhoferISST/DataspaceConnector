@@ -1,6 +1,6 @@
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.model.Proxy;
+import io.dataspaceconnector.model.proxy.Proxy;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services.ids.updater;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.AbstractEntity;
+import io.dataspaceconnector.model.base.AbstractEntity;
 
 /**
  * Updates an DSC object by providing an IDS object.

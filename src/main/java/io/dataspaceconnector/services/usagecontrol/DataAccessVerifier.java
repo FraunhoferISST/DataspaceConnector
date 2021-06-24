@@ -22,7 +22,7 @@ import java.util.List;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.Artifact;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.utils.ContractUtils;
 import io.dataspaceconnector.utils.RuleUtils;

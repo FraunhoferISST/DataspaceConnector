@@ -23,14 +23,14 @@
 //
 //import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 //import io.dataspaceconnector.exceptions.UnreachableLineException;
-//import io.dataspaceconnector.model.Artifact;
-//import io.dataspaceconnector.model.ArtifactDesc;
-//import io.dataspaceconnector.model.ArtifactFactory;
-//import io.dataspaceconnector.model.ArtifactImpl;
-//import io.dataspaceconnector.model.Data;
-//import io.dataspaceconnector.model.LocalData;
+//import io.dataspaceconnector.model.artifact.Artifact;
+//import io.dataspaceconnector.model.artifact.ArtifactDesc;
+//import io.dataspaceconnector.model.artifact.ArtifactFactory;
+//import io.dataspaceconnector.model.artifact.ArtifactImpl;
+//import io.dataspaceconnector.model.artifact.Data;
+//import io.dataspaceconnector.model.artifact.LocalData;
 //import io.dataspaceconnector.model.QueryInput;
-//import io.dataspaceconnector.model.RemoteData;
+//import io.dataspaceconnector.model.artifact.RemoteData;
 //import io.dataspaceconnector.repositories.ArtifactRepository;
 //import io.dataspaceconnector.repositories.DataRepository;
 //import io.dataspaceconnector.services.HttpService;
