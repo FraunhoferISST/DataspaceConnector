@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Contains utility methods for creating ResponseEntities with different status codes and custom
@@ -221,6 +221,20 @@ public final class ControllerUtils {
         }
         return new ResponseEntity<>("Failed to store entity. " + exception.getMessage(),
                 HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Creates a ResponseEntity with status code 504 and a message indicating that the connection
+     * timed out.
+     *
+     * @param exception The exception that was thrown.
+     * @return ResponseEntity with status code 504.
+     */
+    public static ResponseEntity<Object> respondConnectionTimedOut(final Exception exception) {
+        if (log.isWarnEnabled()) {
+            log.warn("Connection timed out. [exception=({})]", exception.getMessage(), exception);
+        }
+        return new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
     }
 
     /**

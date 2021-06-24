@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
@@ -40,6 +37,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+
 /**
  * Controller for sending ids resource unavailable messages.
  */
@@ -61,7 +62,6 @@ public class ResourceUnavailableMessageController {
 
     /**
      * Sending an ids resource unavailable message with a resource as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient  The url of the recipient.
      * @param resourceId The resource id.
@@ -74,7 +74,8 @@ public class ResourceUnavailableMessageController {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "504", description = "Gateway Timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
@@ -96,6 +97,8 @@ public class ResourceUnavailableMessageController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body("Ids message handling failed. null");
             }
+        } catch (SocketTimeoutException exception) {
+            return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (IOException | DapsTokenManagerException | MultipartParseException
                 | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);

@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 
 /**
@@ -62,7 +63,6 @@ public class ConnectorUpdateMessageController {
 
     /**
      * Sending an ids connector update message with the current connector as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.
@@ -73,8 +73,8 @@ public class ConnectorUpdateMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "504", description = "Gateway Timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
@@ -94,6 +94,8 @@ public class ConnectorUpdateMessageController {
             }
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
+        } catch (SocketTimeoutException exception) {
+            return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (IOException | DapsTokenManagerException | ClaimsException
                 | MultipartParseException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);

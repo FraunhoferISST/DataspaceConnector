@@ -15,13 +15,11 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
@@ -33,13 +31,16 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
-import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract class for building, sending, and processing ids messages.
@@ -93,8 +94,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
-    public Map<String, String> send(final D desc, final Object payload)
-            throws MessageException {
+    public Map<String, String> send(final D desc, final Object payload) throws MessageException {
         try {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
@@ -125,22 +125,28 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.HEADER_BUILD_FAILED.toString(), e);
+        } catch (SocketTimeoutException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Gateway timeout when connecting to recipient. [exception=({})]",
+                        e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.GATEWAY_TIMEOUT.toString(), e);
         } catch (ClaimsException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid DAT in incoming message. [exception=({})]",
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
-        } catch (IOException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Message could not be sent. [exception=({})]", e.getMessage(), e);
-            }
-            throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
         } catch (MultipartParseException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Message could not be parsed. [exception=({})]", e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
+        } catch (IOException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Message could not be sent. [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.MESSAGE_NOT_SENT.toString(), e);
         }
     }
 
