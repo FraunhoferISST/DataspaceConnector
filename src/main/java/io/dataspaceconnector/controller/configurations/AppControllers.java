@@ -17,8 +17,8 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.apps.App;
+import io.dataspaceconnector.model.apps.AppDesc;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.appstore.AppStoreDesc;
 import io.dataspaceconnector.services.configuration.AppService;

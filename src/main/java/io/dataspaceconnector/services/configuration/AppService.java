@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.app.App;
-import io.dataspaceconnector.model.app.AppDesc;
+import io.dataspaceconnector.model.apps.App;
+import io.dataspaceconnector.model.apps.AppDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

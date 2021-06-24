@@ -17,7 +17,7 @@ package io.dataspaceconnector.services.configuration;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.app.App;
+import io.dataspaceconnector.model.apps.App;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
