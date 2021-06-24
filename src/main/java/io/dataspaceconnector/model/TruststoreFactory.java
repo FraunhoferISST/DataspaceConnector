@@ -1,10 +1,11 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TruststoreFactory
-        implements AbstractFactory<Truststore, TruststoreDesc> {
+        implements Factory<Truststore, TruststoreDesc> {
     @Override
     public Truststore create(final TruststoreDesc desc) {
         final var entity = new Truststore();

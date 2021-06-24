@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -30,7 +31,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates an app store.
  */
 @Component
-public class AppStoreFactory implements AbstractFactory<AppStore, AppStoreDesc> {
+public class AppStoreFactory implements Factory<AppStore, AppStoreDesc> {
 
     /**
      * The default uri.

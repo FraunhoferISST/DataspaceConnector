@@ -15,25 +15,22 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.zip.CRC32C;
+
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.zip.CRC32C;
-
 /**
  * Creates and updates an artifact.
  */
 @Component
-public final class ArtifactFactory implements AbstractFactory<Artifact, ArtifactDesc> {
+public final class ArtifactFactory extends AbstractFactory<Artifact, ArtifactDesc> {
 
     /**
      * Default remote id assigned to all artifacts.
@@ -69,7 +66,7 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         artifact.setAgreements(new ArrayList<>());
         artifact.setRepresentations(new ArrayList<>());
         if (desc.getBootstrapId() != null) {
-            artifact.setBootstrapId(URI.create(desc.getBootstrapId()));
+            artifact.setBootstrapId(desc.getBootstrapId());
         }
 
         update(artifact, desc);
@@ -77,35 +74,16 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         return artifact;
     }
 
-    /**
-     * Update an artifact.
-     * @param artifact The artifact to be updated.
-     * @param desc     The new artifact description.
-     * @return True if the artifact has been modified.
-     * @throws IllegalArgumentException if any of the parameters is null.
-     */
     @Override
-    public boolean update(final Artifact artifact, final ArtifactDesc desc) {
-        Utils.requireNonNull(artifact, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
+    protected boolean updateInternal(final Artifact artifact, final ArtifactDesc desc) {
         final var hasUpdatedRemoteId = updateRemoteId(artifact, desc.getRemoteId());
         final var hasUpdatedRemoteAddress = updateRemoteAddress(artifact, desc.getRemoteAddress());
         final var hasUpdatedTitle = updateTitle(artifact, desc.getTitle());
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
-        final var hasUpdatedAdditional = this.updateAdditional(artifact, desc.getAdditional());
-        final boolean hasUpdatedBootstrapId;
-        if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId =
-                    this.updateBootstrapId(artifact, URI.create(desc.getBootstrapId()));
-        } else {
-            hasUpdatedBootstrapId = false;
-        }
 
         return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle
-               || hasUpdatedAutoDownload || hasUpdatedData || hasUpdatedAdditional
-               || hasUpdatedBootstrapId;
+               || hasUpdatedAutoDownload || hasUpdatedData;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
@@ -138,16 +116,6 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         }
 
         return false;
-    }
-
-    private boolean updateAdditional(final Artifact artifact,
-                                     final Map<String, String> additional) {
-        final var newAdditional =
-                MetadataUtils
-                        .updateStringMap(artifact.getAdditional(), additional, new HashMap<>());
-        newAdditional.ifPresent(artifact::setAdditional);
-
-        return newAdditional.isPresent();
     }
 
     private boolean updateData(final Artifact artifact, final ArtifactDesc desc) {
@@ -231,23 +199,6 @@ public final class ArtifactFactory implements AbstractFactory<Artifact, Artifact
         }
 
         return hasChanged;
-    }
-
-    private boolean updateBootstrapId(final Artifact artifact, final URI bootstrapId) {
-        final Optional<URI> newBootstrapId;
-        if (bootstrapId == null && artifact.getBootstrapId() == null) {
-            newBootstrapId = Optional.empty();
-        } else {
-            newBootstrapId = MetadataUtils
-                    .updateUri(
-                            artifact.getBootstrapId(),
-                            bootstrapId,
-                            artifact.getBootstrapId());
-        }
-
-        newBootstrapId.ifPresent(artifact::setBootstrapId);
-
-        return newBootstrapId.isPresent();
     }
 
     private long calculateChecksum(final byte[] bytes) {

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -30,7 +31,7 @@ import java.util.Objects;
  * Creates and updates a broker.
  */
 @Component
-public class BrokerFactory implements AbstractFactory<Broker, BrokerDesc> {
+public class BrokerFactory implements Factory<Broker, BrokerDesc> {
 
     /**
      * Default access url.

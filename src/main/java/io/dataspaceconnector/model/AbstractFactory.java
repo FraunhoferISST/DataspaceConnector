@@ -1,39 +1,57 @@
-/*
- * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.dataspaceconnector.model;
 
-/**
- * The base factory for factory classes.
- * This class creates and updates an entity by using a supplied description.
- * @param <T> The type of the entity.
- * @param <D> The type of the description.
- */
-public interface AbstractFactory<T extends AbstractEntity, D extends AbstractDescription<T>> {
-    /**
-     * Create a new entity.
-     * @param desc The description of the entity.
-     * @return The new entity.
-     */
-    T create(D desc);
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-    /**
-     * Update an entity.
-     * @param entity The entity to be updated.
-     * @param desc The description of the new entity.
-     * @return true if changes where performed.
-     */
-    boolean update(T entity, D desc);
+import io.dataspaceconnector.model.base.Factory;
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+
+public abstract class AbstractFactory<T extends AbstractEntity, D extends AbstractDescription<T>> implements Factory<T, D> {
+
+    abstract boolean updateInternal(T entity, D desc);
+
+    @Override
+    public boolean update(final T entity, final D desc) {
+        Utils.requireNonNull(entity, ErrorMessages.ENTITY_NULL);
+        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(entity, desc.getBootstrapId());
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
+
+        return updateAdditional(entity, desc.getAdditional()) || hasUpdatedBootstrapId;
+    }
+
+    protected boolean updateAdditional(final T entity, final Map<String, String> additional) {
+        final var newAdditional = MetadataUtils.updateStringMap(
+                entity.getAdditional(), additional, new HashMap<>());
+        newAdditional.ifPresent(entity::setAdditional);
+
+        return newAdditional.isPresent();
+    }
+
+    protected boolean updateBootstrapId(final T entity, final URI bootstrapId) {
+        Optional<URI> newBootstrapId;
+        if (bootstrapId == null && entity.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            entity.getBootstrapId(),
+                            bootstrapId,
+                            entity.getBootstrapId());
+        }
+
+        newBootstrapId.ifPresent(entity::setBootstrapId);
+
+        return newBootstrapId.isPresent();
+    }
 }

@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -29,7 +30,7 @@ import java.util.Objects;
  * Creates and updates a route.
  */
 @Component
-public class RouteFactory implements AbstractFactory<Route, RouteDesc> {
+public class RouteFactory implements Factory<Route, RouteDesc> {
 
     /**
      * The default string.

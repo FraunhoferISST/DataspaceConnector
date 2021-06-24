@@ -15,16 +15,8 @@
  */
 package io.dataspaceconnector.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -34,6 +26,18 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.UUID;
+
+import io.dataspaceconnector.model.utils.UriConverter;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Base type for all entities.
@@ -91,7 +95,8 @@ public class AbstractEntity implements Serializable {
     /**
      * Optional id which is used during bootstrapping.
      */
-    @Column(name = "bootstrap_id")
-    @Setter
+    @Column(name = "bootstrap_id", length = URI_COLUMN_LENGTH)
+    @Setter(AccessLevel.PACKAGE)
+    @Convert(converter = UriConverter.class)
     private URI bootstrapId;
 }

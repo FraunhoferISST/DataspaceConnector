@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -30,7 +31,7 @@ import java.util.Map;
  * @param <D> The description type.
  */
 public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc<T>>
-        implements AbstractFactory<T, D> {
+        implements Factory<T, D> {
 
     /**
      * The default uri.

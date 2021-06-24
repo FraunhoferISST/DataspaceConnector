@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,4 +54,7 @@ public class AbstractDescription<T> {
 
         additional.put(key, value);
     }
+
+    @JsonIgnore
+    private URI bootstrapId;
 }

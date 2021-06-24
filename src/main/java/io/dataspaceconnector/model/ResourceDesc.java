@@ -68,10 +68,4 @@ public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
-
-    /**
-     * Optional id which is used during bootstrapping.
-     */
-    private String bootstrapId;
-
 }

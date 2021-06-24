@@ -17,8 +17,6 @@ package io.dataspaceconnector.model;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
@@ -29,7 +27,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates a contract.
  */
 @Component
-public class AgreementFactory implements AbstractFactory<Agreement, AgreementDesc> {
+public class AgreementFactory extends AbstractFactory<Agreement, AgreementDesc> {
 
     /**
      * The default remote id.
@@ -59,24 +57,13 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         return agreement;
     }
 
-    /**
-     * Update a contract.
-     * @param agreement The contract to be updated.
-     * @param desc      The new contract description.
-     * @return True if the contract has been modified.
-     * @throws IllegalArgumentException if any of the passed arguments is null.
-     */
     @Override
-    public boolean update(final Agreement agreement, final AgreementDesc desc) {
-        Utils.requireNonNull(agreement, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
+    boolean updateInternal(final Agreement entity, final AgreementDesc desc) {
+        final var hasUpdatedRemoteId = this.updateRemoteId(entity, desc.getRemoteId());
+        final var hasUpdatedConfirmed = this.updateHasConfirmed(entity, desc.isConfirmed());
+        final var hasUpdatedValue = this.updateValue(entity, desc.getValue());
 
-        final var hasUpdatedRemoteId = this.updateRemoteId(agreement, desc.getRemoteId());
-        final var hasUpdatedConfirmed = this.updateHasConfirmed(agreement, desc.isConfirmed());
-        final var hasUpdatedValue = this.updateValue(agreement, desc.getValue());
-        final var hasUpdatedAdditional = this.updateAdditional(agreement, desc.getAdditional());
-
-        return hasUpdatedRemoteId || hasUpdatedConfirmed || hasUpdatedValue || hasUpdatedAdditional;
+        return hasUpdatedRemoteId || hasUpdatedConfirmed || hasUpdatedValue;
     }
 
     private boolean updateRemoteId(final Agreement agreement, final URI remoteId) {
@@ -101,14 +88,5 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
         newValue.ifPresent(agreement::setValue);
 
         return newValue.isPresent();
-    }
-
-    private boolean updateAdditional(
-            final Agreement agreement, final Map<String, String> additional) {
-        final var newAdditional = MetadataUtils.updateStringMap(
-                agreement.getAdditional(), additional, new HashMap<>());
-        newAdditional.ifPresent(agreement::setAdditional);
-
-        return newAdditional.isPresent();
     }
 }

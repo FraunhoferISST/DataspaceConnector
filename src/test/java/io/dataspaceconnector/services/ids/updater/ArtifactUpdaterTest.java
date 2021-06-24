@@ -118,7 +118,7 @@ public class ArtifactUpdaterTest {
         output.getDesc().setRemoteId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
         output.getDesc().setAutomatedDownload(false);
         output.getDesc().setAdditional(new ConcurrentHashMap<>());
-        output.getDesc().setBootstrapId("550e8400-e29b-11d4-a716-446655440000");
+        output.getDesc().setBootstrapId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
 
         return output;
     }

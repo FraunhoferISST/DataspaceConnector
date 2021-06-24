@@ -77,7 +77,7 @@ public final class MappingUtils {
         catalogDesc.setAdditional(additional);
         catalogDesc.setTitle("IDS Catalog");
         catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
-        catalogDesc.setBootstrapId(catalog.getId().toString());
+        catalogDesc.setBootstrapId(catalog.getId());
 
         return new CatalogTemplate(catalogDesc, null, null);
     }
@@ -364,7 +364,7 @@ public final class MappingUtils {
         desc.setAutomatedDownload(download);
         desc.setRemoteAddress(remoteUrl);
         if (artifactId != null) {
-            desc.setBootstrapId(artifactId.toString());
+            desc.setBootstrapId(URI.create(artifactId.toString()));
         }
 
         return new ArtifactTemplate(desc);

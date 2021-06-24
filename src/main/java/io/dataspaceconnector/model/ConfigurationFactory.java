@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ConfigurationFactory implements AbstractFactory<Configuration, ConfigurationDesc> {
+public class ConfigurationFactory implements Factory<Configuration, ConfigurationDesc> {
 
     private final @NonNull ProxyFactory proxyFactory;
 

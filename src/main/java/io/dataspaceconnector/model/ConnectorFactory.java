@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -29,7 +30,7 @@ import java.util.Objects;
  * Creates and updates a connector.
  */
 @Component
-public class ConnectorFactory implements AbstractFactory<Connector, ConnectorDesc> {
+public class ConnectorFactory implements Factory<Connector, ConnectorDesc> {
 
     /**
      * Default access url.

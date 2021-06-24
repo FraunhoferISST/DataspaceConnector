@@ -15,16 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
+
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Base class for creating and updating resources.
@@ -32,7 +31,7 @@ import java.util.Optional;
  * @param <D> The description type.
  */
 public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc<T>>
-        implements AbstractFactory<T, D> {
+        extends AbstractFactory<T, D> {
 
     /**
      * The default title assigned to all resources.
@@ -109,10 +108,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Override
-    public boolean update(final T resource, final D desc) {
-        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
-        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-
+    protected boolean updateInternal(final T resource, final D desc) {
         final var hasUpdatedTitle = updateTitle(resource, desc.getTitle());
         final var hasUpdatedDesc = updateDescription(resource, desc.getDescription());
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
@@ -122,21 +118,11 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
-        final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
-        final boolean hasUpdatedBootstrapId;
-        if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId =
-                    this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
-        } else {
-            hasUpdatedBootstrapId = false;
-        }
-
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
-                               || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs
-                               || hasUpdatedAdditional || hasUpdatedBootstrapId;
+                               || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -151,7 +137,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @param desc     The description passed to the factory.
      * @return true if the resource has been modified.
      */
-    protected boolean updateInternal(final T resource, final D desc) {
+    protected <K> boolean updateInternal(final K resource, final D desc) {
         return false;
     }
 
@@ -264,31 +250,5 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
-    }
-
-    private boolean updateBootstrapId(final Resource resource, final URI bootstrapId) {
-        final Optional<URI> newBootstrapId;
-        if (bootstrapId == null && resource.getBootstrapId() == null) {
-            newBootstrapId = Optional.empty();
-        } else {
-            newBootstrapId = MetadataUtils
-                    .updateUri(
-                            resource.getBootstrapId(),
-                            bootstrapId,
-                            resource.getBootstrapId());
-        }
-
-        newBootstrapId.ifPresent(resource::setBootstrapId);
-
-        return newBootstrapId.isPresent();
-    }
-
-    private boolean updateAdditional(
-            final Resource resource, final Map<String, String> additional) {
-        final var newAdditional = MetadataUtils.updateStringMap(
-                resource.getAdditional(), additional, new HashMap<>());
-        newAdditional.ifPresent(resource::setAdditional);
-
-        return newAdditional.isPresent();
     }
 }

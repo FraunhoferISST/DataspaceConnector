@@ -71,10 +71,4 @@ public class ArtifactDesc extends AbstractDescription<Artifact> {
      * Indicates whether the artifact should be downloaded automatically.
      */
     private boolean automatedDownload = ArtifactFactory.DEFAULT_AUTO_DOWNLOAD;
-
-    /**
-     * Optional id which is used during bootstrapping.
-     */
-    private String bootstrapId;
-
 }

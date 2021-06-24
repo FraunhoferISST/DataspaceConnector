@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -29,7 +30,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates data sources.
  */
 @Component
-public class DataSourceFactory implements AbstractFactory<DataSource, DataSourceDesc> {
+public class DataSourceFactory implements Factory<DataSource, DataSourceDesc> {
 
     /**
      * The default string.

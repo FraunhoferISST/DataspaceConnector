@@ -2,10 +2,11 @@ package io.dataspaceconnector.model;
 
 import java.util.ArrayList;
 
+import io.dataspaceconnector.model.base.Factory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProxyFactory implements AbstractFactory<Proxy, ProxyDesc> {
+public class ProxyFactory implements Factory<Proxy, ProxyDesc> {
 
     @Override
     public Proxy create(final ProxyDesc desc) {

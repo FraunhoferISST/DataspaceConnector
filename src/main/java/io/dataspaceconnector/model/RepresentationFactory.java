@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -29,7 +30,7 @@ import java.util.Map;
  * Creates and updates a representation.
  */
 @Component
-public class RepresentationFactory implements AbstractFactory<Representation, RepresentationDesc> {
+public class RepresentationFactory implements Factory<Representation, RepresentationDesc> {
 
     /**
      * The default remote id assigned to all representations.

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.dataspaceconnector.model.base.Factory;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates a contract.
  */
 @Component
-public class ContractFactory implements AbstractFactory<Contract, ContractDesc> {
+public class ContractFactory implements Factory<Contract, ContractDesc> {
 
     /**
      * Default remote id assigned to all contracts.

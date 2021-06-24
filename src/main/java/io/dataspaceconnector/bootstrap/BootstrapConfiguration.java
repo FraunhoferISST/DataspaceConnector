@@ -337,7 +337,7 @@ public class BootstrapConfiguration {
             final Properties properties,
             final Resource resource) {
         // add ids id to additional fields
-        resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
+        resourceTemplate.getDesc().setBootstrapId(resource.getId());
 
         // collect all artifact IDs from artifacts inside representations
         resourceTemplate.setRepresentations(

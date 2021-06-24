@@ -1,9 +1,10 @@
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.model.base.Factory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KeystoreFactory implements AbstractFactory<Keystore, KeystoreDesc> {
+public class KeystoreFactory implements Factory<Keystore, KeystoreDesc> {
 
     @Override
     public Keystore create(final KeystoreDesc desc) {
