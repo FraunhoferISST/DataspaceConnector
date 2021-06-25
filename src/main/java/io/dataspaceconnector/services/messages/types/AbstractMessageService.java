@@ -101,11 +101,10 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
 
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
-                 // TODO Add logging house class
                 log.debug("Built request message. [body=({})]", body);
             }
 
-            // Send message and return response.
+            // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (MessageBuilderException e) {
             if (log.isWarnEnabled()) {
@@ -155,10 +154,9 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The received message response.
      * @return True if the response type is as expected.
-     * @throws MessageResponseException If the response could not be read.
+     * @throws MessageResponseException if the ids response could not be read.
      */
-    public boolean isValidResponseType(final Map<String, String> message)
-            throws MessageResponseException {
+    public boolean isValidResponseType(final Map<String, String> message) throws MessageResponseException {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
@@ -182,22 +180,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     }
 
     /**
-     * The ids message.
-     *
-     * @param message The message that should be validated.
-     * @throws MessageEmptyException        if the message is empty.
-     * @throws VersionNotSupportedException if the message version is not supported.
-     */
-    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
-            VersionNotSupportedException {
-        MessageUtils.checkForEmptyMessage(message);
-
-        final var modelVersion = MessageUtils.extractModelVersion(message);
-        final var inboundVersions = connectorService.getInboundModelVersion();
-        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
-    }
-
-    /**
      * If the response message is not of the expected type, message type, rejection reason, and the
      * payload are returned as an object.
      *
@@ -212,17 +194,32 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
         final var idsMessage = deserializer.getResponseMessage(header);
-        final var responseMap = new HashMap<String, Object>();
-        responseMap.put("type", idsMessage.getClass());
+        final var map = new HashMap<String, Object>();
+        map.put("type", idsMessage.getClass());
 
         // If the message is of type exception, add the reason to the response object.
         if (idsMessage instanceof RejectionMessage) {
             final var rejectionMessage = (RejectionMessage) idsMessage;
-            final var reason = MessageUtils.extractRejectionReason(rejectionMessage);
-            responseMap.put("reason", reason);
+            map.put("reason", MessageUtils.extractRejectionReason(rejectionMessage));
         }
 
-        responseMap.put("payload", payload);
-        return responseMap;
+        map.put("payload", payload);
+        return map;
+    }
+
+    /**
+     * The ids message.
+     *
+     * @param message The message that should be validated.
+     * @throws MessageEmptyException        if the message is empty.
+     * @throws VersionNotSupportedException if the message version is not supported.
+     */
+    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
+            VersionNotSupportedException {
+        MessageUtils.checkForEmptyMessage(message);
+
+        final var modelVersion = MessageUtils.extractModelVersion(message);
+        final var inboundVersions = connectorService.getInboundModelVersion();
+        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
     }
 }
