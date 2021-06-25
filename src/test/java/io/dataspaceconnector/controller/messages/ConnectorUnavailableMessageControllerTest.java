@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
@@ -38,6 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -149,6 +147,6 @@ public class ConnectorUnavailableMessageControllerTest {
                                   .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("Success", result.getResponse().getContentAsString());
+        assertEquals("", result.getResponse().getContentAsString());
     }
 }

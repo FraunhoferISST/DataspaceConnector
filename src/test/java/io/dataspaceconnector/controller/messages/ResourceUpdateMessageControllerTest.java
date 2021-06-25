@@ -189,7 +189,7 @@ public class ResourceUpdateMessageControllerTest {
                 .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("Success", result.getResponse().getContentAsString());
+        assertEquals("", result.getResponse().getContentAsString());
     }
 
     private Resource getResource() {
