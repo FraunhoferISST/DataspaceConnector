@@ -15,24 +15,24 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
-import java.net.URI;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
+import io.dataspaceconnector.exceptions.RdfBuilderException;
 import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Message service for ids contract agreement messages.
@@ -79,8 +79,7 @@ public final class ContractAgreementService
      * @param agreement The contract agreement.
      * @return The response map.
      * @throws MessageException         if message handling failed.
-     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
-     *         if the contract agreement rdf string could not be built.
+     * @throws RdfBuilderException      if the contract request rdf string could not be built.
      * @throws IllegalArgumentException if contract agreement is null.
      */
     public Map<String, String> sendMessage(final URI recipient, final ContractAgreement agreement)
