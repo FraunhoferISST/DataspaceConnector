@@ -30,7 +30,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Run Mutation Tests
-      run: mvn -B -U org.pitest:pitest-maven:mutationCoverage --file pom.xml
+      run: mvn -B -U test org.pitest:pitest-maven:mutationCoverage --file pom.xml
 
   build:
     timeout-minutes: 30
@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        java: [11, 12, 13, 14, 15]
+        java: [11, 12, 13, 14, 15, 16]
 
     steps:
     - uses: actions/checkout@v2
