@@ -15,13 +15,10 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.iais.eis.QueryLanguage;
-import de.fraunhofer.iais.eis.QueryScope;
-import de.fraunhofer.iais.eis.QueryTarget;
-import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.services.messages.types.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,9 +51,9 @@ import java.net.URI;
 public class QueryMessageController {
 
     /**
-     * The service for communication with the ids broker.
+     * The service for sending ids messages.
      */
-    private final @NonNull IDSBrokerService brokerService;
+    private final @NonNull MessageService messageService;
 
     /**
      * Sending an ids query message with a query message as payload.
@@ -87,15 +84,13 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the resource update message.
-            final var response = brokerService.queryBroker(recipient, query,
-                    QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
-
-            if (response != null && response.getPayload().isPresent()) {
-                final var responseAsString = response.getPayload().get();
+            final var payload = messageService.sendQueryMessage(recipient, query);
+            if (payload.isPresent()) {
+                final var responseAsString = payload.get();
                 return ResponseEntity.ok(responseAsString);
-            } else {
-                return ControllerUtils.respondReceivedInvalidResponse();
             }
+
+            return ControllerUtils.respondReceivedInvalidResponse();
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (MultipartParseException exception) {

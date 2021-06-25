@@ -52,12 +52,12 @@ public class DescriptionRequestMessageController {
     /**
      * Service for message handling.
      */
-    private final @NonNull DescriptionRequestService messageService;
+    private final @NonNull DescriptionRequestService descriptionReqSvc;
 
     /**
      * Service for ids deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull DeserializationService deserializationSvc;
 
     /**
      * Requests metadata from an external connector by building an DescriptionRequestMessage.
@@ -83,11 +83,11 @@ public class DescriptionRequestMessageController {
         String payload = null;
         try {
             // Send and validate description request/response message.
-            final var response = messageService.sendMessage(recipient, elementId);
-            final var valid = messageService.validateResponse(response);
+            final var response = descriptionReqSvc.sendMessage(recipient, elementId);
+            final var valid = descriptionReqSvc.validateResponse(response);
             if (!valid) {
                 // If the response is not a description response message, show the response.
-                final var content = messageService.getResponseContent(response);
+                final var content = descriptionReqSvc.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -98,7 +98,7 @@ public class DescriptionRequestMessageController {
             } else {
                 // Get payload as component.
                 final var component =
-                        deserializationService.getInfrastructureComponent(payload);
+                        deserializationSvc.getInfrastructureComponent(payload);
                 return ResponseEntity.ok(component.toRdf());
             }
         } catch (MessageException exception) {

@@ -18,7 +18,8 @@ package io.dataspaceconnector.bootstrap;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
-import io.dataspaceconnector.bootstrap.broker.BrokerMessageService;
+import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
+import io.dataspaceconnector.services.messages.types.MessageService;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -104,7 +105,7 @@ public class BootstrapConfiguration {
     /**
      * Service for deserializing ids entities.
      */
-    private final @NotNull DeserializationService deserializationService;
+    private final @NotNull DeserializationService deserializationSvc;
 
     /**
      * The template builder.
@@ -114,7 +115,7 @@ public class BootstrapConfiguration {
     /**
      * The catalog service.
      */
-    private final @NotNull CatalogService catalogService;
+    private final @NotNull CatalogService catalogSvc;
 
     /**
      * The platform transaction manager.
@@ -124,12 +125,12 @@ public class BootstrapConfiguration {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorSvc;
 
     /**
      * Service for interacting with a broker.
      */
-    private final @NonNull BrokerMessageService brokerService;
+    private final @NonNull MessageService brokerSvc;
 
     /**
      * Bootstrap the connector. Will load JSON-LD files containing IDS catalog entities and register
@@ -154,7 +155,7 @@ public class BootstrapConfiguration {
         }
 
         try {
-            connectorService.updateConfigModel();
+            connectorSvc.updateConfigModel();
         } catch (ConfigUpdateException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Failed to update config model. [exception=({})]", e.getMessage(), e);
@@ -162,7 +163,7 @@ public class BootstrapConfiguration {
         }
 
         // register resources at broker
-        if (!brokerService.registerAtBroker(properties, idsResources)) {
+        if (!registerAtBroker(properties, idsResources)) {
             if (log.isInfoEnabled()) {
                 log.info("An error occurred while registering resources at the broker.");
             }
@@ -171,6 +172,54 @@ public class BootstrapConfiguration {
         if (log.isInfoEnabled()) {
             log.info("Finished bootstrapping of connector.");
         }
+    }
+
+    /**
+     * Register resources at the broker.
+     *
+     * @param properties Bootstrap properties.
+     * @param resources  The ids resources to register.
+     * @return true if all resources could be registered.
+     */
+    public boolean registerAtBroker(final Properties properties,
+                                    final Map<URI, Resource> resources) {
+        final var knownBrokers = new HashSet<URL>();
+        // Iterate over all registered resources.
+        for (final var entry : resources.entrySet()) {
+            final var propertyKey = "broker.register." + entry.getKey().toString();
+            if (properties.containsKey(propertyKey)) {
+                final var brokerUrl = BootstrapUtils.toUrl(properties.getProperty(propertyKey));
+                if (brokerUrl.isEmpty()) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Skipping broker due to invalid url. [broker=({})]",
+                                properties.getProperty(propertyKey));
+                    }
+                    return false;
+                }
+
+                final var broker = brokerUrl.get();
+
+                try {
+                    if (!knownBrokers.contains(broker)) {
+                        knownBrokers.add(broker);
+                        if (!brokerSvc.sendConnectorUpdateMessage(broker.toURI())) {
+                            return false;
+                        }
+                    }
+
+                    if (!brokerSvc.sendResourceUpdateMessage(broker.toURI(), entry.getValue())) {
+                        return false;
+                    }
+                } catch (Exception e) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("Could not register resource at broker [resourceId=({}), "
+                                + "broker=({})].", entry.getKey().toString(), broker, e);
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private List<File> loadBootstrapData() {
@@ -226,11 +275,10 @@ public class BootstrapConfiguration {
         }
 
         final var template = new TransactionTemplate(transactionManager);
-        // iterate over all deserialized catalogs
+        // Iterate over all deserialized catalogs.
         for (final var catalog : catalogs.get()) {
-            // check for duplicates
-            // get all known catalogs for every bootstrap
-            // processor to detect duplicated bootstrap files
+            // Check for duplicates. Get all known catalogs for every bootstrap processor to detect
+            // duplicated bootstrap files.
             final var duplicate = template.execute(x -> isDuplicate(catalog));
 
             if (duplicate != null && duplicate) {
@@ -250,7 +298,7 @@ public class BootstrapConfiguration {
     }
 
     private boolean isDuplicate(final ResourceCatalog catalog) {
-        for (final var knownCatalog : catalogService.getAll(Pageable.unpaged())) {
+        for (final var knownCatalog : catalogSvc.getAll(Pageable.unpaged())) {
             Hibernate.initialize(knownCatalog.getAdditional());
             if (catalog.getId().equals(knownCatalog.getBootstrapId())) {
                 return true;
@@ -263,12 +311,11 @@ public class BootstrapConfiguration {
     private Optional<Set<ResourceCatalog>> deserializeAllCatalogs(final List<File> jsonFiles) {
         final var catalogs = new HashSet<ResourceCatalog>();
 
-        // deserialize all files
+        // Deserialize all files.
         for (final var jsonFile : jsonFiles) {
             try {
-                catalogs.add(deserializationService.getResourceCatalog(
-                        Files.readString(jsonFile.toPath()))
-                );
+                catalogs.add(deserializationSvc.getResourceCatalog(
+                        Files.readString(jsonFile.toPath())));
             } catch (IOException e) {
                 if (log.isWarnEnabled()) {
                     log.warn("Could not deserialize ids catalog file. [path=({})]",
@@ -281,13 +328,12 @@ public class BootstrapConfiguration {
     }
 
     /**
-     * Transform an ids resource catalog to dsc format and register the catalog
-     * in the connector.
+     * Transform an ids resource catalog to dsc format and register the catalog in the connector.
      *
-     * @param catalog      the ids resource catalog entity
-     * @param properties   additional properties which are missing in ids entity
-     * @param idsResources (IDS ID, IDS-Resource) map that cointains bootstrapped elements
-     * @return true if the catalog could be registered, false otherwise
+     * @param catalog      The ids resource catalog entity.
+     * @param properties   Additional properties that are missing in ids entity.
+     * @param idsResources (IDS ID, IDS-Resource) Map that contains bootstrapped elements.
+     * @return true if the catalog could be registered, false otherwise.
      */
     @Transactional
     protected boolean registerCatalog(final ResourceCatalog catalog,
@@ -301,19 +347,16 @@ public class BootstrapConfiguration {
             final var resourceTemplate =
                     TemplateUtils.getOfferedResourceTemplate(resource);
             fillResourceTemplate(resourceTemplate, properties, resource);
-
             offeredResources.add(resourceTemplate);
-
             idsResources.put(resource.getId(), resource);
         }
-
         catalogTemplate.setOfferedResources(offeredResources);
 
-        // requested resources are skipped
+        // Requested resources are skipped.
         final var requestedResources = new ArrayList<ResourceTemplate<RequestedResourceDesc>>();
         catalogTemplate.setRequestedResources(requestedResources);
 
-        // perform registration
+        // Perform registration.
         templateBuilder.build(catalogTemplate);
 
         if (log.isInfoEnabled()) {
@@ -332,26 +375,23 @@ public class BootstrapConfiguration {
      *                         transformation
      * @param resource         the ids resource
      */
-    private void fillResourceTemplate(
-            final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
-            final Properties properties,
-            final Resource resource) {
-        // add ids id to additional fields
+    private void fillResourceTemplate(final ResourceTemplate<OfferedResourceDesc> resourceTemplate,
+                                      final Properties properties,
+                                      final Resource resource) {
+        // Add ids id to additional fields.
         resourceTemplate.getDesc().setBootstrapId(resource.getId().toString());
 
-        // collect all artifact IDs from artifacts inside representations
-        resourceTemplate.setRepresentations(
-                TemplateUtils.getRepresentationTemplates(
-                        resource,
-                        collectArtifactUris(resource),
-                        shouldAutoDownload(properties, resource.getId()),
-                        null
-                )
-        );
+        // Collect all artifact IDs from artifacts inside representations.
+        resourceTemplate.setRepresentations(TemplateUtils.getRepresentationTemplates(
+                resource,
+                collectArtifactUris(resource),
+                shouldAutoDownload(properties, resource.getId()),
+                null
+        ));
 
         resourceTemplate.setContracts(TemplateUtils.getContractTemplates(resource));
 
-        // add additional information from properties to artifact descriptions
+        // Add additional information from properties to artifact descriptions.
         for (final var representationTemplate : resourceTemplate.getRepresentations()) {
             for (final var artifactTemplate : representationTemplate.getArtifacts()) {
                 updateArtifactDesc(artifactTemplate.getDesc(), properties);

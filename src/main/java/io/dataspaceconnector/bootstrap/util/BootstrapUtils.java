@@ -22,11 +22,14 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -177,6 +180,21 @@ public final class BootstrapUtils {
         }
 
         return files;
+    }
+
+    /**
+     * Convert string to url.
+     *
+     * @param address The recipient's address.
+     * @return The address as url.
+     */
+    public static Optional<URL> toUrl(final String address) {
+        try {
+            return Optional.of(new URL(address));
+        } catch (MalformedURLException ignored) {
+            // Nothing to do here.
+        }
+        return Optional.empty();
     }
 
     private static boolean isSearchedFile(final File file, final String name, final String ext) {

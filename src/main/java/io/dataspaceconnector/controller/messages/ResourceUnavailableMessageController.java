@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.types.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,9 +51,9 @@ import java.net.URI;
 public class ResourceUnavailableMessageController {
 
     /**
-     * The service for communication with the ids broker.
+     * The service for sending ids messages.
      */
-    private final @NonNull IDSBrokerService brokerService;
+    private final @NonNull MessageService messageService;
 
     /**
      * Service for current connector configuration.
@@ -91,13 +91,11 @@ public class ResourceUnavailableMessageController {
             }
 
             // Send the resource unavailable message.
-            final var response =
-                    brokerService.removeResourceFromBroker(recipient, resource.get());
-            if (response == null) {
-                return ControllerUtils.respondReceivedInvalidResponse();
+            if (messageService.sendResourceUnavailableMessage(recipient, resource.get())) {
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ControllerUtils.respondReceivedInvalidResponse();
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
         } catch (MultipartParseException exception) {

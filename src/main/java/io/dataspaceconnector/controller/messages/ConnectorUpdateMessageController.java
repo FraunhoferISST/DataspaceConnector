@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.types.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
-import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -52,9 +52,9 @@ import java.net.URI;
 public class ConnectorUpdateMessageController {
 
     /**
-     * The service for communication with the ids broker.
+     * The service for sending ids messages.
      */
-    private final @NonNull IDSBrokerService brokerService;
+    private final @NonNull MessageService messageService;
 
     /**
      * Service for the current connector configuration.
@@ -80,19 +80,17 @@ public class ConnectorUpdateMessageController {
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     public ResponseEntity<Object> sendConnectorUpdateMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient) {
+            @RequestParam("recipient") final URI recipient) {
         try {
             // Update the config model.
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            final var response =
-                    brokerService.updateSelfDescriptionAtBroker(URI.create(recipient));
-            if (response == null) {
-                return ControllerUtils.respondReceivedInvalidResponse();
+            if (messageService.sendConnectorUpdateMessage(recipient)) {
+                return new ResponseEntity<>(HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ControllerUtils.respondReceivedInvalidResponse();
         } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
         } catch (SocketTimeoutException exception) {
