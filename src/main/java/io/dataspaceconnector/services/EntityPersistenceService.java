@@ -229,8 +229,11 @@ public class EntityPersistenceService {
             throws MessageResponseException, ResourceNotFoundException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
-        final var artifact = artifactService.get(artifactId.get());
 
+        if(artifactId.isEmpty())
+            throw new ResourceNotFoundException(remoteId.toString());
+
+        final var artifact = artifactService.get(artifactId.get());
         artifactService.setData(artifact.getId(),
                 new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {
