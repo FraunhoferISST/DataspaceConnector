@@ -15,7 +15,9 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import io.dataspaceconnector.bootstrap.broker.BrokerService;
+import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceBuilder;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,38 +28,59 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Properties;
 
-@SpringBootTest
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@SpringBootTest(classes = {BootstrapConfiguration.class})
 public class BootstrapConfigurationTest {
 
     @MockBean
-    BrokerService brokerService;
-
-    @Autowired
     CatalogService catalogService;
 
     @Autowired
-    BootstrapConfiguration bootstrapConfiguration;
+    BootstrapConfiguration configuration;
+
+    @MockBean
+    private MessageService messageService;
 
     @BeforeEach
     public void prepare() {
-        catalogService.getAll(Pageable.unpaged()).forEach( catalog ->
-                catalogService.delete(catalog.getId()));
+        catalogService.getAll(Pageable.unpaged()).forEach( catalog -> catalogService.delete(catalog.getId()));
     }
 
     @SneakyThrows
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
-        Mockito.doReturn(true)
-                .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(true).when(configuration).registerAtBroker(Mockito.any(), Mockito.any());
 
         /* ACT */
-        bootstrapConfiguration.bootstrap();
+        configuration.bootstrap();
 
         /* ASSERT */
         assertEquals(2, catalogService.getAll(Pageable.unpaged()).getSize());
     }
 
+    @Test
+    @SneakyThrows
+    void registerAtBroker_validInput_returnTrue() {
+        /* ARRANGE */
+        final var properties = new Properties();
+        properties.put("broker.register.https://someBroker", "https://someBroker");
+        final var idsResources = new HashMap<URI, Resource>();
+        idsResources.put(URI.create("https://someResource"), new ResourceBuilder().build());
+
+        Mockito.doReturn(true).when(messageService).sendConnectorUpdateMessage(Mockito.any());
+        Mockito.doReturn(true).when(messageService).sendResourceUpdateMessage(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var result = configuration.registerAtBroker(properties, idsResources);
+
+        /* ASSERT */
+        assertTrue(result);
+    }
 }
