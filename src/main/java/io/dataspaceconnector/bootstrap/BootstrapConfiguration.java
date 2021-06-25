@@ -181,7 +181,7 @@ public class BootstrapConfiguration {
      * @param resources  The ids resources to register.
      * @return true if all resources could be registered.
      */
-    public boolean registerAtBroker(final Properties properties,
+    private boolean registerAtBroker(final Properties properties,
                                     final Map<URI, Resource> resources) {
         final var knownBrokers = new HashSet<URL>();
         // Iterate over all registered resources.
@@ -335,7 +335,6 @@ public class BootstrapConfiguration {
      * @param idsResources (IDS ID, IDS-Resource) Map that contains bootstrapped elements.
      * @return true if the catalog could be registered, false otherwise.
      */
-    @Transactional
     protected boolean registerCatalog(final ResourceCatalog catalog,
                                       final Properties properties,
                                       final Map<URI, Resource> idsResources) {
