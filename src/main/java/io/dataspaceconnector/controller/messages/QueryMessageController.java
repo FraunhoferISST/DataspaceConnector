@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.iais.eis.QueryLanguage;
+import de.fraunhofer.iais.eis.QueryScope;
+import de.fraunhofer.iais.eis.QueryTarget;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
@@ -85,7 +88,7 @@ public class QueryMessageController {
         try {
             // Send the resource update message.
             final var response = brokerService.queryBroker(recipient, query,
-                    null, null, null);
+                    QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
 
             if (response != null && response.getPayload().isPresent()) {
                 final var responseAsString = response.getPayload().get();
