@@ -84,8 +84,8 @@ public class QueryMessageController {
                             + "};") @RequestBody final String query) {
         try {
             // Send the query message.
-            final var payload = messageService.sendQueryMessage(recipient, query);
-            return payload.<ResponseEntity<Object>>map(ResponseEntity::ok)
+            final var response = messageService.sendQueryMessage(recipient, query);
+            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
                     .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
@@ -127,9 +127,9 @@ public class QueryMessageController {
             @RequestBody final String term) {
         try {
             // Send the query message.
-            final var payload =
+            final var response =
                     messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
-            return payload.<ResponseEntity<Object>>map(ResponseEntity::ok)
+            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
                     .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
         } catch (SocketTimeoutException exception) {
             return ControllerUtils.respondConnectionTimedOut(exception);
