@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.messages.types;
+package io.dataspaceconnector.services.messages;
 
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
@@ -119,6 +119,31 @@ public class MessageService {
         final var response = brokerSvc.queryBroker(recipient, query,
                 QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
         final var msg = String.format("Successfully processed query. [url=(%s)]", recipient);
+        if (validateResponse(response, msg)) {
+            return response.getPayload();
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Send query message and validate received response.
+     *
+     * @param recipient The recipient.
+     * @param term      The search term.
+     * @param limit     The limit value.
+     * @param offset    The offset value.
+     * @return True if the message was successfully processed by the recipient, false if not.
+     */
+    public Optional<String> sendFullTextSearchQueryMessage(final URI recipient, final String term,
+                                                           final int limit, final int offset)
+            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+            IOException {
+        final var response = brokerSvc.fullTextSearchBroker(recipient, term,
+                QueryScope.ALL, QueryTarget.BROKER, limit, offset);
+
+        final var msg = String.format("Successfully processed full text search. [url=(%s)]",
+                recipient);
         if (validateResponse(response, msg)) {
             return response.getPayload();
         }

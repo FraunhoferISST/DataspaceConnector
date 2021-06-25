@@ -75,7 +75,7 @@ public class DescriptionRequestMessageController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
-    public ResponseEntity<Object> sendDescriptionRequestMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")

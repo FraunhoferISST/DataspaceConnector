@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
-import io.dataspaceconnector.services.messages.types.MessageService;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;

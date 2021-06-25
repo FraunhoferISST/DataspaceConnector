@@ -20,7 +20,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.services.messages.types.MessageService;
+import io.dataspaceconnector.services.messages.MessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -78,7 +78,7 @@ public class ConnectorUpdateMessageController {
             @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
-    public ResponseEntity<Object> sendConnectorUpdateMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient) {
         try {
