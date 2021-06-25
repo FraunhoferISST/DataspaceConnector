@@ -156,7 +156,8 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return True if the response type is as expected.
      * @throws MessageResponseException if the ids response could not be read.
      */
-    public boolean isValidResponseType(final Map<String, String> message) throws MessageResponseException {
+    public boolean isValidResponseType(final Map<String, String> message)
+            throws MessageResponseException {
         try {
             // MessageResponseException is handled at a higher level.
             final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
