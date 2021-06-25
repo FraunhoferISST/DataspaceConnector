@@ -119,9 +119,9 @@ public class QueryMessageController {
     public ResponseEntity<Object> sendSearchMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
-            @Parameter(description = "The limit value.")
+            @Parameter(description = "The limit value.", required = true)
             @RequestParam(value = "limit", defaultValue = "50") final Integer limit,
-            @Parameter(description = "The offset value.")
+            @Parameter(description = "The offset value.", required = true)
             @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
             @Parameter(description = "The search term.", required = true)
             @RequestBody final String term) {
