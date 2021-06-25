@@ -636,10 +636,10 @@
 				</dependencies>
 				<configuration>
 					<targetClasses>
-						<param>io.dataspaceconnector*</param>
+						<param>io.dataspaceconnector.model</param>
 					</targetClasses>
 					<targetTests>
-						<param>io.dataspaceconnector*</param>
+						<param>io.dataspaceconnector.model*</param>
 					</targetTests>
 					<excludedTestClasses>
 						<param>**</param>
@@ -650,9 +650,10 @@
 					<historyInputFile>${project.build.directory}/pit-reports/history</historyInputFile>
 					<historyOutputFile>${project.build.directory}/pit-reports/history</historyOutputFile>
 					<verbose>false</verbose>
-					<threads>4</threads>
+					<threads>2</threads>
 					<timestampedReports>false</timestampedReports>
-					<!-- <coverageThreshold>80</coverageThreshold> -->
+					<coverageThreshold>95</coverageThreshold>
+					<mutationThreshold>90</mutationThreshold>
 				</configuration>
 				<executions>
 					<execution>

@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.resources;
 
+import java.net.URI;
+
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * Creates and updates a resource.
@@ -38,7 +38,7 @@ public final class RequestedResourceFactory
     }
 
     @Override
-    protected boolean updateInternal(
+    protected boolean updateType(
             final RequestedResource resource, final RequestedResourceDesc desc) {
         return updateRemoteId(resource, desc.getRemoteId());
     }

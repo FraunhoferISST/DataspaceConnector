@@ -131,7 +131,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @param desc     The description passed to the factory.
      * @return true if the resource has been modified.
      */
-    protected <K> boolean updateType(final K resource, final D desc) {
+    protected boolean updateType(final T resource, final D desc) {
         return false;
     }
 

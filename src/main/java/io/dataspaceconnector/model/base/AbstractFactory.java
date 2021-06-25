@@ -32,17 +32,17 @@ public abstract class AbstractFactory<T extends AbstractEntity, D extends Descri
         Utils.requireNonNull(entity, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final boolean hasUpdatedBootstrapId;
+        boolean bootstrapId;
         if (desc.getBootstrapId() != null) {
-            hasUpdatedBootstrapId =
-                    this.updateBootstrapId(entity, desc.getBootstrapId());
+            bootstrapId = this.updateBootstrapId(entity, desc.getBootstrapId());
         } else {
-            hasUpdatedBootstrapId = false;
+            bootstrapId = false;
         }
 
-        return updateInternal(entity, desc)
-               || updateAdditional(entity, desc.getAdditional())
-               || hasUpdatedBootstrapId;
+        final var internal = updateInternal(entity, desc);
+        final var additional = updateAdditional(entity, desc.getAdditional());
+
+        return internal || additional || bootstrapId;
     }
 
     protected boolean updateAdditional(final T entity, final Map<String, String> additional) {
