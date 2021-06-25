@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.ContractRule;
@@ -43,16 +41,16 @@ public class IdsRuleBuilder<T extends Rule> extends AbstractIdsBuilder<ContractR
     private final @NonNull Class<T> ruleType;
 
     @Override
-    protected final T createInternal(final ContractRule rule, final URI baseUri,
-                                     final int currentDepth, final int maxDepth)
+    protected final T createInternal(final ContractRule rule, final int currentDepth,
+                                     final int maxDepth)
             throws ConstraintViolationException {
         final var idsRule = deserializer.getRule(rule.getValue());
-        final var selfLink = getAbsoluteSelfLink(rule, baseUri);
+        final var selfLink = getAbsoluteSelfLink(rule);
         var newRule = rule.getValue();
 
         // Note: Infomodel deserializer sets autogen ID, when ID is missing in original rule value.
         // If autogen ID not present in original rule value, it's equal to rule not having ID
-        if (idsRule.getId() == null || rule.getValue().indexOf(idsRule.getId().toString()) == -1) {
+        if (idsRule.getId() == null || !rule.getValue().contains(idsRule.getId().toString())) {
             // No id has been set for this rule. Thus, no references can be found.
             // Inject the real id.
             newRule = newRule.substring(0, newRule.indexOf("{") + 1)

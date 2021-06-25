@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import java.net.URI;
+import java.util.List;
+
+import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -24,9 +28,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.Collections;
 
 /**
  * Converts DSC representation to ids representation.
@@ -43,13 +44,11 @@ public final class IdsRepresentationBuilder
 
     @Override
     protected de.fraunhofer.iais.eis.Representation createInternal(
-            final Representation representation,
-            final URI baseUri, final int currentDepth,
+            final Representation representation, final int currentDepth,
             final int maxDepth) throws ConstraintViolationException {
         // Build children.
         final var artifacts =
-                create(artifactBuilder, representation.getArtifacts(), baseUri, currentDepth,
-                        maxDepth);
+                create(artifactBuilder, representation.getArtifacts(), currentDepth, maxDepth);
 
         // Build representation only if at least one artifact is present.
         if (artifacts.isEmpty() || artifacts.get().isEmpty()) {
@@ -67,7 +66,7 @@ public final class IdsRepresentationBuilder
                         .build();
         final var standard = URI.create(representation.getStandard());
 
-        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation, baseUri))
+        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation))
                 ._created_(created)
                 ._language_(language)
                 ._mediaType_(mediaType)

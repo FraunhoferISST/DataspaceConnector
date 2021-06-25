@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.ContractOffer;
 import de.fraunhofer.iais.eis.ContractOfferBuilder;
 import de.fraunhofer.iais.eis.Duty;
@@ -30,10 +33,6 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Converts DSC contracts to ids contract offers.
@@ -63,19 +62,16 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
     private final @NonNull DeserializationService deserializer;
 
     @Override
-    protected ContractOffer createInternal(final Contract contract, final URI baseUri,
-                                           final int currentDepth, final int maxDepth)
+    protected ContractOffer createInternal(final Contract contract, final int currentDepth,
+                                           final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var permissions =
-                create(permBuilder, onlyPermissions(contract.getRules()), baseUri,
-                        currentDepth, maxDepth);
+                create(permBuilder, onlyPermissions(contract.getRules()), currentDepth, maxDepth);
         final var prohibitions =
-                create(prohBuilder, onlyProhibitions(contract.getRules()), baseUri,
-                        currentDepth, maxDepth);
+                create(prohBuilder, onlyProhibitions(contract.getRules()), currentDepth, maxDepth);
         final var duties =
-                create(dutyBuilder, onlyDuties(contract.getRules()), baseUri, currentDepth,
-                        maxDepth);
+                create(dutyBuilder, onlyDuties(contract.getRules()), currentDepth, maxDepth);
 
         // Build contract only if at least one rule is present.
         if (permissions.isEmpty() && prohibitions.isEmpty() && duties.isEmpty()) {
@@ -108,7 +104,7 @@ public final class IdsContractBuilder extends AbstractIdsBuilder<Contract, Contr
         final var consumer = contract.getConsumer();
         final var provider = contract.getProvider();
 
-        final var builder = new ContractOfferBuilder(getAbsoluteSelfLink(contract, baseUri))
+        final var builder = new ContractOfferBuilder(getAbsoluteSelfLink(contract))
                 ._contractStart_(start)
                 ._contractEnd_(end)
                 ._contractDate_(IdsMessageUtils.getGregorianNow())
