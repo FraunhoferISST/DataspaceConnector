@@ -230,8 +230,9 @@ public class EntityPersistenceService {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
 
-        if(artifactId.isEmpty())
+        if (artifactId.isEmpty()) {
             throw new ResourceNotFoundException(remoteId.toString());
+        }
 
         final var artifact = artifactService.get(artifactId.get());
         artifactService.setData(artifact.getId(),
