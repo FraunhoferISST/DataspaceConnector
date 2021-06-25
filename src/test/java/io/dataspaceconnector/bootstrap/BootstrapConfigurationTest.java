@@ -17,7 +17,7 @@ package io.dataspaceconnector.bootstrap;
 
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import io.dataspaceconnector.services.messages.MessageService;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +45,7 @@ public class BootstrapConfigurationTest {
     BootstrapConfiguration configuration;
 
     @MockBean
-    private MessageService messageService;
+    private GlobalMessageService messageService;
 
     @BeforeEach
     public void prepare() {

@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.bootstrap.util.BootstrapUtils;
-import io.dataspaceconnector.services.messages.MessageService;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -130,7 +130,7 @@ public class BootstrapConfiguration {
     /**
      * Service for interacting with a broker.
      */
-    private final @NonNull MessageService brokerSvc;
+    private final @NonNull GlobalMessageService brokerSvc;
 
     /**
      * Bootstrap the connector. Will load JSON-LD files containing IDS catalog entities and register

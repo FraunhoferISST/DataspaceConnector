@@ -20,7 +20,7 @@ import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
 import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.services.messages.MessageService;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,7 +54,7 @@ public class ConnectorUpdateMessageController {
     /**
      * The service for sending ids messages.
      */
-    private final @NonNull MessageService messageService;
+    private final @NonNull GlobalMessageService messageService;
 
     /**
      * Service for the current connector configuration.

@@ -39,7 +39,7 @@ import java.util.Optional;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class MessageService {
+public class GlobalMessageService {
 
     /**
      * The service for communication with an ids broker.
