@@ -29,7 +29,6 @@ import de.fraunhofer.iais.eis.Prohibition;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
-import io.dataspaceconnector.model.TimeInterval;
 import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
 import lombok.extern.log4j.Log4j2;
 

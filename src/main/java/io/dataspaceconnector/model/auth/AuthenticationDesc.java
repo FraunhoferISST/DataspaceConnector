@@ -1,4 +1,4 @@
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.auth;
 
 import lombok.Data;
 

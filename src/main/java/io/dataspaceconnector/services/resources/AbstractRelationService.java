@@ -42,7 +42,7 @@ import org.springframework.data.domain.Pageable;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
 public abstract class AbstractRelationService<K extends AbstractEntity, W extends AbstractEntity,
-        T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>>
+        T extends BaseEntityService<K, ?>, X extends EntityService<W, ?>>
         implements RelationService<K, W, T, X> {
 
     /*

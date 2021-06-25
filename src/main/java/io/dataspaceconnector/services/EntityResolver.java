@@ -34,7 +34,7 @@ import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.rules.ContractRule;
 import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.resources.OfferedResourceDesc;
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.utils.QueryInput;
 import io.dataspaceconnector.model.representations.Representation;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.ids.builder.IdsArtifactBuilder;

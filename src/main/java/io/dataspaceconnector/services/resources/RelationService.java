@@ -31,7 +31,7 @@ import org.springframework.data.domain.Pageable;
  * @param <X> Type of child entity service.
  */
 public interface RelationService<K extends AbstractEntity, W extends AbstractEntity,
-        T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>> {
+        T extends BaseEntityService<K, ?>, X extends EntityService<W, ?>> {
 
     /**
      * Get all children of an entity.

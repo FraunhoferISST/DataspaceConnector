@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.Authentication;
+import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.datasources.DataSource;
 import io.dataspaceconnector.model.datasources.DataSourceDesc;
 import io.dataspaceconnector.model.datasources.DataSourceFactory;

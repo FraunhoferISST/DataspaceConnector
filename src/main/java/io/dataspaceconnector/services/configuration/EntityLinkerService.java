@@ -20,10 +20,10 @@ import java.util.List;
 import io.dataspaceconnector.model.apps.App;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.endpoints.Endpoint;
 import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.routes.Route;
+import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
 import lombok.NoArgsConstructor;
@@ -97,29 +97,13 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class RouteStartEndpointLinker
-            extends OwningRelationService<Route, GenericEndpoint, RouteService,
-            GenericEndpointService> {
+    public static class RouteEndpointLinker
+            extends OwningRelationService<Route, Endpoint, RouteService,
+            EndpointServiceProxy> {
 
         @Override
-        protected final List<GenericEndpoint> getInternal(final Route owner) {
+        protected final List<Endpoint> getInternal(final Route owner) {
             throw new RuntimeException("Not implemented");
         }
     }
-
-    /**
-     * Handles the relation between the route and last endpoint.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class RouteLastEndpointLinker
-            extends OwningRelationService<Route, ConnectorEndpoint, RouteService,
-            ConnectorEndpointService> {
-
-        @Override
-        protected final List<ConnectorEndpoint> getInternal(final Route owner) {
-            throw new RuntimeException("Not implemented");
-        }
-    }
-
 }

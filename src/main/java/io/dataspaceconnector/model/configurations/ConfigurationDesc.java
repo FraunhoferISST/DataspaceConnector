@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.configurations;
 
-import io.dataspaceconnector.model.DeployMode;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.proxy.ProxyDesc;

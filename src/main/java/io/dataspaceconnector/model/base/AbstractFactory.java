@@ -40,7 +40,9 @@ public abstract class AbstractFactory<T extends AbstractEntity, D extends Descri
             hasUpdatedBootstrapId = false;
         }
 
-        return updateAdditional(entity, desc.getAdditional()) || hasUpdatedBootstrapId;
+        return updateInternal(entity, desc)
+               || updateAdditional(entity, desc.getAdditional())
+               || hasUpdatedBootstrapId;
     }
 
     protected boolean updateAdditional(final T entity, final Map<String, String> additional) {

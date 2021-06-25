@@ -15,25 +15,30 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import javax.validation.Valid;
-import java.io.IOException;
 import java.util.UUID;
 
-import io.dataspaceconnector.controller.resources.BaseResourceController;
+import io.dataspaceconnector.controller.base.CRUDController;
+import io.dataspaceconnector.model.endpoints.AppEndpoint;
+import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoints.Endpoint;
 import io.dataspaceconnector.model.endpoints.EndpointDesc;
-import io.dataspaceconnector.services.configuration.GenericEndpointService;
+import io.dataspaceconnector.model.endpoints.GenericEndpoint;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
-import io.dataspaceconnector.view.EndpointViewProxy;
+import io.dataspaceconnector.utils.Utils;
+import io.dataspaceconnector.view.AppEndpointViewAssembler;
+import io.dataspaceconnector.view.ConnectorEndpointViewAssembler;
+import io.dataspaceconnector.view.GenericEndpointViewAssembler;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -47,40 +52,95 @@ public final class EndpointControllers {
     @RestController
     @RequestMapping("/api/endpoints")
     @RequiredArgsConstructor
-    @Tag(name = "Generic Endpoint", description = "Endpoints for CRUD operations on"
-            + " generic endpoints")
+    @Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
     public static class GenericEndpointController
-            extends BaseResourceController<Endpoint, EndpointDesc, EndpointViewProxy, EndpointServiceProxy> {
+            implements CRUDController<Endpoint, EndpointDesc, Object> {
 
-        /**
-         * The service managing data sources.
-         */
-        private final @NonNull GenericEndpointService genericEndpointService;
+        @Autowired
+        private final EndpointServiceProxy service;
 
-        /**
-         * Replace the data source of a generic endpoint.
-         * @param genericEndpointId The generic endpoint whose data source should be replaced.
-         * @param dataSourceId      The new data source.
-         * @return Http Status ok.
-         */
-        @PutMapping(value = "{id}/datasources")
-        public ResponseEntity<Void> putDataSource(
-                @Valid @PathVariable(name = "id") final UUID genericEndpointId,
-                @RequestParam(name = "dataSourceId") final UUID dataSourceId) throws IOException {
-            genericEndpointService.setGenericEndpointDataSource(genericEndpointId, dataSourceId);
-            return ResponseEntity.ok().build();
+        @Autowired
+        private final GenericEndpointViewAssembler genericAssembler;
+
+        @Autowired
+        private final AppEndpointViewAssembler appAssembler;
+
+        @Autowired
+        private final ConnectorEndpointViewAssembler connectorAssembler;
+
+        @Autowired
+        private final PagedResourcesAssembler<? extends Endpoint> pagedAssembler;
+
+        private <K> RepresentationModel<?> toView(final K endpoint) {
+            if (AppEndpoint.class.equals(endpoint.getClass())) {
+                return appAssembler.toModel((AppEndpoint) endpoint);
+            }
+
+            if (ConnectorEndpoint.class.equals(endpoint.getClass())) {
+                return connectorAssembler.toModel((ConnectorEndpoint) endpoint);
+            }
+
+            return genericAssembler.toModel((GenericEndpoint) endpoint);
         }
 
-        /**
-         * Delete the data source from a generic endpoint.
-         * @param genericEndpointId The generic endpoint whose data source should be deleted.
-         * @return Http Status ok.
-         */
-        @DeleteMapping(value = "{id}/datasources")
-        public ResponseEntity<Void> deleteDataSource(
-                @Valid @PathVariable(name = "id") final UUID genericEndpointId) throws IOException {
-            genericEndpointService.deleteGenericEndpointDataSource(genericEndpointId);
-            return ResponseEntity.ok().build();
+        private <K extends Endpoint> PagedModel<?> toView(final Pageable pageable) {
+            final var objs = service.getAll(pageable);
+
+            return PagedModel.empty();
+        }
+
+        private ResponseEntity<Object> respondCreated(final Endpoint obj) {
+            final RepresentationModel<?> entity = toView(obj);
+            final var headers = new HttpHeaders();
+            headers.setLocation(entity.getRequiredLink("self").toUri());
+
+            return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
+        }
+
+        @Override
+        public ResponseEntity<Object> create(final EndpointDesc desc) {
+            return respondCreated(service.create(desc));
+        }
+
+        @Override
+        public PagedModel<Object> getAll(final Integer page, final Integer size) {
+            final var pageable = Utils.toPageRequest(page, size);
+            final PagedModel<?> entities = toView(pageable);
+//            PagedModel<?> model;
+//            if (entities.hasContent()) {
+//                model = pagedAssembler.toModel(entities, assembler);
+//            } else {
+//                model = pagedAssembler.toEmptyModel(null, Endpoint.class);
+//            }
+
+            return null;
+        }
+
+        @Override
+        public Object get(final UUID resourceId) {
+            return toView(service.get(resourceId));
+        }
+
+        @Override
+        public ResponseEntity<Object> update(final UUID resourceId, final EndpointDesc desc) {
+            final var resource = service.update(resourceId, desc);
+
+            ResponseEntity<Object> response;
+            if (resource.getId().equals(resourceId)) {
+                // The resource was not moved
+                response = new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else {
+                // The resource has been moved
+                response = respondCreated(resource);
+            }
+
+            return response;
+        }
+
+        @Override
+        public ResponseEntity<Void> delete(final UUID resourceId) {
+            service.delete(resourceId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 }

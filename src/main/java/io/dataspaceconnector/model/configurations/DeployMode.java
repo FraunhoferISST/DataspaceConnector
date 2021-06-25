@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.configurations;
 
-import java.time.ZonedDateTime;
-
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Inner class for a time interval format.
+ * Enumeration for connector deploy modes.
  */
-@Getter
-@Setter(AccessLevel.PUBLIC)
-@EqualsAndHashCode
-@RequiredArgsConstructor
-public class TimeInterval {
+public enum DeployMode {
 
     /**
-     * The start date.
+     * Connector is in productive deployment.
      */
-    private ZonedDateTime start;
-
+    @JsonProperty("Productive")
+    PRODUCTIVE,
     /**
-     * The end date.
+     * Connector is in test deployment.
      */
-    private ZonedDateTime end;
+    @JsonProperty("Test")
+    TEST;
 }

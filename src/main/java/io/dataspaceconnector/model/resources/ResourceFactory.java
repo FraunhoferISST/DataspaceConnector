@@ -112,7 +112,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
-        final var hasChildUpdated = updateInternal(resource, desc);
+        final var hasChildUpdated = updateType(resource, desc);
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
@@ -131,7 +131,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @param desc     The description passed to the factory.
      * @return true if the resource has been modified.
      */
-    protected <K> boolean updateInternal(final K resource, final D desc) {
+    protected <K> boolean updateType(final K resource, final D desc) {
         return false;
     }
 

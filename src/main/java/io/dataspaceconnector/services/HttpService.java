@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services;
 
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.utils.QueryInput;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import kotlin.NotImplementedError;

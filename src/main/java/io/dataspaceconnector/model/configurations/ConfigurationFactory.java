@@ -17,7 +17,6 @@ package io.dataspaceconnector.model.configurations;
 
 import java.util.Objects;
 
-import io.dataspaceconnector.model.DeployMode;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.model.keystore.KeystoreDesc;
 import io.dataspaceconnector.model.keystore.KeystoreFactory;

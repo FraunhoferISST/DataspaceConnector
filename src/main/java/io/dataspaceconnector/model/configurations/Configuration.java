@@ -22,7 +22,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.model.DeployMode;
 import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.proxy.Proxy;

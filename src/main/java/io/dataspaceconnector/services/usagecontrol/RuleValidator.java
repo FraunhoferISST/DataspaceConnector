@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.rules.ContractRule;
-import io.dataspaceconnector.model.TimeInterval;
+import io.dataspaceconnector.utils.TimeInterval;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import io.dataspaceconnector.utils.ErrorMessages;

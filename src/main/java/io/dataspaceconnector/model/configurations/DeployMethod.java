@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.configurations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Enumeration for registration status.
+ * Enumeration for deploy method.
  */
-public enum RegistrationStatus {
-
+public enum DeployMethod {
     /**
-     * Unregistered status.
+     * Deploy method is none.
      */
-    @JsonProperty("Unregistered")
-    UNREGISTERED,
-
+    @JsonProperty("None")
+    NONE,
     /**
-     * Registered status.
+     * Deploy method is camel.
      */
-    @JsonProperty("Registered")
-    REGISTERED;
+    @JsonProperty("Camel")
+    CAMEL;
 }

@@ -25,7 +25,7 @@ import java.util.List;
 
 import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.DeployMethod;
+import io.dataspaceconnector.model.configurations.DeployMethod;
 import io.dataspaceconnector.model.endpoints.Endpoint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;

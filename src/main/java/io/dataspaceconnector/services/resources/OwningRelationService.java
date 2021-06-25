@@ -32,7 +32,7 @@ import io.dataspaceconnector.model.base.AbstractEntity;
  */
 public abstract class OwningRelationService<
         K extends AbstractEntity, W extends AbstractEntity, T extends BaseEntityService<K, ?>, X
-                extends BaseEntityService<W, ?>> extends AbstractRelationService<K, W, T, X> {
+                extends EntityService<W, ?>> extends AbstractRelationService<K, W, T, X> {
 
     @Override
     protected final void addInternal(final UUID ownerId, final Set<UUID> entities) {

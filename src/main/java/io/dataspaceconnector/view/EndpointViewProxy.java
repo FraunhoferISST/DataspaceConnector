@@ -9,6 +9,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "datasources", itemRelation = "datasource")
+@Relation(collectionRelation = "endpoints", itemRelation = "endpoint")
 public class EndpointViewProxy extends RepresentationModel<EndpointViewProxy> {
+
 }

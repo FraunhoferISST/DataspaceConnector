@@ -60,7 +60,12 @@ public enum BasePath {
     /**
      * The contract agreement's base path.
      */
-    AGREEMENTS("/api/agreements");
+    AGREEMENTS("/api/agreements"),
+
+    /**
+     * The routes's base path.
+     */
+    ROUTES("/api/routes");
 
     /**
      * The path as string.

@@ -25,8 +25,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.net.URI;
 
-import io.dataspaceconnector.model.Authentication;
-import io.dataspaceconnector.model.DataSourceType;
+import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;

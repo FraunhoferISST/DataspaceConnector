@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.configuration;
 import io.dataspaceconnector.model.configurations.Configuration;
 import io.dataspaceconnector.model.configurations.ConfigurationDesc;
 import io.dataspaceconnector.model.configurations.ConfigurationFactory;
-import io.dataspaceconnector.model.DeployMode;
+import io.dataspaceconnector.model.configurations.DeployMode;
 import io.dataspaceconnector.repositories.ConfigurationRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

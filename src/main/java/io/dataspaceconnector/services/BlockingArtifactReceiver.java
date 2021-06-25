@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services;
 
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.QueryInput;
+import io.dataspaceconnector.utils.QueryInput;
 import io.dataspaceconnector.services.messages.types.ArtifactRequestService;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.utils.ErrorMessages;

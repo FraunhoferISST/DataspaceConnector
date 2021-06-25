@@ -13,28 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model;
+package io.dataspaceconnector.model.base;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Enumeration for connector status.
+ * Enumeration for registration status.
  */
-public enum ConnectorStatus {
+public enum RegistrationStatus {
 
     /**
-     * Connector is badly configured.
+     * Unregistered status.
      */
-    @JsonProperty("Failing")
-    FAILING,
+    @JsonProperty("Unregistered")
+    UNREGISTERED,
+
     /**
-     * Connector is offline.
+     * Registered status.
      */
-    @JsonProperty("Offline")
-    OFFLINE,
-    /**
-     * Connector is online.
-     */
-    @JsonProperty("Online")
-    ONLINE;
+    @JsonProperty("Registered")
+    REGISTERED;
 }

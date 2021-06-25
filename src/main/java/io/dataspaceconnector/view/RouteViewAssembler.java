@@ -47,15 +47,15 @@ public class RouteViewAssembler
                 RouteView.class);
         view.add(getSelfLink(route.getId()));
 
-        final var subroutes = linkTo(methodOn(RouteControllers.RoutesToSteps.class)
+        final var steps = linkTo(methodOn(RouteControllers.RoutesToSteps.class)
                 .getResource(route.getId(), null, null))
                 .withRel("routes");
-        view.add(subroutes);
+        view.add(steps);
 
         final var offeredResources =
                 linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
                         .getResource(route.getId(), null, null))
-                        .withRel("resources");
+                        .withRel("offers");
         view.add(offeredResources);
 
         return view;

@@ -24,7 +24,7 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.RegistrationStatus;
+import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.apps.App;
 import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.model.utils.UriConverter;

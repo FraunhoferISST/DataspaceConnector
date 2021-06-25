@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EndpointFactoryProxy
-        extends EndpointFactory<Endpoint, EndpointDesc> {
+public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc> {
 
     @Autowired
     private AppEndpointFactory apps;
@@ -18,11 +17,10 @@ public class EndpointFactoryProxy
 
     @Override
     protected Endpoint initializeEntity(final EndpointDesc desc) {
-        switch (desc.getType()) {
-            case APP:
-                return apps.initializeEntity((AppEndpointDesc) desc);
-            case CONNECTOR:
-                return connector.initializeEntity((ConnectorEndpointDesc) desc);
+        if (AppEndpoint.class.equals(desc.getClass())) {
+            return apps.initializeEntity((AppEndpointDesc) desc);
+        } else if (ConnectorEndpoint.class.equals(desc.getClass())) {
+            return connector.initializeEntity((ConnectorEndpointDesc) desc);
         }
 
         return generic.initializeEntity((GenericEndpointDesc) desc);
@@ -30,11 +28,10 @@ public class EndpointFactoryProxy
 
     @Override
     protected boolean updateInternal(final Endpoint endpoint, final EndpointDesc desc) {
-        switch (desc.getType()) {
-            case APP:
-                return apps.updateInternal((AppEndpoint) endpoint, (AppEndpointDesc) desc);
-            case CONNECTOR:
-                return connector.updateInternal((ConnectorEndpoint) endpoint, (ConnectorEndpointDesc) desc);
+        if (AppEndpoint.class.equals(desc.getClass())) {
+            return apps.updateInternal((AppEndpoint) endpoint, (AppEndpointDesc) desc);
+        } else if (ConnectorEndpoint.class.equals(desc.getClass())) {
+            return connector.updateInternal((ConnectorEndpoint) endpoint, (ConnectorEndpointDesc) desc);
         }
 
         return generic.updateInternal((GenericEndpoint) endpoint, (GenericEndpointDesc) desc);

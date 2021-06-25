@@ -15,9 +15,7 @@
  */
 package io.dataspaceconnector.model.routes;
 
-import java.net.URI;
-
-import io.dataspaceconnector.model.DeployMethod;
+import io.dataspaceconnector.model.configurations.DeployMethod;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -38,8 +36,4 @@ public class RouteDesc extends Description {
      * The route configuration.
      */
     private String config;
-
-    private URI start;
-
-    private URI end;
 }

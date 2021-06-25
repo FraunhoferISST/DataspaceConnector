@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.dataspaceconnector.model.Authentication;
+import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractEntity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
@@ -50,13 +50,13 @@ public class Proxy extends AbstractEntity {
      * The proxy uri.
      */
     @Convert(converter = UriConverter.class)
-    private URI name;
+    private URI location;
 
     /**
      * List of no proxy uris.
      */
     @ElementCollection
-    private List<URI> exclusions;
+    private List<String> exclusions;
 
     /**
      * The authentication information for the proxy.

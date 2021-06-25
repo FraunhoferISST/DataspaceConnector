@@ -18,8 +18,7 @@ package io.dataspaceconnector.model.datasources;
 import java.net.URI;
 import java.util.Objects;
 
-import io.dataspaceconnector.model.Authentication;
-import io.dataspaceconnector.model.DataSourceType;
+import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;

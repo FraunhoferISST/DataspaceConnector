@@ -42,11 +42,7 @@ public final class AppControllers {
     @RequestMapping("/api/apps")
     @Tag(name = "Apps", description = "Endpoints for CRUD operations on apps")
     public static class AppController
-            extends BaseResourceController<App, AppDesc, AppView, AppService> {
-
-
-
-    }
+            extends BaseResourceController<App, AppDesc, AppView, AppService> { }
 
     /**
      * Offers the endpoints for managing app stores.
@@ -55,8 +51,7 @@ public final class AppControllers {
     @RequestMapping("/api/appstores")
     @Tag(name = "App Store", description = "Endpoints for CRUD operations on app store")
     public static class AppStoreController
-            extends BaseResourceController<AppStore, AppStoreDesc, AppStoreView, AppStoreService> {
-    }
+            extends BaseResourceController<AppStore, AppStoreDesc, AppStoreView, AppStoreService> { }
 
     /**
      * Offers the endpoints for managing the relations between app store and apps.
@@ -65,6 +60,5 @@ public final class AppControllers {
     @RequestMapping("/api/appstores/{id}/apps")
     @Tag(name = "App Store", description = "Endpoints for linking app stores to apps")
     public static class AppStoreToApps extends BaseResourceChildController<
-            EntityLinkerService.AppStoreAppLinker, App, AppView> {
-    }
+            EntityLinkerService.AppStoreAppLinker, App, AppView> { }
 }
