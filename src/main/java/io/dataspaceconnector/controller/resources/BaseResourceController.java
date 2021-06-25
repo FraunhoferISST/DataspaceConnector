@@ -109,7 +109,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Descript
         final var entity = assembler.toModel(obj);
 
         final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
@@ -186,7 +186,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Descript
             // The resource has been moved
             final var entity = assembler.toModel(resource);
             final var headers = new HttpHeaders();
-            headers.setLocation(entity.getLink("self").get().toUri());
+            headers.setLocation(entity.getRequiredLink("self").toUri());
 
             response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
         }

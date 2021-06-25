@@ -77,7 +77,9 @@ public abstract class NonOwningRelationService<
     @Override
     public final void removeInternal(final UUID ownerId, final Set<UUID> entities) {
         final var set = Set.of(ownerId);
-        entities.stream().peek(id -> owningService.remove(id, set)).close();
+        for (final var id : entities) {
+            owningService.remove(id, set);
+        }
     }
 
     @Override
@@ -86,7 +88,11 @@ public abstract class NonOwningRelationService<
         final var allRelations =
                 getOneService().getAll(Pageable.unpaged()).stream().map(AbstractEntity::getId)
                                .collect(Collectors.toList());
-        allRelations.stream().peek(id -> owningService.remove(id, set)).close();
+
+        for (final var id : allRelations) {
+            owningService.remove(id, set);
+        }
+
         add(ownerId, entities);
     }
 }

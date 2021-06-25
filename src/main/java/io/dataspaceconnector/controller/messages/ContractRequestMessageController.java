@@ -254,7 +254,7 @@ public class ContractRequestMessageController {
         final var entity = agreementAsm.toModel(agreementService.get(agreementId));
 
         final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
