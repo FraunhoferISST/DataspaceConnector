@@ -636,14 +636,14 @@
 				</dependencies>
 				<configuration>
 					<targetClasses>
-						<param>io.dataspaceconnector.model</param>
+						<param>io.dataspaceconnector.model*</param>
 					</targetClasses>
 					<targetTests>
 						<param>io.dataspaceconnector.model*</param>
 					</targetTests>
-					<excludedTestClasses>
-						<param>**</param>
-					</excludedTestClasses>
+<!--					<excludedTestClasses>-->
+<!--						<param>**</param>-->
+<!--					</excludedTestClasses>-->
 					<mutators>
 						<mutator>ALL</mutator>
 					</mutators>
