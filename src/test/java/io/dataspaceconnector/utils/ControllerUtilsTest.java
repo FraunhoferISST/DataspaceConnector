@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -202,6 +202,33 @@ class ControllerUtilsTest {
 
         /* ACT */
         final var response = ControllerUtils.respondFailedToStoreEntity(exception);
+
+        /* ARRANGE */
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
+        /* ARRANGE */
+        final var exception = new Exception("Some exception.");
+        final var expectedResponse = new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
+
+        /* ACT */
+        final var response = ControllerUtils.respondConnectionTimedOut(exception);
+
+        /* ARRANGE */
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    public void respondReceivedInvalidResponse_null_returnValidResponseEntity() {
+        /* ARRANGE */
+        final var expectedResponse = new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+
+        /* ACT */
+        final var response = ControllerUtils.respondReceivedInvalidResponse();
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());

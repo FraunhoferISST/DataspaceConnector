@@ -15,16 +15,7 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-
-import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.ResultMessage;
-import de.fraunhofer.iais.eis.ResultMessageBuilder;
-import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
-import de.fraunhofer.ids.messaging.protocol.multipart.mapping.ResultMAP;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +25,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.xml.datatype.DatatypeFactory;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -45,68 +38,112 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class QueryMessageControllerTest {
 
     @MockBean
-    private IDSBrokerService brokerService;
+    private GlobalMessageService messageService;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
-
     @Test
-    public void sendConnectorUpdateMessage_unauthorized_rejectUnauthorized() throws Exception {
+    public void sendQueryMessage_unauthorized_rejectUnauthorized() throws Exception {
         mockMvc.perform(post("/api/ids/query")).andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validQuery_returnQueryAnswer() throws Exception {
+    public void sendQueryMessage_validQuery_returnQueryAnswer() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var response = Optional.of("Some query result.");
 
-        ResultMessage resultMessage = new ResultMessageBuilder()._issuerConnector_(new URI("https://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
-
-        final var response =
-                new ResultMAP(resultMessage, "Some query result");
-
-        Mockito.doReturn(response).when(brokerService)
-               .queryBroker(Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any());
+        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                                                   .param("recipient", recipient)
-                                                   .content("SOME QUERY"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("recipient", recipient).content("SOME QUERY"))
+                .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertEquals("Some query result", result.getResponse().getContentAsString());
+        assertEquals("Some query result.", result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_someProblem_returnIdsMessageFailed() throws Exception {
+    public void sendQueryMessage_validQuery_returnBadGateway() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var response = Optional.empty();
 
-        Mockito.doThrow(IOException.class).when(brokerService)
-               .queryBroker(Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any(),
-                            Mockito.any());
+        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                                                   .param("recipient", recipient)
-                                                   .content("SOME QUERY"))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)
+                .content("SOME QUERY"))
+                .andExpect(status().isBadGateway()).andReturn();
+
+        /* ASSERT */
+        assertEquals(502, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendQueryMessage_someProblem_returnIdsMessageFailed() throws Exception {
+        /* ARRANGE */
+        final var recipient = URI.create("https://someBroker").toString();
+
+        Mockito.doThrow(IOException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/query")
+                .param("recipient", recipient).content("SOME QUERY"))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
         assertEquals("Ids message handling failed. null",
-                     result.getResponse().getContentAsString());
+                result.getResponse().getContentAsString());
+    }
+
+    @Test
+    public void sendSearchMessage_unauthorized_rejectUnauthorized() throws Exception {
+        mockMvc.perform(post("/api/ids/search")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendSearchMessage_validSearchTerm_returnResponse() throws Exception {
+        /* ARRANGE */
+        final var recipient = URI.create("https://someBroker").toString();
+        final var response = Optional.of("Some search result.");
+
+        Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
+                Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/search")
+                .param("recipient", recipient).param("limit", "50")
+                .param("offset", "0").content("SOME QUERY"))
+                .andExpect(status().isOk()).andReturn();
+
+        /* ASSERT */
+        assertEquals("Some search result.", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendSearchMessage_validSearchTerm_returnBadGateway() throws Exception {
+        /* ARRANGE */
+        final var recipient = URI.create("https://someBroker").toString();
+        final var response = Optional.empty();
+
+        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/query")
+                .param("recipient", recipient)
+                .content("SOME QUERY"))
+                .andExpect(status().isBadGateway()).andReturn();
+
+        /* ASSERT */
+        assertEquals(502, result.getResponse().getStatus());
     }
 }
