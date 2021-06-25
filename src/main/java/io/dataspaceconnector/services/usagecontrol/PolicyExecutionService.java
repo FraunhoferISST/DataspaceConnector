@@ -122,10 +122,11 @@ public class PolicyExecutionService {
     private Map<String, Object> buildLog(final URI target) {
         final var id = connectorService.getConnectorId();
 
-        return new HashMap<>() {{
-            put("target", target);
-            put("issuerConnector", id);
-            put("accessed", new Date());
-        }};
+        final var output = new HashMap<String, Object>();
+        output.put("target", target);
+        output.put("issuerConnector", id);
+        output.put("accessed", new Date());
+
+        return output;
     }
 }
