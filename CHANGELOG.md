@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Increase spring-boot version to 2.5.2.
+- Increase checkstyle version to 8.44.
 
 ## [5.2.0] - 2021-06-23
 
