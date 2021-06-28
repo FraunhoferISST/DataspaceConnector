@@ -19,13 +19,17 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var entity = initializeEntity(desc);
-        if (desc.getBootstrapId() != null) {
-            entity.setBootstrapId(desc.getBootstrapId());
-        }
+        initializeBootstrapId(entity, desc);
 
         update(entity, desc);
 
         return entity;
+    }
+
+    private void initializeBootstrapId(final T entity, final D desc) {
+        if (desc.getBootstrapId() != null) {
+            entity.setBootstrapId(desc.getBootstrapId());
+        }
     }
 
     public boolean update(final T entity, final D desc) {

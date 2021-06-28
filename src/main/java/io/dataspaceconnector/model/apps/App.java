@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.apps;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
@@ -34,7 +35,7 @@ import org.hibernate.annotations.Where;
 /**
  * An app can be used to perform operations on the data.
  */
-@javax.persistence.Entity
+@Entity
 @Table(name = "app")
 @SQLDelete(sql = "UPDATE app SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -48,8 +49,6 @@ public class App extends NamedEntity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    private AppType type;
 
     @ElementCollection
     private Map<String, String> metaData;

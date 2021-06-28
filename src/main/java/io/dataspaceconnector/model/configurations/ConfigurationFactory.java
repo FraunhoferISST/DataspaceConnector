@@ -61,7 +61,6 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
         final var hasUpdatedDeployMode = updateDeployMode(config, desc.getDeployMode());
         final var hasUpdatedTrustStore = updateTrustStore(config, desc.getTruststoreSettings());
         final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
-        final var hasUpdatedAdditional = updateAdditional(config, desc.getAdditional());
         final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
 
         return hasUpdatedLogLevel || hasUpdatedDeployMode || hasUpdatedTrustStore || hasUpdatedKeyStore

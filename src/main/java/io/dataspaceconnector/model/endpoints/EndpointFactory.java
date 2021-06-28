@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.endpoints;
 import java.net.URI;
 
 import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.utils.MetadataUtils;
 
 /**
  * Base class for creating and updating endpoints.
@@ -63,22 +64,18 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
      */
     @Override
     public boolean update(final T endpoint, final D desc) {
-//        Utils.requireNonNull(endpoint, ErrorMessages.ENTITY_NULL);
-//        Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
-//
-//        final var hasUpdatedDocumentation = updateEndpointDocumentation(endpoint,
-//                desc.getEndpointDocumentation());
-//        final var hasUpdatedInformation = updateEndpointInformation(endpoint,
-//                desc.getEndpointInformation());
+        final var hasParentUpdated = super.update(endpoint, desc);
+        final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
+        final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
 //        final var hasUpdatedInboundPath = updateInboundPath(endpoint, desc.getInboundPath());
 //        final var hasUpdatedOutboundPath = updateOutboundPath(endpoint, desc.getOutboundPath());
-//        final var hasUpdatedAdditional = updateAdditional(endpoint, endpoint.getAdditional());
-//
-//        final var updatedInternal = updateInternal(endpoint, desc);
-//
-//        return hasUpdatedDocumentation || hasUpdatedInformation || hasUpdatedInboundPath
-//                || hasUpdatedOutboundPath || hasUpdatedAdditional || updatedInternal;
-        return false;
+        final var hasUpdatedAdditional = updateAdditional(endpoint, endpoint.getAdditional());
+
+        final var updatedInternal = updateInternal(endpoint, desc);
+
+        return hasParentUpdated || hasUpdatedDocs || hasUpdatedInfo
+               // || hasUpdatedInboundPath || hasUpdatedOutboundPath
+               || hasUpdatedAdditional || updatedInternal;
     }
 
 //    /**
@@ -88,7 +85,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 //     */
 //    private boolean updateOutboundPath(final Endpoint endpoint, final String outboundPath) {
 //        final var newOutboundPath = MetadataUtils.updateString(endpoint.getOutboundPath(),
-//                outboundPath, DEFAULT_OUTBOUND_PATH);
+//                                                               outboundPath, DEFAULT_OUTBOUND_PATH);
 //        newOutboundPath.ifPresent(endpoint::setOutboundPath);
 //
 //        return newOutboundPath.isPresent();
@@ -106,35 +103,32 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 //
 //        return newInboundPath.isPresent();
 //    }
-//
-//    /**
-//     * @param endpoint            The endpoint entity.
-//     * @param endpointInformation The endpoint information.
-//     * @return True, if endpoint information is updated.
-//     */
-//    private boolean updateEndpointInformation(final Endpoint endpoint,
-//                                              final String endpointInformation) {
-//        final var newEndpointInfo =
-//                MetadataUtils.updateString(endpoint.getEndpointInformation(), endpointInformation,
-//                        DEFAULT_INFORMATION);
-//        newEndpointInfo.ifPresent(endpoint::setEndpointInformation);
-//
-//        return newEndpointInfo.isPresent();
-//    }
-//
-//
-//    /**
-//     * @param endpoint              The endpoint entity.
-//     * @param endpointDocumentation The endpoint documentation.
-//     * @return True, if endpoint documentation is updated.
-//     */
-//    private boolean updateEndpointDocumentation(final Endpoint endpoint,
-//                                                final URI endpointDocumentation) {
-//        final var newDocumentation =
-//                MetadataUtils.updateUri(endpoint.getDocs(), endpointDocumentation,
-//                                        DEFAULT_URI);
-//        newDocumentation.ifPresent(endpoint::setDocs);
-//
-//        return newDocumentation.isPresent();
-//    }
+
+    /**
+     * @param endpoint The endpoint entity.
+     * @param info     The endpoint information.
+     * @return True, if endpoint information is updated.
+     */
+    private boolean updateInfo(final Endpoint endpoint,
+                               final String info) {
+        final var newInfo =
+                MetadataUtils.updateString(endpoint.getInfo(), info, DEFAULT_INFORMATION);
+        newInfo.ifPresent(endpoint::setInfo);
+
+        return newInfo.isPresent();
+    }
+
+
+    /**
+     * @param endpoint The endpoint entity.
+     * @param docs     The endpoint documentation.
+     * @return True, if endpoint documentation is updated.
+     */
+    private boolean updateDocs(final Endpoint endpoint,
+                               final URI docs) {
+        final var newDocs = MetadataUtils.updateUri(endpoint.getDocs(), docs, DEFAULT_URI);
+        newDocs.ifPresent(endpoint::setDocs);
+
+        return newDocs.isPresent();
+    }
 }

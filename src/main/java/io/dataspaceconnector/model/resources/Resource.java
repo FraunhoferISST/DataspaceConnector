@@ -24,12 +24,12 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.exceptions.ResourceException;
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.representations.Representation;
 import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.utils.exceptions.NotImplemented;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -124,7 +124,7 @@ public class Resource extends NamedEntity {
         /*
             NOTE: Offered and Requested Resource override this function.
          */
-        throw new ResourceException("Not implemented");
+        throw new NotImplemented();
     }
 
     /**
@@ -137,6 +137,6 @@ public class Resource extends NamedEntity {
             so that exception should never be returned. Throw exception
             here so that a missing override crashes really load.
          */
-        throw new ResourceException("Not implemented");
+        throw new NotImplemented();
     }
 }

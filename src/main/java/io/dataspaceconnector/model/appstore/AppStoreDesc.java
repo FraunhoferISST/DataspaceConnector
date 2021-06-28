@@ -17,9 +17,7 @@ package io.dataspaceconnector.model.appstore;
 
 import java.net.URI;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.NamedDescription;
-import io.dataspaceconnector.model.base.RegistrationStatus;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -36,10 +34,4 @@ public class AppStoreDesc extends NamedDescription {
      * The access url of the app store.
      */
     private URI name;
-
-    /**
-     * The registration status.
-     */
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private RegistrationStatus status;
 }

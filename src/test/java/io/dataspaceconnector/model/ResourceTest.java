@@ -17,28 +17,28 @@ package io.dataspaceconnector.model;
 
 import java.util.ArrayList;
 
-import io.dataspaceconnector.exceptions.ResourceException;
 import io.dataspaceconnector.model.resources.Resource;
+import io.dataspaceconnector.utils.exceptions.NotImplemented;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceTest {
     @Test
-    public void setCatalogs_anything_throwsResourceException() {
+    public void setCatalogs_anything_throwsNotImplemented() {
         /* ARRANGE */
         final var resource = new Resource();
 
         /* ACT && ASSERT */
-        assertThrows(ResourceException.class, () -> resource.setCatalogs(new ArrayList<>()));
+        assertThrows(NotImplemented.class, () -> resource.setCatalogs(new ArrayList<>()));
     }
 
     @Test
-    public void getCatalogs_nothing_throwsResourceException() {
+    public void getCatalogs_nothing_throwsNotImplemented() {
         /* ARRANGE */
         final var resource = new Resource();
 
         /* ACT && ASSERT */
-        assertThrows(ResourceException.class, resource::getCatalogs);
+        assertThrows(NotImplemented.class, resource::getCatalogs);
     }
 }

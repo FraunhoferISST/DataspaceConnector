@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resources;
+package io.dataspaceconnector.controller.resources.catalogs;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
+@SpringBootTest(classes = { ResourceControllers.CatalogController.class})
 class CatalogControllerTest {
     @MockBean
     private CatalogService catalogService;

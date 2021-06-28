@@ -16,8 +16,6 @@
 package io.dataspaceconnector.model.appstore;
 
 import javax.persistence.Convert;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
@@ -25,7 +23,6 @@ import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.apps.App;
-import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -58,12 +55,6 @@ public class AppStore extends NamedEntity {
      */
     @Convert(converter = UriConverter.class)
     private URI name;
-
-    /**
-     * The registration status.
-     */
-    @Enumerated(EnumType.STRING)
-    private RegistrationStatus status;
 
     /**
      * The list of apps.

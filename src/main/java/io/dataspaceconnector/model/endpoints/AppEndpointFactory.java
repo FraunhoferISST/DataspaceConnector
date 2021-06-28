@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.endpoints;
 
-import java.net.URI;
 import java.util.Objects;
 
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -63,15 +62,14 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
         Utils.requireNonNull(appEndpoint, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var hasUpdatedAccessUrl = updateAccessUrl(appEndpoint, desc.getAccessURL());
         final var hasUpdatedMediaType = updateMediaType(appEndpoint, desc.getMediaType());
-        final var hasUpdatedPort = updateEndpointPort(appEndpoint, desc.getAppEndpointPort());
-        final var hasUpdatedProtocol = updateProtocol(appEndpoint, desc.getAppEndpointProtocol());
+        final var hasUpdatedPort = updateEndpointPort(appEndpoint, desc.getPort());
+        final var hasUpdatedProtocol = updateProtocol(appEndpoint, desc.getProtocol());
         final var hasUpdatedLanguage = updateLanguage(appEndpoint, desc.getLanguage());
         final var hasUpdatedAppEndpointType = updateAppEndpointType(appEndpoint,
-                desc.getAppEndpointType());
+                desc.getType());
 
-        return hasUpdatedAccessUrl || hasUpdatedMediaType || hasUpdatedPort
+        return hasUpdatedMediaType || hasUpdatedPort
                 || hasUpdatedProtocol || hasUpdatedLanguage || hasUpdatedAppEndpointType;
     }
 
@@ -139,18 +137,5 @@ public class AppEndpointFactory extends EndpointFactory<AppEndpoint, AppEndpoint
                 DEFAULT_MEDIATYPE);
         newMediaType.ifPresent(appEndpoint::setMediaType);
         return newMediaType.isPresent();
-    }
-
-    /**
-     * @param appEndpoint The app endpoint
-     * @param accessURL   The new access url
-     * @return true, if access url is updated
-     */
-    private boolean updateAccessUrl(final AppEndpoint appEndpoint, final URI accessURL) {
-        final var newUri = MetadataUtils.updateUri(appEndpoint.getName(), accessURL,
-                                                   URI.create(DEFAULT_ACCESS_URL));
-
-        newUri.ifPresent(appEndpoint::setName);
-        return newUri.isPresent();
     }
 }

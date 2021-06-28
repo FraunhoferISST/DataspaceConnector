@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.controller.resources;
+package io.dataspaceconnector.controller.resources.catalogs;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.utils.Utils;
@@ -37,7 +38,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {ResourceControllers.CatalogController.class})
+@SpringBootTest(classes = { ResourceControllers.CatalogController.class})
 class CatalogControllerTest_getAll {
     @MockBean
     private CatalogService service;

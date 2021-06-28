@@ -19,7 +19,6 @@ import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.dataspaceconnector.model.configurations.DeployMethod;
-import io.dataspaceconnector.model.endpoints.Endpoint;
 import io.dataspaceconnector.view.util.ViewConstants;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,15 +56,4 @@ public class RouteView extends RepresentationModel<RouteView> {
      * The deploy method of the route.
      */
     private DeployMethod method;
-
-    /**
-     * The start endpoint of the route.
-     */
-    private Endpoint start;
-
-    /**
-     * The last endpoint of the route.
-     */
-    private Endpoint end;
-
 }

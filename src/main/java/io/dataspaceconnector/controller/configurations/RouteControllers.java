@@ -55,7 +55,7 @@ public final class RouteControllers {
             Route, RouteView> { }
 
     @RestController
-    @RequestMapping("/api/routes/{id}/offers")
+    @RequestMapping("/api/routes/{id}/outputs")
     @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
     public static class RoutesToOfferedResources
             extends BaseResourceChildController<EntityLinkerService.RouteOfferedResourceLinker,

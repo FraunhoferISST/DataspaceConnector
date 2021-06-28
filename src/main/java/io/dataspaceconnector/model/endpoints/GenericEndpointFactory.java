@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.endpoints;
 
 import io.dataspaceconnector.model.datasources.DataSource;
-import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,51 +36,5 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
     @Override
     protected GenericEndpoint initializeEntity(final GenericEndpointDesc desc) {
         return new GenericEndpoint();
-    }
-
-    /**
-     * @param genericEndpoint The app endpoint.
-     * @param desc            The description of the new entity.
-     * @return True, if app endpoint is updated.
-     */
-    @Override
-    protected boolean updateInternal(final GenericEndpoint genericEndpoint,
-                                     final GenericEndpointDesc desc) {
-        return updateAbsolutePath(genericEndpoint, desc.getAbsolutePath());
-    }
-
-    /**
-     * @param genericEndpoint The generic endpoint.
-     * @param absolutePath    The absolute path of the generic endpoint.
-     * @return True, if generic endpoint is updated.
-     */
-    private boolean updateAbsolutePath(final GenericEndpoint genericEndpoint,
-                                       final String absolutePath) {
-        final var newAbsolutePath =
-                MetadataUtils.updateString(genericEndpoint.getAbsolutePath(), absolutePath,
-                        DEFAULT_PATH);
-        newAbsolutePath.ifPresent(genericEndpoint::setAbsolutePath);
-
-        return newAbsolutePath.isPresent();
-    }
-
-    /**
-     * @param genericEndpoint The generic endpoint which is updated.
-     * @param dataSource      The new data source.
-     * @return Updated Generic Endpoint.
-     */
-    public GenericEndpoint updateDataSource(final GenericEndpoint genericEndpoint,
-                                            final DataSource dataSource) {
-        genericEndpoint.setDataSource(dataSource);
-        return genericEndpoint;
-    }
-
-    /**
-     * @param genericEndpoint The generic endpoint which is updated.
-     * @return Updated generic endpoint.
-     */
-    public GenericEndpoint deleteDataSource(final GenericEndpoint genericEndpoint) {
-        genericEndpoint.setDataSource(null);
-        return genericEndpoint;
     }
 }

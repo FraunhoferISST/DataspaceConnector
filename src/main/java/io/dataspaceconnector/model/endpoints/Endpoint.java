@@ -57,4 +57,6 @@ public class Endpoint extends Entity {
      */
     @Convert(converter = UriConverter.class)
     private URI docs;
+
+    private String info;
 }

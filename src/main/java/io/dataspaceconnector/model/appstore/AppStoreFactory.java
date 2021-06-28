@@ -17,10 +17,8 @@ package io.dataspaceconnector.model.appstore;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import io.dataspaceconnector.model.AbstractNamedFactory;
-import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -54,23 +52,7 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
      */
     @Override
     protected boolean updateInternal(final AppStore appStore, final AppStoreDesc desc) {
-        final var hasUpdatedName = updateName(appStore, desc.getName());
-        final var hasUpdatedRegistrationStatus =
-                updateRegistrationStatus(appStore, desc.getStatus());
-
-        return hasUpdatedName || hasUpdatedRegistrationStatus;
-    }
-
-    /**
-     * @param appStore           The entity to be updated.
-     * @param status The new registration status.
-     * @return True after updating the registration status.
-     */
-    private boolean updateRegistrationStatus(final AppStore appStore,
-                                             final RegistrationStatus status) {
-        appStore.setStatus(
-                Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
-        return true;
+        return updateName(appStore, desc.getName());
     }
 
     /**

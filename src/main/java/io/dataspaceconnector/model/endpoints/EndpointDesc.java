@@ -37,4 +37,5 @@ import lombok.EqualsAndHashCode;
 public class EndpointDesc extends Description {
     private URI location;
     private URI docs;
+    private String info;
 }

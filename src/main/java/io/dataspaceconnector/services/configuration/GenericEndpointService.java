@@ -17,15 +17,10 @@ package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.endpoints.GenericEndpoint;
 import io.dataspaceconnector.model.endpoints.GenericEndpointDesc;
-import io.dataspaceconnector.model.endpoints.GenericEndpointFactory;
 import io.dataspaceconnector.repositories.DataSourceRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
-import java.io.IOException;
-import java.util.UUID;
 
 /**
  * Service class for generic endpoints.
@@ -48,49 +43,49 @@ public class GenericEndpointService
     public GenericEndpointService(final DataSourceRepository repository) {
         this.dataSourceRepository = repository;
     }
-
-    /**
-     * This method allows to modify the generic endpoint and set a data source.
-     *
-     * @param genericEndpointId The id of the generic endpoint.
-     * @param dataSourceId      The new data source of the generic endpoint.
-     * @throws IOException Exception occurs, if data source can not be set at generic endpoint.
-     */
-    @Transactional
-    public void setGenericEndpointDataSource(final UUID genericEndpointId,
-                                             final UUID dataSourceId) throws IOException {
-        final var genericEndpointRepository = getRepository();
-        final var genericEndpoint = genericEndpointRepository
-                .findById(genericEndpointId)
-                .orElse(null);
-        final var dataSource = dataSourceRepository.findById(dataSourceId).orElse(null);
-        if (genericEndpoint != null && dataSource != null) {
-            final var updatedGenericEndpoint = ((GenericEndpointFactory) getFactory())
-                    .updateDataSource(genericEndpoint, dataSource);
-            genericEndpointRepository.saveAndFlush(updatedGenericEndpoint);
-        } else {
-            throw new IOException("Failed to update the generic endpoint");
-        }
-    }
-
-    /**
-     * This method allows to delete the data source from a generic endpoint.
-     *
-     * @param genericEndpointId The id of the data source.
-     * @throws IOException Exception occurs, if data source can not be deleted.
-     */
-    @Transactional
-    public void deleteGenericEndpointDataSource(final UUID genericEndpointId) throws IOException {
-        final var genericEndpointRepository = getRepository();
-        final var genericEndpoint = genericEndpointRepository
-                .findById(genericEndpointId)
-                .orElse(null);
-        if (genericEndpoint != null) {
-            final var updatedGenericEndpoint = ((GenericEndpointFactory) getFactory())
-                    .deleteDataSource(genericEndpoint);
-            genericEndpointRepository.saveAndFlush(updatedGenericEndpoint);
-        } else {
-            throw new IOException("Failed to delete the authentication from the data source.");
-        }
-    }
+//
+//    /**
+//     * This method allows to modify the generic endpoint and set a data source.
+//     *
+//     * @param genericEndpointId The id of the generic endpoint.
+//     * @param dataSourceId      The new data source of the generic endpoint.
+//     * @throws IOException Exception occurs, if data source can not be set at generic endpoint.
+//     */
+//    @Transactional
+//    public void setGenericEndpointDataSource(final UUID genericEndpointId,
+//                                             final UUID dataSourceId) throws IOException {
+//        final var genericEndpointRepository = getRepository();
+//        final var genericEndpoint = genericEndpointRepository
+//                .findById(genericEndpointId)
+//                .orElse(null);
+//        final var dataSource = dataSourceRepository.findById(dataSourceId).orElse(null);
+//        if (genericEndpoint != null && dataSource != null) {
+//            final var updatedGenericEndpoint = ((GenericEndpointFactory) getFactory())
+//                    .updateDataSource(genericEndpoint, dataSource);
+//            genericEndpointRepository.saveAndFlush(updatedGenericEndpoint);
+//        } else {
+//            throw new IOException("Failed to update the generic endpoint");
+//        }
+//    }
+//
+//    /**
+//     * This method allows to delete the data source from a generic endpoint.
+//     *
+//     * @param genericEndpointId The id of the data source.
+//     * @throws IOException Exception occurs, if data source can not be deleted.
+//     */
+//    @Transactional
+//    public void deleteGenericEndpointDataSource(final UUID genericEndpointId) throws IOException {
+//        final var genericEndpointRepository = getRepository();
+//        final var genericEndpoint = genericEndpointRepository
+//                .findById(genericEndpointId)
+//                .orElse(null);
+//        if (genericEndpoint != null) {
+//            final var updatedGenericEndpoint = ((GenericEndpointFactory) getFactory())
+//                    .deleteDataSource(genericEndpoint);
+//            genericEndpointRepository.saveAndFlush(updatedGenericEndpoint);
+//        } else {
+//            throw new IOException("Failed to delete the authentication from the data source.");
+//        }
+//    }
 }

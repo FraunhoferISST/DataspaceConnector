@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.endpoints;
 
-import java.net.URI;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,11 +23,4 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ConnectorEndpointDesc extends EndpointDesc {
-
-    /**
-     * The absolute path of the generic endpoint.
-     */
-    private URI accessURL;
-
-}
+public class ConnectorEndpointDesc extends EndpointDesc { }

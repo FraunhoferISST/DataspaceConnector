@@ -15,6 +15,12 @@
  */
 package io.dataspaceconnector.services.configuration;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.endpoints.AppEndpoint;
 import io.dataspaceconnector.model.endpoints.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoints.AppEndpointFactory;
@@ -34,12 +40,6 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -234,7 +234,7 @@ public class AppEndpointServiceTest {
 
         final var accessUrlField = appEndpoint.getClass().getDeclaredField("name");
         accessUrlField.setAccessible(true);
-        accessUrlField.set(appEndpoint, desc.getAccessURL());
+        accessUrlField.set(appEndpoint, desc.getLocation());
 
         return appEndpoint;
     }
@@ -256,14 +256,14 @@ public class AppEndpointServiceTest {
 
     private AppEndpointDesc getAppEndpointDesc() {
         final var desc = new AppEndpointDesc();
-        desc.setAccessURL(URI.create("https://appendpoint"));
+        desc.setLocation(URI.create("https://appendpoint"));
 
         return desc;
     }
 
     private AppEndpointDesc getUpdatedAppEndpointDesc() {
         final var desc = new AppEndpointDesc();
-        desc.setAccessURL(URI.create("https://updatedendpoint"));
+        desc.setLocation(URI.create("https://updatedendpoint"));
 
         return desc;
     }

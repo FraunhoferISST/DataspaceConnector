@@ -28,11 +28,6 @@ import lombok.EqualsAndHashCode;
 public class AppEndpointDesc extends EndpointDesc {
 
     /**
-     * The access url of the endpoint.
-     */
-    private URI accessURL;
-
-    /**
      * The file name extension of the data.
      */
     private String mediaType;
@@ -40,12 +35,12 @@ public class AppEndpointDesc extends EndpointDesc {
     /**
      * The port number of the app endpoint.
      */
-    private int appEndpointPort;
+    private int port;
 
     /**
      * The protocol of the app endpoint.
      */
-    private String appEndpointProtocol;
+    private String protocol;
 
     /**
      * The used language.
@@ -55,5 +50,5 @@ public class AppEndpointDesc extends EndpointDesc {
     /**
      * The type of the app endpoint.
      */
-    private AppEndpointType appEndpointType;
+    private AppEndpointType type;
 }

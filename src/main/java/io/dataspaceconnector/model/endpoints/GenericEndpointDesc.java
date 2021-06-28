@@ -23,11 +23,4 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class GenericEndpointDesc extends EndpointDesc {
-
-    /**
-     * The absolute path of the generic endpoint.
-     */
-    private String absolutePath;
-
-}
+public class GenericEndpointDesc extends EndpointDesc { }
