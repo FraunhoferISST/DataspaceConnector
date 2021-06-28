@@ -19,8 +19,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,17 +28,12 @@ import org.springframework.stereotype.Component;
  * Creates and updates a broker.
  */
 @Component
-public class BrokerFactory extends AbstractFactory<Broker, BrokerDesc> {
+public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
 
     /**
      * Default access url.
      */
     private static final URI DEFAULT_URI = URI.create("https://broker.com");
-
-    /**
-     * Default string value.
-     */
-    private static final String DEFAULT_STRING = "unknown";
 
     /**
      * @param desc The description of the entity.
@@ -60,10 +55,9 @@ public class BrokerFactory extends AbstractFactory<Broker, BrokerDesc> {
     @Override
     protected boolean updateInternal(final Broker broker, final BrokerDesc desc) {
         final var newAccessUrl = updateAccessUrl(broker, broker.getAccessUrl());
-        final var newTitle = updateTitle(broker, broker.getTitle());
         final var newStatus = updateRegistrationStatus(broker, broker.getStatus());
 
-        return newAccessUrl || newTitle || newStatus;
+        return newAccessUrl || newStatus;
     }
 
     /**
@@ -74,18 +68,6 @@ public class BrokerFactory extends AbstractFactory<Broker, BrokerDesc> {
     private boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
         broker.setStatus(Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
-    }
-
-    /**
-     * @param broker The entity to be updated.
-     * @param title  The new title of the entity.
-     * @return True, if broker is updated
-     */
-    private boolean updateTitle(final Broker broker, final String title) {
-        final var newTitle = MetadataUtils.updateString(broker.getTitle(), title,
-                DEFAULT_STRING);
-        newTitle.ifPresent(broker::setTitle);
-        return newTitle.isPresent();
     }
 
     /**

@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.services.configuration;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import io.dataspaceconnector.model.apps.App;
 import io.dataspaceconnector.model.apps.AppDesc;
 import io.dataspaceconnector.model.apps.AppFactory;
@@ -27,9 +30,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.Optional;
-import java.util.UUID;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -161,14 +162,8 @@ public class AppServiceTest {
         final var appConstructor = App.class.getConstructor();
 
         final var app = appConstructor.newInstance();
-
-        final var idField = app.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(app, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
-
-        final var titlelField = app.getClass().getDeclaredField("title");
-        titlelField.setAccessible(true);
-        titlelField.set(app, desc.getTitle());
+        ReflectionTestUtils.setField(app, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(app, "title", desc.getTitle());
 
         return app;
     }
@@ -179,10 +174,7 @@ public class AppServiceTest {
 
     @SneakyThrows
     private App getAppFromValidDesc(final UUID id, final App app) {
-        final var idField = app.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(app, id);
-
+        ReflectionTestUtils.setField(app, "id", id);
         return app;
     }
 

@@ -16,12 +16,11 @@
 package io.dataspaceconnector.model.endpoints;
 
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.Table;
 import java.net.URI;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -34,7 +33,7 @@ import org.hibernate.annotations.Where;
 /**
  * Entity which manages the endpoints.
  */
-@Entity
+@javax.persistence.Entity
 @Inheritance
 @Getter
 @Setter(AccessLevel.PACKAGE)
@@ -43,7 +42,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted = false")
 @Table(name = "endpoint")
 @RequiredArgsConstructor
-public class Endpoint extends AbstractEntity {
+public class Endpoint extends Entity {
 
     /**
      * Serial version uid.

@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.Description;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <D> Input type consumed by controller.
  * @param <V> Output type produced by the controller.
  */
-public interface CRUDController<T extends AbstractEntity, D extends Description, V>  {
+public interface CRUDController<T extends Entity, D extends Description, V>  {
     /**
      * Creates a new resource. Endpoint for POST requests.
      * @param desc The resource description.

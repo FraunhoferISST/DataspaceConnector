@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -156,14 +157,8 @@ class CatalogControllerTest_getAll {
         constructor.setAccessible(true);
 
         final var catalog = constructor.newInstance();
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, title);
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.randomUUID());
+        ReflectionTestUtils.setField(catalog, "title", title);
+        ReflectionTestUtils.setField(catalog, "id", UUID.randomUUID());
 
         return catalog;
     }

@@ -19,7 +19,7 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.model.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,7 +28,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ContractDesc extends Description {
+public class ContractDesc extends NamedDescription {
 
     /**
      * The contract id on provider side.
@@ -45,11 +45,6 @@ public class ContractDesc extends Description {
      * The provider signing the contract.
      */
     private URI provider;
-
-    /**
-     * The title of the contract.
-     */
-    private String title;
 
     /**
      * Contract start time and date.

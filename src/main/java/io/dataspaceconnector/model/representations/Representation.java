@@ -15,17 +15,16 @@
  */
 package io.dataspaceconnector.model.representations;
 
-import java.net.URI;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
-import io.dataspaceconnector.model.resources.Resource;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.resources.Resource;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -40,7 +39,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 /**
  * A representation describes how data is presented.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "representation")
 @SQLDelete(sql = "UPDATE representation SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -48,7 +47,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Representation extends AbstractEntity {
+public class Representation extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -61,11 +60,6 @@ public class Representation extends AbstractEntity {
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
-
-    /**
-     * The title of the representation.
-     */
-    private String title;
 
     /**
      * The media type expressed by this representation.

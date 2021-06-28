@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.rules;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,18 +28,13 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ContractRuleDesc extends Description {
+public class ContractRuleDesc extends NamedDescription {
 
     /**
      * The rule id on provider side.
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private URI remoteId;
-
-    /**
-     * The title of the rule.
-     */
-    private String title;
 
     /**
      * The rule to be enforced.

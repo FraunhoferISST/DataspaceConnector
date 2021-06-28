@@ -38,9 +38,11 @@ public final class RequestedResourceFactory
     }
 
     @Override
-    protected boolean updateType(
+    protected boolean updateInternal(
             final RequestedResource resource, final RequestedResourceDesc desc) {
-        return updateRemoteId(resource, desc.getRemoteId());
+        final var hasParentUpdated = super.updateInternal(resource, desc);
+        final var hasRemoteIdUpdated = updateRemoteId(resource, desc.getRemoteId());
+        return hasParentUpdated || hasRemoteIdUpdated;
     }
 
     private boolean updateRemoteId(final RequestedResource resource, final URI remoteId) {

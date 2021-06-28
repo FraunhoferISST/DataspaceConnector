@@ -52,6 +52,7 @@ import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.contracts.Contract;
 import lombok.SneakyThrows;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class RuleUtilsTest {
     @Test
@@ -1216,14 +1217,8 @@ class RuleUtilsTest {
         constructor.setAccessible(true);
 
         final var contract = constructor.newInstance();
-
-        final var titleField = contract.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(contract, "Catalog without consumer");
-
-        final var issuerField = contract.getClass().getDeclaredField("consumer");
-        issuerField.setAccessible(true);
-        issuerField.set(contract, URI.create(""));
+        ReflectionTestUtils.setField(contract, "title", "Catalog without consumer");
+        ReflectionTestUtils.setField(contract, "consumer", URI.create(""));
 
         return contract;
     }
@@ -1234,14 +1229,8 @@ class RuleUtilsTest {
         constructor.setAccessible(true);
 
         final var contract = constructor.newInstance();
-
-        final var titleField = contract.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(contract, "Catalog with consumer");
-
-        final var issuerField = contract.getClass().getDeclaredField("consumer");
-        issuerField.setAccessible(true);
-        issuerField.set(contract, URI.create("https://someConsumer"));
+        ReflectionTestUtils.setField(contract, "title", "Catalog with consumer");
+        ReflectionTestUtils.setField(contract, "consumer", URI.create("https://someConsumer"));
 
         return contract;
     }

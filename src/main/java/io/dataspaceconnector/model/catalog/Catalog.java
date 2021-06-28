@@ -15,28 +15,25 @@
  */
 package io.dataspaceconnector.model.catalog;
 
-import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import io.dataspaceconnector.model.resources.OfferedResource;
-import io.dataspaceconnector.model.resources.RequestedResource;
-import io.dataspaceconnector.model.base.AbstractEntity;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import java.util.List;
 
+import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.resources.RequestedResource;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * A catalog groups resources.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "catalog")
 @SQLDelete(sql = "UPDATE catalog SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -44,21 +41,11 @@ import lombok.Setter;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Catalog extends AbstractEntity {
+public class Catalog extends NamedEntity {
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The title of the catalog.
-     **/
-    private String title;
-
-    /**
-     * The description of the catalog.
-     **/
-    private String description;
 
     /**
      * The offered resources grouped by the catalog.

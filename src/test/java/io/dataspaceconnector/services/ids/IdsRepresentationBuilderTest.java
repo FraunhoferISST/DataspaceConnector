@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -180,11 +180,11 @@ public class IdsRepresentationBuilderTest {
         artifactDesc.setValue("value");
         final var artifact = artifactFactory.create(artifactDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(artifact, date);
 
@@ -201,15 +201,15 @@ public class IdsRepresentationBuilderTest {
 
         final var representation = representationFactory.create(representationDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(representation, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(representation, ZonedDateTime.now(ZoneOffset.UTC));
 
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
+        final var modificationDateField = Entity.class.getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
         modificationDateField.set(representation, date);
 
@@ -226,7 +226,7 @@ public class IdsRepresentationBuilderTest {
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
-        final var additionalField = AbstractEntity.class.getDeclaredField("additional");
+        final var additionalField = Entity.class.getDeclaredField("additional");
         additionalField.setAccessible(true);
         additionalField.set(representation, additional);
 

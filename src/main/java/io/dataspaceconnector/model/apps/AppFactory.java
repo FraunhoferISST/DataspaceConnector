@@ -15,20 +15,14 @@
  */
 package io.dataspaceconnector.model.apps;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates an app.
  */
 @Component
-public class AppFactory extends AbstractFactory<App, AppDesc> {
-
-    /**
-     * The default title.
-     */
-    private static final String DEFAULT_TITLE = "";
+public class AppFactory extends AbstractNamedFactory<App, AppDesc> {
 
     /**
      * Creates an app.
@@ -39,30 +33,5 @@ public class AppFactory extends AbstractFactory<App, AppDesc> {
     @Override
     protected App initializeEntity(final AppDesc desc) {
         return new App();
-    }
-
-    /**
-     * Updates an app with the description.
-     *
-     * @param app  The entity to be updated.
-     * @param desc The description of the new entity.
-     * @return true, if app is updated
-     */
-    @Override
-    protected boolean updateInternal(final App app, final AppDesc desc) {
-        return updateTitle(app, desc.getTitle());
-    }
-
-    /**
-     * @param app   The entity to be updated.
-     * @param title The new title.
-     * @return True, if title is updated.
-     */
-    private boolean updateTitle(final App app, final String title) {
-        final var newTitle = MetadataUtils.updateString(app.getTitle(), title,
-                DEFAULT_TITLE);
-        newTitle.ifPresent(app::setTitle);
-
-        return newTitle.isPresent();
     }
 }

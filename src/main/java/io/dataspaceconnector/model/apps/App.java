@@ -16,13 +16,12 @@
 package io.dataspaceconnector.model.apps;
 
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 import java.util.Map;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.endpoints.Endpoint;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -35,7 +34,7 @@ import org.hibernate.annotations.Where;
 /**
  * An app can be used to perform operations on the data.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "app")
 @SQLDelete(sql = "UPDATE app SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -43,17 +42,12 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class App extends AbstractEntity {
+public class App extends NamedEntity {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The title of the app.
-     */
-    private String title;
 
     private AppType type;
 

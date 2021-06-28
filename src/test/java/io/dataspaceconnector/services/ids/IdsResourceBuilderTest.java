@@ -17,7 +17,7 @@ package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -249,11 +249,11 @@ public class IdsResourceBuilderTest {
         artifactDesc.setValue("value");
         final var artifact = artifactFactory.create(artifactDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(artifact, date);
 
@@ -270,15 +270,15 @@ public class IdsResourceBuilderTest {
 
         final var representation = representationFactory.create(representationDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(representation, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(representation, ZonedDateTime.now(ZoneOffset.UTC));
 
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
+        final var modificationDateField = Entity.class.getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
         modificationDateField.set(representation, date);
 
@@ -313,11 +313,11 @@ public class IdsResourceBuilderTest {
         ruleDesc.setValue(value);
         final var rule = ruleFactory.create(ruleDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(rule, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(rule, date);
 
@@ -335,15 +335,15 @@ public class IdsResourceBuilderTest {
 
         final var contract = contractFactory.create(contractDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(contract, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(contract, date);
 
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
+        final var modificationDateField = Entity.class.getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
         modificationDateField.set(contract, date);
 
@@ -368,15 +368,15 @@ public class IdsResourceBuilderTest {
 
         final var resource = resourceFactory.create(resourceDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(resource, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(resource, date);
 
-        final var modificationDateField = AbstractEntity.class.getDeclaredField("modificationDate");
+        final var modificationDateField = Entity.class.getDeclaredField("modificationDate");
         modificationDateField.setAccessible(true);
         modificationDateField.set(resource, date);
 
@@ -397,7 +397,7 @@ public class IdsResourceBuilderTest {
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
-        final var additionalField = AbstractEntity.class.getDeclaredField("additional");
+        final var additionalField = Entity.class.getDeclaredField("additional");
         additionalField.setAccessible(true);
         additionalField.set(resource, additional);
 

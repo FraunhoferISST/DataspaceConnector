@@ -21,7 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.zip.CRC32C;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates an artifact.
  */
 @Component
-public final class ArtifactFactory extends AbstractFactory<Artifact, ArtifactDesc> {
+public final class ArtifactFactory extends AbstractNamedFactory<Artifact, ArtifactDesc> {
 
     /**
      * Default remote id assigned to all artifacts.
@@ -40,11 +40,6 @@ public final class ArtifactFactory extends AbstractFactory<Artifact, ArtifactDes
      * Default remote address assigned to all artifacts.
      */
     public static final URI DEFAULT_REMOTE_ADDRESS = URI.create("genesis");
-
-    /**
-     * Default title assigned to all artifacts.
-     */
-    public static final String DEFAULT_TITLE = "";
 
     /**
      * Default download setting assigned to all artifacts.
@@ -70,12 +65,11 @@ public final class ArtifactFactory extends AbstractFactory<Artifact, ArtifactDes
     protected boolean updateInternal(final Artifact artifact, final ArtifactDesc desc) {
         final var hasUpdatedRemoteId = updateRemoteId(artifact, desc.getRemoteId());
         final var hasUpdatedRemoteAddress = updateRemoteAddress(artifact, desc.getRemoteAddress());
-        final var hasUpdatedTitle = updateTitle(artifact, desc.getTitle());
         final var hasUpdatedAutoDownload = updateAutoDownload(artifact, desc.isAutomatedDownload());
         final var hasUpdatedData = updateData(artifact, desc);
 
-        return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedTitle
-               || hasUpdatedAutoDownload || hasUpdatedData;
+        return hasUpdatedRemoteId || hasUpdatedRemoteAddress || hasUpdatedAutoDownload
+               || hasUpdatedData;
     }
 
     private boolean updateRemoteId(final Artifact artifact, final URI remoteId) {
@@ -92,13 +86,6 @@ public final class ArtifactFactory extends AbstractFactory<Artifact, ArtifactDes
         newUri.ifPresent(artifact::setRemoteAddress);
 
         return newUri.isPresent();
-    }
-
-    private boolean updateTitle(final Artifact artifact, final String title) {
-        final var newTitle = MetadataUtils.updateString(artifact.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(artifact::setTitle);
-
-        return newTitle.isPresent();
     }
 
     private boolean updateAutoDownload(final Artifact artifact, final boolean autoDownload) {

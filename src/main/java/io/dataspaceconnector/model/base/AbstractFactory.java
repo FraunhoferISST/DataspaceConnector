@@ -9,7 +9,7 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 
-public abstract class AbstractFactory<T extends AbstractEntity, D extends Description> {
+public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
 
@@ -32,17 +32,11 @@ public abstract class AbstractFactory<T extends AbstractEntity, D extends Descri
         Utils.requireNonNull(entity, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        boolean bootstrapId;
-        if (desc.getBootstrapId() != null) {
-            bootstrapId = this.updateBootstrapId(entity, desc.getBootstrapId());
-        } else {
-            bootstrapId = false;
-        }
-
-        final var internal = updateInternal(entity, desc);
         final var additional = updateAdditional(entity, desc.getAdditional());
+        final var bootstrap = updateBootstrapId(entity, desc.getBootstrapId());
+        final var internal = updateInternal(entity, desc);
 
-        return internal || additional || bootstrapId;
+        return additional || bootstrap || internal;
     }
 
     protected boolean updateAdditional(final T entity, final Map<String, String> additional) {
@@ -54,6 +48,11 @@ public abstract class AbstractFactory<T extends AbstractEntity, D extends Descri
     }
 
     protected boolean updateBootstrapId(final T entity, final URI bootstrapId) {
+        // TODO Fix me
+        if (bootstrapId == null) {
+            return false;
+        }
+
         Optional<URI> newBootstrapId;
         if (bootstrapId == null && entity.getBootstrapId() == null) {
             newBootstrapId = Optional.empty();

@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -83,18 +84,9 @@ class CatalogOfferedResourceLinkerTest {
         constructor.setAccessible(true);
 
         final var catalog = constructor.newInstance();
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, "Catalog");
-
-        final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
-        offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(catalog, "title", "Catalog");
+        ReflectionTestUtils.setField(catalog, "offeredResources", new ArrayList<OfferedResource>());
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return catalog;
     }
@@ -105,15 +97,8 @@ class CatalogOfferedResourceLinkerTest {
         constructor.setAccessible(true);
 
         final var resource = constructor.newInstance();
-
-        final var titleField = resource.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(resource, "Hello");
-
-        final var idField =
-                resource.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(resource, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
+        ReflectionTestUtils.setField(catalog, "title", "Hello");
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
         return resource;
     }

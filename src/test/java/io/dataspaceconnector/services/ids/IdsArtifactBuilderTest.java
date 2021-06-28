@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactFactory;
@@ -137,11 +137,11 @@ public class IdsArtifactBuilderTest {
         artifactDesc.setValue("value");
         final var artifact = artifactFactory.create(artifactDesc);
 
-        final var idField = AbstractEntity.class.getDeclaredField("id");
+        final var idField = Entity.class.getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(artifact, UUID.randomUUID());
 
-        final var creationDateField = AbstractEntity.class.getDeclaredField("creationDate");
+        final var creationDateField = Entity.class.getDeclaredField("creationDate");
         creationDateField.setAccessible(true);
         creationDateField.set(artifact, date);
 
@@ -154,7 +154,7 @@ public class IdsArtifactBuilderTest {
         final var additional = new HashMap<String, String>();
         additional.put("key", "value");
 
-        final var additionalField = AbstractEntity.class.getDeclaredField("additional");
+        final var additionalField = Entity.class.getDeclaredField("additional");
         additionalField.setAccessible(true);
         additionalField.set(artifact, additional);
 

@@ -15,18 +15,18 @@
  */
 package io.dataspaceconnector.model.contracts;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.resources.Resource;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.rules.ContractRule;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -41,7 +41,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 /**
  * A contract documents access and usage behaviours.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "contract")
 @SQLDelete(sql = "UPDATE contract SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -49,7 +49,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Contract extends AbstractEntity {
+public class Contract extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -76,11 +76,6 @@ public class Contract extends AbstractEntity {
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI provider;
-
-    /**
-     * The title of the contract.
-     */
-    private String title;
 
     /**
      * Contract start time and date.

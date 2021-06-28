@@ -15,18 +15,17 @@
  */
 package io.dataspaceconnector.model.resources;
 
-import java.net.URI;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
 import io.dataspaceconnector.exceptions.ResourceException;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.representations.Representation;
@@ -45,7 +44,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 /**
  * A resource describes offered or requested data.
  */
-@Entity
+@javax.persistence.Entity
 @Inheritance
 @Getter
 @Setter(AccessLevel.PACKAGE)
@@ -54,21 +53,11 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Where(clause = "deleted = false")
 @Table(name = "resource")
 @RequiredArgsConstructor
-public class Resource extends AbstractEntity {
+public class Resource extends NamedEntity {
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The title of the resource.
-     */
-    private String title;
-
-    /**
-     * The description of the resource.
-     */
-    private String description;
 
     /**
      * The keywords of the resource.

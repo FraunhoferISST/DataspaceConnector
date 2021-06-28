@@ -18,8 +18,8 @@ package io.dataspaceconnector.model.clearinghouse;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -30,17 +30,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ClearingHouseDesc extends Description {
+public class ClearingHouseDesc extends NamedDescription {
 
     /**
      * The access url of the clearing house.
      */
     private URI name;
-
-    /**
-     * The title of the clearing house.
-     */
-    private String title;
 
     /**
      * The status of registration.

@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model.routes;
 
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
@@ -23,7 +22,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.configurations.DeployMethod;
 import io.dataspaceconnector.model.endpoints.Endpoint;
@@ -38,7 +37,7 @@ import org.hibernate.annotations.Where;
 /**
  *
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "route")
 @SQLDelete(sql = "UPDATE route SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -46,7 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Route extends AbstractEntity {
+public class Route extends Entity {
 
     /**
      * Serial version uid.

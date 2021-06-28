@@ -34,6 +34,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -359,22 +360,10 @@ class CatalogControllerTest {
         constructor.setAccessible(true);
 
         final var catalog = constructor.newInstance();
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, desc.getTitle());
-
-        final var descriptionField = catalog.getClass().getDeclaredField("description");
-        descriptionField.setAccessible(true);
-        descriptionField.set(catalog, desc.getDescription());
-
-        final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
-        offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(catalog, "title", desc.getTitle());
+        ReflectionTestUtils.setField(catalog, "description", desc.getDescription());
+        ReflectionTestUtils.setField(catalog, "offeredResources", new ArrayList<OfferedResource>());
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return catalog;
     }
@@ -386,22 +375,10 @@ class CatalogControllerTest {
         constructor.setAccessible(true);
 
         final var catalog = constructor.newInstance();
-
-        final var titleField = catalog.getClass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(catalog, desc.getTitle());
-
-        final var descriptionField = catalog.getClass().getDeclaredField("description");
-        descriptionField.setAccessible(true);
-        descriptionField.set(catalog, desc.getDescription());
-
-        final var offeredResourcesField = catalog.getClass().getDeclaredField("offeredResources");
-        offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, new ArrayList<OfferedResource>());
-
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(catalog, UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
+        ReflectionTestUtils.setField(catalog, "title", desc.getTitle());
+        ReflectionTestUtils.setField(catalog, "description", desc.getDescription());
+        ReflectionTestUtils.setField(catalog, "offeredResources", new ArrayList<OfferedResource>());
+        ReflectionTestUtils.setField(catalog, "id", UUID.fromString("554ed409-03e9-4b41-a45a-4b7a8c0aa499"));
 
         return catalog;
     }

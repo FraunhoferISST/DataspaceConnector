@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 
 /**
@@ -29,17 +29,7 @@ import io.dataspaceconnector.utils.MetadataUtils;
  * @param <D> The description type.
  */
 public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc>
-        extends AbstractFactory<T, D> {
-
-    /**
-     * The default title assigned to all resources.
-     */
-    public static final String DEFAULT_TITLE = "";
-
-    /**
-     * The default description assigned to all resources.
-     */
-    public static final String DEFAULT_DESCRIPTION = "";
+        extends AbstractNamedFactory<T, D> {
 
     /**
      * The default keywords assigned to all resources.
@@ -102,9 +92,9 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Override
-    protected boolean updateInternal(final T resource, final D desc) {
-        final var hasUpdatedTitle = updateTitle(resource, desc.getTitle());
-        final var hasUpdatedDesc = updateDescription(resource, desc.getDescription());
+    public boolean update(final T resource, final D desc) {
+        // TODO Fix me (parent call)
+        final var hasParentUpdated = super.update(resource, desc);
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
         final var hasUpdatedPublisher = updatePublisher(resource, desc.getPublisher());
         final var hasUpdatedLanguage = updateLanguage(resource, desc.getLanguage());
@@ -112,9 +102,9 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
-        final var hasChildUpdated = updateType(resource, desc);
+        final var hasChildUpdated = updateInternal(resource, desc);
 
-        final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
+        final var hasUpdated = hasParentUpdated || hasChildUpdated
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
                                || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs;
 
@@ -123,43 +113,6 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         }
 
         return hasUpdated;
-    }
-
-    /**
-     * Update a resource. Implement type specific stuff here.
-     * @param resource The resource to be updated.
-     * @param desc     The description passed to the factory.
-     * @return true if the resource has been modified.
-     */
-    protected boolean updateType(final T resource, final D desc) {
-        return false;
-    }
-
-    /**
-     * Update a resource's title.
-     * @param resource The resource.
-     * @param title    The new title.
-     * @return true if the resource's title has been modified.
-     */
-    protected final boolean updateTitle(final Resource resource, final String title) {
-        final var newTitle = MetadataUtils.updateString(resource.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(resource::setTitle);
-
-        return newTitle.isPresent();
-    }
-
-    /**
-     * Update a resource's description.
-     * @param resource    The resource.
-     * @param description The new description.
-     * @return true if the resource's description has been modified.
-     */
-    protected final boolean updateDescription(final Resource resource, final String description) {
-        final var newDesc = MetadataUtils.updateString(
-                resource.getDescription(), description, DEFAULT_DESCRIPTION);
-        newDesc.ifPresent(resource::setDescription);
-
-        return newDesc.isPresent();
     }
 
     /**

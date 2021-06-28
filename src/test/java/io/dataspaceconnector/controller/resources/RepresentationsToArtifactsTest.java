@@ -37,6 +37,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -148,15 +149,8 @@ class RepresentationsToArtifactsTest {
         constructor.setAccessible(true);
 
         final var artifact = constructor.newInstance();
-
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(artifact, title);
-
-        final var idField =
-                artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(artifact, UUID.randomUUID());
+        ReflectionTestUtils.setField(artifact, "title", title);
+        ReflectionTestUtils.setField(artifact, "id", UUID.randomUUID());
 
         return artifact;
     }

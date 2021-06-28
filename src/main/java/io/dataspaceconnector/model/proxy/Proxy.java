@@ -18,14 +18,13 @@ package io.dataspaceconnector.model.proxy;
 import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import java.net.URI;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.dataspaceconnector.model.auth.Authentication;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,11 +35,11 @@ import lombok.ToString;
 /**
  * Entity for managing proxies.
  */
-@Entity
+@javax.persistence.Entity
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
-public class Proxy extends AbstractEntity {
+public class Proxy extends Entity {
     /**
      * Serial version uid.
      **/

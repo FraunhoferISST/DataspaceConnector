@@ -17,14 +17,13 @@ package io.dataspaceconnector.model.rules;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.contracts.Contract;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
@@ -40,7 +39,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 /**
  * A ContractRule defines a rule that should be enforced.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "contractrule")
 @SQLDelete(sql = "UPDATE contractrule SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -48,7 +47,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class ContractRule extends AbstractEntity {
+public class ContractRule extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -61,11 +60,6 @@ public class ContractRule extends AbstractEntity {
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
-
-    /**
-     * The title of the rule.
-     */
-    private String title;
 
     /**
      * The definition of the rule.

@@ -15,18 +15,17 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import java.net.URI;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
 
-import io.dataspaceconnector.model.representations.Representation;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.agreements.Agreement;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.representations.Representation;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -42,7 +41,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
  * An artifact stores and encapsulates data.
  */
 @Inheritance
-@Entity
+@javax.persistence.Entity
 @Table(name = "artifact")
 @SQLDelete(sql = "UPDATE artifact SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -50,7 +49,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public abstract class Artifact extends AbstractEntity {
+public abstract class Artifact extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -70,11 +69,6 @@ public abstract class Artifact extends AbstractEntity {
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI remoteAddress;
-
-    /**
-     * The title of the catalog.
-     **/
-    private String title;
 
     /**
      * The counter of how often the underlying data has been accessed.

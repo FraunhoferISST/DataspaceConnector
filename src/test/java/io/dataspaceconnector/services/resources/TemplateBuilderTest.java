@@ -34,6 +34,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -172,10 +173,7 @@ class TemplateBuilderTest {
     private Artifact getArtifact(ArtifactDesc desc) {
         final var artifactConstructor = ArtifactImpl.class.getConstructor();
         final var artifact = artifactConstructor.newInstance();
-
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
-        titleField.setAccessible(true);
-        titleField.set(artifact, desc.getTitle());
+        ReflectionTestUtils.setField(artifact, "title", desc.getTitle());
 
         return artifact;
     }

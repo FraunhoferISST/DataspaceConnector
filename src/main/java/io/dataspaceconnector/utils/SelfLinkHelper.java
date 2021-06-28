@@ -19,7 +19,7 @@ import java.net.URI;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.agreements.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -100,7 +100,7 @@ public final class SelfLinkHelper {
      * @param <T>    Generic type of database entity.
      * @return The abstract entity.
      */
-    public static <T extends AbstractEntity> URI getSelfLink(final T entity) {
+    public static <T extends Entity> URI getSelfLink(final T entity) {
         if (entity instanceof Catalog) {
             return getSelfLink((Catalog) entity);
         } else if (entity instanceof OfferedResource) {
@@ -132,7 +132,7 @@ public final class SelfLinkHelper {
      * @return The abstract entity and its self-link.
      * @throws ResourceNotFoundException If the entity could not be found.
      */
-    public static <T extends AbstractEntity, S extends SelfLinking> URI getSelfLink(
+    public static <T extends Entity, S extends SelfLinking> URI getSelfLink(
             final T entity, final S describer) throws ResourceNotFoundException {
         try {
             return describer.getSelfLink(entity.getId()).toUri();

@@ -19,8 +19,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,16 +28,12 @@ import org.springframework.stereotype.Component;
  * Creates and updates an app store.
  */
 @Component
-public class AppStoreFactory extends AbstractFactory<AppStore, AppStoreDesc> {
+public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc> {
 
     /**
      * The default uri.
      */
     private static final URI DEFAULT_LOCATION = URI.create("");
-    /**
-     * The default title.
-     */
-    private static final String DEFAULT_TITLE = "";
 
     /**
      * @param desc The description of the entity.
@@ -58,12 +54,11 @@ public class AppStoreFactory extends AbstractFactory<AppStore, AppStoreDesc> {
      */
     @Override
     protected boolean updateInternal(final AppStore appStore, final AppStoreDesc desc) {
-        final var hasUpdatedTitle = updateTitle(appStore, desc.getTitle());
         final var hasUpdatedName = updateName(appStore, desc.getName());
         final var hasUpdatedRegistrationStatus =
                 updateRegistrationStatus(appStore, desc.getStatus());
 
-        return hasUpdatedTitle || hasUpdatedName || hasUpdatedRegistrationStatus;
+        return hasUpdatedName || hasUpdatedRegistrationStatus;
     }
 
     /**
@@ -88,17 +83,5 @@ public class AppStoreFactory extends AbstractFactory<AppStore, AppStoreDesc> {
                                                          name, DEFAULT_LOCATION);
         newName.ifPresent(appStore::setName);
         return newName.isPresent();
-    }
-
-    /**
-     * @param appStore The entity to be updated.
-     * @param title    The new title.
-     * @return True, if title is updated.
-     */
-    private boolean updateTitle(final AppStore appStore, final String title) {
-        final var newTitle = MetadataUtils.updateString(appStore.getTitle(), title,
-                DEFAULT_TITLE);
-        newTitle.ifPresent(appStore::setTitle);
-        return newTitle.isPresent();
     }
 }

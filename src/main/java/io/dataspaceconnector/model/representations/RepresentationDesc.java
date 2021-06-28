@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.representations;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.model.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,18 +27,13 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RepresentationDesc extends Description {
+public class RepresentationDesc extends NamedDescription {
 
     /**
      * The representation id on provider side.
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private URI remoteId;
-
-    /**
-     * The title of the representation.
-     */
-    private String title;
 
     /**
      * The media type expressed by this representation.

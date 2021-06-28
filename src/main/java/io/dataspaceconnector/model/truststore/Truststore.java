@@ -1,11 +1,9 @@
 package io.dataspaceconnector.model.truststore;
 
-import javax.persistence.Entity;
+import io.dataspaceconnector.model.base.Entity;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
-
-@Entity
-public class Truststore extends AbstractEntity {
+@javax.persistence.Entity
+public class Truststore extends Entity {
     /**
      * Serial version uid.
      **/

@@ -15,14 +15,13 @@
  */
 package io.dataspaceconnector.model.configurations;
 
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import de.fraunhofer.iais.eis.ConnectorStatus;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.keystore.Keystore;
 import io.dataspaceconnector.model.proxy.Proxy;
 import io.dataspaceconnector.model.truststore.Truststore;
@@ -37,7 +36,7 @@ import org.hibernate.annotations.Where;
 /**
  * The configuration describes the configuration of a connector.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "configuration")
 @SQLDelete(sql = "UPDATE configuration SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -45,7 +44,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Configuration extends AbstractEntity {
+public class Configuration extends Entity {
 
     /**
      * Serial version uid.

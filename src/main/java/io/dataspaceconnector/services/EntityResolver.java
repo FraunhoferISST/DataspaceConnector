@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.SelfLinkCreationException;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.agreements.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.catalog.Catalog;
@@ -164,7 +164,7 @@ public class EntityResolver {
      * @throws ResourceNotFoundException If the resource could not be found.
      * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
-    public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
+    public Entity getEntityById(final URI elementId) throws ResourceNotFoundException {
         Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
 
         try {
@@ -209,7 +209,7 @@ public class EntityResolver {
      * @param entity The connector's entity.
      * @return A rdf string of an ids object.
      */
-    public <T extends AbstractEntity> String getEntityAsRdfString(final T entity)
+    public <T extends Entity> String getEntityAsRdfString(final T entity)
             throws InvalidResourceException {
         // NOTE Maybe the builder class could be found without the ugly if array?
         try {

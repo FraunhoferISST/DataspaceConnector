@@ -18,8 +18,8 @@ package io.dataspaceconnector.model.broker;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -28,17 +28,12 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class BrokerDesc extends Description {
+public class BrokerDesc extends NamedDescription {
 
     /**
      * The access url of the broker.
      */
     private URI accessUrl;
-
-    /**
-     * The title of the broker.
-     */
-    private String title;
 
     /**
      * The status of registration.

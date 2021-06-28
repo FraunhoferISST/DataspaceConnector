@@ -17,26 +17,14 @@ package io.dataspaceconnector.model.catalog;
 
 import java.util.ArrayList;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 
 /**
  * Creates and updates a catalog.
  */
 @Component
-public class CatalogFactory extends AbstractFactory<Catalog, CatalogDesc> {
-
-    /**
-     * Default title assigned to all catalogs.
-     */
-    public static final String DEFAULT_TITLE = "";
-
-    /**
-     * Default description assigned to all catalogs.
-     */
-    public static final String DEFAULT_DESCRIPTION = "";
-
+public class CatalogFactory extends AbstractNamedFactory<Catalog, CatalogDesc> {
     /**
      * Create a new catalog.
      * @param desc The description of the new catalog.
@@ -50,29 +38,5 @@ public class CatalogFactory extends AbstractFactory<Catalog, CatalogDesc> {
         catalog.setRequestedResources(new ArrayList<>());
 
         return catalog;
-    }
-
-    @Override
-    protected boolean updateInternal(final Catalog catalog, final CatalogDesc desc) {
-        final var hasUpdatedTitle = this.updateTitle(catalog, desc.getTitle());
-        final var hasUpdatedDesc = this.updateDescription(catalog, desc.getDescription());
-
-        return hasUpdatedTitle || hasUpdatedDesc;
-    }
-
-    private boolean updateTitle(final Catalog catalog, final String title) {
-        final var newTitle = MetadataUtils.updateString(catalog.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(catalog::setTitle);
-
-        return newTitle.isPresent();
-    }
-
-    private boolean updateDescription(final Catalog catalog, final String description) {
-        final var newDescription =
-                MetadataUtils
-                        .updateString(catalog.getDescription(), description, DEFAULT_DESCRIPTION);
-        newDescription.ifPresent(catalog::setDescription);
-
-        return newDescription.isPresent();
     }
 }

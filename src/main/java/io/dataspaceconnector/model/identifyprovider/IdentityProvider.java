@@ -16,15 +16,15 @@
 package io.dataspaceconnector.model.identifyprovider;
 
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.Table;
 import java.net.URI;
 
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -37,7 +37,7 @@ import org.hibernate.annotations.Where;
 /**
  * Entity class for the identity provider.
  */
-@Entity
+@javax.persistence.Entity
 @Inheritance
 @Table(name = "identityprovider")
 @Getter
@@ -46,7 +46,7 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE identityprovider SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @RequiredArgsConstructor
-public class IdentityProvider extends AbstractEntity {
+public class IdentityProvider extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -58,11 +58,6 @@ public class IdentityProvider extends AbstractEntity {
      */
     @Convert(converter = UriConverter.class)
     private URI name;
-
-    /**
-     * The title of the identity provider.
-     */
-    private String title;
 
     /**
      * The registration status.

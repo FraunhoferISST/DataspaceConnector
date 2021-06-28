@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.broker;
 
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
@@ -25,9 +24,10 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -40,7 +40,7 @@ import org.hibernate.annotations.Where;
 /**
  * The entity where connectors and resources can be registered.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "broker")
 @SQLDelete(sql = "UPDATE broker SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -48,7 +48,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Broker extends AbstractEntity {
+public class Broker extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -60,11 +60,6 @@ public class Broker extends AbstractEntity {
      */
     @Convert(converter = UriConverter.class)
     private URI accessUrl;
-
-    /**
-     * The title of the broker.
-     */
-    private String title;
 
     /**
      * The status of registration.

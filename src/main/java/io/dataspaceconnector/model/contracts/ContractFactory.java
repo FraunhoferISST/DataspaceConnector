@@ -20,7 +20,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * Creates and updates a contract.
  */
 @Component
-public class ContractFactory extends AbstractFactory<Contract, ContractDesc> {
+public class ContractFactory extends AbstractNamedFactory<Contract, ContractDesc> {
 
     /**
      * Default remote id assigned to all contracts.
@@ -44,11 +44,6 @@ public class ContractFactory extends AbstractFactory<Contract, ContractDesc> {
      * Default provider assigned to all contracts.
      */
     public static final URI DEFAULT_PROVIDER = URI.create("");
-
-    /**
-     * Default title assigned to all contracts.
-     */
-    public static final String DEFAULT_TITLE = "";
 
     /**
      * Create a new contract.
@@ -77,12 +72,10 @@ public class ContractFactory extends AbstractFactory<Contract, ContractDesc> {
         final var hasUpdatedRemoteId = this.updateRemoteId(contract, desc.getRemoteId());
         final var hasUpdatedConsumer = this.updateConsumer(contract, desc.getConsumer());
         final var hasUpdatedProvider = this.updateProvider(contract, desc.getProvider());
-        final var hasUpdatedTitle = this.updateTitle(contract, desc.getTitle());
 
         final var hasUpdatedTime = this.updateTime(contract, contract.getStart(), desc.getEnd());
 
-        return hasUpdatedRemoteId || hasUpdatedConsumer || hasUpdatedProvider || hasUpdatedTitle
-               || hasUpdatedTime;
+        return hasUpdatedRemoteId || hasUpdatedConsumer || hasUpdatedProvider || hasUpdatedTime;
     }
 
     private boolean updateRemoteId(final Contract contract, final URI remoteId) {
@@ -107,13 +100,6 @@ public class ContractFactory extends AbstractFactory<Contract, ContractDesc> {
         newUri.ifPresent(contract::setProvider);
 
         return newUri.isPresent();
-    }
-
-    private boolean updateTitle(final Contract contract, final String title) {
-        final var newTitle = MetadataUtils.updateString(contract.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(contract::setTitle);
-
-        return newTitle.isPresent();
     }
 
     private boolean updateTime(final Contract contract, final ZonedDateTime start,

@@ -45,7 +45,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Data
 @MappedSuperclass
 @Setter(AccessLevel.NONE)
-public class AbstractEntity implements Serializable {
+public class Entity implements Serializable {
     /**
      * Serial version uid.
      **/

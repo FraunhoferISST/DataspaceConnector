@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.utils.SelfLinkHelper;
 import io.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
@@ -39,7 +39,7 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @NoArgsConstructor
-public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
+public abstract class AbstractIdsBuilder<T extends Entity, X> {
 
     /**
      * The default depth the builder will follow dependencies.
@@ -103,7 +103,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @param <K>     The entity type.
      * @return The absolute path to this entity.
      */
-    protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity) {
+    protected <K extends Entity> URI getAbsoluteSelfLink(final K entity) {
         return SelfLinkHelper.getSelfLink(entity);
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @param <W>          The type of the ids entity.
      * @return The converted ids objects. Null if the distance is to far to the original call.
      */
-    protected <V extends AbstractEntity, W> Optional<List<W>> create(
+    protected <V extends Entity, W> Optional<List<W>> create(
             final AbstractIdsBuilder<V, W> builder, final List<V> entityList,
             final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;

@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,8 +52,8 @@ import org.springframework.data.domain.Pageable;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
 public abstract class NonOwningRelationService<
-        K extends AbstractEntity,
-        W extends AbstractEntity,
+        K extends Entity,
+        W extends Entity,
         T extends BaseEntityService<K, ?>,
         X extends BaseEntityService<W, ?>
         > extends AbstractRelationService<K, W, T, X> {
@@ -86,7 +86,7 @@ public abstract class NonOwningRelationService<
     public final void replaceInternal(final UUID ownerId, final Set<UUID> entities) {
         final var set = Set.of(ownerId);
         final var allRelations =
-                getOneService().getAll(Pageable.unpaged()).stream().map(AbstractEntity::getId)
+                getOneService().getAll(Pageable.unpaged()).stream().map(Entity::getId)
                                .collect(Collectors.toList());
 
         for (final var id : allRelations) {

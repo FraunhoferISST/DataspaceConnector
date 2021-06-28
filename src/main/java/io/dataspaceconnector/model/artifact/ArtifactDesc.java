@@ -19,7 +19,7 @@ import java.net.URI;
 import java.net.URL;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.model.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,7 +29,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ArtifactDesc extends Description {
+public class ArtifactDesc extends NamedDescription {
 
     /**
      * The agreement id on provider side.
@@ -42,11 +42,6 @@ public class ArtifactDesc extends Description {
      */
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private URI remoteAddress;
-
-    /**
-     * The title of the artifact.
-     */
-    private String title;
 
     /**
      * The url of the data location.

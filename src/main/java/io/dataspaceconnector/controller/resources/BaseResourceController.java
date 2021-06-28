@@ -18,7 +18,7 @@ package io.dataspaceconnector.controller.resources;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.base.CRUDController;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.Description;
 import io.dataspaceconnector.services.resources.EntityService;
 import io.dataspaceconnector.utils.Utils;
@@ -45,7 +45,7 @@ import org.springframework.http.ResponseEntity;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class BaseResourceController<T extends AbstractEntity, D extends Description, V
+public class BaseResourceController<T extends Entity, D extends Description, V
         extends RepresentationModel<V>, S extends EntityService<T, D>>
         implements CRUDController<T, D, V> {
     /**

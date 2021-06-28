@@ -18,27 +18,16 @@ package io.dataspaceconnector.model.resources;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.Description;
+import io.dataspaceconnector.model.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * Base class for describing resources.
- * @param <T> The type of the resource.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ResourceDesc extends Description {
-
-    /**
-     * The title of the resource.
-     */
-    private String title;
-
-    /**
-     * The description of the resource.
-     */
-    private String description;
+public class ResourceDesc extends NamedDescription {
 
     /**
      * The keywords of the resource.

@@ -18,6 +18,7 @@ package io.dataspaceconnector.model.identifyprovider;
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
@@ -28,17 +29,12 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class IdentityProviderDesc extends Description {
+public class IdentityProviderDesc extends NamedDescription {
 
     /**
      * The access url of the identity provider.
      */
     private URI name;
-
-    /**
-     * The title of the identity provider.
-     */
-    private String title;
 
     /**
      * The registration status.

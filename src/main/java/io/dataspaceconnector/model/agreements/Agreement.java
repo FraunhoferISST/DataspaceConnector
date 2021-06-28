@@ -17,7 +17,6 @@ package io.dataspaceconnector.model.agreements;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
@@ -25,7 +24,7 @@ import java.net.URI;
 import java.util.List;
 
 import io.dataspaceconnector.model.artifact.Artifact;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -41,7 +40,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
  * A contract agreement is an agreement between two parties on access
  * and usage behaviours.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "agreement")
 @SQLDelete(sql = "UPDATE agreement SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -49,7 +48,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Agreement extends AbstractEntity {
+public class Agreement extends Entity {
 
     /**
      * Serial version uid.

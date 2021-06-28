@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseDescriptions;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.services.resources.RelationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.UUIDUtils;
@@ -64,7 +64,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
 public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
-        T extends AbstractEntity, V extends RepresentationModel<V>> {
+        T extends Entity, V extends RepresentationModel<V>> {
     /**
      * The linker between two resources.
      **/

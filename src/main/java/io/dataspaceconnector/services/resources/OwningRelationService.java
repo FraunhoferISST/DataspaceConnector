@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 
 /**
  * Creates a parent-children relationship between two types of resources.
@@ -31,7 +31,7 @@ import io.dataspaceconnector.model.base.AbstractEntity;
  * @param <X> The service type for the child resource.
  */
 public abstract class OwningRelationService<
-        K extends AbstractEntity, W extends AbstractEntity, T extends BaseEntityService<K, ?>, X
+        K extends Entity, W extends Entity, T extends BaseEntityService<K, ?>, X
                 extends EntityService<W, ?>> extends AbstractRelationService<K, W, T, X> {
 
     @Override

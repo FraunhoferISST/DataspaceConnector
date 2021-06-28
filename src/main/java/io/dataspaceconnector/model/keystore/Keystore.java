@@ -1,11 +1,9 @@
 package io.dataspaceconnector.model.keystore;
 
-import javax.persistence.Entity;
+import io.dataspaceconnector.model.base.Entity;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
-
-@Entity
-public class Keystore extends AbstractEntity {
+@javax.persistence.Entity
+public class Keystore extends Entity {
     /**
      * Serial version uid.
      **/

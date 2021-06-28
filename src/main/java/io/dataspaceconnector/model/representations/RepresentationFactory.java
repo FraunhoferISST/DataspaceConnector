@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.representations;
 import java.net.URI;
 import java.util.ArrayList;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -26,17 +26,13 @@ import org.springframework.stereotype.Component;
  * Creates and updates a representation.
  */
 @Component
-public class RepresentationFactory extends AbstractFactory<Representation, RepresentationDesc> {
+public class RepresentationFactory
+        extends AbstractNamedFactory<Representation, RepresentationDesc> {
 
     /**
      * The default remote id assigned to all representations.
      */
     public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-
-    /**
-     * The default title assigned to all representations.
-     */
-    public static final String DEFAULT_TITLE = "";
 
     /**
      * The default language assigned to all representations.
@@ -78,13 +74,11 @@ public class RepresentationFactory extends AbstractFactory<Representation, Repre
     @Override
     protected boolean updateInternal(final Representation representation, final RepresentationDesc desc) {
         final var hasUpdatedRemoteId = this.updateRemoteId(representation, desc.getRemoteId());
-        final var hasUpdatedTitle = this.updateTitle(representation, desc.getTitle());
         final var hasUpdatedMediaType = this.updateMediaType(representation, desc.getMediaType());
         final var hasUpdatedLanguage = this.updateLanguage(representation, desc.getLanguage());
         final var hasUpdatedStandard = this.updateStandard(representation, desc.getStandard());
 
-        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedLanguage || hasUpdatedMediaType
-               || hasUpdatedStandard;
+        return hasUpdatedRemoteId || hasUpdatedLanguage || hasUpdatedMediaType || hasUpdatedStandard;
     }
 
     private boolean updateRemoteId(final Representation representation, final URI remoteId) {
@@ -93,14 +87,6 @@ public class RepresentationFactory extends AbstractFactory<Representation, Repre
         newUri.ifPresent(representation::setRemoteId);
 
         return newUri.isPresent();
-    }
-
-    private boolean updateTitle(final Representation representation, final String title) {
-        final var newTitle =
-                MetadataUtils.updateString(representation.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(representation::setTitle);
-
-        return newTitle.isPresent();
     }
 
     private boolean updateLanguage(final Representation representation, final String language) {

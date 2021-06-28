@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.base.Description;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.repositories.BaseEntityRepository;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -39,7 +39,7 @@ import org.springframework.data.domain.Pageable;
  */
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.NONE)
-public class BaseEntityService<T extends AbstractEntity, D extends Description>
+public class BaseEntityService<T extends Entity, D extends Description>
     implements EntityService<T, D> {
     /**
      * Persists all entities of type T.

@@ -18,8 +18,8 @@ package io.dataspaceconnector.model.identifyprovider;
 import java.net.URI;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,17 +28,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class IdentityProviderFactory
-        extends AbstractFactory<IdentityProvider, IdentityProviderDesc> {
+        extends AbstractNamedFactory<IdentityProvider, IdentityProviderDesc> {
 
     /**
      * Default access url.
      */
     private static final URI DEFAULT_IDENTITY_PROVIDER = URI.create("");
-
-    /**
-     * Default string value.
-     */
-    private static final String DEFAULT_TITLE = "";
 
     /**
      * @param desc The description of the entity.
@@ -58,10 +53,9 @@ public class IdentityProviderFactory
     protected boolean updateInternal(final IdentityProvider identityProvider,
                                         final IdentityProviderDesc desc) {
         final var hasUpdatedName = updateName(identityProvider, desc.getName());
-        final var newTitle = updateTitle(identityProvider, desc.getTitle());
         final var newStatus = updateRegistrationStatus(identityProvider, desc.getStatus());
 
-        return hasUpdatedName || newTitle || newStatus;
+        return hasUpdatedName || newStatus;
     }
 
     /**
@@ -74,18 +68,6 @@ public class IdentityProviderFactory
         identityProvider.setStatus(
                 Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
-    }
-
-    /**
-     * @param identityProvider The entity to be updated.
-     * @param title            The new title of the entity.
-     * @return True, if title is updated.
-     */
-    private boolean updateTitle(final IdentityProvider identityProvider, final String title) {
-        final var newTitle =
-                MetadataUtils.updateString(identityProvider.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(identityProvider::setTitle);
-        return newTitle.isPresent();
     }
 
     /**

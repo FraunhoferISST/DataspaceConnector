@@ -16,7 +16,6 @@
 package io.dataspaceconnector.model.appstore;
 
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
@@ -24,9 +23,9 @@ import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.RegistrationStatus;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.apps.App;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.RegistrationStatus;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -39,7 +38,7 @@ import org.hibernate.annotations.Where;
 /**
  * Apps can be downloaded from an app store to perform data operations on the data.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "appstore")
 @SQLDelete(sql = "UPDATE appstore SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -47,7 +46,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class AppStore extends AbstractEntity {
+public class AppStore extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -59,11 +58,6 @@ public class AppStore extends AbstractEntity {
      */
     @Convert(converter = UriConverter.class)
     private URI name;
-
-    /**
-     * The title of the app store.
-     */
-    private String title;
 
     /**
      * The registration status.

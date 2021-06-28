@@ -18,8 +18,8 @@ package io.dataspaceconnector.model.clearinghouse;
 import java.net.URI;
 import java.util.Objects;
 
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -27,17 +27,12 @@ import org.springframework.stereotype.Component;
  * Creates and updates clearing houses.
  */
 @Component
-public class ClearingHouseFactory extends AbstractFactory<ClearingHouse, ClearingHouseDesc> {
+public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, ClearingHouseDesc> {
 
     /**
      * Default access url.
      */
     private static final URI DEFAULT_NAME = URI.create("");
-
-    /**
-     * Default string value.
-     */
-    private static final String DEFAULT_TITLE = "";
 
     @Override
     protected ClearingHouse initializeEntity(final ClearingHouseDesc desc) {
@@ -47,10 +42,9 @@ public class ClearingHouseFactory extends AbstractFactory<ClearingHouse, Clearin
     @Override
     protected boolean updateInternal(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
         final var hasUpdatedName = updateName(clearingHouse, desc.getName());
-        final var newTitle = updateTitle(clearingHouse, desc.getTitle());
         final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
 
-        return hasUpdatedName || newTitle || newStatus;
+        return hasUpdatedName || newStatus;
     }
 
     /**
@@ -63,18 +57,6 @@ public class ClearingHouseFactory extends AbstractFactory<ClearingHouse, Clearin
         clearingHouse.setStatus(
                 Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
-    }
-
-    /**
-     * @param clearingHouse The entity to be updated.
-     * @param title         The new title of the entity.
-     * @return True, if clearing house is updated
-     */
-    private boolean updateTitle(final ClearingHouse clearingHouse, final String title) {
-        final var newTitle = MetadataUtils.updateString(clearingHouse.getTitle(),
-                                                        title, DEFAULT_TITLE);
-        newTitle.ifPresent(clearingHouse::setTitle);
-        return newTitle.isPresent();
     }
 
     /**

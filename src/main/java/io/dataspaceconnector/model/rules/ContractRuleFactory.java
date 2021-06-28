@@ -18,7 +18,7 @@ package io.dataspaceconnector.model.rules;
 import java.net.URI;
 import java.util.ArrayList;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
@@ -26,17 +26,12 @@ import org.springframework.stereotype.Component;
  * Creates and updates a ContractRule.
  */
 @Component
-public class ContractRuleFactory extends AbstractFactory<ContractRule, ContractRuleDesc> {
+public class ContractRuleFactory extends AbstractNamedFactory<ContractRule, ContractRuleDesc> {
 
     /**
      * The default remote id assigned to all contract rules.
      */
     public static final URI DEFAULT_REMOTE_ID = URI.create("genesis");
-
-    /**
-     * The default title assigned to all contract rules.
-     */
-    public static final String DEFAULT_TITLE = "";
 
     /**
      * The default rule assigned to all contract rules.
@@ -67,10 +62,9 @@ public class ContractRuleFactory extends AbstractFactory<ContractRule, ContractR
     @Override
     protected boolean updateInternal(final ContractRule contractRule, final ContractRuleDesc desc) {
         final var hasUpdatedRemoteId = this.updateRemoteId(contractRule, desc.getRemoteId());
-        final var hasUpdatedTitle = this.updateTitle(contractRule, desc.getTitle());
         final var hasUpdatedRule = this.updateRule(contractRule, desc.getValue());
 
-        return hasUpdatedRemoteId || hasUpdatedTitle || hasUpdatedRule;
+        return hasUpdatedRemoteId || hasUpdatedRule;
     }
 
     private boolean updateRemoteId(final ContractRule contractRule, final URI remoteId) {
@@ -79,14 +73,6 @@ public class ContractRuleFactory extends AbstractFactory<ContractRule, ContractR
         newUri.ifPresent(contractRule::setRemoteId);
 
         return newUri.isPresent();
-    }
-
-    private boolean updateTitle(final ContractRule contractRule, final String title) {
-        final var newTitle =
-                MetadataUtils.updateString(contractRule.getTitle(), title, DEFAULT_TITLE);
-        newTitle.ifPresent(contractRule::setTitle);
-
-        return newTitle.isPresent();
     }
 
     private boolean updateRule(final ContractRule contractRule, final String rule) {

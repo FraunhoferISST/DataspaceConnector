@@ -16,14 +16,14 @@
 package io.dataspaceconnector.model.clearinghouse;
 
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import java.net.URI;
 
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -37,7 +37,7 @@ import org.hibernate.annotations.Where;
  * The Clearing House is an intermediary that provides clearing and settlement services
  * for all data exchange transactions.
  */
-@Entity
+@javax.persistence.Entity
 @Table(name = "clearinghouse")
 @SQLDelete(sql = "UPDATE clearinghouse SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
@@ -45,7 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class ClearingHouse extends AbstractEntity {
+public class ClearingHouse extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -57,11 +57,6 @@ public class ClearingHouse extends AbstractEntity {
      */
     @Convert(converter = UriConverter.class)
     private URI name;
-
-    /**
-     * The title of the clearing house.
-     */
-    private String title;
 
     /**
      * The status of registration.

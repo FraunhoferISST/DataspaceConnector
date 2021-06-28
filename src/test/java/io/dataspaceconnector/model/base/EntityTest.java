@@ -15,15 +15,14 @@
  */
 package io.dataspaceconnector.model.base;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 
-class AbstractEntityTest {
+class EntityTest {
 
     @Test
     public void verify_equals() {
-        EqualsVerifier.forClass(AbstractEntity.class).verify();
+        EqualsVerifier.forClass(Entity.class).verify();
     }
 
 }

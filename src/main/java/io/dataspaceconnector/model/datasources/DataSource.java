@@ -17,7 +17,6 @@ package io.dataspaceconnector.model.datasources;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Convert;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
@@ -26,7 +25,7 @@ import javax.persistence.Table;
 import java.net.URI;
 
 import io.dataspaceconnector.model.auth.Authentication;
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -39,7 +38,7 @@ import org.hibernate.annotations.Where;
 /**
  * Entity which holds information about the data sources.
  */
-@Entity
+@javax.persistence.Entity
 @Inheritance
 @Getter
 @Setter(AccessLevel.PACKAGE)
@@ -48,7 +47,7 @@ import org.hibernate.annotations.Where;
 @Where(clause = "deleted = false")
 @Table(name = "datasource")
 @RequiredArgsConstructor
-public class DataSource extends AbstractEntity {
+public class DataSource extends Entity {
 
     /**
      * Serial version uid.

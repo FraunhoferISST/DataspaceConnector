@@ -2,12 +2,12 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.UUID;
 
-import io.dataspaceconnector.model.base.AbstractEntity;
+import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.Description;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-public interface EntityService<T extends AbstractEntity, D extends Description> {
+public interface EntityService<T extends Entity, D extends Description> {
     T create(D desc);
     T update(UUID entityId, D desc);
     T get(UUID entityId);
