@@ -23,7 +23,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
-import io.dataspaceconnector.model.messages.LogMessageDesc;
+import io.dataspaceconnector.ids.messages.dto.LogMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import lombok.extern.log4j.Log4j2;

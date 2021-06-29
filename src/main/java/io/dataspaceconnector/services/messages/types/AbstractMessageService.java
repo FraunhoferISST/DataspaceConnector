@@ -29,7 +29,7 @@ import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.MessageDesc;
+import io.dataspaceconnector.ids.messages.dto.MessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;

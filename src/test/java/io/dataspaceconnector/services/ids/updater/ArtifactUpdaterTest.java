@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.ArtifactDesc;
-import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.ids.templates.ArtifactTemplate;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

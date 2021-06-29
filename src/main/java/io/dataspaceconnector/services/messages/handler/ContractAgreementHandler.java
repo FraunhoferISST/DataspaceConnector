@@ -23,7 +23,7 @@ import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageRequestException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
+import io.dataspaceconnector.ids.messages.dto.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.EntityUpdateService;
 import io.dataspaceconnector.services.ids.DeserializationService;

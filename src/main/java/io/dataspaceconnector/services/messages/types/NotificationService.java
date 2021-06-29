@@ -21,7 +21,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
-import io.dataspaceconnector.model.messages.NotificationMessageDesc;
+import io.dataspaceconnector.ids.messages.dto.NotificationMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import lombok.extern.log4j.Log4j2;

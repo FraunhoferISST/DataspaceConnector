@@ -30,12 +30,12 @@ import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.ResourceDesc;
-import io.dataspaceconnector.model.templates.ArtifactTemplate;
-import io.dataspaceconnector.model.templates.CatalogTemplate;
-import io.dataspaceconnector.model.templates.ContractTemplate;
-import io.dataspaceconnector.model.templates.RepresentationTemplate;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
-import io.dataspaceconnector.model.templates.RuleTemplate;
+import io.dataspaceconnector.ids.templates.ArtifactTemplate;
+import io.dataspaceconnector.ids.templates.CatalogTemplate;
+import io.dataspaceconnector.ids.templates.ContractTemplate;
+import io.dataspaceconnector.ids.templates.RepresentationTemplate;
+import io.dataspaceconnector.ids.templates.ResourceTemplate;
+import io.dataspaceconnector.ids.templates.RuleTemplate;
 
 import java.net.URI;
 import java.time.ZonedDateTime;

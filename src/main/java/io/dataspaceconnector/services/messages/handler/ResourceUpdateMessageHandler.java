@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.messages.handler;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
+import io.dataspaceconnector.ids.messages.dto.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.EntityUpdateService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.messages.MessageResponseService;

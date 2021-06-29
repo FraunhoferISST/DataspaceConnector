@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
-import io.dataspaceconnector.model.messages.ContractAgreementMessageDesc;
+import io.dataspaceconnector.ids.messages.dto.ContractAgreementMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;

@@ -23,7 +23,7 @@ import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.templates.ResourceTemplate;
+import io.dataspaceconnector.ids.templates.ResourceTemplate;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.CatalogService;
