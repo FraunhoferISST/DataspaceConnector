@@ -19,6 +19,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.net.URI;
 import java.util.List;
 
@@ -28,15 +29,22 @@ import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /**
  * Entity for managing proxies.
  */
 @javax.persistence.Entity
+@Table(name = "keystore")
+@SQLDelete(sql = "UPDATE keystore SET deleted=true WHERE id=?")
+@Where(clause = "deleted = false")
+@EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @RequiredArgsConstructor
