@@ -66,18 +66,19 @@ public final class DapsTokenValidator implements PermissionEvaluator {
             return tokenProvider.getDAT() != null;
         } catch (ConnectorMissingCertExtensionException e) {
             if (log.isWarnEnabled()) {
-                log.warn("Certificate of the Connector is missing aki/ski extensions!"
-                        + " exception=({})]", e.getMessage());
+                log.warn("Connector certificate is missing aki/ski extensions."
+                        + " [exception=({})]", e.getMessage());
             }
             return false;
         } catch (DapsConnectionException e) {
             if (log.isWarnEnabled()) {
-                log.warn("The Daps Connection Failed exception=({})]", e.getMessage());
+                log.warn("Connection to DAPS could not be established. "
+                        + "[exception=({})]", e.getMessage());
             }
             return false;
         } catch (DapsEmptyResponseException e) {
             if (log.isWarnEnabled()) {
-                log.warn("The Daps returned a empty response exception=({})]", e.getMessage());
+                log.warn("Received empty response from DAPS. [exception=({})]", e.getMessage());
             }
             return false;
         }
