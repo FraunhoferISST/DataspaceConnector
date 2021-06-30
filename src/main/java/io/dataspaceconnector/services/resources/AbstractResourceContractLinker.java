@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.resources;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.contracts.Contract;
-import io.dataspaceconnector.model.resources.Resource;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.resource.Resource;
 import lombok.NoArgsConstructor;
 
 /**

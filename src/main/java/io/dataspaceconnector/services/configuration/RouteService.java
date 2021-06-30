@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.routes.Route;
-import io.dataspaceconnector.model.routes.RouteDesc;
+import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

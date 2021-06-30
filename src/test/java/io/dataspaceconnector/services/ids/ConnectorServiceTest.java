@@ -40,7 +40,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
 import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
 import io.dataspaceconnector.services.ids.builder.IdsResourceBuilder;
 import io.dataspaceconnector.services.resources.CatalogService;

@@ -19,7 +19,7 @@ import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

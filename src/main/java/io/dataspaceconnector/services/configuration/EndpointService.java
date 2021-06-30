@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.endpoints.Endpoint;
-import io.dataspaceconnector.model.endpoints.EndpointDesc;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 

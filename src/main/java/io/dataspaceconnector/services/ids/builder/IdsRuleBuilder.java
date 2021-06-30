@@ -17,7 +17,7 @@ package io.dataspaceconnector.services.ids.builder;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

@@ -23,7 +23,7 @@ import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.SelfLinkCreationException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.messages.DescriptionResponseMessageDesc;
+import io.dataspaceconnector.model.message.DescriptionResponseMessageDesc;
 import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.MessageResponseService;

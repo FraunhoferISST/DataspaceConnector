@@ -18,7 +18,7 @@ package io.dataspaceconnector.repositories;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.contracts.Contract;
+import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.catalog.Catalog;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

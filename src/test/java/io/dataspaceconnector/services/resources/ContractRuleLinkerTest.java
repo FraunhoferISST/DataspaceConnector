@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.contracts.Contract;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.rule.ContractRule;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

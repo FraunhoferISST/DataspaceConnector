@@ -18,7 +18,7 @@ package io.dataspaceconnector.services.messages.types;
 import de.fraunhofer.iais.eis.ArtifactRequestMessage;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
-import io.dataspaceconnector.model.messages.ArtifactRequestMessageDesc;
+import io.dataspaceconnector.model.message.ArtifactRequestMessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;

@@ -29,7 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public final class RepresentationUpdater implements InfomodelUpdater<Representation,
-        io.dataspaceconnector.model.representations.Representation> {
+        io.dataspaceconnector.model.representation.Representation> {
 
     /**
      * Service for representations.
@@ -40,7 +40,7 @@ public final class RepresentationUpdater implements InfomodelUpdater<Representat
      * {@inheritDoc}
      */
     @Override
-    public io.dataspaceconnector.model.representations.Representation update(
+    public io.dataspaceconnector.model.representation.Representation update(
             final Representation entity) throws ResourceNotFoundException {
         final var entityId = representationService.identifyByRemoteId(entity.getId());
         if (entityId.isEmpty()) {

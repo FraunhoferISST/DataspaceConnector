@@ -27,7 +27,7 @@ import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.exceptions.RdfBuilderException;
-import io.dataspaceconnector.model.messages.ContractRequestMessageDesc;
+import io.dataspaceconnector.model.message.ContractRequestMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;

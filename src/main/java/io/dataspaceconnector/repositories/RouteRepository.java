@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.routes.Route;
+import io.dataspaceconnector.model.route.Route;
 import org.springframework.stereotype.Repository;
 
 /**

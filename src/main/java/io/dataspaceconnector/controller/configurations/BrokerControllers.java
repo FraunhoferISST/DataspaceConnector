@@ -25,7 +25,7 @@ import io.dataspaceconnector.controller.resources.BaseResourceController;
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.broker.BrokerDesc;
-import io.dataspaceconnector.model.resources.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.services.configuration.BrokerService;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.view.BrokerView;

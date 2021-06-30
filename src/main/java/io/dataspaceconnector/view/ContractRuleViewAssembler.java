@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.RuleController;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.rule.ContractRule;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;

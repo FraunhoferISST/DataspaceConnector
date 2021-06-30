@@ -77,9 +77,9 @@ public class IdentityProviderFactory
      */
     private boolean updateName(final IdentityProvider identityProvider, final URI name) {
         final var newLocation =
-                MetadataUtils.updateUri(identityProvider.getName(), name,
+                MetadataUtils.updateUri(identityProvider.getLocation(), name,
                                         DEFAULT_IDENTITY_PROVIDER);
-        newLocation.ifPresent(identityProvider::setName);
+        newLocation.ifPresent(identityProvider::setLocation);
         return newLocation.isPresent();
     }
 }

@@ -3,10 +3,10 @@ package io.dataspaceconnector.services.resources;
 import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
-import io.dataspaceconnector.model.endpoints.AppEndpointDesc;
-import io.dataspaceconnector.model.endpoints.ConnectorEndpointDesc;
-import io.dataspaceconnector.model.endpoints.Endpoint;
-import io.dataspaceconnector.model.endpoints.EndpointDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.EndpointDesc;
 import io.dataspaceconnector.repositories.EndpointRepository;
 import io.dataspaceconnector.services.configuration.AppEndpointService;
 import io.dataspaceconnector.services.configuration.ConnectorEndpointService;

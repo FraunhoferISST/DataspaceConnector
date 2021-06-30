@@ -18,11 +18,11 @@ package io.dataspaceconnector.services.resources;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.agreements.Agreement;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
-import io.dataspaceconnector.model.contracts.Contract;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.rule.ContractRule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

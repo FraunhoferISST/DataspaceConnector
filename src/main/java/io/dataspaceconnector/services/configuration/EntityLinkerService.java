@@ -17,12 +17,12 @@ package io.dataspaceconnector.services.configuration;
 
 import java.util.List;
 
-import io.dataspaceconnector.model.apps.App;
+import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.appstore.AppStore;
 import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.model.endpoints.Endpoint;
-import io.dataspaceconnector.model.resources.OfferedResource;
-import io.dataspaceconnector.model.routes.Route;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;

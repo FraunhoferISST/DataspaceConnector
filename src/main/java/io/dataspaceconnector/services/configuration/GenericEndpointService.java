@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.endpoints.GenericEndpoint;
-import io.dataspaceconnector.model.endpoints.GenericEndpointDesc;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpointDesc;
 import io.dataspaceconnector.repositories.DataSourceRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

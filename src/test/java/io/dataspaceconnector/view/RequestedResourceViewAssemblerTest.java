@@ -24,9 +24,9 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
-import io.dataspaceconnector.model.resources.RequestedResource;
-import io.dataspaceconnector.model.resources.RequestedResourceDesc;
-import io.dataspaceconnector.model.resources.RequestedResourceFactory;
+import io.dataspaceconnector.model.resource.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResourceDesc;
+import io.dataspaceconnector.model.resource.RequestedResourceFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

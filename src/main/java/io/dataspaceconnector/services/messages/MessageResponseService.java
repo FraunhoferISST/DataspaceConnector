@@ -24,7 +24,7 @@ import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.exceptions.SelfLinkCreationException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import io.dataspaceconnector.model.agreements.Agreement;
+import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;

@@ -18,7 +18,7 @@ package io.dataspaceconnector.view;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.RouteControllers;
-import io.dataspaceconnector.model.routes.Route;
+import io.dataspaceconnector.model.route.Route;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.view;
 
 import io.dataspaceconnector.controller.configurations.EndpointControllers;
-import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

@@ -17,8 +17,8 @@ package io.dataspaceconnector.services.usagecontrol;
 
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
-import io.dataspaceconnector.model.contracts.Contract;
-import io.dataspaceconnector.model.rules.ContractRule;
+import io.dataspaceconnector.model.contract.Contract;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.utils.TimeInterval;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;

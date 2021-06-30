@@ -52,18 +52,18 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
      */
     @Override
     protected boolean updateInternal(final AppStore appStore, final AppStoreDesc desc) {
-        return updateName(appStore, desc.getName());
+        return updateLocation(appStore, desc.getName());
     }
 
     /**
      * @param appStore  The entity to be updated.
-     * @param name The new access url.
+     * @param location The new access url.
      * @return True, if access url is updated.
      */
-    private boolean updateName(final AppStore appStore, final URI name) {
-        final var newName = MetadataUtils.updateUri(appStore.getName(),
-                                                         name, DEFAULT_LOCATION);
-        newName.ifPresent(appStore::setName);
-        return newName.isPresent();
+    private boolean updateLocation(final AppStore appStore, final URI location) {
+        final var newLocation = MetadataUtils.updateUri(appStore.getLocation(),
+                                                         location, DEFAULT_LOCATION);
+        newLocation.ifPresent(appStore::setLocation);
+        return newLocation.isPresent();
     }
 }

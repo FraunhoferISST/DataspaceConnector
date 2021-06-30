@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.endpoints.AppEndpoint;
-import io.dataspaceconnector.model.endpoints.AppEndpointDesc;
-import io.dataspaceconnector.model.endpoints.AppEndpointFactory;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
 import io.dataspaceconnector.repositories.AppEndpointRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;

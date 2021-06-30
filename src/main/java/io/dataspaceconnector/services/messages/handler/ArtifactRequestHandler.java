@@ -32,7 +32,7 @@ import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.utils.QueryInput;
-import io.dataspaceconnector.model.messages.ArtifactResponseMessageDesc;
+import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.services.EntityResolver;
 import io.dataspaceconnector.services.messages.MessageResponseService;
 import io.dataspaceconnector.services.messages.types.ArtifactResponseService;

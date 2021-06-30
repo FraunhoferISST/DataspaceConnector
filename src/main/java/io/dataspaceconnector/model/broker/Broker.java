@@ -21,13 +21,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.net.URI;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
-import io.dataspaceconnector.model.resources.OfferedResource;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.base.RemoteService;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -48,7 +47,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Broker extends NamedEntity {
+public class Broker extends NamedEntity implements RemoteService {
 
     /**
      * Serial version uid.
@@ -59,7 +58,7 @@ public class Broker extends NamedEntity {
      * The access url of the broker.
      */
     @Convert(converter = UriConverter.class)
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The status of registration.
@@ -77,9 +76,4 @@ public class Broker extends NamedEntity {
      * Necessary credentials.
      */
     private String credentials;
-
-    /**
-     * The date specification.
-     */
-    private ZonedDateTime lastSeen;
 }

@@ -17,7 +17,7 @@ package io.dataspaceconnector.model.templates;
 
 import java.net.URI;
 
-import io.dataspaceconnector.model.agreements.AgreementDesc;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;

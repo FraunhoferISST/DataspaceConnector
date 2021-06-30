@@ -16,8 +16,8 @@
 package io.dataspaceconnector.controller.resources;
 
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
-import io.dataspaceconnector.model.agreements.Agreement;
-import io.dataspaceconnector.model.agreements.AgreementDesc;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementDesc;
 import io.dataspaceconnector.view.AgreementViewAssembler;
 import io.dataspaceconnector.services.resources.AgreementService;
 import org.junit.jupiter.api.Test;

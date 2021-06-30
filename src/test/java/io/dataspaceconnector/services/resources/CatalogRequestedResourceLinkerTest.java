@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resources.RequestedResource;
+import io.dataspaceconnector.model.resource.RequestedResource;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services.resources;
 
 import io.dataspaceconnector.model.catalog.Catalog;
-import io.dataspaceconnector.model.resources.Resource;
+import io.dataspaceconnector.model.resource.Resource;
 
 /**
  * Base class for handling catalog-resource relations.

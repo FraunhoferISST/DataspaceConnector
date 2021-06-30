@@ -18,8 +18,8 @@ package io.dataspaceconnector.services.resources;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.dataspaceconnector.model.agreements.Agreement;
-import io.dataspaceconnector.model.agreements.AgreementFactory;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.agreement.AgreementFactory;
 import io.dataspaceconnector.repositories.AgreementRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

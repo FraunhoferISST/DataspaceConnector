@@ -24,7 +24,7 @@ import java.net.URI;
 
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -46,7 +46,7 @@ import org.hibernate.annotations.Where;
 @SQLDelete(sql = "UPDATE identityprovider SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @RequiredArgsConstructor
-public class IdentityProvider extends NamedEntity {
+public class IdentityProvider extends NamedEntity implements RemoteService {
 
     /**
      * Serial version uid.
@@ -57,7 +57,7 @@ public class IdentityProvider extends NamedEntity {
      * The access url of the identity provider.
      */
     @Convert(converter = UriConverter.class)
-    private URI name;
+    private URI location;
 
     /**
      * The registration status.

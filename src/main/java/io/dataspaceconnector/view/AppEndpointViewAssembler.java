@@ -18,7 +18,7 @@ package io.dataspaceconnector.view;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.EndpointControllers;
-import io.dataspaceconnector.model.endpoints.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

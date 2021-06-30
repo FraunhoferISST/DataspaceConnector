@@ -32,7 +32,7 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
     /**
      * Default access url.
      */
-    private static final URI DEFAULT_NAME = URI.create("");
+    private static final URI DEFAULT_LOCATION = URI.create("");
 
     @Override
     protected ClearingHouse initializeEntity(final ClearingHouseDesc desc) {
@@ -41,10 +41,10 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
 
     @Override
     protected boolean updateInternal(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
-        final var hasUpdatedName = updateName(clearingHouse, desc.getName());
+        final var hasUpdatedLocation = updateLocation(clearingHouse, desc.getName());
         final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
 
-        return hasUpdatedName || newStatus;
+        return hasUpdatedLocation || newStatus;
     }
 
     /**
@@ -61,13 +61,13 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
 
     /**
      * @param clearingHouse The entity to be updated.
-     * @param name     The new access url of the entity.
+     * @param location     The new access url of the entity.
      * @return True, if clearing house is updated.
      */
-    private boolean updateName(final ClearingHouse clearingHouse, final URI name) {
+    private boolean updateLocation(final ClearingHouse clearingHouse, final URI location) {
         final var newAccessUrl =
-                MetadataUtils.updateUri(clearingHouse.getName(), name, DEFAULT_NAME);
-        newAccessUrl.ifPresent(clearingHouse::setName);
+                MetadataUtils.updateUri(clearingHouse.getLocation(), location, DEFAULT_LOCATION);
+        newAccessUrl.ifPresent(clearingHouse::setLocation);
         return newAccessUrl.isPresent();
     }
 }

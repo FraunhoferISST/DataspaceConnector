@@ -23,7 +23,7 @@ import java.net.URI;
 
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.base.RemoteService;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -45,7 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class ClearingHouse extends NamedEntity {
+public class ClearingHouse extends NamedEntity implements RemoteService {
 
     /**
      * Serial version uid.
@@ -56,7 +56,7 @@ public class ClearingHouse extends NamedEntity {
      * The access url of the clearing house.
      */
     @Convert(converter = UriConverter.class)
-    private URI name;
+    private URI location;
 
     /**
      * The status of registration.

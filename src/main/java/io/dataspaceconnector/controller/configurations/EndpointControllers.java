@@ -18,11 +18,11 @@ package io.dataspaceconnector.controller.configurations;
 import java.util.UUID;
 
 import io.dataspaceconnector.controller.base.CRUDController;
-import io.dataspaceconnector.model.endpoints.AppEndpoint;
-import io.dataspaceconnector.model.endpoints.ConnectorEndpoint;
-import io.dataspaceconnector.model.endpoints.Endpoint;
-import io.dataspaceconnector.model.endpoints.EndpointDesc;
-import io.dataspaceconnector.model.endpoints.GenericEndpoint;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.endpoint.EndpointDesc;
+import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.utils.Utils;
 import io.dataspaceconnector.view.AppEndpointViewAssembler;

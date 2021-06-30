@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.AgreementController;
-import io.dataspaceconnector.model.agreements.Agreement;
+import io.dataspaceconnector.model.agreement.Agreement;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;

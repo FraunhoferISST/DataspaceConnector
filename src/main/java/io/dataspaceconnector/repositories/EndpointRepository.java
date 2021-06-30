@@ -1,6 +1,6 @@
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.endpoints.Endpoint;
+import io.dataspaceconnector.model.endpoint.Endpoint;
 import org.springframework.stereotype.Repository;
 
 @Repository

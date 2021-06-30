@@ -24,8 +24,9 @@ import java.net.URI;
 import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
-import io.dataspaceconnector.model.agreements.Agreement;
-import io.dataspaceconnector.model.representations.Representation;
+import io.dataspaceconnector.model.agreement.Agreement;
+import io.dataspaceconnector.model.base.RemoteObject;
+import io.dataspaceconnector.model.representation.Representation;
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -49,7 +50,7 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public abstract class Artifact extends NamedEntity {
+public abstract class Artifact extends NamedEntity implements RemoteObject {
 
     /**
      * Serial version uid.

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.configurations.Configuration;
+import io.dataspaceconnector.model.configuration.Configuration;
 import org.springframework.stereotype.Repository;
 
 /**
