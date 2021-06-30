@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.identifyprovider.IdentityProvider;
-import io.dataspaceconnector.model.identifyprovider.IdentityProviderDesc;
+import io.dataspaceconnector.model.identityprovider.IdentityProvider;
+import io.dataspaceconnector.model.identityprovider.IdentityProviderDesc;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -51,7 +51,9 @@ public final class AppControllers {
     @RequestMapping("/api/appstores")
     @Tag(name = "App Store", description = "Endpoints for CRUD operations on app store")
     public static class AppStoreController
-            extends BaseResourceController<AppStore, AppStoreDesc, AppStoreView, AppStoreService> { }
+            extends BaseResourceController<AppStore, AppStoreDesc, AppStoreView, AppStoreService> {
+
+    }
 
     /**
      * Offers the endpoints for managing the relations between app store and apps.

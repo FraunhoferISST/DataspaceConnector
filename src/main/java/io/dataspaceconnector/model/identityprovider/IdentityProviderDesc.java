@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.model.identifyprovider;
+package io.dataspaceconnector.model.identityprovider;
 
 import java.net.URI;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.base.RegistrationStatus;
-import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

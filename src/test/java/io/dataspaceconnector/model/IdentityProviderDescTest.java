@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.model.identifyprovider.IdentityProviderDesc;
+import io.dataspaceconnector.model.identityprovider.IdentityProviderDesc;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 

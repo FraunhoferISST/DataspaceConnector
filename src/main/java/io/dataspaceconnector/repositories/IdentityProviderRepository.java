@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.identifyprovider.IdentityProvider;
+import io.dataspaceconnector.model.identityprovider.IdentityProvider;
 import org.springframework.stereotype.Repository;
 
 /**
