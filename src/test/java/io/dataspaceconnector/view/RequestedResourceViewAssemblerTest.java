@@ -111,7 +111,7 @@ public class RequestedResourceViewAssemblerTest {
         assertEquals(requestedResource.getKeywords(), result.getKeywords());
         assertEquals(requestedResource.getPublisher(), result.getPublisher());
         assertEquals(requestedResource.getLanguage(), result.getLanguage());
-        assertEquals(requestedResource.getLicence(), result.getLicence());
+        assertEquals(requestedResource.getLicense(), result.getLicence());
         assertEquals(requestedResource.getVersion(), result.getVersion());
         assertEquals(requestedResource.getSovereign(), result.getSovereign());
         assertEquals(requestedResource.getEndpointDocumentation(),
@@ -156,7 +156,7 @@ public class RequestedResourceViewAssemblerTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         desc.setRemoteId(URI.create("https://remote-id.com"));

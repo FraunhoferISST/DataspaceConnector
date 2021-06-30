@@ -373,7 +373,7 @@ public class IdsCatalogBuilderTest {
         resourceDesc.setDescription(description);
         resourceDesc.setKeywords(Collections.singletonList("keyword"));
         resourceDesc.setEndpointDocumentation(URI.create("http://endpoint-doc.com"));
-        resourceDesc.setLicence(URI.create("http://license.com"));
+        resourceDesc.setLicense(URI.create("http://license.com"));
         resourceDesc.setPublisher(URI.create("http://publisher.com"));
         resourceDesc.setSovereign(URI.create("http://sovereign.com"));
 

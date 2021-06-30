@@ -85,11 +85,11 @@ public class Resource extends NamedEntity {
     private String language;
 
     /**
-     * The licence of the resource.
+     * The license of the resource.
      */
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
-    private URI licence;
+    private URI license;
 
     /**
      * The endpoint of the resource.

@@ -66,7 +66,7 @@ public final class IdsResourceBuilder<T extends Resource>
         final var idsLanguage = IdsUtils.getLanguage(resource.getLanguage());
         final var keywords = IdsUtils.getKeywordsAsTypedLiteral(resource.getKeywords(),
                 language);
-        final var license = resource.getLicence();
+        final var license = resource.getLicense();
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();

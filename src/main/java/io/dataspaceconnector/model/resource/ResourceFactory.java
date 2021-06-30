@@ -98,7 +98,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
         final var hasUpdatedPublisher = updatePublisher(resource, desc.getPublisher());
         final var hasUpdatedLanguage = updateLanguage(resource, desc.getLanguage());
-        final var hasUpdatedLicence = updateLicence(resource, desc.getLicence());
+        final var hasUpdatedLicense = updateLicence(resource, desc.getLicense());
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
@@ -106,7 +106,7 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
 
         final var hasUpdated = hasParentUpdated || hasChildUpdated
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
-                               || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs;
+                               || hasUpdatedLicense || hasUpdatedSovereign || hasUpdatedEndpointDocs;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -165,8 +165,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
      */
     protected final boolean updateLicence(final Resource resource, final URI licence) {
         final var newLicence =
-                MetadataUtils.updateUri(resource.getLicence(), licence, DEFAULT_LICENCE);
-        newLicence.ifPresent(resource::setLicence);
+                MetadataUtils.updateUri(resource.getLicense(), licence, DEFAULT_LICENCE);
+        newLicence.ifPresent(resource::setLicense);
 
         return newLicence.isPresent();
     }

@@ -45,9 +45,9 @@ public class ResourceDesc extends NamedDescription {
     private String language;
 
     /**
-     * The licence of the resource.
+     * The license of the resource.
      */
-    private URI licence;
+    private URI license;
 
     /**
      * The owner of the resource.

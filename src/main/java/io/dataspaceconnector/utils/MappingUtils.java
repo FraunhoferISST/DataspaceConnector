@@ -194,7 +194,7 @@ public final class MappingUtils {
         desc.setAdditional(buildAdditionalForResource(resource));
         desc.setKeywords(keywords);
         desc.setPublisher(publisher);
-        desc.setLicence(standardLicense);
+        desc.setLicense(standardLicense);
         desc.setSovereign(sovereign);
 
         if (description != null) {
