@@ -203,7 +203,7 @@ public final class MessageUtils {
     }
 
     /**
-     * Extract the header part from the ids framework response.
+     * Extract the header part from the ids messaging services response.
      *
      * @param message The ids response message as map.
      * @return The ids header.
@@ -215,7 +215,7 @@ public final class MessageUtils {
     }
 
     /**
-     * Extract the payload part from the ids framework response.
+     * Extract the payload part from the ids messaging services response.
      *
      * @param message The ids response message as map.
      * @return The ids payload.
