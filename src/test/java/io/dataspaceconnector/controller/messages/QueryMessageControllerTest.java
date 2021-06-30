@@ -15,7 +15,11 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.GlobalMessageService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -45,6 +49,9 @@ public class QueryMessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private ConnectorService connectorService;
+
     @Test
     public void sendQueryMessage_unauthorized_rejectUnauthorized() throws Exception {
         mockMvc.perform(post("/api/ids/query")).andExpect(status().isUnauthorized());
@@ -56,8 +63,11 @@ public class QueryMessageControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.of("Some query result.");
+        final var token = getToken();
 
-        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
@@ -74,8 +84,11 @@ public class QueryMessageControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.empty();
+        final var token = getToken();
 
-        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
@@ -93,7 +106,8 @@ public class QueryMessageControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
 
-        Mockito.doThrow(IOException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
+        Mockito.doThrow(IOException.class).when(messageService).sendQueryMessage(Mockito.any(),
+                Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
@@ -108,7 +122,9 @@ public class QueryMessageControllerTest {
     public void sendQueryMessage_throwMultipartParseException_returnReceivedInvalidResponse() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(MultipartParseException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
@@ -117,7 +133,8 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.", result.getResponse().getContentAsString());
+        assertEquals("Failed to read the ids response message.",
+                result.getResponse().getContentAsString());
     }
 
     @Test
@@ -125,7 +142,9 @@ public class QueryMessageControllerTest {
     public void sendQueryMessage_throwSocketTimeoutException_returnConnectionTimedOut() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
@@ -147,7 +166,9 @@ public class QueryMessageControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.of("Some search result.");
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
@@ -167,7 +188,9 @@ public class QueryMessageControllerTest {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.empty();
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
@@ -203,7 +226,9 @@ public class QueryMessageControllerTest {
     public void sendSearchMessage_throwMultipartParseException_returnReceivedInvalidResponse() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(MultipartParseException.class).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
@@ -213,7 +238,8 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
-        assertEquals("Failed to read the ids response message.", result.getResponse().getContentAsString());
+        assertEquals("Failed to read the ids response message.",
+                result.getResponse().getContentAsString());
     }
 
     @Test
@@ -221,7 +247,9 @@ public class QueryMessageControllerTest {
     public void sendSearchMessage_throwSocketTimeoutException_returnConnectionTimedOut() throws Exception {
         /* ARRANGE */
         final var recipient = URI.create("https://someBroker").toString();
+        final var token = getToken();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
@@ -231,5 +259,12 @@ public class QueryMessageControllerTest {
 
         /* ASSERT */
         assertEquals(504, result.getResponse().getStatus());
+    }
+
+    private DynamicAttributeToken getToken() {
+        return new DynamicAttributeTokenBuilder()
+                ._tokenValue_("token")
+                ._tokenFormat_(TokenFormat.JWT)
+                .build();
     }
 }

@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
@@ -73,8 +73,7 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_noRecipient_throws400()
-            throws Exception {
+    public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -90,14 +89,12 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_noResourceId_throws400()
-            throws Exception {
+    public void sendConnectorUpdateMessage_noResourceId_throws400() throws Exception {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT */
-        final var result =
-                mockMvc.perform(post("/api/ids/resource/update")
+        final var result = mockMvc.perform(post("/api/ids/resource/update")
                         .param("recipient", "https://someUrl")).andExpect(status().isBadRequest())
                         .andReturn();
 
@@ -107,9 +104,10 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_resourceNotFound_throws404()
-            throws Exception {
+    public void sendConnectorUpdateMessage_resourceNotFound_throws404() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.empty()).when(connectorService).getOfferedResourceById(resourceURI);
 
         /* ACT */
@@ -125,9 +123,10 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(Mockito.any(),
                 Mockito.eq(resource));
@@ -145,12 +144,11 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-
         Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(Mockito.any(),
                 Mockito.eq(resource));
 
@@ -167,17 +165,23 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
-            throws Exception {
+    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
 
-        MessageProcessedNotificationMessage message =
-                new MessageProcessedNotificationMessageBuilder()._issuerConnector_(new URI("https" +
-                        "://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._issuerConnector_(new URI("https://url"))
+                ._correlationMessage_(new URI("https://cormessage"))
+                ._issued_(DatatypeFactory.newInstance()
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
+                ._senderAgent_(new URI("https://sender"))
+                ._modelVersion_("4.0.0")
+                ._securityToken_(token)
+                .build();
 
-        final var response =
-                new MessageProcessedNotificationMAP(message);
+        final var response = new MessageProcessedNotificationMAP(message);
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doReturn(response).when(brokerService).updateResourceAtBroker(Mockito.any(),
                 Mockito.eq(resource));
@@ -194,5 +198,12 @@ public class ResourceUpdateMessageControllerTest {
 
     private Resource getResource() {
         return new ResourceBuilder(URI.create(resourceId.toString())).build();
+    }
+
+    private DynamicAttributeToken getToken() {
+        return new DynamicAttributeTokenBuilder()
+                ._tokenValue_("token")
+                ._tokenFormat_(TokenFormat.JWT)
+                .build();
     }
 }

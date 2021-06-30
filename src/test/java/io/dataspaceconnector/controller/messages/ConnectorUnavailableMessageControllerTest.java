@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
-import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
@@ -67,13 +67,13 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_noRecipient_throws400()
-            throws Exception {
+    public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT */
-        final var result = mockMvc.perform(post("/api/ids/connector/unavailable")).andExpect(status().isBadRequest()).andReturn();
+        final var result = mockMvc.perform(post("/api/ids/connector/unavailable"))
+                .andExpect(status().isBadRequest()).andReturn();
 
         /* ASSERT */
         assertTrue(result.getResponse().getContentAsString().isEmpty());
@@ -81,15 +81,16 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_failUpdateConfigModel_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_failUpdateConfigModel_throws500() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(ConfigUpdateException.class).when(connectorService).updateConfigModel();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", recipient))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
         assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
@@ -97,56 +98,73 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", recipient))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null", result.getResponse().getContentAsString());
+        assertEquals("Ids message handling failed. null",
+                result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", recipient))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null", result.getResponse().getContentAsString());
+        assertEquals("Ids message handling failed. null",
+                result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
-            throws Exception {
+    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
+        final var token = getToken();
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._issuerConnector_(new URI("https://url"))
+                ._correlationMessage_(new URI("https://cormessage"))
+                ._issued_(DatatypeFactory.newInstance()
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
+                ._senderAgent_(new URI("https://sender"))
+                ._modelVersion_("4.0.0")
+                ._securityToken_(token)
+                .build();
 
-        MessageProcessedNotificationMessage message = new MessageProcessedNotificationMessageBuilder()._issuerConnector_(new URI("https://url"))._correlationMessage_(new URI("https://cormessage"))._issued_(DatatypeFactory.newInstance().newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))._senderAgent_(new URI("https://sender"))._modelVersion_("4.0.0")._securityToken_(new DynamicAttributeTokenBuilder()._tokenValue_("token")._tokenFormat_(TokenFormat.JWT).build()).build();
+        final var response = new MessageProcessedNotificationMAP(message);
 
-        final var response =
-                new MessageProcessedNotificationMAP(message);
-
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                                                   .param("recipient", "https://someURL"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("recipient", "https://someURL"))
+                .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
         assertEquals("", result.getResponse().getContentAsString());
+    }
+
+    private DynamicAttributeToken getToken() {
+        return new DynamicAttributeTokenBuilder()
+                ._tokenValue_("token")
+                ._tokenFormat_(TokenFormat.JWT)
+                .build();
     }
 }
