@@ -17,6 +17,7 @@ package io.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
@@ -33,7 +34,9 @@ public final class MessageProcessedNotificationService
         extends AbstractMessageService<MessageProcessedNotificationMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     * when building the message.
      */
     @Override
     public Message buildMessage(final MessageProcessedNotificationMessageDesc desc) {

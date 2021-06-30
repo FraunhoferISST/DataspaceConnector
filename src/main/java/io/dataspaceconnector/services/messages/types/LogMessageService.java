@@ -15,12 +15,11 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.LogMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.model.messages.LogMessageDesc;
@@ -29,7 +28,7 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import java.net.URI;
 
 /**
  * Message service for ids log messages.
@@ -39,7 +38,9 @@ import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 public final class LogMessageService extends AbstractMessageService<LogMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     * when building the message.
      */
     @Override
     public Message buildMessage(final LogMessageDesc desc) throws ConstraintViolationException {

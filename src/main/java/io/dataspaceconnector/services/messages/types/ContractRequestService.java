@@ -42,7 +42,9 @@ public final class ContractRequestService
         extends AbstractMessageService<ContractRequestMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     * when building the message.
      */
     @Override
     public Message buildMessage(final ContractRequestMessageDesc desc)

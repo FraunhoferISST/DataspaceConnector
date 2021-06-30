@@ -15,10 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
-import de.fraunhofer.ids.messaging.core.daps.ConnectorMissingCertExtensionException;
-import de.fraunhofer.ids.messaging.core.daps.DapsConnectionException;
-import de.fraunhofer.ids.messaging.core.daps.DapsEmptyResponseException;
-import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -37,9 +34,9 @@ import java.io.Serializable;
 public final class DapsTokenValidator implements PermissionEvaluator {
 
     /**
-     * Service for providing current DAT.
+     * Service for providing connector information.
      */
-    private final @NonNull DapsTokenProvider tokenProvider;
+    private final @NonNull ConnectorService connectorService;
 
     @Override
     public boolean hasPermission(
@@ -62,25 +59,6 @@ public final class DapsTokenValidator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege() {
-        try {
-            return tokenProvider.getDAT() != null;
-        } catch (ConnectorMissingCertExtensionException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Connector certificate is missing aki/ski extensions."
-                        + " [exception=({})]", e.getMessage());
-            }
-            return false;
-        } catch (DapsConnectionException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Connection to DAPS could not be established. "
-                        + "[exception=({})]", e.getMessage());
-            }
-            return false;
-        } catch (DapsEmptyResponseException e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Received empty response from DAPS. [exception=({})]", e.getMessage());
-            }
-            return false;
-        }
+        return connectorService.getCurrentDat() != null;
     }
 }

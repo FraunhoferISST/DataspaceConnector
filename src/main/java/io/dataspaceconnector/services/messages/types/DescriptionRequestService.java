@@ -15,14 +15,12 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
-import java.net.URI;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.DescriptionRequestMessageBuilder;
 import de.fraunhofer.iais.eis.DescriptionResponseMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.model.messages.DescriptionRequestMessageDesc;
@@ -30,7 +28,8 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Message service for ids description request messages.
@@ -40,7 +39,9 @@ public final class DescriptionRequestService
         extends AbstractMessageService<DescriptionRequestMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     * when building the message.
      */
     @Override
     public Message buildMessage(final DescriptionRequestMessageDesc desc)
