@@ -25,7 +25,7 @@ info:
   license:
     name: "Apache License, Version 2.0"
     url: https://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 5.2.0
+  version: 6.0.0
 servers:
   - url: https://localhost:8080
     description: Generated server url
@@ -3854,6 +3854,9 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
+            ids:unit:
+              type: string
+              format: uri
             ids:rightOperand:
               $ref: '#/components/schemas/RdfResource'
             ids:leftOperand:
@@ -3876,9 +3879,6 @@ components:
                 - https://w3id.org/idsa/code/STATE
                 - https://w3id.org/idsa/code/SYSTEM
                 - https://w3id.org/idsa/code/USER
-            ids:unit:
-              type: string
-              format: uri
             ids:operator:
               type: string
               enum:
@@ -3961,7 +3961,7 @@ components:
         - $ref: '#/components/schemas/AbstractConstraint'
         - type: object
           properties:
-            ids:xone:
+            ids:and:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -3969,7 +3969,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
-            ids:and:
+            ids:xone:
               type: array
               items:
                 $ref: '#/components/schemas/Constraint'
@@ -4043,11 +4043,6 @@ components:
         ids:target:
           type: string
           format: uri
-        ids:constraint:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/LogicalConstraint'
         ids:action:
           type: array
           items:
@@ -4069,11 +4064,11 @@ components:
               - https://w3id.org/idsa/code/TRACK_PROVENANCE
               - https://w3id.org/idsa/code/USE
               - https://w3id.org/idsa/code/WRITE
-        ids:assignee:
+        ids:constraint:
           type: array
           items:
-            type: string
-            format: uri
+            oneOf:
+              - $ref: '#/components/schemas/LogicalConstraint'
         ids:assigner:
           type: array
           items:
@@ -4083,6 +4078,11 @@ components:
           oneOf:
             - $ref: '#/components/schemas/Constraint'
             - $ref: '#/components/schemas/LogicalConstraint'
+        ids:assignee:
+          type: array
+          items:
+            type: string
+            format: uri
         ids:description:
           type: array
           items:
