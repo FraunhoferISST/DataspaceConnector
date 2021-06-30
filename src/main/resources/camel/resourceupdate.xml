@@ -22,7 +22,7 @@
         <!-- deserializing the message payload fails -->
         <onException>
             <exception>io.dataspaceconnector.exceptions.DeserializationException</exception>
-            <to uri="direct:handleIllegalArgumentException"/>
+            <to uri="direct:handleWrappedIllegalArgumentException"/>
         </onException>
 
         <!-- payload is empty -->

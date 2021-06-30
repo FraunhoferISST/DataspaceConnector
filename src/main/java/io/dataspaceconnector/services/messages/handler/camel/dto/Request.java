@@ -16,9 +16,8 @@
 package io.dataspaceconnector.services.messages.handler.camel.dto;
 
 import de.fraunhofer.iais.eis.Message;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 /**
  * Implementation of the {@link RouteMsg} interface for requests. Should contain a subclass of
@@ -30,15 +29,15 @@ import lombok.RequiredArgsConstructor;
  * @param <B> the body/payload type.
  */
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Request<H extends Message, B> implements RouteMsg<H, B> {
     /**
      * The header.
      */
-    private final @NonNull H header;
+    private final H header;
 
     /**
      * The body/payload.
      */
-    private final @NonNull B body;
+    private final B body;
 }

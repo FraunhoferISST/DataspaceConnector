@@ -65,6 +65,15 @@
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>
 
+    <route id="wrappedIllegalArgumentException">
+        <from uri="direct:handleWrappedIllegalArgumentException"/>
+        <log message="An IllegalArgumentException occurred!"/>
+        <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception.cause},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
+    </route>
+
     <route id="messagePayloadException">
         <from uri="direct:handleMessagePayloadException"/>
         <log message="Message payload is missing!"/>
