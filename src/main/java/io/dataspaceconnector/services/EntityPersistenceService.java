@@ -15,14 +15,15 @@
  */
 package io.dataspaceconnector.services;
 
+import javax.persistence.PersistenceException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.persistence.PersistenceException;
 
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -222,13 +223,18 @@ public class EntityPersistenceService {
      * @param remoteId The artifact id.
      * @throws MessageResponseException  If the message response could not be processed.
      * @throws ResourceNotFoundException If the artifact could not be found.
+     * @throws IOException If the data could not be stored.
      */
     public void saveData(final Map<String, String> response, final URI remoteId)
-            throws MessageResponseException, ResourceNotFoundException {
+            throws MessageResponseException, ResourceNotFoundException, IOException {
         final var base64Data = MessageUtils.extractPayloadFromMultipartMessage(response);
         final var artifactId = artifactService.identifyByRemoteId(remoteId);
-        final var artifact = artifactService.get(artifactId.get());
 
+        if (artifactId.isEmpty()) {
+            throw new ResourceNotFoundException(remoteId.toString());
+        }
+
+        final var artifact = artifactService.get(artifactId.get());
         artifactService.setData(artifact.getId(),
                 new ByteArrayInputStream(Base64.decode(base64Data)));
         if (log.isDebugEnabled()) {

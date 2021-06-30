@@ -15,6 +15,11 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.time.format.DateTimeParseException;
+
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.config.UsageControlFramework;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -30,10 +35,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.time.format.DateTimeParseException;
 
 /**
  * This class implements automated policy check.
@@ -100,12 +101,9 @@ public class ScheduledDataRemoval {
         for (final var agreement : agreementService.getAll(Pageable.unpaged())) {
             final var value = agreement.getValue();
             final var idsAgreement = deserializationService.getContractAgreement(value);
-            final var rules = ContractUtils.extractRulesFromContract(idsAgreement);
-            for (final var rule : rules) {
-                final var delete = RuleUtils.checkRuleForPostDuties(rule);
-                if (delete) {
-                    final var target = rule.getTarget();
-                    removeDataFromArtifact(target);
+            for (final var rule : ContractUtils.extractRulesFromContract(idsAgreement)) {
+                if (RuleUtils.checkRuleForPostDuties(rule)) {
+                    removeDataFromArtifact(rule.getTarget());
                 }
             }
         }
@@ -121,9 +119,16 @@ public class ScheduledDataRemoval {
         final var artifactId = artifactService.identifyByRemoteId(target);
         if (artifactId.isPresent()) {
             // Update data for artifact.
-            artifactService.setData(artifactId.get(), InputStream.nullInputStream());
-            if (log.isDebugEnabled()) {
-                log.debug("Removed data from artifact. [target=({})]", artifactId);
+            try {
+                artifactService.setData(artifactId.get(), InputStream.nullInputStream());
+                if (log.isDebugEnabled()) {
+                    log.debug("Removed data from artifact. [target=({})]", artifactId);
+                }
+            } catch (IOException e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Failed to remove data from artifact. [target=({})]",
+                             artifactId);
+                }
             }
         }
     }

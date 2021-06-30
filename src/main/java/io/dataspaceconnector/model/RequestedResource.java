@@ -20,12 +20,21 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Describes resource requested by this connector.
@@ -46,6 +55,8 @@ public final class RequestedResource extends Resource {
     /**
      * The resource id on provider side.
      */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI remoteId;
 
     /**
@@ -54,18 +65,17 @@ public final class RequestedResource extends Resource {
     @ManyToMany
     private List<Subscriber> subscribers;
 
+     * The catalogs in which this resource is used.
+     */
+    @ManyToMany(mappedBy = "requestedResources")
+    private List<Catalog> catalogs;
+
     /**
      * Default constructor.
      */
     protected RequestedResource() {
         super();
     }
-
-    /**
-     * The catalogs in which this resource is used.
-     */
-    @ManyToMany(mappedBy = "requestedResources")
-    private List<Catalog> catalogs;
 
     /**
      * {@inheritDoc}

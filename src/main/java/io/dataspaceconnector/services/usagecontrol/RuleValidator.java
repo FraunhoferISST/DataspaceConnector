@@ -76,7 +76,7 @@ public class RuleValidator {
      * @param issuerConnector The issuer connector.
      * @throws PolicyRestrictionException If a policy restriction was detected.
      */
-    void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
+    public void validatePolicy(final PolicyPattern pattern, final Rule rule, final URI target,
                         final URI issuerConnector) throws PolicyRestrictionException {
         switch (pattern) {
             case PROVIDE_ACCESS:
@@ -121,7 +121,6 @@ public class RuleValidator {
     public boolean validateRulesOfRequest(final List<Contract> contractOffers,
                                           final Map<URI, List<Rule>> map,
                                           final URI target) {
-        boolean valid = false;
         for (final var contract : contractOffers) {
             // Get rule list from contract offer.
             final var ruleList = dependencyResolver.getRulesByContractOffer(contract);
@@ -130,12 +129,11 @@ public class RuleValidator {
 
             // Compare rules
             if (compareRulesOfOfferToRequest(ruleList, values)) {
-                valid = true;
-                break;
+                return true;
             }
         }
 
-        return valid;
+        return false;
     }
 
     /**
@@ -149,12 +147,10 @@ public class RuleValidator {
                                                 final List<Rule> requestRules) {
         final var idsRuleList = new ArrayList<Rule>();
         for (final var rule : offerRules) {
-            final var value = rule.getValue();
-            final var idsRule = deserializationService.getRule(value);
-            idsRuleList.add(idsRule);
+            idsRuleList.add(deserializationService.getRule(rule.getValue()));
         }
 
-        if (!RuleUtils.compareRules(idsRuleList, (ArrayList<Rule>) requestRules)) {
+        if (!RuleUtils.compareRules(idsRuleList, requestRules)) {
             if (log.isDebugEnabled()) {
                 log.debug("Rules do not match. [offer=({}), request=({})]", idsRuleList,
                         requestRules);
@@ -222,10 +218,7 @@ public class RuleValidator {
             throw new PolicyRestrictionException(ErrorMessages.DATA_ACCESS_INVALID_INTERVAL);
         }
 
-        final var maxTime = RuleUtils.getCalculatedDate(created, duration);
-        final var validDate = RuleUtils.checkDate(RuleUtils.getCurrentDate(), maxTime);
-
-        if (!validDate) {
+        if (RuleUtils.isExpired(RuleUtils.getCalculatedDate(created, duration))) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid date time. [target=({})]", target);
             }

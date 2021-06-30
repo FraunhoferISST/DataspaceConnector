@@ -39,7 +39,6 @@ import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -88,8 +87,6 @@ public final class RuleUtils {
                     } else if (leftOperand == LeftOperand.SYSTEM
                             && operator == BinaryOperator.SAME_AS) {
                         detectedPattern = PolicyPattern.CONNECTOR_RESTRICTED_USAGE;
-                    } else {
-                        detectedPattern = null;
                     }
                 }
             } else {
@@ -99,8 +96,6 @@ public final class RuleUtils {
                         detectedPattern = PolicyPattern.USAGE_NOTIFICATION;
                     } else if (action == Action.LOG) {
                         detectedPattern = PolicyPattern.USAGE_LOGGING;
-                    } else {
-                        detectedPattern = null;
                     }
                 } else {
                     detectedPattern = PolicyPattern.PROVIDE_ACCESS;
@@ -136,7 +131,7 @@ public final class RuleUtils {
      * @return True if resource should be deleted, false if not.
      * @throws DateTimeParseException If the policy could not be checked.
      */
-    public static boolean checkDutiesForDeletion(final ArrayList<? extends Duty> duties)
+    public static boolean checkDutiesForDeletion(final List<? extends Duty> duties)
             throws DateTimeParseException {
         for (final var duty : duties) {
             for (final var action : duty.getAction()) {
@@ -145,6 +140,7 @@ public final class RuleUtils {
                 }
             }
         }
+
         return false;
     }
 
@@ -157,23 +153,18 @@ public final class RuleUtils {
      * @throws DateTimeParseException if a duration cannot be parsed.
      */
     public static boolean checkRuleForDeletion(final Rule rule) throws DateTimeParseException {
-        final var max = getDate(rule);
-        if (max != null) {
-            return checkDate(ZonedDateTime.now(ZoneOffset.UTC), max);
-        } else {
-            return false;
-        }
+        final var expiration = getDate(rule);
+        return expiration != null && isExpired(expiration);
     }
 
     /**
-     * Checks whether the current date is later than the specified one.
+     * Checks whether a given date has already passed.
      *
-     * @param dateNow   the current date.
-     * @param maxAccess the target date.
-     * @return true, if the current date is later than the target date; false otherwise.
+     * @param expiration the expiration date.
+     * @return true, if the current date is after the expiration date; false otherwise.
      */
-    public static boolean checkDate(final ZonedDateTime dateNow, final ZonedDateTime maxAccess) {
-        return !dateNow.isAfter(maxAccess);
+    public static boolean isExpired(final ZonedDateTime expiration) {
+        return getCurrentDate().isAfter(expiration);
     }
 
     /**
@@ -229,11 +220,12 @@ public final class RuleUtils {
      *
      * @param rule the policy rule object.
      * @return the time interval.
+     * @throws ParseException if the parsing fails.
      */
     public static TimeInterval getTimeInterval(final Rule rule) throws ParseException {
         final var interval = new TimeInterval();
 
-        for (var constraint : rule.getConstraint()) {
+        for (final var constraint : rule.getConstraint()) {
             final var operator = ((ConstraintImpl) constraint).getOperator();
             if (operator == BinaryOperator.AFTER) {
                 final var value = ((ConstraintImpl) constraint).getRightOperand().getValue();
@@ -279,14 +271,14 @@ public final class RuleUtils {
      * @return The duration or null.
      * @throws DateTimeParseException If the duration cannot be parsed.
      */
-    public static java.time.Duration getDuration(final Rule rule)
+    public static Duration getDuration(final Rule rule)
             throws DateTimeParseException {
         final var constraint = rule.getConstraint().get(0);
         final var type = ((ConstraintImpl) constraint).getRightOperand().getType();
 
-        if (type.equals("xsd:duration")) {
+        if ("xsd:duration".equals(type)) {
             final var duration = ((ConstraintImpl) constraint).getRightOperand().getValue();
-            return java.time.Duration.parse(duration);
+            return Duration.parse(duration);
         } else {
             return null;
         }
@@ -314,7 +306,7 @@ public final class RuleUtils {
             throws InvalidInputException {
         for (final var rule : ruleList) {
             final var target = rule.getTarget();
-            if (target == null || target.toString().equals("")) {
+            if (target == null || target.toString().isBlank()) {
                 throw new InvalidInputException(ErrorMessages.MISSING_TARGET.toString());
             }
         }
@@ -353,8 +345,8 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean comparePermissions(final ArrayList<? extends Permission> lList,
-                                             final ArrayList<? extends Permission> rList) {
+    public static boolean comparePermissions(final List<? extends Permission> lList,
+                                             final List<? extends Permission> rList) {
         return compareDuties(lList, rList) && compareRules(lList, rList);
     }
 
@@ -365,8 +357,8 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean compareProhibitions(final ArrayList<? extends Prohibition> lList,
-                                              final ArrayList<? extends Prohibition> rList) {
+    public static boolean compareProhibitions(final List<? extends Prohibition> lList,
+                                              final List<? extends Prohibition> rList) {
         return compareRules(lList, rList);
     }
 
@@ -377,8 +369,8 @@ public final class RuleUtils {
      * @param rList The other list.
      * @return True, if the lists are equal, false if not.
      */
-    public static boolean compareObligations(final ArrayList<? extends Duty> lList,
-                                             final ArrayList<? extends Duty> rList) {
+    public static boolean compareObligations(final List<? extends Duty> lList,
+                                             final List<? extends Duty> rList) {
         return compareRules(lList, rList);
     }
 
@@ -389,8 +381,8 @@ public final class RuleUtils {
      * @param rList List of rules from the contract that should be compared.
      * @return true if both rules are the same.
      */
-    private static boolean compareDuties(final ArrayList<? extends Permission> lList,
-                                         final ArrayList<? extends Permission> rList) {
+    private static boolean compareDuties(final List<? extends Permission> lList,
+                                         final List<? extends Permission> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareDuties);
     }
 
@@ -401,8 +393,8 @@ public final class RuleUtils {
      * @param newRules List of rules from the contract that should be compared.
      * @return true if both rules are the same.
      */
-    public static boolean compareRules(final ArrayList<? extends Rule> oldRules,
-                                       final ArrayList<? extends Rule> newRules) {
+    public static boolean compareRules(final List<? extends Rule> oldRules,
+                                       final List<? extends Rule> newRules) {
         return Utils.compareList(oldRules, newRules, RuleUtils::compareRule);
     }
 
@@ -413,9 +405,8 @@ public final class RuleUtils {
      * @param rList List of rules from the contract that should be compared.
      * @return true if both rules are the same.
      */
-    private static boolean compareConstraints(
-            final ArrayList<? extends AbstractConstraint> lList,
-            final ArrayList<? extends AbstractConstraint> rList) {
+    private static boolean compareConstraints(final List<? extends AbstractConstraint> lList,
+            final List<? extends AbstractConstraint> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareConstraint);
     }
 
@@ -426,8 +417,8 @@ public final class RuleUtils {
      * @param rList List of rules from the contract that should be compared.
      * @return true if the actions are the same.
      */
-    private static boolean compareActions(final ArrayList<? extends Action> lList,
-                                          final ArrayList<? extends Action> rList) {
+    private static boolean compareActions(final List<? extends Action> lList,
+                                          final List<? extends Action> rList) {
         return Utils.compareList(lList, rList, RuleUtils::compareAction);
     }
 
@@ -446,7 +437,7 @@ public final class RuleUtils {
         return lObj.toRdf().equals(rObj.toRdf());
     }
 
-    private static <T extends Action> boolean compareAction(final T lObj, final T rObj) {
+    private static boolean compareAction(final Action lObj, final Action rObj) {
         return lObj.equals(rObj);
     }
 

@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import io.dataspaceconnector.model.QueryInput;
+import kotlin.NotImplementedError;
 import kotlin.Pair;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -129,25 +130,34 @@ class HttpServiceTest {
                                               "someBody", MediaType.parse("application/text")))
                                       .build();
 
+        // The first response will be consumed by the first request, duplicate
+        final var response2 =
+                new Response.Builder().request(new Request.Builder().url(target).build()).protocol(
+                        Protocol.HTTP_1_1).code(200).message("Some message")
+                                      .body(ResponseBody.create(
+                                              "someBody", MediaType.parse("application/text")))
+                                      .build();
+
         Mockito.doReturn(response).when(httpSvc).get(Mockito.any());
 
         /* ACT */
         final var result = service.request(HttpService.Method.GET, target, args);
 
         /* ASSERT */
+        Mockito.doReturn(response2).when(httpSvc).get(Mockito.any());
         final var expected = service.get(target, args);
         assertEquals(expected.getCode(), result.getCode());
         assertTrue(Arrays.areEqual("someBody".getBytes(StandardCharsets.UTF_8), result.getBody().readAllBytes()));
     }
 
     @Test
-    public void request_null_throwRuntimeException() throws IOException {
+    public void request_null_throwNotImplementedError() throws IOException {
         /* ARRANGE */
         final var target = new URL("https://someTarget");
         final var args = new HttpService.HttpArgs();
 
         /* ACT && ASSERT */
-        assertThrows(RuntimeException.class, () -> service.request(null, target, args));
+        assertThrows(NotImplementedError.class, () -> service.request(null, target, args));
     }
 
     @Test

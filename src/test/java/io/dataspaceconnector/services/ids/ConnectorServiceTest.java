@@ -60,6 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -67,6 +68,9 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ConnectorService.class})
 public class ConnectorServiceTest {
+
+    @MockBean
+    private DeserializationService deserializationService;
 
     @MockBean
     private ConfigurationContainer configContainer;
@@ -98,7 +102,7 @@ public class ConnectorServiceTest {
 
         when(configContainer.getConnector()).thenReturn(connector);
         when(catalogService.getAll(Pageable.unpaged())).thenReturn(new PageImpl<>(List.of(catalog)));
-        when(catalogBuilder.create(catalog, 0)).thenReturn(idsCatalog);
+        when(catalogBuilder.create(eq(catalog), eq(0))).thenReturn(idsCatalog);
 
         /* ACT */
         final var result = connectorService.getConnectorWithOfferedResources();

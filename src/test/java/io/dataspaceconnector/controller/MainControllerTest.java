@@ -15,13 +15,10 @@
  */
 package io.dataspaceconnector.controller;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.validation.ConstraintViolationException;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
+import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
+import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -31,6 +28,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import javax.validation.ConstraintViolationException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -42,6 +44,9 @@ public class MainControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
+
+    @MockBean
+    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     MockMvc mockMvc;
@@ -55,6 +60,9 @@ public class MainControllerTest {
                 ._maintainer_(URI.create("someMaintainer"))
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                                              ._accessURL_(URI.create("https://accessUrl"))
+                                              .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithoutResources();
 
@@ -92,6 +100,9 @@ public class MainControllerTest {
                 ._maintainer_(URI.create("someMaintainer"))
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
+                                              ._accessURL_(URI.create("https://accessUrl"))
+                                              .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 

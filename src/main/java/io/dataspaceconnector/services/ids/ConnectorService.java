@@ -16,7 +16,6 @@
 package io.dataspaceconnector.services.ids;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * This service offers different methods related to the connector configuration, like e.g. getting
@@ -133,7 +133,7 @@ public class ConnectorService {
 
         // Create a connector with a list of offered resources.
         final var connectorImpl = (BaseConnectorImpl) connector;
-        connectorImpl.setResourceCatalog((ArrayList<? extends ResourceCatalog>) catalogs);
+        connectorImpl.setResourceCatalog(catalogs);
         return connectorImpl;
     }
 
@@ -157,6 +157,7 @@ public class ConnectorService {
      *
      * @throws ConfigurationUpdateException If the configuration could not be update.
      */
+    @Transactional
     public void updateConfigModel() throws ConfigurationUpdateException {
         try {
             final var connector = getConnectorWithOfferedResources();

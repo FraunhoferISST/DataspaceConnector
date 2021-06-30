@@ -1,10 +1,86 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-### [5.x]
+## [5.X.X] - XXXX-XX-XX
 
 ### Changed
- - Make the Clearing House url setting optional in `application.properties`.
+- Increase spring-boot version to 2.5.2.
+- Increase checkstyle version to 8.44.
+- Increase pmd version to 6.36.0.
+
+## [5.2.0] - 2021-06-23
+
+### Added
+- Add `BootstrapConfiguration`.
+  * Allow registering ids catalogs, offered resources, representations, artifacts, and contract
+    offers during start up.
+  * Allow registering offered resources as part of the catalogs to brokers.
+- Add `CatalogTemplate` and matching mapping/build functions.
+- Add a method to `AbstractIdsBuilder` that allows to create elements with a custom base URI.
+- Add `bootstrap.path` to `application.properties` to define the base path where bootstrapping data
+  can be found.
+
+### Changed
+- Change `ConnectorService` to use the connector's ID from `config.json` when
+  `getAllCatalogsWithOfferedResources` is called.
+
+### Fixed
+- Fixed missing IDS context in `/api/examples/policy`.
+- Disable autocommit on database transactions.
+- Remove encoding from optional path segment in `HttpService`.
+
+### Changed
+- Increase IDS Framework version to 5.0.4.
+- Update default Infomodel version to 4.0.10.
+- Increase postgres version to 42.2.22.
+
+## [5.1.2] - 2021-06-14
+
+### Fixed
+- Fixed deletion of artifact data before the set time.
+- Fixed tags with different descriptions in openapi schema.
+- Fixed missing paging information in openapi schema.
+
+### Changed
+- Increase postgresql version to 42.2.21.
+- Increase spring-boot version to 2.5.1.
+
+## [5.1.1] - 2021-06-09
+
+### Fixed
+- Add missing hateoas information in openapi schema.
+
+## [5.1.0] - 2021-06-07
+
+### Added
+- Add telemetry collection via Jaeger.
+
+### Changed
+- Replace deprecated JPA calls (`getOne` -> `getById`).
+- Increase length restriction for URIs in database columns to 2048.
+- Increase modelmapper version to 2.4.4.
+- Increase equalsverifier version to 3.6.1.
+- Increase spring-openApi-security version to 1.5.9.
+- Increase spring-openapi-ui version to 1.5.9.
+- Increase maven-javadoc-plugin version to 3.3.0.
+- Increase spring-boot version to 2.5.0.
+- Increase checkstyle version to 8.43.
+- Increase pmd version to 6.35.0.
+- Increase pitest version from 1.6.6 to 1.6.7.
+
+### Fixed
+- Representations have now only one self-link.
+- Set Basic Auth Header on (provider) backend calls.
+- Ignore empty extension `/**` on `GET **/artifacts/{id}/data/**`.
+- `GET **/artifacts/{id}/data` and `POST **/artifacts/{id}/data` will now return the same output.
+
+## [5.0.2] - 2021-05-25
+
+### Changed
+- Make the Clearing House url setting optional in `application.properties`.
+
+### Fixed
+- Persist URIs as strings in database.
 
 ## [5.0.1] - 2021-05-19
 

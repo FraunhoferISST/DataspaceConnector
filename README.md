@@ -11,7 +11,7 @@
   <a href="mailto:info@dataspace-connector.de">Contact</a> •
   <a href="#contributing">Contribute</a> •
   <a href="https://international-data-spaces-association.github.io/DataspaceConnector/">Docs</a> •
-  <a href="https://github.com/FraunhoferISST/DataspaceConnector/issues">Issues</a> •
+  <a href="https://github.com/International-Data-Spaces-Association/DataspaceConnector/issues">Issues</a> •
   <a href="#license">License</a>
 </p>
 
@@ -66,6 +66,7 @@ The core development is driven by
 * [Ronja Quensel](https://github.com/ronjaquensel), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 
 with significant contributions, comments, and support by (in alphabetical order):
+* [Fabian Bruckner](https://github.com/fabianbruckner), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Haydar Qarawlus](https://github.com/hqarawlus), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [Johannes Pieperbeck](https://github.com/jpieperbeck), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)
 * [René Brinkhege](https://github.com/renebrinkhege), [Fraunhofer ISST](https://www.isst.fraunhofer.de/en.html)

@@ -15,23 +15,21 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.utils.SelfLinkHelper;
 import io.dataspaceconnector.utils.Utils;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The base class for constructing an ids object from DSC objects.
@@ -73,12 +71,12 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * @return The ids object.
      */
     public X create(final T entity, final int maxDepth) throws ConstraintViolationException {
-        return create(entity, getBaseUri(), 0, maxDepth);
+        return create(entity, 0, maxDepth);
     }
 
-    private X create(final T entity, final URI baseUri, final int currentDepth,
+    private X create(final T entity, final int currentDepth,
                      final int maxDepth) throws ConstraintViolationException {
-        final var resource = createInternal(entity, baseUri, currentDepth, maxDepth);
+        final var resource = createInternal(entity, currentDepth, maxDepth);
         if (resource != null) {
             return addAdditionals(resource, entity.getAdditional());
         } else {
@@ -91,44 +89,27 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      * additional field will be set automatically.
      *
      * @param entity       The entity to be converted.
-     * @param baseUri      The hostname of the system.
      * @param currentDepth The current distance to the original call.
      * @param maxDepth     The max depth to the original call.
      * @return The ids object.
      */
-    protected abstract X createInternal(T entity, URI baseUri, int currentDepth, int maxDepth)
+    protected abstract X createInternal(T entity, int currentDepth, int maxDepth)
             throws ConstraintViolationException;
-
-    private URI getBaseUri() {
-        return URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
-    }
 
     /**
      * Use this function to construct the absolute path to this entity.
      *
      * @param entity  The entity.
-     * @param baseUri The hostname.
-     * @param <X>     The entity type.
+     * @param <K>     The entity type.
      * @return The absolute path to this entity.
      */
-    protected <X extends AbstractEntity> URI getAbsoluteSelfLink(final X entity,
-                                                                 final URI baseUri) {
-        var uri = SelfLinkHelper.getSelfLink(entity);
-
-        if (!uri.isAbsolute()) {
-            uri = URI.create(baseUri.toString() + uri);
-        }
-
-        return uri;
+    protected <K extends AbstractEntity> URI getAbsoluteSelfLink(final K entity) {
+        return SelfLinkHelper.getSelfLink(entity);
     }
 
     private static boolean shouldGenerate(final int currentDepth, final int maxDepth) {
         return currentDepth <= maxDepth || maxDepth < 0;
     }
-
-    // NOTE: The type of ArrayList is used because the ids object expects ArrayList for some
-    // unknown reason. By changing the return type from List to ArrayList it is more convenient
-    // to use since no typecast is required.
 
     /**
      * Batch call of create. Use this call for building an object's dependencies. This function
@@ -136,27 +117,25 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
      *
      * @param builder      The builder applied to all objects.
      * @param entityList   The entities that need to be converted.
-     * @param baseUri      The hostname of the system.
      * @param currentDepth The current distance to the original call.
      * @param maxDepth     The distance to the original call.
      * @param <V>          The type of the DSC entity.
      * @param <W>          The type of the ids entity.
      * @return The converted ids objects. Null if the distance is to far to the original call.
      */
-    protected <V extends AbstractEntity, W> Optional<ArrayList<W>> create(
-            final AbstractIdsBuilder<V, W> builder, final List<V> entityList, final URI baseUri,
+    protected <V extends AbstractEntity, W> Optional<List<W>> create(
+            final AbstractIdsBuilder<V, W> builder, final List<V> entityList,
             final int currentDepth, final int maxDepth) throws ConstraintViolationException {
         final int nextDepth = currentDepth + 1;
 
         return !shouldGenerate(nextDepth, maxDepth) ? Optional.empty()
-                : Optional.of(new ArrayList<>(Utils.toStream(entityList)
-                .map(r -> builder
-                        .create(r, baseUri, nextDepth, maxDepth))
+                : Optional.of(Utils.toStream(entityList)
+                .map(r -> builder.create(r, nextDepth, maxDepth))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList())));
+                .collect(Collectors.toList()));
     }
 
-    private <X> X addAdditionals(final X idsObject, final Map<String, String> additional) {
+    private <K> K addAdditionals(final K idsObject, final Map<String, String> additional) {
         // NOTE: The Infomodel lib has setProperty on all classes, but the method is implemented
         // individually...
         try {
@@ -174,7 +153,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         return idsObject;
     }
 
-    private <X> Method findAdditionalMethod(final X idsResource) throws NoSuchMethodException {
+    private <K> Method findAdditionalMethod(final K idsResource) throws NoSuchMethodException {
         // NOTE: The Infomodel lib has setProperty on all classes, but some of them are implemented
         // higher up the inheritance chain.
         // If the setProperty method has a different signature null is returned.
@@ -182,7 +161,7 @@ public abstract class AbstractIdsBuilder<T extends AbstractEntity, X> {
         for (int i = 0; i < MAX_DEPTH; i++) {
             try {
                 return tClass.getMethod("setProperty", String.class, Object.class);
-            } catch (NoSuchMethodException ignore) {
+            } catch (NoSuchMethodException ignored) {
                 // Intentionally empty
             }
             if (i < MAX_DEPTH - 1) {

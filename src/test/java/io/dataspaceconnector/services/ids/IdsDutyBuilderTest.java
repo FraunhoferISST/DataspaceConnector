@@ -76,7 +76,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType()); //TODO always null for xsd:dateTimeStamp
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -102,7 +102,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -146,7 +146,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -178,6 +178,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"
@@ -204,6 +208,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithoutId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"ids:action\" : [ {\n"
                 + "      \"@id\" : \"idsc:DELETE\"\n"
@@ -228,6 +236,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithInvalidType() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Representation\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"
@@ -254,6 +266,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithMissingAction() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"

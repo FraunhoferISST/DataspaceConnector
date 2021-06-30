@@ -28,7 +28,6 @@ import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -53,14 +52,9 @@ public class RepresentationViewAssembler
         final var view = modelMapper.map(representation, RepresentationView.class);
         view.add(getSelfLink(representation.getId()));
 
-        final var selfLink =
-                linkTo(RepresentationController.class).slash(representation.getId()).withSelfRel();
-        view.add(selfLink);
-
         final var artifactsLink =
-                WebMvcLinkBuilder
-                        .linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
-                                        .getResource(representation.getId(), null, null))
+                linkTo(methodOn(RelationControllers.RepresentationsToArtifacts.class)
+                                .getResource(representation.getId(), null, null))
                         .withRel("artifacts");
         view.add(artifactsLink);
 

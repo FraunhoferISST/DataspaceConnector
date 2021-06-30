@@ -33,6 +33,21 @@ import org.springframework.data.domain.Pageable;
 public final class Utils {
 
     /**
+     * Default page size.
+     */
+    public static final int DEFAULT_PAGE_SIZE = 30;
+
+    /**
+     * Max page size.
+     */
+    public static final int MAX_PAGE_SIZE = 100;
+
+    /**
+     * Default first page.
+     */
+    public static final int DEFAULT_FIRST_PAGE = 0;
+
+    /**
      * Default constructor.
      */
     private Utils() {
@@ -107,7 +122,7 @@ public final class Utils {
         if (param == null) {
             return true;
         } else {
-            return param.toString().equals("");
+            return param.toString().isEmpty();
         }
     }
 
@@ -118,6 +133,7 @@ public final class Utils {
      * @param size The page size.
      * @return The page request.
      */
+    @SuppressWarnings("PMD.UselessParentheses")
     public static PageRequest toPageRequest(final Integer page, final Integer size) {
         final int pageIndex = (page != null && page > 0) ? page : DEFAULT_FIRST_PAGE;
         final int sizeValue = (size != null && size > 0) ? Math.min(size, MAX_PAGE_SIZE)
@@ -125,21 +141,6 @@ public final class Utils {
 
         return PageRequest.of(pageIndex, sizeValue);
     }
-
-    /**
-     * Default page size.
-     */
-    public static final int DEFAULT_PAGE_SIZE = 30;
-
-    /**
-     * Max page size.
-     */
-    public static final int MAX_PAGE_SIZE = 100;
-
-    /**
-     * Default first page.
-     */
-    public static final int DEFAULT_FIRST_PAGE = 0;
 
     /**
      * Compare two lists to each other.
@@ -156,7 +157,11 @@ public final class Utils {
         var isSame = true;
 
         if (isOnlyOneNull(lList, rList)) {
-            isSame = false;
+            final var cond1 = lList == null && rList.isEmpty();
+            final var cond2 = rList == null && lList.isEmpty();
+            if (!cond1 && !cond2) {
+                isSame = false;
+            }
         } else if (lList != null /* && rList != null*/) {
             final var lSet = makeUnique(lList, compare);
             final var rSet = makeUnique(rList, compare);
@@ -202,6 +207,7 @@ public final class Utils {
         return output;
     }
 
+    @SuppressWarnings("PMD.UselessParentheses")
     private static <T> boolean isOnlyOneNull(final T obj1, final T obj2) {
         return (obj1 == null && obj2 != null) || (obj1 != null && obj2 == null);
     }

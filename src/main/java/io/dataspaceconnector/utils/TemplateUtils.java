@@ -15,21 +15,24 @@
  */
 package io.dataspaceconnector.utils;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
+import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
 import lombok.extern.log4j.Log4j2;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Provides methods for building entity templates.
@@ -45,6 +48,17 @@ public final class TemplateUtils {
     }
 
     /**
+     * Build catalog template from ids catalog.
+     *
+     * @param catalog The ids catalog.
+     * @return The catalog template.
+     */
+    public static CatalogTemplate getCatalogTemplate(
+            final Catalog catalog) {
+        return MappingUtils.fromIdsCatalog(catalog);
+    }
+
+    /**
      * Build resource template from ids resource.
      *
      * @param resource The ids resource.
@@ -53,6 +67,17 @@ public final class TemplateUtils {
     public static ResourceTemplate<RequestedResourceDesc> getResourceTemplate(
             final Resource resource) {
         return MappingUtils.fromIdsResource(resource);
+    }
+
+    /**
+     * Build offered resource template from ids resource.
+     *
+     * @param resource The ids resource.
+     * @return The resource template.
+     */
+    public static ResourceTemplate<OfferedResourceDesc> getOfferedResourceTemplate(
+            final Resource resource) {
+        return MappingUtils.fromIdsOfferedResource(resource);
     }
 
     /**
@@ -115,10 +140,8 @@ public final class TemplateUtils {
 
         try {
             for (final var artifact : Utils.requireNonNull(artifactList, ErrorMessages.LIST_NULL)) {
-                final var id = artifact.getId();
-
                 // Artifact is only saved if it has been requested.
-                if (requestedArtifacts.contains(id)) {
+                if (requestedArtifacts.contains(artifact.getId())) {
                     final var template = MappingUtils.fromIdsArtifact((Artifact) artifact,
                             download, remoteUrl);
                     list.add(template);
@@ -136,12 +159,11 @@ public final class TemplateUtils {
 
     /**
      * Build a list of contract templates from ids resource.
-     * NOTE: Keep method for later usage.
      *
      * @param resource The ids resource.
      * @return List of contract templates.
      */
-    private static List<ContractTemplate> getContractTemplates(final Resource resource) {
+    public static List<ContractTemplate> getContractTemplates(final Resource resource) {
         final var list = new ArrayList<ContractTemplate>();
 
         // Iterate over all contract offers.

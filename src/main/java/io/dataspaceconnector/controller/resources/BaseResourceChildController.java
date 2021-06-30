@@ -15,12 +15,12 @@
  */
 package io.dataspaceconnector.controller.resources;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.services.resources.RelationService;
@@ -30,6 +30,9 @@ import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.domain.Page;
@@ -56,6 +59,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <T> The type of the entity operated on.
  * @param <V> The type of the view model produces.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
         T extends AbstractEntity, V extends RepresentationModel<V>> {
     /**
@@ -74,7 +79,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * The assembler for creating list of views.
      */
     @Autowired
-    private PagedResourcesAssembler<T> pagedResourcesAssembler;
+    private PagedResourcesAssembler<T> pagedAssembler;
 
     /**
      * The type of the service.
@@ -84,9 +89,11 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     /**
      * Default constructor.
      */
+    @SuppressWarnings("unchecked")
     protected BaseResourceChildController() {
         final var resolved = GenericTypeResolver
                 .resolveTypeArguments(getClass(), BaseResourceChildController.class);
+        assert resolved != null;
         resourceType = (Class<S>) resolved[2];
     }
 
@@ -101,10 +108,11 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *          if the ownerId is not known.
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get all children of a base resource with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<PagedModel<V>> getResource(
+    public PagedModel<V> getResource(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
@@ -113,12 +121,12 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
 
         PagedModel<V> model;
         if (entities.hasContent()) {
-            model = pagedResourcesAssembler.toModel((Page<T>) entities, assembler);
+            model = pagedAssembler.toModel((Page<T>) entities, assembler);
         } else {
-            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+            model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
-        return ResponseEntity.ok(model);
+        return model;
     }
 
     /**
@@ -131,7 +139,7 @@ public class BaseResourceChildController<S extends RelationService<?, ?, ?, ?>,
     @PostMapping
     @Operation(summary = "Add a list of children to a base resource")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public HttpEntity<PagedModel<V>> addResources(
+    public PagedModel<V> addResources(
             @Valid @PathVariable(name = "id") final UUID ownerId,
             @Valid @RequestBody final List<URI> resources) {
         Utils.requireNonNull(resources, ErrorMessages.LIST_NULL);

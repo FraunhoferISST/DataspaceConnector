@@ -15,11 +15,12 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import javax.persistence.PersistenceException;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import javax.persistence.PersistenceException;
 
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
@@ -125,7 +126,7 @@ public class ContractRequestMessageController {
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping(value = "/contract")
+    @PostMapping("/contract")
     @Operation(summary = "Send ids description request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
@@ -139,14 +140,14 @@ public class ContractRequestMessageController {
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "List of ids resource that should be requested.")
-            @RequestParam(value = "resourceIds") final List<URI> resources,
+            @RequestParam("resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
-            @RequestParam(value = "artifactIds") final List<URI> artifacts,
+            @RequestParam("artifactIds") final List<URI> artifacts,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
 //                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
-            @RequestParam(value = "download") final boolean download,
+            @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
         UUID agreementId;
@@ -224,12 +225,13 @@ public class ContractRequestMessageController {
                     // Read and process the response message.
                     try {
                         persistenceSvc.saveData(response, artifact);
-                    } catch (ResourceNotFoundException | MessageResponseException exception) {
+                    } catch (IOException | ResourceNotFoundException
+                             | MessageResponseException e) {
                         // Ignore that the data saving failed. Another try can take place later.
                         if (log.isWarnEnabled()) {
                             log.warn("Could not save data for artifact."
                                             + "[artifact=({}), exception=({})]",
-                                    artifact, exception.getMessage());
+                                    artifact, e.getMessage());
                         }
                     }
                 }
@@ -252,7 +254,7 @@ public class ContractRequestMessageController {
         final var entity = agreementAsm.toModel(agreementService.get(agreementId));
 
         final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }

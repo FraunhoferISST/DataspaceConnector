@@ -39,14 +39,7 @@ public class AgreementFactory implements AbstractFactory<Agreement, AgreementDes
     /**
      * The default value.
      */
-    static final String DEFAULT_VALUE = "";
-
-    /**
-     * Default constructor.
-     */
-    public AgreementFactory() {
-        // This constructor is intentionally empty. Nothing to do here.
-    }
+    public static final String DEFAULT_VALUE = "";
 
     /**
      * Create a new contract.

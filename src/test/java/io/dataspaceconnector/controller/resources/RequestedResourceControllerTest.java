@@ -18,6 +18,7 @@ package io.dataspaceconnector.controller.resources;
 import java.net.URI;
 import java.util.UUID;
 
+import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.services.resources.ResourceService;
@@ -25,15 +26,12 @@ import io.dataspaceconnector.services.resources.SubscriberNotificationService;
 import io.dataspaceconnector.view.RequestedResourceViewAssembler;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = {ResourceControllers.RequestedResourceController.class})
 class RequestedResourceControllerTest {
@@ -62,13 +60,8 @@ class RequestedResourceControllerTest {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var result = controller.create(null);
-
-        /* ASSERT */
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED.value(), result.getStatusCodeValue());
-        assertNull(result.getBody());
-        Mockito.verifyNoInteractions(service);
+        /* ACT && ASSERT */
+        assertThrows(MethodNotAllowed.class, () -> controller.create(null));
     }
 
     @Test
@@ -76,13 +69,8 @@ class RequestedResourceControllerTest {
         /* ARRANGE */
         // Nothing to arrange.
 
-        /* ACT */
-        final var result = controller.create(new RequestedResourceDesc());
-
-        /* ASSERT */
-        assertEquals(HttpStatus.METHOD_NOT_ALLOWED.value(), result.getStatusCodeValue());
-        assertNull(result.getBody());
-        Mockito.verifyNoInteractions(service);
+        /* ACT && ASSERT */
+        assertThrows(MethodNotAllowed.class, () -> controller.create(new RequestedResourceDesc()));
     }
 
 }

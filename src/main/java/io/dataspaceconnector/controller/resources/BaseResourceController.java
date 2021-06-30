@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import java.util.UUID;
 import javax.validation.Valid;
+import java.util.UUID;
 
 import io.dataspaceconnector.model.AbstractDescription;
 import io.dataspaceconnector.model.AbstractEntity;
@@ -25,10 +25,12 @@ import io.dataspaceconnector.utils.Utils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -52,6 +54,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @param <V> The type of the view produces by this controller.
  * @param <S> The underlying service for handling the resource logic.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public class BaseResourceController<T extends AbstractEntity, D extends AbstractDescription<T>, V
         extends RepresentationModel<V>, S
         extends BaseEntityService<T, D>> {
@@ -71,7 +75,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * The assembler for creating list of views.
      */
     @Autowired
-    private PagedResourcesAssembler<T> pagedResourcesAssembler;
+    private PagedResourcesAssembler<T> pagedAssembler;
 
     /**
      * The type of the entity used for creating empty pages.
@@ -81,9 +85,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     /**
      * Default constructor.
      */
+    @SuppressWarnings("unchecked")
     protected BaseResourceController() {
         final var resolved =
                 GenericTypeResolver.resolveTypeArguments(getClass(), BaseResourceController.class);
+        assert resolved != null;
         resourceType = (Class<T>) resolved[2];
     }
 
@@ -101,7 +107,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
         final var entity = assembler.toModel(obj);
 
         final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }
@@ -113,22 +119,23 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @param size The page size.
      * @return Response with code 200 (Ok) and the list of all endpoints of this resource type.
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET)
     @Operation(summary = "Get a list of base resources with pagination")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<CollectionModel<V>> getAll(
+    public PagedModel<V> getAll(
             @RequestParam(required = false, defaultValue = "0") final Integer page,
             @RequestParam(required = false, defaultValue = "30") final Integer size) {
         final var pageable = Utils.toPageRequest(page, size);
         final var entities = service.getAll(pageable);
         PagedModel<V> model;
         if (entities.hasContent()) {
-            model = pagedResourcesAssembler.toModel(entities, assembler);
+            model = pagedAssembler.toModel(entities, assembler);
         } else {
-            model = (PagedModel<V>) pagedResourcesAssembler.toEmptyModel(entities, resourceType);
+            model = (PagedModel<V>) pagedAssembler.toEmptyModel(entities, resourceType);
         }
 
-        return ResponseEntity.ok(model);
+        return model;
     }
 
     /**
@@ -142,9 +149,8 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @Operation(summary = "Get a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok")})
-    public ResponseEntity<V> get(@Valid @PathVariable(name = "id") final UUID resourceId) {
-        final var view = assembler.toModel(service.get(resourceId));
-        return ResponseEntity.ok(view);
+    public V get(@Valid @PathVariable(name = "id") final UUID resourceId) {
+        return assembler.toModel(service.get(resourceId));
     }
 
     /**
@@ -158,7 +164,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *          if the resourceId is unknown.
      */
-    @PutMapping(value = "{id}")
+    @PutMapping("{id}")
     @Operation(summary = "Update a base resource by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -175,7 +181,7 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
             // The resource has been moved
             final var entity = assembler.toModel(resource);
             final var headers = new HttpHeaders();
-            headers.setLocation(entity.getLink("self").get().toUri());
+            headers.setLocation(entity.getRequiredLink("self").toUri());
 
             response = new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
         }
@@ -189,20 +195,11 @@ public class BaseResourceController<T extends AbstractEntity, D extends Abstract
      * @return Response with code 204 (No_Content).
      * @throws IllegalArgumentException if the resourceId is null.
      */
-    @DeleteMapping(value = "{id}")
+    @DeleteMapping("{id}")
     @Operation(summary = "Delete a base resource by id")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No Content")})
     public ResponseEntity<Void> delete(@Valid @PathVariable(name = "id") final UUID resourceId) {
         service.delete(resourceId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    /**
-     * Get the service responsible for the resource's logic handling.
-     *
-     * @return The service.
-     */
-    protected S getService() {
-        return service;
     }
 }

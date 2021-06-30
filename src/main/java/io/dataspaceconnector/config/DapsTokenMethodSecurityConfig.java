@@ -15,6 +15,9 @@
  */
 package io.dataspaceconnector.config;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -27,6 +30,8 @@ import org.springframework.security.config.annotation.method.configuration.Globa
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Getter(AccessLevel.PUBLIC)
+@Setter(AccessLevel.PRIVATE)
 public class DapsTokenMethodSecurityConfig extends GlobalMethodSecurityConfiguration {
 
     /**

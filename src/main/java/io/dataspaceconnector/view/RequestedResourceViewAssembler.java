@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -51,9 +50,8 @@ public class RequestedResourceViewAssembler
         view.add(getSelfLink(resource.getId()));
 
         final var contractsLink =
-                WebMvcLinkBuilder
-                        .linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
-                                        .getResource(resource.getId(), null, null))
+                linkTo(methodOn(RelationControllers.RequestedResourcesToContracts.class)
+                                .getResource(resource.getId(), null, null))
                         .withRel("contracts");
         view.add(contractsLink);
 
