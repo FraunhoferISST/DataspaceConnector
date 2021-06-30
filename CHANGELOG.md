@@ -1,12 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.X.X] - XXXX-XX-XX
+## [6.0.0] - 2021-06-30
+
+### Added
+- Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
 
 ### Changed
 - Increase spring-boot version to 2.5.2.
 - Increase checkstyle version to 8.44.
 - Increase pmd version to 6.36.0.
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.1.
+- Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
+`/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
+- Move implementation for sending IDS query, connector, and resource messages to
+  `GeneralMessageService`.
+- Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
+  message.
 
 ## [5.2.0] - 2021-06-23
 
