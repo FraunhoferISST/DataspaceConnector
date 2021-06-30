@@ -18,7 +18,9 @@ package io.dataspaceconnector.services.resources;
 import java.util.UUID;
 
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
+import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
+import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpointDesc;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
@@ -47,9 +49,9 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     private EndpointRepository repository;
 
     private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y> getService(final Class<?> clazz) {
-        if (AppEndpointDesc.class.equals(clazz)) {
+        if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) apps;
-        } else if (ConnectorEndpointDesc.class.equals(clazz)) {
+        } else if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
         }
 
@@ -99,8 +101,8 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public void delete(final UUID entityId) {
-        apps.get(entityId);
-        connector.get(entityId);
-        generic.get(entityId);
+        var endpoint = get(entityId);
+        var service = getService(endpoint.getClass());
+        service.delete(entityId);
     }
 }

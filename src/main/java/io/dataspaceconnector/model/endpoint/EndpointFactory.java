@@ -15,10 +15,10 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
+
+import java.net.URI;
 
 /**
  * Base class for creating and updating endpoints.
@@ -65,6 +65,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
     @Override
     public boolean update(final T endpoint, final D desc) {
         final var hasParentUpdated = super.update(endpoint, desc);
+        final var hasUpdatedLocation = updateLocation(endpoint, desc.getLocation());
         final var hasUpdatedDocs = updateDocs(endpoint, desc.getDocs());
         final var hasUpdatedInfo = updateInfo(endpoint, desc.getInfo());
 //        final var hasUpdatedInboundPath = updateInboundPath(endpoint, desc.getInboundPath());
@@ -73,9 +74,9 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 
         final var updatedInternal = updateInternal(endpoint, desc);
 
-        return hasParentUpdated || hasUpdatedDocs || hasUpdatedInfo
-               // || hasUpdatedInboundPath || hasUpdatedOutboundPath
-               || hasUpdatedAdditional || updatedInternal;
+        return hasParentUpdated || hasUpdatedLocation || hasUpdatedDocs || hasUpdatedInfo
+                // || hasUpdatedInboundPath || hasUpdatedOutboundPath
+                || hasUpdatedAdditional || updatedInternal;
     }
 
 //    /**
@@ -130,5 +131,18 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
         newDocs.ifPresent(endpoint::setDocs);
 
         return newDocs.isPresent();
+    }
+
+    /**
+     * @param endpoint The endpoint entity.
+     * @param location The endpoint location.
+     * @return True, if endpoint location is updated.
+     */
+    private boolean updateLocation(final Endpoint endpoint,
+                                   final URI location) {
+        final var newLocation = MetadataUtils.updateUri(endpoint.getDocs(), location, DEFAULT_URI);
+        newLocation.ifPresent(endpoint::setLocation);
+
+        return newLocation.isPresent();
     }
 }

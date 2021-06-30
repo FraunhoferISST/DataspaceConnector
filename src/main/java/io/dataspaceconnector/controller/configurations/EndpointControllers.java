@@ -47,7 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 public final class EndpointControllers {
 
     /**
-     * Offers the endpoints for managing generic endpoints.
+     * Offers the endpoints for managing different endpoints.
      */
     @RestController
     @RequestMapping("/api/endpoints")

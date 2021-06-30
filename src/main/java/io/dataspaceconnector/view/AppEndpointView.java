@@ -47,30 +47,11 @@ public class AppEndpointView extends RepresentationModel<AppEndpointView> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
-    /**
-     * The documentation for the endpoint.
-     */
-    private URI endpointDocumentation;
+    private URI location;
 
-    /**
-     * The information for the endpoint.
-     */
-    private String endpointInformation;
+    private URI docs;
 
-    /**
-     * The inbound path.
-     */
-    private String inboundPath;
-
-    /**
-     * The outbound path.
-     */
-    private String outboundPath;
-
-    /**
-     * The access url of the endpoint.
-     */
-    private URI accessURL;
+    private String info;
 
     /**
      * The file name extension of the data.

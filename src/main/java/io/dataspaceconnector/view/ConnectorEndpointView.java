@@ -46,28 +46,9 @@ public class ConnectorEndpointView extends RepresentationModel<ConnectorEndpoint
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
-    /**
-     * The documentation for the endpoint.
-     */
-    private URI endpointDocumentation;
+    private URI location;
 
-    /**
-     * The information for the endpoint.
-     */
-    private String endpointInformation;
+    private URI docs;
 
-    /**
-     * The inbound path.
-     */
-    private String inboundPath;
-
-    /**
-     * The outbound path.
-     */
-    private String outboundPath;
-
-    /**
-     * The absolute path of the generic endpoint.
-     */
-    private URI accessURL;
+    private String info;
 }
