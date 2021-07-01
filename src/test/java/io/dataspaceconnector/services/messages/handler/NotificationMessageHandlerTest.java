@@ -63,10 +63,15 @@ class NotificationMessageHandlerTest {
             ._tokenFormat_(TokenFormat.JWT)
             .build();
 
+    private final String version = "4.0.0";
+    private final URI uri = URI.create("https://localhost:8080");
+
     @Test
     public void handleMessage_nullMessage_returnBadRequest() {
         /* ARRANGE */
-        // Nothing to arrange here.
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(uri).when(connectorService).getConnectorId();
+        Mockito.doReturn(version).when(connectorService).getOutboundModelVersion();
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage(null, null);
@@ -84,16 +89,20 @@ class NotificationMessageHandlerTest {
         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
 
         final var message = new NotificationMessageBuilder()
-                ._senderAgent_(URI.create("https://localhost:8080"))
-                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._senderAgent_(uri)
+                ._issuerConnector_(uri)
                 ._securityToken_(token)
                 ._modelVersion_("tetris")
                 ._issued_(xmlCalendar)
                 .build();
 
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(uri).when(connectorService).getConnectorId();
+        Mockito.doReturn(version).when(connectorService).getOutboundModelVersion();
+
         /* ACT */
-        final var result =
-                (ErrorResponse) handler.handleMessage((NotificationMessageImpl) message, null);
+        final var result = (ErrorResponse) handler.handleMessage((NotificationMessageImpl) message,
+                null);
 
         /* ASSERT */
         assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
@@ -107,8 +116,6 @@ class NotificationMessageHandlerTest {
         calendar.setTime(new Date());
         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
 
-        final var version = "4.0.0";
-        final var uri = URI.create("https://localhost:8080");
         final var message = new NotificationMessageBuilder()
                 ._senderAgent_(uri)
                 ._issuerConnector_(uri)

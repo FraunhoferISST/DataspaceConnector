@@ -24,7 +24,6 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessageBuilder;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
-import io.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
@@ -113,7 +112,8 @@ class ResourceUpdateMessageHandlerTest {
         final var message = getResourceUpdateMessage();
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadInputstream(null, new ObjectMapper()));
+        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
+                new MessagePayloadInputstream(null, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -125,7 +125,8 @@ class ResourceUpdateMessageHandlerTest {
         final var message = getResourceUpdateMessage();
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, new MessagePayloadInputstream(
+        final var result = (ErrorResponse) handler.handleMessage(
+                (ResourceUpdateMessageImpl) message, new MessagePayloadInputstream(
                 InputStream.nullInputStream(), new ObjectMapper()));
 
         /* ASSERT */
@@ -141,12 +142,9 @@ class ResourceUpdateMessageHandlerTest {
         final InputStream stream = new ByteArrayInputStream(invalidInput.getBytes(StandardCharsets.UTF_8));
 
         /* ACT */
-        final ErrorResponse result;
-
-             result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                    new MessagePayloadInputstream(stream, new ObjectMapper()));
-
-
+        final var result = (ErrorResponse) handler.handleMessage(
+                (ResourceUpdateMessageImpl) message,
+                new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -158,13 +156,15 @@ class ResourceUpdateMessageHandlerTest {
         /* ARRANGE */
         final var message = getResourceUpdateMessage();
 
-        final var validInput = new Serializer().serialize(new ResourceBuilder(URI.create("https://localhost:8080/artifacts/someOtherId"))
-                                                                    .build());
+        final var validInput = new Serializer().serialize(new ResourceBuilder(
+                URI.create("https://localhost:8080/artifacts/someOtherId"))
+                .build());
         final InputStream stream = new ByteArrayInputStream(validInput.getBytes(StandardCharsets.UTF_8));
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message,
-                                                                 new MessagePayloadInputstream(stream, new ObjectMapper()));
+        final var result = (ErrorResponse) handler.handleMessage(
+                (ResourceUpdateMessageImpl) message,
+                new MessagePayloadInputstream(stream, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -212,6 +212,10 @@ class ResourceUpdateMessageHandlerTest {
 
     //     assertTrue(result.getHeader() instanceof MessageProcessedNotificationMessage);
     // }
+
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private ResourceUpdateMessage getResourceUpdateMessage() {
