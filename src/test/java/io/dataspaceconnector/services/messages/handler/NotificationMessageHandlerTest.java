@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
@@ -22,11 +23,13 @@ import de.fraunhofer.iais.eis.NotificationMessageImpl;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -46,11 +49,19 @@ class NotificationMessageHandlerTest {
     @MockBean
     private BootstrapConfiguration bootstrapConfiguration;
 
+    @MockBean
+    private ConnectorService connectorService;
+
     @SpyBean
     MessageProcessedNotificationService notificationService;
 
     @Autowired
     NotificationMessageHandler handler;
+
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
 
     @Test
     public void handleMessage_nullMessage_returnBadRequest() {
@@ -61,7 +72,8 @@ class NotificationMessageHandlerTest {
         final var result = (ErrorResponse) handler.handleMessage(null, null);
 
         /* ASSERT */
-        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -74,16 +86,18 @@ class NotificationMessageHandlerTest {
         final var message = new NotificationMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
                 ._issuerConnector_(URI.create("https://localhost:8080"))
-                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._securityToken_(token)
                 ._modelVersion_("tetris")
                 ._issued_(xmlCalendar)
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse) handler.handleMessage((NotificationMessageImpl) message, null);
+        final var result =
+                (ErrorResponse) handler.handleMessage((NotificationMessageImpl) message, null);
 
         /* ASSERT */
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
+                result.getRejectionMessage().getRejectionReason());
     }
 
     @Test
@@ -93,20 +107,29 @@ class NotificationMessageHandlerTest {
         calendar.setTime(new Date());
         final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
 
+        final var version = "4.0.0";
+        final var uri = URI.create("https://localhost:8080");
         final var message = new NotificationMessageBuilder()
-                ._senderAgent_(URI.create("https://localhost:8080"))
-                ._issuerConnector_(URI.create("https://localhost:8080"))
-                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
-                ._modelVersion_("4.0.0")
+                ._senderAgent_(uri)
+                ._issuerConnector_(uri)
+                ._securityToken_(token)
+                ._modelVersion_(version)
                 ._issued_(xmlCalendar)
                 .build();
 
+        Mockito.doNothing().when(notificationService).validateIncomingMessage(message);
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(uri).when(connectorService).getConnectorId();
+        Mockito.doReturn(version).when(connectorService).getOutboundModelVersion();
+
         /* ACT */
-        final var result = (BodyResponse<?>) handler.handleMessage((NotificationMessageImpl) message, null);
+        final var result = (BodyResponse<?>) handler.handleMessage((NotificationMessageImpl)
+                message, null);
 
         /* ASSERT */
-        final var expected = (MessageProcessedNotificationMessage) notificationService.buildMessage(new MessageProcessedNotificationMessageDesc(
-                                                                             message.getIssuerConnector(), message.getId()));
+        final var expected = (MessageProcessedNotificationMessage) notificationService
+                .buildMessage(new MessageProcessedNotificationMessageDesc(
+                        message.getIssuerConnector(), message.getId()));
 
         // Compare header
         assertEquals(expected.getIssuerConnector(), result.getHeader().getIssuerConnector());

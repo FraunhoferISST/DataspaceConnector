@@ -23,6 +23,7 @@ import de.fraunhofer.iais.eis.ContractAgreementMessage;
 import de.fraunhofer.iais.eis.ContractRequestBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -36,6 +37,7 @@ import io.dataspaceconnector.model.ContractFactory;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.services.EntityPersistenceService;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.resources.EntityDependencyResolver;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
@@ -67,6 +69,9 @@ class ContractRequestHandlerTest {
 
     @MockBean
     private BootstrapConfiguration bootstrapConfiguration;
+
+    @MockBean
+    private ConnectorService connectorService;
 
     @SpyBean
     EntityPersistenceService persistenceService;
@@ -418,8 +423,7 @@ class ContractRequestHandlerTest {
                 ._target_(artifactId)
                 .build();
 
-        final var message =
-                new ContractRequestBuilder(URI.create("https://someUri"))
+        final var message = new ContractRequestBuilder(URI.create("https://someUri"))
                         ._permission_(Util.asList(permission))
                         .build();
 
@@ -435,6 +439,10 @@ class ContractRequestHandlerTest {
         ruleDesc.setValue(new Serializer().serialize(permission));
         final var rule = new ContractRuleFactory().create(ruleDesc);
 
+        final var token = getToken();
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doReturn(issuerConnector).when(connectorService).getConnectorId();
+        Mockito.doReturn("4.0.0").when(connectorService).getOutboundModelVersion();
         Mockito.doReturn(Arrays.asList(contract)).when(dependencyResolver).getContractOffersByArtifactId(Mockito.eq(artifactId));
         Mockito.doReturn(Arrays.asList(rule)).when(dependencyResolver).getRulesByContractOffer(Mockito.eq(contract));
         Mockito.doReturn(getContractAgreement()).when(persistenceService).buildAndSaveContractAgreement(
@@ -451,6 +459,13 @@ class ContractRequestHandlerTest {
         return new ContractAgreementBuilder(URI.create("http://localhost:8080/api/agreements/" + UUID.randomUUID()))
                 ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(IdsMessageUtils.getGregorianNow())
+                .build();
+    }
+
+    private DynamicAttributeToken getToken() {
+        return new DynamicAttributeTokenBuilder()
+                ._tokenValue_("token")
+                ._tokenFormat_(TokenFormat.JWT)
                 .build();
     }
 }
