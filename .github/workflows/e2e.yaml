@@ -8,14 +8,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v2
-      - name: Build image
-        run: |
-          docker build . -t ghcr.io/international-data-spaces-association/dataspace-connector:test
+      # - name: Checkout Repo
+      #   uses: actions/checkout@v2
+      # - name: Cache maven packages
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: ~/.m2
+      #     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      #     restore-keys: ${{ runner.os }}-m2
+      # - name: Build image
+      #   run: |
+      #     docker build . -t ghcr.io/international-data-spaces-association/dataspace-connector:test
       - name: Setup environment
         run: |
-          curl -sfL https://get.k3s.io | sh -
+          curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
+          cat /etc/rancher/k3s/k3s.yaml
+          cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
       - name: Test environment
         run: |
           kubectl get nodes
