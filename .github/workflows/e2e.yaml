@@ -29,4 +29,5 @@ jobs:
         run: |
           kubectl cluster-info
       - name:
+        uses: |
           helm install charts/dataspace-connector
