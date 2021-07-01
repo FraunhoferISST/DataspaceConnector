@@ -2,10 +2,6 @@ name: End to end tests
 on:
   push:
 
-concurrency:
-  group: ${{ github.head_ref }}
-  cancel-in-progress: true
-
 jobs:
   e2e:
     timeout-minutes: 30
