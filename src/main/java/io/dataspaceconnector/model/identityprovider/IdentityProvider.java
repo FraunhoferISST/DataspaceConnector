@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.identityprovider;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -33,6 +34,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Entity class for the identity provider.
@@ -57,6 +60,7 @@ public class IdentityProvider extends NamedEntity implements RemoteService {
      * The access url of the identity provider.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**

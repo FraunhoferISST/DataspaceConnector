@@ -25,9 +25,12 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Table;
 import java.net.URI;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 @javax.persistence.Entity
 @Table(name = "truststore")
@@ -47,6 +50,7 @@ public class Truststore extends Entity {
      * The trust store.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI name;
 
     /**

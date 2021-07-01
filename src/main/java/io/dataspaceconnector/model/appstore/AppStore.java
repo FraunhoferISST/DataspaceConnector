@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.appstore;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -32,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Apps can be downloaded from an app store to perform data operations on the data.
@@ -55,6 +58,7 @@ public class AppStore extends NamedEntity implements RemoteService {
      * The access url of the app store.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**

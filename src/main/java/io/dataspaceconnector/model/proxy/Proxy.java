@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.proxy;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.OneToOne;
@@ -36,6 +37,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Entity for managing proxies.
@@ -58,6 +61,7 @@ public class Proxy extends Entity implements RemoteService {
      * The proxy uri.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**

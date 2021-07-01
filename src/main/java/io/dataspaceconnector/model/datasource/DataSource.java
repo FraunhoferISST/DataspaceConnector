@@ -16,6 +16,7 @@
 package io.dataspaceconnector.model.datasource;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -35,6 +36,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Entity which holds information about the data sources.
@@ -59,6 +62,7 @@ public class DataSource extends Entity implements RemoteService {
      * The relative path of the data source.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**

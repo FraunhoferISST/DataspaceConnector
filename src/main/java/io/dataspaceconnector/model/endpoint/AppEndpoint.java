@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,6 +28,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * The app endpoint can be used and connected to other endpoints to perform operations on the data.
@@ -48,6 +51,7 @@ public class AppEndpoint extends Endpoint {
      * The access url of the endpoint.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI name;
 
     /**

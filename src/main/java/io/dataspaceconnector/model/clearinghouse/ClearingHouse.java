@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.clearinghouse;
 
+import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * The Clearing House is an intermediary that provides clearing and settlement services
@@ -56,6 +59,7 @@ public class ClearingHouse extends NamedEntity implements RemoteService {
      * The access url of the clearing house.
      */
     @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
     private URI location;
 
     /**
