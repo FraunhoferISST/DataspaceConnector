@@ -158,6 +158,10 @@
 					<groupId>de.fraunhofer.iais.eis.ids.infomodel</groupId>
 					<artifactId>java</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -179,6 +183,10 @@
 				<exclusion>
 					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.jsonwebtoken</groupId>
+					<artifactId>jjwt</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
