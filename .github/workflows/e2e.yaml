@@ -28,6 +28,6 @@ jobs:
       - name: Test environment
         run: |
           kubectl cluster-info
-      - name:
-        uses: |
-          helm install dsc charts/dataspace-connector
+      - name: Setup provider
+        run: |
+          helm install provider charts/dataspace-connector
