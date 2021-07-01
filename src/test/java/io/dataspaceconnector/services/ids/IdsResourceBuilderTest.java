@@ -362,7 +362,7 @@ public class IdsResourceBuilderTest {
         resourceDesc.setDescription(description);
         resourceDesc.setKeywords(Collections.singletonList(keyword));
         resourceDesc.setEndpointDocumentation(endpointDocumentation);
-        resourceDesc.setLicence(license);
+        resourceDesc.setLicense(license);
         resourceDesc.setPublisher(publisher);
         resourceDesc.setSovereign(sovereign);
 

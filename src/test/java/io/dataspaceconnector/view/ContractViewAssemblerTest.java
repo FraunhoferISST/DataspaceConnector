@@ -263,7 +263,7 @@ public class ContractViewAssemblerTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         final var resource = offeredResourceFactory.create(desc);
@@ -284,7 +284,7 @@ public class ContractViewAssemblerTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         final var resource = requestedResourceFactory.create(desc);

@@ -111,7 +111,7 @@ public class OfferedResourceViewAssemblerTest {
         Assertions.assertEquals(offeredResource.getKeywords(), result.getKeywords());
         Assertions.assertEquals(offeredResource.getPublisher(), result.getPublisher());
         Assertions.assertEquals(offeredResource.getLanguage(), result.getLanguage());
-        Assertions.assertEquals(offeredResource.getLicence(), result.getLicence());
+        Assertions.assertEquals(offeredResource.getLicense(), result.getLicense());
         Assertions.assertEquals(offeredResource.getVersion(), result.getVersion());
         Assertions.assertEquals(offeredResource.getSovereign(), result.getSovereign());
         Assertions.assertEquals(offeredResource.getEndpointDocumentation(),
@@ -156,7 +156,7 @@ public class OfferedResourceViewAssemblerTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         final var resource = offeredResourceFactory.create(desc);

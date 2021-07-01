@@ -3400,7 +3400,7 @@ components:
           format: uri
         language:
           type: string
-        licence:
+        license:
           type: string
           format: uri
         sovereign:
@@ -3446,7 +3446,7 @@ components:
           format: uri
         language:
           type: string
-        licence:
+        license:
           type: string
           format: uri
         sovereign:
@@ -3701,7 +3701,7 @@ components:
           format: uri
         language:
           type: string
-        licence:
+        license:
           type: string
           format: uri
         version:
@@ -3741,7 +3741,7 @@ components:
           format: uri
         language:
           type: string
-        licence:
+        license:
           type: string
           format: uri
         version:

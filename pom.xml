@@ -41,9 +41,9 @@
 	</organization>
 	<licenses>
 		<license>
-			<name>${licence_name}</name>
-			<url>${licence_url}</url>
-			<distribution>${licence_distribution}</distribution>
+			<name>${license_name}</name>
+			<url>${license_url}</url>
+			<distribution>${license_distribution}</distribution>
 		</license>
 	</licenses>
 
@@ -131,10 +131,10 @@
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
 
-		<!-- Licence -->
-		<licence_name>Apache License, Version 2.0</licence_name>
-		<licence_url>https://www.apache.org/licenses/LICENSE-2.0.txt</licence_url>
-		<licence_distribution>repo</licence_distribution>
+		<!-- License -->
+		<license_name>Apache License, Version 2.0</license_name>
+		<license_url>https://www.apache.org/licenses/LICENSE-2.0.txt</license_url>
+		<license_distribution>repo</license_distribution>
 	</properties>
 
 	<dependencies>
@@ -562,9 +562,9 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<systemPropertyVariables>
-						<propertyName>licence_type</propertyName>
-						<propertyName>licence_url</propertyName>
-						<propertyName>licence_distribution</propertyName>
+						<propertyName>license_type</propertyName>
+						<propertyName>license_url</propertyName>
+						<propertyName>license_distribution</propertyName>
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
