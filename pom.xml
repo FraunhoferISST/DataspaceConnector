@@ -107,6 +107,7 @@
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
 		<jaeger.version>3.3.1</jaeger.version>
+		<velocity.version>1.7</velocity.version>
 
 		<!-- Plugins -->
 		<maven-enforcer-plugin.version>3.0.0-M3</maven-enforcer-plugin.version>
@@ -383,6 +384,14 @@
 			<version>${equalsverifier.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
