@@ -23,6 +23,7 @@ jobs:
         run: |
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
           cat /etc/rancher/k3s/k3s.yaml
+          mkdir -p ~/.kube
           cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
       - name: Test environment
         run: |
