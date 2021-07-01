@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@SpringBootTest( classes = { ExampleController.class })
+@SpringBootTest(classes = {ExampleController.class})
 public class ExampleControllerTest {
 
     @MockBean
@@ -79,10 +79,9 @@ public class ExampleControllerTest {
                         new ProxyBuilder(URI.create("proxiId"))
                                 ._noProxy_(new ArrayList<>(Collections.singletonList(
                                         URI.create("https://localhost:8080/"))))
-                                ._proxyAuthentication_(
-                                        new BasicAuthenticationBuilder(URI.create("basicAuthId")).build())
-                                ._proxyURI_(URI.create(
-                                        "proxy.dortmund.isst.fraunhofer.de:3128"))
+                                ._proxyAuthentication_(new BasicAuthenticationBuilder(
+                                        URI.create("basicAuthId")).build())
+                                ._proxyURI_(URI.create("proxy.dortmund.isst.fraunhofer.de:3128"))
                                 .build()))
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)
                 ._connectorDescription_(
@@ -96,14 +95,14 @@ public class ExampleControllerTest {
                                         new TypedLiteral("Dataspace Connector")))
                                 ._description_(Util.asList(new TypedLiteral(
                                         "IDS Connector with static "
-                                        + "example resources hosted by the Fraunhofer ISST.")))
+                                                + "example resources hosted by the Fraunhofer " +
+                                                "ISST.")))
                                 ._version_("v3.0.0")
                                 ._publicKey_(
                                         new PublicKeyBuilder(URI.create("keyId"))
                                                 ._keyType_(KeyType.RSA)
-                                                ._keyValue_(
-                                                        "Your daps token here.".getBytes(
-                                                                StandardCharsets.UTF_8))
+                                                ._keyValue_("Your daps token here."
+                                                        .getBytes(StandardCharsets.UTF_8))
                                                 .build())
                                 ._hasDefaultEndpoint_(
                                         new ConnectorEndpointBuilder(URI.create("endpointId"))
@@ -116,7 +115,7 @@ public class ExampleControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/examples/configuration"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
         assertEquals(expect.toRdf(), result.getResponse().getContentAsString());
     }
 

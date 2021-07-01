@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import lombok.SneakyThrows;
@@ -27,6 +23,10 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,9 +47,9 @@ class CatalogOfferedResourceLinkerTest {
     Catalog catalog = getCatalog();
     OfferedResource resource = getResource();
 
-    /**************************************************************************
-     * getInternal
-     *************************************************************************/
+    /***********************************************************************************************
+     * getInternal                                                                                 *
+     **********************************************************************************************/
 
     @Test
     public void getInternal_null_throwsNullPointerException() {
@@ -73,9 +73,9 @@ class CatalogOfferedResourceLinkerTest {
         assertEquals(expected, resources);
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private Catalog getCatalog() {
@@ -110,8 +110,8 @@ class CatalogOfferedResourceLinkerTest {
         titleField.setAccessible(true);
         titleField.set(resource, "Hello");
 
-        final var idField =
-                resource.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+        final var idField = resource.getClass().getSuperclass().getSuperclass().getDeclaredField(
+                "id");
         idField.setAccessible(true);
         idField.set(resource, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 

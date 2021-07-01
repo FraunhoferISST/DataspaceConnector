@@ -15,25 +15,25 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
-import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -190,7 +190,8 @@ public class IdsDutyBuilderTest {
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -218,7 +219,8 @@ public class IdsDutyBuilderTest {
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -248,7 +250,8 @@ public class IdsDutyBuilderTest {
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -275,7 +278,8 @@ public class IdsDutyBuilderTest {
                 + "-aa4c29d29fb5\",\n"
                 + "    \"ids:constraint\" : [ {\n"
                 + "      \"@type\" : \"ids:Constraint\",\n"
-                + "      \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "      \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64" +
+                "-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"

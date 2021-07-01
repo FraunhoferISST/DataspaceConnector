@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
@@ -42,6 +35,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,8 +49,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {RepresentationViewAssembler.class, ViewAssemblerHelper.class,
-        RepresentationFactory.class, OfferedResourceFactory.class, RequestedResourceFactory.class})
+@SpringBootTest(classes = {
+        RepresentationViewAssembler.class,
+        ViewAssemblerHelper.class,
+        RepresentationFactory.class,
+        OfferedResourceFactory.class,
+        RequestedResourceFactory.class
+})
 public class RepresentationViewAssemblerTest {
 
     @Autowired
@@ -70,11 +75,9 @@ public class RepresentationViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = representationViewAssembler.getSelfLink(null);
@@ -82,18 +85,16 @@ public class RepresentationViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var representationId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = representationViewAssembler.getSelfLink(representationId);
@@ -101,7 +102,7 @@ public class RepresentationViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + representationId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
@@ -235,12 +236,12 @@ public class RepresentationViewAssemblerTest {
 
         /* ACT && ASSERT */
         assertThrows(UnreachableLineException.class,
-                     () -> representationViewAssembler.toModel(representation));
+                () -> representationViewAssembler.toModel(representation));
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Representation getRepresentation() {
         final var desc = new RepresentationDesc();
@@ -315,8 +316,7 @@ public class RepresentationViewAssemblerTest {
     }
 
     private String getRepresentationLink(final UUID representationId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RepresentationController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + representationId;
@@ -341,7 +341,7 @@ public class RepresentationViewAssemblerTest {
 
         private static final long serialVersionUID = 1L;
 
-        public UnknownResource() {}
+        public UnknownResource() {
+        }
     }
-
 }

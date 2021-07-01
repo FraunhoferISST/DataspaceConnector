@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -35,6 +33,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,9 +92,9 @@ public class DataProvisionVerifierTest {
         assertEquals(VerificationResult.DENIED, result);
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private ContractAgreement getContractAgreement() {
         return new ContractAgreementBuilder(URI.create("https://agreement.com"))
@@ -125,5 +125,4 @@ public class DataProvisionVerifierTest {
                 ._target_(target)
                 .build();
     }
-
 }

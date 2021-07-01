@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { CatalogFactory.class, OfferedResourceFactory.class,
+@SpringBootTest(classes = {CatalogFactory.class, OfferedResourceFactory.class,
         RepresentationFactory.class, ArtifactFactory.class, ContractFactory.class,
         ContractRuleFactory.class, IdsCatalogBuilder.class, IdsResourceBuilder.class,
         IdsRepresentationBuilder.class, IdsArtifactBuilder.class, IdsContractBuilder.class,
@@ -423,7 +423,8 @@ public class IdsCatalogBuilderTest {
 
         final var offeredResourcesField = Catalog.class.getDeclaredField("offeredResources");
         offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));;
+        offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));
+        ;
 
         return catalog;
     }

@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.Artifact;
@@ -37,6 +31,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,8 +44,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {ArtifactViewAssembler.class, ViewAssemblerHelper.class,
-        ArtifactFactory.class})
+@SpringBootTest(classes = {
+        ArtifactViewAssembler.class,
+        ViewAssemblerHelper.class,
+        ArtifactFactory.class
+})
 public class ArtifactViewAssemblerTest {
 
     @Autowired
@@ -57,11 +60,9 @@ public class ArtifactViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = artifactViewAssembler.getSelfLink(null);
@@ -69,18 +70,16 @@ public class ArtifactViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var artifactId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = artifactViewAssembler.getSelfLink(artifactId);
@@ -88,14 +87,13 @@ public class ArtifactViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + artifactId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void toModel_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> artifactViewAssembler.toModel(null));
+        assertThrows(IllegalArgumentException.class, () -> artifactViewAssembler.toModel(null));
     }
 
     @Test
@@ -140,9 +138,9 @@ public class ArtifactViewAssemblerTest {
                 agreementsLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Artifact getArtifact() {
         final var desc = new ArtifactDesc();
@@ -165,8 +163,7 @@ public class ArtifactViewAssemblerTest {
     }
 
     private String getArtifactLink(final UUID artifactId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ArtifactController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + artifactId;
@@ -187,5 +184,4 @@ public class ArtifactViewAssemblerTest {
         return linkTo(methodOn(RelationControllers.ArtifactsToAgreements.class)
                 .getResource(artifactId, null, null)).toString();
     }
-
 }

@@ -28,10 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = {ControllerUtils.class})
 class ControllerUtilsTest {
 
+    private final Exception exception = new Exception("Some exception.");
+
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Ids message handling failed. "
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -46,7 +47,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to read the ids response "
                 + "message.", HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -61,7 +61,6 @@ class ControllerUtilsTest {
     @Test
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -76,7 +75,6 @@ class ControllerUtilsTest {
     @Test
     public void respondDeserializationError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to update.",
                 HttpStatus.BAD_REQUEST);
 
@@ -136,7 +134,6 @@ class ControllerUtilsTest {
     @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Could not identify pattern.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -151,7 +148,6 @@ class ControllerUtilsTest {
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Invalid input. "
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -166,7 +162,6 @@ class ControllerUtilsTest {
     @Test
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to build contract request.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -181,7 +176,6 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectorNotLoaded_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Connector could not be loaded.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -196,7 +190,6 @@ class ControllerUtilsTest {
     @Test
     public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -211,7 +204,6 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */
@@ -249,5 +241,4 @@ class ControllerUtilsTest {
         assertEquals(ResponseEntity.class, response.getClass());
         assertEquals(expectedResponse, response);
     }
-
 }

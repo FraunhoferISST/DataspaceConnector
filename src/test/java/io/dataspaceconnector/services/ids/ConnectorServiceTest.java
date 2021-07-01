@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -53,6 +49,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -255,7 +255,8 @@ public class ConnectorServiceTest {
     }
 
     private ConfigurationModel getConfigModel() {
-        return new ConfigurationModelBuilder(URI.create("https://w3id.org/idsa/autogen/configModel/462e5a6a-7143-4453-9c5c-d2aba8c9aec1"))
+        return new ConfigurationModelBuilder(URI.create("https://w3id" +
+                ".org/idsa/autogen/configModel/462e5a6a-7143-4453-9c5c-d2aba8c9aec1"))
                 ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
                 ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)

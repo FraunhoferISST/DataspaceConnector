@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
@@ -28,6 +24,10 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,9 +47,9 @@ class OfferedResourceContractLinkerTest {
     OfferedResource resource = getResource();
     Contract contract = getContract();
 
-    /**************************************************************************
-     * getInternal
-     *************************************************************************/
+    /***********************************************************************************************
+     * getInternal                                                                                 *
+     **********************************************************************************************/
 
     @Test
     public void getInternal_null_throwsNullPointerException() {
@@ -73,9 +73,9 @@ class OfferedResourceContractLinkerTest {
         assertEquals(expected, contracts);
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private OfferedResource getResource() {
@@ -88,13 +88,13 @@ class OfferedResourceContractLinkerTest {
         titleField.setAccessible(true);
         titleField.set(resource, "Hello");
 
-        final var contractsField =
-                resource.getClass().getSuperclass().getDeclaredField("contracts");
+        final var contractsField = resource.getClass().getSuperclass().getDeclaredField(
+                "contracts");
         contractsField.setAccessible(true);
         contractsField.set(resource, new ArrayList<Contract>());
 
-        final var idField =
-                resource.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
+        final var idField = resource.getClass().getSuperclass().getSuperclass().getDeclaredField(
+                "id");
         idField.setAccessible(true);
         idField.set(resource, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 

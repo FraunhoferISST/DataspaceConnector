@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.AgreementFactory;
 import io.dataspaceconnector.repositories.AgreementRepository;
@@ -26,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -67,8 +67,7 @@ public class AgreementServiceTest {
 
         /* ASSERT */
         assertTrue(result);
-        verify(agreementRepository, times(1))
-                .confirmAgreement(agreement.getId());
+        verify(agreementRepository, times(1)).confirmAgreement(agreement.getId());
     }
 
     @Test
@@ -76,8 +75,7 @@ public class AgreementServiceTest {
         /* ARRANGE */
         final var agreement = getAgreement();
 
-        when(agreementRepository.findById(agreement.getId()))
-                .thenReturn(Optional.of(new Agreement()));
+        when(agreementRepository.findById(agreement.getId())).thenReturn(Optional.of(new Agreement()));
 
         /* ACT */
         final var result = agreementService.confirmAgreement(agreement);
@@ -87,9 +85,9 @@ public class AgreementServiceTest {
         verify(agreementRepository, never()).confirmAgreement(agreement.getId());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Agreement getAgreement() {
         final var agreement = new Agreement();
@@ -97,5 +95,4 @@ public class AgreementServiceTest {
         ReflectionTestUtils.setField(agreement, "value", "someValue");
         return agreement;
     }
-
 }

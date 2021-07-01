@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -366,7 +366,8 @@ public class ContractRuleFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ContractRuleDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new ContractRuleDesc()));
     }
 
     @Test

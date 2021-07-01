@@ -61,8 +61,8 @@ public class MainControllerTest {
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                                              ._accessURL_(URI.create("https://accessUrl"))
-                                              .build())
+                        ._accessURL_(URI.create("https://accessUrl"))
+                        .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithoutResources();
 
@@ -79,11 +79,13 @@ public class MainControllerTest {
         Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getConnectorWithoutResources();
 
         /* ACT */
-        final var result = mockMvc.perform(get("/")).andExpect(status().isInternalServerError()).andReturn();
+        final var result = mockMvc.perform(get("/"))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
         assertEquals("application/json", result.getResponse().getContentType());
-        assertEquals("{\"message\":\"An error occurred. Please try again later.\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"An error occurred. Please try again later.\"}",
+                result.getResponse().getContentAsString());
     }
 
     /**
@@ -101,13 +103,14 @@ public class MainControllerTest {
                 ._inboundModelVersion_(new ArrayList<>(Arrays.asList("9991", "9992")))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                                              ._accessURL_(URI.create("https://accessUrl"))
-                                              .build())
+                        ._accessURL_(URI.create("https://accessUrl"))
+                        .build())
                 .build();
         Mockito.doReturn(connector).when(connectorService).getConnectorWithOfferedResources();
 
         /* ACT */
-        final var result = mockMvc.perform(get("/api/connector")).andExpect(status().isOk()).andReturn();
+        final var result =
+                mockMvc.perform(get("/api/connector")).andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
@@ -130,11 +133,13 @@ public class MainControllerTest {
         Mockito.doThrow(ConstraintViolationException.class).when(connectorService).getConnectorWithOfferedResources();
 
         /* ACT */
-        final var result = mockMvc.perform(get("/api/connector")).andExpect(status().isInternalServerError()).andReturn();
+        final var result = mockMvc.perform(get("/api/connector"))
+                .andExpect(status().isInternalServerError()).andReturn();
 
         /* ASSERT */
         assertEquals("application/json", result.getResponse().getContentType());
-        assertEquals("{\"message\":\"An error occurred. Please try again later.\"}", result.getResponse().getContentAsString());
+        assertEquals("{\"message\":\"An error occurred. Please try again later.\"}",
+                result.getResponse().getContentAsString());
     }
 
     /**
@@ -160,20 +165,20 @@ public class MainControllerTest {
         final var result = mockMvc.perform(get("/api")).andExpect(status().isOk()).andReturn();
 
         assertEquals("{\"_links\":{\"self\":{\"href\":\"http://localhost/api\"},"
-                     + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\","
-                     + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
-                     + "/catalogs{?page,size}\",\"templated\":true},"
-                     + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\","
-                     + "\"templated\":true},\"representations\":{\"href\":\"http://localhost/api"
-                     + "/representations{?page,size}\",\"templated\":true},"
-                     + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
-                     + "\"templated\":true},"
-                     + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
-                     + "\"templated\":true}}}", result.getResponse().getContentAsString());
+                + "\"agreements\":{\"href\":\"http://localhost/api/agreements{?page,size}\","
+                + "\"templated\":true},"
+                + "\"artifacts\":{\"href\":\"http://localhost/api/artifacts{?page,size}\","
+                + "\"templated\":true},\"catalogs\":{\"href\":\"http://localhost/api"
+                + "/catalogs{?page,size}\",\"templated\":true},"
+                + "\"contracts\":{\"href\":\"http://localhost/api/contracts{?page,size}\","
+                + "\"templated\":true},"
+                + "\"offers\":{\"href\":\"http://localhost/api/offers{?page,size}\","
+                + "\"templated\":true},\"representations\":{\"href\":\"http://localhost/api"
+                + "/representations{?page,size}\",\"templated\":true},"
+                + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
+                + "\"templated\":true},"
+                + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
+                + "\"templated\":true}}}", result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }
 }

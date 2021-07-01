@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -798,7 +798,8 @@ public class OfferedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new OfferedResourceDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new OfferedResourceDesc()));
     }
 
     @Test

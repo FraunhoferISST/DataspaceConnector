@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PolicyRestrictionExceptionHandlerTest {
 
-    private PolicyRestrictionExceptionHandler handler = new PolicyRestrictionExceptionHandler();
+    private final PolicyRestrictionExceptionHandler handler =
+            new PolicyRestrictionExceptionHandler();
 
     @Test
     public void handlePolicyRestrictionException_anyException_returnForbiddenError() {

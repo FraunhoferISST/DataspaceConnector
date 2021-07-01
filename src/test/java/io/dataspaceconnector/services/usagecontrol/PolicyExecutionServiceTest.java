@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -39,6 +37,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -66,11 +66,11 @@ public class PolicyExecutionServiceTest {
     @Autowired
     private PolicyExecutionService policyExecutionService;
 
+    private final URI chUri = URI.create("https://clearing-house.com");
+
     @Test
     public void sendAgreement_inputNull_doNothing() {
         /* ARRANGE */
-        final var chUri= URI.create("https://clearing-house.com");
-
         when(connectorConfig.getClearingHouse()).thenReturn(chUri);
 
         /* ACT */
@@ -84,7 +84,6 @@ public class PolicyExecutionServiceTest {
     public void sendAgreement_validInput_sendAgreementToClearingHouse() {
         /* ARRANGE */
         final var agreement = getContractAgreement();
-        final var chUri= URI.create("https://clearing-house.com");
 
         when(connectorConfig.getClearingHouse()).thenReturn(chUri);
         doNothing().when(logMessageService).sendMessage(any(), any());
@@ -101,7 +100,6 @@ public class PolicyExecutionServiceTest {
     public void logDataAccess_clearingHouseUriPresent_sendLogMessageToClearingHouse() {
         /* ARRANGE */
         final var target = URI.create("https://target.com");
-        final var chUri= URI.create("https://clearing-house.com");
         final var connectorId = URI.create("https://connector.com");
 
         when(connectorConfig.getClearingHouse()).thenReturn(chUri);
@@ -132,9 +130,9 @@ public class PolicyExecutionServiceTest {
                 .sendMessage(eq(URI.create(notificationUri)), any());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private ContractAgreement getContractAgreement() {
         return new ContractAgreementBuilder(URI.create("https://agreement.com"))
@@ -146,8 +144,7 @@ public class PolicyExecutionServiceTest {
     private Rule getRule(final String endpoint) {
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
-                ._description_(Util.asList(
-                        new TypedLiteral("usage-notification")))
+                ._description_(Util.asList(new TypedLiteral("usage-notification")))
                 ._action_(Util.asList(Action.USE))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.NOTIFY))
@@ -159,5 +156,4 @@ public class PolicyExecutionServiceTest {
                         .build()))
                 .build();
     }
-
 }

@@ -83,9 +83,11 @@ public class HttpTraceFilterTest {
         final var parameterNames = Collections.enumeration(params.keySet());
         Mockito.doReturn(parameterNames).when(request).getParameterNames();
 
-        final var customServletIS = RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
+        final var customServletIS =
+                RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
         customServletIS.setAccessible(true);
-        final var requestBody = customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
+        final var requestBody =
+                customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
 
         Mockito.doReturn(requestBody).when(request).getInputStream();
         Mockito.doReturn(StandardCharsets.UTF_8.name()).when(request).getCharacterEncoding();
@@ -137,9 +139,11 @@ public class HttpTraceFilterTest {
 //        final var parameterNames = Collections.enumeration(params.keySet());
 //        Mockito.doReturn(parameterNames).when(request).getParameterNames();
 //
-//        final var customServletIS = RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
+//        final var customServletIS = RequestWrapper.class.getDeclaredClasses()[0]
+//        .getDeclaredConstructor(byte[].class);
 //        customServletIS.setAccessible(true);
-//        final var requestBody = customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
+//        final var requestBody = customServletIS.newInstance("BODY".getBytes(StandardCharsets
+//        .UTF_8));
 //
 //        Mockito.doReturn(requestBody).when(request).getInputStream();
 //        Mockito.doReturn(StandardCharsets.UTF_8.name()).when(request).getCharacterEncoding();
@@ -155,8 +159,10 @@ public class HttpTraceFilterTest {
 //        Mockito.doReturn("HEADERRESPONSE").when(response).getHeader(Mockito.eq("SOMERESPONSE"));
 //
 //        Mockito.doReturn(42).when(response).getStatus();
-//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8)).when(response).getContentAsByteArray();
-//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8).length).when(response).getBufferSize();
+//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8)).when(response)
+//        .getContentAsByteArray();
+//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8).length).when(response)
+//        .getBufferSize();
 //        Mockito.doReturn(StandardCharsets.UTF_8.toString()).when(response).getCharacterEncoding();
 //
 //        /* ACT */

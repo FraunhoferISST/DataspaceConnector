@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.Catalog;
@@ -34,14 +29,22 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {CatalogViewAssembler.class, ViewAssemblerHelper.class,
-        CatalogFactory.class})
+@SpringBootTest(classes = {
+        CatalogViewAssembler.class,
+        ViewAssemblerHelper.class,
+        CatalogFactory.class
+})
 public class CatalogViewAssemblerTest {
 
     @Autowired
@@ -53,11 +56,9 @@ public class CatalogViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.CatalogController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = catalogViewAssembler.getSelfLink(null);
@@ -65,18 +66,16 @@ public class CatalogViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var catalogId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.CatalogController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = catalogViewAssembler.getSelfLink(catalogId);
@@ -84,14 +83,13 @@ public class CatalogViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + catalogId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void toModel_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> catalogViewAssembler.toModel(null));
+        assertThrows(IllegalArgumentException.class, () -> catalogViewAssembler.toModel(null));
     }
 
     @Test
@@ -122,9 +120,9 @@ public class CatalogViewAssemblerTest {
                 offeredResourcesLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Catalog getCatalog() {
         final var desc = new CatalogDesc();

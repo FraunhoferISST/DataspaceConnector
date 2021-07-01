@@ -791,7 +791,8 @@ public class RequestedResourceFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new RequestedResourceDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new RequestedResourceDesc()));
     }
 
     @Test

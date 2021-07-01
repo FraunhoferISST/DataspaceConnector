@@ -81,10 +81,12 @@ public class IdsRepresentationBuilderTest {
         assertTrue(idsRepresentation.getId().isAbsolute());
         assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
 
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
+        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()),
+                idsRepresentation.getCreated());
         assertEquals(Language.EN, idsRepresentation.getLanguage());
         assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
+        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()),
+                idsRepresentation.getModified());
         assertEquals(standard, idsRepresentation.getRepresentationStandard());
         assertNull(idsRepresentation.getProperties());
 
@@ -94,7 +96,8 @@ public class IdsRepresentationBuilderTest {
         final var artifact = getArtifact();
         final var idsArtifact = (de.fraunhofer.iais.eis.Artifact) artifacts.get(0);
         assertEquals(artifact.getTitle(), idsArtifact.getFileName());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
     }
 
     @Test
@@ -109,10 +112,12 @@ public class IdsRepresentationBuilderTest {
         assertTrue(idsRepresentation.getId().isAbsolute());
         assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
 
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
+        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()),
+                idsRepresentation.getCreated());
         assertEquals(Language.EN, idsRepresentation.getLanguage());
         assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
+        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()),
+                idsRepresentation.getModified());
         assertEquals(standard, idsRepresentation.getRepresentationStandard());
 
         assertNotNull(idsRepresentation.getProperties());
@@ -125,7 +130,8 @@ public class IdsRepresentationBuilderTest {
         final var artifact = getArtifact();
         final var idsArtifact = (de.fraunhofer.iais.eis.Artifact) artifacts.get(0);
         assertEquals(artifact.getTitle(), idsArtifact.getFileName());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
     }
 
     @Test
@@ -152,10 +158,12 @@ public class IdsRepresentationBuilderTest {
         assertTrue(idsRepresentation.getId().isAbsolute());
         assertTrue(idsRepresentation.getId().toString().contains(representation.getId().toString()));
 
-        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()), idsRepresentation.getCreated());
+        assertEquals(IdsUtils.getGregorianOf(representation.getCreationDate()),
+                idsRepresentation.getCreated());
         assertEquals(Language.EN, idsRepresentation.getLanguage());
         assertEquals(mediaType, idsRepresentation.getMediaType().getFilenameExtension());
-        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()), idsRepresentation.getModified());
+        assertEquals(IdsUtils.getGregorianOf(representation.getModificationDate()),
+                idsRepresentation.getModified());
         assertEquals(standard, idsRepresentation.getRepresentationStandard());
         assertNull(idsRepresentation.getProperties());
 
@@ -165,7 +173,8 @@ public class IdsRepresentationBuilderTest {
         final var artifact = getArtifact();
         final var idsArtifact = (de.fraunhofer.iais.eis.Artifact) artifacts.get(0);
         assertEquals(artifact.getTitle(), idsArtifact.getFileName());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
     }
 
     /**************************************************************************

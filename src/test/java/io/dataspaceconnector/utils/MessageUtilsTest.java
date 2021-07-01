@@ -139,8 +139,7 @@ class MessageUtilsTest {
         // Nothing to arrange here.
 
         /* ACT & ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> MessageUtils.extractTransferContract(null));
+        assertThrows(IllegalArgumentException.class, () -> MessageUtils.extractTransferContract(null));
     }
 
     @Test
@@ -246,8 +245,7 @@ class MessageUtilsTest {
         // Nothing to arrange here.
 
         /* ACT & ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> MessageUtils.extractRejectionReason(null));
+        assertThrows(IllegalArgumentException.class, () -> MessageUtils.extractRejectionReason(null));
     }
 
     @Test
@@ -283,7 +281,8 @@ class MessageUtilsTest {
         final var inboundModelVersions = List.of("4.0.1", "4.0.2");
 
         /* ACT & ASSERT */
-        assertThrows(VersionNotSupportedException.class, () -> MessageUtils.checkForVersionSupport(modelVersion, inboundModelVersions));
+        assertThrows(VersionNotSupportedException.class,
+                () -> MessageUtils.checkForVersionSupport(modelVersion, inboundModelVersions));
     }
 
     @Test
@@ -359,6 +358,10 @@ class MessageUtilsTest {
         /* ACT & ASSERT */
         assertThrows(IllegalArgumentException.class, () -> MessageUtils.extractPayloadFromMultipartMessage(null));
     }
+
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private DescriptionRequestMessage getDescriptionRequestMessageWithRequestedElement() {
         return new DescriptionRequestMessageBuilder(messageId)

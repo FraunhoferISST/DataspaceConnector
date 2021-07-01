@@ -63,9 +63,9 @@ class TemplateBuilderTest {
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
 
-    /**
-     * ContractTemplate.
-     */
+    /***********************************************************************************************
+     * ContractTemplate.                                                                           *
+     **********************************************************************************************/
 
     @Test
     public void build_ContractTemplateNull_throwIllegalArgumentException() {
@@ -84,17 +84,19 @@ class TemplateBuilderTest {
 
         /* ASSERT */
         assertNotNull(result);
-        Mockito.verify(catalogOfferedResourceLinker, Mockito.atLeastOnce()).replace(Mockito.any(), Mockito.any());
+        Mockito.verify(catalogOfferedResourceLinker, Mockito.atLeastOnce())
+                .replace(Mockito.any(), Mockito.any());
     }
 
-    /**
-     * ResourceTemplate.
-     */
+    /***********************************************************************************************
+     * ResourceTemplate.                                                                           *
+     **********************************************************************************************/
 
     @Test
     public void build_ResourceTemplateNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> builder.build(( ResourceTemplate<OfferedResourceDesc> ) null));
+        assertThrows(IllegalArgumentException.class,
+                () -> builder.build((ResourceTemplate<OfferedResourceDesc>) null));
     }
 
     @Test
@@ -109,12 +111,13 @@ class TemplateBuilderTest {
         /* ASSERT */
         assertNotNull(result);
         Mockito.verify(offeredResourceRepresentationLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
-        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).add(Mockito.any(), Mockito.any());
+        Mockito.verify(offeredResourceContractLinker, Mockito.atLeastOnce()).add(Mockito.any(),
+                Mockito.any());
     }
 
-    /**
-     * ArtifactTemplate.
-     */
+    /***********************************************************************************************
+     * ArtifactTemplate.                                                                           *
+     **********************************************************************************************/
 
     @Test
     public void build_ArtifactTemplateNull_throwIllegalArgumentException() {
@@ -140,9 +143,9 @@ class TemplateBuilderTest {
         assertEquals("Some title", result.getTitle());
     }
 
-    /**
-     * RuleTemplate.
-     */
+    /***********************************************************************************************
+     * RuleTemplate.                                                                               *
+     **********************************************************************************************/
 
     @Test
     public void build_RuleTemplateNull_throwIllegalArgumentException() {
@@ -164,9 +167,9 @@ class TemplateBuilderTest {
         assertEquals("Some title", result.getTitle());
     }
 
-    /**
-     * Utilities
-     */
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private Artifact getArtifact(ArtifactDesc desc) {
