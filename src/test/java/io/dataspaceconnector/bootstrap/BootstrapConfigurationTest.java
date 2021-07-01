@@ -39,17 +39,4 @@ public class BootstrapConfigurationTest {
     public void prepare() {
         catalogService.getAll(Pageable.unpaged()).forEach( catalog -> catalogService.delete(catalog.getId()));
     }
-
-//    @SneakyThrows
-//    @Test
-//    public void bootstrap_files_registerCatalogs() {
-//        /* ARRANGE */
-//        Mockito.doReturn(true).when(configuration).registerAtBroker(Mockito.any(), Mockito.any());
-//
-//        /* ACT */
-//        configuration.bootstrap();
-//
-//        /* ASSERT */
-//        assertEquals(2, catalogService.getAll(Pageable.unpaged()).getSize());
-//    }
 }

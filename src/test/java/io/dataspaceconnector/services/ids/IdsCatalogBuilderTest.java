@@ -424,7 +424,6 @@ public class IdsCatalogBuilderTest {
         final var offeredResourcesField = Catalog.class.getDeclaredField("offeredResources");
         offeredResourcesField.setAccessible(true);
         offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));
-        ;
 
         return catalog;
     }
