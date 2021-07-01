@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [6.0.0] - 2021-06-30
+## [6.0.0] - XXXX-XX-XX
 
 ### Added
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
   `GeneralMessageService`.
 - Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
   message.
+- Change naming of the resource's license attribute from `licence` to `license`.
 
 ## [5.2.0] - 2021-06-23
 
