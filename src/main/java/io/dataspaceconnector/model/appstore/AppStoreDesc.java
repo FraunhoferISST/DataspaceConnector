@@ -33,5 +33,5 @@ public class AppStoreDesc extends NamedDescription {
     /**
      * The access url of the app store.
      */
-    private URI name;
+    private URI location;
 }

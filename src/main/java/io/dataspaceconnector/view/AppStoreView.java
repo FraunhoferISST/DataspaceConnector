@@ -49,17 +49,17 @@ public class AppStoreView extends RepresentationModel<AppStoreView> {
     private ZonedDateTime modificationDate;
 
     /**
-     * The access url of the app store.
-     */
-    private URI name;
-
-    /**
      * The title of the app store.
      */
     private String title;
 
     /**
-     * The registration status.
+     * The description of the app store.
      */
-    private RegistrationStatus status;
+    private String description;
+
+    /**
+     * The access url of the app store.
+     */
+    private URI location;
 }

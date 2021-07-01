@@ -52,7 +52,7 @@ public class AppStoreFactory extends AbstractNamedFactory<AppStore, AppStoreDesc
      */
     @Override
     protected boolean updateInternal(final AppStore appStore, final AppStoreDesc desc) {
-        return updateLocation(appStore, desc.getName());
+        return updateLocation(appStore, desc.getLocation());
     }
 
     /**
