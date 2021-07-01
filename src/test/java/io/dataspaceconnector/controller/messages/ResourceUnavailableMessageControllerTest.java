@@ -64,6 +64,10 @@ public class ResourceUnavailableMessageControllerTest {
     private final URI resourceURI = URI.create(resourceId.toString());
     private final Resource resource = getResource();
     private final String recipient = "https://someURL";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
@@ -93,7 +97,7 @@ public class ResourceUnavailableMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
-                .param("recipient", "https://someUrl")).andExpect(status().isBadRequest())
+                .param("recipient", "https://someUrl"))
                 .andReturn();
 
         /* ASSERT */
@@ -104,7 +108,6 @@ public class ResourceUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_resourceNotFound_throws404() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.empty()).when(connectorService).getOfferedResourceById(resourceURI);
 
@@ -112,7 +115,7 @@ public class ResourceUnavailableMessageControllerTest {
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
                 .param("recipient", "https://someURL")
                 .param("resourceId", resourceId.toString()))
-                .andExpect(status().isNotFound()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Resource 550e8400-e29b-11d4-a716-446655440000 not found.",
@@ -123,7 +126,6 @@ public class ResourceUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(Mockito.any(),
@@ -133,7 +135,7 @@ public class ResourceUnavailableMessageControllerTest {
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
                 .param("recipient", "https://someURL")
                 .param("resourceId", resourceId.toString()))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Ids message handling failed. null",
@@ -144,7 +146,6 @@ public class ResourceUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doThrow(IOException.class).when(brokerService).removeResourceFromBroker(Mockito.any(),
@@ -154,7 +155,7 @@ public class ResourceUnavailableMessageControllerTest {
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
                 .param("recipient", recipient)
                 .param("resourceId", resourceId.toString()))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Ids message handling failed. null",
@@ -165,7 +166,6 @@ public class ResourceUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         final var message = new MessageProcessedNotificationMessageBuilder()
                 ._issuerConnector_(new URI("https://url"))
                 ._correlationMessage_(new URI("https://cormessage"))
@@ -187,7 +187,7 @@ public class ResourceUnavailableMessageControllerTest {
         final var result = mockMvc.perform(post("/api/ids/resource/unavailable")
                 .param("recipient", recipient)
                 .param("resourceId", resourceId.toString()))
-                .andExpect(status().isOk()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertEquals("", result.getResponse().getContentAsString());
@@ -195,12 +195,5 @@ public class ResourceUnavailableMessageControllerTest {
 
     private Resource getResource() {
         return new ResourceBuilder(URI.create(resourceId.toString())).build();
-    }
-
-    private DynamicAttributeToken getToken() {
-        return new DynamicAttributeTokenBuilder()
-                ._tokenValue_("token")
-                ._tokenFormat_(TokenFormat.JWT)
-                .build();
     }
 }

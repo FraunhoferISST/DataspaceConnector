@@ -59,6 +59,10 @@ public class ConnectorUpdateMessageControllerTest {
     private MockMvc mockMvc;
 
     private final String recipient = "https://someURL";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
@@ -73,70 +77,63 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update"))
-                .andExpect(status().isBadRequest()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertTrue(result.getResponse().getContentAsString().isEmpty());
+        assertEquals(400, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_failUpdateConfigModel_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(ConfigUpdateException.class).when(connectorService).updateConfigModel();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
         assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
-                result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).updateSelfDescriptionAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
-                result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         final var message = new MessageProcessedNotificationMessageBuilder()
                 ._issuerConnector_(new URI("https://url"))
                 ._correlationMessage_(new URI("https://cormessage"))
@@ -154,17 +151,10 @@ public class ConnectorUpdateMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/update")
-                .param("recipient", recipient))
-                .andExpect(status().isOk()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
         assertEquals("", result.getResponse().getContentAsString());
-    }
-
-    private DynamicAttributeToken getToken() {
-        return new DynamicAttributeTokenBuilder()
-                ._tokenValue_("token")
-                ._tokenFormat_(TokenFormat.JWT)
-                .build();
+        assertEquals(200, result.getResponse().getStatus());
     }
 }

@@ -18,6 +18,8 @@ package io.dataspaceconnector.controller.messages;
 import de.fraunhofer.iais.eis.DynamicAttributeToken;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
 import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.GlobalMessageService;
@@ -32,7 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.URI;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,6 +53,12 @@ public class QueryMessageControllerTest {
     @MockBean
     private ConnectorService connectorService;
 
+    private final String brokerUrl = "https://someBroker";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
+
     @Test
     public void sendQueryMessage_unauthorized_rejectUnauthorized() throws Exception {
         mockMvc.perform(post("/api/ids/query")).andExpect(status().isUnauthorized());
@@ -61,9 +68,7 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_validInput_returnQueryResponse() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.of("Some query result.");
-        final var token = getToken();
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
@@ -71,7 +76,7 @@ public class QueryMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", recipient).content("SOME QUERY"))
+                .param("recipient", brokerUrl).content("SOME QUERY"))
                 .andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
@@ -82,9 +87,7 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_mockConnectionTimeout_returnBadGateway() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.empty();
-        final var token = getToken();
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendQueryMessage(Mockito.any(),
@@ -92,9 +95,7 @@ public class QueryMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", recipient)
-                .content("SOME QUERY"))
-                .andExpect(status().isBadGateway()).andReturn();
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
         assertEquals(502, result.getResponse().getStatus());
@@ -104,14 +105,42 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_throwIOException_returnIdsMessageFailed() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-
         Mockito.doThrow(IOException.class).when(messageService).sendQueryMessage(Mockito.any(),
                 Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", recipient).content("SOME QUERY")).andReturn();
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendQueryMessage_throwDapsTokenManagerException_returnIdsMessageFailed() throws Exception {
+        /* ARRANGE */
+        Mockito.doThrow(DapsTokenManagerException.class).when(messageService).sendQueryMessage(Mockito.any(),
+                Mockito.any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/query")
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendQueryMessage_throwClaimsException_returnIdsMessageFailed() throws Exception {
+        /* ARRANGE */
+        Mockito.doThrow(ClaimsException.class).when(messageService).sendQueryMessage(Mockito.any(),
+                Mockito.any());
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/query")
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -121,15 +150,12 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_throwMultipartParseException_returnReceivedInvalidResponse() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-        final var token = getToken();
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(MultipartParseException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", recipient).content("SOME QUERY")).andReturn();
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -141,15 +167,12 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendQueryMessage_throwSocketTimeoutException_returnConnectionTimedOut() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-        final var token = getToken();
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendQueryMessage(Mockito.any(), Mockito.any());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/query")
-                .param("recipient", recipient).content("SOME QUERY")).andReturn();
+                .param("recipient", brokerUrl).content("SOME QUERY")).andReturn();
 
         /* ASSERT */
         assertEquals(504, result.getResponse().getStatus());
@@ -164,9 +187,7 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_validSearchTerm_returnResponse() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.of("Some search result.");
-        final var token = getToken();
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
@@ -174,9 +195,8 @@ public class QueryMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", recipient).param("limit", "50")
-                .param("offset", "0").content("SOME SEARCH TERM"))
-                .andExpect(status().isOk()).andReturn();
+                .param("recipient", brokerUrl).param("limit", "50")
+                .param("offset", "0").content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
         assertEquals("Some search result.", result.getResponse().getContentAsString());
@@ -186,9 +206,7 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_validSearchTerm_returnBadGateway() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
         final var response = Optional.empty();
-        final var token = getToken();
 
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(response).when(messageService).sendFullTextSearchQueryMessage(
@@ -196,9 +214,8 @@ public class QueryMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", recipient)
-                .content("SOME SEARCH TERM"))
-                .andExpect(status().isBadGateway()).andReturn();
+                .param("recipient", brokerUrl)
+                .content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
         assertEquals(502, result.getResponse().getStatus());
@@ -208,14 +225,12 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_throwIOException_returnIdsMessageFailed() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-
         Mockito.doThrow(IOException.class).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", recipient).content("SOME SEARCH TERM")).andReturn();
+                .param("recipient", brokerUrl).content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -225,16 +240,13 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_throwMultipartParseException_returnReceivedInvalidResponse() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-        final var token = getToken();
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(MultipartParseException.class).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", recipient).content("SOME SEARCH TERM")).andReturn();
+                .param("recipient", brokerUrl).content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
         assertEquals(500, result.getResponse().getStatus());
@@ -246,25 +258,15 @@ public class QueryMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendSearchMessage_throwSocketTimeoutException_returnConnectionTimedOut() throws Exception {
         /* ARRANGE */
-        final var recipient = URI.create("https://someBroker").toString();
-        final var token = getToken();
-
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(SocketTimeoutException.class).when(messageService).sendFullTextSearchQueryMessage(
                 Mockito.any(), Mockito.any(), Mockito.anyInt(), Mockito.anyInt());
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/search")
-                .param("recipient", recipient).content("SOME SEARCH TERM")).andReturn();
+                .param("recipient", brokerUrl).content("SOME SEARCH TERM")).andReturn();
 
         /* ASSERT */
         assertEquals(504, result.getResponse().getStatus());
-    }
-
-    private DynamicAttributeToken getToken() {
-        return new DynamicAttributeTokenBuilder()
-                ._tokenValue_("token")
-                ._tokenFormat_(TokenFormat.JWT)
-                .build();
     }
 }

@@ -22,6 +22,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,6 +61,10 @@ public class ConnectorUnavailableMessageControllerTest {
     private MockMvc mockMvc;
 
     private final String recipient = "https://someURL";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
@@ -73,7 +79,7 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable"))
-                .andExpect(status().isBadRequest()).andReturn();
+                .andReturn();
 
         /* ASSERT */
         assertTrue(result.getResponse().getContentAsString().isEmpty());
@@ -83,52 +89,77 @@ public class ConnectorUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_failUpdateConfigModel_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(ConfigUpdateException.class).when(connectorService).updateConfigModel();
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
         assertEquals("Failed to update configuration.", result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
-                result.getResponse().getContentAsString());
+        assertEquals(500, result.getResponse().getStatus());
     }
 
     @Test
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doThrow(IOException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", recipient))
-                .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)).andReturn();
 
         /* ASSERT */
-        assertEquals("Ids message handling failed. null",
+        assertEquals(500, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_throwSocketTimeoutException_throws504() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(SocketTimeoutException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
+                .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals(504, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser("ADMIN")
+    public void sendConnectorUpdateMessage_throwMultipartParseException_throws500() throws Exception {
+        /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
+        Mockito.doThrow(MultipartParseException.class).when(brokerService).unregisterAtBroker(Mockito.eq(URI.create(recipient)));
+
+        /* ACT */
+        final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
+                .param("recipient", recipient)).andReturn();
+
+        /* ASSERT */
+        assertEquals(500, result.getResponse().getStatus());
+        assertEquals("Failed to read the ids response message.",
                 result.getResponse().getContentAsString());
     }
 
@@ -136,7 +167,6 @@ public class ConnectorUnavailableMessageControllerTest {
     @WithMockUser("ADMIN")
     public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
-        final var token = getToken();
         final var message = new MessageProcessedNotificationMessageBuilder()
                 ._issuerConnector_(new URI("https://url"))
                 ._correlationMessage_(new URI("https://cormessage"))
@@ -154,17 +184,10 @@ public class ConnectorUnavailableMessageControllerTest {
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/connector/unavailable")
-                .param("recipient", "https://someURL"))
-                .andExpect(status().isOk()).andReturn();
+                .param("recipient", "https://someURL")).andReturn();
 
         /* ASSERT */
         assertEquals("", result.getResponse().getContentAsString());
-    }
-
-    private DynamicAttributeToken getToken() {
-        return new DynamicAttributeTokenBuilder()
-                ._tokenValue_("token")
-                ._tokenFormat_(TokenFormat.JWT)
-                .build();
+        assertEquals(200, result.getResponse().getStatus());
     }
 }
