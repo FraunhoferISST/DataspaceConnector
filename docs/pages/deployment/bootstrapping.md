@@ -17,7 +17,12 @@ Load resources during startup and register them at an IDS Broker.
 
 In this section, the registration of resources during the startup is described.
 
-### Registering Elements at the Connector
+## Configuration
+
+The bootstrapping feature is disabled by default. To enable it, change the `bootstrap.active=false`
+value in the `application.properties` to `true`. Then, follow the steps below.
+
+## Registering Elements at the Connector
 
 During the startup of the Dataspace Connector, the bootstrapping path that is specified in
 `application.properties` will be scanned for `*.jsonld` and `bootstrap.properties` files. The search
@@ -158,7 +163,7 @@ artifact.value.https\://w3id.org/idsa/autogen/artifact/d5b1cd4e-2a5a-47c2-86c5-0
 broker.register.https\://w3id.org/idsa/autogen/resource/d5b1cd4e-2a5a-47c2-86c5-003c6a11ce69=https://broker.ids.isst.fraunhofer.de/infrastructure
 ```
 
-### Registering Elements at the IDS Broker
+## Registering Elements at the IDS Broker
 Each resource that has been registered during the bootstrapping process can be registered at an
 IDS Broker. It is possible to register different resources at different brokers, but each resource
 can only be registered at one broker once. The registration of a resource at a broker implicitly
