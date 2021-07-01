@@ -36,10 +36,11 @@ public final class MessageProcessedNotificationService
     /**
      * @throws IllegalArgumentException     if desc is null.
      * @throws ConstraintViolationException if security tokes is null or another error appears
-     * when building the message.
+     *                                      when building the message.
      */
     @Override
-    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc) {
+    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc)
+            throws ConstraintViolationException {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
