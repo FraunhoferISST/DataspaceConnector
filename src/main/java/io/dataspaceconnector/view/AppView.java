@@ -50,4 +50,9 @@ public class AppView extends RepresentationModel<AppView> {
      * The title of the app.
      */
     private String title;
+
+    /**
+     * The description of the app.
+     */
+    private String description;
 }

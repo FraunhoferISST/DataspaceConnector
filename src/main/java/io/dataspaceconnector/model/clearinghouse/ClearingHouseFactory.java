@@ -41,7 +41,7 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
 
     @Override
     protected boolean updateInternal(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
-        final var hasUpdatedLocation = updateLocation(clearingHouse, desc.getName());
+        final var hasUpdatedLocation = updateLocation(clearingHouse, desc.getLocation());
         final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
 
         return hasUpdatedLocation || newStatus;

@@ -15,62 +15,41 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.datasource.DataSource;
 import io.dataspaceconnector.model.datasource.DataSourceDesc;
 import io.dataspaceconnector.model.datasource.DataSourceFactory;
+import io.dataspaceconnector.repositories.DataSourceRepository;
 import io.dataspaceconnector.services.resources.BaseEntityService;
-import lombok.NoArgsConstructor;
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.Utils;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.UUID;
 
 /**
  * Service class for data sources.
  */
 @Service
-@NoArgsConstructor
+@Getter(AccessLevel.PACKAGE)
+@RequiredArgsConstructor
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
 
-    /**
-     * This method allows to modify the data source and set an authentication.
-     * @param dataSourceId   The id of the data source.
-     * @param authentication The new authentication for the data source.
-     * @throws IOException Exception occurs, if authentication can not be set at data source.
-     */
-    @Transactional
-    public void setDataSourceAuthentication(final UUID dataSourceId,
-                                            final Authentication authentication)
-            throws IOException {
-        final var dataSourceRepository = getRepository();
-        final var dataSource = dataSourceRepository.findById(dataSourceId).orElse(null);
-        if (dataSource != null && authentication != null) {
-            final var updatedDataSource = ((DataSourceFactory) getFactory())
-                    .updateAuthentication(dataSource, authentication);
-            dataSourceRepository.saveAndFlush(updatedDataSource);
-        } else {
-            throw new IOException("Failed to update the data source");
-        }
-    }
+    private final @NonNull DataSourceRepository dataSourceRepository;
 
-    /**
-     *
-     * This method allows to delete the authentication from a data source.
-     * @param dataSourceId The id of the data source.
-     * @throws IOException Exception occurs, if authentication can not be deleted.
-     */
-    @Transactional
-    public void deleteDataSourceAuthentication(final UUID dataSourceId) throws IOException {
-        final var dataSourceRepository = getRepository();
-        final var dataSource = dataSourceRepository.findById(dataSourceId).orElse(null);
-        if (dataSource != null) {
-            final var updatedDataSource = ((DataSourceFactory) getFactory())
-                    .deleteAuthentication(dataSource);
-            dataSourceRepository.saveAndFlush(updatedDataSource);
-        } else {
-            throw new IOException("Failed to delete the authentication from the data source.");
+    private final @NonNull DataSourceFactory dataSourceFactory;
+
+    @Override
+    public void delete(final UUID entityId) {
+        Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
+        var dataSource = dataSourceRepository.getById(entityId);
+
+        if(dataSource.getAuthentication()!=null){
+            dataSourceFactory.removeAuthentication(dataSource);
         }
+        dataSourceRepository.delete(dataSource);
     }
 }

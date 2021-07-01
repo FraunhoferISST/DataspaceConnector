@@ -15,13 +15,13 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import java.net.URI;
-import java.util.Objects;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Objects;
 
 /**
  * Creates and updates data sources.
@@ -52,23 +52,24 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
-        final var hasUpdatedName = updateName(dataSource, desc.getName());
+        final var hasUpdatedLocation = updateLocation(dataSource, desc.getLocation());
+        final var hasUpdatedAuthentication = updateAuthentication(dataSource, desc.getAuthentication());
         final var hasUpdatedDataSourceType = updateDataSourceType(dataSource, desc.getType());
 
-        return hasUpdatedName || hasUpdatedDataSourceType;
+        return hasUpdatedLocation || hasUpdatedAuthentication || hasUpdatedDataSourceType;
     }
 
     /**
      * @param dataSource The data source entity.
-     * @param name   The relative path of the data source.
+     * @param location   The relative path of the data source.
      * @return True, if data source type is updated.
      */
-    private boolean updateName(final DataSource dataSource, final URI name) {
-        final var newName =
-                MetadataUtils.updateUri(dataSource.getLocation(), name, DEFAULT_NAME);
-        newName.ifPresent(dataSource::setLocation);
+    private boolean updateLocation(final DataSource dataSource, final URI location) {
+        final var newLocation =
+                MetadataUtils.updateUri(dataSource.getLocation(), location, DEFAULT_NAME);
+        newLocation.ifPresent(dataSource::setLocation);
 
-        return newName.isPresent();
+        return newLocation.isPresent();
     }
 
     /**
@@ -87,18 +88,22 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      * @param authentication The updated authentication.
      * @return updated entity.
      */
-    public DataSource updateAuthentication(final DataSource dataSource,
-                                           final Authentication authentication) {
+    public boolean updateAuthentication(final DataSource dataSource,
+                                        final Authentication authentication) {
+        if (dataSource.getAuthentication() == null && authentication == null){
+            return false;
+        }
+
+        if(dataSource.getAuthentication()!=null && authentication == null){
+            dataSource.setAuthentication(null);
+            return true;
+        }
+
         dataSource.setAuthentication(authentication);
-        return dataSource;
+        return true;
     }
 
-    /**
-     * @param dataSource The entity to be updated.
-     * @return updated entity without authentication.
-     */
-    public DataSource deleteAuthentication(final DataSource dataSource) {
+    public void removeAuthentication(final DataSource dataSource) {
         dataSource.setAuthentication(null);
-        return dataSource;
     }
 }

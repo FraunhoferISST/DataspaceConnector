@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.configuration;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToOne;
@@ -72,18 +73,18 @@ public class Configuration extends Entity {
     /**
      * The proxy configuration.
      */
-    @OneToOne(optional = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Proxy proxy;
 
     /**
      * The trust store.
      */
-    @OneToOne(optional = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Truststore truststore;
 
     /**
      * The key store.
      */
-    @OneToOne(optional = true)
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Keystore keystore;
 }

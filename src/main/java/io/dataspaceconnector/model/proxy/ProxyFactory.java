@@ -15,13 +15,14 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
@@ -37,19 +38,32 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     @Override
-    public boolean updateInternal(final Proxy proxy, final ProxyDesc desc){
+    public boolean updateInternal(final Proxy proxy, final ProxyDesc desc) {
         final var hasUpdatedLocation = updateLocation(proxy, desc.getLocation());
+        final var hasUpdatedExclusions = updateExclusions(proxy, desc.getExclusions());
         final var hasUpdatedAuthentication = updateAuthentication(proxy, desc.getAuthentication());
 
-        return hasUpdatedLocation || hasUpdatedAuthentication;
+        return hasUpdatedLocation || hasUpdatedExclusions || hasUpdatedAuthentication;
+    }
+
+    private boolean updateExclusions(final Proxy proxy, final List<String> exclusions) {
+        if (proxy.getExclusions().isEmpty() && exclusions.isEmpty()) {
+            return false;
+        }
+        if (!proxy.getExclusions().isEmpty() && exclusions.isEmpty()) {
+            proxy.setExclusions(new ArrayList<>());
+            return true;
+        }
+        proxy.setExclusions(exclusions);
+        return true;
     }
 
     private boolean updateAuthentication(final Proxy proxy, final Authentication authentication) {
-        if(proxy.getAuthentication() == null && authentication == null){
+        if (proxy.getAuthentication() == null && authentication == null) {
             return false;
         }
 
-        if(proxy.getAuthentication() !=null && authentication == null){
+        if (proxy.getAuthentication() != null && authentication == null) {
             proxy.setAuthentication(null);
             return true;
         }

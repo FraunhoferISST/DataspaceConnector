@@ -15,7 +15,15 @@
  */
 package io.dataspaceconnector.view;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class TruststoreView extends RepresentationModel<TruststoreView> {
+
+    private String name;
 }

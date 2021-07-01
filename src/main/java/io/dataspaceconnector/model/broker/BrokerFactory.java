@@ -54,10 +54,10 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
      */
     @Override
     protected boolean updateInternal(final Broker broker, final BrokerDesc desc) {
-        final var newAccessUrl = updateAccessUrl(broker, broker.getLocation());
+        final var newLocation = updateAccessUrl(broker, broker.getLocation());
         final var newStatus = updateRegistrationStatus(broker, broker.getStatus());
 
-        return newAccessUrl || newStatus;
+        return newLocation || newStatus;
     }
 
     /**

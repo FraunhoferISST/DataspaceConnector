@@ -44,8 +44,8 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
  * Entity for managing proxies.
  */
 @javax.persistence.Entity
-@Table(name = "keystore")
-@SQLDelete(sql = "UPDATE keystore SET deleted=true WHERE id=?")
+@Table(name = "proxy")
+@SQLDelete(sql = "UPDATE proxy SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @EqualsAndHashCode(callSuper = true)
 @Getter

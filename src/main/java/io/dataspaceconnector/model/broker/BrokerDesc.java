@@ -33,7 +33,7 @@ public class BrokerDesc extends NamedDescription {
     /**
      * The access url of the broker.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The status of registration.

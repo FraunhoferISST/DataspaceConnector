@@ -22,7 +22,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.List;
 
-import io.dataspaceconnector.model.base.Entity;
+import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.configuration.DeployMethod;
 import io.dataspaceconnector.model.endpoint.Endpoint;
@@ -45,7 +45,7 @@ import org.hibernate.annotations.Where;
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Route extends Entity {
+public class Route extends NamedEntity {
 
     /**
      * Serial version uid.
@@ -67,7 +67,7 @@ public class Route extends Entity {
     /**
      * The route configuration.
      */
-    private String config;
+    private String configuration;
 
     /**
      * The start endpoint of the route.

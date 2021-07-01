@@ -75,9 +75,4 @@ public class Broker extends NamedEntity implements RemoteService {
      */
     @OneToMany
     private List<OfferedResource> offeredResources;
-
-    /**
-     * Necessary credentials.
-     */
-    private String credentials;
 }

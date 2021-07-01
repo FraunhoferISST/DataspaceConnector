@@ -35,7 +35,7 @@ public class ClearingHouseDesc extends NamedDescription {
     /**
      * The access url of the clearing house.
      */
-    private URI name;
+    private URI location;
 
     /**
      * The status of registration.

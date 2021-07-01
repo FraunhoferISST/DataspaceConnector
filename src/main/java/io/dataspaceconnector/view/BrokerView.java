@@ -48,7 +48,7 @@ public class BrokerView extends RepresentationModel<BrokerView> {
     /**
      * The access url of the broker.
      */
-    private URI accessUrl;
+    private URI location;
 
     /**
      * The title of the broker.
@@ -59,10 +59,4 @@ public class BrokerView extends RepresentationModel<BrokerView> {
      * The status of registration.
      */
     private RegistrationStatus status;
-
-    /**
-     * The date specification.
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-    private ZonedDateTime lastSeen;
 }

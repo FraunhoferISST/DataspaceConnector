@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model.route;
 
+import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.configuration.DeployMethod;
-import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -25,7 +25,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class RouteDesc extends Description {
+public class RouteDesc extends NamedDescription {
 
     /**
      * The deploy method of the route.
@@ -35,5 +35,5 @@ public class RouteDesc extends Description {
     /**
      * The route configuration.
      */
-    private String config;
+    private String configuration;
 }

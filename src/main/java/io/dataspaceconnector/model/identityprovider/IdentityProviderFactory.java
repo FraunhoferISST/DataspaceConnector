@@ -52,10 +52,10 @@ public class IdentityProviderFactory
     @Override
     protected boolean updateInternal(final IdentityProvider identityProvider,
                                         final IdentityProviderDesc desc) {
-        final var hasUpdatedName = updateName(identityProvider, desc.getName());
+        final var hasUpdatedLocation = updateLocation(identityProvider, desc.getLocation());
         final var newStatus = updateRegistrationStatus(identityProvider, desc.getStatus());
 
-        return hasUpdatedName || newStatus;
+        return hasUpdatedLocation || newStatus;
     }
 
     /**
@@ -72,12 +72,12 @@ public class IdentityProviderFactory
 
     /**
      * @param identityProvider The entity to be updated.
-     * @param name        The new access url of the entity.
+     * @param location        The new access url of the entity.
      * @return True, if access url is updated.
      */
-    private boolean updateName(final IdentityProvider identityProvider, final URI name) {
+    private boolean updateLocation(final IdentityProvider identityProvider, final URI location) {
         final var newLocation =
-                MetadataUtils.updateUri(identityProvider.getLocation(), name,
+                MetadataUtils.updateUri(identityProvider.getLocation(), location,
                                         DEFAULT_IDENTITY_PROVIDER);
         newLocation.ifPresent(identityProvider::setLocation);
         return newLocation.isPresent();

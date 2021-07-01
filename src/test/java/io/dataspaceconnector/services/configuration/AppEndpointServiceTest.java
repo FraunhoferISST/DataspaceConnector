@@ -136,7 +136,6 @@ public class AppEndpointServiceTest {
 
         /* ASSERT */
         assertEquals(appEndpoint.getId(), result.getId());
-        assertEquals(appEndpoint.getName(), result.getName());
     }
 
     /**********************************************************************

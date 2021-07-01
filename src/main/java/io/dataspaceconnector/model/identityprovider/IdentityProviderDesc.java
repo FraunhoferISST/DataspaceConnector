@@ -33,7 +33,7 @@ public class IdentityProviderDesc extends NamedDescription {
     /**
      * The access url of the identity provider.
      */
-    private URI name;
+    private URI location;
 
     /**
      * The registration status.

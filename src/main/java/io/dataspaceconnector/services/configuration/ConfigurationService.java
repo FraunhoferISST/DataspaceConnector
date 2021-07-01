@@ -17,13 +17,9 @@ package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.configuration.Configuration;
 import io.dataspaceconnector.model.configuration.ConfigurationDesc;
-import io.dataspaceconnector.repositories.KeystoreRepository;
-import io.dataspaceconnector.repositories.ProxyRepository;
-import io.dataspaceconnector.repositories.TruststoreRepository;
 import io.dataspaceconnector.services.resources.BaseEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
@@ -36,32 +32,32 @@ import org.springframework.stereotype.Service;
 @Setter(AccessLevel.NONE)
 @RequiredArgsConstructor
 public class ConfigurationService extends BaseEntityService<Configuration, ConfigurationDesc> {
-
-    /**
-     * Repository for storing data.
-     **/
-    private final @NonNull ProxyRepository proxyRepo;
-
-    private final @NonNull TruststoreRepository trustStoreRepo;
-
-    private final @NonNull KeystoreRepository keystoreRepo;
-
-    /**
-     * Persist the configuration with the proxy.
-     * @param configuration The configuration which is persisted.
-     * @return The persisted configuration.
-     */
-    @Override
-    protected Configuration persist(final Configuration configuration) {
-        if(configuration.getProxy() != null)
-            proxyRepo.saveAndFlush(configuration.getProxy());
-
-        if(configuration.getTruststore() != null)
-            trustStoreRepo.saveAndFlush(configuration.getTruststore());
-
-        if(configuration.getKeystore() != null)
-            keystoreRepo.saveAndFlush(configuration.getKeystore());
-
-        return super.persist(configuration);
-    }
+//
+//    /**
+//     * Repository for storing data.
+//     **/
+//    private final @NonNull ProxyRepository proxyRepo;
+//
+//    private final @NonNull TruststoreRepository trustStoreRepo;
+//
+//    private final @NonNull KeystoreRepository keystoreRepo;
+//
+//    /**
+//     * Persist the configuration with the proxy.
+//     * @param configuration The configuration which is persisted.
+//     * @return The persisted configuration.
+//     */
+//    @Override
+//    protected Configuration persist(final Configuration configuration) {
+//        if(configuration.getKeystore() != null)
+//            keystoreRepo.saveAndFlush(configuration.getKeystore());
+//
+//        if(configuration.getTruststore() != null)
+//            trustStoreRepo.saveAndFlush(configuration.getTruststore());
+//
+//        if(configuration.getProxy() != null)
+//            proxyRepo.saveAndFlush(configuration.getProxy());
+//
+//        return super.persist(configuration);
+//    }
 }

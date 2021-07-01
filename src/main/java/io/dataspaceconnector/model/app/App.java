@@ -15,13 +15,17 @@
  */
 package io.dataspaceconnector.model.app;
 
+import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.net.URI;
 import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
 import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * An app can be used to perform operations on the data.
@@ -47,6 +53,13 @@ public class App extends NamedEntity {
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
+
+    /**
+     * The access url of the broker.
+     */
+    @Convert(converter = UriConverter.class)
+    @Column(length = URI_COLUMN_LENGTH)
+    private URI registryInformation;
 
     @OneToMany
     private List<Endpoint> startEndpoints;

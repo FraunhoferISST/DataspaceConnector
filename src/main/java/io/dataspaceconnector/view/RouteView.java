@@ -48,6 +48,16 @@ public class RouteView extends RepresentationModel<RouteView> {
     private ZonedDateTime modificationDate;
 
     /**
+     * The title of the route.
+     */
+    private String title;
+
+    /**
+     * The description of the route.
+     */
+    private String description;
+
+    /**
      * The route configuration.
      */
     private String config;

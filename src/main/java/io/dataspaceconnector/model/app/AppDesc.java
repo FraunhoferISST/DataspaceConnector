@@ -15,10 +15,13 @@
  */
 package io.dataspaceconnector.model.app;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dataspaceconnector.model.NamedDescription;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.net.URI;
 
 /**
  * Describes an app's properties.
@@ -26,4 +29,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AppDesc extends NamedDescription { }
+public class AppDesc extends NamedDescription {
+
+    /**
+     * The status of registration.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private URI registryInformation;
+}

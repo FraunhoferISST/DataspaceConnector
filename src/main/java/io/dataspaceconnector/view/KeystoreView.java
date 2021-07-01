@@ -15,7 +15,17 @@
  */
 package io.dataspaceconnector.view;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.net.URI;
+
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class KeystoreView extends RepresentationModel<KeystoreView> {
+
+    private URI location;
 }
