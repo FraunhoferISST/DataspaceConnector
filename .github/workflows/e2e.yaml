@@ -6,19 +6,20 @@ concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
-e2e:
-  timeout-minutes: 30
-  runs-on: ubuntu-latest
+jobs:
+  e2e:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v2
-    - name: Build image
-      run: |
-        docker build . -t ghcr.io/international-data-spaces-association/dataspace-connector:test
-    - name: Setup environment
-      run: |
-        curl -sfL https://get.k3s.io | sh -
-    - name: Test environment
-      run: |
-        kubectl get nodes
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+      - name: Build image
+        run: |
+          docker build . -t ghcr.io/international-data-spaces-association/dataspace-connector:test
+      - name: Setup environment
+        run: |
+          curl -sfL https://get.k3s.io | sh -
+      - name: Test environment
+        run: |
+          kubectl get nodes
