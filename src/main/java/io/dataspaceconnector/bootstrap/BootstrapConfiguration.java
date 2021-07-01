@@ -35,6 +35,7 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -73,6 +74,7 @@ import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootst
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
+@ConditionalOnProperty(value = "bootstrap.active", havingValue = "true", matchIfMissing = true)
 public class BootstrapConfiguration {
 
     /**
