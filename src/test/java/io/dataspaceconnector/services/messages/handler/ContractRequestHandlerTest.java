@@ -106,10 +106,15 @@ class ContractRequestHandlerTest {
     }
 
     @Test
-    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() throws
-            DatatypeConfigurationException {
+    public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() {
         /* ARRANGE */
-        final var message = getMessage();
+        final var message = new ContractRequestMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("1.0.0")
+                ._issued_(xmlCalendar)
+                .build();
 
         /* ACT */
         final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, null);
