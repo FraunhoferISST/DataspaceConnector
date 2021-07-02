@@ -38,14 +38,14 @@ public class DataspaceConnectorRouteConfigurer {
      * Username for the Dataspace Connector.
      */
     @Setter
-    @Value("${dataspace.connector.api.username}")
+    @Value("${spring.security.user.name}")
     String dataSpaceConnectorApiUsername;
 
     /**
      * Password for the Dataspace Connector.
      */
     @Setter
-    @Value("${dataspace.connector.api.password}")
+    @Value("${spring.security.user.password}")
     String dataSpaceConnectorApiPassword;
 
     /**
