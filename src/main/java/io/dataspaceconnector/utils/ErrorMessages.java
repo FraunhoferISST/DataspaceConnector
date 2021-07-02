@@ -185,7 +185,6 @@ public enum ErrorMessages {
      */
     POLICY_RESTRICTION("Policy restriction detected.");
 
-
     /**
      * Holds the enums string.
      */
