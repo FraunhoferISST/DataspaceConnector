@@ -26,6 +26,12 @@ import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
+import io.dataspaceconnector.model.pattern.DeletionDesc;
+import io.dataspaceconnector.model.pattern.DurationDesc;
+import io.dataspaceconnector.model.pattern.IntervalDesc;
+import io.dataspaceconnector.model.pattern.NotificationDesc;
+import io.dataspaceconnector.model.pattern.RestrictionDesc;
+import io.dataspaceconnector.model.pattern.UsageNumberDesc;
 
 import java.net.URI;
 
@@ -45,7 +51,6 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
      */
     public static Rule buildProvideAccessRule() {
         return new PermissionBuilder()
@@ -59,7 +64,6 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
      */
     public static Rule buildProhibitAccessRule() {
         return new ProhibitionBuilder()
@@ -72,10 +76,17 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildNTimesUsageRule() {
+    public static Rule buildNTimesUsageRule(final UsageNumberDesc input) throws Exception {
+        final var value = input.getValue();
+
+        if (!ValidationUtils.isValidInteger(value)) {
+            throw new Exception("This is not a valid number.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("n-times-usage")))
@@ -83,7 +94,7 @@ public final class PatternUtils {
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.COUNT)
                         ._operator_(BinaryOperator.LTEQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:double")))
+                        ._rightOperand_(new RdfResource(value, URI.create("xsd:double")))
                         .build()))
                 .build();
     }
@@ -91,10 +102,17 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildDurationUsageRule() {
+    public static Rule buildDurationUsageRule(final DurationDesc input) throws Exception {
+        final var value = input.getValue();
+
+        if (!ValidationUtils.isValidDuration(value)) {
+            throw new Exception("This is not a valid duration.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("duration-usage")))
@@ -102,7 +120,7 @@ public final class PatternUtils {
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.ELAPSED_TIME)
                         ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource("PT1M30.5S", URI.create("xsd:duration")))
+                        ._rightOperand_(new RdfResource(value, URI.create("xsd:duration")))
                         .build()))
                 .build();
     }
@@ -110,10 +128,18 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildIntervalUsageRule() {
+    public static Rule buildIntervalUsageRule(final IntervalDesc input) throws Exception {
+        final var start = input.getStart();
+        final var end = input.getEnd();
+
+        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(start)) {
+            throw new Exception("This is not a valid datetime.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("usage-during-interval")))
@@ -121,13 +147,11 @@ public final class PatternUtils {
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
                         ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                URI.create("xsd:dateTimeStamp")))
+                        ._rightOperand_(new RdfResource(start, URI.create("xsd:dateTimeStamp")))
                         .build(), new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
                         ._operator_(BinaryOperator.BEFORE)
-                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                URI.create("xsd:dateTimeStamp")))
+                        ._rightOperand_(new RdfResource(end, URI.create("xsd:dateTimeStamp")))
                         .build()))
                 .build();
     }
@@ -135,10 +159,20 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildUsageUntilDeletionRule() {
+    public static Rule buildUsageUntilDeletionRule(final DeletionDesc input) throws Exception {
+        final var start = input.getStart();
+        final var end = input.getEnd();
+        final var date = input.getDate();
+
+        if (ValidationUtils.isInvalidDate(start) || ValidationUtils.isInvalidDate(start)
+                || ValidationUtils.isInvalidDate(date)) {
+            throw new Exception("This is not a valid datetime.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("usage-until-deletion")))
@@ -146,20 +180,18 @@ public final class PatternUtils {
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
                         ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                URI.create("xsd:dateTimeStamp")))
+                        ._rightOperand_(new RdfResource(start, URI.create("xsd:dateTimeStamp")))
                         .build(), new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
                         ._operator_(BinaryOperator.BEFORE)
-                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                URI.create("xsd:dateTimeStamp")))
+                        ._rightOperand_(new RdfResource(end, URI.create("xsd:dateTimeStamp")))
                         .build()))
                 ._postDuty_(Util.asList(new DutyBuilder()
                         ._action_(Util.asList(Action.DELETE))
                         ._constraint_(Util.asList(new ConstraintBuilder()
                                 ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
                                 ._operator_(BinaryOperator.TEMPORAL_EQUALS)
-                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                ._rightOperand_(new RdfResource(date,
                                         URI.create("xsd:dateTimeStamp")))
                                 .build()))
                         .build()))
@@ -170,7 +202,6 @@ public final class PatternUtils {
      * Build ids rule.
      *
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
      */
     public static Rule buildUsageLoggingRule() {
         return new PermissionBuilder()
@@ -186,10 +217,17 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildUsageNotificationRule() {
+    public static Rule buildUsageNotificationRule(final NotificationDesc input) throws Exception {
+        final var recipient = input.getUrl();
+
+        if (ValidationUtils.isInvalidUri(recipient)) {
+            throw new Exception("This is not a valid url.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("usage-notification")))
@@ -199,9 +237,8 @@ public final class PatternUtils {
                         ._constraint_(Util.asList(new ConstraintBuilder()
                                 ._leftOperand_(LeftOperand.ENDPOINT)
                                 ._operator_(BinaryOperator.DEFINES_AS)
-                                ._rightOperand_(new RdfResource(
-                                        "https://localhost:8080/api/ids"
-                                                + "/data", URI.create("xsd:anyURI")))
+                                ._rightOperand_(new RdfResource(recipient,
+                                        URI.create("xsd:anyURI")))
                                 .build()))
                         .build()))
                 .build();
@@ -210,10 +247,18 @@ public final class PatternUtils {
     /**
      * Build ids rule.
      *
+     * @param input Rule input.
      * @return The ids rule.
-     * @throws de.fraunhofer.iais.eis.util.ConstraintViolationException if rule creation fails.
+     * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildConnectorRestrictedUsageRule() {
+    public static Rule buildConnectorRestrictedUsageRule(final RestrictionDesc input)
+            throws Exception {
+        final var id = input.getUrl();
+
+        if (ValidationUtils.isInvalidUri(id)) {
+            throw new Exception("This is not a valid url.");
+        }
+
         return new PermissionBuilder()
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("connector-restriction")))
@@ -221,9 +266,7 @@ public final class PatternUtils {
                 ._constraint_(Util.asList(new ConstraintBuilder()
                         ._leftOperand_(LeftOperand.SYSTEM)
                         ._operator_(BinaryOperator.SAME_AS)
-                        ._rightOperand_(
-                                new RdfResource("https://example.com",
-                                        URI.create("xsd:anyURI")))
+                        ._rightOperand_(new RdfResource(id, URI.create("xsd:anyURI")))
                         .build()))
                 .build();
     }

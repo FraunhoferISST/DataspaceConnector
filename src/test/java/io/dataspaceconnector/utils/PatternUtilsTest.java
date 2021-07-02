@@ -21,6 +21,13 @@ import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.LeftOperand;
 import de.fraunhofer.iais.eis.Permission;
 import de.fraunhofer.iais.eis.Prohibition;
+import io.dataspaceconnector.model.pattern.DeletionDesc;
+import io.dataspaceconnector.model.pattern.DurationDesc;
+import io.dataspaceconnector.model.pattern.IntervalDesc;
+import io.dataspaceconnector.model.pattern.NotificationDesc;
+import io.dataspaceconnector.model.pattern.RestrictionDesc;
+import io.dataspaceconnector.model.pattern.UsageNumberDesc;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -66,12 +73,15 @@ public class PatternUtilsTest {
    }
 
    @Test
+   @SneakyThrows
    public void buildNTimesUsageRule_returnPermissionWithConstraint() {
        /* ARRANGE */
-       // Nothing to arrange here.
+       final var value = "5";
+       final var input = new UsageNumberDesc();
+       input.setValue(value);
 
        /* ACT */
-       final var rule = PatternUtils.buildNTimesUsageRule();
+       final var rule = PatternUtils.buildNTimesUsageRule(input);
 
        /* ASSERT */
        assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -85,16 +95,21 @@ public class PatternUtilsTest {
        assertTrue((BinaryOperator.LT.equals(operator))
                || (BinaryOperator.LTEQ.equals(operator)));
 
-       assertTrue(isValidInteger(constraint.getRightOperand().getValue()));
+       final var valueResult = constraint.getRightOperand().getValue();
+       assertEquals(value, valueResult);
+       assertTrue(isValidInteger(valueResult));
    }
 
    @Test
+   @SneakyThrows
    public void buildDurationUsageRule_returnPermissionWithConstraint() {
        /* ARRANGE */
-       // Nothing to arrange here.
+       final var value = "PT1M30.5S";
+       final var input = new DurationDesc();
+       input.setValue(value);
 
        /* ACT */
-       final var rule = PatternUtils.buildDurationUsageRule();
+       final var rule = PatternUtils.buildDurationUsageRule(input);
 
        /* ASSERT */
        assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -108,16 +123,23 @@ public class PatternUtilsTest {
        assertTrue((BinaryOperator.SHORTER_EQ.equals(operator))
                || (BinaryOperator.SHORTER.equals(operator)));
 
-       assertTrue(isValidDuration(constraint.getRightOperand().getValue()));
+       final var valueResult = constraint.getRightOperand().getValue();
+       assertEquals(value, valueResult);
+       assertTrue(isValidDuration(valueResult));
    }
 
    @Test
+   @SneakyThrows
    public void buildIntervalUsageRule_returnPermissionWithTwoConstraints() {
        /* ARRANGE */
-       // Nothing to arrange here.
+       final var start = "2020-07-11T00:00:00Z";
+       final var end = "2020-07-11T00:00:00Z";
+       final var input = new IntervalDesc();
+       input.setStart(start);
+       input.setEnd(end);
 
        /* ACT */
-       final var rule = PatternUtils.buildIntervalUsageRule();
+       final var rule = PatternUtils.buildIntervalUsageRule(input);
 
        /* ASSERT */
        assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -129,23 +151,34 @@ public class PatternUtilsTest {
        final var operator1 = constraint1.getOperator();
        assertTrue((BinaryOperator.BEFORE.equals(operator1))
                || (BinaryOperator.AFTER.equals(operator1)));
-       assertTrue(isValidDate(constraint1.getRightOperand().getValue()));
+       final var startResult = constraint1.getRightOperand().getValue();
+       assertEquals(start, startResult);
+       assertTrue(isValidDate(startResult));
 
        final var constraint2 = (Constraint) rule.getConstraint().get(1);
        assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint2.getLeftOperand());
        final var operator2 = constraint2.getOperator();
        assertTrue((BinaryOperator.BEFORE.equals(operator2))
                || (BinaryOperator.AFTER.equals(operator2)));
-       assertTrue(isValidDate(constraint2.getRightOperand().getValue()));
+       final var endResult = constraint2.getRightOperand().getValue();
+       assertEquals(end, endResult);
+       assertTrue(isValidDate(endResult));
    }
 
    @Test
+   @SneakyThrows
    public void buildUsageUntilDeletionRule_returnPermissionWithTwoConstraintsAndPostDuty() {
        /* ARRANGE */
-       // Nothing to arrange here.
+       final var start = "2020-07-11T00:00:00Z";
+       final var end = "2020-07-11T00:00:00Z";
+       final var date = "2020-07-11T00:00:00Z";
+       final var input = new DeletionDesc();
+       input.setStart(start);
+       input.setEnd(end);
+       input.setDate(date);
 
        /* ACT */
-       final var rule = PatternUtils.buildUsageUntilDeletionRule();
+       final var rule = PatternUtils.buildUsageUntilDeletionRule(input);
 
        /* ASSERT */
        assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -158,14 +191,18 @@ public class PatternUtilsTest {
        final var operator1 = constraint1.getOperator();
        assertTrue((BinaryOperator.BEFORE.equals(operator1))
                || (BinaryOperator.AFTER.equals(operator1)));
-       assertTrue(isValidDate(constraint1.getRightOperand().getValue()));
+       final var startResult = constraint1.getRightOperand().getValue();
+       assertEquals(start, startResult);
+       assertTrue(isValidDate(startResult));
 
        final var constraint2 = (Constraint) rule.getConstraint().get(1);
        assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint2.getLeftOperand());
        final var operator2 = constraint2.getOperator();
        assertTrue((BinaryOperator.BEFORE.equals(operator2))
                || (BinaryOperator.AFTER.equals(operator2)));
-       assertTrue(isValidDate(constraint2.getRightOperand().getValue()));
+       final var endResult = constraint2.getRightOperand().getValue();
+       assertEquals(end, endResult);
+       assertTrue(isValidDate(endResult));
 
        final var duty = ((Permission) rule).getPostDuty().get(0);
        assertEquals(1, duty.getConstraint().size());
@@ -174,7 +211,9 @@ public class PatternUtilsTest {
        assertEquals(LeftOperand.POLICY_EVALUATION_TIME, dutyConstraint.getLeftOperand());
        final var dutyConstraintOperator = dutyConstraint.getOperator();
        assertEquals(BinaryOperator.TEMPORAL_EQUALS, dutyConstraintOperator);
-       assertTrue(isValidDate(dutyConstraint.getRightOperand().getValue()));
+       final var dateResult = dutyConstraint.getRightOperand().getValue();
+       assertEquals(date, dateResult);
+       assertTrue(isValidDate(dateResult));
    }
 
    @Test
@@ -195,12 +234,15 @@ public class PatternUtilsTest {
    }
 
    @Test
+   @SneakyThrows
    public void buildUsageNotificationRule_returnPermissionWithPostDuty() {
        /* ARRANGE */
-       // Nothing to arrange here.
+       final var value = "https://someRecipient";
+       final var input = new NotificationDesc();
+       input.setUrl(value);
 
        /* ACT */
-       final var rule = PatternUtils.buildUsageNotificationRule();
+       final var rule = PatternUtils.buildUsageNotificationRule(input);
 
        /* ASSERT */
        assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -218,16 +260,21 @@ public class PatternUtilsTest {
        final var dutyConstraintOperator = dutyConstraint.getOperator();
        assertEquals(BinaryOperator.DEFINES_AS, dutyConstraintOperator);
 
-       assertTrue(isValidUri(dutyConstraint.getRightOperand().getValue()));
+       final var valueResult = dutyConstraint.getRightOperand().getValue();
+       assertEquals(value, valueResult);
+       assertTrue(isValidUri(valueResult));
    }
 
     @Test
+    @SneakyThrows
     public void buildConnectorRestrictedUsageRule_returnPermissionWithPostDuty() {
         /* ARRANGE */
-        // Nothing to arrange here.
+        final var value = "https://someRecipient";
+        final var input = new RestrictionDesc();
+        input.setUrl(value);
 
         /* ACT */
-        final var rule = PatternUtils.buildConnectorRestrictedUsageRule();
+        final var rule = PatternUtils.buildConnectorRestrictedUsageRule(input);
 
         /* ASSERT */
         assertTrue(Permission.class.isAssignableFrom(rule.getClass()));
@@ -237,7 +284,9 @@ public class PatternUtilsTest {
         final var constraint = (Constraint) rule.getConstraint().get(0);
         assertEquals(LeftOperand.SYSTEM, constraint.getLeftOperand());
         assertEquals(BinaryOperator.SAME_AS, constraint.getOperator());
-        assertTrue(isValidUri(constraint.getRightOperand().getValue()));
+        final var valueResult = constraint.getRightOperand().getValue();
+        assertEquals(value, valueResult);
+        assertTrue(isValidUri(valueResult));
     }
 
     /***********************************************************************************************
