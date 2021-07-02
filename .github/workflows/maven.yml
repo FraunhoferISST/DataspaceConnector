@@ -29,6 +29,7 @@ jobs:
         quiet: true
         output_format: github_failed_only
         download_external_modules: true
+        soft_fail: true
 
   test:
     timeout-minutes: 30
