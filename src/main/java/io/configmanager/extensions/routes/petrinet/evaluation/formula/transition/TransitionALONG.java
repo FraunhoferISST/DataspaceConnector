@@ -1,4 +1,6 @@
 /*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +33,7 @@ public class TransitionALONG implements TransitionFormula {
     public static TransitionALONG transitionALONG(final TransitionFormula parameter) {
         return new TransitionALONG(parameter);
     }
-    
+
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         return transitionNOT(transitionEV(transitionNOT(parameter))).evaluate(node, paths);

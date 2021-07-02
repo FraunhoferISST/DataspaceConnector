@@ -1,4 +1,6 @@
 /*
+ * Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface GuiUtilApi {
-    @GetMapping(value = "/api/ui/enum/{enumName}")
+    @GetMapping(value = "/enum/{enumName}")
     @Operation(summary = "Get the specific enum")
     @ApiResponse(responseCode = "200", description = "Successfully get the enums")
     @ApiResponse(responseCode = "400", description = "Can not find the enums")
