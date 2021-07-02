@@ -35,7 +35,6 @@ import lombok.extern.log4j.Log4j2;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -43,7 +42,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -74,8 +72,7 @@ import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootst
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-@ConditionalOnProperty(value = "bootstrap.enabled", havingValue = "true", matchIfMissing = true)
-public class BootstrapConfiguration {
+public class Bootstrapper {
 
     /**
      * File extension used for JSON-LD files.
@@ -139,7 +136,6 @@ public class BootstrapConfiguration {
      * clearing house and broker that should be used, and which resources need to be registered at
      * what broker.
      */
-    @PostConstruct
     public void bootstrap() {
         if (log.isInfoEnabled()) {
             log.info("Start bootstrapping of Connector.");

@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.services.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ResourceUpdateMessageHandlerTest {
 
     @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
+    private Bootstrapper bootstrapper;
 
     @SpyBean
     EntityUpdateService updateService;

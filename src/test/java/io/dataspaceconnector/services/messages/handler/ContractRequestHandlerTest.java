@@ -29,7 +29,7 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractFactory;
@@ -66,7 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ContractRequestHandlerTest {
 
     @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
+    private Bootstrapper bootstrapper;
 
     @SpyBean
     EntityPersistenceService persistenceService;

@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.filter.httptracing;
 
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HttpTraceFilterTest {
 
     @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
+    private Bootstrapper bootstrapper;
 
     @Mock
     HttpTraceEventHandler eventHandler;

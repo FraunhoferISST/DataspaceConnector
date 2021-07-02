@@ -29,7 +29,7 @@ import org.springframework.data.domain.Pageable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class BootstrapConfigurationTest {
+public class BootstrapperTest {
 
     @MockBean
     BrokerService brokerService;
@@ -38,7 +38,7 @@ public class BootstrapConfigurationTest {
     CatalogService catalogService;
 
     @Autowired
-    BootstrapConfiguration bootstrapConfiguration;
+    Bootstrapper bootstrapper;
 
     @BeforeEach
     public void prepare() {
@@ -54,7 +54,7 @@ public class BootstrapConfigurationTest {
                 .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
 
         /* ACT */
-        bootstrapConfiguration.bootstrap();
+        bootstrapper.bootstrap();
 
         /* ASSERT */
         assertEquals(2, catalogService.getAll(Pageable.unpaged()).getSize());
