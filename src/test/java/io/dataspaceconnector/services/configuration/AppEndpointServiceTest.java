@@ -24,6 +24,7 @@ import java.util.UUID;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.AppEndpointDesc;
 import io.dataspaceconnector.model.endpoint.AppEndpointFactory;
+import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.repositories.AppEndpointRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -231,7 +232,7 @@ public class AppEndpointServiceTest {
         idField.setAccessible(true);
         idField.set(appEndpoint, UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e"));
 
-        final var accessUrlField = appEndpoint.getClass().getDeclaredField("name");
+        final var accessUrlField = appEndpoint.getClass().getSuperclass().getDeclaredField("location");
         accessUrlField.setAccessible(true);
         accessUrlField.set(appEndpoint, desc.getLocation());
 
