@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@Tag(name = "Extension: GUI Utilities")
+@Tag(name = "ConfigManager: GUI Utilities")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GuiUtilController implements GuiUtilApi {
     /**

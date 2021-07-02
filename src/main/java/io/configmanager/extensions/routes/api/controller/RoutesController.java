@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/api/ui")
-@Tag(name = "Extension: Routes")
+@Tag(name = "ConfigManager: Routes")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RoutesController implements RoutesApi {
     /**
