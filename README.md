@@ -30,7 +30,7 @@ usage policy patterns.
 
 <h3 align="center" >
   <a href="https://international-data-spaces-association.github.io/DataspaceConnector/">
-    Manual & Documentation
+    D O C U M E N T A T I O N
   </a>
 </h3>
 

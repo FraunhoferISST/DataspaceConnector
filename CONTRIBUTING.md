@@ -46,7 +46,7 @@ at https://deepsource.io/blog/git-branch-naming-conventions/. After your changes
 `README.md`, `/docs`, and `CHANGELOG.md` with necessary details. Then, create a pull request and note
 that **committing to the main branch is not allowed**. Please use the feature `linked issues` to
 link issues and pull requests. To mark your pull request as `work in progress`, please use the
-provided GitHub feature. Contributions to the master will be squashed and merged.
+provided GitHub feature. Contributions to the main branch will be squashed and merged.
 
 ## Commits
 
