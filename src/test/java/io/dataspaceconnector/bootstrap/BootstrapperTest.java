@@ -15,8 +15,19 @@
  */
 package io.dataspaceconnector.bootstrap;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 import io.dataspaceconnector.bootstrap.broker.BrokerService;
+import io.dataspaceconnector.model.Catalog;
+import io.dataspaceconnector.model.OfferedResource;
+import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.services.resources.TemplateBuilder;
+import io.dataspaceconnector.utils.Utils;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -33,11 +45,32 @@ public class BootstrapperTest {
     @MockBean
     BrokerService brokerService;
 
-    @Autowired
+    @MockBean
     CatalogService catalogService;
+
+    @MockBean
+    TemplateBuilder<OfferedResource, OfferedResourceDesc> templateBuilder;
 
     @Autowired
     Bootstrapper bootstrapper;
+
+    private UUID catalogOneId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+    private UUID catalogTwoId = UUID.fromString("a1ed9763-e8c4-441b-bd94-d06996fced9e");
+    private Catalog catalogOne = getCatalogOne();
+    private Catalog catalogTwo = getCatalogTwo();
+    private boolean toggle = false;
+    private List<Catalog> catalogList = new ArrayList<>();
+
+    private Catalog createCatalog(final CatalogTemplate template) {
+        if (toggle) {
+            toggle = false;
+            catalogList.add(catalogOne);
+            return catalogOne;
+        } else {
+            catalogList.add(catalogTwo);
+            return catalogTwo;
+        }
+    }
 
     @SneakyThrows
     @Test
@@ -46,6 +79,18 @@ public class BootstrapperTest {
         Mockito.doReturn(true)
                 .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
 
+        Mockito.doAnswer(x -> Utils.toPage(catalogList, Pageable.unpaged()))
+               .when(catalogService)
+               .getAll(Mockito.any());
+
+        Mockito.doAnswer(x -> createCatalog(x.getArgument(0)))
+               .when(templateBuilder)
+               .build(Mockito.any(CatalogTemplate.class));
+
+        Mockito.doReturn(catalogOne).when(catalogService).get(Mockito.eq(catalogOneId));
+        Mockito.doReturn(catalogTwo).when(catalogService).get(Mockito.eq(catalogTwoId));
+
+
         /* ACT */
         bootstrapper.bootstrap();
 
@@ -53,4 +98,25 @@ public class BootstrapperTest {
         assertEquals(2, catalogService.getAll(Pageable.unpaged()).getSize());
     }
 
+
+    @SneakyThrows
+    private Catalog getCatalogOne() {
+        final var constructor = Catalog.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        final var output = constructor.newInstance();
+        ReflectionTestUtils.setField(output, "id", catalogOneId);
+        ReflectionTestUtils.setField(output, "offeredResources", new ArrayList<OfferedResource>());
+        ReflectionTestUtils.setField(output, "additional", new HashMap<String, String>());
+        return output;
+    }
+
+    @SneakyThrows
+    private Catalog getCatalogTwo() {
+        final var constructor = Catalog.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+        final var output = constructor.newInstance();
+        ReflectionTestUtils.setField(output, "id", catalogTwoId);
+        ReflectionTestUtils.setField(output, "additional", new HashMap<String, String>());
+        return output;
+    }
 }
