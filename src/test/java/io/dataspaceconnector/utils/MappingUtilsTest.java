@@ -61,8 +61,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingUtilsTest {
 
-    private final ZonedDateTime date =
-            ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
+    private final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L),
+            ZoneOffset.UTC);
 
     @Test
     public void fromIdsCatalog_inputNull_throwIllegalArgumentExceptionException() {
@@ -103,7 +103,7 @@ public class MappingUtilsTest {
         assertEquals(resource.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
         assertEquals(resource.getDescription().get(0).toString(), result.getDesc().getDescription());
         assertEquals(resource.getPublisher(), result.getDesc().getPublisher());
-        assertEquals(resource.getStandardLicense(), result.getDesc().getLicence());
+        assertEquals(resource.getStandardLicense(), result.getDesc().getLicense());
         assertEquals(resource.getLanguage().get(0).toString(), result.getDesc().getLanguage());
         assertEquals(resource.getTitle().get(0).toString(), result.getDesc().getTitle());
         assertEquals(resource.getSovereign(), result.getDesc().getSovereign());
@@ -151,7 +151,7 @@ public class MappingUtilsTest {
         assertEquals(resource.getKeyword().get(0).getValue(), result.getDesc().getKeywords().get(0));
         assertEquals(resource.getDescription().get(0).toString(), result.getDesc().getDescription());
         assertEquals(resource.getPublisher(), result.getDesc().getPublisher());
-        assertEquals(resource.getStandardLicense(), result.getDesc().getLicence());
+        assertEquals(resource.getStandardLicense(), result.getDesc().getLicense());
         assertEquals(resource.getLanguage().get(0).toString(), result.getDesc().getLanguage());
         assertEquals(resource.getTitle().get(0).toString(), result.getDesc().getTitle());
         assertEquals(resource.getSovereign(), result.getDesc().getSovereign());

@@ -15,11 +15,10 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.Objects;
-
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +37,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.URI;
+
 /**
  * Controller for sending ids query messages.
  */
@@ -48,13 +51,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class QueryMessageController {
 
     /**
-     * The service for communication with the ids broker.
+     * The service for sending ids messages.
      */
-    private final @NonNull IDSBrokerService brokerService;
+    private final @NonNull GlobalMessageService messageService;
 
     /**
-     * Sending an ids query message with a query message as payload.
-     * TODO Validate response message and return OK or other status code.
+     * Send an ids query message with a query message as payload.
      *
      * @param recipient The url of the recipient.
      * @param query     The query statement.
@@ -62,15 +64,16 @@ public class QueryMessageController {
      */
     @PostMapping("/query")
     @Operation(summary = "Query message", description = "Can be used for querying an "
-            + "IDS broker.")
+            + "IDS component (e.g. the Broker).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
-    public ResponseEntity<Object> sendConnectorUpdateMessage(
+    public ResponseEntity<Object> sendQueryMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Schema(description = "Database query (SparQL)", required = true,
@@ -80,12 +83,59 @@ public class QueryMessageController {
                             + "  ?subject ?predicate ?object\n"
                             + "};") @RequestBody final String query) {
         try {
-            // Send the resource update message.
-            final var response = brokerService.queryBroker(recipient.toString(), query,
-                    null, null, null);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
-            return ResponseEntity.ok(responseToString);
-        } catch (IOException exception) {
+            // Send the query message.
+            final var response = messageService.sendQueryMessage(recipient, query);
+            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+        } catch (SocketTimeoutException exception) {
+            return ControllerUtils.respondConnectionTimedOut(exception);
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
+            return ControllerUtils.respondIdsMessageFailed(exception);
+        }
+    }
+
+    /**
+     * Send an ids query message with search terms and values as payload.
+     *
+     * @param recipient The url of the recipient.
+     * @param term      The search term.
+     * @param limit     The limit of the number of response objects.
+     * @param offset    The search offset value.
+     * @return The response message or an error.
+     */
+    @PostMapping("/search")
+    @Operation(summary = "Full text search", description = "Can be used for full text search at an "
+            + "IDS component (e.g. the Broker).")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
+    @ResponseBody
+    @PreAuthorize("hasPermission(#recipient, 'rw')")
+    public ResponseEntity<Object> sendSearchMessage(
+            @Parameter(description = "The recipient url.", required = true)
+            @RequestParam("recipient") final URI recipient,
+            @Parameter(description = "The limit value.", required = true)
+            @RequestParam(value = "limit", defaultValue = "50") final Integer limit,
+            @Parameter(description = "The offset value.", required = true)
+            @RequestParam(value = "offset", defaultValue = "0") final Integer offset,
+            @Parameter(description = "The search term.", required = true)
+            @RequestBody final String term) {
+        try {
+            // Send the query message.
+            final var response =
+                    messageService.sendFullTextSearchQueryMessage(recipient, term, limit, offset);
+            return response.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                    .orElseGet(ControllerUtils::respondReceivedInvalidResponse);
+        } catch (SocketTimeoutException exception) {
+            return ControllerUtils.respondConnectionTimedOut(exception);
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

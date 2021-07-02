@@ -15,19 +15,17 @@
  */
 package io.dataspaceconnector.services.ids.builder;
 
-import java.net.URI;
-import java.util.List;
-
-import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.IANAMediaTypeBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
-import de.fraunhofer.iais.eis.RepresentationInstance;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.utils.IdsUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.Collections;
 
 /**
  * Converts DSC representation to ids representation.
@@ -38,7 +36,7 @@ public final class IdsRepresentationBuilder
         extends AbstractIdsBuilder<Representation, de.fraunhofer.iais.eis.Representation> {
 
     /**
-     * The builder for Infomodel Artifacts.
+     * The builder for ids artifacts.
      */
     private final @NonNull IdsArtifactBuilder artifactBuilder;
 
@@ -73,15 +71,8 @@ public final class IdsRepresentationBuilder
                 ._modified_(modified)
                 ._representationStandard_(standard);
 
-        if (artifacts.isPresent()) {
-           builder._instance_(getArtifacts(artifacts.get()));
-        }
+        artifacts.ifPresent(x -> builder._instance_(Collections.unmodifiableList(x)));
 
         return builder.build();
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<RepresentationInstance> getArtifacts(final List<Artifact> artifacts) {
-        return (List<RepresentationInstance>) (List<?>) artifacts;
     }
 }

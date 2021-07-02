@@ -21,7 +21,7 @@ import de.fraunhofer.iais.eis.TokenFormat;
 import io.dataspaceconnector.model.messages.ContractRejectionMessageDesc;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
+import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ class ContractRejectionServiceTest {
     private ConnectorService connectorService;
 
     @MockBean
-    private IDSHttpService idsHttpService;
+    private IdsHttpService idsHttpService;
 
     @MockBean
     private DeserializationService deserializationService;

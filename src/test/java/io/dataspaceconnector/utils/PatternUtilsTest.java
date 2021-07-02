@@ -240,9 +240,9 @@ public class PatternUtilsTest {
         assertTrue(isValidUri(constraint.getRightOperand().getValue()));
     }
 
-   /**************************************************************************
-    * Utilities.
-    *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
    private boolean isValidInteger(String string) {
        try {
@@ -279,5 +279,4 @@ public class PatternUtilsTest {
            return false;
        }
    }
-
 }

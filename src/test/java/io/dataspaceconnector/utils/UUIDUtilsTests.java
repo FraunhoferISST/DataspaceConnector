@@ -255,5 +255,4 @@ public class UUIDUtilsTests {
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class, () -> UUIDUtils.createUUID(function, maxNumTries));
     }
-
 }

@@ -28,8 +28,8 @@ import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import de.fraunhofer.ids.messaging.response.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -48,7 +48,7 @@ public class MessageResponseService {
     /**
      * Service for the current connector configuration.
      */
-    private final @NonNull ConnectorService connectorService;
+    private final @NonNull ConnectorService connectorSvc;
 
     /**
      * Handles thrown {@link MessageEmptyException}.
@@ -66,8 +66,8 @@ public class MessageResponseService {
         }
 
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
-                exception.getMessage(), connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                exception.getMessage(),
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -87,8 +87,8 @@ public class MessageResponseService {
                     + "[version=({}), exception=({})]", version, exception.getMessage(), exception);
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.VERSION_NOT_SUPPORTED,
-                exception.getMessage(), connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                exception.getMessage(),
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -112,8 +112,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Response could not be constructed.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -136,8 +135,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_AUTHORIZED,
                 "Policy restriction detected." + exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -159,8 +157,8 @@ public class MessageResponseService {
                     issuerConnector, messageId, exception);
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                "Could not parse message payload.", connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                "Could not parse message payload.",
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -183,8 +181,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND, String.format(
                 "The requested element %s could not be found.", requestedElement),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -205,8 +202,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -226,8 +222,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing rules in contract request.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -247,8 +242,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing targets in rules of contract request.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -268,8 +262,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.NOT_FOUND,
                 "Could not find any matching contract offers for your request.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -290,11 +283,9 @@ public class MessageResponseService {
                             + "issuer=({}), messageId=({})]", exception.getMessage(), payload,
                     issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not process request message. " + exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -317,11 +308,9 @@ public class MessageResponseService {
                             + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
                     requestedArtifact, transferContract, issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not process request message. " + exception.getMessage(),
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -342,11 +331,9 @@ public class MessageResponseService {
                             + "issuer=({}), messageId=({})]", exception, payload, issuerConnector,
                     messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "This agreement does not match the one handled out before.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -367,11 +354,9 @@ public class MessageResponseService {
                             + "agreement=({}), issuer=({}), messageId=({})]",
                     exception.getMessage(), agreement, issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not store contract agreement.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -392,11 +377,9 @@ public class MessageResponseService {
                             + "issuer=({}), messageId=({})]", requestedArtifact, transferContract,
                     issuerConnector, messageId);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing transfer contract.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -419,11 +402,9 @@ public class MessageResponseService {
                             + "contract=({}), issuer=({}), messageId=({})]", exception.getMessage(),
                     requestedArtifact, transferContract, issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Invalid transfer contract for requested artifact.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -444,11 +425,9 @@ public class MessageResponseService {
                             + "issuer=({}), messageId=({})]", requestedArtifact, transferContract,
                     issuerConnector, messageId);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing requested artifact.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -471,11 +450,9 @@ public class MessageResponseService {
                             + "issuer=({}), messageId=({})]", exception.getMessage(),
                     requestedArtifact, transferContract, issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Invalid query input.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -496,11 +473,9 @@ public class MessageResponseService {
                             + "messageId=({})]", exception.getMessage(), requestedArtifact,
                     issuerConnector, messageId, exception);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.INTERNAL_RECIPIENT_ERROR,
+        return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Could not retrieve data.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -518,11 +493,9 @@ public class MessageResponseService {
             log.debug("Missing affected resource. [resource=({}), issuer=({}), "
                     + "messageId=({})]", affectedResource, issuerConnector, messageId);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing affected resource.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -540,11 +513,9 @@ public class MessageResponseService {
             log.debug("Missing resource in payload. [resource=({}), issuer=({}), "
                     + "messageId=({})]", affectedResource, issuerConnector, messageId);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Missing resource in payload.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -565,11 +536,9 @@ public class MessageResponseService {
                             + "affectedResource=({}), issuer=({}), messageId=({})]", resourceId,
                     affectedResource, issuerConnector, messageId);
         }
-        return ErrorResponse.withDefaultHeader(
-                RejectionReason.BAD_PARAMETERS,
+        return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "Affected resource does not match the resource id.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -592,8 +561,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.MALFORMED_MESSAGE,
                 "Invalid rules in message payload.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -612,8 +580,7 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
                 "Internal error when constructing requested element.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 
     /**
@@ -634,7 +601,6 @@ public class MessageResponseService {
         }
         return ErrorResponse.withDefaultHeader(RejectionReason.BAD_PARAMETERS,
                 "This the transfer contract has not yet been confirmed.",
-                connectorService.getConnectorId(),
-                connectorService.getOutboundModelVersion());
+                connectorSvc.getConnectorId(), connectorSvc.getOutboundModelVersion());
     }
 }

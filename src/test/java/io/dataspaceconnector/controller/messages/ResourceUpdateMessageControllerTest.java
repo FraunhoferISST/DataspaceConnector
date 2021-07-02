@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.iais.eis.DynamicAttributeToken;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
+import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
+import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import okhttp3.MediaType;
-import okhttp3.Protocol;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.xml.datatype.DatatypeFactory;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
@@ -60,6 +61,10 @@ public class ResourceUpdateMessageControllerTest {
     private final URI resourceURI = URI.create(resourceId.toString());
     private final Resource resource = getResource();
     private final String recipient = "https://someURL";
+    private final DynamicAttributeToken token = new DynamicAttributeTokenBuilder()
+            ._tokenValue_("token")
+            ._tokenFormat_(TokenFormat.JWT)
+            .build();
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_returnUnauthorized() throws Exception {
@@ -68,16 +73,14 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_noRecipient_throws400()
-            throws Exception {
+    public void sendConnectorUpdateMessage_noRecipient_throws400() throws Exception {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT */
-        final var result =
-                mockMvc.perform(post("/api/ids/resource/update")
-                .param("resourceId", resourceId.toString())).andExpect(status().isBadRequest())
-                       .andReturn();
+        final var result = mockMvc.perform(post("/api/ids/resource/update")
+                .param("resourceId", resourceId.toString()))
+                .andReturn();
 
         /* ASSERT */
         assertTrue(result.getResponse().getContentAsString().isEmpty());
@@ -85,16 +88,14 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_noResourceId_throws400()
-            throws Exception {
+    public void sendConnectorUpdateMessage_noResourceId_throws400() throws Exception {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT */
-        final var result =
-                mockMvc.perform(post("/api/ids/resource/update")
-                .param("recipient", "https://someUrl")).andExpect(status().isBadRequest())
-                       .andReturn();
+        final var result = mockMvc.perform(post("/api/ids/resource/update")
+                .param("recipient", "https://someUrl"))
+                .andReturn();
 
         /* ASSERT */
         assertTrue(result.getResponse().getContentAsString().isEmpty());
@@ -102,90 +103,91 @@ public class ResourceUpdateMessageControllerTest {
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_resourceNotFound_throws404()
-            throws Exception {
+    public void sendConnectorUpdateMessage_resourceNotFound_throws404() throws Exception {
         /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.empty()).when(connectorService).getOfferedResourceById(resourceURI);
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
-                                                   .param("recipient", "https://someURL")
-                                                   .param("resourceId", resourceId.toString()))
-                                  .andExpect(status().isNotFound()).andReturn();
+                .param("recipient", "https://someURL")
+                .param("resourceId", resourceId.toString()))
+                .andReturn();
 
         /* ASSERT */
-        assertEquals("Resource 550e8400-e29b-11d4-a716-446655440000 not found.", result.getResponse().getContentAsString());
+        assertEquals("Resource " + resourceURI + " not found.",
+                result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_failUpdateAtBroker_throws500() throws Exception {
         /* ARRANGE */
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(Mockito.any(),
-                                                                                      Mockito.eq(resource));
+                Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
-                                                   .param("recipient", "https://someURL")
-                                                   .param("resourceId", resourceId.toString()))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", "https://someURL")
+                .param("resourceId", resourceId.toString()))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Ids message handling failed. null",
-                     result.getResponse().getContentAsString());
+                result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500()
-            throws Exception {
+    public void sendConnectorUpdateMessage_brokerEmptyResponseBody_throws500() throws Exception {
         /* ARRANGE */
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(Protocol.HTTP_1_1).code(200).message("").build();
-
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
-        Mockito.doReturn(response).when(brokerService).updateResourceAtBroker(Mockito.any(),
-                                                                              Mockito.eq(resource));
+        Mockito.doThrow(IOException.class).when(brokerService).updateResourceAtBroker(Mockito.any(),
+                Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
-                                                   .param("recipient", recipient)
-                                                   .param("resourceId", resourceId.toString()))
-                                  .andExpect(status().isInternalServerError()).andReturn();
+                .param("recipient", recipient)
+                .param("resourceId", resourceId.toString()))
+                .andReturn();
 
         /* ASSERT */
         assertEquals("Ids message handling failed. null",
-                     result.getResponse().getContentAsString());
+                result.getResponse().getContentAsString());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse()
-            throws Exception {
+    public void sendConnectorUpdateMessage_validRequest_returnsBrokerResponse() throws Exception {
         /* ARRANGE */
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(recipient).build())
-                                      .protocol(
-                                              Protocol.HTTP_1_1).code(200).message("")
-                                      .body(ResponseBody.create("ANSWER", MediaType
-                                              .parse("application/text")))
-                                      .build();
+        final var message = new MessageProcessedNotificationMessageBuilder()
+                ._issuerConnector_(new URI("https://url"))
+                ._correlationMessage_(new URI("https://cormessage"))
+                ._issued_(DatatypeFactory.newInstance()
+                        .newXMLGregorianCalendar("2009-05-07T17:05:45.678Z"))
+                ._senderAgent_(new URI("https://sender"))
+                ._modelVersion_("4.0.0")
+                ._securityToken_(token)
+                .build();
 
+        final var response = new MessageProcessedNotificationMAP(message);
+
+        Mockito.doReturn(token).when(connectorService).getCurrentDat();
         Mockito.doReturn(Optional.of(resource)).when(connectorService).getOfferedResourceById(Mockito.eq(resourceURI));
         Mockito.doReturn(response).when(brokerService).updateResourceAtBroker(Mockito.any(),
-                                                                              Mockito.eq(resource));
+                Mockito.eq(resource));
 
         /* ACT */
         final var result = mockMvc.perform(post("/api/ids/resource/update")
-                                                   .param("recipient", recipient)
-                                                   .param("resourceId", resourceId.toString()))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("recipient", recipient)
+                .param("resourceId", resourceId.toString()))
+                .andReturn();
 
         /* ASSERT */
-        assertEquals("ANSWER", result.getResponse().getContentAsString());
+        assertEquals("", result.getResponse().getContentAsString());
     }
 
     private Resource getResource() {

@@ -15,16 +15,11 @@
  */
 package io.dataspaceconnector.bootstrap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
 import io.dataspaceconnector.utils.Utils;
@@ -37,13 +32,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class BootstrapperTest {
 
     @MockBean
-    BrokerService brokerService;
+    GlobalMessageService messageService;
 
     @MockBean
     CatalogService catalogService;
@@ -76,8 +76,7 @@ public class BootstrapperTest {
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
-        Mockito.doReturn(true)
-                .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(true).when(messageService).sendConnectorUpdateMessage(Mockito.any());
 
         Mockito.doAnswer(x -> Utils.toPage(catalogList, Pageable.unpaged()))
                .when(catalogService)

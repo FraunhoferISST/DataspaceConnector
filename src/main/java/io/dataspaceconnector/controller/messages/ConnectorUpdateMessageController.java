@@ -15,10 +15,13 @@
  */
 package io.dataspaceconnector.controller.messages;
 
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenManagerException;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.utils.ControllerUtils;
-import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +39,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.net.SocketTimeoutException;
+import java.net.URI;
 
 /**
  * Controller for sending ids connector update messages.
@@ -47,9 +52,9 @@ import java.util.Objects;
 public class ConnectorUpdateMessageController {
 
     /**
-     * The service for communication with the ids broker.
+     * The service for sending ids messages.
      */
-    private final @NonNull IDSBrokerService brokerService;
+    private final @NonNull GlobalMessageService messageService;
 
     /**
      * Service for the current connector configuration.
@@ -58,7 +63,6 @@ public class ConnectorUpdateMessageController {
 
     /**
      * Sending an ids connector update message with the current connector as payload.
-     * TODO Validate response message and return OK or other status code.
      *
      * @param recipient The url of the recipient.
      * @return The response message or an error.
@@ -69,24 +73,31 @@ public class ConnectorUpdateMessageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Not found"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")})
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "502", description = "Bad gateway"),
+            @ApiResponse(responseCode = "504", description = "Gateway timeout")})
     @ResponseBody
     @PreAuthorize("hasPermission(#recipient, 'rw')")
-    public ResponseEntity<Object> sendConnectorUpdateMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
-            @RequestParam("recipient") final String recipient) {
+            @RequestParam("recipient") final URI recipient) {
         try {
             // Update the config model.
             connectorService.updateConfigModel();
 
             // Send the connector update message.
-            final var response = brokerService.updateSelfDescriptionAtBroker(recipient);
-            final var responseToString = Objects.requireNonNull(response.body()).string();
-            return ResponseEntity.ok(responseToString);
-        } catch (ConfigurationUpdateException exception) {
+            if (messageService.sendConnectorUpdateMessage(recipient)) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+
+            return ControllerUtils.respondReceivedInvalidResponse();
+        } catch (ConfigUpdateException exception) {
             return ControllerUtils.respondConfigurationUpdateError(exception);
-        } catch (NullPointerException | IOException exception) {
+        } catch (SocketTimeoutException exception) {
+            return ControllerUtils.respondConnectionTimedOut(exception);
+        } catch (MultipartParseException exception) {
+            return ControllerUtils.respondReceivedInvalidResponse(exception);
+        } catch (IOException | DapsTokenManagerException | ClaimsException exception) {
             return ControllerUtils.respondIdsMessageFailed(exception);
         }
     }

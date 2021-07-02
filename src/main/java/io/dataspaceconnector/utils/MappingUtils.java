@@ -182,7 +182,7 @@ public final class MappingUtils {
     }
 
     private static <T extends io.dataspaceconnector.model.Resource> void
-            fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
+    fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
         final var description = resource.getDescription();
         final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
         final var language = resource.getLanguage();
@@ -195,12 +195,12 @@ public final class MappingUtils {
         desc.setAdditional(buildAdditionalForResource(resource));
         desc.setKeywords(keywords);
         desc.setPublisher(publisher);
-        desc.setLicence(standardLicense);
+        desc.setLicense(standardLicense);
         desc.setSovereign(sovereign);
 
         if (description != null) {
             desc.setDescription(description.size() == 1 ? description.get(0).toString()
-                                                        : description.toString());
+                    : description.toString());
         }
 
         if (title != null) {
@@ -256,9 +256,9 @@ public final class MappingUtils {
      * Adds the string value of a given list as an additional property. If the list only contains
      * one element, the string value will not contain brackets.
      *
-     * @param list the list.
+     * @param list       the list.
      * @param additional the map of additional properties.
-     * @param key the map key to use.
+     * @param key        the map key to use.
      */
     private static void addListToAdditional(final List<?> list,
                                             final Map<String, String> additional,
@@ -424,9 +424,9 @@ public final class MappingUtils {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException if the rule is null.
-     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
-     *         if the rule cannot be converted to string.
+     * @throws IllegalArgumentException                             if the rule is null.
+     * @throws io.dataspaceconnector.exceptions.RdfBuilderException if the rule cannot be
+     * converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
         Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);

@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.repositories.RuleRepository;
@@ -25,6 +22,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -62,5 +62,4 @@ public class RuleServiceTest {
         /* ASSERT */
         assertEquals(rules, result);
     }
-
 }

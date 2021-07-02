@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.ContractRule;
@@ -34,14 +29,22 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {ContractRuleViewAssembler.class, ViewAssemblerHelper.class,
-        ContractRuleFactory.class})
+@SpringBootTest(classes = {
+        ContractRuleViewAssembler.class,
+        ViewAssemblerHelper.class,
+        ContractRuleFactory.class
+})
 public class ContractRuleViewAssemblerTest {
 
     @Autowired
@@ -53,8 +56,7 @@ public class ContractRuleViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RuleController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
@@ -72,11 +74,9 @@ public class ContractRuleViewAssemblerTest {
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var contractRuleId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RuleController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = contractRuleViewAssembler.getSelfLink(contractRuleId);
@@ -84,14 +84,13 @@ public class ContractRuleViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + contractRuleId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void toModel_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> contractRuleViewAssembler.toModel(null));
+        assertThrows(IllegalArgumentException.class, () -> contractRuleViewAssembler.toModel(null));
     }
 
     @Test
@@ -122,9 +121,9 @@ public class ContractRuleViewAssemblerTest {
                 contractsLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private ContractRule getContractRule() {
         final var desc = new ContractRuleDesc();
@@ -156,5 +155,4 @@ public class ContractRuleViewAssemblerTest {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.RulesToContracts.class)
                 .getResource(contractRuleId, null, null)).toString();
     }
-
 }

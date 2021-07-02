@@ -43,6 +43,7 @@ extensible software that encapsulates the IDS information model from connected s
 * Resource Update Messages for receiving latest data
 * Integration and configuration of Jaeger for using open telemetry
 * Optional http tracing for transparent information and data flow
+* Optional bootstrapping for registering resource offers on start-up
 * Security
     * Prevent leaking of technology stack in case of errors/exceptions
     * Logger sanitizes inputs to prevent CRLF injections
@@ -53,10 +54,9 @@ extensible software that encapsulates the IDS information model from connected s
 
 | Library | License | Owner | Contact |
 |:--------|:--------|:------|:--------|
-| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/Java-Representation-of-IDS-Information-Model) | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de) |
-| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | Apache 2.0 | Fraunhofer IAIS | [E-Mail](mailto:contact@ids.fraunhofer.de) |
-| [IDS Framework](https://mvn.ids.isst.fraunhofer.de/nexus/repository/ids-public/) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/IDS-Connector-Framework) | Fraunhofer ISST | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de) |
-| IDS Messaging Service | [Apache 2.0](https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services) | Fraunhofer ISST & AISEC | [Tim Berthold](mailto:tim.berthold@isst.fraunhofer.de), [Matthias Böckmann](mailto:matthias.boeckmann@iais.fraunhofer.de) |
+| [IDS Information Model Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel/) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/Java-Representation-of-IDS-Information-Model) | Fraunhofer IAIS | [E-Mail IAIS](mailto:contact@ids.fraunhofer.de) |
+| [IDS Information Model Serializer Library](https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/de/fraunhofer/iais/eis/ids/infomodel-serializer/) | Apache 2.0 | Fraunhofer IAIS | [E-Mail IAIS](mailto:contact@ids.fraunhofer.de) |
+| [IDS Messaging Service](https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services) | [Apache 2.0](https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services) | Fraunhofer ISST & IAIS | [E-Mail ISST](mailto:info@dataspace-connector.de), [E-Mail IAIS](mailto:contact@ids.fraunhofer.de) |
 
 The [ConfigManager](https://github.com/FraunhoferISST/IDS-ConfigurationManager) and its
 [GUI](https://github.com/International-Data-Spaces-Association/IDS-ConfigurationManager-UI) are a

@@ -56,9 +56,13 @@ class MainControllerIT {
         final var result = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertDoesNotThrow( () -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
+        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
+
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private BaseConnector getConnectorWithoutResources() {
         return new BaseConnectorBuilder()
@@ -68,8 +72,8 @@ class MainControllerIT {
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                                              ._accessURL_(URI.create("https://accessUrl"))
-                                              .build())
+                        ._accessURL_(URI.create("https://accessUrl"))
+                        .build())
                 .build();
     }
 }
