@@ -25,10 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Evaluates to true, if on any possible path every place fulfills parameter1, until a place fulfills parameter2.
+ * Evaluates to true, if on any possible path every place fulfills parameter1,
+ * until a place fulfills parameter2.
  */
-@AllArgsConstructor
 @Slf4j
+@AllArgsConstructor
 public class NodeFORALL_UNTIL implements StateFormula {
     private StateFormula parameter1;
     private StateFormula parameter2;
@@ -72,7 +73,8 @@ public class NodeFORALL_UNTIL implements StateFormula {
                 }
             } else {
                 //TODO path contains circle
-                //if something on the circle fulfills param2 accept, if something does not fulfill param1 reject
+                //if something on the circle fulfills param2 accept,
+                // if something does not fulfill param1 reject
                 for (var i = 2; i < path.size() - 1; i += 2) {
                     final var res1 = parameter1.evaluate(path.get(i), paths);
                     final var res2 = parameter2.evaluate(path.get(i), paths);
@@ -84,7 +86,10 @@ public class NodeFORALL_UNTIL implements StateFormula {
                     }
                 }
                 //if everything on circle fulfills param1 but not param2: complicated case
-                final var lastPlace = path.get(path.size() - 1) instanceof Place ? path.get(path.size() - 1) : path.get(path.size() - 2);
+                final var lastPlace = path.get(path.size() - 1) instanceof Place
+                        ? path.get(path.size() - 1)
+                        : path.get(path.size() - 2);
+
                 final var newPaths = new ArrayList<>(paths);
                 newPaths.remove(path);
 
@@ -103,6 +108,9 @@ public class NodeFORALL_UNTIL implements StateFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

@@ -16,9 +16,7 @@
 package io.configmanager.extensions.routes.camel;
 
 import io.configmanager.core.OkHttpUtils;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Credentials;
 import okhttp3.MediaType;
@@ -39,36 +37,35 @@ import java.util.Objects;
 @Slf4j
 @Component
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RouteHttpHelper {
     /**
      * URL of the Camel application.
      */
     @Value("${camel.application.url}")
-    String camelApplicationUrl;
+    private String camelApplicationUrl;
 
     /**
      * Username for the Camel application.
      */
     @Value("${camel.application.username}")
-    String camelApplicationUsername;
+    private String camelApplicationUsername;
 
     /**
      * Password for the Camel application.
      */
     @Value("${camel.application.password}")
-    String camelApplicationPassword;
+    private String camelApplicationPassword;
 
     /**
      * The Camel application's API path for managing routes.
      */
     @Value("${camel.application.path.routes}")
-    String camelApplicationRoutesPath;
+    private String camelApplicationRoutesPath;
 
     /**
      * The OkHttpClient for sending requests to the Camel application.
      */
-    final OkHttpClient httpClient = OkHttpUtils.getUnsafeOkHttpClient();
+    private final OkHttpClient httpClient = OkHttpUtils.getUnsafeOkHttpClient();
 
     /**
      * Sends an XML route to the Camel application specified in application.properties as a file.
@@ -96,7 +93,9 @@ public class RouteHttpHelper {
             if (!response.isSuccessful()) {
                 if (log.isErrorEnabled()) {
                     log.error("Error sending file to Camel: {}, {}", response.code(),
-                            response.body() != null ? Objects.requireNonNull(response.body()).string() : "No response body.");
+                            response.body() != null
+                                    ? Objects.requireNonNull(response.body()).string()
+                                    : "No response body.");
                 }
 
                 throw new IOException("Request for deploying route was unsuccessful with code "
@@ -135,7 +134,9 @@ public class RouteHttpHelper {
             if (!response.isSuccessful()) {
                 if (log.isErrorEnabled()) {
                     log.error("Error deleting route at Camel: {}, {}", response.code(),
-                            response.body() != null ? Objects.requireNonNull(response.body()).string() : "No response body.");
+                            response.body() != null
+                                    ? Objects.requireNonNull(response.body()).string()
+                                    : "No response body.");
                 }
 
                 throw new IOException("Request for deleting route was unsuccessful with code "

@@ -16,9 +16,7 @@
 package io.configmanager.extensions.routes.petrinet.evaluation.formula.transition;
 
 import io.configmanager.extensions.routes.petrinet.model.Node;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
@@ -26,10 +24,9 @@ import java.util.List;
  * Evaluates to true, if parameter1 and parameter2 evaluate to true.
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransitionAND implements TransitionFormula {
-    TransitionFormula parameter1;
-    TransitionFormula parameter2;
+    private TransitionFormula parameter1;
+    private TransitionFormula parameter2;
 
     public static TransitionAND transitionAND(final TransitionFormula parameter1,
                                               final TransitionFormula parameter2) {
@@ -48,6 +45,9 @@ public class TransitionAND implements TransitionFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

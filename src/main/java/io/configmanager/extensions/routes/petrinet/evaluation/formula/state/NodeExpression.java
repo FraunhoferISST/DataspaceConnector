@@ -19,14 +19,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Custom Expression to be evaluated on a {@link de.fraunhofer.isst.configmanager.extensions.routes.petrinet.model.Place}.
+ * Custom Expression to be evaluated on a
+ * {@link io.configmanager.extensions.routes.petrinet.model.Place}.
  */
 @Getter
 @AllArgsConstructor
 public class NodeExpression {
 
     /**
-     * Subexpression (function from {@link de.fraunhofer.isst.configmanager.extensions.routes.petrinet.model.Place} to boolean.
+     * Subexpression (function from
+     * {@link io.configmanager.extensions.routes.petrinet.model.Place} to boolean.
      */
     private NodeSubExpression subExpression;
 

@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 public interface GuiUtilApi {
+    /**
+     * Auxiliary API to provide data to a GUI,
+     * which either comes from the infomodel or is connector specific.
+     * @param enumName Selection of the domain of the requested data, e.g. language.
+     * @return The response message or an error.
+     */
     @GetMapping(value = "/enum/{enumName}")
     @Operation(summary = "Get the specific enum")
     @ApiResponse(responseCode = "200", description = "Successfully get the enums")

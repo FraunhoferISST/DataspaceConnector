@@ -17,21 +17,18 @@ package io.configmanager.extensions.routes.petrinet.evaluation.formula.transitio
 
 import io.configmanager.extensions.routes.petrinet.model.Node;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 /**
- * Evaluates to true, if a path exists, where parameter1 evaluates to true for every transition, until parameter2
- * evaluates to true.
+ * Evaluates to true, if a path exists, where parameter1 evaluates to true for every transition,
+ * until parameter2 evaluates to true.
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransitionEXIST_UNTIL implements TransitionFormula {
-    TransitionFormula parameter1;
-    TransitionFormula parameter2;
+    private TransitionFormula parameter1;
+    private TransitionFormula parameter2;
 
     public static TransitionEXIST_UNTIL transitionEXIST_UNTIL(final TransitionFormula parameter1,
                                                               final TransitionFormula parameter2) {
@@ -81,6 +78,9 @@ public class TransitionEXIST_UNTIL implements TransitionFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

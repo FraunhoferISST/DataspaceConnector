@@ -17,9 +17,7 @@ package io.configmanager.extensions.routes.petrinet.evaluation.formula.transitio
 
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.state.StateFormula;
 import io.configmanager.extensions.routes.petrinet.model.Node;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
@@ -28,14 +26,13 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.tra
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 
 /**
- * evaluates to true, if there is a successor transition for which parameter1 holds, while parameter2 holds for the
- * place in between.
+ * evaluates to true, if there is a successor transition for which parameter1 holds,
+ * while parameter2 holds for the place in between.
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TransitionEXIST_MODAL implements TransitionFormula {
-    TransitionFormula parameter1;
-    StateFormula parameter2;
+    private TransitionFormula parameter1;
+    private StateFormula parameter2;
 
     private static TransitionEXIST_MODAL transitionEXIST_MODAL(final TransitionFormula parameter1,
                                                                final StateFormula parameter2) {
@@ -44,7 +41,8 @@ public class TransitionEXIST_MODAL implements TransitionFormula {
 
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return nodeMODAL(transitionAND(parameter1, transitionMODAL(parameter2))).evaluate(node, paths);
+        return nodeMODAL(transitionAND(parameter1,
+                transitionMODAL(parameter2))).evaluate(node, paths);
     }
 
     @Override
@@ -54,6 +52,9 @@ public class TransitionEXIST_MODAL implements TransitionFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

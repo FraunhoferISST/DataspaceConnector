@@ -27,9 +27,7 @@ import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
@@ -51,25 +49,27 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class RouteManager {
+    /**
+     * Setting on how to handle routing errors.
+     */
     @Value("${camel.application.error-handler}")
-    String camelErrorHandlerRef;
+    private String camelErrorHandlerRef;
 
     /**
      * Helper for deploying and deleting Camel routes via HTTP.
      */
-    final RouteHttpHelper routeHttpHelper;
+    private final RouteHttpHelper routeHttpHelper;
 
     /**
      * Helper for deploying and deleting Camel routes in the file system.
      */
-    final RouteFileHelper routeFileHelper;
+    private final RouteFileHelper routeFileHelper;
 
     /**
      * Helper for configuring Camel routes for the Dataspace Connector.
      */
-    final RouteConfigurer routeConfigurer;
+    private final RouteConfigurer routeConfigurer;
 
     /**
      * Creates a Camel XML route from a given app route.
@@ -91,11 +91,15 @@ public class RouteManager {
         velocityContext.put("routeId", camelRouteId);
 
         //get route start and end (will either be connector, app or generic endpoint)
-        addRouteStartToContext(velocityContext, (ArrayList<? extends Endpoint>) appRoute.getAppRouteStart());
-        addRouteEndToContext(velocityContext, (ArrayList<? extends Endpoint>) appRoute.getAppRouteEnd());
+        addRouteStartToContext(velocityContext,
+                (ArrayList<? extends Endpoint>) appRoute.getAppRouteStart());
+
+        addRouteEndToContext(velocityContext,
+                (ArrayList<? extends Endpoint>) appRoute.getAppRouteEnd());
 
         //get route steps (if any)
-        addRouteStepsToContext(velocityContext, (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
+        addRouteStepsToContext(velocityContext,
+                (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
 
         try {
             createDataspaceConnectorRoute(appRoute, velocityContext);
@@ -298,8 +302,9 @@ public class RouteManager {
             final var camelRouteId = (String) velocityContext.get("routeId");
 
             if (log.isErrorEnabled()) {
-                log.error("An error occurred while populating template. Please check all respective "
-                                + "files for connection with ID '{}' for correctness! (Error message: {})",
+                log.error("An error occurred while populating template."
+                                + " Please check all respective files for connection"
+                                + " with ID '{}' for correctness! (Error message: {})",
                         camelRouteId, e.toString());
             }
 

@@ -22,8 +22,8 @@ import java.net.URI;
 import java.util.Objects;
 
 /**
- * Used for inner places of unfolded transitions (has a originalTrans field to access the original transition which
- * was unfolded).
+ * Used for inner places of unfolded transitions (has a originalTrans
+ * field to access the original transition which was unfolded).
  */
 @Getter
 @Setter
@@ -58,6 +58,8 @@ public class InnerPlace extends PlaceImpl {
 
         final var place = (InnerPlace) o;
 
-        return originalTrans.equals(place.originalTrans) && getMarkers() == place.getMarkers() && Objects.equals(getID(), place.getID());
+        return originalTrans.equals(place.originalTrans)
+                && getMarkers() == place.getMarkers()
+                && Objects.equals(getID(), place.getID());
     }
 }

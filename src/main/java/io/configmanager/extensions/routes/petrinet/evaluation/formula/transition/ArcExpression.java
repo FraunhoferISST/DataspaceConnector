@@ -15,28 +15,27 @@
  */
 package io.configmanager.extensions.routes.petrinet.evaluation.formula.transition;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 
 /**
- * Custom Expression to be evaluated on a {@link io.configmanager.extensions.routes.petrinet.model.Transition}.
+ * Custom Expression to be evaluated on a
+ * {@link io.configmanager.extensions.routes.petrinet.model.Transition}.
  */
 @Getter
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArcExpression {
 
     /**
-     * Subexpression (function from {@link io.configmanager.extensions.routes.petrinet.model.Transition} to boolean.
+     * Subexpression (function from
+     * {@link io.configmanager.extensions.routes.petrinet.model.Transition} to boolean.
      */
-    ArcSubExpression subExpression;
+    private ArcSubExpression subExpression;
 
     /**
      * Information message to return when subExpression is not fulfilled by a transition.
      */
-    String message;
+    private String message;
 
     public static ArcExpression arcExpression(final ArcSubExpression subExpression,
                                               final String message) {

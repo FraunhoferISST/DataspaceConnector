@@ -15,16 +15,12 @@
  */
 package io.configmanager.extensions.routes.petrinet.model;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
-
 /**
  * Implementation class of the {@link Arc} interface.
  */
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ArcImpl implements Arc {
-    Node source;
-    Node target;
+    private Node source;
+    private Node target;
 
     public ArcImpl(final Node source, final Node target) {
         if (source.isComplementOf(target)) {

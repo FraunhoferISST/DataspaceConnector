@@ -16,8 +16,6 @@
 package io.configmanager.extensions.routes.petrinet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -27,17 +25,15 @@ import java.util.Set;
 /**
  * Implementation class of the {@link Place} interface.
  */
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlaceImpl implements Place {
-
-    transient URI id;
-    int markers;
-
-    @JsonIgnore
-    transient Set<Arc> sourceArcs;
+    private URI id;
+    private int markers;
 
     @JsonIgnore
-    transient Set<Arc> targetArcs;
+    private Set<Arc> sourceArcs;
+
+    @JsonIgnore
+    private Set<Arc> targetArcs;
 
     public PlaceImpl(final URI id) {
         this.id = id;

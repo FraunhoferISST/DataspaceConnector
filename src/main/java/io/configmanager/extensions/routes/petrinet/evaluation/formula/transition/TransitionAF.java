@@ -34,7 +34,8 @@ public class TransitionAF implements TransitionFormula {
 
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return node instanceof Transition && parameter.getSubExpression().evaluate((Transition) node);
+        return node instanceof Transition
+                && parameter.getSubExpression().evaluate((Transition) node);
     }
 
     @Override

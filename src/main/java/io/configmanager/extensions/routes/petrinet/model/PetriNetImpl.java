@@ -15,10 +15,8 @@
  */
 package io.configmanager.extensions.routes.petrinet.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.experimental.FieldDefaults;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -31,12 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementation class of the {@link PetriNet} interface.
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PetriNetImpl implements PetriNet, HasId {
-
-    transient URI id;
-    transient Set<Node> nodes;
-    transient Set<Arc> arcs;
+    private URI id;
+    private Set<Node> nodes;
+    private Set<Arc> arcs;
 
     @Override
     public Set<Node> getNodes() {
@@ -99,14 +95,21 @@ public class PetriNetImpl implements PetriNet, HasId {
             return false;
         }
         final var petriNet = (PetriNetImpl) o;
-        return Objects.equals(id, petriNet.id) && arcsEqual(petriNet.arcs) && nodesEqual(petriNet.nodes);
+        return Objects.equals(id, petriNet.id)
+                && arcsEqual(petriNet.arcs)
+                && nodesEqual(petriNet.nodes);
     }
 
     private boolean nodesEqual(final Set<Node> otherNodes) {
-        return nodes.stream().map(s -> otherNodes.stream().filter(n -> n.getID().equals(s.getID())).anyMatch(n -> n.equals(s))).reduce(true, (a, b) -> a && b);
+        return nodes.stream().map(s -> otherNodes.stream()
+                    .filter(n -> n.getID().equals(s.getID()))
+                    .anyMatch(n -> n.equals(s)))
+                .reduce(true, (a, b) -> a && b);
     }
 
     private boolean arcsEqual(final Set<Arc> otherArcs) {
-        return arcs.stream().map(s -> otherArcs.stream().anyMatch(n -> n.equals(s))).reduce(true, (a, b) -> a && b);
+        return arcs.stream().map(s -> otherArcs.stream()
+                    .anyMatch(n -> n.equals(s)))
+                .reduce(true, (a, b) -> a && b);
     }
 }

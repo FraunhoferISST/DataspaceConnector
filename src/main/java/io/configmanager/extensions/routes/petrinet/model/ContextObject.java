@@ -15,10 +15,8 @@
  */
 package io.configmanager.extensions.routes.petrinet.model;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +27,14 @@ import java.util.Objects;
  */
 @Getter
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ContextObject {
+    private List<String> context;
+    private String read;
+    private String write;
+    private String erase;
+    private TransType type;
 
-    List<String> context;
-    String read;
-    String write;
-    String erase;
-    TransType type;
-
-   public ContextObject deepCopy() {
+    public ContextObject deepCopy() {
        return new ContextObject(context, read, write, erase, type);
    }
 
@@ -54,7 +50,10 @@ public class ContextObject {
 
         final var that = (ContextObject) o;
 
-        return Objects.equals(context, that.context) && Objects.equals(read, that.read) && Objects.equals(write, that.write) && Objects.equals(erase, that.erase);
+        return Objects.equals(context, that.context)
+                && Objects.equals(read, that.read)
+                && Objects.equals(write, that.write)
+                && Objects.equals(erase, that.erase);
     }
 
     @Override
@@ -63,8 +62,8 @@ public class ContextObject {
     }
 
     /**
-     * Transition types (are they apps or control transitions for the petrinet?), only APP transitions have to be
-     * unfolded for parallel checks.
+     * Transition types (are they apps or control transitions for the petrinet?),
+     * only APP transitions have to be unfolded for parallel checks.
      */
     public enum TransType {
         APP,

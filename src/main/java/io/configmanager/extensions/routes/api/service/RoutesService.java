@@ -120,7 +120,8 @@ public class RoutesService {
         //TODO: Get from DB
 
 //        return configModelService.getConfigModel().getAppRoute()
-//                .stream().filter(appRoute1 -> appRoute1.getId().equals(routeId)).findAny().orElse(null);
+//                .stream()
+//                .filter(appRoute1 -> appRoute1.getId().equals(routeId)).findAny().orElse(null);
 
         return null;
     }
@@ -146,19 +147,32 @@ public class RoutesService {
         //TODO: Get from DB
 
 //        return (AppRouteImpl) configModelService.getConfigModel().getAppRoute()
-//                .stream().filter(appRoute -> appRoute.getId().equals(routeId)).findAny().orElse(null);
+//                .stream()
+//                .filter(appRoute -> appRoute.getId().equals(routeId)).findAny().orElse(null);
 
         return null;
     }
 
+    /**
+     * Creates an AppRoute step.
+     * @param routeId The ID of the route, where the step should be added.
+     * @param startId ID of the Start-Endpoint.
+     * @param endID ID of the End-Endpoint.
+     * @param resourceId Resource for the route.
+     * @param startCoordinateX GUI: X-Coordinate of the Start-Endpoint.
+     * @param startCoordinateY GUI: Y-Coordinate of the Start-Endpoint.
+     * @param endCoordinateX GUI: X-Coordinate of the End-Endpoint.
+     * @param endCoordinateY GUI: Y-Coordinate of the End-Endpoint.
+     * @return The created RouteStep.
+     */
     public RouteStep createAppRouteStep(final URI routeId,
                                         final URI startId,
+                                        final URI endID,
+                                        final URI resourceId,
                                         final int startCoordinateX,
                                         final int startCoordinateY,
-                                        final URI endID,
                                         final int endCoordinateX,
-                                        final int endCoordinateY,
-                                        final URI resourceId) {
+                                        final int endCoordinateY) {
 
         //TODO: Save in DB
 
@@ -209,12 +223,17 @@ public class RoutesService {
 //                if (resource != null) {
 //
 //                    // Set resource endpoint
-//                    if (configModelService.getConfigModel().getConnectorDescription().getHasEndpoint() == null
-//                            || configModelService.getConfigModel().getConnectorDescription().getHasEndpoint().isEmpty()) {
+//                    if (configModelService.getConfigModel()
+//                                .getConnectorDescription().getHasEndpoint() == null
+//                            || configModelService.getConfigModel()
+//                                .getConnectorDescription().getHasEndpoint().isEmpty()) {
 //
 //                        final var baseConnectorImpl =
-//                                (BaseConnectorImpl) configModelService.getConfigModel().getConnectorDescription();
-//                        baseConnectorImpl.setHasEndpoint(Util.asList(new ConnectorEndpointBuilder()
+//                                (BaseConnectorImpl) configModelService
+//                                        .getConfigModel()
+//                                        .getConnectorDescription();
+//                        baseConnectorImpl.setHasEndpoint(
+//                                Util.asList(new ConnectorEndpointBuilder()
 //                                ._accessURL_(URI.create("http://api/ids/data")).build()));
 //                    }
 //                    final var connectorEndpoint =
@@ -231,7 +250,8 @@ public class RoutesService {
 //
 //                    // Creating camel route
 //                    try {
-//                        routeManager.createAndDeployXMLRoute(configModelService.getConfigModel(), appRouteImpl);
+//                        routeManager.createAndDeployXMLRoute(
+//                                configModelService.getConfigModel(), appRouteImpl);
 //                    } catch (RouteCreationException e) {
 //                        if (log.isErrorEnabled()){
 //                            log.error(e.getMessage(), e);
@@ -269,7 +289,8 @@ public class RoutesService {
 //            final var customApp = customAppList.stream()
 //                    .map(CustomApp::getAppEndpointList)
 //                    .flatMap(Collection::stream)
-//                    .filter(customAppEndpoint -> customAppEndpoint.getEndpoint().getId().equals(endpointId))
+//                    .filter(customAppEndpoint -> customAppEndpoint
+//                            .getEndpoint().getId().equals(endpointId))
 //                    .findAny().orElse(null);
 //
 //            if (customApp != null) {
@@ -277,7 +298,8 @@ public class RoutesService {
 //            }
 //        }
 //        // Search endpoint in the backend repository and in list of connector endpoints
-//        if (endpoint == null && !endpointService.getGenericEndpoints().isEmpty() && endpointId.toString().contains("genericEndpoint")) {
+//        if (endpoint == null && !endpointService.getGenericEndpoints().isEmpty()
+//                && endpointId.toString().contains("genericEndpoint")) {
 //            final var genericEndpoint = endpointService.getGenericEndpoint(endpointId);
 //
 //            if (genericEndpoint != null) {
@@ -285,11 +307,14 @@ public class RoutesService {
 //            }
 //        }
 //
-//        if (endpoint == null && !configModelService.getConfigModel().getConnectorDescription().getHasEndpoint().isEmpty()
+//        if (endpoint == null && !configModelService.getConfigModel()
+//                    .getConnectorDescription().getHasEndpoint().isEmpty()
 //                && endpointId.toString().contains("connectorEndpoint")) {
 //
-//            endpoint = configModelService.getConfigModel().getConnectorDescription().getHasEndpoint()
-//                    .stream().filter(connectorEndpoint -> connectorEndpoint.getId().equals(endpointId))
+//            endpoint = configModelService.getConfigModel()
+//                    .getConnectorDescription().getHasEndpoint()
+//                    .stream().filter(connectorEndpoint -> connectorEndpoint
+//                        .getId().equals(endpointId))
 //                    .findAny().orElse(null);
 //        }
 //

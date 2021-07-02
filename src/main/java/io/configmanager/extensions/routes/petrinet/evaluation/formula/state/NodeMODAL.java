@@ -24,7 +24,8 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 /**
- * Evaluates to true, if parameter evaluates to true for a transition directly following the current place.
+ * Evaluates to true, if parameter evaluates to true for a transition directly following
+ * the current place.
  */
 @AllArgsConstructor
 public class NodeMODAL implements StateFormula {

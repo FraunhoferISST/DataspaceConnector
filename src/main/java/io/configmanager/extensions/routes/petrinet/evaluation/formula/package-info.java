@@ -13,19 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.configmanager.util.enums;
-
 /**
- * Enums for the broker status.
+ * Petrinet evaluation formulas.
  */
-public enum BrokerRegistrationStatus {
-    /**
-     * If the connector is registered at the Broker.
-     */
-    REGISTERED,
-
-    /**
-     * If the connector is not registered at the Broker.
-     */
-    UNREGISTERED
-}
+package io.configmanager.extensions.routes.petrinet.evaluation.formula;

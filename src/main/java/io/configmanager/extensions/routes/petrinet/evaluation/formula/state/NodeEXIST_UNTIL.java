@@ -22,12 +22,11 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 /**
- * Evaluates to true, if a path exists, where parameter1 evaluates to true for every place, until parameter2
- * evaluates to true.
+ * Evaluates to true, if a path exists, where parameter1 evaluates to true for every place,
+ * until parameter2 evaluates to true.
  */
 @AllArgsConstructor
 public class NodeEXIST_UNTIL implements StateFormula {
-
     private StateFormula parameter1;
     private StateFormula parameter2;
 
@@ -83,6 +82,9 @@ public class NodeEXIST_UNTIL implements StateFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

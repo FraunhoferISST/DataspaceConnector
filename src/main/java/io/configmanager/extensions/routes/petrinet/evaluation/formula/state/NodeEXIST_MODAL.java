@@ -26,8 +26,8 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.sta
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionMODAL.transitionMODAL;
 
 /**
- * evaluates to true, if there is a successor place for which parameter1 holds, while parameter2 holds for the
- * transition in between.
+ * Evaluates to true, if there is a successor place for which parameter1 holds,
+ * while parameter2 holds for the transition in between.
  */
 @AllArgsConstructor
 public class NodeEXIST_MODAL implements StateFormula {
@@ -41,7 +41,8 @@ public class NodeEXIST_MODAL implements StateFormula {
 
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
-        return transitionMODAL(nodeAND(parameter1, nodeMODAL(parameter2))).evaluate(node, paths);
+        return transitionMODAL(nodeAND(parameter1,
+                nodeMODAL(parameter2))).evaluate(node, paths);
     }
 
     @Override
@@ -51,6 +52,8 @@ public class NodeEXIST_MODAL implements StateFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)", symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

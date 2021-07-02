@@ -20,8 +20,7 @@ import io.configmanager.extensions.routes.petrinet.model.Node;
 import java.util.List;
 
 /**
- * A generic Formula, can be a {@link io.configmanager.extensions.routes.petrinet.evaluation.formula.state.StateFormula}
- * or a {@link io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFormula}.
+ * A generic Formula, can be a StateFormula or a TransitionFormula.
  */
 public interface Formula {
 

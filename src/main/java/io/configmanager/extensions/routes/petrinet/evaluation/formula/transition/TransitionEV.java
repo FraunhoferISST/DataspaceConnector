@@ -24,7 +24,8 @@ import static io.configmanager.extensions.routes.petrinet.evaluation.formula.TT.
 import static io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFORALL_UNTIL.transitionFORALL_UNTIL;
 
 /**
- * Evaluates to true, if a transition fulfilling the given parameter is eventually reached on every path.
+ * Evaluates to true, if a transition fulfilling the given parameter
+ * is eventually reached on every path.
  */
 @AllArgsConstructor
 public class TransitionEV implements TransitionFormula {

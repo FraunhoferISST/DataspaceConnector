@@ -15,14 +15,16 @@
  */
 package io.configmanager.util.json;
 
-import lombok.experimental.UtilityClass;
 import net.minidev.json.JSONObject;
 
 /**
  * Utility class which can be used to define helper methods.
  */
-@UtilityClass
-public class JsonUtils {
+public final class JsonUtils {
+    private JsonUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * This method creates with the given parameters a JSON message.
      *

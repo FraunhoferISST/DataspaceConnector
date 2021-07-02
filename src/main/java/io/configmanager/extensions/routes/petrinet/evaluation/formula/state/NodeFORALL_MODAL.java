@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Evaluates to true, if parameter1 evaluates to true for every following place and parameter2 evaluates to true
+ * Evaluates to true, if parameter1 evaluates to true for every following
+ * place and parameter2 evaluates to true
  * for every transition in between.
  */
 @AllArgsConstructor
@@ -47,8 +48,16 @@ public class NodeFORALL_MODAL implements StateFormula {
             return false;
         }
 
-        final var followingTransitions = paths.stream().filter(path -> path.size() == 2 && path.get(0) == node).map(path -> path.get(1)).collect(Collectors.toSet());
-        final var followingPlaces = followingTransitions.stream().map(Node::getSourceArcs).flatMap(Collection::stream).map(Arc::getTarget).collect(Collectors.toSet());
+        final var followingTransitions = paths.stream()
+                .filter(path -> path.size() == 2 && path.get(0) == node)
+                .map(path -> path.get(1))
+                .collect(Collectors.toSet());
+
+        final var followingPlaces = followingTransitions.stream()
+                .map(Node::getSourceArcs)
+                .flatMap(Collection::stream)
+                .map(Arc::getTarget)
+                .collect(Collectors.toSet());
 
         for (final var place : followingPlaces) {
             if (!parameter1.evaluate(place, paths)) {
@@ -71,6 +80,9 @@ public class NodeFORALL_MODAL implements StateFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)",
+                symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

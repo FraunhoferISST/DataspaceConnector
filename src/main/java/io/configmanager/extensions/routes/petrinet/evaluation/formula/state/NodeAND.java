@@ -16,9 +16,7 @@
 package io.configmanager.extensions.routes.petrinet.evaluation.formula.state;
 
 import io.configmanager.extensions.routes.petrinet.model.Node;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
@@ -26,11 +24,9 @@ import java.util.List;
  * evaluates to true, if parameter1 and parameter2 evaluate to true.
  */
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class NodeAND implements StateFormula {
-
-    StateFormula parameter1;
-    StateFormula parameter2;
+    private StateFormula parameter1;
+    private StateFormula parameter2;
 
     public static NodeAND nodeAND(final StateFormula parameter1, final StateFormula parameter2) {
         return new NodeAND(parameter1, parameter2);
@@ -48,6 +44,8 @@ public class NodeAND implements StateFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s, %s)", symbol(), parameter1.writeFormula(), parameter2.writeFormula());
+        return String.format("%s(%s, %s)", symbol(),
+                parameter1.writeFormula(),
+                parameter2.writeFormula());
     }
 }

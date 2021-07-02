@@ -27,6 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.net.URI;
 
 public interface BrokerApi {
+    /**
+     * Creates a new Broker.
+     * @param brokerUri The location of the Broker.
+     * @param title The title of the Broker.
+     * @return The response message or an error.
+     */
     @PostMapping(value = "/broker", produces = "application/ld+json")
     @Operation(summary = "Creates a new broker")
     @ApiResponse(responseCode = "200", description = "Created a new broker")
@@ -34,6 +40,12 @@ public interface BrokerApi {
                                         @RequestParam(value = "title", required = false)
                                                 String title);
 
+    /**
+     * Updates metadata of an existing Broker.
+     * @param brokerUri The location of the Broker.
+     * @param title The title of the Broker.
+     * @return The response message or an error.
+     */
     @PutMapping(value = "/broker", produces = "application/ld+json")
     @Operation(summary = "Updates a broker")
     @ApiResponse(responseCode = "200", description = "Updated the broker")
@@ -42,12 +54,21 @@ public interface BrokerApi {
                                         @RequestParam(value = "title", required = false)
                                                 String title);
 
+    /**
+     * Deletes metadata of an existing Broker.
+     * @param brokerUri The location of the Broker used to identify the Broker.
+     * @return The response message or an error.
+     */
     @DeleteMapping(value = "/broker", produces = "application/ld+json")
     @Operation(summary = "Deletes a broker")
     @ApiResponse(responseCode = "200", description = "Deleted the broker")
     @ApiResponse(responseCode = "400", description = "Can not delete the broker")
     ResponseEntity<String> deleteBroker(@RequestParam(value = "brokerUri") URI brokerUri);
 
+    /**
+     * Returns the list of all metadata of all known Broker.
+     * @return The response message or an error.
+     */
     @GetMapping(value = "/brokers", produces = "application/ld+json")
     @Operation(summary = "Returns the list of all brokers")
     @ApiResponse(responseCode = "200",

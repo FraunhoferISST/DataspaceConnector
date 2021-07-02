@@ -70,7 +70,6 @@ public class GuiUtilService {
             case "connectorstatus": sortedJsonArray = getConnectorStatus(); break;
             case "connectordeploymode": sortedJsonArray = getConnectorDeployMode(); break;
             case "language": sortedJsonArray = getLanguage(); break;
-//            case "sourcetype": sortedJsonArray = getSourceType(); break;
             case "deploymethod": sortedJsonArray = getDeployMethod(); break;
             case "brokerstatus": sortedJsonArray = getBrokerStatus(); break;
             default: break;

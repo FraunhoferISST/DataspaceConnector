@@ -18,6 +18,7 @@ package io.configmanager.extensions.routes.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.AppRoute;
+import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.configmanager.extensions.routes.api.RoutesApi;
 import io.configmanager.extensions.routes.api.service.RoutesService;
@@ -224,17 +225,19 @@ public class RoutesController implements RoutesApi {
      * @return a suitable http response depending on success
      */
     @Override
-    public ResponseEntity<String> createAppRouteStep(final URI routeId, final URI startId,
+    public ResponseEntity<String> createAppRouteStep(final URI routeId,
+                                                     final URI startId,
                                                      final int startCoordinateX,
-                                                     final int startCoordinateY, final URI endID,
+                                                     final int startCoordinateY,
+                                                     final URI endID,
                                                      final int endCoordinateX,
                                                      final int endCoordinateY,
                                                      final URI resourceId) {
         ResponseEntity<String> response;
 
         final var routeStep = routesService.createAppRouteStep(routeId, startId,
-                startCoordinateX, startCoordinateY,
-                endID, endCoordinateX, endCoordinateY, resourceId);
+                endID, resourceId
+                , startCoordinateX, startCoordinateY, endCoordinateX, endCoordinateY);
 
         if (routeStep != null) {
             final var jsonObject = new JSONObject();

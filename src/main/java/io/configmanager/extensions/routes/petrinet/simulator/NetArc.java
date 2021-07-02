@@ -16,10 +16,8 @@
 package io.configmanager.extensions.routes.petrinet.simulator;
 
 import io.configmanager.extensions.routes.petrinet.model.PetriNet;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 
 import java.net.URI;
 
@@ -28,18 +26,17 @@ import java.net.URI;
  */
 @Getter
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class NetArc {
     /**
      * PetriNet from which target is reachable, using a transition.
      */
-    PetriNet source;
+    private PetriNet source;
 
 
     /**
      * PetriNet that can be reached from source, using a transition.
      */
-    PetriNet target;
+    private PetriNet target;
 
-    URI usedTransition;
+    private URI usedTransition;
 }

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * APIs for AppStore management.
+ * Classes for AppStore management.
  */
 package io.configmanager.extensions.components.appstore;

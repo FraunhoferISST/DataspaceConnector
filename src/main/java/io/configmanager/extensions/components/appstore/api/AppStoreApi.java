@@ -27,28 +27,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.net.URI;
 
 public interface AppStoreApi {
+    /**
+     * Creates a new AppStore.
+     * @param accessUrl The location of the AppStore.
+     * @param title The title of the AppStore.
+     * @return The response message or an error.
+     */
     @PostMapping(value = "/appstore", produces = "application/ld+json")
     @Operation(summary = "Creates a new app store")
     @ApiResponse(responseCode = "200", description = "Created a new app store")
     ResponseEntity<String> createAppStore(@RequestParam(value = "accessUrl") URI accessUrl,
-                                        @RequestParam(value = "title", required = false) String title);
+                                          @RequestParam(value = "title",
+                                                  required = false) String title);
 
+    /**
+     * Updates metadata of an existing AppStore.
+     * @param accessUrl The location of the AppStore.
+     * @param title The title of the AppStore.
+     * @return The response message or an error.
+     */
     @PutMapping(value = "/appstore", produces = "application/ld+json")
     @Operation(summary = "Updates an app store")
     @ApiResponse(responseCode = "200", description = "Updated the app store")
     @ApiResponse(responseCode = "400", description = "Can not update the app store")
     ResponseEntity<String> updateAppStore(@RequestParam(value = "accessUrl") URI accessUrl,
-                                        @RequestParam(value = "title", required = false) String title);
+                                        @RequestParam(value = "title",
+                                                required = false) String title);
 
+    /**
+     * Deletes metadata of an existing AppStore.
+     * @param accessUrl The location of the AppStore used to identify the AppStore.
+     * @return The response message or an error.
+     */
     @DeleteMapping(value = "/appstore", produces = "application/ld+json")
     @Operation(summary = "Deletes an app store")
     @ApiResponse(responseCode = "200", description = "Deleted the app store")
     @ApiResponse(responseCode = "400", description = "Can not delete the app store")
     ResponseEntity<String> deleteAppStore(@RequestParam(value = "accessUrl") URI accessUrl);
 
+    /**
+     * Returns the list of all metadata of all known AppStores.
+     * @return The response message or an error.
+     */
     @GetMapping(value = "/appstores", produces = "application/ld+json")
     @Operation(summary = "Returns the list of all app stores")
-    @ApiResponse(responseCode = "200", description = "Successfully returned the list of all app stores")
+    @ApiResponse(responseCode = "200",
+            description = "Successfully returned the list of all app stores")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     ResponseEntity<String> getAllAppStores();
 }

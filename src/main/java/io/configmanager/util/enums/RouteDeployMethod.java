@@ -19,9 +19,28 @@ package io.configmanager.util.enums;
  * Enums for the route deploy methods.
  */
 public enum RouteDeployMethod {
+    /**
+     * No route deploy method selected.
+     */
     NONE,
+
+    /**
+     * Camel as route deploy method.
+     */
     CAMEL,
+
+    /**
+     * Kafka as route deploy method.
+     */
     KAFKA,
+
+    /**
+     * Argo as route deploy method.
+     */
     ARGO,
+
+    /**
+     * Airflow as route deploy method.
+     */
     AIRFLOW
 }

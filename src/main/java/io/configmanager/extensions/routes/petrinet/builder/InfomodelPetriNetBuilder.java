@@ -27,7 +27,6 @@ import io.configmanager.extensions.routes.petrinet.model.Place;
 import io.configmanager.extensions.routes.petrinet.model.PlaceImpl;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
 import io.configmanager.extensions.routes.petrinet.model.TransitionImpl;
-import lombok.experimental.UtilityClass;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -36,17 +35,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Provide static methods, to generate a Petri Net (https://en.wikipedia.org/wiki/Petri_net) from an Infomodel AppRoute.
+ * Provide static methods, to generate a Petri Net
+ * (https://en.wikipedia.org/wiki/Petri_net) from an Infomodel AppRoute.
  */
-@UtilityClass
-public class InfomodelPetriNetBuilder {
+public final class InfomodelPetriNetBuilder {
+
+    private InfomodelPetriNetBuilder() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Generate a Petri Net from a given infomodel {@link AppRoute}.
      * RouteSteps will be represented as Places, Endpoints as Transitions.
-     *
-     * @param appRoute an Infomodel {@link AppRoute}
-     * @return a Petri Net created from the AppRoute
+     * @param appRoute An Infomodel {@link AppRoute}.
+     * @param includeAppRoute Includes appRoute into Petrinet.
+     * @return A Petri Net created from the AppRoute.
      */
     public static PetriNet petriNetFromAppRoute(final AppRoute appRoute,
                                                 final boolean includeAppRoute) {
@@ -107,7 +110,8 @@ public class InfomodelPetriNetBuilder {
                                               final Map<URI, Place> places,
                                               final Map<URI, Transition> transitions) {
 
-        //if a place with subroutes ID already exists in the map, the SubRoute was already added to the Petri Net
+        //if a place with subroutes ID already exists in the map,
+        // the SubRoute was already added to the Petri Net
         if (places.containsKey(subRoute.getId())) {
             return;
         }
@@ -132,7 +136,8 @@ public class InfomodelPetriNetBuilder {
     }
 
     /**
-     * Get the transition for the given {@link Endpoint} by ID, or generate a new one if no transition for that endpoint exists.
+     * Get the transition for the given {@link Endpoint} by ID,
+     * or generate a new one if no transition for that endpoint exists.
      *
      * @param transitions the transition that will be created or found in the map
      * @param endpoint the endpoint for which the transition should be found
@@ -150,7 +155,8 @@ public class InfomodelPetriNetBuilder {
     }
 
     /**
-     * Add a source node to every transition without input and a sink node to every transition without output.
+     * Add a source node to every transition without input and
+     * a sink node to every transition without output.
      *
      * @param petriNet
      */

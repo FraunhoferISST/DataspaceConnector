@@ -18,7 +18,8 @@ package io.configmanager.extensions.routes.petrinet.evaluation.formula.transitio
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.Formula;
 
 /**
- * Formulas which are evaluated on a {@link io.configmanager.extensions.routes.petrinet.model.Transition} of a PetriNet.
+ * Formulas which are evaluated on a
+ * {@link io.configmanager.extensions.routes.petrinet.model.Transition} of a PetriNet.
  */
 public interface TransitionFormula extends Formula {
 }
