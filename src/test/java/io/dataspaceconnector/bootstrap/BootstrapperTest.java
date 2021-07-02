@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.UUID;
 
 import io.dataspaceconnector.bootstrap.broker.BrokerService;
-import io.dataspaceconnector.model.Catalog;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.OfferedResourceDesc;
+import io.dataspaceconnector.model.catalog.Catalog;
+import io.dataspaceconnector.model.resource.OfferedResource;
+import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
