@@ -56,6 +56,11 @@ public class BrokerView extends RepresentationModel<BrokerView> {
     private String title;
 
     /**
+     * The description of the broker.
+     */
+    private String description;
+
+    /**
      * The status of registration.
      */
     private RegistrationStatus status;
