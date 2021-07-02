@@ -80,8 +80,8 @@ public class ConnectorApplication {
                     .email(properties.getProperty("contact_email"))
                 )
                 .license(new License()
-                    .name(properties.getProperty("licence"))
-                    .url(properties.getProperty("licence_url")))
+                    .name(properties.getProperty("license"))
+                    .url(properties.getProperty("license_url")))
             );
     }
 }

@@ -111,7 +111,7 @@ public class RequestedResourceViewAssemblerTest {
         assertEquals(requestedResource.getKeywords(), result.getKeywords());
         assertEquals(requestedResource.getPublisher(), result.getPublisher());
         assertEquals(requestedResource.getLanguage(), result.getLanguage());
-        assertEquals(requestedResource.getLicense(), result.getLicence());
+        assertEquals(requestedResource.getLicense(), result.getLicense());
         assertEquals(requestedResource.getVersion(), result.getVersion());
         assertEquals(requestedResource.getSovereign(), result.getSovereign());
         assertEquals(requestedResource.getEndpointDocumentation(),

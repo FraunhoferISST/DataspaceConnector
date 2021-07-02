@@ -88,12 +88,12 @@ public class RequestedResourceFactoryTest {
     }
 
     @Test
-    public void default_licence_is_empty() {
+    public void default_license_is_empty() {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertEquals(URI.create(""), ResourceFactory.DEFAULT_LICENCE);
+        assertEquals(URI.create(""), ResourceFactory.DEFAULT_LICENSE);
     }
 
     @Test
@@ -504,11 +504,11 @@ public class RequestedResourceFactoryTest {
     }
 
     /**
-     * licence.
+     * license.
      */
 
     @Test
-    public void create_nullLicence_defaultLicence() {
+    public void create_nullLicense_defaultLicense() {
         /* ARRANGE */
         final var desc = new RequestedResourceDesc();
         desc.setLicense(null);
@@ -521,10 +521,10 @@ public class RequestedResourceFactoryTest {
     }
 
     @Test
-    public void update_differentLicence_setLicence() {
+    public void update_differentLicense_setLicense() {
         /* ARRANGE */
         final var desc = new RequestedResourceDesc();
-        desc.setLicense(URI.create("RandomLicence"));
+        desc.setLicense(URI.create("RandomLicense"));
 
         final var resource = factory.create(new RequestedResourceDesc());
 
@@ -536,10 +536,10 @@ public class RequestedResourceFactoryTest {
     }
 
     @Test
-    public void update_differentLicence_returnTrue() {
+    public void update_differentLicense_returnTrue() {
         /* ARRANGE */
         final var desc = new RequestedResourceDesc();
-        desc.setLicense(URI.create("RandomLicence"));
+        desc.setLicense(URI.create("RandomLicense"));
 
         final var resource = factory.create(new RequestedResourceDesc());
 
@@ -551,7 +551,7 @@ public class RequestedResourceFactoryTest {
     }
 
     @Test
-    public void update_sameLicence_returnFalse() {
+    public void update_sameLicense_returnFalse() {
         /* ARRANGE */
         final var resource = factory.create(new RequestedResourceDesc());
 
