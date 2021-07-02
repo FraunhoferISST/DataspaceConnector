@@ -27,7 +27,6 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class NotificationMessageHandlerTest {
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @MockBean
     private ConnectorService connectorService;

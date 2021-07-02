@@ -34,7 +34,6 @@ import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
 import de.fraunhofer.ids.messaging.response.BodyResponse;
 import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractFactory;
@@ -68,9 +67,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ContractRequestHandlerTest {
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @MockBean
     private ConnectorService connectorService;
