@@ -153,7 +153,8 @@ runtime.
 ```
 
 ### Duration Usage
-```{
+```
+{
   "@context" : {
     "ids" : "https://w3id.org/idsa/core/",
     "idsc" : "https://w3id.org/idsa/code/"
