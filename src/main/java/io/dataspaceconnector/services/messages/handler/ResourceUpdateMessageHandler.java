@@ -15,24 +15,12 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import java.util.Objects;
-
-import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
-import io.dataspaceconnector.services.messages.handler.camel.dto.Response;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.ExchangeBuilder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,51 +31,27 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-@RequiredArgsConstructor
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
-public class ResourceUpdateMessageHandler implements MessageHandler<ResourceUpdateMessageImpl> {
+public class ResourceUpdateMessageHandler extends AbstractMessageHandler<ResourceUpdateMessageImpl> {
 
     /**
-     * Template for triggering Camel routes.
-     */
-    private final @NonNull ProducerTemplate template;
-
-    /**
-     * The CamelContext required for constructing the {@link ProducerTemplate}.
-     */
-    private final @NonNull CamelContext context;
-
-    /**
-     * Service for the current connector configuration.
-     */
-    private final @NonNull ConnectorService connectorService;
-
-    /**
-     * This message implements the logic that is needed to handle the message. As it just returns
-     * the input as string the messagePayload-InputStream is converted to a String.
+     * Constructs an ResourceUpdateMessageHandler with the required super class parameters.
      *
-     * @param message The ids request message as header.
-     * @param payload The notification message payload.
-     * @return The response message.
+     * @param template Template for triggering Camel routes.
+     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param connectorService Service for the current connector configuration.
+     */
+    public ResourceUpdateMessageHandler(final @NonNull ProducerTemplate template,
+                                  final @NonNull CamelContext context,
+                                  final @NonNull ConnectorService connectorService) {
+        super(template, context, connectorService);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
-    public MessageResponse handleMessage(final ResourceUpdateMessageImpl message,
-                                         final MessagePayload payload) throws RuntimeException {
-        final var result = template.send("direct:resourceUpdateHandler",
-                ExchangeBuilder.anExchange(context)
-                        .withBody(new Request<>(message, payload))
-                        .build());
-
-        final var response = result.getIn().getBody(Response.class);
-        if (response != null) {
-            return BodyResponse.create(response.getHeader(), response.getBody());
-        } else {
-            final var errorResponse = result.getIn().getBody(ErrorResponse.class);
-            return Objects.requireNonNullElseGet(errorResponse,
-                    () -> ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
-                            "Could not process request.",
-                            connectorService.getConnectorId(),
-                            connectorService.getOutboundModelVersion()));
-        }
+    protected String getHandlerRouteDirect() {
+        return "direct:resourceUpdateHandler";
     }
 }
