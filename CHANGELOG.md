@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.3.0] - 2021-07-02
+## [5.2.1] - 2021-07-02
 
 ### Added
 - Make bootstrapping feature optional. It can be disabled in the `application.properties`.
