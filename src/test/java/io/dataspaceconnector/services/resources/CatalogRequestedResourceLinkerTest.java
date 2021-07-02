@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.RequestedResource;
 import lombok.SneakyThrows;
@@ -27,6 +23,10 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -47,9 +47,9 @@ class CatalogRequestedResourceLinkerTest {
     Catalog catalog = getCatalog();
     RequestedResource resource = getResource();
 
-    /**************************************************************************
-     * getInternal
-     *************************************************************************/
+    /***********************************************************************************************
+     * getInternal                                                                                 *
+     **********************************************************************************************/
 
     @Test
     public void getInternal_null_throwsNullPointerException() {
@@ -73,9 +73,9 @@ class CatalogRequestedResourceLinkerTest {
         assertEquals(expected, resources);
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private Catalog getCatalog() {
@@ -88,7 +88,8 @@ class CatalogRequestedResourceLinkerTest {
         titleField.setAccessible(true);
         titleField.set(catalog, "Catalog");
 
-        final var requestedResourcesField = catalog.getClass().getDeclaredField("requestedResources");
+        final var requestedResourcesField = catalog.getClass().getDeclaredField(
+                "requestedResources");
         requestedResourcesField.setAccessible(true);
         requestedResourcesField.set(catalog, new ArrayList<RequestedResource>());
 

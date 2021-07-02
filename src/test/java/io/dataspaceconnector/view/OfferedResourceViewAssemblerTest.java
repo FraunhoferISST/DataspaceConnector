@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.OfferedResource;
@@ -36,6 +29,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,8 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {OfferedResourceViewAssembler.class, ViewAssemblerHelper.class,
-        OfferedResourceFactory.class})
+@SpringBootTest(classes = {
+        OfferedResourceViewAssembler.class,
+        ViewAssemblerHelper.class,
+        OfferedResourceFactory.class
+})
 public class OfferedResourceViewAssemblerTest {
 
     @Autowired
@@ -56,11 +59,9 @@ public class OfferedResourceViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.OfferedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = offeredResourceViewAssembler.getSelfLink(null);
@@ -68,18 +69,16 @@ public class OfferedResourceViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var resourceId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.OfferedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = offeredResourceViewAssembler.getSelfLink(resourceId);
@@ -87,7 +86,7 @@ public class OfferedResourceViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + resourceId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
@@ -112,13 +111,15 @@ public class OfferedResourceViewAssemblerTest {
         Assertions.assertEquals(offeredResource.getKeywords(), result.getKeywords());
         Assertions.assertEquals(offeredResource.getPublisher(), result.getPublisher());
         Assertions.assertEquals(offeredResource.getLanguage(), result.getLanguage());
-        Assertions.assertEquals(offeredResource.getLicence(), result.getLicence());
+        Assertions.assertEquals(offeredResource.getLicense(), result.getLicense());
         Assertions.assertEquals(offeredResource.getVersion(), result.getVersion());
         Assertions.assertEquals(offeredResource.getSovereign(), result.getSovereign());
-        Assertions.assertEquals(offeredResource.getEndpointDocumentation(), result.getEndpointDocumentation());
+        Assertions.assertEquals(offeredResource.getEndpointDocumentation(),
+                result.getEndpointDocumentation());
         Assertions.assertEquals(offeredResource.getAdditional(), result.getAdditional());
         Assertions.assertEquals(offeredResource.getCreationDate(), result.getCreationDate());
-        Assertions.assertEquals(offeredResource.getModificationDate(), result.getModificationDate());
+        Assertions.assertEquals(offeredResource.getModificationDate(),
+                result.getModificationDate());
 
         final var selfLink = result.getLink("self");
         assertTrue(selfLink.isPresent());
@@ -144,9 +145,9 @@ public class OfferedResourceViewAssemblerTest {
                 catalogsLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private OfferedResource getOfferedResource() {
         final var desc = new OfferedResourceDesc();
@@ -155,7 +156,7 @@ public class OfferedResourceViewAssemblerTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         final var resource = offeredResourceFactory.create(desc);
@@ -173,8 +174,7 @@ public class OfferedResourceViewAssemblerTest {
     }
 
     private String getOfferedResourceLink(final UUID resourceId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.OfferedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + resourceId;
@@ -194,5 +194,4 @@ public class OfferedResourceViewAssemblerTest {
         return linkTo(methodOn(RelationControllers.OfferedResourcesToCatalogs.class)
                 .getResource(resourceId, null, null)).toString();
     }
-
 }

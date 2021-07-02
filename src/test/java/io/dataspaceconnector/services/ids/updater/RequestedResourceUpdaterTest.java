@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.services.ids.updater;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Language;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
@@ -38,6 +31,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -49,11 +49,12 @@ public class RequestedResourceUpdaterTest {
     @Autowired
     private RequestedResourceUpdater updater;
 
-    private final UUID resourceId  = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+    private final UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
     private final Resource resource = getResource();
     private final io.dataspaceconnector.model.RequestedResource dscResource = getDscResource();
-    private final io.dataspaceconnector.model.RequestedResource dscUpdatedResource = getUpdatedDscResource();
-    private final ResourceTemplate<RequestedResourceDesc>       template           = getTemplate();
+    private final io.dataspaceconnector.model.RequestedResource dscUpdatedResource =
+            getUpdatedDscResource();
+    private final ResourceTemplate<RequestedResourceDesc> template = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -68,12 +69,12 @@ public class RequestedResourceUpdaterTest {
     public void update_entityUnknownRemoteId_throwsResourceNotFoundException() {
         /* ARRANGE */
         Mockito.doReturn(Optional.empty())
-               .when(requestedResourceService)
-               .identifyByRemoteId(Mockito.eq(resource.getId()));
+                .when(requestedResourceService)
+                .identifyByRemoteId(Mockito.eq(resource.getId()));
 
         /* ACT && ASSERT */
-        final var result = assertThrows(ResourceNotFoundException.class, () -> updater.update(
-                resource));
+        final var result = assertThrows(ResourceNotFoundException.class,
+                () -> updater.update(resource));
         assertEquals(resourceId.toString(), result.getMessage());
     }
 
@@ -81,22 +82,22 @@ public class RequestedResourceUpdaterTest {
     public void update_knownId_returnUpdatedRepresentation() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(resourceId))
-               .when(requestedResourceService)
-               .identifyByRemoteId(Mockito.eq(resource.getId()));
+                .when(requestedResourceService)
+                .identifyByRemoteId(Mockito.eq(resource.getId()));
 
         Mockito.doReturn(dscResource)
-               .when(requestedResourceService)
-               .get(Mockito.eq(resourceId));
+                .when(requestedResourceService)
+                .get(Mockito.eq(resourceId));
 
         Mockito.doReturn(dscUpdatedResource)
-               .when(requestedResourceService)
-               .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
+                .when(requestedResourceService)
+                .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
 
         /* ACT && ASSERT */
         final var result = updater.update(resource);
         assertEquals(dscUpdatedResource, result);
-        Mockito.verify(requestedResourceService, Mockito.atLeastOnce()).update(Mockito.eq(
-                resourceId), Mockito.eq(template.getDesc()));
+        Mockito.verify(requestedResourceService, Mockito.atLeastOnce())
+                .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
     }
 
     private Resource getResource() {
@@ -109,7 +110,7 @@ public class RequestedResourceUpdaterTest {
     private io.dataspaceconnector.model.RequestedResource getDscResource() {
         final var resourceConstructor = RequestedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
-        final var output =  resourceConstructor.newInstance();
+        final var output = resourceConstructor.newInstance();
         ReflectionTestUtils.setField(output, "language", "SOME Language");
         return output;
     }

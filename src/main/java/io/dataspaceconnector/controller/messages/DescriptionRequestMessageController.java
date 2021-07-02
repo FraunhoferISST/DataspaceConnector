@@ -52,12 +52,12 @@ public class DescriptionRequestMessageController {
     /**
      * Service for message handling.
      */
-    private final @NonNull DescriptionRequestService messageService;
+    private final @NonNull DescriptionRequestService descriptionReqSvc;
 
     /**
      * Service for ids deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull DeserializationService deserializationSvc;
 
     /**
      * Requests metadata from an external connector by building an DescriptionRequestMessage.
@@ -75,7 +75,7 @@ public class DescriptionRequestMessageController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
-    public ResponseEntity<Object> sendDescriptionRequestMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "The id of the requested resource.")
@@ -83,11 +83,11 @@ public class DescriptionRequestMessageController {
         String payload = null;
         try {
             // Send and validate description request/response message.
-            final var response = messageService.sendMessage(recipient, elementId);
-            final var valid = messageService.validateResponse(response);
+            final var response = descriptionReqSvc.sendMessage(recipient, elementId);
+            final var valid = descriptionReqSvc.validateResponse(response);
             if (!valid) {
                 // If the response is not a description response message, show the response.
-                final var content = messageService.getResponseContent(response);
+                final var content = descriptionReqSvc.getResponseContent(response);
                 return ControllerUtils.respondWithMessageContent(content);
             }
 
@@ -98,7 +98,7 @@ public class DescriptionRequestMessageController {
             } else {
                 // Get payload as component.
                 final var component =
-                        deserializationService.getInfrastructureComponent(payload);
+                        deserializationSvc.getInfrastructureComponent(payload);
                 return ResponseEntity.ok(component.toRdf());
             }
         } catch (MessageException exception) {
@@ -108,8 +108,6 @@ public class DescriptionRequestMessageController {
         } catch (IllegalArgumentException exception) {
             // If the response is not of type base connector.
             return new ResponseEntity<>(payload, HttpStatus.OK);
-        } catch (Exception exception) {
-            return ControllerUtils.respondGlobalException(exception);
         }
     }
 }

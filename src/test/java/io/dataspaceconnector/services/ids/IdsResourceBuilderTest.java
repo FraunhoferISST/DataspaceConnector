@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Language;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -362,7 +362,7 @@ public class IdsResourceBuilderTest {
         resourceDesc.setDescription(description);
         resourceDesc.setKeywords(Collections.singletonList(keyword));
         resourceDesc.setEndpointDocumentation(endpointDocumentation);
-        resourceDesc.setLicence(license);
+        resourceDesc.setLicense(license);
         resourceDesc.setPublisher(publisher);
         resourceDesc.setSovereign(sovereign);
 

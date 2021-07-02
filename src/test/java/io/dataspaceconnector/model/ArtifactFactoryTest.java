@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.model;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -22,10 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -375,7 +375,8 @@ public class ArtifactFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ArtifactDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new ArtifactDesc()));
     }
 
     @Test
@@ -392,7 +393,7 @@ public class ArtifactFactoryTest {
      */
 
     @Test
-    public void create_num_accessed_is_0 () {
+    public void create_num_accessed_is_0() {
         /* ARRANGE */
         // Nothing to arrange here.
 
@@ -458,7 +459,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, new ArtifactDesc());
 
         /* ASSERT */
-        assertTrue(((ArtifactImpl)artifact).getData() instanceof LocalData);
+        assertTrue(((ArtifactImpl) artifact).getData() instanceof LocalData);
     }
 
     @Test
@@ -473,7 +474,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertTrue(((ArtifactImpl)artifact).getData() instanceof RemoteData);
+        assertTrue(((ArtifactImpl) artifact).getData() instanceof RemoteData);
     }
 
     /**
@@ -490,7 +491,7 @@ public class ArtifactFactoryTest {
         final var result = (ArtifactImpl) factory.create(desc);
 
         /* ASSERT */
-        assertNull(((LocalData)result.getData()).getValue());
+        assertNull(((LocalData) result.getData()).getValue());
     }
 
     @Test
@@ -505,7 +506,8 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        assertTrue(Arrays.equals(desc.getValue().getBytes(StandardCharsets.UTF_16), ((LocalData)artifact.getData()).getValue()));
+        assertTrue(Arrays.equals(desc.getValue().getBytes(StandardCharsets.UTF_16),
+                ((LocalData) artifact.getData()).getValue()));
     }
 
     @Test
@@ -551,7 +553,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, desc);
 
         /* ASSERT */
-        final var data = (RemoteData)((ArtifactImpl)artifact).getData();
+        final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
         assertEquals(desc.getAccessUrl(), data.getAccessUrl());
     }
 
@@ -570,7 +572,7 @@ public class ArtifactFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        final var data = (RemoteData)((ArtifactImpl)result).getData();
+        final var data = (RemoteData) ((ArtifactImpl) result).getData();
         assertNull(data.getUsername());
     }
 
@@ -591,7 +593,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, updateDesc);
 
         /* ASSERT */
-        final var data = (RemoteData)((ArtifactImpl)artifact).getData();
+        final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
         assertEquals(updateDesc.getUsername(), data.getUsername());
     }
 
@@ -646,7 +648,7 @@ public class ArtifactFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        final var data = (RemoteData)((ArtifactImpl)result).getData();
+        final var data = (RemoteData) ((ArtifactImpl) result).getData();
         assertNull(data.getPassword());
     }
 
@@ -667,7 +669,7 @@ public class ArtifactFactoryTest {
         factory.update(artifact, updateDesc);
 
         /* ASSERT */
-        final var data = (RemoteData)((ArtifactImpl)artifact).getData();
+        final var data = (RemoteData) ((ArtifactImpl) artifact).getData();
         assertEquals(updateDesc.getPassword(), data.getPassword());
     }
 

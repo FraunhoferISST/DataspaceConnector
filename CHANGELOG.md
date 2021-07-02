@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [6.0.0] - XXXX-XX-XX
+
+### Added
+- Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
+
+### Changed
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.1.
+- Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
+  `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
+- Move implementation for sending IDS query, connector, and resource messages to
+  `GeneralMessageService`.
+- Handle DAT retrieving errors in `PRODUCTIVE_DEPLOYMENT` with status code 500 and a corresponding
+  message.
+- Change naming of the resource's license attribute from `licence` to `license`.
+
 ## [5.2.1] - 2021-07-02
 
 ### Added

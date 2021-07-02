@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
-import de.fraunhofer.isst.ids.framework.communication.http.HttpService;
+import de.fraunhofer.ids.messaging.protocol.http.HttpService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

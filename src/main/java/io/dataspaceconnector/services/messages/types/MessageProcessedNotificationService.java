@@ -17,13 +17,14 @@ package io.dataspaceconnector.services.messages.types;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageBuilder;
+import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 
 /**
  * Message service for ids message processed notification messages.
@@ -33,10 +34,13 @@ public final class MessageProcessedNotificationService
         extends AbstractMessageService<MessageProcessedNotificationMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     *                                      when building the message.
      */
     @Override
-    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc) {
+    public Message buildMessage(final MessageProcessedNotificationMessageDesc desc)
+            throws ConstraintViolationException {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var connectorId = getConnectorService().getConnectorId();
@@ -49,7 +53,7 @@ public final class MessageProcessedNotificationService
         return new MessageProcessedNotificationMessageBuilder()
                 ._securityToken_(token)
                 ._correlationMessage_(correlationMessage)
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._issuerConnector_(connectorId)
                 ._modelVersion_(modelVersion)
                 ._senderAgent_(connectorId)

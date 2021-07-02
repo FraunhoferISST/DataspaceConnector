@@ -15,13 +15,11 @@
  */
 package io.dataspaceconnector.services.messages;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.services.ids.ConnectorService;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +27,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,7 +53,7 @@ class MessageResponseServiceTest {
     }
 
     /**
-     *  handleMessageEmptyException
+     * handleMessageEmptyException
      */
 
     @Test
@@ -62,7 +62,8 @@ class MessageResponseServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.handleMessageEmptyException(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.handleMessageEmptyException(null));
     }
 
     @Test
@@ -77,14 +78,15 @@ class MessageResponseServiceTest {
         assertTrue(result instanceof ErrorResponse);
 
         final var error = (ErrorResponse) result;
-        assertEquals(RejectionReason.BAD_PARAMETERS, error.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.BAD_PARAMETERS,
+                error.getRejectionMessage().getRejectionReason());
         assertEquals(exception.getMessage(), error.getErrorMessage());
         assertEquals(connectorId, error.getRejectionMessage().getIssuerConnector());
         assertEquals(outboundVersion, error.getRejectionMessage().getModelVersion());
     }
 
     /**
-     *  handleInfoModelNotSupportedException
+     * handleInfoModelNotSupportedException
      */
 
     @Test
@@ -93,7 +95,8 @@ class MessageResponseServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.handleInfoModelNotSupportedException(null, "4.0.0"));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.handleInfoModelNotSupportedException(null, "4.0.0"));
     }
 
     @Test
@@ -102,8 +105,8 @@ class MessageResponseServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        Assertions
-                .assertDoesNotThrow(() -> service.handleInfoModelNotSupportedException(new VersionNotSupportedException(""), null));
+        Assertions.assertDoesNotThrow(() -> service.handleInfoModelNotSupportedException(
+                new VersionNotSupportedException(""), null));
     }
 
     @Test
@@ -120,14 +123,15 @@ class MessageResponseServiceTest {
         assertTrue(result instanceof ErrorResponse);
 
         final var error = (ErrorResponse) result;
-        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, error.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.VERSION_NOT_SUPPORTED,
+                error.getRejectionMessage().getRejectionReason());
         assertEquals(exception.getMessage(), error.getErrorMessage());
         assertEquals(connectorId, error.getRejectionMessage().getIssuerConnector());
         assertEquals(outboundVersion, error.getRejectionMessage().getModelVersion());
     }
 
     /**
-     *  handleResponseMessageBuilderException
+     * handleResponseMessageBuilderException
      */
 
     @Test
@@ -136,7 +140,9 @@ class MessageResponseServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.handleResponseMessageBuilderException(null, URI.create("https://someUri"), URI.create("https://someUri")));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.handleResponseMessageBuilderException(null,
+                        URI.create("https://someUri"), URI.create("https://someUri")));
     }
 
 
@@ -147,7 +153,8 @@ class MessageResponseServiceTest {
 
         /* ACT && ASSERT */
         Assertions
-                .assertDoesNotThrow(() -> service.handleResponseMessageBuilderException(new Exception(""), null, URI.create("https://someUri")));
+                .assertDoesNotThrow(() -> service.handleResponseMessageBuilderException(
+                        new Exception(""), null, URI.create("https://someUri")));
     }
 
     @Test
@@ -156,8 +163,8 @@ class MessageResponseServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        Assertions
-                .assertDoesNotThrow(() -> service.handleResponseMessageBuilderException(new Exception(""), URI.create("https://someUri"), null));
+        Assertions.assertDoesNotThrow(() -> service.handleResponseMessageBuilderException(
+                new Exception(""), URI.create("https://someUri"), null));
     }
 
     @Test
@@ -168,13 +175,15 @@ class MessageResponseServiceTest {
         final var messageId = URI.create("https://someUri2");
 
         /* ACT */
-        final var result = service.handleResponseMessageBuilderException(exception, issuer, messageId);
+        final var result = service.handleResponseMessageBuilderException(
+                exception, issuer, messageId);
 
         /* ASSERT */
         assertTrue(result instanceof ErrorResponse);
 
         final var error = (ErrorResponse) result;
-        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, error.getRejectionMessage().getRejectionReason());
+        assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                error.getRejectionMessage().getRejectionReason());
         assertEquals("Response could not be constructed.", error.getErrorMessage());
         assertEquals(connectorId, error.getRejectionMessage().getIssuerConnector());
         assertEquals(outboundVersion, error.getRejectionMessage().getModelVersion());
