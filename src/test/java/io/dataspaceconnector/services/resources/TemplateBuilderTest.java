@@ -169,7 +169,7 @@ class TemplateBuilderTest {
         final var artifactConstructor = ArtifactImpl.class.getConstructor();
         final var artifact = artifactConstructor.newInstance();
 
-        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
+        final var titleField = artifact.getClass().getSuperclass().getSuperclass().getDeclaredField("title");
         titleField.setAccessible(true);
         titleField.set(artifact, desc.getTitle());
 

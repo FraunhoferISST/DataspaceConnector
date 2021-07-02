@@ -74,9 +74,9 @@ public class OfferedResourceView extends RepresentationModel<OfferedResourceView
     private String language;
 
     /**
-     * The licence of the resource.
+     * The license of the resource.
      */
-    private URI licence;
+    private URI license;
 
     /**
      * The version of the resource.

@@ -88,12 +88,12 @@ public class OfferedResourceFactoryTest {
     }
 
     @Test
-    public void default_licence_is_empty() {
+    public void default_license_is_empty() {
         /* ARRANGE */
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertEquals(URI.create(""), ResourceFactory.DEFAULT_LICENCE);
+        assertEquals(URI.create(""), ResourceFactory.DEFAULT_LICENSE);
     }
 
     @Test
@@ -513,11 +513,11 @@ public class OfferedResourceFactoryTest {
     }
 
     /**
-     * licence.
+     * license.
      */
 
     @Test
-    public void create_nullLicence_defaultLicence() {
+    public void create_nullLicense_defaultLicense() {
         /* ARRANGE */
         final var desc = new OfferedResourceDesc();
         desc.setLicense(null);
@@ -526,14 +526,14 @@ public class OfferedResourceFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(ResourceFactory.DEFAULT_LICENCE, result.getLicense());
+        assertEquals(ResourceFactory.DEFAULT_LICENSE, result.getLicense());
     }
 
     @Test
-    public void update_differentLicence_setLicence() {
+    public void update_differentLicense_setLicense() {
         /* ARRANGE */
         final var desc = new OfferedResourceDesc();
-        desc.setLicense(URI.create("RandomLicence"));
+        desc.setLicense(URI.create("RandomLicense"));
 
         final var resource = factory.create(new OfferedResourceDesc());
 
@@ -545,10 +545,10 @@ public class OfferedResourceFactoryTest {
     }
 
     @Test
-    public void update_differentLicence_returnTrue() {
+    public void update_differentLicense_returnTrue() {
         /* ARRANGE */
         final var desc = new OfferedResourceDesc();
-        desc.setLicense(URI.create("RandomLicence"));
+        desc.setLicense(URI.create("RandomLicense"));
 
         final var resource = factory.create(new OfferedResourceDesc());
 
@@ -560,7 +560,7 @@ public class OfferedResourceFactoryTest {
     }
 
     @Test
-    public void update_sameLicence_returnFalse() {
+    public void update_sameLicense_returnFalse() {
         /* ARRANGE */
         final var resource = factory.create(new OfferedResourceDesc());
 
