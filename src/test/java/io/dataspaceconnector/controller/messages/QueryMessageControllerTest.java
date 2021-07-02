@@ -16,7 +16,6 @@
 package io.dataspaceconnector.controller.messages;
 
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
 import okhttp3.Request;
@@ -47,9 +46,6 @@ public class QueryMessageControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @Test
     public void sendConnectorUpdateMessage_unauthorized_rejectUnauthorized() throws Exception {

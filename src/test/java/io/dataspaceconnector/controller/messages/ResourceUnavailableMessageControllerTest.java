@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller.messages;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -52,9 +51,6 @@ public class ResourceUnavailableMessageControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     private MockMvc mockMvc;
