@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
 import io.dataspaceconnector.model.ArtifactImpl;
@@ -56,9 +55,6 @@ class TemplateBuilderTest {
 
     @MockBean
     private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
-
-    @MockBean
-    private Bootstrapper bootstrapper;
 
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;

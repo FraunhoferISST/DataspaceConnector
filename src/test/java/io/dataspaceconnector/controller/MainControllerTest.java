@@ -18,7 +18,6 @@ package io.dataspaceconnector.controller;
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
-import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,9 +43,6 @@ public class MainControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
-
-    @MockBean
-    private Bootstrapper bootstrapper;
 
     @Autowired
     MockMvc mockMvc;

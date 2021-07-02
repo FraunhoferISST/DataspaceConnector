@@ -18,7 +18,6 @@ package io.dataspaceconnector.bootstrap;
 import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +38,6 @@ public class BootstrapperTest {
 
     @Autowired
     Bootstrapper bootstrapper;
-
-    @BeforeEach
-    public void prepare() {
-        catalogService.getAll(Pageable.unpaged()).forEach( catalog ->
-                catalogService.delete(catalog.getId()));
-    }
 
     @SneakyThrows
     @Test

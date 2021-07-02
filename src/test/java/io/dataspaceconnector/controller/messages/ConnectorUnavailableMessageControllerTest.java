@@ -17,7 +17,6 @@ package io.dataspaceconnector.controller.messages;
 
 import de.fraunhofer.isst.ids.framework.communication.broker.IDSBrokerService;
 import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
-import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import okhttp3.MediaType;
 import okhttp3.Protocol;
@@ -49,9 +48,6 @@ public class ConnectorUnavailableMessageControllerTest {
 
     @MockBean
     private ConnectorService connectorService;
-
-    @MockBean
-    private Bootstrapper bootstrapper;
 
     @Autowired
     private MockMvc mockMvc;

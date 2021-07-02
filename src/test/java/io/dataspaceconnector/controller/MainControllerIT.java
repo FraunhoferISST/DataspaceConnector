@@ -20,7 +20,6 @@ import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
-import io.dataspaceconnector.bootstrap.Bootstrapper;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,9 +45,6 @@ class MainControllerIT {
 
     @Autowired
     MockMvc mockMvc;
-
-    @MockBean
-    private Bootstrapper bootstrapper;
 
     @Test
     public void getPublicSelfDescription_nothing_returnValidDescription() throws Exception {
