@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -34,7 +33,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -57,9 +55,6 @@ class TemplateBuilderTest {
 
     @MockBean
     private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
@@ -173,7 +168,10 @@ class TemplateBuilderTest {
     private Artifact getArtifact(ArtifactDesc desc) {
         final var artifactConstructor = ArtifactImpl.class.getConstructor();
         final var artifact = artifactConstructor.newInstance();
-        ReflectionTestUtils.setField(artifact, "title", desc.getTitle());
+
+        final var titleField = artifact.getClass().getSuperclass().getDeclaredField("title");
+        titleField.setAccessible(true);
+        titleField.set(artifact, desc.getTitle());
 
         return artifact;
     }

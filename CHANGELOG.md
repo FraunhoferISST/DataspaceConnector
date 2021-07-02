@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [5.X.X] - XXXX-XX-XX
+## [5.2.1] - 2021-07-02
+
+### Added
+- Make bootstrapping feature optional. It can be disabled in the `application.properties`.
 
 ### Changed
 - Increase spring-boot version to 2.5.2.
