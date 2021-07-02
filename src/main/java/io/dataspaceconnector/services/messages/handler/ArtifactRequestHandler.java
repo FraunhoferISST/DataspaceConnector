@@ -15,13 +15,17 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import java.util.Objects;
+
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
+import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Response;
 import lombok.NonNull;
@@ -55,6 +59,11 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
     private final @NonNull CamelContext context;
 
     /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorService connectorService;
+
+    /**
      * This message implements the logic that is needed to handle the message. As it returns the
      * input as string the messagePayload-InputStream is converted to a String.
      *
@@ -75,7 +84,12 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
         if (response != null) {
             return BodyResponse.create(response.getHeader(), response.getBody());
         } else {
-            return result.getIn().getBody(ErrorResponse.class);
+            final var errorResponse = result.getIn().getBody(ErrorResponse.class);
+            return Objects.requireNonNullElseGet(errorResponse,
+                    () -> ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                    "Could not process request.",
+                    connectorService.getConnectorId(),
+                    connectorService.getOutboundModelVersion()));
         }
     }
 }

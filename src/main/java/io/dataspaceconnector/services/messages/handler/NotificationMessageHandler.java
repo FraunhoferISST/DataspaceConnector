@@ -15,6 +15,10 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import java.util.Objects;
+
+import de.fraunhofer.iais.eis.RejectionReason;
+import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Response;
 import org.apache.camel.CamelContext;
@@ -54,6 +58,11 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
     private final @NonNull CamelContext context;
 
     /**
+     * Service for the current connector configuration.
+     */
+    private final @NonNull ConnectorService connectorService;
+
+    /**
      * This message implements the logic that is needed to handle the message. As it just returns
      * the input as string the messagePayload-InputStream is converted to a String.
      *
@@ -70,7 +79,15 @@ public class NotificationMessageHandler implements MessageHandler<NotificationMe
                         .build());
 
         final var response = result.getIn().getBody(Response.class);
-        return response == null ? result.getIn().getBody(ErrorResponse.class)
-                                : BodyResponse.create(response.getHeader(), response.getBody());
+        if (response != null) {
+            return BodyResponse.create(response.getHeader(), response.getBody());
+        } else {
+            final var errorResponse = result.getIn().getBody(ErrorResponse.class);
+            return Objects.requireNonNullElseGet(errorResponse,
+                    () -> ErrorResponse.withDefaultHeader(RejectionReason.INTERNAL_RECIPIENT_ERROR,
+                            "Could not process request.",
+                            connectorService.getConnectorId(),
+                            connectorService.getOutboundModelVersion()));
+        }
     }
 }
