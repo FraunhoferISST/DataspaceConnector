@@ -30,7 +30,7 @@ import org.springframework.data.domain.Pageable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@ConditionalOnProperty(value = "bootstrap.active", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = "bootstrap.enabled", havingValue = "true", matchIfMissing = true)
 public class BootstrapConfigurationTest {
 
     @MockBean
