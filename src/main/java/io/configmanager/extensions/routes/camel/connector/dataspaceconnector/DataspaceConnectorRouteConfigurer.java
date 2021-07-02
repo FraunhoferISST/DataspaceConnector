@@ -77,9 +77,9 @@ public class DataspaceConnectorRouteConfigurer {
 
         Resource resource;
         if (routeStart.get(0) instanceof GenericEndpoint) {
-            resource = RESOURCE_LOADER.getResource("classpath:camel-templates/dataspaceconnector/http_to_connector_template.vm");
+            resource = RESOURCE_LOADER.getResource("classpath:camel-templates/http_to_connector_template.vm");
         } else if (routeStart.get(0) instanceof ConnectorEndpoint) {
-            resource = RESOURCE_LOADER.getResource("classpath:camel-templates/dataspaceconnector/connector_to_http_template.vm");
+            resource = RESOURCE_LOADER.getResource("classpath:camel-templates/connector_to_http_template.vm");
         } else {
             resource = null;
         }
