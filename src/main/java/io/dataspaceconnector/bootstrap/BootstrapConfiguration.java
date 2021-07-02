@@ -74,7 +74,7 @@ import static io.dataspaceconnector.bootstrap.util.BootstrapUtils.retrieveBootst
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-@ConditionalOnProperty(value = "bootstrap.active", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = "bootstrap.enabled", havingValue = "true", matchIfMissing = true)
 public class BootstrapConfiguration {
 
     /**
