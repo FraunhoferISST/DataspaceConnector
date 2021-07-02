@@ -23,7 +23,6 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.model.message.MessageProcessedNotificationMessageDesc;
 import io.dataspaceconnector.services.messages.types.MessageProcessedNotificationService;
 import org.junit.jupiter.api.Test;
@@ -42,9 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class NotificationMessageHandlerTest {
-
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
 
     @SpyBean
     MessageProcessedNotificationService notificationService;
