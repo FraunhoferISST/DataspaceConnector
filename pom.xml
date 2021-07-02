@@ -162,6 +162,14 @@
 					<groupId>io.jsonwebtoken</groupId>
 					<artifactId>jjwt</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.bitbucket.b_c</groupId>
+					<artifactId>jose4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bcpkix-fips</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
