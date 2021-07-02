@@ -326,7 +326,7 @@ class RuleValidator extends
 
         // Retrieve matching contract offers to compare the content.
         for (final var target : targetRuleMap.keySet()) {
-            final var valid = checkRule(target, request, messageId, targetRuleMap);
+            final var valid = checkRule(target, request, issuer, targetRuleMap);
             if (!valid) {
                 throw new ContractRejectedException(issuer, messageId, "Contract rejected.");
             }
@@ -361,13 +361,11 @@ class RuleValidator extends
             throw new ContractListEmptyException(request, "List of valid contracts is empty.");
         }
 
-        boolean valid;
         try {
-            valid = ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
+            return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
         } catch (IllegalArgumentException e) {
             throw new MalformedRuleException("Malformed rule.", e);
         }
-        return ruleValidator.validateRulesOfRequest(validContracts, targetRuleMap, target);
     }
 
 }

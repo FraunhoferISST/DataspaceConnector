@@ -188,8 +188,8 @@
     <route id="malformedRules">
         <from uri="direct:handleMalformedRules"/>
         <log message="Rules are invalid!"/>
-        <to uri="bean:messageResponseService?method=handleMalformedRules(${exception.getCause()},
-        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().getContractRequest().toRdf(),
+        <to uri="bean:messageResponseService?method=handleMalformedRules(${exception.cause},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().getContractRequest().toRdf()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>
