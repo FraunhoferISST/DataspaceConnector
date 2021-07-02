@@ -21,7 +21,6 @@ import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
-import io.configmanager.extensions.routes.camel.connector.dataspaceconnector.DataspaceConnectorRouteConfigurer;
 import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
@@ -68,7 +67,7 @@ public class RouteManager {
     /**
      * Helper for configuring Camel routes for the Dataspace Connector.
      */
-    final DataspaceConnectorRouteConfigurer dataspaceConnectorRouteConfigurer;
+    final RouteConfigurer routeConfigurer;
 
     /**
      * Creates a Camel XML route from a given app route.
@@ -250,10 +249,10 @@ public class RouteManager {
         velocityContext.put("errorHandlerRef", camelErrorHandlerRef);
 
         //add basic auth header for connector endpoint
-        dataspaceConnectorRouteConfigurer.addBasicAuthToContext(velocityContext);
+        routeConfigurer.addBasicAuthToContext(velocityContext);
 
         //choose correct XML template based on route
-        final var template = dataspaceConnectorRouteConfigurer.getRouteTemplate(appRoute);
+        final var template = routeConfigurer.getRouteTemplate(appRoute);
 
         if (template != null) {
             final var velocityEngine = new VelocityEngine();

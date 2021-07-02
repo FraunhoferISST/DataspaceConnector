@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.configmanager.extensions.routes.camel.connector.dataspaceconnector;
+package io.configmanager.extensions.routes.camel;
 
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DataspaceConnectorRouteConfigurer {
+public class RouteConfigurer {
 
     /**
      * Username for the Dataspace Connector.
