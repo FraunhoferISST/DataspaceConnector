@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public final class BootstrapLoader {
+
+    /**
+     * Service for bootstrapping the connector.
+     */
     private final @NonNull Bootstrapper bootstrapper;
 
     /**
