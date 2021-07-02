@@ -22,7 +22,6 @@ import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
 import io.configmanager.extensions.routes.camel.connector.dataspaceconnector.DataspaceConnectorRouteConfigurer;
-import io.configmanager.extensions.routes.camel.connector.trustedconnector.TrustedConnectorRouteConfigurer;
 import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
@@ -53,12 +52,6 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RouteManager {
-    /**
-     * Indicates if a Dataspace Connector or a Trusted Connector is being managed.
-     */
-    @Value("${dataspace.connector.enabled}")
-    boolean dataspaceConnectorEnabled;
-
     @Value("${camel.application.error-handler}")
     String camelErrorHandlerRef;
 
@@ -78,11 +71,9 @@ public class RouteManager {
     final DataspaceConnectorRouteConfigurer dataspaceConnectorRouteConfigurer;
 
     /**
-     * Creates a Camel XML route from a given app route for either the Dataspace Connector or the
-     * Trusted Connector. If the Configuration Manager is currently managing a Dataspace Connector,
-     * the generated XML route will be sent to the Camel application. If the Configuration
-     * Manager is currently managing a Trusted Connector, the generated XML route will be written
-     * to a file in the designated directory. Both the Camel application and the directory are
+     * Creates a Camel XML route from a given app route.
+     * The generated XML route will be sent to the Camel application.
+     * Both the Camel application and the directory are
      * specified in application.properties.
      *
      * @param configurationModel config model the app route belongs to; contains key- and truststore
@@ -106,12 +97,7 @@ public class RouteManager {
         addRouteStepsToContext(velocityContext, (ArrayList<? extends RouteStep>) appRoute.getHasSubRoute());
 
         try {
-            if (dataspaceConnectorEnabled) {
-                createDataspaceConnectorRoute(appRoute, velocityContext);
-            } else {
-                createTrustedConnectorRoute(appRoute, velocityContext, configurationModel,
-                        camelRouteId);
-            }
+            createDataspaceConnectorRoute(appRoute, velocityContext);
         } catch (Exception e) {
             throw new RouteCreationException("Error creating Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", e);
@@ -290,54 +276,6 @@ public class RouteManager {
     }
 
     /**
-     * Creates and deploys a Camel route for the Trusted Connector. First, Trusted Connector
-     * specific configuration is added to the Velocity Context, which should already contain
-     * general route information. Then, the correct route template for the given AppRoute
-     * object is chosen from the Trusted Connector templates. Last, the generated XML route is
-     * written to the directory defined in application.properties.
-     *
-     * @param appRoute the AppRoute object
-     * @param velocityContext the Velocity context
-     * @param configurationModel the Configuration Model containing key- and truststore passwords
-     *                           required for the Trusted Connector's SSL configuration
-     * @param camelRouteId ID of the Camel route, which is used as the file name
-     * @throws Exception if the route file cannot be created or deployed
-     */
-    private void createTrustedConnectorRoute(final AppRoute appRoute,
-                                             final VelocityContext velocityContext,
-                                             final ConfigurationModel configurationModel,
-                                             final String camelRouteId) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating route for Trusted Connector...");
-        }
-
-        //add SSL configuration for connector endpoint
-        TrustedConnectorRouteConfigurer.addSslConfig(velocityContext, configurationModel);
-
-        //choose correct XML template based on route
-        final var template = TrustedConnectorRouteConfigurer.getRouteTemplate(appRoute);
-
-        if (template != null) {
-            final var velocityEngine = new VelocityEngine();
-            velocityEngine.init();
-
-            //populate route template with properties from velocity context to create route
-            final var writer = populateTemplate(template, velocityEngine, velocityContext);
-
-            //write the generated route (XML) to a file in the designated directory
-            routeFileHelper.writeToFile(camelRouteId + ".xml", writer.toString());
-        } else {
-            if (log.isWarnEnabled()) {
-                log.warn("Template is null. Unable to create XML route file for AppRoute"
-                        + " with ID '{}'", appRoute.getId());
-            }
-
-            throw new NoSuitableTemplateException("No suitable Camel route template found for "
-                    + "AppRoute with ID '" + appRoute.getId() + "'");
-        }
-    }
-
-    /**
      * Populates a given Velocity template using the values from a given Velocity context.
      *
      * @param resource the template
@@ -385,10 +323,8 @@ public class RouteManager {
     }
 
     /**
-     * Deletes the Camel route for a given {@link AppRoute}. If the Configuration Manager is
-     * currently managing a Dataspace Connector, the route is deleted at the Camel application. If
-     * the Configuration Manager is currently managing a Trusted Connector, the route file is
-     * removed from the designated directory.
+     * Deletes the Camel route for a given {@link AppRoute}.
+     * The route is deleted at the Camel application.
      *
      * @param appRoute the AppRoute
      * @throws RouteDeletionException if the Camel route cannot be deleted
@@ -397,11 +333,7 @@ public class RouteManager {
         final var camelRouteId = getCamelRouteId(appRoute);
 
         try {
-            if (dataspaceConnectorEnabled) {
-                routeHttpHelper.deleteRouteAtCamelApplication(camelRouteId);
-            } else {
-                routeFileHelper.deleteFile(camelRouteId + ".xml");
-            }
+            routeHttpHelper.deleteRouteAtCamelApplication(camelRouteId);
         } catch (Exception e) {
             throw new RouteDeletionException("Error deleting Camel route for AppRoute with ID '"
                     + appRoute.getId() + "'", e);
