@@ -251,7 +251,8 @@ public final class PatternUtils {
      * @return The ids rule.
      * @throws Exception if input value is not a valid integer.
      */
-    public static Rule buildConnectorRestrictedUsageRule(final RestrictionDesc input) throws Exception {
+    public static Rule buildConnectorRestrictedUsageRule(final RestrictionDesc input)
+            throws Exception {
         final var id = input.getUrl();
 
         if (ValidationUtils.isInvalidUri(id)) {
