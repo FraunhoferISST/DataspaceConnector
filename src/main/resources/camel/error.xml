@@ -68,8 +68,9 @@
     <route id="wrappedIllegalArgumentException">
         <from uri="direct:handleWrappedIllegalArgumentException"/>
         <log message="An IllegalArgumentException occurred!"/>
+        <process ref="PayloadStreamReader"/>
         <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception.cause},
-        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>

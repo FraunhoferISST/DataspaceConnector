@@ -59,16 +59,19 @@
                 <!-- at least one rule in the contract is malformed -->
                 <exception>io.dataspaceconnector.exceptions.MalformedRuleException</exception>
                 <to uri="direct:handleMalformedRules"/>-->
+                <stop/>
             </doCatch>
             <doCatch>
                 <!-- there are no contract offers for the target artifact or none for the requesting consumer -->
                 <exception>io.dataspaceconnector.exceptions.ContractListEmptyException</exception>
                 <to uri="direct:handleContractListEmptyException"/>
+                <stop/>
             </doCatch>
             <doCatch>
                 <!-- the contract request will be rejected -->
                 <exception>io.dataspaceconnector.exceptions.ContractRejectedException</exception>
                 <process ref="RejectContractProcessor"/>
+                <stop/>
             </doCatch>
         </doTry>
         <process ref="AcceptContractProcessor"/>

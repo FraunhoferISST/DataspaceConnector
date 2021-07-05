@@ -35,11 +35,13 @@
                 <!-- deserializing the message payload fails -->
                 <exception>io.dataspaceconnector.exceptions.DeserializationException</exception>
                 <to uri="direct:handleWrappedIllegalArgumentException"/>
+                <stop/>
             </doCatch>
             <doCatch>
                 <!-- payload is empty -->
                 <exception>io.dataspaceconnector.exceptions.MissingPayloadException</exception>
                 <to uri="direct:handleMissingPayloadException"/>
+                <stop/>
             </doCatch>
         </doTry>
         <process ref="CorrectAffectedResourceValidator"/>

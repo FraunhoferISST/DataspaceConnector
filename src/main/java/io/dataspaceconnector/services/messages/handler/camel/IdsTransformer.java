@@ -15,10 +15,15 @@
  */
 package io.dataspaceconnector.services.messages.handler.camel;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
@@ -220,6 +225,9 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
         RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer>> {
 
     /**
+     * Transforms the payload of the incoming RouteMsg from a container object for a ContractRequest
+     * and the list of rules it contains to a container object for the ContractRequest and its
+     * rules in relation to their respective targets.
      *
      * @param msg the incoming message.
      * @return a RouteMsg object with the initial header and the new container object as payload.
@@ -236,4 +244,43 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
         return new Request<>(msg.getHeader(), container);
     }
 
+}
+
+/**
+ * Transform a {@link MessagePayload} body to a string for error handling, as in case of a
+ * not parsable body, the payload is logged.
+ */
+@Component("PayloadStreamReader")
+class PayloadStreamReader extends IdsTransformer<
+        RouteMsg<? extends Message, MessagePayload>,
+        RouteMsg<? extends Message, String>> {
+
+    /**
+     * Transforms the payload of the incoming RouteMsg from a MessagePayload to a string.
+     *
+     * @param msg the incoming message.
+     * @return the transformed input.
+     * @throws Exception if transformation fails.
+     */
+    @Override
+    protected RouteMsg<? extends Message, String> processInternal(final RouteMsg<? extends Message,
+            MessagePayload> msg) throws Exception {
+        final var inputStream = msg.getBody().getUnderlyingInputStream();
+
+        // Reset the stream so it can be read again.
+        inputStream.reset();
+
+        String payload;
+        try {
+            payload = new BufferedReader(
+                    new InputStreamReader(inputStream))
+                    .lines()
+                    .parallel()
+                    .collect(Collectors.joining("\n"));
+        } catch (Exception e) {
+            payload = "Payload could not be read from request.";
+        }
+
+        return new Request<>(msg.getHeader(), payload);
+    }
 }
