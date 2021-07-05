@@ -87,7 +87,7 @@
         <from uri="direct:handleContractException"/>
         <log message="Error with contracts!"/>
         <to uri="bean:messageResponseService?method=handleContractException(${exception},
-        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toString()},
+        ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toRdf()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
     </route>

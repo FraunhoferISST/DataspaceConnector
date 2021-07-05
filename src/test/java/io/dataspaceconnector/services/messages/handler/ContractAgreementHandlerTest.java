@@ -15,32 +15,69 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractAgreement;
+import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.MessageProcessedNotificationMessage;
+import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.util.Util;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
+import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import io.dataspaceconnector.model.Agreement;
+import io.dataspaceconnector.services.EntityResolver;
+import io.dataspaceconnector.services.EntityUpdateService;
+import io.dataspaceconnector.services.messages.types.LogMessageService;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@SpringBootTest(properties = {"clearing.house.url=https://ch-ids.aisec.fraunhofer.de/logs/messages/"})
 class ContractAgreementHandlerTest {
 
     @Autowired
     ContractAgreementHandler handler;
+
+    @MockBean
+    private EntityResolver entityResolver;
+
+    @MockBean
+    private EntityUpdateService updateService;
+
+    @MockBean
+    private LogMessageService logMessageService;
+
+    @Value("${clearing.house.url}")
+    private URI chUri;
 
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
@@ -58,16 +95,12 @@ class ContractAgreementHandlerTest {
     public void handleMessage_unsupportedMessage_returnUnsupportedVersionRejectionMessage() throws
             DatatypeConfigurationException {
         /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
                 ._issuerConnector_(URI.create("https://localhost:8080"))
                 ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
                 ._modelVersion_("tetris")
-                ._issued_(xmlCalendar)
+                ._issued_(getXmlCalendar())
                 ._correlationMessage_(URI.create("https://somecorrelationMessage"))
                 .build();
 
@@ -83,16 +116,12 @@ class ContractAgreementHandlerTest {
     public void handleMessage_nullPayload_returnBadRequestErrorResponse() throws
             DatatypeConfigurationException {
         /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
                 ._issuerConnector_(URI.create("https://localhost:8080"))
                 ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
                 ._modelVersion_("4.0.0")
-                ._issued_(xmlCalendar)
+                ._issued_(getXmlCalendar())
                 ._correlationMessage_(URI.create("https://somecorrelationMessage"))
                 .build();
 
@@ -107,16 +136,12 @@ class ContractAgreementHandlerTest {
     public void handleMessage_emptyPayload_returnBadRequestErrorResponse() throws
             DatatypeConfigurationException {
         /* ARRANGE */
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
         final var message = new ContractAgreementMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
                 ._issuerConnector_(URI.create("https://localhost:8080"))
                 ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
                 ._modelVersion_("4.0.0")
-                ._issued_(xmlCalendar)
+                ._issued_(getXmlCalendar())
                 ._correlationMessage_(URI.create("https://somecorrelationMessage"))
                 .build();
 
@@ -125,5 +150,139 @@ class ContractAgreementHandlerTest {
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+    }
+
+    @Test
+    public void handleMessage_agreementsDoNotMatch_returnBadParametersResponse() {
+        final var message = new ContractAgreementMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("4.0.0")
+                ._issued_(getXmlCalendar())
+                ._correlationMessage_(URI.create("https://somecorrelationMessage"))
+                .build();
+
+        final var agreement = getContractAgreement();
+        final var storedAgreement = getAgreement(agreement.toRdf());
+        final var differentAgreement = getDifferentContractAgreement();
+
+        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+
+        /* ACT */
+        final var result = (ErrorResponse)
+                handler.handleMessage((ContractAgreementMessageImpl) message,
+                        new MessagePayloadImpl(
+                                new ByteArrayInputStream(
+                                        differentAgreement.toRdf().getBytes(StandardCharsets.UTF_8)),
+                                new ObjectMapper()));
+
+        /* ASSERT */
+        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+    }
+
+    @Test
+    public void handleMessage_updatingAgreementFails_returnBadParametersResponse() {
+        /* ARRANGE */
+        final var message = new ContractAgreementMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("4.0.0")
+                ._issued_(getXmlCalendar())
+                ._correlationMessage_(URI.create("https://somecorrelationMessage"))
+                .build();
+
+        final var agreement = getContractAgreement();
+        final var storedAgreement = getAgreement(agreement.toRdf());
+
+        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+        when(updateService.confirmAgreement(any())).thenReturn(false);
+
+        /* ACT */
+        final var result = (ErrorResponse)
+                handler.handleMessage((ContractAgreementMessageImpl) message,
+                        new MessagePayloadImpl(
+                                new ByteArrayInputStream(
+                                        agreement.toRdf().getBytes(StandardCharsets.UTF_8)),
+                                new ObjectMapper()));
+
+        /* ASSERT */
+        assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
+    }
+
+    @Test
+    public void handleMessage_validAgreement_returnMessageProcessedNotificationMessageAndLogToCH() {
+        /* ARRANGE */
+        final var message = new ContractAgreementMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("4.0.0")
+                ._issued_(getXmlCalendar())
+                ._correlationMessage_(URI.create("https://somecorrelationMessage"))
+                .build();
+
+        final var agreement = getContractAgreement();
+        final var storedAgreement = getAgreement(agreement.toRdf());
+
+        when(entityResolver.getAgreementByUri(any())).thenReturn(storedAgreement);
+        when(updateService.confirmAgreement(any())).thenReturn(true);
+        doNothing().when(logMessageService).sendMessage(any(), any());
+
+        /* ACT */
+        final var result = (BodyResponse<MessageProcessedNotificationMessage>)
+                handler.handleMessage((ContractAgreementMessageImpl) message,
+                new MessagePayloadImpl(
+                        new ByteArrayInputStream(agreement.toRdf().getBytes(StandardCharsets.UTF_8)),
+                        new ObjectMapper()));
+
+        /* ASSERT */
+        assertNotNull(result.getHeader());
+
+        verify(logMessageService, times(1)).sendMessage(chUri, agreement.toRdf());
+    }
+
+    @SneakyThrows
+    private XMLGregorianCalendar getXmlCalendar() {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    }
+
+    @SneakyThrows
+    private ContractAgreement getContractAgreement() {
+        return new ContractAgreementBuilder()
+                ._contractDate_(getXmlCalendar())
+                ._contractStart_(getXmlCalendar())
+                ._contractEnd_(getXmlCalendar())
+                ._permission_(Util.asList(new PermissionBuilder()
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                ._provider_(URI.create("https://provider.com"))
+                ._consumer_(URI.create("https://consumer.com"))
+                .build();
+    }
+
+    @SneakyThrows
+    private ContractAgreement getDifferentContractAgreement() {
+        return new ContractAgreementBuilder()
+                ._contractDate_(getXmlCalendar())
+                ._contractStart_(getXmlCalendar())
+                ._contractEnd_(getXmlCalendar())
+                ._permission_(Util.asList(new PermissionBuilder()
+                        ._action_(Util.asList(Action.USE))
+                        .build()))
+                ._provider_(URI.create("https://provider.com"))
+                ._consumer_(URI.create("https://other-consumer.com"))
+                .build();
+    }
+
+    private Agreement getAgreement(final String rdf) {
+        final var agreement = new Agreement();
+        ReflectionTestUtils.setField(agreement, "value", rdf);
+        ReflectionTestUtils.setField(agreement, "artifacts",
+                Collections.singletonList(URI.create("https://artifact.com")));
+        return agreement;
     }
 }
