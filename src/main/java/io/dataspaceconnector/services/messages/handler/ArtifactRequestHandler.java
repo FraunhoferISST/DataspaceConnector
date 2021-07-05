@@ -138,7 +138,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
             try {
                 final var agreement = contractManager.validateTransferContract(
-                        transferContract, requestedArtifact);
+                        transferContract, requestedArtifact, issuer);
 
                 final var input = new VerificationInput(requestedArtifact, issuer, agreement);
                 if (accessVerifier.verify(input) == VerificationResult.DENIED) {
