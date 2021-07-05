@@ -16,17 +16,20 @@
 package io.dataspaceconnector.bootstrap.util;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,9 +49,8 @@ public final class BootstrapUtils {
     /**
      * Set of entries in bootstrap property files that are allowed to have multiple values.
      */
-    private static final Set<String> MULTI_VALUE_PROPS = SetUtils.hashSet(
-            "resource.download.auto"
-    );
+    private static final Set<String> MULTI_VALUE_PROPS = new HashSet<>(Arrays.asList(
+            "resource.download.auto"));
 
     private BootstrapUtils() {
         // Nothing to do here.
@@ -178,6 +180,21 @@ public final class BootstrapUtils {
         }
 
         return files;
+    }
+
+    /**
+     * Convert string to url.
+     *
+     * @param address The recipient's address.
+     * @return The address as url.
+     */
+    public static Optional<URL> toUrl(final String address) {
+        try {
+            return Optional.of(new URL(address));
+        } catch (MalformedURLException ignored) {
+            // Nothing to do here.
+        }
+        return Optional.empty();
     }
 
     private static boolean isSearchedFile(final File file, final String name, final String ext) {

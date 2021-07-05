@@ -46,12 +46,12 @@ public class RepresentationUpdaterTest {
     @Autowired
     private RepresentationUpdater updater;
 
-    private final UUID           representationId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Representation                                            representation           = getRepresentation();
-    private final io.dataspaceconnector.model.representation.Representation dscRepresentation        = getDscRepresentation();
+    private final UUID representationId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+    private final Representation representation = getRepresentation();
+    private final io.dataspaceconnector.model.representation.Representation dscRepresentation = getDscRepresentation();
     private final io.dataspaceconnector.model.representation.Representation
-                                                                            dscUpdatedRepresentation = getUpdatedDscRepresentation();
-    private final RepresentationTemplate                                    template                 = getTemplate();
+            dscUpdatedRepresentation = getUpdatedDscRepresentation();
+    private final RepresentationTemplate template = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -66,11 +66,12 @@ public class RepresentationUpdaterTest {
     public void update_entityUnknownRemoteId_throwsResourceNotFoundException() {
         /* ARRANGE */
         Mockito.doReturn(Optional.empty())
-               .when(representationService)
-               .identifyByRemoteId(Mockito.eq(representation.getId()));
+                .when(representationService)
+                .identifyByRemoteId(Mockito.eq(representation.getId()));
 
         /* ACT && ASSERT */
-        final var result = assertThrows(ResourceNotFoundException.class, () -> updater.update(representation));
+        final var result = assertThrows(ResourceNotFoundException.class,
+                () -> updater.update(representation));
         assertEquals(representationId.toString(), result.getMessage());
     }
 
@@ -78,22 +79,22 @@ public class RepresentationUpdaterTest {
     public void update_knownId_returnUpdatedRepresentation() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(representationId))
-               .when(representationService)
-               .identifyByRemoteId(Mockito.eq(representation.getId()));
+                .when(representationService)
+                .identifyByRemoteId(Mockito.eq(representation.getId()));
 
         Mockito.doReturn(dscRepresentation)
-               .when(representationService)
-               .get(Mockito.eq(representationId));
+                .when(representationService)
+                .get(Mockito.eq(representationId));
 
         Mockito.doReturn(dscUpdatedRepresentation)
-               .when(representationService)
-               .update(Mockito.eq(representationId), Mockito.eq(template.getDesc()));
+                .when(representationService)
+                .update(Mockito.eq(representationId), Mockito.eq(template.getDesc()));
 
         /* ACT && ASSERT */
         final var result = updater.update(representation);
         assertEquals(dscUpdatedRepresentation, result);
         Mockito.verify(representationService, Mockito.atLeastOnce()).update(Mockito.eq(representationId),
-                                                                      Mockito.eq(template.getDesc()));
+                Mockito.eq(template.getDesc()));
     }
 
     private Representation getRepresentation() {

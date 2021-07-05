@@ -67,11 +67,10 @@ public class RepresentationArtifactLinkerTest {
         Mockito.when(representationService.get(Mockito.eq(representation.getId())))
                 .thenReturn(representation);
         Mockito.when(representationService.get(AdditionalMatchers.not(AdditionalMatchers.and(
-                             Mockito.notNull(), Mockito.eq(representation.getId())))))
+                Mockito.notNull(), Mockito.eq(representation.getId())))))
                 .thenThrow(ResourceNotFoundException.class);
         Mockito.when(representationService.persist(Mockito.any()))
-                .thenAnswer((Answer<Representation>)
-                                    invocationOnMock -> invocationOnMock.getArgument(0));
+                .thenAnswer((Answer<Representation>) invocationOnMock -> invocationOnMock.getArgument(0));
 
         Mockito.when(artifactService.get(Mockito.eq(artifactOne.getId()))).thenReturn(artifactOne);
         Mockito.when(artifactService.get(Mockito.eq(artifactTwo.getId()))).thenReturn(artifactTwo);
@@ -83,9 +82,9 @@ public class RepresentationArtifactLinkerTest {
         Mockito.when(artifactService.doesExist(Mockito.eq(artifactThree.getId()))).thenReturn(true);
     }
 
-    /**************************************************************************
-     * get
-     *************************************************************************/
+    /***********************************************************************************************
+     * get                                                                                         *
+     **********************************************************************************************/
 
     @Test
     public void get_unknownId_throwResourceNotFoundException() {
@@ -93,15 +92,15 @@ public class RepresentationArtifactLinkerTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        assertThrows(
-                ResourceNotFoundException.class, () -> linker.get(unknownUuid, Pageable.unpaged()));
+        assertThrows(ResourceNotFoundException.class,
+                () -> linker.get(unknownUuid, Pageable.unpaged()));
     }
 
     @Test
     public void get_knownId_notNull() {
         /* ARRANGE */
-        linker.add(representation.getId(),
-                Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(representation.getId(), Set.of(artifactOne.getId(), artifactTwo.getId(),
+                artifactThree.getId()));
 
         /* ACT */
         final var linkedArtifacts = linker.get(representation.getId(), Pageable.unpaged());
@@ -125,8 +124,8 @@ public class RepresentationArtifactLinkerTest {
         // Nothing to arrange.
 
         /* ACT && ASSERT */
-        assertThrows(
-                IllegalArgumentException.class, () -> linker.get(representation.getId(), null));
+        assertThrows(IllegalArgumentException.class,
+                () -> linker.get(representation.getId(), null));
     }
 
     @Test
@@ -141,8 +140,8 @@ public class RepresentationArtifactLinkerTest {
     @Test
     public void get_knownId_getArtifacts() {
         /* ARRANGE */
-        linker.add(representation.getId(),
-                Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(representation.getId(), Set.of(artifactOne.getId(), artifactTwo.getId(),
+                artifactThree.getId()));
 
         /* ACT */
         final var linkedArtifacts = linker.get(representation.getId(), Pageable.unpaged()).toList();
@@ -153,9 +152,9 @@ public class RepresentationArtifactLinkerTest {
         assertTrue(linkedArtifacts.contains(artifactThree));
     }
 
-    /**************************************************************************
-     * add
-     *************************************************************************/
+    /***********************************************************************************************
+     * add                                                                                         *
+     **********************************************************************************************/
 
     @Test
     public void add_nullId_throwsIllegalArgumentsException() {
@@ -259,8 +258,8 @@ public class RepresentationArtifactLinkerTest {
         final var knownId = representation.getId();
 
         /* ACT */
-        linker.add(
-                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(),
+                artifactThree.getId()));
 
         /* ASSERT */
         final var elements = linker.get(knownId, Pageable.unpaged()).toList();
@@ -277,8 +276,8 @@ public class RepresentationArtifactLinkerTest {
         final var before = linker.get(knownId, Pageable.unpaged()).toList().size();
 
         /* ACT */
-        linker.add(
-                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(),
+                artifactThree.getId()));
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
@@ -295,8 +294,8 @@ public class RepresentationArtifactLinkerTest {
         final var before = linker.get(knownId, Pageable.unpaged()).toList().size();
 
         /* ACT */
-        linker.add(
-                knownId, Set.of(artifactOne.getId(), artifactTwo.getId(), artifactThree.getId()));
+        linker.add(knownId, Set.of(artifactOne.getId(), artifactTwo.getId(),
+                artifactThree.getId()));
 
         /* ASSERT */
         final var after = linker.get(knownId, Pageable.unpaged()).toList().size();
@@ -316,9 +315,9 @@ public class RepresentationArtifactLinkerTest {
                 .persist(Mockito.eq(representation));
     }
 
-    /**************************************************************************
-     * remove
-     *************************************************************************/
+    /***********************************************************************************************
+     * remove                                                                                      *
+     **********************************************************************************************/
 
     @Test
     public void remove_nullId_throwsIllegalArgumentsException() {
@@ -454,9 +453,9 @@ public class RepresentationArtifactLinkerTest {
                 () -> linker.remove(knownId, Set.of(artifactOne.getId(), null)));
     }
 
-    /**************************************************************************
-     * replace
-     *************************************************************************/
+    /***********************************************************************************************
+     * replace                                                                                     *
+     **********************************************************************************************/
 
     @Test
     public void replace_nullId_throwsIllegalArgumentsException() {
@@ -597,9 +596,9 @@ public class RepresentationArtifactLinkerTest {
                 () -> linker.replace(knownId, Set.of(artifactOne.getId(), null)));
     }
 
-    /**************************************************************************
-     * getInternal
-     *************************************************************************/
+    /***********************************************************************************************
+     * getInternal                                                                                 *
+     **********************************************************************************************/
 
     @Test
     public void getInternal_null_throwsNullPointerException() {
@@ -623,9 +622,9 @@ public class RepresentationArtifactLinkerTest {
         assertEquals(expected, artifacts);
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private Representation getRepresentation() {

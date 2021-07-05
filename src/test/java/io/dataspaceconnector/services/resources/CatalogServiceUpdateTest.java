@@ -35,7 +35,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest( classes = { CatalogService.class } )
+@SpringBootTest(classes = {CatalogService.class})
 public class CatalogServiceUpdateTest {
 
     @SpyBean
@@ -78,7 +78,8 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_updateDesc_returnUpdatedCatalog() {
         /* ARRANGE */
-        final var shouldLookLike = getCatalogFromValidDesc(validId, getNewCatalog(getUpdatedValidDesc()));
+        final var shouldLookLike = getCatalogFromValidDesc(validId,
+                getNewCatalog(getUpdatedValidDesc()));
 
         /* ACT */
         final var after = service.update(validId, getUpdatedValidDesc());
@@ -104,6 +105,10 @@ public class CatalogServiceUpdateTest {
         /* ACT */
         Mockito.verify(repository, Mockito.atLeastOnce()).saveAndFlush(Mockito.eq(updatedCatalog));
     }
+
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private CatalogDesc getValidDesc() {
         var desc = new CatalogDesc();

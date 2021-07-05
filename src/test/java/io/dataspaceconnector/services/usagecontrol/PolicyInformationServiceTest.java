@@ -49,8 +49,7 @@ public class PolicyInformationServiceTest {
     public void getCreationDate_artifactPresent_returnCreationDate() {
         /* ARRANGE */
         final var artifact = getArtifact();
-        final var targetUri = URI.create("https://localhost:8080/api/artifacts"
-                + artifact.getId());
+        final var targetUri = URI.create("https://localhost:8080/api/artifacts" + artifact.getId());
 
         when(artifactService.get(artifact.getId())).thenReturn(artifact);
 
@@ -65,8 +64,7 @@ public class PolicyInformationServiceTest {
     public void getAccessNumber_artifactPresent_returnNumAccessed() {
         /* ARRANGE */
         final var artifact = getArtifact();
-        final var targetUri = URI.create("https://localhost:8080/api/artifacts"
-                + artifact.getId());
+        final var targetUri = URI.create("https://localhost:8080/api/artifacts" + artifact.getId());
 
         when(artifactService.get(artifact.getId())).thenReturn(artifact);
 
@@ -77,9 +75,9 @@ public class PolicyInformationServiceTest {
         assertEquals(numAccessed, result);
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Artifact getArtifact() {
         final var artifact = new ArtifactImpl();
@@ -88,5 +86,4 @@ public class PolicyInformationServiceTest {
         ReflectionTestUtils.setField(artifact, "numAccessed", numAccessed);
         return artifact;
     }
-
 }

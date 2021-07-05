@@ -49,9 +49,9 @@ class OfferedResourceRepresentationTest {
     OfferedResource resource = getResource();
     Representation representation = getRepresentation();
 
-    /**************************************************************************
-     * getInternal
-     *************************************************************************/
+    /***********************************************************************************************
+     * getInternal                                                                                 *
+     **********************************************************************************************/
 
     @Test
     public void getInternal_null_throwsNullPointerException() {
@@ -75,9 +75,9 @@ class OfferedResourceRepresentationTest {
         assertEquals(expected, representations);
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     @SneakyThrows
     private OfferedResource getResource() {

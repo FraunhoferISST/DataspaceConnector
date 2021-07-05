@@ -19,7 +19,6 @@ import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
-import io.dataspaceconnector.model.artifact.ArtifactImpl;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
 import io.dataspaceconnector.services.resources.ArtifactService;
 import org.junit.jupiter.api.Test;
@@ -47,10 +46,10 @@ public class ArtifactUpdaterTest {
     private ArtifactUpdater updater;
 
     private final UUID artifactId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
-    private final Artifact                                      artifact           = getArtifact();
-    private final io.dataspaceconnector.model.artifact.Artifact dscArtifact        = getDscArtifact();
+    private final Artifact artifact = getArtifact();
+    private final io.dataspaceconnector.model.artifact.Artifact dscArtifact = getDscArtifact();
     private final io.dataspaceconnector.model.artifact.Artifact dscUpdatedArtifact = getUpdatedDscArtifact();
-    private final ArtifactTemplate                              template           = getTemplate();
+    private final ArtifactTemplate template = getTemplate();
 
     @Test
     public void update_null_throwsNullPointerException() {
@@ -65,11 +64,12 @@ public class ArtifactUpdaterTest {
     public void update_entityUnknownRemoteId_throwsResourceNotFoundException() {
         /* ARRANGE */
         Mockito.doReturn(Optional.empty())
-               .when(artifactService)
-               .identifyByRemoteId(Mockito.eq(artifact.getId()));
+                .when(artifactService)
+                .identifyByRemoteId(Mockito.eq(artifact.getId()));
 
         /* ACT && ASSERT */
-        final var result = assertThrows(ResourceNotFoundException.class, () -> updater.update(artifact));
+        final var result = assertThrows(ResourceNotFoundException.class,
+                () -> updater.update(artifact));
         assertEquals(artifactId.toString(), result.getMessage());
     }
 
@@ -77,22 +77,22 @@ public class ArtifactUpdaterTest {
     public void update_knownId_returnUpdatedArtifact() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(artifactId))
-               .when(artifactService)
-               .identifyByRemoteId(Mockito.eq(artifact.getId()));
+                .when(artifactService)
+                .identifyByRemoteId(Mockito.eq(artifact.getId()));
 
         Mockito.doReturn(dscArtifact)
-               .when(artifactService)
-               .get(Mockito.eq(artifactId));
+                .when(artifactService)
+                .get(Mockito.eq(artifactId));
 
         Mockito.doReturn(dscUpdatedArtifact)
-               .when(artifactService)
-               .update(Mockito.eq(artifactId), Mockito.eq(template.getDesc()));
+                .when(artifactService)
+                .update(Mockito.eq(artifactId), Mockito.eq(template.getDesc()));
 
         /* ACT && ASSERT */
         final var result = updater.update(artifact);
         assertEquals(dscUpdatedArtifact, result);
         Mockito.verify(artifactService, Mockito.atLeastOnce()).update(Mockito.eq(artifactId),
-                                                                      Mockito.eq(template.getDesc()));
+                Mockito.eq(template.getDesc()));
     }
 
 
@@ -102,14 +102,14 @@ public class ArtifactUpdaterTest {
     }
 
     private io.dataspaceconnector.model.artifact.Artifact getDscArtifact() {
-        final var output = new ArtifactImpl();
+        final var output = new io.dataspaceconnector.model.artifact.ArtifactImpl();
         ReflectionTestUtils.setField(output, "title", "SOME TITLE");
         return output;
     }
 
     private io.dataspaceconnector.model.artifact.Artifact getUpdatedDscArtifact() {
-        final var output = new ArtifactImpl();
-        ReflectionTestUtils.setField(output, "title",  "HELLO");
+        final var output = new io.dataspaceconnector.model.artifact.ArtifactImpl();
+        ReflectionTestUtils.setField(output, "title", "HELLO");
         return output;
     }
 

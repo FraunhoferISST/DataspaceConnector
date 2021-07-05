@@ -67,8 +67,7 @@ public class AgreementServiceTest {
 
         /* ASSERT */
         assertTrue(result);
-        verify(agreementRepository, times(1))
-                .confirmAgreement(agreement.getId());
+        verify(agreementRepository, times(1)).confirmAgreement(agreement.getId());
     }
 
     @Test
@@ -76,8 +75,7 @@ public class AgreementServiceTest {
         /* ARRANGE */
         final var agreement = getAgreement();
 
-        when(agreementRepository.findById(agreement.getId()))
-                .thenReturn(Optional.of(new Agreement()));
+        when(agreementRepository.findById(agreement.getId())).thenReturn(Optional.of(new Agreement()));
 
         /* ACT */
         final var result = agreementService.confirmAgreement(agreement);
@@ -87,9 +85,9 @@ public class AgreementServiceTest {
         verify(agreementRepository, never()).confirmAgreement(agreement.getId());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Agreement getAgreement() {
         final var agreement = new Agreement();

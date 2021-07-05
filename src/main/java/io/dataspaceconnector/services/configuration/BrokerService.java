@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 /**
  * Service class for brokers.
  */
-@Service
+@Service("ConfigurationBrokerService") //Clashes with IDS-Messaging-Services brokerService Bean
 @NoArgsConstructor
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 

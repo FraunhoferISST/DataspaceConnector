@@ -41,9 +41,9 @@
 	</organization>
 	<licenses>
 		<license>
-			<name>${licence_name}</name>
-			<url>${licence_url}</url>
-			<distribution>${licence_distribution}</distribution>
+			<name>${license_name}</name>
+			<url>${license_url}</url>
+			<distribution>${license_distribution}</distribution>
 		</license>
 	</licenses>
 
@@ -85,7 +85,7 @@
 
 	<properties>
 		<!-- General -->
-		<revision>5.2.1</revision>
+		<revision>6.0.0</revision>
 		<email>info@dataspace-connector.de</email>
 
 		<!-- Build info -->
@@ -94,7 +94,7 @@
 		<maven.minimum.version>3.3.9</maven.minimum.version>
 
 		<!-- Dependencies -->
-		<ids-framework.version>5.0.4</ids-framework.version>
+		<ids-messaging-services.version>4.1.1.2</ids-messaging-services.version>
 		<springframework.plugin>2.0.0.RELEASE</springframework.plugin>
 		<swagger-annotations.version>1.6.2</swagger-annotations.version>
 		<okhttp.version>4.9.1</okhttp.version>
@@ -106,6 +106,7 @@
 		<springdoc-hateoas.version>1.5.9</springdoc-hateoas.version>
 		<jsonld-java.version>0.13.3</jsonld-java.version>
 		<equalsverifier.version>3.6.1</equalsverifier.version>
+		<h2database.version>1.4.200</h2database.version>
 		<jaeger.version>3.3.1</jaeger.version>
 
 		<!-- Plugins -->
@@ -130,34 +131,19 @@
 		<taglist.version>2.4</taglist.version>
 		<jxr.version>3.1.1</jxr.version>
 
-		<!-- Licence -->
-		<licence_name>Apache License, Version 2.0</licence_name>
-		<licence_url>https://www.apache.org/licenses/LICENSE-2.0.txt</licence_url>
-		<licence_distribution>repo</licence_distribution>
+		<!-- License -->
+		<license_name>Apache License, Version 2.0</license_name>
+		<license_url>https://www.apache.org/licenses/LICENSE-2.0.txt</license_url>
+		<license_distribution>repo</license_distribution>
 	</properties>
 
 	<dependencies>
-		<!-- IDS Framework -->
-		<dependency>
-			<groupId>de.fraunhofer.isst.ids.framework</groupId>
-			<artifactId>base</artifactId>
-			<version>${ids-framework.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
+		<!-- https://github.com/International-Data-Spaces-Association/IDS-Messaging-Services -->
 		<dependency>
-			<groupId>de.fraunhofer.isst.ids.framework</groupId>
-			<artifactId>messaging</artifactId>
-			<version>${ids-framework.version}</version>
+			<groupId>de.fraunhofer.ids.messaging</groupId>
+			<artifactId>broker</artifactId>
+			<version>${ids-messaging-services.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.slf4j</groupId>
@@ -383,6 +369,15 @@
 			<version>${equalsverifier.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>${h2database.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -573,9 +568,9 @@
 				<version>${maven-surefire-plugin.version}</version>
 				<configuration>
 					<systemPropertyVariables>
-						<propertyName>licence_type</propertyName>
-						<propertyName>licence_url</propertyName>
-						<propertyName>licence_distribution</propertyName>
+						<propertyName>license_type</propertyName>
+						<propertyName>license_url</propertyName>
+						<propertyName>license_distribution</propertyName>
 						<buildDirectory>${project.build.directory}</buildDirectory>
 					</systemPropertyVariables>
 				</configuration>
@@ -743,6 +738,11 @@
 	<reporting>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>${jxr.version}</version>
+			</plugin>
+			<plugin>
 				<groupId>com.github.spotbugs</groupId>
 				<artifactId>spotbugs-maven-plugin</artifactId>
 				<version>${spotbugs.version}</version>
@@ -825,11 +825,6 @@
 						</tagClasses>
 					  </tagListOptions>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>${jxr.version}</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

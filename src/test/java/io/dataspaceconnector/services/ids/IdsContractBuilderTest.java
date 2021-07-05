@@ -16,7 +16,7 @@
 package io.dataspaceconnector.services.ids;
 
 import de.fraunhofer.iais.eis.Action;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.contract.ContractDesc;

@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.resource.RequestedResource;
@@ -35,6 +28,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,8 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {RequestedResourceViewAssembler.class, ViewAssemblerHelper.class,
-        RequestedResourceFactory.class})
+@SpringBootTest(classes = {
+        RequestedResourceViewAssembler.class,
+        ViewAssemblerHelper.class,
+        RequestedResourceFactory.class
+})
 public class RequestedResourceViewAssemblerTest {
 
     @Autowired
@@ -55,11 +58,9 @@ public class RequestedResourceViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = requestedResourceViewAssembler.getSelfLink(null);
@@ -67,18 +68,16 @@ public class RequestedResourceViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var resourceId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = requestedResourceViewAssembler.getSelfLink(resourceId);
@@ -86,7 +85,7 @@ public class RequestedResourceViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + resourceId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
@@ -145,9 +144,9 @@ public class RequestedResourceViewAssemblerTest {
                 catalogsLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private RequestedResource getRequestedResource() {
         final var desc = new RequestedResourceDesc();
@@ -175,8 +174,7 @@ public class RequestedResourceViewAssemblerTest {
     }
 
     private String getRequestedResourceLink(final UUID resourceId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.RequestedResourceController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + resourceId;
@@ -196,5 +194,4 @@ public class RequestedResourceViewAssemblerTest {
         return linkTo(methodOn(RelationControllers.RequestedResourcesToCatalogs.class)
                 .getResource(resourceId, null, null)).toString();
     }
-
 }

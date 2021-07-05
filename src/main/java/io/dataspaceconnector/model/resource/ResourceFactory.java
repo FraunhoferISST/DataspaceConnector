@@ -15,13 +15,12 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.utils.MetadataUtils;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-
-import io.dataspaceconnector.model.AbstractNamedFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
 
 /**
  * Base class for creating and updating resources.
@@ -73,6 +72,8 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         resource.setRepresentations(new ArrayList<>());
         resource.setContracts(new ArrayList<>());
         resource.setCatalogs(new ArrayList<>());
+
+        update(resource, desc);
 
         return resource;
     }

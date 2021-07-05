@@ -20,7 +20,6 @@ import javax.persistence.Lob;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
@@ -30,7 +29,6 @@ import org.hibernate.annotations.Where;
  * Simple wrapper for data stored in the internal database.
  */
 @Entity
-@Getter
 @SQLDelete(sql = "UPDATE data SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @EqualsAndHashCode(callSuper = true)
@@ -43,4 +41,12 @@ public class LocalData extends Data {
      */
     @Lob
     private byte[] value;
+
+    /**
+     * Get the data.
+     * @return The data.
+     */
+    public byte[] getValue() {
+        return value == null ? null : value.clone();
+    }
 }

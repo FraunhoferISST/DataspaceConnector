@@ -516,7 +516,8 @@ public class RepresentationFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new RepresentationDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new RepresentationDesc()));
     }
 
     @Test

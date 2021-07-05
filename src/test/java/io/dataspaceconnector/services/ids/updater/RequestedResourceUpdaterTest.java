@@ -68,12 +68,12 @@ public class RequestedResourceUpdaterTest {
     public void update_entityUnknownRemoteId_throwsResourceNotFoundException() {
         /* ARRANGE */
         Mockito.doReturn(Optional.empty())
-               .when(requestedResourceService)
-               .identifyByRemoteId(Mockito.eq(resource.getId()));
+                .when(requestedResourceService)
+                .identifyByRemoteId(Mockito.eq(resource.getId()));
 
         /* ACT && ASSERT */
-        final var result = assertThrows(ResourceNotFoundException.class, () -> updater.update(
-                resource));
+        final var result = assertThrows(ResourceNotFoundException.class,
+                () -> updater.update(resource));
         assertEquals(resourceId.toString(), result.getMessage());
     }
 
@@ -81,22 +81,22 @@ public class RequestedResourceUpdaterTest {
     public void update_knownId_returnUpdatedRepresentation() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(resourceId))
-               .when(requestedResourceService)
-               .identifyByRemoteId(Mockito.eq(resource.getId()));
+                .when(requestedResourceService)
+                .identifyByRemoteId(Mockito.eq(resource.getId()));
 
         Mockito.doReturn(dscResource)
-               .when(requestedResourceService)
-               .get(Mockito.eq(resourceId));
+                .when(requestedResourceService)
+                .get(Mockito.eq(resourceId));
 
         Mockito.doReturn(dscUpdatedResource)
-               .when(requestedResourceService)
-               .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
+                .when(requestedResourceService)
+                .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
 
         /* ACT && ASSERT */
         final var result = updater.update(resource);
         assertEquals(dscUpdatedResource, result);
-        Mockito.verify(requestedResourceService, Mockito.atLeastOnce()).update(Mockito.eq(
-                resourceId), Mockito.eq(template.getDesc()));
+        Mockito.verify(requestedResourceService, Mockito.atLeastOnce())
+                .update(Mockito.eq(resourceId), Mockito.eq(template.getDesc()));
     }
 
     private Resource getResource() {
@@ -109,7 +109,7 @@ public class RequestedResourceUpdaterTest {
     private RequestedResource getDscResource() {
         final var resourceConstructor = RequestedResource.class.getDeclaredConstructor();
         resourceConstructor.setAccessible(true);
-        final var output =  resourceConstructor.newInstance();
+        final var output = resourceConstructor.newInstance();
         ReflectionTestUtils.setField(output, "language", "SOME Language");
         return output;
     }
