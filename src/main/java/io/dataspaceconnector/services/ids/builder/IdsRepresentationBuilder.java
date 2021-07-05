@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Collections;
 
 /**
  * Converts DSC representation to ids representation.
@@ -35,19 +36,17 @@ public final class IdsRepresentationBuilder
         extends AbstractIdsBuilder<Representation, de.fraunhofer.iais.eis.Representation> {
 
     /**
-     * The builder for Infomodel Artifacts.
+     * The builder for ids artifacts.
      */
     private final @NonNull IdsArtifactBuilder artifactBuilder;
 
     @Override
     protected de.fraunhofer.iais.eis.Representation createInternal(
-            final Representation representation,
-            final URI baseUri, final int currentDepth,
+            final Representation representation, final int currentDepth,
             final int maxDepth) throws ConstraintViolationException {
         // Build children.
         final var artifacts =
-                create(artifactBuilder, representation.getArtifacts(), baseUri, currentDepth,
-                        maxDepth);
+                create(artifactBuilder, representation.getArtifacts(), currentDepth, maxDepth);
 
         // Build representation only if at least one artifact is present.
         if (artifacts.isEmpty() || artifacts.get().isEmpty()) {
@@ -65,14 +64,14 @@ public final class IdsRepresentationBuilder
                         .build();
         final var standard = URI.create(representation.getStandard());
 
-        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation, baseUri))
+        final var builder = new RepresentationBuilder(getAbsoluteSelfLink(representation))
                 ._created_(created)
                 ._language_(language)
                 ._mediaType_(mediaType)
                 ._modified_(modified)
                 ._representationStandard_(standard);
 
-        artifacts.ifPresent(builder::_instance_);
+        artifacts.ifPresent(x -> builder._instance_(Collections.unmodifiableList(x)));
 
         return builder.build();
     }

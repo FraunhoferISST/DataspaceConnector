@@ -19,8 +19,8 @@ import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
 import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.LogLevel;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationUpdateException;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import net.minidev.json.JSONObject;
@@ -35,16 +35,16 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-public class ConfigurationControllerTest {
+public class ConfigurationControllerIT {
 
     @MockBean
-    private ConfigurationContainer configContainer;
+    private ConfigContainer configContainer;
 
     @MockBean
     private ConnectorConfiguration connectorConfig;
@@ -53,7 +53,7 @@ public class ConfigurationControllerTest {
     private DeserializationService idsService;
 
     @Autowired
-    MockMvc mockMvc;
+    private MockMvc mockMvc;
 
     @Test
     @WithMockUser("ADMIN")
@@ -66,13 +66,13 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
-                                                    .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(model.toRdf()))
-                                  .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -86,13 +86,13 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
-                                .contentType("application/ld+json")
-                                .content(model.toRdf()))
-               .andExpect(status().isOk());
+                .contentType("application/ld+json")
+                .content(model.toRdf()))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -106,13 +106,13 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(model.toRdf()))
-                                  .andExpect(status().isOk()).andReturn();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/ld+json", result.getResponse().getContentType());
     }
@@ -130,12 +130,11 @@ public class ConfigurationControllerTest {
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
 
-
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
-                                                   .contentType(MediaType.APPLICATION_ATOM_XML)
-                                                   .content(model.toRdf()))
-                                  .andExpect(status().is4xxClientError()).andReturn();
+                .contentType(MediaType.APPLICATION_ATOM_XML)
+                .content(model.toRdf()))
+                .andExpect(status().is4xxClientError()).andReturn();
 
         assertEquals(415, result.getResponse().getStatus());
     }
@@ -151,13 +150,13 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.when(configContainer.getConfigModel()).thenReturn(model);
+        Mockito.when(configContainer.getConfigurationModel()).thenReturn(model);
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(model.toRdf()))
-                                  .andExpect(status().isOk()).andReturn();
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isOk()).andReturn();
 
         Mockito.verify(configContainer, Mockito.atLeastOnce()).updateConfiguration(Mockito.any());
 
@@ -174,14 +173,15 @@ public class ConfigurationControllerTest {
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
                 .build();
 
-        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenThrow(IllegalArgumentException.class);
+        Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf())))
+                .thenThrow(IllegalArgumentException.class);
 
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(model.toRdf()))
-                                  .andExpect(status().isBadRequest());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -195,17 +195,17 @@ public class ConfigurationControllerTest {
                 .build();
 
         Mockito.when(idsService.getConfigurationModel(Mockito.eq(model.toRdf()))).thenReturn(model);
-        Mockito.doThrow(ConfigurationUpdateException.class).when(configContainer).updateConfiguration(Mockito.eq(model));
+        Mockito.doThrow(ConfigUpdateException.class).when(configContainer).updateConfiguration(Mockito.eq(model));
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(model.toRdf()))
-               .andExpect(status().isInternalServerError());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isInternalServerError());
     }
 
     @Test
-    public void updateConfiguration_unauthorized_return500() throws Exception {
+    public void updateConfiguration_unauthorized_return401() throws Exception {
         /* ARRANGE */
         final var model = new ConfigurationModelBuilder()
                 ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
@@ -215,10 +215,9 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(model.toRdf()))
-               .andExpect(status().isUnauthorized());
-
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(model.toRdf()))
+                .andExpect(status().isUnauthorized());
 
         Mockito.verify(configContainer, Mockito.never()).updateConfiguration(Mockito.any());
     }
@@ -228,10 +227,10 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getConfiguration_unauthorized_return500() throws Exception {
+    public void getConfiguration_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration"))
-               .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 
 
@@ -245,11 +244,11 @@ public class ConfigurationControllerTest {
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
                 .build();
 
-        Mockito.doReturn(model).when(configContainer).getConfigModel();
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration"))
-                    .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals(model.toRdf(), result.getResponse().getContentAsString());
     }
@@ -264,11 +263,11 @@ public class ConfigurationControllerTest {
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_OFFLINE)
                 .build();
 
-        Mockito.doReturn(model).when(configContainer).getConfigModel();
+        Mockito.doReturn(model).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/json", result.getResponse().getContentType());
     }
@@ -277,11 +276,11 @@ public class ConfigurationControllerTest {
     @WithMockUser("ADMIN")
     public void getConfiguration_noConfig_return404() throws Exception {
         /* ARRANGE */
-        Mockito.doReturn(null).when(configContainer).getConfigModel();
+        Mockito.doReturn(null).when(configContainer).getConfigurationModel();
 
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration"))
-                                  .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -289,19 +288,19 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void setNegotiationStatus_unauthorized_return500() throws Exception {
+    public void setNegotiationStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration/negotiation")
-                                .param("status", "true"))
-               .andExpect(status().isUnauthorized());
+                .param("status", "true"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithMockUser("ADMIN")
-    public void setNegotiationStatus_noStatusParam_return401() throws Exception {
+    public void setNegotiationStatus_noStatusParam_return400() throws Exception {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/negotiation"))
-               .andExpect(status().is4xxClientError()).andReturn();
+                .andExpect(status().is4xxClientError()).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
     }
@@ -316,8 +315,8 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/negotiation")
-                                    .param("status", "true"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "true"))
+                .andExpect(status().isOk()).andReturn();
 
         Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setPolicyNegotiation(Mockito.eq(true));
 
@@ -334,8 +333,8 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/negotiation")
-                                                   .param("status", "false"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "false"))
+                .andExpect(status().isOk()).andReturn();
 
         Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setPolicyNegotiation(Mockito.eq(false));
 
@@ -347,8 +346,8 @@ public class ConfigurationControllerTest {
     public void setNegotiationStatus_any_returnJson() throws Exception {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/negotiation")
-                                                   .param("status", "false"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "false"))
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/json", result.getResponse().getContentType());
     }
@@ -359,10 +358,10 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getNegotiationStatus_unauthorized_return500() throws Exception {
+    public void getNegotiationStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration/negotiation"))
-               .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -375,7 +374,7 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/negotiation"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
     }
@@ -390,7 +389,7 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/negotiation"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
     }
@@ -398,14 +397,12 @@ public class ConfigurationControllerTest {
     @Test
     @WithMockUser("ADMIN")
     public void getNegotiationStatus_any_returnJson() throws Exception {
-        final var body = new JSONObject();
-        body.put("status", false);
-
+        /* ARRANGE */
         Mockito.doReturn(false).when(connectorConfig).isPolicyNegotiation();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/negotiation"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/json", result.getResponse().getContentType());
     }
@@ -415,11 +412,11 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void setPatternStatus_unauthorized_return500() throws Exception {
+    public void setPatternStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(put("/api/configuration/pattern")
-                                .param("status", "true"))
-               .andExpect(status().isUnauthorized());
+                .param("status", "true"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -427,7 +424,7 @@ public class ConfigurationControllerTest {
     public void setPatternStatus_noStatusParam_return401() throws Exception {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/pattern"))
-                                  .andExpect(status().is4xxClientError()).andReturn();
+                .andExpect(status().is4xxClientError()).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
     }
@@ -442,8 +439,8 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/pattern")
-                                                   .param("status", "true"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "true"))
+                .andExpect(status().isOk()).andReturn();
 
         Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setAllowUnsupported(Mockito.eq(true));
 
@@ -460,8 +457,8 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/pattern")
-                                                   .param("status", "false"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "false"))
+                .andExpect(status().isOk()).andReturn();
 
         Mockito.verify(connectorConfig, Mockito.atLeastOnce()).setAllowUnsupported(Mockito.eq(false));
 
@@ -473,8 +470,8 @@ public class ConfigurationControllerTest {
     public void setPatternStatus_any_returnJson() throws Exception {
         /* ACT && ASSERT */
         final var result = mockMvc.perform(put("/api/configuration/pattern")
-                                                   .param("status", "false"))
-                                  .andExpect(status().isOk()).andReturn();
+                .param("status", "false"))
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/json", result.getResponse().getContentType());
     }
@@ -484,10 +481,10 @@ public class ConfigurationControllerTest {
      */
 
     @Test
-    public void getPatternStatus_unauthorized_return500() throws Exception {
+    public void getPatternStatus_unauthorized_return401() throws Exception {
         /* ACT && ASSERT */
         mockMvc.perform(get("/api/configuration/pattern"))
-               .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -500,7 +497,7 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/pattern"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
     }
@@ -515,7 +512,7 @@ public class ConfigurationControllerTest {
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/negotiation"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals(body.toJSONString(), result.getResponse().getContentAsString());
     }
@@ -523,14 +520,12 @@ public class ConfigurationControllerTest {
     @Test
     @WithMockUser("ADMIN")
     public void getPatternStatus_any_returnJson() throws Exception {
-        final var body = new JSONObject();
-        body.put("status", false);
-
+        /* ARRANGE */
         Mockito.doReturn(false).when(connectorConfig).isAllowUnsupported();
 
         /* ACT && ASSERT */
         final var result = mockMvc.perform(get("/api/configuration/negotiation"))
-                                  .andExpect(status().isOk()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         assertEquals("application/json", result.getResponse().getContentType());
     }

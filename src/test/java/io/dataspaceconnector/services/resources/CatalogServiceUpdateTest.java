@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.CatalogFactory;
@@ -32,9 +29,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest( classes = { CatalogService.class } )
+@SpringBootTest(classes = {CatalogService.class})
 public class CatalogServiceUpdateTest {
 
     @SpyBean
@@ -77,7 +77,8 @@ public class CatalogServiceUpdateTest {
     @Test
     public void update_updateDesc_returnUpdatedCatalog() {
         /* ARRANGE */
-        final var shouldLookLike = getCatalogFromValidDesc(validId, getNewCatalog(getUpdatedValidDesc()));
+        final var shouldLookLike = getCatalogFromValidDesc(validId,
+                getNewCatalog(getUpdatedValidDesc()));
 
         /* ACT */
         final var after = service.update(validId, getUpdatedValidDesc());
@@ -104,6 +105,10 @@ public class CatalogServiceUpdateTest {
         Mockito.verify(repository, Mockito.atLeastOnce()).saveAndFlush(Mockito.eq(updatedCatalog));
     }
 
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
+
     private CatalogDesc getValidDesc() {
         var desc = new CatalogDesc();
         desc.setDescription("The new description.");
@@ -120,12 +125,12 @@ public class CatalogServiceUpdateTest {
         return desc;
     }
 
-    private Catalog getNewCatalog( final CatalogDesc desc ) {
+    private Catalog getNewCatalog(final CatalogDesc desc) {
         return factory.create(desc);
     }
 
     @SneakyThrows
-    private Catalog getCatalogFromValidDesc( final UUID id, final Catalog catalog ) {
+    private Catalog getCatalogFromValidDesc(final UUID id, final Catalog catalog) {
         final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, id);

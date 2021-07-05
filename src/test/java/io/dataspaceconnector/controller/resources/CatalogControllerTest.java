@@ -22,8 +22,8 @@ import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.view.CatalogViewAssembler;
 import io.dataspaceconnector.services.resources.CatalogService;
+import io.dataspaceconnector.view.CatalogViewAssembler;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -172,18 +172,6 @@ class CatalogControllerTest {
     }
 
     @Test
-    public void get_knownId_hasStatusCode200() {
-        /* ARRANGE */
-        // Nothing to arrange here.
-
-        /* ACT */
-        final var result = controller.get(catalogOne.getId());
-
-        /* ASSERT */
-        assertEquals(HttpStatus.OK.value(), result.getStatusCodeValue());
-    }
-
-    @Test
     public void get_knownId_getCatalog() {
         /* ARRANGE */
         final var catalogView = new CatalogViewAssembler().toModel(catalogOne);
@@ -192,7 +180,7 @@ class CatalogControllerTest {
         final var result = controller.get(catalogOne.getId());
 
         /* ASSERT */
-        assertEquals(catalogView, result.getBody());
+        assertEquals(catalogView, result);
     }
 
     /**

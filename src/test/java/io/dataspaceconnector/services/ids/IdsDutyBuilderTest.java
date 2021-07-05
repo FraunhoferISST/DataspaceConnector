@@ -15,25 +15,25 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.Constraint;
 import de.fraunhofer.iais.eis.DutyImpl;
 import de.fraunhofer.iais.eis.LeftOperand;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.services.ids.builder.IdsDutyBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -76,7 +76,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType()); //TODO always null for xsd:dateTimeStamp
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -102,7 +102,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -146,7 +146,7 @@ public class IdsDutyBuilderTest {
 
         assertEquals(1, idsRule.getConstraint().size());
         Constraint constraint = (Constraint) idsRule.getConstraint().get(0);
-//        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
+        assertEquals("xsd:dateTimeStamp", constraint.getRightOperand().getType());
         assertEquals("2020-07-11T00:00:00Z", constraint.getRightOperand().getValue());
         assertEquals(BinaryOperator.TEMPORAL_EQUALS, constraint.getOperator());
         assertEquals(LeftOperand.POLICY_EVALUATION_TIME, constraint.getLeftOperand());
@@ -178,6 +178,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"
@@ -186,7 +190,8 @@ public class IdsDutyBuilderTest {
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -204,13 +209,18 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithoutId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"ids:action\" : [ {\n"
                 + "      \"@id\" : \"idsc:DELETE\"\n"
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -228,6 +238,10 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithInvalidType() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Representation\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"
@@ -236,7 +250,8 @@ public class IdsDutyBuilderTest {
                 + "    } ],\n"
                 + "      \"ids:constraint\" : [ {\n"
                 + "        \"@type\" : \"ids:Constraint\",\n"
-                + "        \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "        \"@id\" : \"https://w3id" +
+                ".org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"
@@ -254,12 +269,17 @@ public class IdsDutyBuilderTest {
 
     private String getRuleWithMissingAction() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Duty\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/duty/770e6abb-dbe5-4ea3-bff5"
                 + "-aa4c29d29fb5\",\n"
                 + "    \"ids:constraint\" : [ {\n"
                 + "      \"@type\" : \"ids:Constraint\",\n"
-                + "      \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64-87fc"
+                + "      \"@id\" : \"https://w3id.org/idsa/autogen/constraint/f2acf67f-bc4c-4e64" +
+                "-87fc"
                 + "-499eec24bc57\",\n"
                 + "      \"ids:rightOperand\" : {\n"
                 + "        \"@value\" : \"2020-07-11T00:00:00Z\",\n"

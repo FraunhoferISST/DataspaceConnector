@@ -28,9 +28,11 @@ import okhttp3.Credentials;
 import okhttp3.HttpUrl;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -43,7 +45,7 @@ public class HttpService {
     /**
      * Service for building and sending http requests.
      */
-    private final @NonNull de.fraunhofer.isst.ids.framework.communication.http.HttpService
+    private final @NonNull de.fraunhofer.ids.messaging.protocol.http.HttpService
             httpSvc;
 
     /**
@@ -126,13 +128,14 @@ public class HttpService {
         final var targetUri = urlBuilder.build().uri();
 
         okhttp3.Response response;
-        if (args.getHeaders() == null) {
+        if (args.getHeaders() == null && args.getAuth() == null) {
             response = httpSvc.get(targetUri);
         } else {
             /*
                 Make a copy of the headers and insert sensitive data only into the copy.
              */
-            final var headerCopy = Map.copyOf(args.getHeaders());
+            final var headerCopy = args.getHeaders() == null
+                    ? new HashMap<String, String>() : new HashMap<>(args.getHeaders());
             if (args.getAuth() != null) {
                 headerCopy.put("Authorization",
                         Credentials.basic(args.getAuth().getFirst(), args.getAuth().getSecond()));
@@ -143,7 +146,10 @@ public class HttpService {
 
         final var output = new Response();
         output.setCode(response.code());
-        output.setBody(response.body().byteStream());
+        output.setBody(response.body() == null
+                ? InputStream.nullInputStream()
+                : new ByteArrayInputStream(response.body().bytes()));
+        response.close();
 
         return output;
     }
@@ -181,7 +187,7 @@ public class HttpService {
     private URL buildTargetUrl(final URL target, final String optional) {
         final var urlBuilder = HttpUrl.parse(target.toString()).newBuilder();
         if (optional != null) {
-            urlBuilder.addEncodedPathSegment(optional);
+            urlBuilder.addPathSegments(optional.startsWith("/") ? optional.substring(1) : optional);
         }
 
         return urlBuilder.build().url();

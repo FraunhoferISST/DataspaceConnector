@@ -15,15 +15,16 @@
  */
 package io.dataspaceconnector.model;
 
+import io.dataspaceconnector.utils.ErrorMessages;
+import io.dataspaceconnector.utils.MetadataUtils;
+import io.dataspaceconnector.utils.Utils;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.dataspaceconnector.utils.ErrorMessages;
-import io.dataspaceconnector.utils.MetadataUtils;
-import io.dataspaceconnector.utils.Utils;
+import java.util.Optional;
 
 /**
  * Base class for creating and updating resources.
@@ -59,9 +60,9 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     public static final String DEFAULT_LANGUAGE = "";
 
     /**
-     * The default licence assigned to all resources.
+     * The default license assigned to all resources.
      */
-    public static final URI DEFAULT_LICENCE = URI.create("");
+    public static final URI DEFAULT_LICENSE = URI.create("");
 
     /**
      * The default sovereign assigned to all resources.
@@ -117,18 +118,25 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasUpdatedKeywords = updateKeywords(resource, desc.getKeywords());
         final var hasUpdatedPublisher = updatePublisher(resource, desc.getPublisher());
         final var hasUpdatedLanguage = updateLanguage(resource, desc.getLanguage());
-        final var hasUpdatedLicence = updateLicence(resource, desc.getLicence());
+        final var hasUpdatedLicense = updateLicense(resource, desc.getLicense());
         final var hasUpdatedSovereign = updateSovereign(resource, desc.getSovereign());
         final var hasUpdatedEndpointDocs =
                 updateEndpointDocs(resource, desc.getEndpointDocumentation());
         final var hasUpdatedAdditional = updateAdditional(resource, desc.getAdditional());
+        final boolean hasUpdatedBootstrapId;
+        if (desc.getBootstrapId() != null) {
+            hasUpdatedBootstrapId =
+                    this.updateBootstrapId(resource, URI.create(desc.getBootstrapId()));
+        } else {
+            hasUpdatedBootstrapId = false;
+        }
 
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasChildUpdated || hasUpdatedTitle || hasUpdatedDesc
                                || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
-                               || hasUpdatedLicence || hasUpdatedSovereign || hasUpdatedEndpointDocs
-                               || hasUpdatedAdditional;
+                               || hasUpdatedLicense || hasUpdatedSovereign || hasUpdatedEndpointDocs
+                               || hasUpdatedAdditional || hasUpdatedBootstrapId;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);
@@ -217,17 +225,17 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
     }
 
     /**
-     * Update a resource's licence.
+     * Update a resource's license.
      * @param resource The resource.
-     * @param licence  The new licence.
-     * @return true if the resource's licence has been modified.
+     * @param license  The new license.
+     * @return true if the resource's license has been modified.
      */
-    protected final boolean updateLicence(final Resource resource, final URI licence) {
-        final var newLicence =
-                MetadataUtils.updateUri(resource.getLicence(), licence, DEFAULT_LICENCE);
-        newLicence.ifPresent(resource::setLicence);
+    protected final boolean updateLicense(final Resource resource, final URI license) {
+        final var newLicense = MetadataUtils.updateUri(resource.getLicense(),
+                license, DEFAULT_LICENSE);
+        newLicense.ifPresent(resource::setLicense);
 
-        return newLicence.isPresent();
+        return newLicense.isPresent();
     }
 
     /**
@@ -256,6 +264,23 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         newPublisher.ifPresent(resource::setEndpointDocumentation);
 
         return newPublisher.isPresent();
+    }
+
+    private boolean updateBootstrapId(final Resource resource, final URI bootstrapId) {
+        final Optional<URI> newBootstrapId;
+        if (bootstrapId == null && resource.getBootstrapId() == null) {
+            newBootstrapId = Optional.empty();
+        } else {
+            newBootstrapId = MetadataUtils
+                    .updateUri(
+                            resource.getBootstrapId(),
+                            bootstrapId,
+                            resource.getBootstrapId());
+        }
+
+        newBootstrapId.ifPresent(resource::setBootstrapId);
+
+        return newBootstrapId.isPresent();
     }
 
     private boolean updateAdditional(

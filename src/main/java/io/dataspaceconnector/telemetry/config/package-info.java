@@ -15,6 +15,6 @@
  */
 
 /**
- * This package contains the telementry configurations.
+ * This package contains the telemetry configurations.
  */
 package io.dataspaceconnector.telemetry.config;

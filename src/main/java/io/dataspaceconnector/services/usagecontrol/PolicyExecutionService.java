@@ -105,12 +105,16 @@ public class PolicyExecutionService {
      */
     public void reportDataAccess(final Rule rule, final URI element)
             throws PolicyExecutionException {
-        final var postDuty = ((Permission) rule).getPostDuty().get(0);
-        final var recipient = RuleUtils.getEndpoint(postDuty);
+        if (rule instanceof Permission) {
+            final var postDuty = ((Permission) rule).getPostDuty().get(0);
+            final var recipient = RuleUtils.getEndpoint(postDuty);
 
-        final var logItem = buildLog(element).toString();
+            final var logItem = buildLog(element).toString();
 
-        notificationService.sendMessage(URI.create(recipient), logItem);
+            notificationService.sendMessage(URI.create(recipient), logItem);
+        } else if (log.isWarnEnabled()) {
+                log.warn("Reporting data access is only supported for permissions.");
+        }
     }
 
     /**
@@ -122,10 +126,11 @@ public class PolicyExecutionService {
     private Map<String, Object> buildLog(final URI target) {
         final var id = connectorService.getConnectorId();
 
-        return new HashMap<>() {{
-            put("target", target);
-            put("issuerConnector", id);
-            put("accessed", new Date());
-        }};
+        final var output = new HashMap<String, Object>();
+        output.put("target", target);
+        output.put("issuerConnector", id);
+        output.put("accessed", new Date());
+
+        return output;
     }
 }

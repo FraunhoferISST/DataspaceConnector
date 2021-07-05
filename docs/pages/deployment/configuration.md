@@ -26,11 +26,11 @@ git clone https://github.com/International-Data-Spaces-Association/DataspaceConn
 The resource folder `resources/conf` provides three important files that are loaded at application start:
 
 * `keystore-localhost.p12`: The provided keystore, on the one hand, is used as IDS certificate that
-  is loaded by the IDS Framework for requesting a valid Dynamic Attribute Token (DAT) from the Dynamic
-  Attribute Provisioning Service (DAPS). Each message to an IDS participant needs to be signed with a
-  valid DAT. On the other hand, it can be used as SSL certificate for TLS encryption.
-* `truststore.p12`: The truststore is used by the IDS Framework for any HTTP/S communication. It
-  ensures the connection to trusted addresses.
+  is loaded by the IDS Messaging Services for requesting a valid Dynamic Attribute Token (DAT) from
+  the Dynamic Attribute Provisioning Service (DAPS). Each message to an IDS participant needs to be
+  signed with a valid DAT. On the other hand, it can be used as SSL certificate for TLS encryption.
+* `truststore.p12`: The truststore is used by the IDS Messaging Services for any HTTP/S
+  communication. It ensures the connection to trusted addresses.
 * `config.json`: The configuration is used to set important properties for IDS message handling.
 
 ## Step 1: Connector Properties
@@ -168,13 +168,13 @@ certificate, public certificates, and any IDS keystore that was provided by the 
 
 In the provided `config.json`, the `ids:connectorDeployMode` is set to `idsc:TEST_DEPLOYMENT`. This
 allows to use the `keystore-localhost.p12` as an IDS certificate. For testing purpose, the existing
-cert can be used, as on application start, the IDS Framework will not get a valid DAT from the DAPS
-and for received messages, the sent DAT will not be checked.
+cert can be used, as on application start, the IDS Messaging Services will not get a valid DAT from
+the DAPS and for received messages, the sent DAT will not be checked.
 
-To turn on the DAT checking, you need to set the `ids:connectorDeployMode` to 
-`idsc:PRODUCTIVE_DEPLOYMENT`. For getting a trusted certificate, contact 
-[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore with the IDS certificate 
-inside to the `resources/conf` and change the filename at `ids:keyStore` accordingly. In addition, 
+To turn on the DAT checking, you need to set the `ids:connectorDeployMode` to
+`idsc:PRODUCTIVE_DEPLOYMENT`. For getting a trusted certificate, contact
+[Gerd Brost](mailto:gerd.brost@aisec.fraunhofer.de). Add the keystore with the IDS certificate
+inside to the `resources/conf` and change the filename at `ids:keyStore` accordingly. In addition,
 set your connector id to uniquely identify your connector towards e.g. the IDS Metadata Broker:
 
 ```json
@@ -185,7 +185,7 @@ set your connector id to uniquely identify your connector towards e.g. the IDS M
 
 ---
 
-**Note**: The `TEST_DEPLOYMENT` mode and accepting a demo cert is for testing purposes only! 
+**Note**: The `TEST_DEPLOYMENT` mode and accepting a demo cert is for testing purposes only!
 This mode is a **security risk** and cannot ensure that the connector is talking to a verified IDS
 participant. Furthermore, messages from the Dataspace Connector without a valid IDS certificate
 may not be accepted by other Connector implementations and will not be accepted by the IDS Metadata
@@ -195,9 +195,9 @@ Broker running in the IDS lab.
 
 ## Step 3: General Settings (optional)
 
-The `application.properties` specifies several Spring Boot and IDS configurations. 
+The `application.properties` specifies several Spring Boot and IDS configurations.
 
-### Tomcat 
+### Tomcat
 
 To define on which port the connector should be running, change `server.port={PORT}`.
 
@@ -213,8 +213,8 @@ springdoc.swagger-ui.disable-swagger-default-url=true
 
 ### SSL
 
-If you want to add your own SSL certificate, check the corresponding path. As the provided 
-certificate only supports the application running at `localhost`, you may replace this with your 
+If you want to add your own SSL certificate, check the corresponding path. As the provided
+certificate only supports the application running at `localhost`, you may replace this with your
 IDS keystore, if you want to host the connector in a productive environment.
 
 ```properties
@@ -234,8 +234,8 @@ configuration.trustStorePassword
 
 ### Http Connections
 
-For customizing timeout settings for incoming and outgoing requests, you may customize the 
-following lines: 
+For customizing timeout settings for incoming and outgoing requests, you may customize the
+following lines:
 
 ```properties
 http.timeout.connect=10000
@@ -248,14 +248,14 @@ Not that either the call timeout is used, or the other three values.
 
 ### Authentication
 
-The application uses Spring Security. Each endpoint behind `/**`, needs a user 
+The application uses Spring Security. Each endpoint behind `/**`, needs a user
 authentication, except the open IDS endpoint at `/api/ids/data`.
 
 Have a look at the blocked endpoints in the `ConfigurationAdapter` class to add or change endpoints
 yourself. In case you don't want to provide authentication for your backend maintenance, feel free
 to remove the corresponding lines.
 
-For changing the default credentials, the properties are located at `spring.security.user.name` 
+For changing the default credentials, the properties are located at `spring.security.user.name`
 and `spring.security.user.password`.
 
 ### Database
@@ -298,7 +298,7 @@ Http tracing is disabled by default: `httptrace.enabled=false`.
 
 ### Jaeger
 
-If your want to access open telemetry, have a look at [this guide](build.md#docker). You can 
+If your want to access open telemetry, have a look at [this guide](build.md#docker). You can
 customize the deployment with these lines:
 
 ```properties
@@ -307,9 +307,18 @@ opentracing.jaeger.udp-sender.port=6831
 opentracing.jaeger.log-spans=true
 ```
 
+### Bootstrapping
+
+If you want to change the base path, which will be used to find properties and catalogs for bootstrapping,
+you can customize the following line:
+
+```properties
+bootstrap.path=.
+```
+
 ### IDS Settings
 
-URLs of the DAPS for IDS identity management and the Clearing House for contract agreement and data 
+URLs of the DAPS for IDS identity management and the Clearing House for contract agreement and data
 usage logging can be changed within the following lines:
 
 ```properties
@@ -329,7 +338,7 @@ policy.framework=INTERNAL
 ```
 
 Contract negotiation is enabled by default. This forces other Connectors to refer to a valid
-contract agreement when requesting data access via an `ArtifactRequestMessage`. If you want to 
+contract agreement when requesting data access via an `ArtifactRequestMessage`. If you want to
 deactivate the policy negotiation, as data provider or data consumer, use the following endpoints
 or the corresponding line within the `application.properties`.
 
@@ -340,8 +349,8 @@ the IDS policy language but not one of the supported patterns. As, by default, t
 the data consumer side would not allow accessing data whose policies cannot be enforced, you are
 able to ignore unsupported patterns with setting the boolean at the endpoint
 `/api/configuration/pattern` or the property `policy.allow-unsupported-patterns` in the
-`application.properties` to `true`. As a data consumer, you are bound to concluded contract 
-agreements that are technically mapped to IDS usage policies. Therefore, you have to ensure, that 
+`application.properties` to `true`. As a data consumer, you are bound to concluded contract
+agreements that are technically mapped to IDS usage policies. Therefore, you have to ensure, that
 your backend applications technically enforce the usage policies instead.
 
 ![Unsupported Pattern Settings](../../assets/images/pattern_settings.png)

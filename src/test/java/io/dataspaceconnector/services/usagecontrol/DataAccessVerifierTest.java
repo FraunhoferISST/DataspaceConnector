@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.BinaryOperator;
 import de.fraunhofer.iais.eis.ConstraintBuilder;
@@ -30,7 +26,7 @@ import de.fraunhofer.iais.eis.PermissionBuilder;
 import de.fraunhofer.iais.eis.util.RdfResource;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.Artifact;
@@ -41,6 +37,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -101,14 +101,14 @@ public class DataAccessVerifierTest {
         assertEquals(VerificationResult.DENIED, result);
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private ContractAgreement getContractAgreement() {
         return new ContractAgreementBuilder(URI.create("https://agreement.com"))
-                ._contractStart_(IDSUtils.getGregorianNow())
-                ._contractEnd_(IDSUtils.getGregorianNow())
+                ._contractStart_(IdsMessageUtils.getGregorianNow())
+                ._contractEnd_(IdsMessageUtils.getGregorianNow())
                 ._permission_(Util.asList(getPermission()))
 //                ._prohibition_(new ArrayList<>())
 //                ._obligation_(new ArrayList<>())
@@ -141,5 +141,4 @@ public class DataAccessVerifierTest {
         ReflectionTestUtils.setField(artifact, "remoteId", remoteId);
         return artifact;
     }
-
 }

@@ -25,8 +25,8 @@ import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageRequestException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
-import de.fraunhofer.isst.ids.framework.communication.http.InfomodelMessageBuilder;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.ids.messaging.util.InfomodelMessageBuilder;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import lombok.extern.log4j.Log4j2;
 import okhttp3.MultipartBody;
 import org.apache.commons.io.IOUtils;
@@ -203,7 +203,7 @@ public final class MessageUtils {
     }
 
     /**
-     * Extract the header part from the ids framework response.
+     * Extract the header part from the ids messaging services response.
      *
      * @param message The ids response message as map.
      * @return The ids header.
@@ -215,7 +215,7 @@ public final class MessageUtils {
     }
 
     /**
-     * Extract the payload part from the ids framework response.
+     * Extract the payload part from the ids messaging services response.
      *
      * @param message The ids response message as map.
      * @return The ids payload.
@@ -261,7 +261,7 @@ public final class MessageUtils {
         }
 
         // If request is empty, return rejection message.
-        if (content.equals("")) {
+        if (content.isEmpty()) {
             throw new MessageRequestException(ErrorMessages.MISSING_PAYLOAD.toString());
         }
 

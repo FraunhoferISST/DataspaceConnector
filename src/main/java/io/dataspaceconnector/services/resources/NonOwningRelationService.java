@@ -20,6 +20,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import io.dataspaceconnector.model.AbstractEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 
@@ -46,6 +49,8 @@ import org.springframework.data.domain.Pageable;
  * @param <T> The service type for the parent resource.
  * @param <X> The service type for the child resource.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public abstract class NonOwningRelationService<
         K extends AbstractEntity,
         W extends AbstractEntity,
@@ -72,7 +77,9 @@ public abstract class NonOwningRelationService<
     @Override
     public final void removeInternal(final UUID ownerId, final Set<UUID> entities) {
         final var set = Set.of(ownerId);
-        entities.stream().peek(id -> owningService.remove(id, set)).close();
+        for (final var id : entities) {
+            owningService.remove(id, set);
+        }
     }
 
     @Override
@@ -81,7 +88,11 @@ public abstract class NonOwningRelationService<
         final var allRelations =
                 getOneService().getAll(Pageable.unpaged()).stream().map(AbstractEntity::getId)
                                .collect(Collectors.toList());
-        allRelations.stream().peek(id -> owningService.remove(id, set)).close();
+
+        for (final var id : allRelations) {
+            owningService.remove(id, set);
+        }
+
         add(ownerId, entities);
     }
 }

@@ -40,17 +40,17 @@ public final class OfferedResource extends Resource {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The catalogs in which this resource is used.
+     */
+    @ManyToMany(mappedBy = "offeredResources")
+    private List<Catalog> catalogs;
+
+    /**
      * Default constructor.
      */
     protected OfferedResource() {
         super();
     }
-
-    /**
-     * The catalogs in which this resource is used.
-     */
-    @ManyToMany(mappedBy = "offeredResources")
-    private List<Catalog> catalogs;
 
     /**
      * {@inheritDoc}

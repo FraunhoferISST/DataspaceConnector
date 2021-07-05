@@ -2,7 +2,7 @@ name: docker-image
 
 on:
    push:
-    branches: [ master, develop ]
+    branches: [ main ]
     tags: 'v*'
    release:
      types: [published]
@@ -54,6 +54,15 @@ jobs:
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+      - name: Run vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:${{ steps.get_branch.outputs.BRANCH }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
       -
        name: Push tagged image
        run: |

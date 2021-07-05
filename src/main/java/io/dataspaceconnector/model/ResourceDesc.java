@@ -15,11 +15,11 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
+import java.util.List;
 
 /**
  * Base class for describing resources.
@@ -55,9 +55,9 @@ public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {
     private String language;
 
     /**
-     * The licence of the resource.
+     * The license of the resource.
      */
-    private URI licence;
+    private URI license;
 
     /**
      * The owner of the resource.
@@ -68,4 +68,10 @@ public class ResourceDesc<T extends Resource> extends AbstractDescription<T> {
      * The endpoint of the resource.
      */
     private URI endpointDocumentation;
+
+    /**
+     * Optional id which is used during bootstrapping.
+     */
+    private String bootstrapId;
+
 }

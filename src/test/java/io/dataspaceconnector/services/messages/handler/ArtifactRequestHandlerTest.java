@@ -15,24 +15,24 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageBuilder;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -45,7 +45,7 @@ class ArtifactRequestHandlerTest {
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
-        final var payload = new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper());
+        final var payload = new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper());
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage(null, payload);
@@ -73,7 +73,7 @@ class ArtifactRequestHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ArtifactRequestMessageImpl) message, null);
+        final var result = (ErrorResponse) handler.handleMessage((ArtifactRequestMessageImpl) message, null);
 
         /* ASSERT */
         assertEquals(RejectionReason.VERSION_NOT_SUPPORTED, result.getRejectionMessage().getRejectionReason());
@@ -98,7 +98,7 @@ class ArtifactRequestHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ArtifactRequestMessageImpl) message, null);
+        final var result = (ErrorResponse) handler.handleMessage((ArtifactRequestMessageImpl) message, null);
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -123,7 +123,7 @@ class ArtifactRequestHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ArtifactRequestMessageImpl) message, new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper()));
+        final var result = (ErrorResponse) handler.handleMessage((ArtifactRequestMessageImpl) message, new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());

@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.filter.httptracing;
 
-import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-
 import io.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,6 +26,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.nio.charset.StandardCharsets;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -78,9 +78,11 @@ public class HttpTraceFilterTest {
         final var parameterNames = Collections.enumeration(params.keySet());
         Mockito.doReturn(parameterNames).when(request).getParameterNames();
 
-        final var customServletIS = RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
+        final var customServletIS =
+                RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
         customServletIS.setAccessible(true);
-        final var requestBody = customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
+        final var requestBody =
+                customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
 
         Mockito.doReturn(requestBody).when(request).getInputStream();
         Mockito.doReturn(StandardCharsets.UTF_8.name()).when(request).getCharacterEncoding();
@@ -112,68 +114,4 @@ public class HttpTraceFilterTest {
         assertNull(responseTrace.getClient());
         assertNull(responseTrace.getParameterMap());
     }
-
-//    @Test
-//    public void doFilterInternal_validRequest_captureResponse() throws Exception {
-//        /* ARRANGE */
-//        final var headers = new HashMap<>();
-//        headers.put("SOME", "HEADER");
-//
-//        final var headerNames = Collections.enumeration(headers.keySet());
-//
-//        Mockito.doReturn(headerNames).when(request).getHeaderNames();
-//        Mockito.doReturn("/URI").when(request).getRequestURI();
-//        Mockito.doReturn("METHOD").when(request).getMethod();
-//        Mockito.doReturn("CLIENT").when(request).getRemoteAddr();
-//
-//        final var params = new HashMap<>();
-//        params.put("OTHER", "PARAMETER");
-//
-//        final var parameterNames = Collections.enumeration(params.keySet());
-//        Mockito.doReturn(parameterNames).when(request).getParameterNames();
-//
-//        final var customServletIS = RequestWrapper.class.getDeclaredClasses()[0].getDeclaredConstructor(byte[].class);
-//        customServletIS.setAccessible(true);
-//        final var requestBody = customServletIS.newInstance("BODY".getBytes(StandardCharsets.UTF_8));
-//
-//        Mockito.doReturn(requestBody).when(request).getInputStream();
-//        Mockito.doReturn(StandardCharsets.UTF_8.name()).when(request).getCharacterEncoding();
-//
-//        /*
-//         * BUILD RESPONSE
-//         */
-//
-//        final var responseHeaders = new HashMap<>();
-//        responseHeaders.put("SOMERESPONSE", "HEADERRESPONSE");
-//        final var responseHeaderNames = (Collection<?>) responseHeaders.keySet();
-//        Mockito.doReturn(responseHeaderNames).when(response).getHeaderNames();
-//        Mockito.doReturn("HEADERRESPONSE").when(response).getHeader(Mockito.eq("SOMERESPONSE"));
-//
-//        Mockito.doReturn(42).when(response).getStatus();
-//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8)).when(response).getContentAsByteArray();
-//        Mockito.doReturn("SOME BODY".getBytes(StandardCharsets.UTF_8).length).when(response).getBufferSize();
-//        Mockito.doReturn(StandardCharsets.UTF_8.toString()).when(response).getCharacterEncoding();
-//
-//        /* ACT */
-//        filter.doFilter(request, response, filterChain);
-//
-//        /* ASSERT */
-//        Mockito.verify(eventHandler, Mockito.times(2)).sendHttpTraceEvent(traceCaptor.capture());
-//        final var traces = traceCaptor.getAllValues();
-//
-//        assertEquals(2, traces.size());
-//
-//        final var requestTrace = traces.get(0);
-//        final var responseTrace = traces.get(1);
-//        assertEquals(responseTrace.getTraceId(), requestTrace.getTraceId());
-//        assertTrue(responseTrace.getTimestamp().isAfter(requestTrace.getTimestamp()));
-//        assertNull(responseTrace.getMethod());
-//        assertNull(responseTrace.getUrl());
-//        assertEquals("ERROR", responseTrace.getBody());
-//        assertEquals(1, responseTrace.getHeaders().size());
-//        assertEquals("HEADERRESPONSE", responseTrace.getHeaders().get("SOMERESPONSE"));
-//        assertEquals(42, responseTrace.getStatus());
-//        assertNull(responseTrace.getClient());
-//        assertNull(responseTrace.getParameterMap());
-//    }
 }

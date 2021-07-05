@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.services.ids.updater;
 
-import java.net.URI;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -32,6 +27,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -64,11 +64,12 @@ public class ArtifactUpdaterTest {
     public void update_entityUnknownRemoteId_throwsResourceNotFoundException() {
         /* ARRANGE */
         Mockito.doReturn(Optional.empty())
-               .when(artifactService)
-               .identifyByRemoteId(Mockito.eq(artifact.getId()));
+                .when(artifactService)
+                .identifyByRemoteId(Mockito.eq(artifact.getId()));
 
         /* ACT && ASSERT */
-        final var result = assertThrows(ResourceNotFoundException.class, () -> updater.update(artifact));
+        final var result = assertThrows(ResourceNotFoundException.class,
+                () -> updater.update(artifact));
         assertEquals(artifactId.toString(), result.getMessage());
     }
 
@@ -76,22 +77,22 @@ public class ArtifactUpdaterTest {
     public void update_knownId_returnUpdatedArtifact() {
         /* ARRANGE */
         Mockito.doReturn(Optional.of(artifactId))
-               .when(artifactService)
-               .identifyByRemoteId(Mockito.eq(artifact.getId()));
+                .when(artifactService)
+                .identifyByRemoteId(Mockito.eq(artifact.getId()));
 
         Mockito.doReturn(dscArtifact)
-               .when(artifactService)
-               .get(Mockito.eq(artifactId));
+                .when(artifactService)
+                .get(Mockito.eq(artifactId));
 
         Mockito.doReturn(dscUpdatedArtifact)
-               .when(artifactService)
-               .update(Mockito.eq(artifactId), Mockito.eq(template.getDesc()));
+                .when(artifactService)
+                .update(Mockito.eq(artifactId), Mockito.eq(template.getDesc()));
 
         /* ACT && ASSERT */
         final var result = updater.update(artifact);
         assertEquals(dscUpdatedArtifact, result);
         Mockito.verify(artifactService, Mockito.atLeastOnce()).update(Mockito.eq(artifactId),
-                                                                      Mockito.eq(template.getDesc()));
+                Mockito.eq(template.getDesc()));
     }
 
 
@@ -108,7 +109,7 @@ public class ArtifactUpdaterTest {
 
     private io.dataspaceconnector.model.Artifact getUpdatedDscArtifact() {
         final var output = new io.dataspaceconnector.model.ArtifactImpl();
-        ReflectionTestUtils.setField(output, "title",  "HELLO");
+        ReflectionTestUtils.setField(output, "title", "HELLO");
         return output;
     }
 
@@ -118,6 +119,7 @@ public class ArtifactUpdaterTest {
         output.getDesc().setRemoteId(URI.create("550e8400-e29b-11d4-a716-446655440000"));
         output.getDesc().setAutomatedDownload(false);
         output.getDesc().setAdditional(new ConcurrentHashMap<>());
+        output.getDesc().setBootstrapId("550e8400-e29b-11d4-a716-446655440000");
 
         return output;
     }

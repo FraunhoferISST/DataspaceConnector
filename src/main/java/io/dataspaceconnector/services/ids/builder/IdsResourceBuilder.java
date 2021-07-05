@@ -26,9 +26,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 /**
  * Converts DSC resource to ids resource.
  *
@@ -51,19 +48,17 @@ public final class IdsResourceBuilder<T extends Resource>
 
     @Override
     protected de.fraunhofer.iais.eis.Resource createInternal(final Resource resource,
-                                                             final URI baseUri,
                                                              final int currentDepth,
                                                              final int maxDepth)
             throws ConstraintViolationException {
         // Build children.
         final var representations =
-                create(repBuilder, resource.getRepresentations(), baseUri, currentDepth,
-                        maxDepth);
+                create(repBuilder, resource.getRepresentations(), currentDepth, maxDepth);
         final var contracts =
-                create(contractBuilder, resource.getContracts(), baseUri, currentDepth, maxDepth);
+                create(contractBuilder, resource.getContracts(), currentDepth, maxDepth);
 
         // Prepare resource attributes.
-        final var selfLink = getAbsoluteSelfLink(resource, baseUri);
+        final var selfLink = getAbsoluteSelfLink(resource);
         final var created = IdsUtils.getGregorianOf(resource.getCreationDate());
         final var modified = IdsUtils.getGregorianOf(resource.getModificationDate());
         final var description = resource.getDescription();
@@ -71,7 +66,7 @@ public final class IdsResourceBuilder<T extends Resource>
         final var idsLanguage = IdsUtils.getLanguage(resource.getLanguage());
         final var keywords = IdsUtils.getKeywordsAsTypedLiteral(resource.getKeywords(),
                 language);
-        final var license = resource.getLicence();
+        final var license = resource.getLicense();
         final var publisher = resource.getPublisher();
         final var sovereign = resource.getSovereign();
         final var title = resource.getTitle();
@@ -96,7 +91,7 @@ public final class IdsResourceBuilder<T extends Resource>
                 ._created_(created)
                 ._description_(Util.asList(new TypedLiteral(description, language)))
                 ._language_(Util.asList(idsLanguage))
-                ._keyword_((ArrayList<? extends TypedLiteral>) keywords)
+                ._keyword_(keywords)
                 ._modified_(modified)
                 ._publisher_(publisher)
                 ._resourceEndpoint_(Util.asList(endpoint))

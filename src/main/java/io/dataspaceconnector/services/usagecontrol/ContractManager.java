@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.usagecontrol;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementBuilder;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -32,7 +28,7 @@ import de.fraunhofer.iais.eis.ProhibitionImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -45,6 +41,10 @@ import io.dataspaceconnector.utils.RuleUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This service offers methods related to contract management.
@@ -78,6 +78,7 @@ public class ContractManager {
      *
      * @param agreementId       The id of the contract.
      * @param requestedArtifact The id of the artifact.
+     * @param issuer            The id of the issuer connector.
      * @return The contract agreement on successful validation.
      * @throws IllegalArgumentException  if contract agreement deserialization fails.
      * @throws ResourceNotFoundException if agreement could not be found.
@@ -85,13 +86,12 @@ public class ContractManager {
      *                                   artifact or is not confirmed.
      */
     public ContractAgreement validateTransferContract(
-            final URI agreementId, final URI requestedArtifact) throws IllegalArgumentException,
-            ResourceNotFoundException, ContractException {
+            final URI agreementId, final URI requestedArtifact, final URI issuer)
+            throws IllegalArgumentException, ResourceNotFoundException, ContractException {
         final var agreement = entityResolver.getAgreementByUri(agreementId);
         final var artifacts = dependencyResolver.getArtifactsByAgreement(agreement);
 
         final var valid = ContractUtils.isMatchingTransferContract(artifacts, requestedArtifact);
-        // TODO Add validation of issuer connector.
         if (!valid) {
             // If the requested artifact does not match the agreement, send rejection message.
             throw new ContractException("Transfer contract does not match the requested artifact.");
@@ -103,7 +103,15 @@ public class ContractManager {
                     + "agreement message to finish the negotiation sequence.");
         }
 
-        return deserializationService.getContractAgreement(agreement.getValue());
+        final var idsAgreement = deserializationService.getContractAgreement(agreement.getValue());
+
+        // Validation of issuer connector.
+        if (!idsAgreement.getConsumer().equals(issuer)) {
+            throw new ContractException("The issuer connector does not correspond to the signed "
+                    + "consumer.");
+        }
+
+        return idsAgreement;
     }
 
     /**
@@ -168,14 +176,14 @@ public class ContractManager {
     /**
      * Build contract agreement from contract request. Sign all rules as assigner.
      *
-     * @param request The contract request.
-     * @param id      ID to use when creating the contract agreement.
-     * @param issuer  The issuer connector id.
+     * @param request     The contract request.
+     * @param agreementId ID to use when creating the contract agreement.
+     * @param issuer      The issuer connector id.
      * @return The contract agreement.
      * @throws ConstraintViolationException If building a contract agreement fails.
      */
     public ContractAgreement buildContractAgreement(
-            final ContractRequest request, final URI id, final URI issuer)
+            final ContractRequest request, final URI agreementId, final URI issuer)
             throws ConstraintViolationException {
         final var connectorId = connectorService.getConnectorId();
 
@@ -200,10 +208,10 @@ public class ContractManager {
         }
 
         // Return contract request.
-        return new ContractAgreementBuilder(id)
+        return new ContractAgreementBuilder(agreementId)
                 ._consumer_(issuer)
-                ._contractDate_(IDSUtils.getGregorianNow())
-                ._contractStart_(IDSUtils.getGregorianNow())
+                ._contractDate_(IdsMessageUtils.getGregorianNow())
+                ._contractStart_(IdsMessageUtils.getGregorianNow())
                 ._contractEnd_(request.getContractEnd()) // TODO Improve calculation of contract
                 // end.
                 ._obligation_(obligations)

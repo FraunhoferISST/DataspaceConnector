@@ -18,6 +18,9 @@ package io.dataspaceconnector.services.messages.types;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
+import de.fraunhofer.ids.messaging.core.daps.ClaimsException;
+import de.fraunhofer.ids.messaging.protocol.http.IdsHttpService;
+import de.fraunhofer.ids.messaging.protocol.multipart.parser.MultipartParseException;
 import io.dataspaceconnector.exceptions.MessageBuilderException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.MessageException;
@@ -28,13 +31,14 @@ import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.ids.DeserializationService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MessageUtils;
-import de.fraunhofer.isst.ids.framework.communication.http.IDSHttpService;
-import de.fraunhofer.isst.ids.framework.daps.ClaimsException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,13 +48,15 @@ import java.util.Map;
  * @param <D> The type of the message description.
  */
 @Log4j2
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public abstract class AbstractMessageService<D extends MessageDesc> {
 
     /**
      * Service for ids communication.
      */
     @Autowired
-    private IDSHttpService idsHttpService;
+    private IdsHttpService idsHttpService;
 
     /**
      * Service for the current connector configuration.
@@ -62,7 +68,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * Service for ids deserialization.
      */
     @Autowired
-    private DeserializationService deserializationService;
+    private DeserializationService deserializer;
 
     /**
      * Build ids message with params.
@@ -88,19 +94,17 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      * @return The response as map.
      * @throws MessageException If message building, sending, or processing failed.
      */
-    public Map<String, String> send(final D desc, final Object payload)
-            throws MessageException {
+    public Map<String, String> send(final D desc, final Object payload) throws MessageException {
         try {
             final var recipient = desc.getRecipient();
             final var header = buildMessage(desc);
 
             final var body = MessageUtils.buildIdsMultipartMessage(header, payload);
             if (log.isDebugEnabled()) {
-                 // TODO Add logging house class
                 log.debug("Built request message. [body=({})]", body);
             }
 
-            // Send message and return response.
+            // Send message and return response. TODO Log outgoing messages.
             return idsHttpService.sendAndCheckDat(body, recipient);
         } catch (MessageBuilderException e) {
             if (log.isWarnEnabled()) {
@@ -120,13 +124,24 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.HEADER_BUILD_FAILED.toString(), e);
+        } catch (SocketTimeoutException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Gateway timeout when connecting to recipient. [exception=({})]",
+                        e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.GATEWAY_TIMEOUT.toString(), e);
         } catch (ClaimsException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Invalid DAT in incoming message. [exception=({})]",
                         e.getMessage(), e);
             }
             throw new MessageException(ErrorMessages.INVALID_RESPONSE_DAT.toString(), e);
-        } catch (FileUploadException | IOException e) {
+        } catch (MultipartParseException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Message could not be parsed. [exception=({})]", e.getMessage(), e);
+            }
+            throw new MessageException(ErrorMessages.MESSAGE_BUILD_FAILED.toString(), e);
+        } catch (IOException e) {
             if (log.isWarnEnabled()) {
                 log.warn("Message could not be sent. [exception=({})]", e.getMessage(), e);
             }
@@ -139,7 +154,7 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
      *
      * @param message The received message response.
      * @return True if the response type is as expected.
-     * @throws MessageResponseException If the response could not be read.
+     * @throws MessageResponseException if the ids response could not be read.
      */
     public boolean isValidResponseType(final Map<String, String> message)
             throws MessageResponseException {
@@ -166,22 +181,6 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
     }
 
     /**
-     * The ids message.
-     *
-     * @param message The message that should be validated.
-     * @throws MessageEmptyException        if the message is empty.
-     * @throws VersionNotSupportedException if the message version is not supported.
-     */
-    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
-            VersionNotSupportedException {
-        MessageUtils.checkForEmptyMessage(message);
-
-        final var modelVersion = MessageUtils.extractModelVersion(message);
-        final var inboundVersions = connectorService.getInboundModelVersion();
-        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
-    }
-
-    /**
      * If the response message is not of the expected type, message type, rejection reason, and the
      * payload are returned as an object.
      *
@@ -195,37 +194,33 @@ public abstract class AbstractMessageService<D extends MessageDesc> {
         final var header = MessageUtils.extractHeaderFromMultipartMessage(message);
         final var payload = MessageUtils.extractPayloadFromMultipartMessage(message);
 
-        final var idsMessage = deserializationService.getResponseMessage(header);
-        final var responseMap = new HashMap<String, Object>() {{
-            put("type", idsMessage.getClass());
-        }};
+        final var idsMessage = deserializer.getResponseMessage(header);
+        final var map = new HashMap<String, Object>();
+        map.put("type", idsMessage.getClass());
 
         // If the message is of type exception, add the reason to the response object.
         if (idsMessage instanceof RejectionMessage) {
             final var rejectionMessage = (RejectionMessage) idsMessage;
-            final var reason = MessageUtils.extractRejectionReason(rejectionMessage);
-            responseMap.put("reason", reason);
+            map.put("reason", MessageUtils.extractRejectionReason(rejectionMessage));
         }
 
-        responseMap.put("payload", payload);
-        return responseMap;
+        map.put("payload", payload);
+        return map;
     }
 
     /**
-     * Getter for ids connector service.
+     * The ids message.
      *
-     * @return The service class.
+     * @param message The message that should be validated.
+     * @throws MessageEmptyException        if the message is empty.
+     * @throws VersionNotSupportedException if the message version is not supported.
      */
-    public ConnectorService getConnectorService() {
-        return connectorService;
-    }
+    public void validateIncomingMessage(final Message message) throws MessageEmptyException,
+            VersionNotSupportedException {
+        MessageUtils.checkForEmptyMessage(message);
 
-    /**
-     * Getter for ids deserialization service.
-     *
-     * @return The service class.
-     */
-    public DeserializationService getDeserializer() {
-        return deserializationService;
+        final var modelVersion = MessageUtils.extractModelVersion(message);
+        final var inboundVersions = connectorService.getInboundModelVersion();
+        MessageUtils.checkForVersionSupport(modelVersion, inboundVersions);
     }
 }

@@ -21,13 +21,13 @@ package io.dataspaceconnector.model.config;
 public final class DatabaseConstants {
 
     /**
-     * Private constructor.
-     */
-    private DatabaseConstants() { }
-
-    /**
      * The maximum length of database columns containing URIs.
      */
     public static final int URI_COLUMN_LENGTH = 2048;
+
+    /**
+     * Private constructor.
+     */
+    private DatabaseConstants() { }
 
 }

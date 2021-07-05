@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ConfigurationModelBuilder;
@@ -37,8 +33,8 @@ import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.util.TypedLiteral;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.configuration.ConfigurationContainer;
-import de.fraunhofer.isst.ids.framework.daps.DapsTokenProvider;
+import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
+import de.fraunhofer.ids.messaging.core.daps.DapsTokenProvider;
 import io.dataspaceconnector.model.Catalog;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.services.ids.builder.IdsCatalogBuilder;
@@ -54,12 +50,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,7 +70,10 @@ import static org.mockito.Mockito.when;
 public class ConnectorServiceTest {
 
     @MockBean
-    private ConfigurationContainer configContainer;
+    private DeserializationService deserializationService;
+
+    @MockBean
+    private ConfigContainer configContainer;
 
     @MockBean
     private DapsTokenProvider tokenProvider;
@@ -98,7 +102,7 @@ public class ConnectorServiceTest {
 
         when(configContainer.getConnector()).thenReturn(connector);
         when(catalogService.getAll(Pageable.unpaged())).thenReturn(new PageImpl<>(List.of(catalog)));
-        when(catalogBuilder.create(catalog, 0)).thenReturn(idsCatalog);
+        when(catalogBuilder.create(eq(catalog), eq(0))).thenReturn(idsCatalog);
 
         /* ACT */
         final var result = connectorService.getConnectorWithOfferedResources();
@@ -158,7 +162,7 @@ public class ConnectorServiceTest {
         when(configContainer.getConnector()).thenReturn(getConnector());
         when(catalogService.getAll(Pageable.unpaged())).thenReturn(new PageImpl<>(List.of(catalog)));
         when(catalogBuilder.create(catalog, 0)).thenReturn(idsCatalog);
-        when(configContainer.getConfigModel()).thenReturn(configModel);
+        when(configContainer.getConfigurationModel()).thenReturn(configModel);
         doNothing().when(configContainer).updateConfiguration(any());
 
         /* ACT */
@@ -251,7 +255,8 @@ public class ConnectorServiceTest {
     }
 
     private ConfigurationModel getConfigModel() {
-        return new ConfigurationModelBuilder(URI.create("https://w3id.org/idsa/autogen/configModel/462e5a6a-7143-4453-9c5c-d2aba8c9aec1"))
+        return new ConfigurationModelBuilder(URI.create("https://w3id" +
+                ".org/idsa/autogen/configModel/462e5a6a-7143-4453-9c5c-d2aba8c9aec1"))
                 ._configurationModelLogLevel_(LogLevel.NO_LOGGING)
                 ._connectorDeployMode_(ConnectorDeployMode.TEST_DEPLOYMENT)
                 ._connectorStatus_(ConnectorStatus.CONNECTOR_ONLINE)

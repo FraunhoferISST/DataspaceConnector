@@ -18,6 +18,7 @@ package io.dataspaceconnector.utils;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.RepresentationBuilder;
 import de.fraunhofer.iais.eis.ResourceBuilder;
+import de.fraunhofer.iais.eis.ResourceCatalogBuilder;
 import de.fraunhofer.iais.eis.util.Util;
 import org.junit.jupiter.api.Test;
 
@@ -25,17 +26,32 @@ import java.net.URI;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TemplateUtilsTest {
+
+    @Test
+    public void getCatalogTemplate_validInput_returnCatalog() {
+        /* ARRANGE */
+        final var catalog = new ResourceCatalogBuilder().build();
+
+        /* ACT */
+        final var result = TemplateUtils.getCatalogTemplate(catalog);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertNotNull(result.getDesc());
+
+    }
 
     @Test
     public void getRepresentationTemplates_validInput_returnRepresentationList() {
         /* ARRANGE */
         final var requestedArtifact = URI.create("https://requestedArtifact");
         final var representation = new RepresentationBuilder()
-                ._instance_(Util.asList(new ArtifactBuilder(requestedArtifact).build(), new ArtifactBuilder().build()))
-                .build();
+                ._instance_(Util.asList(new ArtifactBuilder(requestedArtifact).build(),
+                        new ArtifactBuilder().build())).build();
         final var requestedArtifacts = List.of(requestedArtifact);
         final var download = true;
         final var remoteUrl = URI.create("https://remoteAddress");
@@ -44,8 +60,8 @@ class TemplateUtilsTest {
                 .build();
 
         /* ACT */
-        final var result = TemplateUtils
-                .getRepresentationTemplates(resource, requestedArtifacts, download, remoteUrl);
+        final var result = TemplateUtils.getRepresentationTemplates(
+                resource, requestedArtifacts, download, remoteUrl);
 
         /* ASSERT */
         assertEquals(1, result.size());
@@ -61,8 +77,8 @@ class TemplateUtilsTest {
         final var remoteUrl = URI.create("https://remoteAddress");
 
         /* ACT */
-        final var result = TemplateUtils.getRepresentationTemplates(resource,
-                requestedArtifacts, download, remoteUrl);
+        final var result = TemplateUtils.getRepresentationTemplates(
+                resource, requestedArtifacts, download, remoteUrl);
 
         /* ASSERT */
         assertEquals(0, result.size());
@@ -79,8 +95,8 @@ class TemplateUtilsTest {
         final var remoteUrl = URI.create("https://remoteAddress");
 
         /* ACT */
-        final var result = TemplateUtils.getArtifactTemplates(representation,
-                requestedArtifacts, download, remoteUrl);
+        final var result = TemplateUtils.getArtifactTemplates(
+                representation, requestedArtifacts, download, remoteUrl);
 
         /* ASSERT */
         assertEquals(0, result.size());
@@ -98,8 +114,8 @@ class TemplateUtilsTest {
         final var remoteUrl = URI.create("https://remoteAddress");
 
         /* ACT */
-        final var result = TemplateUtils.getArtifactTemplates(representation,
-                requestedArtifacts, download, remoteUrl);
+        final var result = TemplateUtils.getArtifactTemplates(
+                representation, requestedArtifacts, download, remoteUrl);
 
         /* ASSERT */
         assertEquals(1, result.size());
@@ -126,8 +142,8 @@ class TemplateUtilsTest {
         final var remoteUrl = URI.create("https://remoteAddress");
 
         /* ACT */
-        final var result = TemplateUtils.getArtifactTemplates(representation,
-                requestedArtifacts, download, remoteUrl);
+        final var result = TemplateUtils.getArtifactTemplates(
+                representation, requestedArtifacts, download, remoteUrl);
 
         /* ASSERT */
         assertEquals(0, result.size());

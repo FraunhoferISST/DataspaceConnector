@@ -24,6 +24,9 @@ import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +39,8 @@ import org.springframework.data.domain.Pageable;
  * @param <T> The service type for the parent resource.
  * @param <X> The service type for the child resource.
  */
+@Getter(AccessLevel.PROTECTED)
+@Setter(AccessLevel.NONE)
 public abstract class AbstractRelationService<K extends AbstractEntity, W extends AbstractEntity,
         T extends BaseEntityService<K, ?>, X extends BaseEntityService<W, ?>>
         implements RelationService<K, W, T, X> {
@@ -194,22 +199,4 @@ public abstract class AbstractRelationService<K extends AbstractEntity, W extend
      * @param entities list of the children's IDs.
      */
     protected abstract void replaceInternal(UUID ownerId, Set<UUID> entities);
-
-    /**
-     * Returns the service for managing the "one"-side of the one-to-many-relationship.
-     *
-     * @return the service.
-     */
-    protected final T getOneService() {
-        return oneService;
-    }
-
-    /**
-     * Returns the service for managing the "many"-side of the one-to-many-relationship.
-     *
-     * @return the service.
-     */
-    protected final X getManyService() {
-        return manyService;
-    }
 }

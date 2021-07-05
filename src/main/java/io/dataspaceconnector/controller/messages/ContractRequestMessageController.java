@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.controller.messages;
 
-import javax.persistence.PersistenceException;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import io.dataspaceconnector.exceptions.ContractException;
@@ -59,6 +52,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.persistence.PersistenceException;
+import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This controller provides the endpoint for sending a contract request message and starting the
@@ -126,8 +126,8 @@ public class ContractRequestMessageController {
      * @param ruleList     List of rules that should be used within a contract request.
      * @return The response entity.
      */
-    @PostMapping(value = "/contract")
-    @Operation(summary = "Send ids description request message")
+    @PostMapping("/contract")
+    @Operation(summary = "Send ids contract request message")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok"),
             @ApiResponse(responseCode = "201", description = "Created"),
@@ -136,18 +136,18 @@ public class ContractRequestMessageController {
             @ApiResponse(responseCode = "500", description = "Internal server error")})
     @PreAuthorize("hasPermission(#recipient, 'rw')")
     @ResponseBody
-    public ResponseEntity<Object> sendContractRequestMessage(
+    public ResponseEntity<Object> sendMessage(
             @Parameter(description = "The recipient url.", required = true)
             @RequestParam("recipient") final URI recipient,
             @Parameter(description = "List of ids resource that should be requested.")
-            @RequestParam(value = "resourceIds") final List<URI> resources,
+            @RequestParam("resourceIds") final List<URI> resources,
             @Parameter(description = "List of ids artifacts that should be requested.")
-            @RequestParam(value = "artifactIds") final List<URI> artifacts,
+            @RequestParam("artifactIds") final List<URI> artifacts,
 //            @Parameter(description = "Indicates whether the connector should listen on remote "
 //                    + "updates.") @RequestParam(value = "subscribe") final boolean subscribe,
             @Parameter(description = "Indicates whether the connector should automatically "
                     + "download data of an artifact.")
-            @RequestParam(value = "download") final boolean download,
+            @RequestParam("download") final boolean download,
             @Parameter(description = "List of ids rules with an artifact id as target.")
             @RequestBody final List<Rule> ruleList) {
         UUID agreementId;
@@ -254,7 +254,7 @@ public class ContractRequestMessageController {
         final var entity = agreementAsm.toModel(agreementService.get(agreementId));
 
         final var headers = new HttpHeaders();
-        headers.setLocation(entity.getLink("self").get().toUri());
+        headers.setLocation(entity.getRequiredLink("self").toUri());
 
         return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
     }

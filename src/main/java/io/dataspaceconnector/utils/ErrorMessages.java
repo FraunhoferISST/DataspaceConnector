@@ -131,6 +131,11 @@ public enum ErrorMessages {
     MESSAGE_NOT_SENT("Message could not be sent."),
 
     /**
+     * Multipart message could not be sent to recipient.
+     */
+    GATEWAY_TIMEOUT("Message could not be sent due to a timeout."),
+
+    /**
      * Header of multipart message is malformed.
      */
     MALFORMED_HEADER("Malformed message header."),
@@ -184,7 +189,6 @@ public enum ErrorMessages {
      * A policy restriction has been detected.
      */
     POLICY_RESTRICTION("Policy restriction detected.");
-
 
     /**
      * Holds the enums string.

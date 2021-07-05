@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.services;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.exceptions.InvalidResourceException;
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
@@ -49,14 +56,6 @@ import io.dataspaceconnector.utils.Utils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.io.InputStream;
-
 import org.springframework.stereotype.Service;
 
 /**
@@ -70,77 +69,92 @@ public class EntityResolver {
     /**
      * Service for artifacts.
      */
-    private final @NonNull ArtifactService artifactService;
+    private final @NonNull
+    ArtifactService artifactService;
 
     /**
      * Service for representations.
      */
-    private final @NonNull RepresentationService representationService;
+    private final @NonNull
+    RepresentationService representationService;
 
     /**
      * Service for offered resources.
      */
-    private final @NonNull ResourceService<OfferedResource, OfferedResourceDesc> offerService;
+    private final @NonNull
+    ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     /**
      * Service for catalogs.
      */
-    private final @NonNull CatalogService catalogService;
+    private final @NonNull
+    CatalogService catalogService;
 
     /**
      * Service for contract offers.
      */
-    private final @NonNull ContractService contractService;
+    private final @NonNull
+    ContractService contractService;
 
     /**
      * Service for contract rules.
      */
-    private final @NonNull RuleService ruleService;
+    private final @NonNull
+    RuleService ruleService;
 
     /**
      * Service for contract agreements.
      */
-    private final @NonNull AgreementService agreementService;
+    private final @NonNull
+    AgreementService agreementService;
 
     /**
      * Service for building ids objects.
      */
-    private final @NonNull IdsCatalogBuilder catalogBuilder;
+    private final @NonNull
+    IdsCatalogBuilder catalogBuilder;
 
     /**
      * Service for building ids resource.
      */
-    private final @NonNull IdsResourceBuilder<OfferedResource> offerBuilder;
+    private final @NonNull
+    IdsResourceBuilder<OfferedResource> offerBuilder;
 
     /**
      * Service for building ids artifact.
      */
-    private final @NonNull IdsArtifactBuilder artifactBuilder;
+    private final @NonNull
+    IdsArtifactBuilder artifactBuilder;
 
     /**
      * Service for building ids representation.
      */
-    private final @NonNull IdsRepresentationBuilder representationBuilder;
+    private final @NonNull
+    IdsRepresentationBuilder representationBuilder;
 
     /**
      * Service for building ids contract.
      */
-    private final @NonNull IdsContractBuilder contractBuilder;
+    private final @NonNull
+    IdsContractBuilder contractBuilder;
 
     /**
      * Skips the data access verification.
      */
-    private final @NonNull AllowAccessVerifier allowAccessVerifier;
+    private final @NonNull
+    AllowAccessVerifier allowAccessVerifier;
 
     /**
      * Performs a artifact requests.
      */
-    private final @NonNull BlockingArtifactReceiver artifactReceiver;
+    private final @NonNull
+    BlockingArtifactReceiver artifactReceiver;
 
     /**
      * Service for deserialization.
      */
-    private final @NonNull DeserializationService deserializationService;
+    private final @NonNull
+    DeserializationService deserializationService;
 
     /**
      * Return any connector entity by its id.
@@ -148,7 +162,7 @@ public class EntityResolver {
      * @param elementId The entity id.
      * @return The respective object.
      * @throws ResourceNotFoundException If the resource could not be found.
-     * @throws IllegalArgumentException If the resource is null or the elementId.
+     * @throws IllegalArgumentException  If the resource is null or the elementId.
      */
     public AbstractEntity getEntityById(final URI elementId) throws ResourceNotFoundException {
         Utils.requireNonNull(elementId, ErrorMessages.URI_NULL);
@@ -223,7 +237,7 @@ public class EntityResolver {
             }
         } catch (SelfLinkCreationException exception) {
             if (log.isWarnEnabled()) {
-                log.warn("Could not provide ids object. [entity=({}), exception=({})]",
+                log.warn("Could not create self-link. [entity=({}), exception=({})]",
                         entity, exception.getMessage(), exception);
             }
             throw exception;
@@ -260,13 +274,12 @@ public class EntityResolver {
     /**
      * Get agreement by remote id.
      *
-     * @param id The remote id (at provider side).
+     * @param agreementUri The remote id (at provider side).
      * @return The artifact of the database.
      * @throws ResourceNotFoundException If the resource could not be found.
      */
-    public Agreement getAgreementByUri(final URI id) throws ResourceNotFoundException {
-        final var uuid = EndpointUtils.getUUIDFromPath(id);
-        return agreementService.get(uuid);
+    public Agreement getAgreementByUri(final URI agreementUri) throws ResourceNotFoundException {
+        return agreementService.get(EndpointUtils.getUUIDFromPath(agreementUri));
     }
 
     /**

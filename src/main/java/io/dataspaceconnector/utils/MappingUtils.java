@@ -15,30 +15,36 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
 import de.fraunhofer.iais.eis.Artifact;
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.Contract;
 import de.fraunhofer.iais.eis.Representation;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.Rule;
 import io.dataspaceconnector.model.ArtifactDesc;
+import io.dataspaceconnector.model.CatalogDesc;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractRuleDesc;
+import io.dataspaceconnector.model.OfferedResourceDesc;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResourceDesc;
+import io.dataspaceconnector.model.ResourceDesc;
 import io.dataspaceconnector.model.templates.ArtifactTemplate;
+import io.dataspaceconnector.model.templates.CatalogTemplate;
 import io.dataspaceconnector.model.templates.ContractTemplate;
 import io.dataspaceconnector.model.templates.RepresentationTemplate;
 import io.dataspaceconnector.model.templates.ResourceTemplate;
 import io.dataspaceconnector.model.templates.RuleTemplate;
+
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Maps ids resources to internal resources.
@@ -53,14 +59,33 @@ public final class MappingUtils {
     }
 
     /**
-     * Map ids resource to connector resource.
+     * Map ids catalog to connector catalog.
      *
-     * @param resource The ids resource.
-     * @return The connector resource.
+     * @param catalog The ids catalog.
+     * @return The connector catalog.
      * @throws IllegalArgumentException if the passed resource is null.
      */
-    public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
+    public static CatalogTemplate fromIdsCatalog(final Catalog catalog) {
+        Utils.requireNonNull(catalog, ErrorMessages.ENTITY_NULL);
+
+        final var additional = new HashMap<String, String>();
+        if (catalog.getProperties() != null) {
+            catalog.getProperties().forEach((key, value) -> additional.put(key, value.toString()));
+        }
+
+        final var catalogDesc = new CatalogDesc();
+        catalogDesc.setAdditional(additional);
+        catalogDesc.setTitle("IDS Catalog");
+        catalogDesc.setDescription("This catalog is created from an IDS infomodel catalog.");
+        catalogDesc.setBootstrapId(catalog.getId().toString());
+
+        return new CatalogTemplate(catalogDesc, null, null);
+    }
+
+    private static Map<String, String> buildAdditionalForResource(final Resource resource) {
         Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var additional = propertiesToAdditional(resource.getProperties());
 
         final var periodicity = resource.getAccrualPeriodicity();
         final var contentPart = resource.getContentPart();
@@ -69,28 +94,17 @@ public final class MappingUtils {
         final var created = resource.getCreated();
         final var customLicense = resource.getCustomLicense();
         final var representation = resource.getDefaultRepresentation();
-        final var description = resource.getDescription();
-        final var resourceId = resource.getId();
-        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
-        final var language = resource.getLanguage();
         final var modified = resource.getModified();
-        final var publisher = resource.getPublisher();
         final var resourceEndpoint = resource.getResourceEndpoint();
         final var resourcePart = resource.getResourcePart();
         final var sample = resource.getSample();
         final var shapesGraph = resource.getShapesGraph();
-        final var sovereign = resource.getSovereign();
         final var spatialCoverage = resource.getSpatialCoverage();
-        final var standardLicense = resource.getStandardLicense();
         final var temporalCoverage = resource.getTemporalCoverage();
         final var temporalRes = resource.getTemporalResolution();
         final var theme = resource.getTheme();
-        final var title = resource.getTitle();
         final var variant = resource.getVariant();
         final var version = resource.getVersion();
-
-        // Add additional properties to map.
-        final var additional = propertiesToAdditional(resource.getProperties());
 
         if (periodicity != null) {
             additional.put("ids:accrualPeriodicity", periodicity.toRdf());
@@ -164,42 +178,76 @@ public final class MappingUtils {
             additional.put("ids:version", version);
         }
 
-        final var desc = new RequestedResourceDesc();
-        desc.setAdditional(additional);
-        desc.setRemoteId(resourceId);
+        return additional;
+    }
+
+    private static <T extends io.dataspaceconnector.model.Resource> void
+    fillResourceDesc(final ResourceDesc<T> desc, final Resource resource) {
+        final var description = resource.getDescription();
+        final var keywords = IdsUtils.getKeywordsAsString(resource.getKeyword());
+        final var language = resource.getLanguage();
+        final var publisher = resource.getPublisher();
+        final var sovereign = resource.getSovereign();
+        final var standardLicense = resource.getStandardLicense();
+        final var title = resource.getTitle();
+        final var resourceEndpoint = resource.getResourceEndpoint();
+
+        desc.setAdditional(buildAdditionalForResource(resource));
         desc.setKeywords(keywords);
         desc.setPublisher(publisher);
-        desc.setLicence(standardLicense);
+        desc.setLicense(standardLicense);
         desc.setSovereign(sovereign);
 
         if (description != null) {
-            if (description.size() == 1) {
-                desc.setDescription(description.get(0).toString());
-            } else {
-                desc.setDescription(description.toString());
-            }
+            desc.setDescription(description.size() == 1 ? description.get(0).toString()
+                    : description.toString());
         }
 
         if (title != null) {
-            if (title.size() == 1) {
-                desc.setTitle(title.get(0).toString());
-            } else {
-                desc.setTitle(title.toString());
-            }
+            desc.setTitle(title.size() == 1 ? title.get(0).toString() : title.toString());
         }
 
         if (language != null) {
-            if (language.size() == 1) {
-                desc.setLanguage(language.get(0).toString());
-            } else {
-                desc.setLanguage(language.toString());
-            }
+            desc.setLanguage(
+                    language.size() == 1 ? language.get(0).toString() : language.toString());
         }
 
         if (resourceEndpoint != null) {
             getFirstEndpointDocumentation(resourceEndpoint)
                     .ifPresent(desc::setEndpointDocumentation);
         }
+    }
+
+    /**
+     * Map ids resource to connector resource.
+     *
+     * @param resource The ids resource.
+     * @return The connector resource.
+     * @throws IllegalArgumentException if the passed resource is null.
+     */
+    public static ResourceTemplate<OfferedResourceDesc> fromIdsOfferedResource(
+            final Resource resource) {
+        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var desc = new OfferedResourceDesc();
+        fillResourceDesc(desc, resource);
+
+        return new ResourceTemplate<>(null, desc, null, null);
+    }
+
+    /**
+     * Map ids resource to connector resource.
+     *
+     * @param resource The ids resource.
+     * @return The connector resource.
+     * @throws IllegalArgumentException if the passed resource is null.
+     */
+    public static ResourceTemplate<RequestedResourceDesc> fromIdsResource(final Resource resource) {
+        Utils.requireNonNull(resource, ErrorMessages.ENTITY_NULL);
+
+        final var desc = new RequestedResourceDesc();
+        desc.setRemoteId(resource.getId());
+        fillResourceDesc(desc, resource);
 
         return new ResourceTemplate<>(null, desc, null, null);
     }
@@ -208,18 +256,14 @@ public final class MappingUtils {
      * Adds the string value of a given list as an additional property. If the list only contains
      * one element, the string value will not contain brackets.
      *
-     * @param list the list.
+     * @param list       the list.
      * @param additional the map of additional properties.
-     * @param key the map key to use.
+     * @param key        the map key to use.
      */
     private static void addListToAdditional(final List<?> list,
                                             final Map<String, String> additional,
                                             final String key) {
-        if (list.size() == 1) {
-            additional.put(key, list.get(0).toString());
-        } else {
-            additional.put(key, list.toString());
-        }
+        additional.put(key, list.size() == 1 ? list.get(0).toString() : list.toString());
     }
 
     /**
@@ -319,6 +363,9 @@ public final class MappingUtils {
         desc.setTitle(filename);
         desc.setAutomatedDownload(download);
         desc.setRemoteAddress(remoteUrl);
+        if (artifactId != null) {
+            desc.setBootstrapId(artifactId.toString());
+        }
 
         return new ArtifactTemplate(desc);
     }
@@ -353,16 +400,20 @@ public final class MappingUtils {
         desc.setProvider(provider);
         desc.setRemoteId(contractId);
 
-        try {
-            desc.setEnd(getDateOf(end.toXMLFormat()));
-        } catch (DateTimeParseException ignored) {
-            // Default values don't need to be set here.
+        if (end != null) {
+            try {
+                desc.setEnd(getDateOf(end.toXMLFormat()));
+            } catch (DateTimeParseException ignored) {
+                // Default values don't need to be set here.
+            }
         }
 
-        try {
-            desc.setStart(getDateOf(start.toXMLFormat()));
-        } catch (DateTimeParseException ignored) {
-            // Default values don't need to be set here.
+        if (start != null) {
+            try {
+                desc.setStart(getDateOf(start.toXMLFormat()));
+            } catch (DateTimeParseException ignored) {
+                // Default values don't need to be set here.
+            }
         }
 
         return new ContractTemplate(null, desc, null);
@@ -373,9 +424,9 @@ public final class MappingUtils {
      *
      * @param rule The ids rule.
      * @return The rule template.
-     * @throws IllegalArgumentException if the rule is null.
-     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
-     *         if the rule cannot be converted to string.
+     * @throws IllegalArgumentException                             if the rule is null.
+     * @throws io.dataspaceconnector.exceptions.RdfBuilderException if the rule cannot be
+     * converted to string.
      */
     public static RuleTemplate fromIdsRule(final Rule rule) {
         Utils.requireNonNull(rule, ErrorMessages.ENTITY_NULL);
@@ -418,7 +469,6 @@ public final class MappingUtils {
      *
      * @param calendar The time as string.
      * @return The new ZonedDateTime object.
-     * @throws DateTimeParseException if the string could not be converted.
      */
     public static ZonedDateTime getDateOf(final String calendar) {
         return ZonedDateTime.parse(calendar);

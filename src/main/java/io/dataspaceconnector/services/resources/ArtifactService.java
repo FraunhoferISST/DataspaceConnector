@@ -34,7 +34,10 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +56,8 @@ import java.util.UUID;
  */
 @Log4j2
 @Service
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.NONE)
 public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
         implements RemoteResolver {
     /**
@@ -102,7 +107,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
             }
 
             if (tmp.getData() instanceof LocalData) {
-                final var factory = ((ArtifactFactory) getFactory());
+                final var factory = (ArtifactFactory) getFactory();
                 factory.updateByteSize(artifact, ((LocalData) tmp.getData()).getValue());
             }
         }
@@ -123,14 +128,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final QueryInput queryInput)
             throws PolicyRestrictionException, IOException {
-        // TODO: Parameter Null checks
-
         /*
          * NOTE: Check if agreements with remoteIds are set for this artifact. If such agreements
          * exist the artifact must be assigned to a requested resource. The data access should
@@ -185,15 +189,13 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @throws io.dataspaceconnector.exceptions.ResourceNotFoundException
      *         if the artifact does not exist.
      * @throws IllegalArgumentException   if any of the parameters is null.
+     * @throws IOException if IO errors occurr.
      */
     @Transactional
     public InputStream getData(final PolicyVerifier<Artifact> accessVerifier,
                                final ArtifactRetriever retriever, final UUID artifactId,
                                final RetrievalInformation information)
             throws PolicyRestrictionException, IOException {
-
-        // TODO: Parameter Null checks
-
         // Check the artifact exists and access is granted.
         final var artifact = get(artifactId);
         if (accessVerifier.verify(artifact) == VerificationResult.DENIED) {
@@ -281,6 +283,7 @@ public class ArtifactService extends BaseEntityService<Artifact, ArtifactDesc>
      * @param data       The data container.
      * @param queryInput The query for the backend.
      * @return The stored data.
+     * @throws IOException if IO errors occurr.
      */
     private InputStream getData(final RemoteData data, final QueryInput queryInput)
             throws IOException {

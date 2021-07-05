@@ -26,7 +26,7 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.ContractRuleDesc;
 import io.dataspaceconnector.model.ContractRuleFactory;
 import io.dataspaceconnector.services.ids.builder.IdsPermissionBuilder;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,6 +153,10 @@ public class IdsPermissionBuilderTest {
 
     private String getRuleWithId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Permission\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
                 + "-89a7-73e7c560f3de\",\n"
@@ -172,6 +176,10 @@ public class IdsPermissionBuilderTest {
 
     private String getRuleWithoutId() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Permission\",\n"
                 + "    \"ids:description\" : [ {\n"
                 + "      \"@value\" : \"provide-access\",\n"
@@ -189,6 +197,10 @@ public class IdsPermissionBuilderTest {
 
     private String getRuleWithInvalidType() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Representation\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
                 + "-89a7-73e7c560f3de\",\n"
@@ -208,6 +220,10 @@ public class IdsPermissionBuilderTest {
 
     private String getRuleWithMissingAction() {
         return "{\n"
+                + "   \"@context\" : {\n"
+                + "      \"ids\" : \"https://w3id.org/idsa/core/\",\n"
+                + "      \"idsc\" : \"https://w3id.org/idsa/code/\"\n"
+                + "      },"
                 + "    \"@type\" : \"ids:Permission\",\n"
                 + "    \"@id\" : \"https://w3id.org/idsa/autogen/permission/ae138d4f-f01d-4358"
                 + "-89a7-73e7c560f3de\",\n"

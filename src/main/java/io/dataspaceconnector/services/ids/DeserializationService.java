@@ -15,15 +15,17 @@
  */
 package io.dataspaceconnector.services.ids;
 
+import de.fraunhofer.iais.eis.Catalog;
 import de.fraunhofer.iais.eis.ConfigurationModel;
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.InfrastructureComponent;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
+import de.fraunhofer.iais.eis.ResourceCatalog;
 import de.fraunhofer.iais.eis.ResponseMessage;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -185,7 +187,7 @@ public class DeserializationService {
         try {
             serializerProvider.getSerializer().deserialize(policy, tClass);
             isType = true;
-        } catch (IOException ignore) {
+        } catch (IOException expected) {
             // Intentionally empty
         }
 
@@ -209,6 +211,46 @@ public class DeserializationService {
                 log.warn("Could not deserialize agreement. [exception=({})]", e.getMessage(), e);
             }
             throw new IllegalArgumentException("Could not deserialize contract agreement.", e);
+        }
+    }
+
+    /**
+     * Deserialize string to ids catalog.
+     *
+     * @param catalog The catalog string.
+     * @return The ids catalog.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public Catalog getCatalog(final String catalog) throws IllegalArgumentException {
+        try {
+            return serializerProvider.getSerializer().deserialize(catalog,
+                    Catalog.class);
+        } catch (IOException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize catalog. [exception=({})]", e.getMessage(), e);
+            }
+            throw new IllegalArgumentException("Could not deserialize catalog.", e);
+        }
+    }
+
+    /**
+     * Deserialize string to ids resource catalog.
+     *
+     * @param catalog The catalog string.
+     * @return The ids catalog.
+     * @throws IllegalArgumentException If deserialization fails.
+     */
+    public ResourceCatalog getResourceCatalog(final String catalog)
+            throws IllegalArgumentException {
+        try {
+            return serializerProvider.getSerializer().deserialize(catalog,
+                    ResourceCatalog.class);
+        } catch (IOException e) {
+            if (log.isWarnEnabled()) {
+                log.warn("Could not deserialize resource catalog. [exception=({})]",
+                        e.getMessage(), e);
+            }
+            throw new IllegalArgumentException("Could not deserialize resource catalog.", e);
         }
     }
 

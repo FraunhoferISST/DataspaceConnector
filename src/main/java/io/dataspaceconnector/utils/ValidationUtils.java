@@ -15,9 +15,15 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.util.Map;
-
 import io.dataspaceconnector.model.QueryInput;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 /**
  * This class provides methods to validate values.
@@ -25,9 +31,16 @@ import io.dataspaceconnector.model.QueryInput;
 public final class ValidationUtils {
 
     /**
+     * The pattern for a date format.
+     */
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    /**
      * Utility class does not have to be instantiated.
      */
-    private ValidationUtils() { }
+    private ValidationUtils() {
+    }
 
     /**
      * Checks a given query input. If any of the keys or values in the headers or params maps are
@@ -78,4 +91,64 @@ public final class ValidationUtils {
         }
     }
 
+    /**
+     * Check if a value is a valid integer.
+     *
+     * @param string The input value.
+     * @return False if value is no valid integer.
+     */
+    public static boolean isValidInteger(final String string) {
+        try {
+            Integer.parseInt(string);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if a value is a valid duration.
+     *
+     * @param string The input value.
+     * @return False if value is no valid duration.
+     */
+    public static boolean isValidDuration(final String string) {
+        try {
+            Duration.parse(string);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Check if a value is a valid date.
+     *
+     * @param string The input value.
+     * @return False if value is no valid date.
+     */
+    public static boolean isInvalidDate(final String string) {
+        try {
+            SIMPLE_DATE_FORMAT.parse(string);
+            return false;
+        } catch (ParseException e) {
+            return true;
+        }
+    }
+
+    /**
+     * Check if a value is a valid uri.
+     *
+     * @param string The input value.
+     * @return False if value is no valid uri.
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean isInvalidUri(final String string) {
+        try {
+            URI.create(string).toURL();
+            return false;
+        } catch (IllegalArgumentException | MalformedURLException e) {
+            return true;
+        }
+    }
 }

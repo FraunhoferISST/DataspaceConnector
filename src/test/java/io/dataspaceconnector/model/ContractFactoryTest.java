@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.model;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.net.URI;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -416,75 +416,6 @@ public class ContractFactoryTest {
     }
 
     /**
-     * start.
-     */
-
-//    @Test
-//    public void create_nullStart_defaultStart() {
-//        /* ARRANGE */
-//        final var desc = new ContractDesc();
-//        desc.setStart(null);
-//
-//        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-//
-//        /* ACT */
-//        final var result = factory.create(desc);
-//
-//        /* ASSERT */
-//        assertTrue(now.before(result.getStart()));
-//    }
-//
-//    @Test
-//    public void update_differentStart_setStart() {
-//        /* ARRANGE */
-//        final var desc = new ContractDesc();
-//        desc.setStart(ZonedDateTime.now(ZoneOffset.UTC));
-//
-//        final var contract = factory.create(new ContractDesc());
-//
-//        /* ACT */
-//        factory.update(contract, desc);
-//
-//        /* ASSERT */
-//        assertEquals(desc.getStart(), contract.getStart());
-//    }
-//
-//    @Test
-//    public void update_differentStart_returnTrue() throws ParseException {
-//        /* ARRANGE */
-//        final var initialStartTime = ZonedDateTime.now(ZoneOffset.UTC);
-//        final var initialEndTime = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("20-Feb-2021 10:10:10");
-//
-//        final var initDesc = new ContractDesc();
-//        initDesc.setStart(initialStartTime);
-//        initDesc.setEnd(initialEndTime);
-//
-//        final var contract = factory.create(initDesc);
-//
-//        final var desc = new ContractDesc();
-//        desc.setStart(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse("15-Feb-2021 10:10:10"));
-//        desc.setEnd(initialEndTime);
-//
-//        /* ACT */
-//        final var result = factory.update(contract, desc);
-//
-//        /* ASSERT */
-//        assertTrue(result);
-//    }
-//
-//    @Test
-//    public void update_sameStart_returnFalse() {
-//        /* ARRANGE */
-//        final var contract = factory.create(new ContractDesc());
-//
-//        /* ACT */
-//        final var result = factory.update(contract, new ContractDesc());
-//
-//        /* ASSERT */
-//        assertFalse(result);
-//    }
-
-    /**
      * additional.
      */
     @Test
@@ -559,7 +490,8 @@ public class ContractFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ContractDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new ContractDesc()));
     }
 
     @Test
