@@ -62,5 +62,4 @@ public class RuleServiceTest {
         /* ASSERT */
         assertEquals(rules, result);
     }
-
 }

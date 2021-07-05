@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.agreement.Agreement;
@@ -34,14 +29,22 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {AgreementViewAssembler.class, ViewAssemblerHelper.class,
-        AgreementFactory.class})
+@SpringBootTest(classes = {
+        AgreementViewAssembler.class,
+        ViewAssemblerHelper.class,
+        AgreementFactory.class
+})
 public class AgreementViewAssemblerTest {
 
     @Autowired
@@ -53,11 +56,9 @@ public class AgreementViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = agreementViewAssembler.getSelfLink(null);
@@ -65,15 +66,14 @@ public class AgreementViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var agreementId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
@@ -90,8 +90,7 @@ public class AgreementViewAssemblerTest {
     @Test
     public void toModel_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> agreementViewAssembler.toModel(null));
+        assertThrows(IllegalArgumentException.class, () -> agreementViewAssembler.toModel(null));
     }
 
     @Test
@@ -121,9 +120,9 @@ public class AgreementViewAssemblerTest {
         assertEquals(getAgreementArtifactsLink(agreement.getId()), artifactsLink.get().getHref());
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Agreement getAgreement() {
         final var desc = new AgreementDesc();
@@ -142,8 +141,7 @@ public class AgreementViewAssemblerTest {
     }
 
     private String getAgreementLink(final UUID agreementId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.AgreementController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + agreementId;
@@ -153,5 +151,4 @@ public class AgreementViewAssemblerTest {
         return WebMvcLinkBuilder.linkTo(methodOn(RelationControllers.AgreementsToArtifacts.class)
                 .getResource(agreementId, null, null)).toString();
     }
-
 }

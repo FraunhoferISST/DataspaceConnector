@@ -21,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import static de.fraunhofer.ids.messaging.util.IdsMessageUtils.getGregorianNow;
 
 import org.junit.jupiter.api.Test;
 
@@ -55,11 +54,13 @@ import lombok.SneakyThrows;
 import org.springframework.test.util.ReflectionTestUtils;
 
 class RuleUtilsTest {
+
     @Test
     public void extractRulesFromContract_contractWithoutRules_returnEmptyList() {
         /* ARRANGE */
-        final var contract =
-                new ContractRequestBuilder()._contractStart_(getGregorianNow()).build();
+        final var contract = new ContractRequestBuilder()
+                ._contractStart_(getGregorianNow())
+                .build();
 
         /* ACT */
         final var result = ContractUtils.extractRulesFromContract(contract);
@@ -75,11 +76,11 @@ class RuleUtilsTest {
         final var prohibition = (Prohibition) getRuleTwo();
         final var obligation = (Duty) getRuleOne();
         final var contract = new ContractRequestBuilder()
-                                     ._contractStart_(getGregorianNow())
-                                     ._permission_(Util.asList(permission))
-                                     ._prohibition_(Util.asList(prohibition))
-                                     ._obligation_(Util.asList(obligation))
-                                     .build();
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
 
         /* ACT */
         final var result = ContractUtils.extractRulesFromContract(contract);
@@ -98,11 +99,11 @@ class RuleUtilsTest {
         final var prohibition = (Prohibition) getRuleTwo();
         final var obligation = (Duty) getRuleOne();
         final var contract = new ContractRequestBuilder()
-                                     ._contractStart_(getGregorianNow())
-                                     ._permission_(Util.asList(permission))
-                                     ._prohibition_(Util.asList(prohibition, prohibition))
-                                     ._obligation_(Util.asList(obligation))
-                                     .build();
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition, prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
 
         /* ACT */
         final var result = ContractUtils.extractRulesFromContract(contract);
@@ -120,8 +121,8 @@ class RuleUtilsTest {
         // Nothing to arrange here.
 
         /* ACT & ASSERT */
-        assertThrows(
-                IllegalArgumentException.class, () -> ContractUtils.extractRulesFromContract(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> ContractUtils.extractRulesFromContract(null));
     }
 
     @Test
@@ -132,11 +133,11 @@ class RuleUtilsTest {
         final var prohibition = getProhibitionWithTarget(null);
         final var obligation = getDutyWithTarget(null);
         final var contract = new ContractRequestBuilder()
-                                     ._contractStart_(getGregorianNow())
-                                     ._permission_(Util.asList(permission))
-                                     ._prohibition_(Util.asList(prohibition))
-                                     ._obligation_(Util.asList(obligation))
-                                     .build();
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
 
         /* ACT */
         final var result = ContractUtils.getRulesForTargetId(contract, target);
@@ -155,11 +156,11 @@ class RuleUtilsTest {
         final var prohibition2 = getProhibitionWithTarget(target);
         final var obligation = getDutyWithTarget(target);
         final var contract = new ContractRequestBuilder()
-                                     ._contractStart_(getGregorianNow())
-                                     ._permission_(Util.asList(permission))
-                                     ._prohibition_(Util.asList(prohibition, prohibition2))
-                                     ._obligation_(Util.asList(obligation))
-                                     .build();
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition, prohibition2))
+                ._obligation_(Util.asList(obligation))
+                .build();
 
         /* ACT */
         final var result = ContractUtils.getRulesForTargetId(contract, target);
@@ -179,11 +180,11 @@ class RuleUtilsTest {
         final var prohibition = getProhibitionWithTarget(null);
         final var obligation = getDutyWithTarget(null);
         final var contract = new ContractRequestBuilder()
-                                     ._contractStart_(getGregorianNow())
-                                     ._permission_(Util.asList(permission))
-                                     ._prohibition_(Util.asList(prohibition))
-                                     ._obligation_(Util.asList(obligation))
-                                     .build();
+                ._contractStart_(getGregorianNow())
+                ._permission_(Util.asList(permission))
+                ._prohibition_(Util.asList(prohibition))
+                ._obligation_(Util.asList(obligation))
+                .build();
 
         /* ACT */
         final var result = ContractUtils.getRulesForTargetId(contract, target);
@@ -272,8 +273,8 @@ class RuleUtilsTest {
     @Test
     public void compareRules_sameList_returnTrue() {
         /* ACT && ASSERT */
-        assertTrue(RuleUtils.compareRules(
-                Util.asList(getRuleOne(), getRuleTwo()), Util.asList(getRuleOne(), getRuleTwo())));
+        assertTrue(RuleUtils.compareRules(Util.asList(getRuleOne(), getRuleTwo()),
+                Util.asList(getRuleOne(), getRuleTwo())));
     }
 
     @Test
@@ -361,16 +362,16 @@ class RuleUtilsTest {
         final var maxAccess = 2;
 
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.COUNT)
-                                       ._operator_(BinaryOperator.EQ)
-                                       ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
-                                               URI.create("xsd:decimal")))
-                                       .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
+                        URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getMaxAccess(permission);
@@ -385,16 +386,16 @@ class RuleUtilsTest {
         final var maxAccess = 2;
 
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.COUNT)
-                                       ._operator_(BinaryOperator.LTEQ)
-                                       ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
-                                               URI.create("xsd:decimal")))
-                                       .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.LTEQ)
+                ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
+                        URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getMaxAccess(permission);
@@ -409,16 +410,16 @@ class RuleUtilsTest {
         final var maxAccess = 2;
 
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.COUNT)
-                                       ._operator_(BinaryOperator.LT)
-                                       ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
-                                               URI.create("xsd:decimal")))
-                                       .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.LT)
+                ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
+                        URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getMaxAccess(permission);
@@ -433,16 +434,16 @@ class RuleUtilsTest {
         final var maxAccess = Integer.MAX_VALUE + 1;
 
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.COUNT)
-                                       ._operator_(BinaryOperator.EQ)
-                                       ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
-                                               URI.create("xsd:decimal")))
-                                       .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
+                        URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getMaxAccess(permission);
@@ -455,16 +456,16 @@ class RuleUtilsTest {
     public void getMaxAccess_inputInvalidAccessNotInteger_throwNumberFormatException() {
         /* ARRANGE */
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.COUNT)
-                                       ._operator_(BinaryOperator.EQ)
-                                       ._rightOperand_(new RdfResource(
-                                               "I am not an integer.", URI.create("xsd:decimal")))
-                                       .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource(
+                        "I am not an integer.", URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(NumberFormatException.class, () -> RuleUtils.getMaxAccess(permission));
@@ -473,17 +474,16 @@ class RuleUtilsTest {
     @Test
     public void getMaxAccess_inputInvalidAccessNegative_returnZero() {
         /* ARRANGE */
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource("-3", URI.create("xsd:decimal")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource("-3", URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getMaxAccess(permission);
@@ -498,23 +498,22 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var maxAccess = 3;
 
-        final var constraint1 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                        ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
-                        .build();
+        final var constraint1 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                .build();
         final var constraint2 = new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.COUNT)
-                                        ._operator_(BinaryOperator.EQ)
-                                        ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
-                                                URI.create("xsd:decimal")))
-                                        .build();
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource(String.valueOf(maxAccess),
+                        URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint1, constraint2))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint1, constraint2))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(NumberFormatException.class, () -> RuleUtils.getMaxAccess(permission));
@@ -532,23 +531,21 @@ class RuleUtilsTest {
         final var startDate = "2021-01-01T00:00:00Z";
         final var endDate = "2022-01-01T00:00:00Z";
 
-        final var startConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
-        final var endConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.BEFORE)
-                        ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var startConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                .build();
+        final var endConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.BEFORE)
+                ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(startConstraint, endConstraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(startConstraint, endConstraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -561,17 +558,16 @@ class RuleUtilsTest {
     @Test
     public void getTimeInterval_inputInvalidWrongConstraintType_returnNull() throws ParseException {
         /* ARRANGE */
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                        ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -582,22 +578,20 @@ class RuleUtilsTest {
     }
 
     @Test
-    public void getTimeInterval_inputInvalidNoStartDate_returnCorrectOutput()
-            throws ParseException {
+    public void getTimeInterval_inputInvalidNoStartDate_returnCorrectOutput() throws ParseException {
         /* ARRANGE */
         final var endDate = "2022-01-01T00:00:00Z";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.BEFORE)
-                        ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.BEFORE)
+                ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -612,17 +606,16 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var startDate = "2021-01-01T00:00:00Z";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -639,23 +632,21 @@ class RuleUtilsTest {
         final var startDate = "2022-01-01T00:00:00Z";
         final var endDate = "2021-01-01T00:00:00Z";
 
-        final var startConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
-        final var endConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.BEFORE)
-                        ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var startConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                .build();
+        final var endConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.BEFORE)
+                ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(startConstraint, endConstraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(startConstraint, endConstraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -671,23 +662,21 @@ class RuleUtilsTest {
         final var startDate = "2021-01-01T00:00:00Z";
         final var endDate = "2022-01-01T00:00:00Z";
 
-        final var startConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.CONTAINS)
-                        ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
-        final var endConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.CONTAINS)
-                        ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var startConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.CONTAINS)
+                ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                .build();
+        final var endConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.CONTAINS)
+                ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(startConstraint, endConstraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(startConstraint, endConstraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -703,23 +692,21 @@ class RuleUtilsTest {
         final var startDate = "2021-01-01T00:00:00.000";
         final var endDate = "2022-01-01T00:00:00.000";
 
-        final var startConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.CONTAINS)
-                        ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
-        final var endConstraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.CONTAINS)
-                        ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var startConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.CONTAINS)
+                ._rightOperand_(new RdfResource(startDate, URI.create("xsd:dateTimeStamp")))
+                .build();
+        final var endConstraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.CONTAINS)
+                ._rightOperand_(new RdfResource(endDate, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(startConstraint, endConstraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(startConstraint, endConstraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getTimeInterval(permission);
@@ -740,17 +727,16 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var endpoint = "https://localhost:8000/notify";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ENDPOINT)
-                        ._operator_(BinaryOperator.DEFINES_AS)
-                        ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ENDPOINT)
+                ._operator_(BinaryOperator.DEFINES_AS)
+                ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
+                .build();
 
         final var duty = new DutyBuilder()
-                                 ._action_(Util.asList(Action.NOTIFY))
-                                 ._constraint_(Util.asList(constraint))
-                                 .build();
+                ._action_(Util.asList(Action.NOTIFY))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getEndpoint(duty);
@@ -763,17 +749,16 @@ class RuleUtilsTest {
     public void getEndpoint_inputInvalidWrongConstraintType_returnValue() {
         /* ARRANGE */
         final var value = "5";
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource(value, URI.create("xsd:decimal")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource(value, URI.create("xsd:decimal")))
+                .build();
 
         final var duty = new DutyBuilder()
-                                 ._action_(Util.asList(Action.NOTIFY))
-                                 ._constraint_(Util.asList(constraint))
-                                 .build();
+                ._action_(Util.asList(Action.NOTIFY))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getEndpoint(duty);
@@ -787,23 +772,21 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var endpoint = "https://localhost:8000/notify";
 
-        final var constraint1 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        .build();
-        final var constraint2 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ENDPOINT)
-                        ._operator_(BinaryOperator.DEFINES_AS)
-                        ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
-                        .build();
+        final var constraint1 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                .build();
+        final var constraint2 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ENDPOINT)
+                ._operator_(BinaryOperator.DEFINES_AS)
+                ._rightOperand_(new RdfResource(endpoint, URI.create("xsd:anyURI")))
+                .build();
 
         final var duty = new DutyBuilder()
-                                 ._action_(Util.asList(Action.NOTIFY))
-                                 ._constraint_(Util.asList(constraint1, constraint2))
-                                 .build();
+                ._action_(Util.asList(Action.NOTIFY))
+                ._constraint_(Util.asList(constraint1, constraint2))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getEndpoint(duty);
@@ -823,18 +806,17 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var pipEndpoint = URI.create("https://pip.com");
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        ._pipEndpoint_(pipEndpoint)
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                ._pipEndpoint_(pipEndpoint)
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getPipEndpoint(permission);
@@ -846,17 +828,16 @@ class RuleUtilsTest {
     @Test
     public void getPipEndpoint_inputInvalidConstraintHasNoPipEndpoint_returnNull() {
         /* ARRANGE */
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getPipEndpoint(permission);
@@ -876,17 +857,16 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var date = "2021-01-01T00:00:00Z";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getDate(permission);
@@ -898,17 +878,16 @@ class RuleUtilsTest {
     @Test
     public void getDate_inputInvalidWrongConstraintType_throwDateTimeParseException() {
         /* ARRANGE */
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.EQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.EQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
@@ -919,17 +898,16 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var date = "2021-01-01T00:00:00.000";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
@@ -939,16 +917,16 @@ class RuleUtilsTest {
     public void getDate_inputInvalidNotADate_throwDateTimeParseException() {
         /* ARRANGE */
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                       ._operator_(BinaryOperator.AFTER)
-                                       ._rightOperand_(new RdfResource(
-                                               "I am not a date.", URI.create("xsd:dateTimeStamp")))
-                                       .build();
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(
+                        "I am not a date.", URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
@@ -959,23 +937,21 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var date = "2021-01-01T00:00:00Z";
 
-        final var constraint1 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                        ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
-                        .build();
-        final var constraint2 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                        ._operator_(BinaryOperator.AFTER)
-                        ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
-                        .build();
+        final var constraint1 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource("P6M", URI.create("xsd:duration")))
+                .build();
+        final var constraint2 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                ._operator_(BinaryOperator.AFTER)
+                ._rightOperand_(new RdfResource(date, URI.create("xsd:dateTimeStamp")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint1, constraint2))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint1, constraint2))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDate(permission));
@@ -992,40 +968,38 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var duration = "PT1M30.5S";
 
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                        ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getDuration(permission);
 
         /* ASSERT */
-        assertEquals(
-                DatatypeFactory.newInstance().newDuration(duration).toString(), result.toString());
+        assertEquals(DatatypeFactory.newInstance().newDuration(duration).toString(),
+                result.toString());
     }
 
     @Test
     public void getDuration_inputInvalidWrongConstraintType_returnNull() {
         /* ARRANGE */
-        final var constraint =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.LTEQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        .build();
+        final var constraint = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.LTEQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT */
         final var result = RuleUtils.getDuration(permission);
@@ -1038,16 +1012,16 @@ class RuleUtilsTest {
     public void getDuration_inputInvalidNotADuration_throwDateTimeParseException() {
         /* ARRANGE */
         final var constraint = new ConstraintBuilder()
-                                       ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                                       ._operator_(BinaryOperator.SHORTER_EQ)
-                                       ._rightOperand_(new RdfResource(
-                                               "I am not a duration.", URI.create("xsd:duration")))
-                                       .build();
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource(
+                        "I am not a duration.", URI.create("xsd:duration")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint))
+                .build();
 
         /* ACT & ASSERT */
         assertThrows(DateTimeParseException.class, () -> RuleUtils.getDuration(permission));
@@ -1058,23 +1032,21 @@ class RuleUtilsTest {
         /* ARRANGE */
         final var duration = "P6M";
 
-        final var constraint1 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.COUNT)
-                        ._operator_(BinaryOperator.LTEQ)
-                        ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
-                        .build();
-        final var constraint2 =
-                new ConstraintBuilder()
-                        ._leftOperand_(LeftOperand.ELAPSED_TIME)
-                        ._operator_(BinaryOperator.SHORTER_EQ)
-                        ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
-                        .build();
+        final var constraint1 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.COUNT)
+                ._operator_(BinaryOperator.LTEQ)
+                ._rightOperand_(new RdfResource("5", URI.create("xsd:decimal")))
+                .build();
+        final var constraint2 = new ConstraintBuilder()
+                ._leftOperand_(LeftOperand.ELAPSED_TIME)
+                ._operator_(BinaryOperator.SHORTER_EQ)
+                ._rightOperand_(new RdfResource(duration, URI.create("xsd:duration")))
+                .build();
 
         final var permission = new PermissionBuilder()
-                                       ._action_(Util.asList(Action.USE))
-                                       ._constraint_(Util.asList(constraint1, constraint2))
-                                       .build();
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(constraint1, constraint2))
+                .build();
 
         /*ACT*/
         final var result = RuleUtils.getDuration(permission);
@@ -1086,30 +1058,24 @@ class RuleUtilsTest {
     @Test
     public void checkRuleForDeletion_shouldDelete_returnTrue() {
         /* ARRANGE */
-        final var expiredRule =
-                new PermissionBuilder()
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(
-                                new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.AFTER)
-                                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
-                                                URI.create("xsd:dateTimeStamp")))
-                                        .build()))
-                        ._postDuty_(Util.asList(
-                                new DutyBuilder()
-                                        ._action_(Util.asList(Action.DELETE))
-                                        ._constraint_(Util.asList(
-                                                new ConstraintBuilder()
-                                                        ._leftOperand_(
-                                                                LeftOperand.POLICY_EVALUATION_TIME)
-                                                        ._operator_(BinaryOperator.TEMPORAL_EQUALS)
-                                                        ._rightOperand_(new RdfResource(
-                                                                "2020-07-11T00:00:00Z",
-                                                                URI.create("xsd:dateTimeStamp")))
-                                                        .build()))
-                                        .build()))
-                        .build();
+        final var expiredRule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                        ._operator_(BinaryOperator.AFTER)
+                        ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                        .build()))
+                ._postDuty_(Util.asList(new DutyBuilder()
+                        ._action_(Util.asList(Action.DELETE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                ._operator_(BinaryOperator.TEMPORAL_EQUALS)
+                                ._rightOperand_(new RdfResource("2020-07-11T00:00:00Z",
+                                        URI.create("xsd:dateTimeStamp")))
+                                .build()))
+                        .build()))
+                .build();
 
         /* ACT && ASSERT */
         assertTrue(RuleUtils.checkRuleForDeletion(expiredRule.getPostDuty().get(0)));
@@ -1118,30 +1084,24 @@ class RuleUtilsTest {
     @Test
     public void checkRuleForDeletion_shouldNotDelete_returnFalse() {
         /* ARRANGE */
-        final var expiredRule =
-                new PermissionBuilder()
-                        ._action_(Util.asList(Action.USE))
-                        ._constraint_(Util.asList(
-                                new ConstraintBuilder()
-                                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
-                                        ._operator_(BinaryOperator.AFTER)
-                                        ._rightOperand_(new RdfResource("2050-07-11T00:00:00Z",
-                                                URI.create("xsd:dateTimeStamp")))
-                                        .build()))
-                        ._postDuty_(Util.asList(
-                                new DutyBuilder()
-                                        ._action_(Util.asList(Action.DELETE))
-                                        ._constraint_(Util.asList(
-                                                new ConstraintBuilder()
-                                                        ._leftOperand_(
-                                                                LeftOperand.POLICY_EVALUATION_TIME)
-                                                        ._operator_(BinaryOperator.TEMPORAL_EQUALS)
-                                                        ._rightOperand_(new RdfResource(
-                                                                "2050-07-11T00:00:00Z",
-                                                                URI.create("xsd:dateTimeStamp")))
-                                                        .build()))
-                                        .build()))
-                        .build();
+        final var expiredRule = new PermissionBuilder()
+                ._action_(Util.asList(Action.USE))
+                ._constraint_(Util.asList(new ConstraintBuilder()
+                        ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                        ._operator_(BinaryOperator.AFTER)
+                        ._rightOperand_(new RdfResource("2050-07-11T00:00:00Z",
+                                URI.create("xsd:dateTimeStamp")))
+                        .build()))
+                ._postDuty_(Util.asList(new DutyBuilder()
+                        ._action_(Util.asList(Action.DELETE))
+                        ._constraint_(Util.asList(new ConstraintBuilder()
+                                ._leftOperand_(LeftOperand.POLICY_EVALUATION_TIME)
+                                ._operator_(BinaryOperator.TEMPORAL_EQUALS)
+                                ._rightOperand_(new RdfResource("2050-07-11T00:00:00Z",
+                                        URI.create("xsd:dateTimeStamp")))
+                                .build()))
+                        .build()))
+                .build();
 
         /* ACT && ASSERT */
         assertFalse(RuleUtils.checkRuleForDeletion(expiredRule.getPostDuty().get(0)));
@@ -1165,9 +1125,9 @@ class RuleUtilsTest {
         assertFalse(RuleUtils.isExpired(expiration));
     }
 
-    /**
-     * Utilities
-     */
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     public Rule getRuleOne() {
         return new DutyBuilder()._action_(Util.asList(getActionOne())).build();

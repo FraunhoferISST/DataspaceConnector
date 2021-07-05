@@ -36,12 +36,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan({
-    "io.configmanager",
-    "de.fraunhofer.isst.ids.framework.messaging",
     "io.dataspaceconnector",
-    "de.fraunhofer.isst.ids.framework.communication",
-    "de.fraunhofer.isst.ids.framework.configuration",
-    "de.fraunhofer.isst.ids.framework.daps"
+    "io.configmanager",
+    "de.fraunhofer.ids.*",
+    "de.fraunhofer.ids.messaging.*"
 })
 public class ConnectorApplication {
 

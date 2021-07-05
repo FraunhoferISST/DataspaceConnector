@@ -23,12 +23,12 @@ functionalities in order to integrate them into an IDS data ecosystem. Furthermo
 to use the Dataspace Connector as a basis for the development of own software that is to be
 connected to an IDS data ecosystem.
 
-The Dataspace Connector uses the recent IDS Information Model version and the IDS Framework of
-Fraunhofer ISST for message handling with other IDS components. For managing datasets by means of
-their metadata as IDS resources, the Dataspace Connector provides a REST API. After an initial
-registration, IDS resources are persisted to an internal or external database of the connector.
-External data sources can be connected via REST endpoints, allowing the Dataspace Connector to act
-as an intermediary between the IDS data ecosystem and the actual data source.
+The Dataspace Connector uses the recent IDS Information Model version and the IDS Messaging Services
+for message handling with other IDS components. For managing datasets by
+means of their metadata as IDS resources, the Dataspace Connector provides a REST API. After an
+initial registration, IDS resources are persisted to an internal or external database of the
+connector. External data sources can be connected via REST endpoints, allowing the Dataspace
+Connector to act as an intermediary between the IDS data ecosystem and the actual data source.
 
 Following the requirements of the International Data Spaces, TLS-encrypted communication with other
 IDS connectors and, for example, communication with an IDS broker are supported in the context of an

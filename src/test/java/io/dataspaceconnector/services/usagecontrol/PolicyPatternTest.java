@@ -32,5 +32,4 @@ class PolicyPatternTest {
         /* ASSERT */
         assertEquals("PROVIDE_ACCESS", msg);
     }
-
 }

@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.services;
 
-import java.net.URI;
-import java.util.UUID;
-
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
@@ -50,6 +47,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -66,16 +66,16 @@ public class EntityResolverTest {
     private ResourceService<OfferedResource, OfferedResourceDesc> offerService;
 
     @MockBean
-    private  CatalogService catalogService;
+    private CatalogService catalogService;
 
     @MockBean
-    private  ContractService contractService;
+    private ContractService contractService;
 
     @MockBean
-    private  RuleService ruleService;
+    private RuleService ruleService;
 
     @MockBean
-    private  AgreementService agreementService;
+    private AgreementService agreementService;
 
     @MockBean
     private IdsCatalogBuilder catalogBuilder;
@@ -104,7 +104,7 @@ public class EntityResolverTest {
     @Autowired
     private EntityResolver resolver;
 
-    private UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
+    private final UUID resourceId = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
     @Test
     public void getEntityById_null_throwsResourceNotFoundException() {
@@ -132,7 +132,8 @@ public class EntityResolverTest {
     @Test
     public void getEntityById_validRepresentation_returnRepresentation() {
         /* ARRANGE */
-        final var resourceUri = URI.create("https://localhost:8080/api/representations/" + resourceId);
+        final var resourceUri =
+                URI.create("https://localhost:8080/api/representations/" + resourceId);
         final var resource = getRepresentation();
         Mockito.doReturn(resource).when(representationService).get(resourceId);
 
@@ -216,15 +217,16 @@ public class EntityResolverTest {
     @Test
     public void getEntityById_malformedAgreement_() {
         /* ARRANGE */
-        final var resourceUri = URI.create("https://localhost:8080/someWhereIdontKnow/" + resourceId);
+        final var resourceUri =
+                URI.create("https://localhost:8080/someWhereIdontKnow/" + resourceId);
 
         /* ACT && ASSERT */
         assertThrows(ResourceNotFoundException.class, () -> resolver.getEntityById(resourceUri));
     }
 
-    /**
-     * Utilities
-     */
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Artifact getArtifact() {
         final var output = new ArtifactImpl();
