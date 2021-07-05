@@ -69,7 +69,7 @@ public final class EndpointControllers {
         private final ConnectorEndpointViewAssembler connectorAssembler;
 
         @Autowired
-        private final PagedResourcesAssembler<? extends Endpoint> pagedAssembler;
+        private final PagedResourcesAssembler<Endpoint> pagedAssembler;
 
         private <K> RepresentationModel<?> toView(final K endpoint) {
             if (AppEndpoint.class.equals(endpoint.getClass())) {
@@ -83,9 +83,11 @@ public final class EndpointControllers {
             return genericAssembler.toModel((GenericEndpoint) endpoint);
         }
 
-        private <K extends Endpoint> PagedModel<?> toView(final Pageable pageable) {
+        private PagedModel<?> toView(final Pageable pageable) {
             final var objs = service.getAll(pageable);
-
+            if(objs.hasContent()){
+                    return pagedAssembler.toModel(objs);
+            }
             return PagedModel.empty();
         }
 
@@ -105,15 +107,7 @@ public final class EndpointControllers {
         @Override
         public PagedModel<Object> getAll(final Integer page, final Integer size) {
             final var pageable = Utils.toPageRequest(page, size);
-            final PagedModel<?> entities = toView(pageable);
-//            PagedModel<?> model;
-//            if (entities.hasContent()) {
-//                model = pagedAssembler.toModel(entities, assembler);
-//            } else {
-//                model = pagedAssembler.toEmptyModel(null, Endpoint.class);
-//            }
-
-            return null;
+            return (PagedModel<Object>) toView(pageable);
         }
 
         @Override
