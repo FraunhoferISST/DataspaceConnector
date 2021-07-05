@@ -5,9 +5,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Provide REST endpoint for full-text search at the IDS Broker: `/ids/search`.
+- Check if the issuer connector of an artifact request does correspond to the signed consumer of the
+  transfer contract.
 
 ### Changed
-- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.1.
+- Replace IDS Connector Framework v5.0.4 by IDS Messaging Services v4.1.1.2.
 - Edit response codes and response content for the following endpoints: `/ids/connector/unavailable`,
   `/ids/connector/update`, `/ids/resource/unavailable`, `/ids/resource/update`, `/ids/query`.
 - Move implementation for sending IDS query, connector, and resource messages to
@@ -18,13 +20,13 @@ All notable changes to this project will be documented in this file.
 
 ## [5.2.1] - 2021-07-02
 
-### Added
-- Make bootstrapping feature optional. It can be disabled in the `application.properties`.
-
 ### Changed
 - Increase spring-boot version to 2.5.2.
 - Increase checkstyle version to 8.44.
 - Increase pmd version to 6.36.0.
+
+### Fixed
+- Make bootstrapping feature optional. It can be enabled in the `application.properties`.
 
 ## [5.2.0] - 2021-06-23
 
