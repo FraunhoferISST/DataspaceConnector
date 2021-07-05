@@ -15,21 +15,56 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.net.URI;
 
 /**
  * Describes a subscriber. Use this for creating or updating a subscriber.
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SubscriberDesc extends AbstractDescription<Subscriber> {
+public class SubscriptionDesc extends AbstractDescription<Subscription> {
+
+    /**
+     * The id of the resource or artifact that the subscriber subscribed to.
+     * Note: Only used for request body.
+     */
+    @JsonIgnore
+    private URI target;
+
+    /**
+     * The status of the subscription.
+     */
+    private boolean enabled;
+
+    /**
+     * The title of the subscription.
+     */
+    private String title;
+
+    /**
+     * A description of the subscription.
+     */
+    private String description;
 
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
+
+    /**
+     * A connector or backend system identifier.
+     */
+    private URI subscriber;
+
+    /**
+     * Indicates whether the connector is the subscriber or publisher.
+     */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean active;
 
 }

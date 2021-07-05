@@ -15,15 +15,15 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-
-import io.dataspaceconnector.model.Subscriber;
+import io.dataspaceconnector.model.Subscription;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This class provides methods for handling subscriptions to a requested resource.
@@ -57,10 +57,10 @@ public class SubscriberNotificationService {
         }
 
         final var resource = resourceService.get(resourceId.get());
-        final var subscribers = (resource.getSubscribers() != null
-                ? new ArrayList<>(resource.getSubscribers()) : new ArrayList<Subscriber>())
+        final var subscribers = (resource.getSubscriptions() != null
+                ? new ArrayList<>(resource.getSubscriptions()) : new ArrayList<Subscription>())
                 .stream()
-                .map(Subscriber::getUrl)
+                .map(Subscription::getUrl)
                 .collect(Collectors.toList());
 
         if (!subscribers.isEmpty()) {

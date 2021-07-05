@@ -15,15 +15,6 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Map;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
 import io.dataspaceconnector.controller.resources.tags.ResourceNames;
@@ -44,8 +35,8 @@ import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RepresentationDesc;
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
-import io.dataspaceconnector.model.Subscriber;
-import io.dataspaceconnector.model.SubscriberDesc;
+import io.dataspaceconnector.model.Subscription;
+import io.dataspaceconnector.model.SubscriptionDesc;
 import io.dataspaceconnector.services.BlockingArtifactReceiver;
 import io.dataspaceconnector.services.resources.AgreementService;
 import io.dataspaceconnector.services.resources.ArtifactService;
@@ -55,7 +46,7 @@ import io.dataspaceconnector.services.resources.RepresentationService;
 import io.dataspaceconnector.services.resources.ResourceService;
 import io.dataspaceconnector.services.resources.RetrievalInformation;
 import io.dataspaceconnector.services.resources.RuleService;
-import io.dataspaceconnector.services.resources.SubscriberService;
+import io.dataspaceconnector.services.resources.SubscriptionService;
 import io.dataspaceconnector.services.usagecontrol.DataAccessVerifier;
 import io.dataspaceconnector.utils.ValidationUtils;
 import io.dataspaceconnector.view.AgreementView;
@@ -66,7 +57,7 @@ import io.dataspaceconnector.view.ContractView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RepresentationView;
 import io.dataspaceconnector.view.RequestedResourceView;
-import io.dataspaceconnector.view.SubscriberView;
+import io.dataspaceconnector.view.SubscriptionView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -87,6 +78,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceController}.
@@ -145,13 +145,13 @@ public final class ResourceControllers {
     }
 
     /**
-     * Offers the endpoints for managing subscribers.
+     * Offers the endpoints for managing subscriptions.
      */
     @RestController
-    @RequestMapping("/api/subscribers")
-    @Tag(name = "Subscribers", description = "Endpoints for CRUD operations on subscribers")
-    public static class SubscriberController extends BaseResourceController<Subscriber,
-            SubscriberDesc, SubscriberView, SubscriberService> {
+    @RequestMapping("/api/subscriptions")
+    @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
+    public static class SubscriptionController extends BaseResourceController<Subscription,
+            SubscriptionDesc, SubscriptionView, SubscriptionService> {
     }
 
     /**

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {SubscriberNotificationService.class, RequestedResourceFactory.class})
-public class SubscriberNotificationServiceTest {
+public class SubscriptionNotificationServiceTest {
 
     @MockBean
     private RequestedResourceService requestedResourceService;

@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -25,9 +23,11 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.Subscriber;
+import io.dataspaceconnector.model.Subscription;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * This class contains all implementations of {@link OwningRelationService} and
@@ -159,12 +159,12 @@ public final class RelationServices {
     }
 
     /**
-     * Handles the relation between subscribers and requested resources.
+     * Handles the relation between subscriptions and requested resources.
      */
     @Service
     @NoArgsConstructor
-    public static class SubscriberRequestedResourceLinker
-            extends NonOwningRelationService<Subscriber, RequestedResource, SubscriberService,
+    public static class SubscriptionRequestedResourceLinker
+            extends NonOwningRelationService<Subscription, RequestedResource, SubscriptionService,
             RequestedResourceService> {
 
         /**
@@ -174,8 +174,31 @@ public final class RelationServices {
          * @return the list of requested resources.
          */
         @Override
-        protected List<RequestedResource> getInternal(final Subscriber owner) {
-            return owner.getResources();
+        @SuppressWarnings("unchecked")
+        protected List<RequestedResource> getInternal(final Subscription owner) {
+            return (List<RequestedResource>) (List<?>) owner.getResources();
+        }
+    }
+
+    /**
+     * Handles the relation between subscriptions and offered resources.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class SubscriptionOfferedResourceLinker
+            extends NonOwningRelationService<Subscription, OfferedResource, SubscriptionService,
+            OfferedResourceService> {
+
+        /**
+         * Returns the list of requested resources owning a given subscriber.
+         *
+         * @param owner the subscriber whose requested resources should be received.
+         * @return the list of requested resources.
+         */
+        @Override
+        @SuppressWarnings("unchecked")
+        protected List<OfferedResource> getInternal(final Subscription owner) {
+            return (List<OfferedResource>) (List<?>) owner.getResources();
         }
     }
 
@@ -245,23 +268,44 @@ public final class RelationServices {
     }
 
     /**
-     * Handles the relation between requested resources and subscribers.
+     * Handles the relation between requested resources and subscriptions.
      */
     @Service
     @NoArgsConstructor
-    public static class RequestedResourceSubscriberLinker
-            extends OwningRelationService<RequestedResource, Subscriber,
-            RequestedResourceService, SubscriberService> {
+    public static class RequestedResourceSubscriptionLinker
+            extends OwningRelationService<RequestedResource, Subscription,
+            RequestedResourceService, SubscriptionService> {
 
         /**
-         * Returns the list of subscribers owned by a given requested resource.
+         * Returns the list of subscriptions owned by a given requested resource.
          *
-         * @param owner the requested resource whose subscribers should be received.
-         * @return the list of owned subscribers.
+         * @param owner the requested resource whose subscriptions should be received.
+         * @return the list of owned subscriptions.
          */
         @Override
-        protected List<Subscriber> getInternal(final RequestedResource owner) {
-            return owner.getSubscribers();
+        protected List<Subscription> getInternal(final RequestedResource owner) {
+            return owner.getSubscriptions();
+        }
+    }
+
+    /**
+     * Handles the relation between offered resources and subscriptions.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class OfferedResourceSubscriptionLinker
+            extends OwningRelationService<OfferedResource, Subscription,
+            OfferedResourceService, SubscriptionService> {
+
+        /**
+         * Returns the list of subscriptions owned by a given offered resource.
+         *
+         * @param owner the offered resource whose subscriptions should be received.
+         * @return the list of owned subscriptions.
+         */
+        @Override
+        protected List<Subscription> getInternal(final OfferedResource owner) {
+            return owner.getSubscriptions();
         }
     }
 }

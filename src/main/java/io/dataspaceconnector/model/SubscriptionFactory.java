@@ -15,71 +15,76 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.ArrayList;
-
 import io.dataspaceconnector.exceptions.InvalidEntityException;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+import java.util.ArrayList;
+
 /**
  * Creates and updates a subscriber.
  */
 @Component
-public class SubscriberFactory implements AbstractFactory<Subscriber, SubscriberDesc> {
+public class SubscriptionFactory implements AbstractFactory<Subscription, SubscriptionDesc> {
 
     /**
-     * Creates a new subscriber.
+     * Creates a new subscription.
      *
-     * @param desc The description of the new subscriber.
-     * @return the new subscriber.
+     * @param desc The description of the new subscription.
+     * @return the new subscription.
      * @throws IllegalArgumentException if desc is null.
      * @throws InvalidEntityException if no valid entity can be created from the description.
      */
     @Override
-    public Subscriber create(final SubscriberDesc desc) {
+    public Subscription create(final SubscriptionDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        final var subscriber = new Subscriber();
-        subscriber.setResources(new ArrayList<>());
+        final var subscription = new Subscription();
+        subscription.setResources(new ArrayList<>());
+        subscription.setSubscriber(desc.getSubscriber());
+        subscription.setEnabled(desc.isEnabled());
+        subscription.setUrl(desc.getUrl());
+        subscription.setTarget(desc.getTarget());
+        subscription.setActive(desc.isActive());
 
-        update(subscriber, desc);
+        update(subscription, desc);
 
-        return subscriber;
+        return subscription;
     }
 
     /**
-     * Updates a subscriber.
+     * Updates a subscription.
      *
-     * @param subscriber the subscriber to be updated.
-     * @param desc The new subscriber description.
-     * @return true, if the subscriber has been modified; false otherwise.
+     * @param subscription the subscription to be updated.
+     * @param desc The new subscription description.
+     * @return true, if the subscription has been modified; false otherwise.
      * @throws IllegalArgumentException if any of the parameters is null.
      * @throws InvalidEntityException if no valid entity can be created from the description.
      */
     @Override
-    public boolean update(final Subscriber subscriber, final SubscriberDesc desc) {
-        Utils.requireNonNull(subscriber, ErrorMessages.ENTITY_NULL);
+    public boolean update(final Subscription subscription, final SubscriptionDesc desc) {
+        Utils.requireNonNull(subscription, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        return updateUrl(subscriber, desc.getUrl());
+        return updateUrl(subscription, desc.getUrl());
     }
 
     /**
      * Updates the URL for a subscriber.
-     * @param subscriber the subscriber.
+     * @param subscription the subscriber.
      * @param url the new URL.
      * @return true, if the URL was updated; false otherwise.
      */
-    private boolean updateUrl(final Subscriber subscriber, final URI url) {
+    private boolean updateUrl(final Subscription subscription, final URI url) {
         if (url == null) {
             throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
         }
 
-        final var newUri = MetadataUtils.updateUri(subscriber.getUrl(), url, null);
-        newUri.ifPresent(subscriber::setUrl);
+        final var newUri = MetadataUtils.updateUri(subscription.getUrl(), url, null);
+        newUri.ifPresent(subscription::setUrl);
 
         return newUri.isPresent();
     }

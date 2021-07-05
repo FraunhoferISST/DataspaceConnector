@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.controller.resources;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.exceptions.MethodNotAllowed;
 import io.dataspaceconnector.controller.resources.tags.ResourceDescriptions;
 import io.dataspaceconnector.controller.resources.tags.ResourceNames;
@@ -31,7 +26,7 @@ import io.dataspaceconnector.model.ContractRule;
 import io.dataspaceconnector.model.OfferedResource;
 import io.dataspaceconnector.model.Representation;
 import io.dataspaceconnector.model.RequestedResource;
-import io.dataspaceconnector.model.Subscriber;
+import io.dataspaceconnector.model.Subscription;
 import io.dataspaceconnector.services.resources.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceContractLinker;
 import io.dataspaceconnector.services.resources.AbstractResourceRepresentationLinker;
@@ -44,7 +39,7 @@ import io.dataspaceconnector.view.ContractView;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RepresentationView;
 import io.dataspaceconnector.view.RequestedResourceView;
-import io.dataspaceconnector.view.SubscriberView;
+import io.dataspaceconnector.view.SubscriptionView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -55,6 +50,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceChildController}.
@@ -297,26 +297,50 @@ public final class RelationControllers {
     }
 
     /**
-     * Offers the endpoints for managing the relations between requested resources and subscribers.
+     * Offers the endpoints for managing the relations between requested resources and subscriptions.
      */
     @RestController
-    @RequestMapping("/api/requests/{id}/subscribers")
-    @Tag(name = "Resources", description = "Endpoints for linking subscribers to resources")
-    public static class RequestedResourcesToSubscribers
-            extends BaseResourceChildController<RelationServices.RequestedResourceSubscriberLinker,
-            Subscriber, SubscriberView> {
+    @RequestMapping("/api/requests/{id}/subscriptions")
+    @Tag(name = ResourceNames.REQUESTS, description = ResourceDescriptions.REQUESTS)
+    public static class RequestedResourcesToSubscriptions
+            extends BaseResourceChildController<RelationServices.RequestedResourceSubscriptionLinker,
+            Subscription, SubscriptionView> {
 
     }
 
     /**
-     * Offers the endpoints for managing the relations between subscribers and requested resources.
+     * Offers the endpoints for managing the relations between subscriptions and requested resources.
      */
     @RestController
-    @RequestMapping("/api/subscribers/{id}/requests")
-    @Tag(name = "Subscribers", description = "Endpoints for linking resources to subscribers")
-    public static class SubscribersToRequestedResources
-            extends BaseResourceChildController<RelationServices.SubscriberRequestedResourceLinker,
+    @RequestMapping("/api/subscriptions/{id}/requests")
+    @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
+    public static class SubscriptionsToRequestedResources
+            extends BaseResourceChildController<RelationServices.SubscriptionRequestedResourceLinker,
             RequestedResource, RequestedResourceView> {
+
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between offered resources and subscriptions.
+     */
+    @RestController
+    @RequestMapping("/api/offers/{id}/subscriptions")
+    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
+    public static class OfferedResourcesToSubscribers
+            extends BaseResourceChildController<RelationServices.OfferedResourceSubscriptionLinker,
+            Subscription, SubscriptionView> {
+
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between subscriptions and offered resources.
+     */
+    @RestController
+    @RequestMapping("/api/subscriptions/{id}/offers")
+    @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
+    public static class SubscriptionsToOfferedResources
+            extends BaseResourceChildController<RelationServices.SubscriptionOfferedResourceLinker,
+            OfferedResource, OfferedResourceView> {
 
     }
 }

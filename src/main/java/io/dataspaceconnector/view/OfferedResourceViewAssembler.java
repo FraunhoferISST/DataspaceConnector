@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers.OfferedResourceController;
 import io.dataspaceconnector.model.OfferedResource;
@@ -25,6 +23,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
@@ -65,6 +65,12 @@ public class OfferedResourceViewAssembler
                         .getResource(resource.getId(), null, null))
                         .withRel("catalogs");
         view.add(catalogLink);
+
+        final var subscriptionLink =
+                linkTo(methodOn(RelationControllers.OfferedResourcesToSubscriptions.class)
+                        .getResource(resource.getId(), null, null))
+                        .withRel("subscriptions");
+        view.add(subscriptionLink);
 
         return view;
     }

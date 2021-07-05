@@ -59,6 +59,11 @@ public final class ResourceDescriptions {
      */
     public static final String ARTIFACTS = "Endpoints for operations on artifacts";
 
+    /**
+     * Tag description for subscriptions.
+     */
+    public static final String SUBSCRIPTIONS = "Endpoints for operations on subscriptions";
+
     private ResourceDescriptions() {
         // Nothing to do here.
     }

@@ -103,7 +103,7 @@ public class ViewEqualsTests {
     @Test
     public void verifyEquals_subscriberView_passesVerification() {
         EqualsVerifier.simple()
-                .forClass(SubscriberView.class)
+                .forClass(SubscriptionView.class)
                 .withPrefabValues(Link.class, link1 ,link2)
                 .withNonnullFields("links")
                 .verify();

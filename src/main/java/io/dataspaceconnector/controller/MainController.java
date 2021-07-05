@@ -102,6 +102,8 @@ public class MainController {
                 .getAll(null, null)).withRel("requests"));
         model.add(linkTo(methodOn(ResourceControllers.RuleController.class)
                 .getAll(null, null)).withRel("rules"));
+        model.add(linkTo(methodOn(ResourceControllers.SubscriptionController.class)
+                .getAll(null, null)).withRel("subscriptions"));
 
         return ResponseEntity.ok(model);
     }

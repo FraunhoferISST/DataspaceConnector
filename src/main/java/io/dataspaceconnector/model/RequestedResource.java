@@ -56,12 +56,6 @@ public final class RequestedResource extends Resource {
     private URI remoteId;
 
     /**
-     * List of subscribers subscribed to updates for this resource.
-     */
-    @ManyToMany
-    private List<Subscriber> subscribers;
-
-    /**
      * The catalogs in which this resource is used.
      */
     @ManyToMany(mappedBy = "requestedResources")

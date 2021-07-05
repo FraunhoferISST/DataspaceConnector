@@ -118,6 +118,12 @@ public class Resource extends AbstractEntity {
     private List<Representation> representations;
 
     /**
+     * List of subscribers subscribed to updates for this resource.
+     */
+    @ManyToMany
+    private List<Subscription> subscriptions;
+
+    /**
      * The contracts available for the resource.
      */
     @ManyToMany

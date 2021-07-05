@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.services.resources;
+package io.dataspaceconnector.repositories;
 
-import io.dataspaceconnector.model.Subscriber;
-import io.dataspaceconnector.model.SubscriberDesc;
-import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Service;
+import io.dataspaceconnector.model.Subscription;
 
 /**
- * Handles the basic logic for subscribers.
+ * The repository containing all objects of type {@link Subscription}.
  */
-@Service
-@NoArgsConstructor
-public class SubscriberService extends BaseEntityService<Subscriber, SubscriberDesc> {
+public interface SubscriptionRepository extends BaseEntityRepository<Subscription> {
 }

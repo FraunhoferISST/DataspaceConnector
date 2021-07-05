@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SubscriberFactoryTest {
+public class SubscriptionFactoryTest {
 
-    private SubscriberFactory factory;
+    private SubscriptionFactory factory;
 
     private URI newUrl = URI.create("http://valid-url.com");
 
@@ -23,7 +23,7 @@ public class SubscriberFactoryTest {
 
     @BeforeEach
     public void init() {
-        this.factory = new SubscriberFactory();
+        this.factory = new SubscriptionFactory();
     }
 
     @Test
@@ -41,7 +41,7 @@ public class SubscriberFactoryTest {
         final var result = factory.create(desc);
 
         /* ASSERT */
-        assertEquals(Subscriber.class, result.getClass());
+        assertEquals(Subscription.class, result.getClass());
         assertEquals(desc.getUrl(), result.getUrl());
         assertNull(result.getCreationDate());
         assertNull(result.getModificationDate());
@@ -51,14 +51,14 @@ public class SubscriberFactoryTest {
     @Test
     public void create_descUrlNull_throwInvalidEntityException() {
         /* ACT  && ASSERT */
-        assertThrows(InvalidEntityException.class, () -> factory.create(new SubscriberDesc()));
+        assertThrows(InvalidEntityException.class, () -> factory.create(new SubscriptionDesc()));
     }
 
     @Test
     public void update_subscriberNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
         assertThrows(IllegalArgumentException.class,
-                () -> factory.update(null, new SubscriberDesc()));
+                () -> factory.update(null, new SubscriptionDesc()));
     }
 
     @Test
@@ -88,21 +88,21 @@ public class SubscriberFactoryTest {
     public void update_descUrlNull_throwInvalidEntityException() {
         /* ACT  && ASSERT */
         assertThrows(InvalidEntityException.class,
-                () -> factory.update(getSubscriber(), new SubscriberDesc()));
+                () -> factory.update(getSubscriber(), new SubscriptionDesc()));
     }
 
     /**************************************************************************
      * Utilities.
      *************************************************************************/
 
-    private SubscriberDesc getValidDesc() {
-        final var desc = new SubscriberDesc();
+    private SubscriptionDesc getValidDesc() {
+        final var desc = new SubscriptionDesc();
         desc.setUrl(newUrl);
         return desc;
     }
 
-    private Subscriber getSubscriber() {
-        final var subscriber = new Subscriber();
+    private Subscription getSubscriber() {
+        final var subscriber = new Subscription();
         ReflectionTestUtils.setField(subscriber, "url", initialUrl);
         return subscriber;
     }

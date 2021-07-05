@@ -34,7 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SubscriberNotificationRunnerTest {
+public class SubscriptionNotificationRunnerTest {
 
     @Mock
     private WebClient webClient;

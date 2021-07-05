@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,18 +23,24 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import java.net.URI;
+import java.util.List;
+
 /**
  * Represents a backend subscribed for updates to a requested resource.
  */
 @Entity
-@Table(name = "subscriber")
+@Table(name = "subscription")
 @SQLDelete(sql = "UPDATE resource SET deleted=true WHERE id=?")
 @Where(clause = "deleted = false")
 @Getter
 @Setter(AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
-public class Subscriber extends AbstractEntity {
+public class Subscription extends AbstractEntity {
 
     /**
      * Serial version uid.
@@ -48,14 +48,34 @@ public class Subscriber extends AbstractEntity {
     private static final long serialVersionUID = 1L;
 
     /**
+     * The id of the resource or artifact that the subscriber subscribed to.
+     */
+    private URI target;
+
+    /**
+     * The status of the subscription.
+     */
+    private boolean enabled;
+
+    /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
 
     /**
+     * Indicates whether the connector is the subscriber or publisher.
+     */
+    private boolean active;
+
+    /**
+     * A connector or backend system identifier.
+     */
+    private URI subscriber;
+
+    /**
      * List of requested resource this subscriber is subscribed to.
      */
-    @ManyToMany(mappedBy = "subscribers")
-    private List<RequestedResource> resources;
+    @ManyToMany(mappedBy = "subscriptions")
+    private List<Resource> resources;
 
 }

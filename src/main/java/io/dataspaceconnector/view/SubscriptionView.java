@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZonedDateTime;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,14 +22,18 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+import java.net.URI;
+import java.time.ZonedDateTime;
+import java.util.Map;
+
 /**
- * A DTO for controlled exposing of subscriber information in API responses.
+ * A DTO for controlled exposing of subscription information in API responses.
  */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@Relation(collectionRelation = "subscribers", itemRelation = "subscriber")
-public class SubscriberView extends RepresentationModel<SubscriberView> {
+@Relation(collectionRelation = "subscriptions", itemRelation = "subscription")
+public class SubscriptionView extends RepresentationModel<SubscriptionView> {
 
     /**
      * The creation date.
@@ -48,9 +48,29 @@ public class SubscriberView extends RepresentationModel<SubscriberView> {
     private ZonedDateTime modificationDate;
 
     /**
+     * The id of the resource or artifact that the subscriber subscribed to.
+     */
+    private URI target;
+
+    /**
+     * The status of the subscription.
+     */
+    private boolean enabled;
+
+    /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
+
+    /**
+     * Indicates whether the connector is the subscriber or publisher.
+     */
+    private boolean active;
+
+    /**
+     * A connector or backend system identifier.
+     */
+    private URI subscriber;
 
     /**
      * Additional properties.
