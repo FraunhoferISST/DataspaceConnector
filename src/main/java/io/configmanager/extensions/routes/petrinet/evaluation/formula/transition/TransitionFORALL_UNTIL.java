@@ -40,7 +40,6 @@ public class TransitionFORALL_UNTIL implements TransitionFormula {
     }
 
     //like EXIST_UNTIL but requires conditions for all paths
-    //TODO fix evaluation: use filtered paths
     @Override
     public boolean evaluate(final Node node, final List<List<Node>> paths) {
         if (!(node instanceof Transition)) {

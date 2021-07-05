@@ -33,10 +33,15 @@ public class ArcExpression {
     private ArcSubExpression subExpression;
 
     /**
-     * Information message to return when subExpression is not fulfilled by a transition.
+     * Information about expression, used when writing Formulas to String.
      */
     private String message;
 
+    /**
+     * @param subExpression SubExpression to be evaluated
+     * @param message Information about expression, used when writing Formulas to String
+     * @return ArcExpression containing SubExpression and Message
+     */
     public static ArcExpression arcExpression(final ArcSubExpression subExpression,
                                               final String message) {
         return new ArcExpression(subExpression, message);

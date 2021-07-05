@@ -33,10 +33,15 @@ public class NodeExpression {
     private NodeSubExpression subExpression;
 
     /**
-     * Information message to return when subExpression is not fulfilled by a transition.
+     * Information about expression, used when writing Formulas to String.
      */
     private String message;
 
+    /**
+     * @param nodeSubExpression SubExpression to be evaluated
+     * @param message Information about SubExpression, used when writing Formulas to String
+     * @return NodeExpression containing SubExpression and Message
+     */
     public static NodeExpression nodeExpression(final NodeSubExpression nodeSubExpression,
                                                 final String message) {
         return new NodeExpression(nodeSubExpression, message);

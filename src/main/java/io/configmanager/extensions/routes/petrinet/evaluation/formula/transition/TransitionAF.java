@@ -45,6 +45,6 @@ public class TransitionAF implements TransitionFormula {
 
     @Override
     public String writeFormula() {
-        return String.format("%s(%s)", symbol(), "expression");
+        return String.format("%s(%s)", symbol(), parameter.getMessage());
     }
 }

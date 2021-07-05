@@ -17,26 +17,28 @@ package io.configmanager.extensions.routes.petrinet.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Context of a transition (used for WFDU nets).
  */
 @Getter
+@Setter
 @AllArgsConstructor
 public class ContextObject {
-    private List<String> context;
-    private String read;
-    private String write;
-    private String erase;
+    private Set<String> context;
+    private Set<String> read;
+    private Set<String> write;
+    private Set<String> erase;
     private TransType type;
 
     public ContextObject deepCopy() {
-       return new ContextObject(context, read, write, erase, type);
-   }
+        return new ContextObject(context, read, write, erase, type);
+    }
 
     @Override
     public boolean equals(final Object o) {
