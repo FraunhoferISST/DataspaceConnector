@@ -15,15 +15,13 @@
  */
 package io.dataspaceconnector.services.messages.types;
 
-import java.net.URI;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageBuilder;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.MessageProcessedNotificationMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.MessageResponseException;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
@@ -32,7 +30,8 @@ import io.dataspaceconnector.utils.IdsUtils;
 import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Service;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
+import java.net.URI;
+import java.util.Map;
 
 /**
  * Message service for ids contract agreement messages.
@@ -42,7 +41,9 @@ public final class ContractAgreementService
         extends AbstractMessageService<ContractAgreementMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException if desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     *                                      when building the message.
      */
     @Override
     public Message buildMessage(final ContractAgreementMessageDesc desc)
@@ -57,7 +58,7 @@ public final class ContractAgreementService
         final var correlationMessage = desc.getCorrelationMessage();
 
         return new ContractAgreementMessageBuilder()
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)
@@ -79,8 +80,6 @@ public final class ContractAgreementService
      * @param agreement The contract agreement.
      * @return The response map.
      * @throws MessageException         if message handling failed.
-     * @throws io.dataspaceconnector.exceptions.RdfBuilderException
-     *         if the contract agreement rdf string could not be built.
      * @throws IllegalArgumentException if contract agreement is null.
      */
     public Map<String, String> sendMessage(final URI recipient, final ContractAgreement agreement)

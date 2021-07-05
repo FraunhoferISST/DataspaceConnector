@@ -368,7 +368,8 @@ public class ContractRuleFactoryTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> factory.update(null, new ContractRuleDesc()));
+        assertThrows(IllegalArgumentException.class, () -> factory.update(null,
+                new ContractRuleDesc()));
     }
 
     @Test

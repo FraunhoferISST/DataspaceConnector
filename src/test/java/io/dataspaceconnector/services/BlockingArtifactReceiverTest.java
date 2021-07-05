@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.services;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.exceptions.PolicyRestrictionException;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
@@ -31,6 +27,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.Base64Utils;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -58,8 +58,8 @@ public class BlockingArtifactReceiverTest {
         when(artifactService.get(any())).thenCallRealMethod();
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> blockingArtifactReceiver
-                .retrieve(null, recipient, transferContract, null));
+        assertThrows(IllegalArgumentException.class, () -> blockingArtifactReceiver.retrieve(
+                null, recipient, transferContract, null));
     }
 
     @Test
@@ -82,8 +82,8 @@ public class BlockingArtifactReceiverTest {
         when(messageService.validateResponse(response)).thenReturn(true);
 
         /* ACT */
-        final var result = blockingArtifactReceiver
-                .retrieve(artifactId, recipient, transferContract);
+        final var result = blockingArtifactReceiver.retrieve(
+                artifactId, recipient, transferContract);
 
         /* ASSERT */
         assertEquals(data, Base64Utils.encodeToString(result.readAllBytes()));
@@ -113,14 +113,13 @@ public class BlockingArtifactReceiverTest {
                 .retrieve(artifactId, recipient, transferContract));
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Artifact getArtifact() {
         final var artifact = new ArtifactImpl();
         ReflectionTestUtils.setField(artifact, "remoteId", URI.create("https://artifact.com"));
         return artifact;
     }
-
 }

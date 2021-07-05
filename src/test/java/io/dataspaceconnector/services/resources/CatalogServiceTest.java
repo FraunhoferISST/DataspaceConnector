@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.exceptions.ResourceNotFoundException;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
@@ -42,6 +37,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,14 +62,14 @@ class CatalogServiceTest {
 
     CatalogDesc catalogOneDesc = getCatalogOneDesc();
     CatalogDesc catalogTwoDesc = getCatalogTwoDesc();
-    Catalog     catalogOne     = getCatalogOne();
-    Catalog     catalogTwo  = getCatalogTwo();
+    Catalog catalogOne = getCatalogOne();
+    Catalog catalogTwo = getCatalogTwo();
 
     List<Catalog> catalogList = new ArrayList<>();
 
-    /**************************************************************************
-     * Setup
-     *************************************************************************/
+    /***********************************************************************************************
+     * Setup                                                                                       *
+     **********************************************************************************************/
 
     @BeforeEach
     public void init() {
@@ -78,11 +78,11 @@ class CatalogServiceTest {
         Mockito.when(repository.findById(Mockito.eq(catalogOne.getId())))
                 .thenReturn(Optional.of(catalogOne));
         Mockito.when(repository.findById(Mockito.eq(catalogTwo.getId())))
-               .thenReturn(Optional.of(catalogTwo));
+                .thenReturn(Optional.of(catalogTwo));
         Mockito.when(repository.saveAndFlush(Mockito.eq(catalogOne)))
                 .thenReturn(catalogOne);
         Mockito.when(repository.saveAndFlush(Mockito.eq(catalogTwo)))
-               .thenReturn(catalogTwo);
+                .thenReturn(catalogTwo);
 
         Mockito.when(repository.saveAndFlush(Mockito.any())).thenAnswer(this::saveAndFlushMock);
         Mockito.when(repository.findById(AdditionalMatchers.not(Mockito.eq(catalogOne.getId()))))
@@ -96,17 +96,17 @@ class CatalogServiceTest {
         Mockito.doAnswer(this::deleteByIdMock).when(repository).deleteById(Mockito.isA(UUID.class));
     }
 
-    private static Page<Catalog> toPage( final List<Catalog> catalogList, final Pageable pageable ) {
-        return new PageImpl<>(
-                catalogList.subList(0, catalogList.size()), pageable, catalogList.size());
+    private static Page<Catalog> toPage(final List<Catalog> catalogList, final Pageable pageable) {
+        return new PageImpl<>(catalogList.subList(0, catalogList.size()), pageable,
+                catalogList.size());
     }
 
-    private Page<Catalog> findAllMock( final InvocationOnMock invocation ) {
+    private Page<Catalog> findAllMock(final InvocationOnMock invocation) {
         return toPage(catalogList, invocation.getArgument(0));
     }
 
     @SneakyThrows
-    private Catalog saveAndFlushMock( final InvocationOnMock invocation ) {
+    private Catalog saveAndFlushMock(final InvocationOnMock invocation) {
         final var obj = (Catalog) invocation.getArgument(0);
         ReflectionTestUtils.setField(obj, "id", UUID.randomUUID());
 
@@ -114,15 +114,15 @@ class CatalogServiceTest {
         return obj;
     }
 
-    private Answer<?> deleteByIdMock( final InvocationOnMock invocation ) {
+    private Answer<?> deleteByIdMock(final InvocationOnMock invocation) {
         final var obj = (UUID) invocation.getArgument(0);
         catalogList.removeIf(x -> x.getId().equals(obj));
         return null;
     }
 
-    /**************************************************************************
-     * create
-     *************************************************************************/
+    /***********************************************************************************************
+     * create                                                                                      *
+     **********************************************************************************************/
 
     @Test
     public void create_nullDesc_throwIllegalArgumentException() {
@@ -168,9 +168,9 @@ class CatalogServiceTest {
         assertEquals(beforeCount + 1, service.getAll(Pageable.unpaged()).getSize());
     }
 
-    /**************************************************************************
-     * update
-     *************************************************************************/
+    /***********************************************************************************************
+     * update                                                                                      *
+     **********************************************************************************************/
 
     @Test
     public void update_nullDesc_throwIllegalArgumentException() {
@@ -178,8 +178,8 @@ class CatalogServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(
-                IllegalArgumentException.class, () -> service.update(catalogOne.getId(), null));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.update(catalogOne.getId(), null));
     }
 
     @Test
@@ -200,9 +200,9 @@ class CatalogServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> service.get(unknownUuid));
     }
 
-    /**************************************************************************
-     * get
-     *************************************************************************/
+    /***********************************************************************************************
+     * get                                                                                         *
+     **********************************************************************************************/
 
     @Test
     public void get_nullId_throwIllegalArgumentException() {
@@ -228,13 +228,16 @@ class CatalogServiceTest {
         final var unknownUuid = UUID.fromString("550e8400-e29b-11d4-a716-446655440000");
 
         /* ACT && ASSERT */
-        final var msg = assertThrows(ResourceNotFoundException.class, () -> service.get(unknownUuid));
-        assertEquals(service.getClass().getSimpleName() + ": " + unknownUuid.toString(), msg.getMessage());
+        final var msg = assertThrows(ResourceNotFoundException.class,
+                () -> service.get(unknownUuid));
+        assertEquals(service.getClass().getSimpleName() + ": " + unknownUuid.toString(),
+                msg.getMessage());
     }
 
-    /**************************************************************************
+    /***********************************************************************************************
      * getAll
-     *************************************************************************/
+     * *
+     **********************************************************************************************/
 
     @Test
     public void getAll_null_throwsIllegalArgumentException() {
@@ -245,9 +248,9 @@ class CatalogServiceTest {
         assertThrows(IllegalArgumentException.class, () -> service.getAll(null));
     }
 
-    /**************************************************************************
-     * doesExist
-     *************************************************************************/
+    /***********************************************************************************************
+     * doesExist                                                                                   *
+     **********************************************************************************************/
 
     @Test
     public void doesExist_null_throwIllegalArgumentException() {
@@ -277,9 +280,9 @@ class CatalogServiceTest {
     }
 
 
-    /**************************************************************************
+    /***********************************************************************************************
      * delete
-     *************************************************************************/
+     **********************************************************************************************/
 
     @Test
     public void delete_nullId_throwsIllegalArgumentException() {
@@ -315,8 +318,8 @@ class CatalogServiceTest {
 
         /* ASSERT */
         assertEquals(0, (int) service.getAll(Pageable.unpaged())
-                                  .stream()
-                                  .filter(x -> x.getId().equals(id.getId())).count());
+                .stream()
+                .filter(x -> x.getId().equals(id.getId())).count());
     }
 
     @Test
@@ -335,9 +338,9 @@ class CatalogServiceTest {
         assertEquals(beforeCount, service.getAll(Pageable.unpaged()).getSize());
     }
 
-    /**************************************************************************
-     * Utilities
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private CatalogDesc getCatalogOneDesc() {
         var desc = new CatalogDesc();

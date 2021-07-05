@@ -15,14 +15,14 @@
  */
 package io.dataspaceconnector.utils;
 
+import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,9 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UtilsTest {
 
-    /**************************************************************************
-     * requireNonNull.
-     *************************************************************************/
+    /***********************************************************************************************
+     * requireNonNull.                                                                             *
+     **********************************************************************************************/
 
     @Test
     public void requireNonNull_nullObj_throwsIllegalArgumentException() {
@@ -40,15 +40,15 @@ class UtilsTest {
         final var errorMsg = ErrorMessages.DESC_NULL;
 
         /* ACT && ASSERT */
-        final var msg = assertThrows(
-                IllegalArgumentException.class, () -> Utils.requireNonNull(null, errorMsg));
+        final var msg = assertThrows(IllegalArgumentException.class,
+                () -> Utils.requireNonNull(null, errorMsg));
         assertEquals(errorMsg.toString(), msg.getMessage());
     }
 
     @Test
     public void requireNonNull_nullMsg_returnObj() {
         /* ARRANGE */
-        Integer obj = 5;
+        final var obj = 5;
 
         /* ACT */
         final var value = Utils.requireNonNull(obj, null);
@@ -69,7 +69,7 @@ class UtilsTest {
     @Test
     public void requireNonNull_Valid_returnObj() {
         /* ARRANGE */
-        Integer obj = 5;
+        final var obj = 5;
 
         /* ACT */
         final var value = Utils.requireNonNull(obj, ErrorMessages.DESC_NULL);
@@ -78,9 +78,9 @@ class UtilsTest {
         assertEquals(5, value);
     }
 
-    /**************************************************************************
-     * toStream.
-     *************************************************************************/
+    /***********************************************************************************************
+     * toStream.                                                                                   *
+     **********************************************************************************************/
 
     @Test
     public void toStream_null_returnEmptyStream() {
@@ -106,9 +106,9 @@ class UtilsTest {
         assertEquals(list, result.collect(Collectors.toList()));
     }
 
-    /**************************************************************************
-    * toPage.
-    *************************************************************************/
+    /***********************************************************************************************
+    * toPage.                                                                                      *
+    ***********************************************************************************************/
 
     @Test
     public void toPage_nullList_throwIllegalArgumentException() {
@@ -164,9 +164,9 @@ class UtilsTest {
         assertTrue(result.toList().contains(3));
     }
 
-    /**************************************************************************
-     * toPageRequest.
-     *************************************************************************/
+    /***********************************************************************************************
+     * toPageRequest.                                                                              *
+     **********************************************************************************************/
 
     @Test
     public void toPageRequest_null_defaultRequest() {
@@ -217,9 +217,9 @@ class UtilsTest {
         assertEquals(PageRequest.of(page, size), result);
     }
 
-    /**************************************************************************
-     * DEFAULT_PAGE_SIZE.
-     *************************************************************************/
+    /***********************************************************************************************
+     * DEFAULT_PAGE_SIZE.                                                                          *
+     **********************************************************************************************/
     @Test
     public void DEFAULT_PAGE_SIZE_IS_30() {
         /* ARRANGE */
@@ -229,9 +229,9 @@ class UtilsTest {
         assertEquals(30, Utils.DEFAULT_PAGE_SIZE);
     }
 
-    /**************************************************************************
-     * DEFAULT_FIRST_PAGE.
-     *************************************************************************/
+    /***********************************************************************************************
+     * DEFAULT_FIRST_PAGE.                                                                         *
+     **********************************************************************************************/
     @Test
     public void DEFAULT_FIRST_PAGE_IS_0() {
         /* ARRANGE */
@@ -241,9 +241,9 @@ class UtilsTest {
         assertEquals(0, Utils.DEFAULT_FIRST_PAGE);
     }
 
-    /**************************************************************************
-     * MAX_PAGE_SIZE.
-     *************************************************************************/
+    /***********************************************************************************************
+     * MAX_PAGE_SIZE.                                                                              *
+     **********************************************************************************************/
     @Test
     public void MAX_PAGE_SIZE_IS_100() {
         /* ARRANGE */

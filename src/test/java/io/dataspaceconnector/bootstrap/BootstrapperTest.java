@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import io.dataspaceconnector.bootstrap.broker.BrokerService;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
 import io.dataspaceconnector.model.templates.CatalogTemplate;
+import io.dataspaceconnector.services.messages.GlobalMessageService;
 import io.dataspaceconnector.services.resources.CatalogService;
 import io.dataspaceconnector.services.resources.TemplateBuilder;
 import io.dataspaceconnector.utils.Utils;
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BootstrapperTest {
 
     @MockBean
-    BrokerService brokerService;
+    GlobalMessageService messageService;
 
     @MockBean
     CatalogService catalogService;
@@ -76,8 +76,7 @@ public class BootstrapperTest {
     @Test
     public void bootstrap_files_registerCatalogs() {
         /* ARRANGE */
-        Mockito.doReturn(true)
-                .when(brokerService).registerAtBroker(Mockito.any(), Mockito.any());
+        Mockito.doReturn(true).when(messageService).sendConnectorUpdateMessage(Mockito.any());
 
         Mockito.doAnswer(x -> Utils.toPage(catalogList, Pageable.unpaged()))
                .when(catalogService)

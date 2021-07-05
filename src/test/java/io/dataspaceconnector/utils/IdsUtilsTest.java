@@ -15,21 +15,6 @@
  */
 package io.dataspaceconnector.utils;
 
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import java.math.BigInteger;
-import java.net.URI;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.List;
-
 import de.fraunhofer.iais.eis.Action;
 import de.fraunhofer.iais.eis.Artifact;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
@@ -63,6 +48,21 @@ import io.dataspaceconnector.exceptions.RdfBuilderException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.math.BigInteger;
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,7 +70,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IdsUtilsTest {
 
-    ZonedDateTime date = ZonedDateTime.of(LocalDateTime.ofEpochSecond(1616772571804L, 0, ZoneOffset.UTC), ZoneId.of("Z"));
+    private final ZonedDateTime date = ZonedDateTime.of(LocalDateTime.ofEpochSecond(
+            1616772571804L, 0, ZoneOffset.UTC), ZoneId.of("Z"));
 
     @Test
     public void toRdf_inputNull_throwRdfBuilderException() {
@@ -126,7 +127,8 @@ public class IdsUtilsTest {
     @Test
     public void getKeywordsAsTypedLiteral_keywordsNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getKeywordsAsTypedLiteral(null, "en"));
+        assertThrows(NullPointerException.class, () -> IdsUtils.getKeywordsAsTypedLiteral(null,
+                "en"));
     }
 
     @Test
@@ -296,7 +298,8 @@ public class IdsUtilsTest {
     @Test
     public void getGregorianOf_inputNull_throwNullPointerException() {
         /* ACT && ASSERT */
-        assertThrows(NullPointerException.class, () -> IdsUtils.getGregorianOf((ZonedDateTime) null));
+        assertThrows(NullPointerException.class,
+                () -> IdsUtils.getGregorianOf((ZonedDateTime) null));
     }
 
     @Test
@@ -327,42 +330,46 @@ public class IdsUtilsTest {
         assertEquals("53203-06-26T12:10:04.000Z", result);
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
-    private boolean typedLiteralListContainsValues(final List<TypedLiteral> list, List<String> values) {
+    private boolean typedLiteralListContainsValues(final List<TypedLiteral> list,
+                                                   List<String> values) {
         final var listValues = new ArrayList<>();
-        for (var listElement: list) {
+        for (var listElement : list) {
             listValues.add(listElement.getValue());
         }
         return listValues.containsAll(values);
     }
 
     private BaseConnector getBaseConnector() {
-        return new BaseConnectorBuilder(URI.create("https://w3id.org/idsa/autogen/baseConnector/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new BaseConnectorBuilder(URI.create("https://w3id.org/idsa/autogen/baseConnector" +
+                "/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._maintainer_(URI.create("https://example.com"))
                 ._curator_(URI.create("https://example.com"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._outboundModelVersion_("4.0.0")
                 ._inboundModelVersion_(Util.asList("4.0.0"))
                 ._title_(Util.asList(new TypedLiteral("Dataspace Connector")))
-                ._description_(Util.asList(new TypedLiteral(
-                        "Test Connector")))
+                ._description_(Util.asList(new TypedLiteral("Test Connector")))
                 ._version_("v3.0.0")
-                ._publicKey_(new PublicKeyBuilder(URI.create("https://w3id.org/idsa/autogen/publicKey/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._publicKey_(new PublicKeyBuilder(URI.create("https://w3id" +
+                        ".org/idsa/autogen/publicKey/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._keyType_(KeyType.RSA)
                         ._keyValue_("public key".getBytes())
                         .build()
                 )
-                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder(URI.create("https://w3id.org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._hasDefaultEndpoint_(new ConnectorEndpointBuilder(URI.create("https://w3id" +
+                        ".org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._accessURL_(URI.create("/api/ids/data"))
                         .build())
                 .build();
     }
 
     private Resource getResource() {
-        return new ResourceBuilder(URI.create("https://w3id.org/idsa/autogen/resource/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new ResourceBuilder(URI.create("https://w3id.org/idsa/autogen/resource/591467af" +
+                "-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._contractOffer_(Util.asList(getContractOffer()))
                 ._created_(getDateAsXMLGregorianCalendar())
                 ._description_(Util.asList(new TypedLiteral("description", "EN")))
@@ -370,7 +377,9 @@ public class IdsUtilsTest {
                 ._modified_(getDateAsXMLGregorianCalendar())
                 ._publisher_(URI.create("http://publisher.com"))
                 ._representation_(Util.asList(getRepresentation()))
-                ._resourceEndpoint_(Util.asList(new ConnectorEndpointBuilder(URI.create("https://w3id.org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._resourceEndpoint_(Util.asList(new ConnectorEndpointBuilder(URI.create("https" +
+                        "://w3id.org/idsa/autogen/connectorEndpoint/591467af-9633-4a4e-8bcf" +
+                        "-47ba4e6679ea"))
                         ._accessURL_(URI.create("http://connector-endpoint.com"))
                         .build()))
                 ._sovereign_(URI.create("http://sovereign.com"))
@@ -381,7 +390,8 @@ public class IdsUtilsTest {
     }
 
     private Artifact getArtifact() {
-        return new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new ArtifactBuilder(URI.create("https://w3id.org/idsa/autogen/artifact/591467af" +
+                "-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._byteSize_(BigInteger.ONE)
                 ._creationDate_(getDateAsXMLGregorianCalendar())
                 ._fileName_("file name")
@@ -389,11 +399,13 @@ public class IdsUtilsTest {
     }
 
     private Representation getRepresentation() {
-        return new RepresentationBuilder(URI.create("https://w3id.org/idsa/autogen/representation/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new RepresentationBuilder(URI.create("https://w3id.org/idsa/autogen/representation" +
+                "/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._created_(getDateAsXMLGregorianCalendar())
                 ._instance_(Util.asList(getArtifact()))
                 ._language_(Language.EN)
-                ._mediaType_(new IANAMediaTypeBuilder(URI.create("https://w3id.org/idsa/autogen/mediaType/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._mediaType_(new IANAMediaTypeBuilder(URI.create("https://w3id" +
+                        ".org/idsa/autogen/mediaType/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._filenameExtension_("json")
                         .build())
                 ._modified_(getDateAsXMLGregorianCalendar())
@@ -402,7 +414,8 @@ public class IdsUtilsTest {
     }
 
     private ContractOffer getContractOffer() {
-        return new ContractOfferBuilder(URI.create("https://w3id.org/idsa/autogen/contractOffer/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new ContractOfferBuilder(URI.create("https://w3id.org/idsa/autogen/contractOffer" +
+                "/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 .build();
     }
 
@@ -413,8 +426,10 @@ public class IdsUtilsTest {
 
         permissions.add((Permission) getRule());
 
-        return new ContractRequestBuilder(URI.create("https://w3id.org/idsa/autogen/contractRequest/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
-                ._consumer_(URI.create("https://w3id.org/idsa/autogen/baseConnector/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new ContractRequestBuilder(URI.create("https://w3id" +
+                ".org/idsa/autogen/contractRequest/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._consumer_(URI.create("https://w3id.org/idsa/autogen/baseConnector/591467af-9633" +
+                        "-4a4e-8bcf-47ba4e6679ea"))
                 ._contractDate_(getDateAsXMLGregorianCalendar())
                 ._contractStart_(getDateAsXMLGregorianCalendar())
                 ._obligation_(obligations)
@@ -424,7 +439,8 @@ public class IdsUtilsTest {
     }
 
     private ContractAgreement getContractAgreement() {
-        return new ContractAgreementBuilder(URI.create("https://w3id.org/idsa/autogen/contractAgreement/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new ContractAgreementBuilder(URI.create("https://w3id" +
+                ".org/idsa/autogen/contractAgreement/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._provider_(URI.create("http://provider.com"))
                 ._consumer_(URI.create("http://consumer.com"))
                 ._permission_(Util.asList((Permission) getRule()))
@@ -435,11 +451,13 @@ public class IdsUtilsTest {
     }
 
     private Rule getRule() {
-        return new PermissionBuilder(URI.create("https://w3id.org/idsa/autogen/permission/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+        return new PermissionBuilder(URI.create("https://w3id.org/idsa/autogen/permission" +
+                "/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                 ._title_(Util.asList(new TypedLiteral("Example Usage Policy")))
                 ._description_(Util.asList(new TypedLiteral("usage-logging")))
                 ._action_(Util.asList(Action.USE))
-                ._postDuty_(Util.asList(new DutyBuilder(URI.create("https://w3id.org/idsa/autogen/duty/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
+                ._postDuty_(Util.asList(new DutyBuilder(URI.create("https://w3id" +
+                        ".org/idsa/autogen/duty/591467af-9633-4a4e-8bcf-47ba4e6679ea"))
                         ._action_(Util.asList(Action.LOG))
                         .build()))
                 .build();
@@ -450,5 +468,4 @@ public class IdsUtilsTest {
         GregorianCalendar calendar = GregorianCalendar.from(date);
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
-
 }

@@ -15,13 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.exceptions.UnreachableLineException;
@@ -42,6 +35,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,8 +49,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
 
-@SpringBootTest(classes = {ContractViewAssembler.class, ViewAssemblerHelper.class,
-        ContractFactory.class, OfferedResourceFactory.class, RequestedResourceFactory.class})
+@SpringBootTest(classes = {
+        ContractViewAssembler.class,
+        ViewAssemblerHelper.class,
+        ContractFactory.class,
+        OfferedResourceFactory.class,
+        RequestedResourceFactory.class
+})
 public class ContractViewAssemblerTest {
 
     @Autowired
@@ -70,8 +75,7 @@ public class ContractViewAssemblerTest {
     @Test
     public void getSelfLink_inputNull_returnBasePathWithoutId() {
         /* ARRANGE */
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         final var rel = "self";
@@ -89,11 +93,9 @@ public class ContractViewAssemblerTest {
     public void getSelfLink_validInput_returnSelfLink() {
         /* ARRANGE */
         final var contractId = UUID.randomUUID();
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
-        final var rel = "self";
 
         /* ACT */
         final var result = contractViewAssembler.getSelfLink(contractId);
@@ -101,14 +103,13 @@ public class ContractViewAssemblerTest {
         /* ASSERT */
         assertNotNull(result);
         assertEquals(baseUrl + path + "/" + contractId, result.getHref());
-        assertEquals(rel, result.getRel().value());
+        assertEquals("self", result.getRel().value());
     }
 
     @Test
     public void toModel_inputNull_throwIllegalArgumentException() {
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class,
-                () -> contractViewAssembler.toModel(null));
+        assertThrows(IllegalArgumentException.class, () -> contractViewAssembler.toModel(null));
     }
 
     @Test
@@ -142,8 +143,7 @@ public class ContractViewAssemblerTest {
         final var offersLink = result.getLink("offers");
         assertTrue(offersLink.isPresent());
         assertNotNull(offersLink.get());
-        assertEquals(getContractOfferedResourcesLink(contract.getId()),
-                offersLink.get().getHref());
+        assertEquals(getContractOfferedResourcesLink(contract.getId()), offersLink.get().getHref());
 
         final var requestsLink = result.getLink("requests");
         assertTrue(requestsLink.isEmpty());
@@ -180,8 +180,7 @@ public class ContractViewAssemblerTest {
         final var offersLink = result.getLink("offers");
         assertTrue(offersLink.isPresent());
         assertNotNull(offersLink.get());
-        assertEquals(getContractOfferedResourcesLink(contract.getId()),
-                offersLink.get().getHref());
+        assertEquals(getContractOfferedResourcesLink(contract.getId()), offersLink.get().getHref());
 
         final var requestsLink = result.getLink("requests");
         assertTrue(requestsLink.isEmpty());
@@ -231,13 +230,12 @@ public class ContractViewAssemblerTest {
         final var contract = getContractWithUnknownResources();
 
         /* ACT && ASSERT */
-        assertThrows(UnreachableLineException.class,
-                     () -> contractViewAssembler.toModel(contract));
+        assertThrows(UnreachableLineException.class, () -> contractViewAssembler.toModel(contract));
     }
 
-    /**************************************************************************
-     * Utilities.
-     *************************************************************************/
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private Contract getContract() {
         final var desc = new ContractDesc();
@@ -275,8 +273,7 @@ public class ContractViewAssemblerTest {
         ReflectionTestUtils.setField(resource, "modificationDate", date);
 
         final var contract = getContract();
-        ReflectionTestUtils.setField(contract, "resources",
-                Collections.singletonList(resource));
+        ReflectionTestUtils.setField(contract, "resources", Collections.singletonList(resource));
         return contract;
     }
 
@@ -297,8 +294,7 @@ public class ContractViewAssemblerTest {
         ReflectionTestUtils.setField(resource, "modificationDate", date);
 
         final var contract = getContract();
-        ReflectionTestUtils.setField(contract, "resources",
-                Collections.singletonList(resource));
+        ReflectionTestUtils.setField(contract, "resources", Collections.singletonList(resource));
         return contract;
     }
 
@@ -306,14 +302,12 @@ public class ContractViewAssemblerTest {
         final var resource = new UnknownResource();
 
         final var contract = getContract();
-        ReflectionTestUtils.setField(contract, "resources",
-                Collections.singletonList(resource));
+        ReflectionTestUtils.setField(contract, "resources", Collections.singletonList(resource));
         return contract;
     }
 
     private String getContractLink(final UUID contractId) {
-        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .toUriString();
+        final var baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         final var path = ResourceControllers.ContractController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + contractId;
@@ -338,7 +332,7 @@ public class ContractViewAssemblerTest {
 
         private static final long serialVersionUID = 1L;
 
-        public UnknownResource() {}
+        public UnknownResource() {
+        }
     }
-
 }

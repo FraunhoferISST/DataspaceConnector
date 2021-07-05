@@ -61,8 +61,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MappingUtilsTest {
 
-    private final ZonedDateTime date =
-            ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L), ZoneOffset.UTC);
+    private final ZonedDateTime date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(1616772571804L),
+            ZoneOffset.UTC);
 
     @Test
     public void fromIdsCatalog_inputNull_throwIllegalArgumentExceptionException() {

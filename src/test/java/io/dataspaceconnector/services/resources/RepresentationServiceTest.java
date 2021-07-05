@@ -66,5 +66,4 @@ public class RepresentationServiceTest {
         /* ASSERT */
         assertTrue(result.isPresent());
     }
-
 }

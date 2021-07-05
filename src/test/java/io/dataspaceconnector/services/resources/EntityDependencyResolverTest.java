@@ -91,5 +91,4 @@ public class EntityDependencyResolverTest {
         /* ASSERT */
         assertEquals(artifacts, result);
     }
-
 }
