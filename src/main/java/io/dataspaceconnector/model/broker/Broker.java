@@ -61,7 +61,7 @@ public class Broker extends NamedEntity implements RemoteService {
      * The access url of the broker.
      */
     @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
+    @Column(length = URI_COLUMN_LENGTH, unique = true)
     private URI location;
 
     /**

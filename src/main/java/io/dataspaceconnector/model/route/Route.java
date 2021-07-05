@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.route;
 
+import javax.persistence.CascadeType;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
@@ -72,13 +73,13 @@ public class Route extends NamedEntity {
     /**
      * The start endpoint of the route.
      */
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Endpoint start;
 
     /**
      * The last endpoint of the route.
      */
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private Endpoint end;
 
     /**

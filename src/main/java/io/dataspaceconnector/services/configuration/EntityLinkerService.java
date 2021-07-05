@@ -15,19 +15,22 @@
  */
 package io.dataspaceconnector.services.configuration;
 
-import java.util.List;
-
 import io.dataspaceconnector.model.app.App;
 import io.dataspaceconnector.model.appstore.AppStore;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.route.Route;
+import io.dataspaceconnector.services.resources.ArtifactService;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.services.resources.OfferedResourceService;
 import io.dataspaceconnector.services.resources.OwningRelationService;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class contains all implementations of {@link OwningRelationService}.
@@ -82,13 +85,13 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class RouteOfferedResourceLinker
-            extends OwningRelationService<Route, OfferedResource, RouteService,
-            OfferedResourceService> {
+    public static class RouteArtifactsLinker
+            extends OwningRelationService<Route, Artifact, RouteService,
+            ArtifactService> {
 
         @Override
-        protected final List<OfferedResource> getInternal(final Route owner) {
-            throw new RuntimeException("Not implemented");
+        protected final List<Artifact> getInternal(final Route owner) {
+            return owner.getOutput();
         }
     }
 
@@ -97,13 +100,29 @@ public final class EntityLinkerService {
      */
     @Service
     @NoArgsConstructor
-    public static class RouteEndpointLinker
+    public static class RouteStartEndpointLinker
             extends OwningRelationService<Route, Endpoint, RouteService,
             EndpointServiceProxy> {
 
         @Override
         protected final List<Endpoint> getInternal(final Route owner) {
-            throw new RuntimeException("Not implemented");
+            return owner.getStart() == null ? new ArrayList<>() : List.of(owner.getStart());
+
+        }
+    }
+
+    /**
+     * Handles the relation between the route and last endpoint.
+     */
+    @Service
+    @NoArgsConstructor
+    public static class RouteLastEndpointLinker
+            extends OwningRelationService<Route, Endpoint, RouteService,
+            EndpointServiceProxy> {
+
+        @Override
+        protected final List<Endpoint> getInternal(final Route owner) {
+            return owner.getEnd() == null ? new ArrayList<>() : List.of(owner.getEnd());
         }
     }
 }

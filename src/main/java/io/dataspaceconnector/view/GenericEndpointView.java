@@ -52,14 +52,4 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
     private URI docs;
 
     private String info;
-
-    /**
-     * The absolute path of the generic endpoint.
-     */
-    private String absolutePath;
-
-    /**
-     * Data source to which the generic endpoint belongs.
-     */
-    private DataSource dataSource;
 }

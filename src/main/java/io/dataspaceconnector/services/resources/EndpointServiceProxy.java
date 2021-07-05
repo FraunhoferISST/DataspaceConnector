@@ -88,15 +88,9 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
 
     @Override
     public boolean doesExist(final UUID entityId) {
-        try {
-            return apps.doesExist(entityId);
-        } catch(ResourceNotFoundException ignored) { }
-
-        try {
-            return connector.doesExist(entityId);
-        } catch(ResourceNotFoundException ignored) { }
-
-        return generic.doesExist(entityId);
+        return apps.doesExist(entityId)
+                || connector.doesExist(entityId)
+                || generic.doesExist(entityId);
     }
 
     @Override
