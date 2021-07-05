@@ -54,8 +54,8 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
      */
     @Override
     protected boolean updateInternal(final Broker broker, final BrokerDesc desc) {
-        final var newLocation = updateAccessUrl(broker, broker.getLocation());
-        final var newStatus = updateRegistrationStatus(broker, broker.getStatus());
+        final var newLocation = updateLocation(broker, desc.getLocation());
+        final var newStatus = updateRegistrationStatus(broker, desc.getStatus());
 
         return newLocation || newStatus;
     }
@@ -72,11 +72,11 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
 
     /**
      * @param broker    The entity to be updated.
-     * @param accessUrl The new access url of the entity.
+     * @param location The new location url of the entity.
      * @return True, if broker is updated.
      */
-    private boolean updateAccessUrl(final Broker broker, final URI accessUrl) {
-        final var newAccessUrl = MetadataUtils.updateUri(broker.getLocation(), accessUrl,
+    private boolean updateLocation(final Broker broker, final URI location) {
+        final var newAccessUrl = MetadataUtils.updateUri(broker.getLocation(), location,
                 DEFAULT_URI);
         newAccessUrl.ifPresent(broker::setLocation);
         return newAccessUrl.isPresent();
