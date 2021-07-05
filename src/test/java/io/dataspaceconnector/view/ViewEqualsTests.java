@@ -32,16 +32,16 @@ public class ViewEqualsTests {
     public void verifyEquals_agreementView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(AgreementView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
 
     @Test
     public void verifyEquals_artifactView_passesVerification() {
-       EqualsVerifier.simple()
+        EqualsVerifier.simple()
                 .forClass(ArtifactView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -50,7 +50,7 @@ public class ViewEqualsTests {
     public void verifyEquals_catalogView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(CatalogView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -59,7 +59,7 @@ public class ViewEqualsTests {
     public void verifyEquals_contractRuleView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(ContractRuleView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -68,7 +68,7 @@ public class ViewEqualsTests {
     public void verifyEquals_contractView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(ContractView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -77,7 +77,7 @@ public class ViewEqualsTests {
     public void verifyEquals_offeredResourceView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(OfferedResourceView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -86,7 +86,7 @@ public class ViewEqualsTests {
     public void verifyEquals_representationView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(RepresentationView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }
@@ -95,7 +95,7 @@ public class ViewEqualsTests {
     public void verifyEquals_requestedResourceView_passesVerification() {
         EqualsVerifier.simple()
                 .forClass(RequestedResourceView.class)
-                .withPrefabValues(Link.class, link1 ,link2)
+                .withPrefabValues(Link.class, link1, link2)
                 .withNonnullFields("links")
                 .verify();
     }

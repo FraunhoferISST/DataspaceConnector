@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import de.fraunhofer.isst.ids.framework.configuration.SerializerProvider;
+import de.fraunhofer.ids.messaging.util.SerializerProvider;
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -62,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { CatalogFactory.class, OfferedResourceFactory.class,
+@SpringBootTest(classes = {CatalogFactory.class, OfferedResourceFactory.class,
         RepresentationFactory.class, ArtifactFactory.class, ContractFactory.class,
         ContractRuleFactory.class, IdsCatalogBuilder.class, IdsResourceBuilder.class,
         IdsRepresentationBuilder.class, IdsArtifactBuilder.class, IdsContractBuilder.class,
@@ -373,7 +373,7 @@ public class IdsCatalogBuilderTest {
         resourceDesc.setDescription(description);
         resourceDesc.setKeywords(Collections.singletonList("keyword"));
         resourceDesc.setEndpointDocumentation(URI.create("http://endpoint-doc.com"));
-        resourceDesc.setLicence(URI.create("http://license.com"));
+        resourceDesc.setLicense(URI.create("http://license.com"));
         resourceDesc.setPublisher(URI.create("http://publisher.com"));
         resourceDesc.setSovereign(URI.create("http://sovereign.com"));
 
@@ -423,7 +423,7 @@ public class IdsCatalogBuilderTest {
 
         final var offeredResourcesField = Catalog.class.getDeclaredField("offeredResources");
         offeredResourcesField.setAccessible(true);
-        offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));;
+        offeredResourcesField.set(catalog, Collections.singletonList(getOfferedResource()));
 
         return catalog;
     }

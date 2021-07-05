@@ -15,11 +15,6 @@
  */
 package io.dataspaceconnector.services.ids;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.HashMap;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.AbstractEntity;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.ArtifactDesc;
@@ -31,13 +26,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { ArtifactFactory.class, IdsArtifactBuilder.class})
+@SpringBootTest(classes = {ArtifactFactory.class, IdsArtifactBuilder.class})
 public class IdsArtifactBuilderTest {
 
     @Autowired
@@ -67,7 +67,8 @@ public class IdsArtifactBuilderTest {
         assertTrue(idsArtifact.getId().toString().contains(artifact.getId().toString()));
 
         assertEquals(idsArtifact.getFileName(), artifact.getTitle());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
         assertNull(idsArtifact.getProperties());
     }
 
@@ -84,7 +85,8 @@ public class IdsArtifactBuilderTest {
         assertTrue(idsArtifact.getId().toString().contains(artifact.getId().toString()));
 
         assertEquals(idsArtifact.getFileName(), artifact.getTitle());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
 
         assertNotNull(idsArtifact.getProperties());
         assertEquals(1, idsArtifact.getProperties().size());
@@ -104,7 +106,8 @@ public class IdsArtifactBuilderTest {
         assertTrue(idsArtifact.getId().toString().contains(artifact.getId().toString()));
 
         assertEquals(idsArtifact.getFileName(), artifact.getTitle());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
         assertNull(idsArtifact.getProperties());
     }
 
@@ -121,7 +124,8 @@ public class IdsArtifactBuilderTest {
         assertTrue(idsArtifact.getId().toString().contains(artifact.getId().toString()));
 
         assertEquals(idsArtifact.getFileName(), artifact.getTitle());
-        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()), idsArtifact.getCreationDate());
+        assertEquals(IdsUtils.getGregorianOf(artifact.getCreationDate()),
+                idsArtifact.getCreationDate());
         assertNull(idsArtifact.getProperties());
     }
 

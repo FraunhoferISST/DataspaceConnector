@@ -15,15 +15,12 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
-import java.io.IOException;
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import de.fraunhofer.ids.messaging.handler.message.MessageHandler;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
+import de.fraunhofer.ids.messaging.response.BodyResponse;
+import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
 import io.dataspaceconnector.exceptions.VersionNotSupportedException;
 import io.dataspaceconnector.model.messages.MessageProcessedNotificationMessageDesc;
@@ -36,6 +33,9 @@ import io.dataspaceconnector.utils.MessageUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * This @{@link ResourceUpdateMessageHandler} handles all incoming messages that have a

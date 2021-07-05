@@ -18,11 +18,11 @@ package io.dataspaceconnector.services.messages.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import de.fraunhofer.ids.messaging.handler.message.MessageHandler;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
+import de.fraunhofer.ids.messaging.response.BodyResponse;
+import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.config.ConnectorConfiguration;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
@@ -138,7 +138,7 @@ public class ArtifactRequestHandler implements MessageHandler<ArtifactRequestMes
 
             try {
                 final var agreement = contractManager.validateTransferContract(
-                        transferContract, requestedArtifact);
+                        transferContract, requestedArtifact, issuer);
 
                 final var input = new VerificationInput(requestedArtifact, issuer, agreement);
                 if (accessVerifier.verify(input) == VerificationResult.DENIED) {

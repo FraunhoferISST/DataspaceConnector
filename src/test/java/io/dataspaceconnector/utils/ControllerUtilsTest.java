@@ -15,23 +15,24 @@
  */
 package io.dataspaceconnector.utils;
 
-import java.net.URI;
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.net.URI;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {ControllerUtils.class})
 class ControllerUtilsTest {
 
+    private final Exception exception = new Exception("Some exception.");
+
     @Test
     public void respondIdsMessageFailed_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Ids message handling failed. "
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -46,7 +47,6 @@ class ControllerUtilsTest {
     @Test
     public void respondReceivedInvalidResponse_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to read the ids response "
                 + "message.", HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -61,7 +61,6 @@ class ControllerUtilsTest {
     @Test
     public void respondConfigurationUpdateError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to update configuration.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -76,7 +75,6 @@ class ControllerUtilsTest {
     @Test
     public void respondDeserializationError_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to update.",
                 HttpStatus.BAD_REQUEST);
 
@@ -136,7 +134,6 @@ class ControllerUtilsTest {
     @Test
     public void respondPatternNotIdentified_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Could not identify pattern.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -151,7 +148,6 @@ class ControllerUtilsTest {
     @Test
     public void respondInvalidInput_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Invalid input. "
                 + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -166,7 +162,6 @@ class ControllerUtilsTest {
     @Test
     public void respondFailedToBuildContractRequest_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Failed to build contract request.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -181,7 +176,6 @@ class ControllerUtilsTest {
     @Test
     public void respondConnectorNotLoaded_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
         final var expectedResponse = new ResponseEntity<>("Connector could not be loaded.",
                 HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -194,14 +188,13 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondGlobalException_validException_returnValidResponseEntity() {
+    public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
-        final var expectedResponse = new ResponseEntity<>("Something else went wrong.",
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
+                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         /* ACT */
-        final var response = ControllerUtils.respondGlobalException(exception);
+        final var response = ControllerUtils.respondFailedToStoreEntity(exception);
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
@@ -209,14 +202,25 @@ class ControllerUtilsTest {
     }
 
     @Test
-    public void respondFailedToStoreEntity_validException_returnValidResponseEntity() {
+    public void respondConnectionTimedOut_validException_returnValidResponseEntity() {
         /* ARRANGE */
-        final var exception = new Exception("Some exception.");
-        final var expectedResponse = new ResponseEntity<>("Failed to store entity. "
-                + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        final var expectedResponse = new ResponseEntity<>(HttpStatus.GATEWAY_TIMEOUT);
 
         /* ACT */
-        final var response = ControllerUtils.respondFailedToStoreEntity(exception);
+        final var response = ControllerUtils.respondConnectionTimedOut(exception);
+
+        /* ARRANGE */
+        assertEquals(ResponseEntity.class, response.getClass());
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    public void respondReceivedInvalidResponse_null_returnValidResponseEntity() {
+        /* ARRANGE */
+        final var expectedResponse = new ResponseEntity<>(HttpStatus.BAD_GATEWAY);
+
+        /* ACT */
+        final var response = ControllerUtils.respondReceivedInvalidResponse();
 
         /* ARRANGE */
         assertEquals(ResponseEntity.class, response.getClass());
@@ -237,5 +241,4 @@ class ControllerUtilsTest {
         assertEquals(ResponseEntity.class, response.getClass());
         assertEquals(expectedResponse, response);
     }
-
 }

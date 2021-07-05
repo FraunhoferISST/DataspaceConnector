@@ -15,17 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
-
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-
 import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -33,6 +22,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import java.net.URI;
+import java.util.List;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
@@ -65,6 +61,7 @@ public final class RequestedResource extends Resource {
     @ManyToMany
     private List<Subscriber> subscribers;
 
+    /**
      * The catalogs in which this resource is used.
      */
     @ManyToMany(mappedBy = "requestedResources")

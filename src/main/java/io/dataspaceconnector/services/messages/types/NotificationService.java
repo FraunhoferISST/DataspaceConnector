@@ -19,6 +19,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.NotificationMessageBuilder;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.exceptions.MessageException;
 import io.dataspaceconnector.exceptions.PolicyExecutionException;
 import io.dataspaceconnector.model.messages.NotificationMessageDesc;
@@ -29,8 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 
-import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
-
 /**
  * Message service for ids notification messages.
  */
@@ -39,7 +38,9 @@ import static de.fraunhofer.isst.ids.framework.util.IDSUtils.getGregorianNow;
 public final class NotificationService extends AbstractMessageService<NotificationMessageDesc> {
 
     /**
-     * @throws IllegalArgumentException If desc is null.
+     * @throws IllegalArgumentException     if desc is null.
+     * @throws ConstraintViolationException if security tokes is null or another error appears
+     *                                      when building the message.
      */
     @Override
     public Message buildMessage(final NotificationMessageDesc desc)
@@ -53,7 +54,7 @@ public final class NotificationService extends AbstractMessageService<Notificati
         final var recipient = desc.getRecipient();
 
         return new NotificationMessageBuilder()
-                ._issued_(getGregorianNow())
+                ._issued_(IdsMessageUtils.getGregorianNow())
                 ._modelVersion_(modelVersion)
                 ._issuerConnector_(connectorId)
                 ._senderAgent_(connectorId)

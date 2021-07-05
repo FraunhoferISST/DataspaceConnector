@@ -21,13 +21,11 @@ import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
 import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -41,16 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class ContractAgreementHandlerTest {
 
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
-
     @Autowired
     ContractAgreementHandler handler;
 
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
-        final var payload = new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper());
+        final var payload = new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper());
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage(null, payload);
@@ -126,7 +121,7 @@ class ContractAgreementHandlerTest {
                 .build();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractAgreementMessageImpl) message, new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper()));
+        final var result = (ErrorResponse)handler.handleMessage((ContractAgreementMessageImpl) message, new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());

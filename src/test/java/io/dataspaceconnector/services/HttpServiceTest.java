@@ -15,12 +15,6 @@
  */
 package io.dataspaceconnector.services;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import io.dataspaceconnector.model.QueryInput;
 import kotlin.NotImplementedError;
 import kotlin.Pair;
@@ -36,6 +30,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class HttpServiceTest {
 
     @MockBean
-    de.fraunhofer.isst.ids.framework.communication.http.HttpService httpSvc;
+    de.fraunhofer.ids.messaging.protocol.http.HttpService httpSvc;
 
     @Autowired
     HttpService service;
@@ -123,20 +123,18 @@ class HttpServiceTest {
         final var target = new URL("https://someTarget");
         final var args = new HttpService.HttpArgs();
 
-        final var response =
-                new Response.Builder().request(new Request.Builder().url(target).build()).protocol(
-                        Protocol.HTTP_1_1).code(200).message("Some message")
-                                      .body(ResponseBody.create(
-                                              "someBody", MediaType.parse("application/text")))
-                                      .build();
+        final var response = new Response.Builder()
+                .request(new Request.Builder().url(target).build())
+                .protocol(Protocol.HTTP_1_1).code(200).message("Some message")
+                .body(ResponseBody.create("someBody", MediaType.parse("application/text")))
+                .build();
 
         // The first response will be consumed by the first request, duplicate
-        final var response2 =
-                new Response.Builder().request(new Request.Builder().url(target).build()).protocol(
-                        Protocol.HTTP_1_1).code(200).message("Some message")
-                                      .body(ResponseBody.create(
-                                              "someBody", MediaType.parse("application/text")))
-                                      .build();
+        final var response2 = new Response.Builder()
+                .request(new Request.Builder().url(target).build())
+                .protocol(Protocol.HTTP_1_1).code(200).message("Some message")
+                .body(ResponseBody.create("someBody", MediaType.parse("application/text")))
+                .build();
 
         Mockito.doReturn(response).when(httpSvc).get(Mockito.any());
 
@@ -147,7 +145,8 @@ class HttpServiceTest {
         Mockito.doReturn(response2).when(httpSvc).get(Mockito.any());
         final var expected = service.get(target, args);
         assertEquals(expected.getCode(), result.getCode());
-        assertTrue(Arrays.areEqual("someBody".getBytes(StandardCharsets.UTF_8), result.getBody().readAllBytes()));
+        assertTrue(Arrays.areEqual("someBody".getBytes(StandardCharsets.UTF_8),
+                result.getBody().readAllBytes()));
     }
 
     @Test
@@ -166,7 +165,8 @@ class HttpServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.get(null, new HttpService.HttpArgs()));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.get(null, new HttpService.HttpArgs()));
     }
 
     @Test
@@ -175,7 +175,8 @@ class HttpServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.get(new URL("https://someWhere"), (HttpService.HttpArgs)null));
+        assertThrows(IllegalArgumentException.class,
+                () -> service.get(new URL("https://someWhere"), (HttpService.HttpArgs) null));
     }
 
     @Test
@@ -184,6 +185,7 @@ class HttpServiceTest {
         // Nothing to arrange here.
 
         /* ACT && ASSERT */
-        assertThrows(IllegalArgumentException.class, () -> service.get(null, (HttpService.HttpArgs) null));
+        assertThrows(IllegalArgumentException.class, () -> service.get(null,
+                (HttpService.HttpArgs) null));
     }
 }

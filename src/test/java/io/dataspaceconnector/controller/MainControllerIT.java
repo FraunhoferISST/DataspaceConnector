@@ -20,7 +20,6 @@ import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
-import io.dataspaceconnector.bootstrap.BootstrapConfiguration;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -47,9 +46,6 @@ class MainControllerIT {
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
-    private BootstrapConfiguration bootstrapConfiguration;
-
     @Test
     public void getPublicSelfDescription_nothing_returnValidDescription() throws Exception {
         /* ARRANGE */
@@ -60,9 +56,13 @@ class MainControllerIT {
         final var result = mockMvc.perform(get("/")).andExpect(status().isOk()).andReturn();
 
         /* ASSERT */
-        assertDoesNotThrow( () -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
+        assertDoesNotThrow(() -> new Serializer().deserialize(result.getResponse().getContentAsString(), BaseConnector.class));
         assertEquals(connector.toRdf(), result.getResponse().getContentAsString());
     }
+
+    /***********************************************************************************************
+     * Utilities.                                                                                  *
+     **********************************************************************************************/
 
     private BaseConnector getConnectorWithoutResources() {
         return new BaseConnectorBuilder()
@@ -72,8 +72,8 @@ class MainControllerIT {
                 ._inboundModelVersion_(de.fraunhofer.iais.eis.util.Util.asList("4.0.0"))
                 ._securityProfile_(SecurityProfile.BASE_SECURITY_PROFILE)
                 ._hasDefaultEndpoint_(new ConnectorEndpointBuilder()
-                                              ._accessURL_(URI.create("https://accessUrl"))
-                                              .build())
+                        ._accessURL_(URI.create("https://accessUrl"))
+                        .build())
                 .build();
     }
 }

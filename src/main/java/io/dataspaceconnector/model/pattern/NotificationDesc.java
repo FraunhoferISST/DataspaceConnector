@@ -13,7 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.dataspaceconnector.model.pattern;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 /**
- * Communicate with the broker on startup.
+ * Class for inputs of a policy pattern that describes the data usage notification.
  */
-package io.dataspaceconnector.bootstrap.broker;
+@Schema(example = "{\n"
+        + "\t\"type\": \"USAGE_NOTIFICATION\",\n"
+        + "\t\"url\": \"https://localhost:8080/api/ids/data\"\n"
+        + "}")
+@Data
+@EqualsAndHashCode(callSuper = true)
+public class NotificationDesc extends PatternDesc {
+    /**
+     * The recipient's address.
+     */
+    @JsonProperty("url")
+    private String url;
+}

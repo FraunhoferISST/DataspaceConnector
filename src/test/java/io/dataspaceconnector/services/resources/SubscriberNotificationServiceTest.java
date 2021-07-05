@@ -15,14 +15,6 @@
  */
 package io.dataspaceconnector.services.resources;
 
-import java.net.URI;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-
 import io.dataspaceconnector.model.RequestedResource;
 import io.dataspaceconnector.model.RequestedResourceDesc;
 import io.dataspaceconnector.model.RequestedResourceFactory;
@@ -31,6 +23,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -99,7 +99,7 @@ public class SubscriberNotificationServiceTest {
         desc.setDescription("description");
         desc.setKeywords(Collections.singletonList("keyword"));
         desc.setEndpointDocumentation(URI.create("https://endpointDocumentation.com"));
-        desc.setLicence(URI.create("https://license.com"));
+        desc.setLicense(URI.create("https://license.com"));
         desc.setPublisher(URI.create("https://publisher.com"));
         desc.setSovereign(URI.create("https://sovereign.com"));
         desc.setRemoteId(URI.create("https://remote-id.com"));
