@@ -15,6 +15,16 @@
  */
 package io.dataspaceconnector.services.messages.handler;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactBuilder;
 import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
@@ -28,24 +38,16 @@ import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
-import io.dataspaceconnector.services.EntityUpdateService;
 import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
 import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import io.dataspaceconnector.services.EntityUpdateService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-
-import javax.xml.datatype.DatatypeFactory;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,7 +74,7 @@ class ResourceUpdateMessageHandlerTest {
     }
 
     @Test
-    public void handleMessage_nullMessage_returnVersionNotSupported() {
+    public void handleMessage_invalidVersion_returnVersionNotSupported() {
         /* ARRANGE */
         final var message = getResourceUpdateMessageWithInvalidVersion();
 
@@ -86,7 +88,16 @@ class ResourceUpdateMessageHandlerTest {
     @Test
     public void handleMessage_missingAffectedResource_returnBadRequestResponseMessage() {
         /* ARRANGE */
-        final var message = getResourceUpdateMessage();
+        final var message = new ResourceUpdateMessageBuilder()
+                ._senderAgent_(URI.create("https://localhost:8080"))
+                ._issuerConnector_(URI.create("https://localhost:8080"))
+                ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
+                ._modelVersion_("4.0.0")
+                ._issued_(getXmlCalendar())
+                ._affectedResource_(URI.create("https://localhost:8080/someResource"))
+                .build();
+
+        ReflectionTestUtils.setField(message, "_affectedResource", null);
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage((ResourceUpdateMessageImpl) message, null);
@@ -231,17 +242,20 @@ class ResourceUpdateMessageHandlerTest {
 
     @SneakyThrows
     private ResourceUpdateMessage getResourceUpdateMessageWithInvalidVersion() {
-        final var calendar = new GregorianCalendar();
-        calendar.setTime(new Date());
-        final var xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
-
         return new ResourceUpdateMessageBuilder()
                 ._senderAgent_(URI.create("https://localhost:8080"))
                 ._issuerConnector_(URI.create("https://localhost:8080"))
                 ._securityToken_(new DynamicAttributeTokenBuilder()._tokenFormat_(TokenFormat.OTHER)._tokenValue_("").build())
                 ._modelVersion_("tetris")
-                ._issued_(xmlCalendar)
+                ._issued_(getXmlCalendar())
                 ._affectedResource_(URI.create("https://localhost:8080/someResource"))
                 .build();
+    }
+
+    @SneakyThrows
+    private XMLGregorianCalendar getXmlCalendar() {
+        final var calendar = new GregorianCalendar();
+        calendar.setTime(new Date());
+        return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
     }
 }

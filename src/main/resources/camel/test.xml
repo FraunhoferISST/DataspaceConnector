@@ -2,12 +2,16 @@
 
     <route>
         <from uri="timer://contractRequest?delay=10000&amp;repeatCount=1" />
-        <setProperty name="artifactUri">
-            <constant>https://example.com/some_artifact</constant>
-        </setProperty>
-        <process ref="ContractRequestCreationProcessor" />
-        <to uri="idscp2client://simpleconnector.ids.isst.fraunhofer.de:29292?awaitResponse=true&amp;connectionShareId=ucConnection&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>
-        <log message="${body}"/>
+        <log message="test"/>
+
+<!--        <from uri="timer://contractRequest?delay=10000&amp;repeatCount=1" />-->
+<!--        <setProperty name="artifactUri">-->
+<!--            <constant>https://example.com/some_artifact</constant>-->
+<!--        </setProperty>-->
+<!--        <process ref="ContractRequestCreationProcessor" />-->
+<!--        <to uri="idscp2client://localhost:29292?awaitResponse=true&amp;sslContextParameters=#serverSslContext&amp;useIdsMessages=true"/>-->
+<!--        <log message="${body}"/>-->
+
 <!--        <process ref="TypeExtractionProcessor"/>-->
 <!--        <choice>-->
 <!--            <when>-->

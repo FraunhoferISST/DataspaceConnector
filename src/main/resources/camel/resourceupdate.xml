@@ -19,18 +19,6 @@
             <to uri="direct:handleResponseMessageBuilderException"/>
         </onException>
 
-        <!-- deserializing the message payload fails -->
-        <onException>
-            <exception>io.dataspaceconnector.exceptions.DeserializationException</exception>
-            <to uri="direct:handleWrappedIllegalArgumentException"/>
-        </onException>
-
-        <!-- payload is empty -->
-        <onException>
-            <exception>io.dataspaceconnector.exceptions.MissingPayloadException</exception>
-            <to uri="direct:handleMissingPayloadException"/>
-        </onException>
-
         <!-- reading the payload stream fails -->
         <onException>
             <exception>java.io.IOException</exception>
@@ -41,7 +29,19 @@
         <from uri="direct:resourceUpdateHandler"/>
         <to uri="direct:ids-validation"/>
         <process ref="AffectedResourceValidator"/>
-        <process ref="ResourceDeserializer"/>
+        <doTry>
+            <process ref="ResourceDeserializer"/>
+            <doCatch>
+                <!-- deserializing the message payload fails -->
+                <exception>io.dataspaceconnector.exceptions.DeserializationException</exception>
+                <to uri="direct:handleWrappedIllegalArgumentException"/>
+            </doCatch>
+            <doCatch>
+                <!-- payload is empty -->
+                <exception>io.dataspaceconnector.exceptions.MissingPayloadException</exception>
+                <to uri="direct:handleMissingPayloadException"/>
+            </doCatch>
+        </doTry>
         <process ref="CorrectAffectedResourceValidator"/>
         <process ref="ResourceUpdateProcessor"/>
 

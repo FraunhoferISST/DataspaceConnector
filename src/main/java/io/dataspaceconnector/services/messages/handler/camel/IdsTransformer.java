@@ -126,7 +126,14 @@ class ResourceTransformer extends IdsTransformer<
     @Override
     protected RouteMsg<ResourceUpdateMessageImpl, Resource> processInternal(
             final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> msg) throws Exception {
-        final var payloadString = MessageUtils.getStreamAsString(msg.getBody());
+
+        final String payloadString;
+        try {
+            payloadString = MessageUtils.getStreamAsString(msg.getBody());
+        } catch (IllegalArgumentException e) {
+            throw new MissingPayloadException("Payload is missing from ResourceUpdateMessage.", e);
+        }
+
         if (payloadString.isBlank()) {
             throw new MissingPayloadException("Payload is missing from ResourceUpdateMessage.");
         }
