@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.exceptions.DeserializationException;
 import io.dataspaceconnector.exceptions.MissingPayloadException;
 import io.dataspaceconnector.services.ids.DeserializationService;

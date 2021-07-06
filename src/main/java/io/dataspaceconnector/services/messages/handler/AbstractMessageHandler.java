@@ -4,11 +4,11 @@ import java.util.Objects;
 
 import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.RejectionReason;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessageHandler;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.MessageResponse;
+import de.fraunhofer.ids.messaging.handler.message.MessageHandler;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import de.fraunhofer.ids.messaging.response.BodyResponse;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Request;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Response;

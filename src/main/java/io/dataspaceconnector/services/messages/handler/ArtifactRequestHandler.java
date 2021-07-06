@@ -17,7 +17,7 @@ package io.dataspaceconnector.services.messages.handler;
 
 
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.SupportedMessageType;
+import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;

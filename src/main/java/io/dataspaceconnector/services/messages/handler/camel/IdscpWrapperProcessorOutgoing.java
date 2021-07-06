@@ -1,6 +1,6 @@
 package io.dataspaceconnector.services.messages.handler.camel;
 
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
 import io.dataspaceconnector.services.messages.handler.camel.dto.Response;
 import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;

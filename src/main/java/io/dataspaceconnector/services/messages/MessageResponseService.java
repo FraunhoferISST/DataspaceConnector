@@ -15,9 +15,13 @@
  */
 package io.dataspaceconnector.services.messages;
 
+import java.net.URI;
+
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import de.fraunhofer.ids.messaging.response.MessageResponse;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
 import io.dataspaceconnector.exceptions.MessageEmptyException;
@@ -28,14 +32,10 @@ import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.services.ids.ConnectorService;
 import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.Utils;
-import de.fraunhofer.ids.messaging.response.ErrorResponse;
-import de.fraunhofer.ids.messaging.response.MessageResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-
-import java.net.URI;
 
 /**
  * This class handles message responses.

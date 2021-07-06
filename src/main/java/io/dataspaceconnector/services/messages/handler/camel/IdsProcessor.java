@@ -29,7 +29,7 @@ import de.fraunhofer.iais.eis.RejectionMessage;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.exceptions.AgreementPersistenceException;
 import io.dataspaceconnector.exceptions.ContractException;
 import io.dataspaceconnector.exceptions.InvalidInputException;
@@ -492,7 +492,6 @@ class AgreementComparisonProcessor extends IdsProcessor<
 
         // Publish the agreement so that the designated event handler sends it to the CH.
         publisher.publishEvent(agreement);
-
 
         final var issuer = MessageUtils.extractIssuerConnector(msg.getHeader());
         final var messageId = MessageUtils.extractMessageId(msg.getHeader());

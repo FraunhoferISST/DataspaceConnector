@@ -43,10 +43,10 @@ import de.fraunhofer.iais.eis.RejectionReason;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import de.fraunhofer.iais.eis.util.Util;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayloadImpl;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.BodyResponse;
-import de.fraunhofer.isst.ids.framework.messaging.model.responses.ErrorResponse;
-import de.fraunhofer.isst.ids.framework.util.IDSUtils;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayloadInputstream;
+import de.fraunhofer.ids.messaging.response.BodyResponse;
+import de.fraunhofer.ids.messaging.response.ErrorResponse;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractDesc;
 import io.dataspaceconnector.model.ContractFactory;
@@ -96,7 +96,7 @@ class ContractRequestHandlerTest {
     @Test
     public void handleMessage_nullMessage_returnBadParametersResponse() {
         /* ARRANGE */
-        final var payload = new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper());
+        final var payload = new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper());
 
         /* ACT */
         final var result = (ErrorResponse) handler.handleMessage(null, payload);
@@ -143,7 +143,7 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadImpl(InputStream.nullInputStream(), new ObjectMapper()));
+        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadInputstream(InputStream.nullInputStream(), new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.BAD_PARAMETERS, result.getRejectionMessage().getRejectionReason());
@@ -156,7 +156,7 @@ class ContractRequestHandlerTest {
         final var message = getMessage();
 
         /* ACT */
-        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadImpl(null, new ObjectMapper()));
+        final var result = (ErrorResponse)handler.handleMessage((ContractRequestMessageImpl) message, new MessagePayloadInputstream(null, new ObjectMapper()));
 
         /* ASSERT */
         assertEquals(RejectionReason.INTERNAL_RECIPIENT_ERROR, result.getRejectionMessage().getRejectionReason());
@@ -171,7 +171,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse)handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream("".getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -189,7 +189,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse)handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -210,7 +210,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                new MessagePayloadImpl(
+                new MessagePayloadInputstream(
                         new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -234,7 +234,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -259,7 +259,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -285,7 +285,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -312,7 +312,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -344,7 +344,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -378,7 +378,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -418,7 +418,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (ErrorResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -460,7 +460,7 @@ class ContractRequestHandlerTest {
         /* ACT */
         final var result = (BodyResponse) handler
                 .handleMessage((ContractRequestMessageImpl) message,
-                        new MessagePayloadImpl(
+                        new MessagePayloadInputstream(
                                 new ByteArrayInputStream(payload.getBytes()), new ObjectMapper()));
 
         /* ASSERT */
@@ -469,8 +469,8 @@ class ContractRequestHandlerTest {
 
     private ContractAgreement getContractAgreement() {
         return new ContractAgreementBuilder(URI.create("http://localhost:8080/api/agreements/" + UUID.randomUUID()))
-                ._contractStart_(IDSUtils.getGregorianNow())
-                ._contractEnd_(IDSUtils.getGregorianNow())
+                ._contractStart_(IdsMessageUtils.getGregorianNow())
+                ._contractEnd_(IdsMessageUtils.getGregorianNow())
                 .build();
     }
 

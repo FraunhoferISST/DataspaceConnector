@@ -26,7 +26,7 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
-import de.fraunhofer.isst.ids.framework.messaging.model.messages.MessagePayload;
+import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
 import io.dataspaceconnector.exceptions.ContractListEmptyException;
 import io.dataspaceconnector.exceptions.ContractRejectedException;
 import io.dataspaceconnector.exceptions.InvalidAffectedResourceException;
@@ -179,7 +179,7 @@ class PolicyValidator extends IdsValidator<RouteMsg<ArtifactRequestMessageImpl, 
         }
 
         final var agreement = contractManager.validateTransferContract(
-                transferContract, requestedArtifact);
+                transferContract, requestedArtifact, issuer);
         final var input = new VerificationInput(requestedArtifact, issuer, agreement);
         if (accessVerifier.verify(input) == VerificationResult.DENIED) {
             throw new PolicyRestrictionException(ErrorMessages.POLICY_RESTRICTION);
