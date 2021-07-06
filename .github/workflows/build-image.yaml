@@ -12,7 +12,7 @@ env:
   OWNER: ${{ secrets.REPO_USER }}
 
 jobs:
-  docker:
+  productive:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
@@ -90,6 +90,87 @@ jobs:
        name: Push branch image
        run: |
          docker push $IMAGE:$BRANCH
+       if: startsWith(github.ref, 'refs/heads')
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+  debug:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout Repo
+        uses: actions/checkout@v2
+      -
+        name: Build registry path
+        id: get_repo
+        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+      -
+       name: Find tag
+       id: get_tag
+       run: |
+         echo ${GITHUB_REF#refs/tags/}
+         echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+       if: startsWith(github.ref, 'refs/tags')
+      -
+       name: Find branch name
+       id: get_branch
+       run: |
+         # to lowercase
+         TMP=$(git rev-parse --abbrev-ref HEAD)
+         TMP=$(echo "$TMP" | tr '[:upper:]' '[:lower:]')
+         echo $TMP
+         echo ::set-output name=BRANCH::$TMP
+      -
+       name: Login to registry
+       uses: docker/login-action@v1
+       with:
+         # This should use REGISTRY instead of the secret directly
+         registry: ${{ secrets.IMAGE_REGISTRY }}
+         username: ${{ github.actor }}
+         password: ${{ secrets.GITHUB_TOKEN }}
+      -
+       name: Build image
+       run: |
+        docker build . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+      - name: Run vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.get_repo.outputs.IMAGE }}:${{ steps.get_branch.outputs.BRANCH }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+      -
+       name: Push tagged image
+       run: |
+         echo $IMAGE
+         echo $BRANCH
+         echo $TAG
+         TMP=$TAG
+         if [[ $TMP == v* ]]
+         then
+           # Its a version tag
+           TMP=${TAG:1:${#TAG}}
+           echo "Found a version tag"
+         fi
+         # Has tag
+         docker tag $IMAGE:$BRANCH $IMAGE:$TMP-debug
+         docker push $IMAGE:$TMP-debug
+       if: startsWith(github.ref, 'refs/tags')
+       env:
+         IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
+         BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
+         TAG: ${{ steps.get_tag.outputs.TAG }}
+      -
+       name: Push branch image
+       run: |
+         docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
+         docker push $IMAGE:$BRANCH-debug
        if: startsWith(github.ref, 'refs/heads')
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
