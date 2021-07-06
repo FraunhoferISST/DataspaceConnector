@@ -106,8 +106,9 @@ public abstract class ResourceFactory<T extends Resource, D extends ResourceDesc
         final var hasChildUpdated = updateInternal(resource, desc);
 
         final var hasUpdated = hasParentUpdated || hasChildUpdated
-                               || hasUpdatedKeywords || hasUpdatedPublisher || hasUpdatedLanguage
-                               || hasUpdatedLicense || hasUpdatedSovereign || hasUpdatedEndpointDocs;
+                               || hasUpdatedKeywords || hasUpdatedPublisher
+                               || hasUpdatedLanguage || hasUpdatedLicense
+                               || hasUpdatedSovereign || hasUpdatedEndpointDocs;
 
         if (hasUpdated) {
             resource.setVersion(resource.getVersion() + 1);

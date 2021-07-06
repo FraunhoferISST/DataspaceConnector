@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import io.dataspaceconnector.controller.configurations.ConfigmanagerControllers.ConfigurationController;
 import io.dataspaceconnector.model.configuration.Configuration;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -37,7 +38,7 @@ public class ConfigurationViewAssembler implements
     }
 
     @Override
-    public final ConfigurationView toModel(final Configuration configuration) {
+    public final ConfigurationView toModel(@NotNull final Configuration configuration) {
         final var modelMapper = new ModelMapper();
         final var view = modelMapper.map(configuration, ConfigurationView.class);
         view.add(getSelfLink(configuration.getId()));
@@ -47,7 +48,8 @@ public class ConfigurationViewAssembler implements
         }
 
         if (configuration.getTruststore() != null) {
-            view.setTrustStore(new TruststoreViewAssembler().toModel(configuration.getTruststore()));
+            view.setTrustStore(new TruststoreViewAssembler()
+                    .toModel(configuration.getTruststore()));
         }
 
         if (configuration.getKeystore() != null) {

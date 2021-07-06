@@ -52,9 +52,15 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
-        final var hasUpdatedLocation = updateLocation(dataSource, desc.getLocation());
-        final var hasUpdatedAuthentication = updateAuthentication(dataSource, desc.getAuthentication());
-        final var hasUpdatedDataSourceType = updateDataSourceType(dataSource, desc.getType());
+        final var hasUpdatedLocation = updateLocation(
+                dataSource,
+                desc.getLocation());
+        final var hasUpdatedAuthentication = updateAuthentication(
+                dataSource,
+                desc.getAuthentication());
+        final var hasUpdatedDataSourceType = updateDataSourceType(
+                dataSource,
+                desc.getType());
 
         return hasUpdatedLocation || hasUpdatedAuthentication || hasUpdatedDataSourceType;
     }
@@ -90,11 +96,11 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     public boolean updateAuthentication(final DataSource dataSource,
                                         final Authentication authentication) {
-        if (dataSource.getAuthentication() == null && authentication == null){
+        if (dataSource.getAuthentication() == null && authentication == null) {
             return false;
         }
 
-        if(dataSource.getAuthentication()!=null && authentication == null){
+        if (dataSource.getAuthentication() != null && authentication == null) {
             dataSource.setAuthentication(null);
             return true;
         }

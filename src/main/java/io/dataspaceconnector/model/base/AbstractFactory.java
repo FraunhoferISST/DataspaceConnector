@@ -28,7 +28,9 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
 
-    protected boolean updateInternal(final T entity, final D desc) { return false; }
+    protected boolean updateInternal(final T entity, final D desc) {
+        return false;
+    }
 
     public T create(final D desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);

@@ -17,34 +17,20 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
-import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
-import io.dataspaceconnector.model.route.RouteFactory;
-import io.dataspaceconnector.repositories.EndpointRepository;
-import io.dataspaceconnector.repositories.RouteRepository;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.RouteService;
 import io.dataspaceconnector.view.ArtifactView;
+import io.dataspaceconnector.view.EndpointViewProxy;
+import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RouteView;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.util.UUID;
 
 /**
  * Controller for route management.
@@ -142,16 +128,14 @@ public final class RouteControllers {
     @Tag(name = "Route", description = "Endpoints for linking routes to steps")
     public static class RoutesToSteps
             extends BaseResourceChildController<EntityLinkerService.RouteStepsLinker,
-            Route, RouteView> {
-    }
+            Route, RouteView> { }
 
     @RestController
     @RequestMapping("/api/routes/{id}/outputs")
     @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
     public static class RoutesToArtifacts
             extends BaseResourceChildController<EntityLinkerService.RouteArtifactsLinker,
-            Artifact, ArtifactView> {
-    }
+            Artifact, ArtifactView> { }
 
 //    @RestController
 //    @RequestMapping("/api/routes/{id}/endpoints/start")

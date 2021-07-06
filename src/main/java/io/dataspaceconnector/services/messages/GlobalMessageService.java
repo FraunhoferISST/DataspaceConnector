@@ -61,12 +61,16 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur while
+     *                                   validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public boolean sendConnectorUpdateMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public boolean sendConnectorUpdateMessage(final URI recipient) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.updateSelfDescriptionAtBroker(recipient);
         final var msg = String.format("Successfully registered connector. [url=(%s)]", recipient);
@@ -79,12 +83,16 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur while
+     *                                   validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public boolean sendConnectorUnavailableMessage(final URI recipient)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public boolean sendConnectorUnavailableMessage(final URI recipient) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.unregisterAtBroker(recipient);
         final var msg = String.format("Successfully unregistered connector. [url=(%s)]", recipient);
@@ -98,12 +106,16 @@ public class GlobalMessageService {
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur while
+     *                                   validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public boolean sendResourceUpdateMessage(final URI recipient, final Resource resource)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public boolean sendResourceUpdateMessage(final URI recipient, final Resource resource) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.updateResourceAtBroker(recipient, resource);
         final var msg = String.format("Successfully registered resource. "
@@ -118,12 +130,16 @@ public class GlobalMessageService {
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur while
+     *                                   validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public boolean sendResourceUnavailableMessage(final URI recipient, final Resource resource)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public boolean sendResourceUnavailableMessage(final URI recipient, final Resource resource) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.removeResourceFromBroker(recipient, resource);
         final var msg = String.format("Successfully unregistered resource. "
@@ -138,12 +154,16 @@ public class GlobalMessageService {
      * @param query     The query statement.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur while
+     *                                   validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public Optional<String> sendQueryMessage(final URI recipient, final String query)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public Optional<String> sendQueryMessage(final URI recipient, final String query) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.queryBroker(recipient, query,
                 QueryLanguage.SPARQL, QueryScope.ALL, QueryTarget.BROKER);
@@ -164,13 +184,19 @@ public class GlobalMessageService {
      * @param offset    The offset value.
      * @return True if the message was successfully processed by the recipient, false if not.
      * @throws MultipartParseException   If response could not be parsed to header and payload.
-     * @throws ClaimsException           Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws ClaimsException           Exception that gets thrown, if errors occur
+     *                                   while validating a DAT token.
      * @throws DapsTokenManagerException DAPS Token can not be acquired.
-     * @throws IOException               Any other problems in establishing a connection to the target.
+     * @throws IOException               Any other problems in establishing a connection
+     *                                   to the target.
      */
-    public Optional<String> sendFullTextSearchQueryMessage(final URI recipient, final String term,
-                                                           final int limit, final int offset)
-            throws MultipartParseException, ClaimsException, DapsTokenManagerException,
+    public Optional<String> sendFullTextSearchQueryMessage(final URI recipient,
+                                                           final String term,
+                                                           final int limit,
+                                                           final int offset) throws
+            MultipartParseException,
+            ClaimsException,
+            DapsTokenManagerException,
             IOException {
         final var response = brokerSvc.fullTextSearchBroker(recipient, term,
                 QueryScope.ALL, QueryTarget.BROKER, limit, offset);
@@ -205,6 +231,7 @@ public class GlobalMessageService {
     /**
      * This method updates the registration status of the broker.
      * @param recipient URI of the recipient
+     * @return true if registration status was updated
      */
     private boolean updateRegistrationStatus(final URI recipient) {
         final var allBrokers = brokerRepository.findAll();
@@ -238,7 +265,7 @@ public class GlobalMessageService {
                                  final MessageProcessedNotificationMAP response,
                                  final String msg) {
         final var result = validateResponse(response, msg);
-        if(result){
+        if (result) {
             final var updatedRegistrationStatus = updateRegistrationStatus(recipient);
             if (updatedRegistrationStatus) {
                 if (log.isInfoEnabled()) {

@@ -72,11 +72,11 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     public Endpoint get(final UUID entityId) {
         try {
             return apps.get(entityId);
-        } catch(ResourceNotFoundException ignored) { }
+        } catch (ResourceNotFoundException ignored) { }
 
         try {
             return connector.get(entityId);
-        } catch(ResourceNotFoundException ignored) { }
+        } catch (ResourceNotFoundException ignored) { }
 
         return generic.get(entityId);
     }

@@ -85,7 +85,7 @@ public final class EndpointControllers {
 
         private PagedModel<?> toView(final Pageable pageable) {
             final var objs = service.getAll(pageable);
-            if(objs.hasContent()){
+            if (objs.hasContent()) {
                     return pagedAssembler.toModel(objs);
             }
             return PagedModel.empty();

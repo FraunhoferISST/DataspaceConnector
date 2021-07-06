@@ -21,6 +21,8 @@ import de.fraunhofer.iais.eis.ResourceBuilder;
 import de.fraunhofer.iais.eis.TokenFormat;
 import de.fraunhofer.ids.messaging.broker.IDSBrokerService;
 import de.fraunhofer.ids.messaging.protocol.multipart.mapping.MessageProcessedNotificationMAP;
+import io.dataspaceconnector.model.broker.BrokerFactory;
+import io.dataspaceconnector.repositories.BrokerRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -42,6 +44,12 @@ class GlobalMessageServiceTest {
 
     @MockBean
     private IDSBrokerService brokerService;
+
+    @MockBean
+    private BrokerRepository brokerRepository;
+
+    @MockBean
+    private BrokerFactory brokerFactory;
 
     @Autowired
     GlobalMessageService messageService;

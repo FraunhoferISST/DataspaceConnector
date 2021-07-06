@@ -33,7 +33,9 @@ public class AppEndpointViewAssembler implements
 
     @Override
     public final Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, EndpointControllers.GenericEndpointController.class);
+        return ViewAssemblerHelper.getSelfLink(
+                entityId,
+                EndpointControllers.GenericEndpointController.class);
     }
 
     @Override
