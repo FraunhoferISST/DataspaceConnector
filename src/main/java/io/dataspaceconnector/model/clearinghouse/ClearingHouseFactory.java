@@ -34,13 +34,25 @@ public class ClearingHouseFactory extends AbstractNamedFactory<ClearingHouse, Cl
      */
     private static final URI DEFAULT_LOCATION = URI.create("");
 
+    /**
+     * Initializes a clearing house entity.
+     * @param desc not used in this constructor
+     * @return newly created ClearingHouse object
+     */
     @Override
     protected ClearingHouse initializeEntity(final ClearingHouseDesc desc) {
         return new ClearingHouse();
     }
 
+    /**
+     * Updates the clearing house location and status.
+     * @param clearingHouse clearing house to update
+     * @param desc clearing house description with the desired update
+     * @return true if clearing house was successfully updated
+     */
     @Override
-    protected boolean updateInternal(final ClearingHouse clearingHouse, final ClearingHouseDesc desc) {
+    protected boolean updateInternal(final ClearingHouse clearingHouse,
+                                     final ClearingHouseDesc desc) {
         final var hasUpdatedLocation = updateLocation(clearingHouse, desc.getLocation());
         final var newStatus = updateRegistrationStatus(clearingHouse, desc.getStatus());
 
