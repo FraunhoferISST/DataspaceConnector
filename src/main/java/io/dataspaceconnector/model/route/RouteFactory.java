@@ -58,35 +58,8 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
                 desc.getConfiguration());
         final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
                 desc.getDeploy());
-        final var hasUpdatedStartEndpoint = updateStartEndpoint(route, desc.getStart());
-        final var hasUpdatedLastEndpoint = updateLastEndpoint(route, desc.getEnd());
 
-        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedStartEndpoint
-                || hasUpdatedLastEndpoint;
-    }
-
-    private boolean updateLastEndpoint(final Route route, final Endpoint end) {
-        if (route.getEnd() == null && end == null) {
-            return false;
-        }
-        if (route.getEnd() != null && end == null) {
-            route.setEnd(null);
-            return true;
-        }
-        route.setEnd(end);
-        return true;
-    }
-
-    private boolean updateStartEndpoint(final Route route, final Endpoint start) {
-        if (route.getStart() == null && start == null) {
-            return false;
-        }
-        if (route.getStart() != null && start == null) {
-            route.setStart(null);
-            return true;
-        }
-        route.setStart(start);
-        return true;
+        return hasUpdatedRouteConfig || hasUpdatedDeployMethod;
     }
 
     /**
@@ -110,5 +83,43 @@ public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
         newRouteConfig.ifPresent(route::setConfiguration);
 
         return newRouteConfig.isPresent();
+    }
+
+    /**
+     * @param route    The route.
+     * @param endpoint The start endpoint
+     * @return The route with start endpoint.
+     */
+    public Route setStartEndpoint(final Route route, final Endpoint endpoint) {
+        route.setStart(endpoint);
+        return route;
+    }
+
+    /**
+     * @param route    The route.
+     * @param endpoint The last endpoint.
+     * @return The route with last endpoint.
+     */
+    public Route setLastEndpoint(final Route route, final Endpoint endpoint) {
+        route.setEnd(endpoint);
+        return route;
+    }
+
+    /**
+     * @param route The route.
+     * @return The route without start endpoint.
+     */
+    public Route deleteStartEndpoint(final Route route) {
+        route.setStart(null);
+        return route;
+    }
+
+    /**
+     * @param route The route.
+     * @return The route without the last endpoint.
+     */
+    public Route deleteLastEndpoint(final Route route) {
+        route.setEnd(null);
+        return route;
     }
 }

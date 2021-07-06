@@ -37,14 +37,4 @@ public class RouteDesc extends NamedDescription {
      * The route configuration.
      */
     private String configuration;
-
-    /**
-     * The start endpoint of the route.
-     */
-    private Endpoint start;
-
-    /**
-     * The last endpoint of the route.
-     */
-    private Endpoint end;
 }

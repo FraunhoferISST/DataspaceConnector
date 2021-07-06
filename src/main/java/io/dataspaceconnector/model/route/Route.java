@@ -73,13 +73,13 @@ public class Route extends NamedEntity {
     /**
      * The start endpoint of the route.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne
     private Endpoint start;
 
     /**
      * The last endpoint of the route.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne
     private Endpoint end;
 
     /**
