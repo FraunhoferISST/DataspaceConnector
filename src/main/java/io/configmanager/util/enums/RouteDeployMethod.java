@@ -27,20 +27,20 @@ public enum RouteDeployMethod {
     /**
      * Camel as route deploy method.
      */
-    CAMEL,
-
-    /**
-     * Kafka as route deploy method.
-     */
-    KAFKA,
-
-    /**
-     * Argo as route deploy method.
-     */
-    ARGO,
-
-    /**
-     * Airflow as route deploy method.
-     */
-    AIRFLOW
+    CAMEL
+//
+//    /**
+//     * Kafka as route deploy method.
+//     */
+//    KAFKA,
+//
+//    /**
+//     * Argo as route deploy method.
+//     */
+//    ARGO,
+//
+//    /**
+//     * Airflow as route deploy method.
+//     */
+//    AIRFLOW
 }
