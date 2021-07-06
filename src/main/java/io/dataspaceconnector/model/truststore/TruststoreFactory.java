@@ -21,20 +21,29 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+/**
+ * Factory class for the trust store.
+ */
 @Component
 public class TruststoreFactory extends AbstractFactory<Truststore, TruststoreDesc> {
 
+    /**
+     * The default password.
+     */
     private static final String DEFAULT_PASSWORD = "";
 
+    /**
+     * The default name.
+     */
     private static final URI DEFAULT_NAME = URI.create("");
 
     @Override
-    protected Truststore initializeEntity(final TruststoreDesc desc) {
+    protected final Truststore initializeEntity(final TruststoreDesc desc) {
         return new Truststore();
     }
 
     @Override
-    public boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
+    public final boolean updateInternal(final Truststore truststore, final TruststoreDesc desc) {
         final var hasUpdatedName = updateName(truststore, desc.getName());
         final var hasUpdatedPassword = updatePassword(truststore, desc.getPassword());
 

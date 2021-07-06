@@ -24,13 +24,19 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Factory class for the proxy.
+ */
 @Component
 public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
 
+    /**
+     * The default location.
+     */
     private static final URI DEFAULT_LOCATION = URI.create("");
 
     @Override
-    protected Proxy initializeEntity(final ProxyDesc desc) {
+    protected final Proxy initializeEntity(final ProxyDesc desc) {
         final var proxy = new Proxy();
         proxy.setExclusions(new ArrayList<>());
 
@@ -38,7 +44,7 @@ public class ProxyFactory extends AbstractFactory<Proxy, ProxyDesc> {
     }
 
     @Override
-    public boolean updateInternal(final Proxy proxy, final ProxyDesc desc) {
+    public final boolean updateInternal(final Proxy proxy, final ProxyDesc desc) {
         final var hasUpdatedLocation = updateLocation(proxy, desc.getLocation());
         final var hasUpdatedExclusions = updateExclusions(proxy, desc.getExclusions());
         final var hasUpdatedAuthentication = updateAuthentication(proxy, desc.getAuthentication());

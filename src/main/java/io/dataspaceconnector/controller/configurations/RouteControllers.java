@@ -58,13 +58,27 @@ public final class RouteControllers {
     @RequestMapping("/api/routes")
     @Tag(name = "Route", description = "Endpoints for CRUD operations on routes")
     @RequiredArgsConstructor
-    public static class RouteController
+    public static final class RouteController
             extends BaseResourceController<Route, RouteDesc, RouteView, RouteService> {
 
+        /**
+         * The route repository.
+         */
         private final @NonNull RouteRepository routeRepository;
+        /**
+         * The endpoint repository.
+         */
         private final @NonNull EndpointRepository endpointRepository;
+        /**
+         * The route factory.
+         */
         private final @NonNull RouteFactory routeFactory;
 
+        /**
+         * @param routeId The id of the route.
+         * @param endpointId The id of the endpoint.
+         * @return response status OK, if start endpoint is created.
+         */
         @PutMapping("{id}/endpoint/start")
         @Operation(summary = "Creates start endpoint for the route")
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
@@ -83,6 +97,10 @@ public final class RouteControllers {
                     .body("Could not create start endpoint for the route");
         }
 
+        /**
+         * @param routeId The id of the route.
+         * @return response status OK, if start endpoint is deleted.
+         */
         @DeleteMapping("{id}/endpoint/start")
         @Operation(summary = "Deletes the start endpoint of the route")
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
@@ -99,6 +117,11 @@ public final class RouteControllers {
                     .body("Could not delete the start endpoint of the route");
         }
 
+        /**
+         * @param routeId The id of the route.
+         * @param endpointId The id of the endpoint.
+         * @return response status OK, if last endpoint is created.
+         */
         @PutMapping("{id}/endpoint/end")
         @Operation(summary = "Creates last endpoint for the route")
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
@@ -117,6 +140,10 @@ public final class RouteControllers {
                     .body("Could not create last endpoint for the route");
         }
 
+        /**
+         * @param routeId The id of the route
+         * @return response status OK, if last endpoint is deleted.
+         */
         @DeleteMapping("{id}/endpoint/end")
         @Operation(summary = "Deletes the start endpoint of the route")
         @ApiResponses(value = {@ApiResponse(responseCode = ResponseCodes.OK)})
@@ -142,14 +169,19 @@ public final class RouteControllers {
     @Tag(name = "Route", description = "Endpoints for linking routes to steps")
     public static class RoutesToSteps
             extends BaseResourceChildController<EntityLinkerService.RouteStepsLinker,
-            Route, RouteView> { }
+            Route, RouteView> {
+    }
 
+    /**
+     * Offers the endpoint for managing route artifacts.
+     */
     @RestController
     @RequestMapping("/api/routes/{id}/outputs")
     @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
     public static class RoutesToArtifacts
             extends BaseResourceChildController<EntityLinkerService.RouteArtifactsLinker,
-            Artifact, ArtifactView> { }
+            Artifact, ArtifactView> {
+    }
 
 //    @RestController
 //    @RequestMapping("/api/routes/{id}/endpoints/start")

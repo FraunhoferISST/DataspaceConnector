@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.model.proxy;
 
-import java.net.URI;
-import java.util.List;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.Description;
 import lombok.AllArgsConstructor;
@@ -25,12 +22,27 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.net.URI;
+import java.util.List;
+
+/**
+ * This class holds information about the proxy properties.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ProxyDesc extends Description {
-    private URI          location;
+    /**
+     * The location information.
+     */
+    private URI location;
+    /**
+     * The list of exclusions.
+     */
     private List<String> exclusions;
+    /**
+     * The authentication information.
+     */
     private Authentication authentication;
 }

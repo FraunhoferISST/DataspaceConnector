@@ -153,7 +153,8 @@ public final class ContractUtils {
      * @return Cleaned list of contracts.
      * @throws IllegalArgumentException if any of the arguments is null.
      */
-    public static List<io.dataspaceconnector.model.contract.Contract> removeContractsWithInvalidConsumer(
+    public static List<io.dataspaceconnector.model.contract.Contract>
+    removeContractsWithInvalidConsumer(
             final List<io.dataspaceconnector.model.contract.Contract> contracts,
             final URI issuerConnector) {
         Utils.requireNonNull(contracts, ErrorMessages.LIST_NULL);

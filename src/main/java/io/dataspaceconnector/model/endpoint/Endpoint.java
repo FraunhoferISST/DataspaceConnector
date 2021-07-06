@@ -53,6 +53,9 @@ public class Endpoint extends Entity implements RemoteService {
      **/
     private static final long serialVersionUID = 1L;
 
+    /**+
+     * The access url of the endpoint.
+     */
     @Convert(converter = UriConverter.class)
     @Column(length = URI_COLUMN_LENGTH)
     private URI location;
@@ -64,5 +67,8 @@ public class Endpoint extends Entity implements RemoteService {
     @Column(length = URI_COLUMN_LENGTH)
     private URI docs;
 
+    /**
+     * The information about the endpoint.
+     */
     private String info;
 }

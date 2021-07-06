@@ -17,7 +17,6 @@ package io.dataspaceconnector.model.route;
 
 import io.dataspaceconnector.model.NamedDescription;
 import io.dataspaceconnector.model.configuration.DeployMethod;
-import io.dataspaceconnector.model.endpoint.Endpoint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

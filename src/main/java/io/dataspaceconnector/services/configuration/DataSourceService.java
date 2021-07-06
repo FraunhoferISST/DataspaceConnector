@@ -38,12 +38,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DataSourceService extends BaseEntityService<DataSource, DataSourceDesc> {
 
+    /**
+     * The data source repository.
+     */
     private final @NonNull DataSourceRepository dataSourceRepository;
 
+    /**
+     * The data source factory.
+     */
     private final @NonNull DataSourceFactory dataSourceFactory;
 
     @Override
-    public void delete(final UUID entityId) {
+    public final void delete(final UUID entityId) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         var dataSource = dataSourceRepository.getById(entityId);
 

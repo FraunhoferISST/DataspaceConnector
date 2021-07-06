@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.model.base;
 
+/**
+ * Interface for the property name.
+ */
 public interface Named {
+    /**
+     *
+     * @return the name as string
+     */
     String getName();
 }

@@ -15,6 +15,13 @@
  */
 package io.dataspaceconnector.view.util;
 
+/**
+ * This class holds constants for the view.
+ */
 public class ViewConstants {
+
+    /**
+     * Constant for the date time.
+     */
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 }

@@ -20,12 +20,21 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Description class which holds additional information like title, description.
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class NamedDescription extends Description {
 
+    /**
+     * The title of the entity.
+     */
     private String title;
 
+    /**
+     * The description of the entity.
+     */
     private String description;
 }

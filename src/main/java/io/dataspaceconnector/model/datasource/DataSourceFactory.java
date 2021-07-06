@@ -34,6 +34,9 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     private static final URI DEFAULT_NAME = URI.create("");
 
+    /**
+     * The default data source type.
+     */
     private static final DataSourceType DEFAULT_SOURCE_TYPE = DataSourceType.DATABASE;
 
     /**
@@ -109,6 +112,10 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
         return true;
     }
 
+    /**
+     * Removes the authentication from the data source.
+     * @param dataSource The data source
+     */
     public void removeAuthentication(final DataSource dataSource) {
         dataSource.setAuthentication(null);
     }

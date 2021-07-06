@@ -72,13 +72,15 @@ public class RepresentationFactory
      * @throws IllegalArgumentException if any of the parameters is null.
      */
     @Override
-    protected boolean updateInternal(final Representation representation, final RepresentationDesc desc) {
+    protected boolean updateInternal(final Representation representation,
+                                     final RepresentationDesc desc) {
         final var hasUpdatedRemoteId = this.updateRemoteId(representation, desc.getRemoteId());
         final var hasUpdatedMediaType = this.updateMediaType(representation, desc.getMediaType());
         final var hasUpdatedLanguage = this.updateLanguage(representation, desc.getLanguage());
         final var hasUpdatedStandard = this.updateStandard(representation, desc.getStandard());
 
-        return hasUpdatedRemoteId || hasUpdatedLanguage || hasUpdatedMediaType || hasUpdatedStandard;
+        return hasUpdatedRemoteId || hasUpdatedLanguage
+                || hasUpdatedMediaType || hasUpdatedStandard;
     }
 
     private boolean updateRemoteId(final Representation representation, final URI remoteId) {

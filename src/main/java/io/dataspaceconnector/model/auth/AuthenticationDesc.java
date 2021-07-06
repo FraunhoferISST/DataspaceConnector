@@ -17,8 +17,17 @@ package io.dataspaceconnector.model.auth;
 
 import lombok.Data;
 
+/**
+ * This class describes authentication properties.
+ */
 @Data
 public class AuthenticationDesc {
+    /**
+     * The username for the authentication.
+     */
     private String username;
+    /**
+     * The password for the authentication.
+     */
     private String password;
 }

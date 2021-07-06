@@ -32,6 +32,9 @@ import java.net.URI;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
+/**
+ * The entity class for the trust store.
+ */
 @javax.persistence.Entity
 @Table(name = "truststore")
 @SQLDelete(sql = "UPDATE truststore SET deleted=true WHERE id=?")

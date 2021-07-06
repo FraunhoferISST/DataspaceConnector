@@ -53,7 +53,7 @@ public class AgreementFactory extends AbstractFactory<Agreement, AgreementDesc> 
     }
 
     @Override
-    protected boolean updateInternal(final Agreement entity, final AgreementDesc desc) {
+    protected final boolean updateInternal(final Agreement entity, final AgreementDesc desc) {
         final var hasUpdatedRemoteId = this.updateRemoteId(entity, desc.getRemoteId());
         final var hasUpdatedConfirmed = this.updateHasConfirmed(entity, desc.isConfirmed());
         final var hasUpdatedValue = this.updateValue(entity, desc.getValue());

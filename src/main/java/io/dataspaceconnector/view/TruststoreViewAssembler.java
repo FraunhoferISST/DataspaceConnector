@@ -19,10 +19,14 @@ import io.dataspaceconnector.model.truststore.Truststore;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 
+/**
+ * View assembler for the trust store.
+ */
 public class TruststoreViewAssembler implements
         RepresentationModelAssembler<Truststore, TruststoreView> {
+
     @Override
-    public TruststoreView toModel(final Truststore store) {
+    public final TruststoreView toModel(final Truststore store) {
         return new ModelMapper().map(store, TruststoreView.class);
     }
 }

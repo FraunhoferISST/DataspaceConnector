@@ -15,5 +15,8 @@
  */
 package io.dataspaceconnector.model.app;
 
+/**
+ * Enumeration for the app types.
+ */
 public enum AppType {
 }

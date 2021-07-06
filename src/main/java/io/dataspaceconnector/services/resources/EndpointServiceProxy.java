@@ -33,25 +33,48 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class for endpoint proxy.
+ */
 @Service
 public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDesc> {
 
+    /**
+     * The generic endpoint service.
+     */
     @Autowired
-    GenericEndpointService generic;
+    private GenericEndpointService generic;
 
+    /**
+     * The app endpoint service.
+     */
     @Autowired
-    AppEndpointService apps;
+    private AppEndpointService apps;
 
+    /**
+     * The connector endpoint service.
+     */
     @Autowired
-    ConnectorEndpointService connector;
+    private ConnectorEndpointService connector;
 
+    /**
+     * The endpoint repository.
+     */
     @Autowired
     private EndpointRepository repository;
 
-    private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y> getService(final Class<?> clazz) {
+    /**
+     * @param clazz The class.
+     * @param <X> Types of endpoint.
+     * @param <Y> Types of the endpoint description.
+     * @return entity service.
+     */
+    private <X extends Endpoint, Y extends EndpointDesc> EntityService<X, Y>
+    getService(final Class<?> clazz) {
         if (AppEndpointDesc.class.equals(clazz) || AppEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) apps;
-        } else if (ConnectorEndpointDesc.class.equals(clazz) || ConnectorEndpoint.class.equals(clazz)) {
+        } else if (ConnectorEndpointDesc.class.equals(clazz)
+                || ConnectorEndpoint.class.equals(clazz)) {
             return (EntityService<X, Y>) connector;
         }
 
@@ -59,17 +82,17 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     }
 
     @Override
-    public Endpoint create(final EndpointDesc desc) {
+    public final Endpoint create(final EndpointDesc desc) {
         return getService(desc.getClass()).create(desc);
     }
 
     @Override
-    public Endpoint update(final UUID entityId, final EndpointDesc desc) {
+    public final Endpoint update(final UUID entityId, final EndpointDesc desc) {
         return getService(desc.getClass()).update(entityId, desc);
     }
 
     @Override
-    public Endpoint get(final UUID entityId) {
+    public final Endpoint get(final UUID entityId) {
         try {
             return apps.get(entityId);
         } catch (ResourceNotFoundException ignored) { }
@@ -82,19 +105,19 @@ public class EndpointServiceProxy implements EntityService<Endpoint, EndpointDes
     }
 
     @Override
-    public Page<Endpoint> getAll(final Pageable pageable) {
+    public final Page<Endpoint> getAll(final Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Override
-    public boolean doesExist(final UUID entityId) {
+    public final boolean doesExist(final UUID entityId) {
         return apps.doesExist(entityId)
                 || connector.doesExist(entityId)
                 || generic.doesExist(entityId);
     }
 
     @Override
-    public void delete(final UUID entityId) {
+    public final void delete(final UUID entityId) {
         var endpoint = get(entityId);
         var service = getService(endpoint.getClass());
         service.delete(entityId);

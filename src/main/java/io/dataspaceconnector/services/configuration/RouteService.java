@@ -39,17 +39,21 @@ public class RouteService extends BaseEntityService<Route, RouteDesc> {
      **/
     private final @NonNull EndpointRepository endpointRepo;
 
+    /**
+     * Constrcutor for route service.
+     * @param endpointRepository The endpoint repository.
+     */
     @Autowired
-    public RouteService(final @NonNull EndpointRepository endpointRepository){
+    public RouteService(final @NonNull EndpointRepository endpointRepository) {
         this.endpointRepo = endpointRepository;
     }
 
     @Override
-    protected Route persist(final Route route){
-        if(route.getStart()!=null){
+    protected final Route persist(final Route route) {
+        if (route.getStart() != null) {
             endpointRepo.save(route.getStart());
         }
-        if(route.getEnd()!=null){
+        if (route.getEnd() != null) {
             endpointRepo.save(route.getEnd());
         }
         return super.persist(route);

@@ -54,6 +54,9 @@ public class Description {
         additional.put(key, value);
     }
 
+    /**
+     * The id of the bootstrap.
+     */
     @JsonIgnore
     private URI bootstrapId;
 }

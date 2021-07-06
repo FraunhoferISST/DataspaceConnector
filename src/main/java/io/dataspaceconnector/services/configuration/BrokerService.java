@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class BrokerService extends BaseEntityService<Broker, BrokerDesc> {
 
     @Override
-    public void delete(final UUID entityId) {
+    public final void delete(final UUID entityId) {
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         if (!getRepository().getById(entityId).getOfferedResources().isEmpty()) {
            return;

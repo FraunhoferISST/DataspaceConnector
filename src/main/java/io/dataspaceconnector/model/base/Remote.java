@@ -15,5 +15,8 @@
  */
 package io.dataspaceconnector.model.base;
 
+/**
+ * Interface for remote.
+ */
 public interface Remote {
 }

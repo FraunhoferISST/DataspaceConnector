@@ -22,11 +22,45 @@ import io.dataspaceconnector.model.base.Description;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+/**
+ * Interface for entities.
+ * @param <T> The type of the entity.
+ * @param <D> The type of the description.
+ */
 public interface EntityService<T extends Entity, D extends Description> {
+    /**
+     * @param desc The description of the entity.
+     * @return entity
+     */
     T create(D desc);
+
+    /**
+     * @param entityId The id of the entity.
+     * @param desc The description of the entity.
+     * @return entity
+     */
     T update(UUID entityId, D desc);
+
+    /**
+     * @param entityId The id of the entity.
+     * @return entity
+     */
     T get(UUID entityId);
+
+    /**
+     * @param pageable Holds the page request.
+     * @return page
+     */
     Page<T> getAll(Pageable pageable);
+
+    /**
+     * @param entityId The id of the entity.
+     * @return true, if entity does exist.
+     */
     boolean doesExist(UUID entityId);
+
+    /**
+     * @param entityId The id of the entity.
+     */
     void delete(UUID entityId);
 }

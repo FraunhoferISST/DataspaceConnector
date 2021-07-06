@@ -24,6 +24,11 @@ import io.dataspaceconnector.utils.ErrorMessages;
 import io.dataspaceconnector.utils.MetadataUtils;
 import io.dataspaceconnector.utils.Utils;
 
+/**
+ * Abstract factory class for entities.
+ * @param <T> The type of the entity.
+ * @param <D> The type of the entity description.
+ */
 public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
@@ -32,6 +37,10 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         return false;
     }
 
+    /**
+     * @param desc The description of the entity.
+     * @return entity
+     */
     public T create(final D desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
@@ -43,12 +52,21 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         return entity;
     }
 
+    /**
+     * @param entity The entity.
+     * @param desc The description of the entity.
+     */
     private void initializeBootstrapId(final T entity, final D desc) {
         if (desc.getBootstrapId() != null) {
             entity.setBootstrapId(desc.getBootstrapId());
         }
     }
 
+    /**
+     * @param entity The entity.
+     * @param desc The description of the entity.
+     * @return true, if entity is updated.
+     */
     public boolean update(final T entity, final D desc) {
         Utils.requireNonNull(entity, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
@@ -60,7 +78,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         return additional || bootstrap || internal;
     }
 
-    protected boolean updateAdditional(final T entity, final Map<String, String> additional) {
+    protected final boolean updateAdditional(final T entity, final Map<String, String> additional) {
         final var newAdditional = MetadataUtils.updateStringMap(
                 entity.getAdditional(), additional, new HashMap<>());
         newAdditional.ifPresent(entity::setAdditional);
@@ -68,7 +86,7 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
         return newAdditional.isPresent();
     }
 
-    protected boolean updateBootstrapId(final T entity, final URI bootstrapId) {
+    protected final boolean updateBootstrapId(final T entity, final URI bootstrapId) {
         // TODO Fix me
         if (bootstrapId == null) {
             return false;

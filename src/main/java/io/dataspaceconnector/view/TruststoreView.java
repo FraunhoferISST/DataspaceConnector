@@ -20,10 +20,16 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+/**
+ * View class for the trust store.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class TruststoreView extends RepresentationModel<TruststoreView> {
 
+    /**
+     * The name of the trust store.
+     */
     private String name;
 }

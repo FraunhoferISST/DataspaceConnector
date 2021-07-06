@@ -18,6 +18,9 @@ package io.dataspaceconnector.repositories;
 import io.dataspaceconnector.model.truststore.Truststore;
 import org.springframework.stereotype.Repository;
 
+/**
+ * CRUD repository for the trust store.
+ */
 @Repository
 public interface TruststoreRepository extends BaseEntityRepository<Truststore> {
 }

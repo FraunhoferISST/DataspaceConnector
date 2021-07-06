@@ -61,9 +61,15 @@ public class App extends NamedEntity {
     @Column(length = URI_COLUMN_LENGTH)
     private URI registryInformation;
 
+    /**
+     * List of start endpoints.
+     */
     @OneToMany
     private List<Endpoint> startEndpoints;
 
+    /**
+     * List of last endpoints.
+     */
     @OneToMany
     private List<Endpoint> endEndpoints;
 }

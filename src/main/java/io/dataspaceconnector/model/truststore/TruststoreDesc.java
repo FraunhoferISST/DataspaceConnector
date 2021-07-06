@@ -23,6 +23,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class describes trust stores properties.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
