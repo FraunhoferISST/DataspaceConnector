@@ -132,7 +132,7 @@ jobs:
       -
        name: Build image
        run: |
-        docker build . -f scripts/ci/debug/Debug.dockerfile -t $IMAGE:$BRANCH
+        docker build . -f scripts/ci/docker/Debug.dockerfile -t $IMAGE:$BRANCH
        env:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
          BRANCH: ${{ steps.get_branch.outputs.BRANCH }}
