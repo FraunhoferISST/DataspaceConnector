@@ -2,20 +2,20 @@
 
     <route id="versionNotSupportedException">
         <from uri="direct:handleVersionNotSupportedException"/>
-        <log message="Version not supported!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling VersionNotSupportedException called."/>
         <to uri="bean:messageResponseService?method=handleInfoModelNotSupportedException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getModelVersion()})"/>
     </route>
 
     <route id="messageEmptyException">
         <from uri="direct:handleMessageEmptyException"/>
-        <log message="Message empty!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling MessageEmptyException called."/>
         <to uri="bean:messageResponseService?method=handleMessageEmptyException(${exception})"/>
     </route>
 
     <route id="resourceNotFoundException">
         <from uri="direct:handleResourceNotFoundException"/>
-        <log message="Resource not found!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ResourceNotFoundException called."/>
         <to uri="bean:messageResponseService?method=handleResourceNotFoundException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedElement()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -24,7 +24,7 @@
 
     <route id="responseMessageBuilderException">
         <from uri="direct:handleResponseMessageBuilderException"/>
-        <log message="Error building response message!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ResponseMessageBuilderException called."/>
         <to uri="bean:messageResponseService?method=handleResponseMessageBuilderException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
@@ -32,14 +32,14 @@
 
     <route id="selfLinkCreationException">
         <from uri="direct:handleSelfLinkCreationException"/>
-        <log message="Error in self link creation!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling SelfLinkCreationException called."/>
         <to uri="bean:messageResponseService?method=handleSelfLinkCreationException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()})"/>
     </route>
 
     <route id="noAffectedResourceException">
         <from uri="direct:handleNoAffectedResourceException"/>
-        <log message="Affected resource is missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing affected resource called."/>
         <to uri="bean:messageResponseService?method=handleMissingAffectedResource(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getAffectedResource()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -48,7 +48,7 @@
 
     <route id="invalidAffectedResourceException">
         <from uri="direct:handleInvalidAffectedResourceException"/>
-        <log message="Mismatch between affected resource from header and payload!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid affected resource called."/>
         <to uri="bean:messageResponseService?method=handleInvalidAffectedResource(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getAffectedResource()},
@@ -58,7 +58,7 @@
 
     <route id="illegalArgumentException">
         <from uri="direct:handleIllegalArgumentException"/>
-        <log message="An IllegalArgumentException occurred!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
         <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toString()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -67,7 +67,7 @@
 
     <route id="wrappedIllegalArgumentException">
         <from uri="direct:handleWrappedIllegalArgumentException"/>
-        <log message="An IllegalArgumentException occurred!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling IllegalArgumentException called."/>
         <process ref="PayloadStreamReader"/>
         <to uri="bean:messageResponseService?method=handleIllegalArgumentException(${exception.cause},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody()},
@@ -77,7 +77,7 @@
 
     <route id="messagePayloadException">
         <from uri="direct:handleMessagePayloadException"/>
-        <log message="Message payload is missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling MessagePayloadException called."/>
         <to uri="bean:messageResponseService?method=handleMessagePayloadException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()})"/>
@@ -85,7 +85,7 @@
 
     <route id="contractException">
         <from uri="direct:handleContractException"/>
-        <log message="Error with contracts!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling ContractException called."/>
         <to uri="bean:messageResponseService?method=handleContractException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toRdf()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -94,7 +94,7 @@
 
     <route id="unconfirmedAgreementException">
         <from uri="direct:handleUnconfirmedAgreementException"/>
-        <log message="Could not confirm agreement!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling unconfirmed agreement called."/>
         <to uri="bean:messageResponseService?method=handleUnconfirmedAgreement(${exception.getAgreement()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()})"/>
@@ -102,7 +102,7 @@
 
     <route id="noRequestedArtifactException">
         <from uri="direct:handleNoRequestedArtifactException"/>
-        <log message="Requested artifact is missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing requested artifact called."/>
         <to uri="bean:messageResponseService?method=handleMissingRequestedArtifact(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -112,7 +112,7 @@
 
     <route id="invalidInputException">
         <from uri="direct:handleInvalidInputException"/>
-        <log message="Invalid query input!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid query input called."/>
         <to uri="bean:messageResponseService?method=handleInvalidQueryInput(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -122,7 +122,7 @@
 
     <route id="noTransferContractException">
         <from uri="direct:handleNoTransferContractException"/>
-        <log message="Trasnfer contract is missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing transfer contract called."/>
         <to uri="bean:messageResponseService?method=handleMissingTransferContract(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -132,7 +132,7 @@
 
     <route id="messageProcessingFailedForArtifact">
         <from uri="direct:handleMessageProcessingFailedForArtifact"/>
-        <log message="Message processing failed!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
         <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -142,7 +142,7 @@
 
     <route id="messageProcessingFailedForAgreement">
         <from uri="direct:handleMessageProcessingFailedForAgreement"/>
-        <log message="Message processing failed!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed message processing called."/>
         <to uri="bean:messageResponseService?method=handleMessageProcessingFailed(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().toRdf(),
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -151,7 +151,7 @@
 
     <route id="policyRestrictionException">
         <from uri="direct:handlePolicyRestrictionException"/>
-        <log message="There is a policy restriction!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling PolicyRestrictionException called."/>
         <to uri="bean:messageResponseService?method=handlePolicyRestrictionException(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -161,7 +161,7 @@
 
     <route id="invalidTransferContract">
         <from uri="direct:handleInvalidTransferContract"/>
-        <log message="Invalid transfer contract!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling invalid transfer contract called."/>
         <to uri="bean:messageResponseService?method=handleInvalidTransferContract(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getTransferContract()},
@@ -171,7 +171,7 @@
 
     <route id="dataRetrievalError">
         <from uri="direct:handleDataRetrievalError"/>
-        <log message="Failed to retrieve data!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling failed data retrieval called."/>
         <to uri="bean:messageResponseService?method=handleFailedToRetrieveData(${exception},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getRequestedArtifact()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -180,7 +180,7 @@
 
     <route id="contractListEmpty">
         <from uri="direct:handleContractListEmptyException"/>
-        <log message="List of contracts is empty!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing contract offers called."/>
         <to uri="bean:messageResponseService?method=handleMissingContractOffers(${exception.getContractRequest()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()})"/>
@@ -188,7 +188,7 @@
 
     <route id="malformedRules">
         <from uri="direct:handleMalformedRules"/>
-        <log message="Rules are invalid!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling malformed rules called."/>
         <to uri="bean:messageResponseService?method=handleMalformedRules(${exception.cause},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getBody().getContractRequest().toRdf()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -197,7 +197,7 @@
 
     <route id="missingRulesException">
         <from uri="direct:handleMissingRulesException"/>
-        <log message="Rules are missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing rules called."/>
         <to uri="bean:messageResponseService?method=handleMissingRules(${exception.getContractRequest()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()})"/>
@@ -205,7 +205,7 @@
 
     <route id="missingTargetInRuleException">
         <from uri="direct:handleMissingTargetInRuleException"/>
-        <log message="Rules are missing!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing target in rules called."/>
         <to uri="bean:messageResponseService?method=handleMissingTargetInRules(${exception.getContractRequest()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getId()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()})"/>
@@ -213,7 +213,7 @@
 
     <route id="agreementPersistenceException">
         <from uri="direct:handleAgreementPersistenceException"/>
-        <log message="Error persisting artifact!"/>
+        <log loggingLevel="DEBUG" message="Error route for handling AgreementPersistenceException called."/>
         <to uri="bean:messageResponseService?method=handleAgreementPersistenceException(${exception.getCause()},
         null,
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
@@ -222,7 +222,7 @@
 
     <route id="missingPayloadException">
         <from uri="direct:handleMissingPayloadException"/>
-        <log message="Payload is empty"/>
+        <log loggingLevel="DEBUG" message="Error route for handling missing payload called."/>
         <to uri="bean:messageResponseService?method=handleMissingPayload(
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getAffectedResource()},
         ${mandatoryBodyAs(io.dataspaceconnector.services.messages.handler.camel.dto.Request).getHeader().getIssuerConnector()},
