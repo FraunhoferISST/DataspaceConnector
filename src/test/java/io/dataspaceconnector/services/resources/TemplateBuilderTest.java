@@ -18,7 +18,10 @@ package io.dataspaceconnector.services.resources;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import io.dataspaceconnector.model.artifact.ArtifactImpl;
+import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.catalog.CatalogDesc;
+import io.dataspaceconnector.model.resource.Resource;
+import io.dataspaceconnector.model.rule.ContractRule;
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.resource.OfferedResourceDesc;
@@ -55,6 +58,15 @@ class TemplateBuilderTest {
 
     @MockBean
     private CatalogOfferedResourceLinker catalogOfferedResourceLinker;
+
+    @MockBean
+    private Resource resource;
+
+    @MockBean
+    private ContractRule contractRule;
+
+    @MockBean
+    private Catalog catalog;
 
     @Autowired
     TemplateBuilder<OfferedResource, OfferedResourceDesc> builder;
