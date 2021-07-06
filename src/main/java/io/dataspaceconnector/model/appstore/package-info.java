@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This is the package for all resource classes.
+ * Package for the appstore model.
  */
-package io.dataspaceconnector.model.resource;
+package io.dataspaceconnector.model.appstore;
