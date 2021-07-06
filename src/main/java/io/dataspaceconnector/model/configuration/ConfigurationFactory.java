@@ -35,10 +35,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ConfigurationFactory extends AbstractFactory<Configuration, ConfigurationDesc> {
 
+    /**
+     * Contains creation and update logic for proxy objects.
+     **/
     private final @NonNull ProxyFactory proxyFactory;
 
+    /**
+     * Contains creation and update logic for truststore objects.
+     **/
     private final @NonNull TruststoreFactory truststoreFactory;
 
+    /**
+     * Contains creation and update logic for keystore objects.
+     **/
     private final @NonNull KeystoreFactory keystoreFactory;
 
     /**
@@ -63,7 +72,10 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
         final var hasUpdatedKeyStore = updateKeyStore(config, desc.getKeystoreSettings());
         final var hasUpdatedProxy = updateProxy(config, desc.getProxySettings());
 
-        return hasUpdatedLogLevel || hasUpdatedDeployMode || hasUpdatedTrustStore || hasUpdatedKeyStore
+        return hasUpdatedLogLevel
+                || hasUpdatedDeployMode
+                || hasUpdatedTrustStore
+                || hasUpdatedKeyStore
                 || hasUpdatedProxy;
     }
 
@@ -94,10 +106,10 @@ public class ConfigurationFactory extends AbstractFactory<Configuration, Configu
 
     private boolean updateProxy(final Configuration configuration, final ProxyDesc desc) {
         // TODO only update if proxy really changed
-        if(configuration.getProxy() == null && desc == null)
+        if (configuration.getProxy() == null && desc == null) {
             return false;
-
-        if(configuration.getProxy() != null && desc == null) {
+        }
+        if (configuration.getProxy() != null && desc == null) {
             configuration.setProxy(null);
             return true;
         }
