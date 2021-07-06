@@ -17,12 +17,14 @@ package io.dataspaceconnector.controller.configurations;
 
 import io.dataspaceconnector.controller.resources.BaseResourceChildController;
 import io.dataspaceconnector.controller.resources.BaseResourceController;
+import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.resource.OfferedResource;
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
 import io.dataspaceconnector.services.configuration.EntityLinkerService;
 import io.dataspaceconnector.services.configuration.RouteService;
+import io.dataspaceconnector.view.ArtifactView;
 import io.dataspaceconnector.view.EndpointViewProxy;
 import io.dataspaceconnector.view.OfferedResourceView;
 import io.dataspaceconnector.view.RouteView;
@@ -57,14 +59,21 @@ public final class RouteControllers {
     @RestController
     @RequestMapping("/api/routes/{id}/outputs")
     @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
-    public static class RoutesToOfferedResources
-            extends BaseResourceChildController<EntityLinkerService.RouteOfferedResourceLinker,
-            OfferedResource, OfferedResourceView> { }
+    public static class RoutesToArtifacts
+            extends BaseResourceChildController<EntityLinkerService.RouteArtifactsLinker,
+            Artifact, ArtifactView> { }
 
     @RestController
-    @RequestMapping("/api/routes/{id}/endpoints")
-    @Tag(name = "Route", description = "Endpoints for linking routes to offered resources")
+    @RequestMapping("/api/routes/{id}/endpoints/start")
+    @Tag(name = "Route", description = "Endpoints for linking routes to the start endpoint")
+    public static class RoutesToStartEndpoints
+            extends BaseResourceChildController<EntityLinkerService.RouteStartEndpointLinker,
+            Endpoint, EndpointViewProxy> { }
+
+    @RestController
+    @RequestMapping("/api/routes/{id}/endpoints/end")
+    @Tag(name = "Route", description = "Endpoints for linking routes to the last endpoint")
     public static class RoutesToEndpoints
-            extends BaseResourceChildController<EntityLinkerService.RouteEndpointLinker,
+            extends BaseResourceChildController<EntityLinkerService.RouteLastEndpointLinker,
             Endpoint, EndpointViewProxy> { }
 }

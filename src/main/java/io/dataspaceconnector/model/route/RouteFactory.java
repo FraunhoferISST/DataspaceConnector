@@ -15,14 +15,20 @@
  */
 package io.dataspaceconnector.model.route;
 
-import io.dataspaceconnector.model.base.AbstractFactory;
+import io.dataspaceconnector.model.AbstractNamedFactory;
+import io.dataspaceconnector.model.configuration.DeployMethod;
+import io.dataspaceconnector.model.endpoint.Endpoint;
+import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Creates and updates a route.
  */
 @Component
-public class RouteFactory extends AbstractFactory<Route, RouteDesc> {
+public class RouteFactory extends AbstractNamedFactory<Route, RouteDesc> {
 
     /**
      * The default string.
@@ -36,10 +42,7 @@ public class RouteFactory extends AbstractFactory<Route, RouteDesc> {
     @Override
     protected Route initializeEntity(final RouteDesc desc) {
         final var route = new Route();
-//        route.setStartEndpoint(new ArrayList<>());
-//        route.setLastEndpoint(new ArrayList<>());
-//        route.setSubRoutes(new ArrayList<>());
-//        route.setOfferedResources(new ArrayList<>());
+        route.setOutput(new ArrayList<>());
 
         return route;
     }
@@ -51,36 +54,61 @@ public class RouteFactory extends AbstractFactory<Route, RouteDesc> {
      */
     @Override
     protected boolean updateInternal(final Route route, final RouteDesc desc) {
-//        final var hasUpdatedRouteConfig = updateRouteConfiguration(route,
-//                desc.getRouteConfiguration());
-//        final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
-//                route.getDeployMethod());
-//        final var hasUpdatedAdditional = updateAdditional(route, route.getAdditional());
-//
-//        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedAdditional;
-        return false;
+        final var hasUpdatedRouteConfig = updateRouteConfiguration(route,
+                desc.getConfiguration());
+        final var hasUpdatedDeployMethod = updateRouteDeployMethod(route,
+                desc.getDeploy());
+        final var hasUpdatedStartEndpoint = updateStartEndpoint(route, desc.getStart());
+        final var hasUpdatedLastEndpoint = updateLastEndpoint(route, desc.getEnd());
+
+        return hasUpdatedRouteConfig || hasUpdatedDeployMethod || hasUpdatedStartEndpoint
+                || hasUpdatedLastEndpoint;
     }
-//
-//    /**
-//     * @param route        The route.
-//     * @param deployMethod The deploy method of the route.
-//     * @return True, if route deploy method is updated.
-//     */
-//    private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
-//        route.setDeployMethod(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
-//        return true;
-//    }
-//
-//    /**
-//     * @param route              The route.
-//     * @param routeConfiguration The route configuration.
-//     * @return True, if route configuration is updated.
-//     */
-//    private boolean updateRouteConfiguration(final Route route, final String routeConfiguration) {
-//        final var newRouteConfig = MetadataUtils.updateString(route.getRouteConfiguration(),
-//                routeConfiguration, DEFAULT_CONFIGURATION);
-//        newRouteConfig.ifPresent(route::setRouteConfiguration);
-//
-//        return newRouteConfig.isPresent();
-//    }
+
+    private boolean updateLastEndpoint(final Route route, final Endpoint end) {
+        if (route.getEnd() == null && end == null) {
+            return false;
+        }
+        if (route.getEnd() != null && end == null) {
+            route.setEnd(null);
+            return true;
+        }
+        route.setEnd(end);
+        return true;
+    }
+
+    private boolean updateStartEndpoint(final Route route, final Endpoint start) {
+        if (route.getStart() == null && start == null) {
+            return false;
+        }
+        if (route.getStart() != null && start == null) {
+            route.setStart(null);
+            return true;
+        }
+        route.setStart(start);
+        return true;
+    }
+
+    /**
+     * @param route        The route.
+     * @param deployMethod The deploy method of the route.
+     * @return True, if route deploy method is updated.
+     */
+    private boolean updateRouteDeployMethod(final Route route, final DeployMethod deployMethod) {
+        route.setDeploy(Objects.requireNonNullElse(deployMethod, DeployMethod.NONE));
+        return true;
+    }
+
+    /**
+     * @param route              The route.
+     * @param routeConfiguration The route configuration.
+     * @return True, if route configuration is updated.
+     */
+    private boolean updateRouteConfiguration(final Route route, final String routeConfiguration) {
+        final var newRouteConfig = MetadataUtils.updateString(route.getConfiguration(),
+                routeConfiguration, DEFAULT_CONFIGURATION);
+        newRouteConfig.ifPresent(route::setConfiguration);
+
+        return newRouteConfig.isPresent();
+    }
 }

@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.base.CRUDController;
 import io.dataspaceconnector.model.endpoint.AppEndpoint;
 import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
@@ -40,6 +38,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 /**
  * Controller for management of different endpoints.

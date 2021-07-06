@@ -60,10 +60,10 @@ public class RouteView extends RepresentationModel<RouteView> {
     /**
      * The route configuration.
      */
-    private String config;
+    private String configuration;
 
     /**
      * The deploy method of the route.
      */
-    private DeployMethod method;
+    private DeployMethod deploy;
 }

@@ -24,11 +24,6 @@ import org.springframework.stereotype.Component;
 public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, GenericEndpointDesc> {
 
     /**
-     * Default absolute path.
-     */
-    private static final String DEFAULT_PATH = "https://path";
-
-    /**
      * @param desc The description passed to the factory.
      * @return The app endpoint entity.
      */

@@ -52,11 +52,24 @@ public class RouteViewAssembler
                 .withRel("routes");
         view.add(steps);
 
-        final var offeredResources =
-                linkTo(methodOn(RouteControllers.RoutesToOfferedResources.class)
+        final var artifacts =
+                linkTo(methodOn(RouteControllers.RoutesToArtifacts.class)
                         .getResource(route.getId(), null, null))
-                        .withRel("offers");
-        view.add(offeredResources);
+                        .withRel("artifacts");
+        view.add(artifacts);
+
+        final var startEndpoints =
+                linkTo(methodOn(RouteControllers.RoutesToStartEndpoints.class)
+                        .getResource(route.getId(), null, null))
+                        .withRel("endpoints");
+        view.add(startEndpoints);
+
+        final var lastEndpoints =
+                linkTo(methodOn(RouteControllers.RoutesToEndpoints.class)
+                        .getResource(route.getId(), null, null))
+                        .withRel("endpoints");
+        view.add(lastEndpoints);
+
 
         return view;
     }

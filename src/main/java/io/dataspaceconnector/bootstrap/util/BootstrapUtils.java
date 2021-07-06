@@ -65,6 +65,7 @@ public final class BootstrapUtils {
      * @param name      The (optional) name of the bootstrapping file.
      * @param extension The extension of the bootstrapping file.
      * @return Properties that contain the merged content of all bootstrap config files.
+     * @throws FileNotFoundException Could not open properties file.
      */
     public static Properties retrieveBootstrapConfig(final String path,
                                                      final String name,
