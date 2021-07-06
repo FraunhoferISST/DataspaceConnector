@@ -29,15 +29,14 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public final class OkHttpUtils {
-
-    private OkHttpUtils() {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * Default timeout for HTTP-Requests.
      */
     private static final int TIMEOUT = 30;
+
+    private OkHttpUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Static method for generating an OkHttpClient which does not validate Certificate Chains.

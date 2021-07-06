@@ -90,7 +90,7 @@ public class InfomodelPetriNetBuilder {
             if (log.isDebugEnabled()) {
                 log.debug(String.format("Evaluating formula: %s", formula.writeFormula()));
             }
-            var result = CTLEvaluator.evaluate(formula, stepGraph.getInitial()
+            final var result = CTLEvaluator.evaluate(formula, stepGraph.getInitial()
                     .getNodes()
                     .stream()
                     .filter(node -> node instanceof Place && ((Place) node)
@@ -312,7 +312,7 @@ public class InfomodelPetriNetBuilder {
         final var transitions = petriNet.getNodes().stream()
                 .filter(node -> node instanceof Transition)
                 .collect(Collectors.toList());
-        Set<Transition> visited = new HashSet<>();
+        final Set<Transition> visited = new HashSet<>();
         for (final var trans : transitions) {
             if (!visited.contains((Transition) trans)) {
                 visited.addAll(fillWriteAndErase(
@@ -338,31 +338,31 @@ public class InfomodelPetriNetBuilder {
 
         visited.add(trans);
 
-        var previous = trans.getTargetArcs().stream()
+        final var previous = trans.getTargetArcs().stream()
                 .map(Arc::getSource)
                 .map(Node::getTargetArcs)
                 .flatMap(Collection::stream)
                 .map(Arc::getSource)
                 .filter(node -> node instanceof TransitionImpl)
                 .collect(Collectors.toSet());
-        Set<String> readSet = new HashSet<>();
+        final Set<String> readSet = new HashSet<>();
 
-        for (var prevTrans : previous) {
+        for (final var prevTrans : previous) {
             fillWriteAndErase((Transition) prevTrans, new HashSet<>(visited));
-            Transition filledTrans = (Transition) prevTrans;
-            var context = filledTrans.getContext();
+            final var filledTrans = (Transition) prevTrans;
+            final var context = filledTrans.getContext();
             readSet.addAll(context.getWrite());
         }
 
         trans.getContext().setRead(readSet);
 
-        if ((trans).getContext().getType() == ContextObject.TransType.APP) {
-            final var writeSplit = (trans).getContext().getWrite();
+        if (trans.getContext().getType() == ContextObject.TransType.APP) {
+            final var writeSplit = trans.getContext().getWrite();
             final var erased = readSet.stream().filter(
                     x -> !writeSplit.contains(x)).collect(Collectors.toSet());
-            (trans).getContext().setErase(erased);
+            trans.getContext().setErase(erased);
         } else {
-            (trans).getContext().setWrite(readSet);
+            trans.getContext().setWrite(readSet);
         }
 
         return visited;

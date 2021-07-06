@@ -18,6 +18,7 @@ package io.configmanager.extensions.routes.camel;
 import de.fraunhofer.iais.eis.AppRoute;
 import de.fraunhofer.iais.eis.ConnectorEndpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
@@ -31,8 +32,8 @@ import org.springframework.stereotype.Component;
  * Utility class for configuring Camel routes for the Dataspace Connector.
  */
 @Component
+@NoArgsConstructor
 public class RouteConfigurer {
-
     /**
      * Username for the Dataspace Connector.
      */
