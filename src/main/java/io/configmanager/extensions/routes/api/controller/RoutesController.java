@@ -18,14 +18,12 @@ package io.configmanager.extensions.routes.api.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.AppRoute;
-import de.fraunhofer.iais.eis.RouteStep;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
 import io.configmanager.extensions.routes.api.RoutesApi;
 import io.configmanager.extensions.routes.api.service.RoutesService;
 import io.configmanager.util.enums.RouteDeployMethod;
 import io.configmanager.util.json.JsonUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +46,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: Routes")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RoutesController implements RoutesApi {
     /**
      * Max. amount of route errors to be logged.
@@ -74,6 +71,21 @@ public class RoutesController implements RoutesApi {
      * The temp. storage of route errors.
      */
     private final LinkedList<String> routeErrors = new LinkedList<>();
+
+    /**
+     * Constuctor of RoutesController.
+     * @param routesService The Service class for the Route-APIs.
+     * @param serializer The infomodel-serializer.
+     * @param objectMapper Objectmapper used for mapping values to strings.
+     */
+    @Autowired
+    public RoutesController(final RoutesService routesService,
+                            final Serializer serializer,
+                            final ObjectMapper objectMapper) {
+        this.routesService = routesService;
+        this.serializer = serializer;
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * This method creates an app route.

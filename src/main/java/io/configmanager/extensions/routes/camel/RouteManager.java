@@ -27,7 +27,6 @@ import io.configmanager.extensions.routes.camel.dto.RouteStepEndpoint;
 import io.configmanager.extensions.routes.camel.exceptions.NoSuitableTemplateException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteCreationException;
 import io.configmanager.extensions.routes.camel.exceptions.RouteDeletionException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.velocity.VelocityContext;
@@ -48,7 +47,6 @@ import java.util.List;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RouteManager {
     /**
      * Setting on how to handle routing errors.
@@ -70,6 +68,21 @@ public class RouteManager {
      * Helper for configuring Camel routes for the Dataspace Connector.
      */
     private final RouteConfigurer routeConfigurer;
+
+    /**
+     * Constructor of RouteManager.
+     * @param routeHttpHelper Helper for deploying and deleting Camel routes via HTTP.
+     * @param routeFileHelper Helper for deploying and deleting Camel routes in the file system.
+     * @param routeConfigurer Helper for configuring Camel routes for the Dataspace Connector.
+     */
+    @Autowired
+    public RouteManager(final RouteHttpHelper routeHttpHelper,
+                        final RouteFileHelper routeFileHelper,
+                        final RouteConfigurer routeConfigurer) {
+        this.routeHttpHelper = routeHttpHelper;
+        this.routeFileHelper = routeFileHelper;
+        this.routeConfigurer = routeConfigurer;
+    }
 
     /**
      * Creates a Camel XML route from a given app route.

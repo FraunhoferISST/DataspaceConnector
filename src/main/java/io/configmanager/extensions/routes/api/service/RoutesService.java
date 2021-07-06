@@ -20,9 +20,8 @@ import de.fraunhofer.iais.eis.AppRouteImpl;
 import de.fraunhofer.iais.eis.Endpoint;
 import de.fraunhofer.iais.eis.GenericEndpoint;
 import de.fraunhofer.iais.eis.RouteStep;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ import java.util.List;
 @Slf4j
 @Service
 @Transactional
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@NoArgsConstructor
 public class RoutesService {
     /**
      * This method creates an app route.

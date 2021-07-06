@@ -18,7 +18,6 @@ package io.configmanager.extensions.gui.api.controller;
 import io.configmanager.extensions.gui.api.GuiUtilApi;
 import io.configmanager.extensions.gui.api.service.GuiUtilService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +32,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: GUI Utilities")
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GuiUtilController implements GuiUtilApi {
     /**
      * The Service class for returning values for the API calls.
      */
     private final GuiUtilService utilService;
+
+    /**
+     * Constructor of GuiUtilController.
+     * @param utilService A Util-Service class for returning values for API calls.
+     */
+    @Autowired
+    public GuiUtilController(final GuiUtilService utilService) {
+        this.utilService = utilService;
+    }
 
     /**
      * This method returns for a given enum name all enum values.
