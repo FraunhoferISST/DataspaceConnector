@@ -555,6 +555,7 @@
 				<configuration>
 					<show>private</show>
 					<author>true</author>
+					<doclint>none</doclint>
 				</configuration>
 				<executions>
 					<execution>
