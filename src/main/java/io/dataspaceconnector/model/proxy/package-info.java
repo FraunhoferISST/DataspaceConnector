@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This is the package for all resource classes.
+ * This is the package for the proxy model.
  */
-package io.dataspaceconnector.model.resource;
+package io.dataspaceconnector.model.proxy;

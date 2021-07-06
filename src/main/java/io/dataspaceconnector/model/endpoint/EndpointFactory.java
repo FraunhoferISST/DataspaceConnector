@@ -86,7 +86,7 @@ public abstract class EndpointFactory<T extends Endpoint, D extends EndpointDesc
 //     */
 //    private boolean updateOutboundPath(final Endpoint endpoint, final String outboundPath) {
 //        final var newOutboundPath = MetadataUtils.updateString(endpoint.getOutboundPath(),
-//                                                               outboundPath, DEFAULT_OUTBOUND_PATH);
+//                                    outboundPath, DEFAULT_OUTBOUND_PATH);
 //        newOutboundPath.ifPresent(endpoint::setOutboundPath);
 //
 //        return newOutboundPath.isPresent();

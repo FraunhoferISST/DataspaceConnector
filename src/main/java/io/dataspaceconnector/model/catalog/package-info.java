@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This is the package for all resource classes.
+ * This package contains the catalog model.
  */
-package io.dataspaceconnector.model.resource;
+package io.dataspaceconnector.model.catalog;

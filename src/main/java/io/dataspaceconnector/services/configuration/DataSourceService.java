@@ -47,7 +47,7 @@ public class DataSourceService extends BaseEntityService<DataSource, DataSourceD
         Utils.requireNonNull(entityId, ErrorMessages.ENTITYID_NULL);
         var dataSource = dataSourceRepository.getById(entityId);
 
-        if(dataSource.getAuthentication()!=null){
+        if (dataSource.getAuthentication() != null) {
             dataSourceFactory.removeAuthentication(dataSource);
         }
         dataSourceRepository.delete(dataSource);

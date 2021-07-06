@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * This is the package for all resource classes.
+ * This package holds the base models.
  */
-package io.dataspaceconnector.model.resource;
+package io.dataspaceconnector.model.base;
