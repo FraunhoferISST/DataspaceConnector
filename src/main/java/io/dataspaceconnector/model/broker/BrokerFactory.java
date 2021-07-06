@@ -65,7 +65,7 @@ public class BrokerFactory extends AbstractNamedFactory<Broker, BrokerDesc> {
      * @param status The registration status of the broker.
      * @return True, if broker is updated.
      */
-    private boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
+    public boolean updateRegistrationStatus(final Broker broker, final RegistrationStatus status) {
         broker.setStatus(Objects.requireNonNullElse(status, RegistrationStatus.UNREGISTERED));
         return true;
     }
