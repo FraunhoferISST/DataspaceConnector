@@ -15,4 +15,7 @@
  */
 package io.dataspaceconnector.utils.exceptions;
 
+/**
+ * Exception class for not implemented code.
+ */
 public class NotImplemented extends RuntimeException { }

@@ -17,6 +17,12 @@ package io.dataspaceconnector.model.base;
 
 import java.net.URI;
 
+/**
+ * Interface for remote objects.
+ */
 public interface RemoteObject extends Remote {
+    /**
+     * @return remote id
+     */
     URI getRemoteId();
 }

@@ -51,8 +51,14 @@ public class GlobalMessageService {
      */
     private final @NotNull IDSBrokerService brokerSvc;
 
+    /**
+     * The broker repository.
+     */
     private final @NotNull BrokerRepository brokerRepository;
 
+    /**
+     * The broker factory.
+     */
     private final @NotNull BrokerFactory brokerFactory;
 
     /**
@@ -136,7 +142,8 @@ public class GlobalMessageService {
      * @throws IOException               Any other problems in establishing a connection
      *                                   to the target.
      */
-    public boolean sendResourceUnavailableMessage(final URI recipient, final Resource resource) throws
+    public boolean sendResourceUnavailableMessage(final URI recipient,
+                                                  final Resource resource) throws
             MultipartParseException,
             ClaimsException,
             DapsTokenManagerException,
@@ -246,7 +253,8 @@ public class GlobalMessageService {
             if (RegistrationStatus.UNREGISTERED.equals(foundBroker.getStatus())) {
                 brokerFactory.updateRegistrationStatus(foundBroker, RegistrationStatus.REGISTERED);
             } else {
-                brokerFactory.updateRegistrationStatus(foundBroker, RegistrationStatus.UNREGISTERED);
+                brokerFactory.updateRegistrationStatus(foundBroker,
+                        RegistrationStatus.UNREGISTERED);
             }
             brokerRepository.saveAndFlush(foundBroker);
             return true;

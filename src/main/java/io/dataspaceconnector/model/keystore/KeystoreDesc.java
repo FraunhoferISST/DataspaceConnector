@@ -23,6 +23,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * This class describes key stores properties.
+ */
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)

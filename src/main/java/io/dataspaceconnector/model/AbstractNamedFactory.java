@@ -18,6 +18,11 @@ package io.dataspaceconnector.model;
 import io.dataspaceconnector.model.base.AbstractFactory;
 import io.dataspaceconnector.utils.MetadataUtils;
 
+/**
+ * Abstract factory class which holds additional information like title, description.
+ * @param <T> The type of the entity.
+ * @param <D> The type of the description.
+ */
 public abstract class AbstractNamedFactory<T extends NamedEntity, D extends NamedDescription>
         extends AbstractFactory<T, D> {
 

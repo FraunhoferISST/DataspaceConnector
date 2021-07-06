@@ -23,11 +23,21 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
+/**
+ * The view class for the proxy.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class ProxyView extends RepresentationModel<ProxyView> {
 
+    /**
+     * The location information.
+     */
     private URI location;
+
+    /**
+     * The list of exclusions.
+     */
     private List<String> exclusions;
 }

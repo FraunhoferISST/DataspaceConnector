@@ -58,18 +58,17 @@ public class RouteViewAssembler
                         .withRel("artifacts");
         view.add(artifacts);
 
-        final var startEndpoints =
-                linkTo(methodOn(RouteControllers.RoutesToStartEndpoints.class)
-                        .getResource(route.getId(), null, null))
-                        .withRel("endpoints");
-        view.add(startEndpoints);
-
-        final var lastEndpoints =
-                linkTo(methodOn(RouteControllers.RoutesToEndpoints.class)
-                        .getResource(route.getId(), null, null))
-                        .withRel("endpoints");
-        view.add(lastEndpoints);
-
+//        final var startEndpoints =
+//                linkTo(methodOn(RouteControllers.RoutesToStartEndpoints.class)
+//                        .getResource(route.getId(), null, null))
+//                        .withRel("endpoints");
+//        view.add(startEndpoints);
+//
+//        final var lastEndpoints =
+//                linkTo(methodOn(RouteControllers.RoutesToEndpoints.class)
+//                        .getResource(route.getId(), null, null))
+//                        .withRel("endpoints");
+//        view.add(lastEndpoints);
 
         return view;
     }

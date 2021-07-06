@@ -22,10 +22,16 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.net.URI;
 
+/**
+ * The view class for the key store.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class KeystoreView extends RepresentationModel<KeystoreView> {
 
+    /**
+     * The location information.
+     */
     private URI location;
 }

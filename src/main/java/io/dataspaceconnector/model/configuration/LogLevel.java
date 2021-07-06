@@ -22,21 +22,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public enum LogLevel {
 
+    /**
+     * Log level is off.
+     */
     @JsonProperty("Off")
     OFF,
 
+    /**
+     * Log level is trace.
+     */
     @JsonProperty("Trace")
     TRACE,
 
+    /**
+     * Log level is debug.
+     */
     @JsonProperty("Debug")
     DEBUG,
 
+    /**
+     * Log level is info.
+     */
     @JsonProperty("Info")
     INFO,
 
+    /**
+     * Log level is warn.
+     */
     @JsonProperty("Warn")
     WARN,
 
+    /**
+     * Log level is error.
+     */
     @JsonProperty("Error")
     ERROR;
 }

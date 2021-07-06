@@ -32,6 +32,9 @@ import java.net.URI;
 
 import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
+/**
+ * The entity class for the key store.
+ */
 @javax.persistence.Entity
 @Table(name = "keystore")
 @SQLDelete(sql = "UPDATE keystore SET deleted=true WHERE id=?")

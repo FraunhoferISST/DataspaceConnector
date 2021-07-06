@@ -53,24 +53,44 @@ public final class EndpointControllers {
     @RequestMapping("/api/endpoints")
     @RequiredArgsConstructor
     @Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
-    public static class GenericEndpointController
+    public static final class GenericEndpointController
             implements CRUDController<Endpoint, EndpointDesc, Object> {
 
+        /**
+         * Service proxy for endpoints.
+         */
         @Autowired
         private final EndpointServiceProxy service;
 
+        /**
+         * Assembler for generic endpoints.
+         */
         @Autowired
         private final GenericEndpointViewAssembler genericAssembler;
 
+        /**
+         * Assembler for app endpoints.
+         */
         @Autowired
         private final AppEndpointViewAssembler appAssembler;
 
+        /**
+         * Assembler for connector endpoints.
+         */
         @Autowired
         private final ConnectorEndpointViewAssembler connectorAssembler;
 
+        /**
+         * Assembler for pagination.
+         */
         @Autowired
         private final PagedResourcesAssembler<Endpoint> pagedAssembler;
 
+        /**
+         * @param endpoint The endpoint.
+         * @param <K> The type of the endpoint.
+         * @return representation model
+         */
         private <K> RepresentationModel<?> toView(final K endpoint) {
             if (AppEndpoint.class.equals(endpoint.getClass())) {
                 return appAssembler.toModel((AppEndpoint) endpoint);
@@ -83,6 +103,10 @@ public final class EndpointControllers {
             return genericAssembler.toModel((GenericEndpoint) endpoint);
         }
 
+        /**
+         * @param pageable Holds the page request.
+         * @return page model
+         */
         private PagedModel<?> toView(final Pageable pageable) {
             final var objs = service.getAll(pageable);
             if (objs.hasContent()) {
@@ -91,6 +115,10 @@ public final class EndpointControllers {
             return PagedModel.empty();
         }
 
+        /**
+         * @param obj The endpoint object.
+         * @return response entity
+         */
         private ResponseEntity<Object> respondCreated(final Endpoint obj) {
             final RepresentationModel<?> entity = toView(obj);
             final var headers = new HttpHeaders();

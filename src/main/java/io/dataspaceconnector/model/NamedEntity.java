@@ -21,10 +21,19 @@ import io.dataspaceconnector.model.base.Entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * The entity class which holds additional information like title, description.
+ */
 @Data
 @MappedSuperclass
 @EqualsAndHashCode(callSuper = true)
 public class NamedEntity extends Entity {
+    /**
+     * The title of the entity.
+     */
     private String title;
+    /**
+     * The description of the entity.
+     */
     private String description;
 }

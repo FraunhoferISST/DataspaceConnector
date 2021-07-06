@@ -17,14 +17,45 @@ package io.dataspaceconnector.services.configuration;
 
 import io.dataspaceconnector.model.route.Route;
 import io.dataspaceconnector.model.route.RouteDesc;
+import io.dataspaceconnector.repositories.EndpointRepository;
 import io.dataspaceconnector.services.resources.BaseEntityService;
-import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
  * Service class for routes.
  */
 @Service
-@NoArgsConstructor
+@Getter(AccessLevel.PACKAGE)
+@Setter(AccessLevel.NONE)
 public class RouteService extends BaseEntityService<Route, RouteDesc> {
+
+    /**
+     * Repository for storing data.
+     **/
+    private final @NonNull EndpointRepository endpointRepo;
+
+    /**
+     * Constrcutor for route service.
+     * @param endpointRepository The endpoint repository.
+     */
+    @Autowired
+    public RouteService(final @NonNull EndpointRepository endpointRepository) {
+        this.endpointRepo = endpointRepository;
+    }
+
+    @Override
+    protected final Route persist(final Route route) {
+        if (route.getStart() != null) {
+            endpointRepo.save(route.getStart());
+        }
+        if (route.getEnd() != null) {
+            endpointRepo.save(route.getEnd());
+        }
+        return super.persist(route);
+    }
 }

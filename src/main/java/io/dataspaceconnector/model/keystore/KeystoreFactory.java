@@ -21,20 +21,29 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+/**
+ * Factory class for the key store.
+ */
 @Component
 public class KeystoreFactory extends AbstractFactory<Keystore, KeystoreDesc> {
 
+    /**
+     * The default password.
+     */
     private static final String DEFAULT_PASSWORD = "";
 
+    /**
+     * The default location.
+     */
     private static final URI DEFAULT_LOCATION = URI.create("");
 
     @Override
-    protected Keystore initializeEntity(final KeystoreDesc desc) {
+    protected final Keystore initializeEntity(final KeystoreDesc desc) {
         return new Keystore();
     }
 
     @Override
-    public boolean updateInternal(final Keystore keystore, final KeystoreDesc desc) {
+    public final boolean updateInternal(final Keystore keystore, final KeystoreDesc desc) {
         final var hasUpdatedLocation = updateLocation(keystore, desc.getLocation());
         final var hasUpdatedPassword = updatePassword(keystore, desc.getPassword());
 

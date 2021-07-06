@@ -18,6 +18,9 @@ package io.dataspaceconnector.repositories;
 import io.dataspaceconnector.model.keystore.Keystore;
 import org.springframework.stereotype.Repository;
 
+/**
+ * CRUD repository for the key store.
+ */
 @Repository
 public interface KeystoreRepository extends BaseEntityRepository<Keystore> {
 }

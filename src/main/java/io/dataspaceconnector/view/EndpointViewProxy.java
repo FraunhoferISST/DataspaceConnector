@@ -21,6 +21,9 @@ import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
+/**
+ * The view class for the endpoint proxy.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)

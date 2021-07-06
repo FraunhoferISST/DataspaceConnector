@@ -18,6 +18,9 @@ package io.dataspaceconnector.repositories;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import org.springframework.stereotype.Repository;
 
+/**
+ * CRUD repository for the endpoints.
+ */
 @Repository
 public interface EndpointRepository extends BaseEntityRepository<Endpoint>  {
 }

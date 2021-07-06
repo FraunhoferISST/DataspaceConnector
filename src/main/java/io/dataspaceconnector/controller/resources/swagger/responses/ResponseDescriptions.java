@@ -15,10 +15,25 @@
  */
 package io.dataspaceconnector.controller.resources.swagger.responses;
 
+/**
+ * This class holds descriptions for the responses.
+ */
 public class ResponseDescriptions {
+    /**
+     * Description is Ok.
+     */
     @SuppressWarnings("PMD.ShortVariable")
     public static final String OK = "Ok";
+    /**
+     * Description is Created.
+     */
     public static final String CREATED = "Created";
+    /**
+     * Description is No Content.
+     */
     public static final String NO_CONTENT = "No Content";
+    /**
+     * Description is No Allowed.
+     */
     public static final String METHOD_NOT_ALLOWED = "Not Allowed";
 }

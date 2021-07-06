@@ -35,7 +35,16 @@ import lombok.EqualsAndHashCode;
         @JsonSubTypes.Type(value = GenericEndpointDesc.class, name = "GENERIC")}
 )
 public class EndpointDesc extends Description {
+    /**
+     * The location information about the endpoint.
+     */
     private URI location;
+    /**
+     * The documentation url.
+     */
     private URI docs;
+    /**
+     * The information about the endpoint.
+     */
     private String info;
 }

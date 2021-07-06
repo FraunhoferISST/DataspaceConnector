@@ -13,20 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view;
-
-import io.dataspaceconnector.model.keystore.Keystore;
-import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.server.RepresentationModelAssembler;
-
 /**
- * The view assembler for the key store.
+ * Groups classes for the exceptions.
  */
-public class KeystoreViewAssembler implements
-        RepresentationModelAssembler<Keystore, KeystoreView> {
-
-    @Override
-    public final KeystoreView toModel(final Keystore store) {
-        return  new ModelMapper().map(store, KeystoreView.class);
-    }
-}
+package io.dataspaceconnector.utils.exceptions;

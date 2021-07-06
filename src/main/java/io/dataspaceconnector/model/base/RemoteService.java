@@ -17,6 +17,12 @@ package io.dataspaceconnector.model.base;
 
 import java.net.URI;
 
+/**
+ * Interface for remote service.
+ */
 public interface RemoteService extends Remote {
+    /**
+     * @return location information
+     */
     URI getLocation();
 }

@@ -46,9 +46,18 @@ public class GenericEndpointView extends RepresentationModel<GenericEndpointView
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private ZonedDateTime modificationDate;
 
+    /**
+     * The location information.
+     */
     private URI location;
 
+    /**
+     * The documentation of the endpoint.
+     */
     private URI docs;
 
+    /**
+     * The information of the endpoint.
+     */
     private String info;
 }
