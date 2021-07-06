@@ -159,50 +159,6 @@ public final class RelationServices {
     }
 
     /**
-     * Handles the relation between subscriptions and requested resources.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class SubscriptionRequestedResourceLinker
-            extends NonOwningRelationService<Subscription, RequestedResource, SubscriptionService,
-            RequestedResourceService> {
-
-        /**
-         * Returns the list of requested resources owning a given subscriber.
-         *
-         * @param owner the subscriber whose requested resources should be received.
-         * @return the list of requested resources.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        protected List<RequestedResource> getInternal(final Subscription owner) {
-            return (List<RequestedResource>) (List<?>) owner.getResources();
-        }
-    }
-
-    /**
-     * Handles the relation between subscriptions and offered resources.
-     */
-    @Service
-    @NoArgsConstructor
-    public static class SubscriptionOfferedResourceLinker
-            extends NonOwningRelationService<Subscription, OfferedResource, SubscriptionService,
-            OfferedResourceService> {
-
-        /**
-         * Returns the list of requested resources owning a given subscriber.
-         *
-         * @param owner the subscriber whose requested resources should be received.
-         * @return the list of requested resources.
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        protected List<OfferedResource> getInternal(final Subscription owner) {
-            return (List<OfferedResource>) (List<?>) owner.getResources();
-        }
-    }
-
-    /**
      * Handles the relation between agreements and artifacts.
      */
     @Service

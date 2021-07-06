@@ -309,38 +309,14 @@ public final class RelationControllers {
     }
 
     /**
-     * Offers the endpoints for managing the relations between subscriptions and requested resources.
-     */
-    @RestController
-    @RequestMapping("/api/subscriptions/{id}/requests")
-    @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
-    public static class SubscriptionsToRequestedResources
-            extends BaseResourceChildController<RelationServices.SubscriptionRequestedResourceLinker,
-            RequestedResource, RequestedResourceView> {
-
-    }
-
-    /**
      * Offers the endpoints for managing the relations between offered resources and subscriptions.
      */
     @RestController
     @RequestMapping("/api/offers/{id}/subscriptions")
     @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
-    public static class OfferedResourcesToSubscribers
+    public static class OfferedResourcesToSubscriptions
             extends BaseResourceChildController<RelationServices.OfferedResourceSubscriptionLinker,
             Subscription, SubscriptionView> {
-
-    }
-
-    /**
-     * Offers the endpoints for managing the relations between subscriptions and offered resources.
-     */
-    @RestController
-    @RequestMapping("/api/subscriptions/{id}/offers")
-    @Tag(name = ResourceNames.SUBSCRIPTIONS, description = ResourceDescriptions.SUBSCRIPTIONS)
-    public static class SubscriptionsToOfferedResources
-            extends BaseResourceChildController<RelationServices.SubscriptionOfferedResourceLinker,
-            OfferedResource, OfferedResourceView> {
 
     }
 }

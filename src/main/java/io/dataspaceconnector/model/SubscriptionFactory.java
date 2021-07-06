@@ -22,7 +22,6 @@ import io.dataspaceconnector.utils.Utils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.ArrayList;
 
 /**
  * Creates and updates a subscriber.
@@ -43,12 +42,9 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var subscription = new Subscription();
-        subscription.setResources(new ArrayList<>());
         subscription.setSubscriber(desc.getSubscriber());
-        subscription.setEnabled(desc.isEnabled());
         subscription.setUrl(desc.getUrl());
         subscription.setTarget(desc.getTarget());
-        subscription.setActive(desc.isActive());
 
         update(subscription, desc);
 

@@ -24,10 +24,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import java.net.URI;
-import java.util.List;
 
 /**
  * Represents a backend subscribed for updates to a requested resource.
@@ -53,19 +51,9 @@ public class Subscription extends AbstractEntity {
     private URI target;
 
     /**
-     * The status of the subscription.
-     */
-    private boolean enabled;
-
-    /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
-
-    /**
-     * Indicates whether the connector is the subscriber or publisher.
-     */
-    private boolean active;
 
     /**
      * A connector or backend system identifier.
@@ -73,9 +61,9 @@ public class Subscription extends AbstractEntity {
     private URI subscriber;
 
     /**
-     * List of requested resource this subscriber is subscribed to.
+     * Indicates whether the connector is the subscriber or publisher.
      */
-    @ManyToMany(mappedBy = "subscriptions")
-    private List<Resource> resources;
+
+    private boolean download;
 
 }

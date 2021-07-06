@@ -15,13 +15,8 @@
  */
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.resources.RelationControllers;
-import io.dataspaceconnector.controller.resources.ResourceControllers.SubscriptionController;
-import io.dataspaceconnector.exceptions.UnreachableLineException;
-import io.dataspaceconnector.model.OfferedResource;
-import io.dataspaceconnector.model.RequestedResource;
+import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.Subscription;
-import io.dataspaceconnector.utils.ErrorMessages;
 import lombok.NoArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -30,11 +25,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.methodOn;
-
 /**
- * Assembles the REST resource for a subscription.
+ * Assembles the REST resource for a requested resource.
  */
 @Component
 @NoArgsConstructor
@@ -52,34 +44,6 @@ public class SubscriptionViewAssembler
         final var view = modelMapper.map(subscription, SubscriptionView.class);
         view.add(getSelfLink(subscription.getId()));
 
-        final var resourceType = subscription.getResources();
-        Link resourceLinker;
-        if (resourceType.isEmpty()) {
-            // No elements found, default to offered resources
-            resourceLinker =
-                    linkTo(methodOn(RelationControllers.SubscriptionsToOfferedResources.class)
-                            .getResource(subscription.getId(), null, null))
-                            .withRel("offers");
-        } else {
-            // Construct the link for the right resource type.
-            if (resourceType.get(0) instanceof OfferedResource) {
-                resourceLinker =
-                        linkTo(methodOn(RelationControllers.SubscriptionsToOfferedResources.class)
-                                .getResource(subscription.getId(), null, null))
-                                .withRel("offers");
-            } else if (resourceType.get(0) instanceof RequestedResource) {
-                resourceLinker =
-                        linkTo(methodOn(
-                                RelationControllers.SubscriptionsToRequestedResources.class)
-                                .getResource(subscription.getId(), null, null))
-                                .withRel("requests");
-            } else {
-                throw new UnreachableLineException(ErrorMessages.UNKNOWN_TYPE);
-            }
-        }
-
-        view.add(resourceLinker);
-
         return view;
     }
 
@@ -90,7 +54,7 @@ public class SubscriptionViewAssembler
      */
     @Override
     public Link getSelfLink(final UUID entityId) {
-        return ViewAssemblerHelper.getSelfLink(entityId, SubscriptionController.class);
+        return ViewAssemblerHelper.getSelfLink(entityId, ResourceControllers.SubscriptionController.class);
     }
 
 }

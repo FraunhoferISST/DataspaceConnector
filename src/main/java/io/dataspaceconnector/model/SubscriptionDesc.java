@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -33,23 +32,12 @@ public class SubscriptionDesc extends AbstractDescription<Subscription> {
      * The id of the resource or artifact that the subscriber subscribed to.
      * Note: Only used for request body.
      */
-    @JsonIgnore
     private URI target;
 
     /**
      * The status of the subscription.
      */
     private boolean enabled;
-
-    /**
-     * The title of the subscription.
-     */
-    private String title;
-
-    /**
-     * A description of the subscription.
-     */
-    private String description;
 
     /**
      * The URL to use when notifying the subscriber about updates to a resource.

@@ -174,6 +174,8 @@ public class MainControllerTest {
                 + "\"requests\":{\"href\":\"http://localhost/api/requests{?page,size}\","
                 + "\"templated\":true},"
                 + "\"rules\":{\"href\":\"http://localhost/api/rules{?page,size}\","
+                + "\"templated\":true},"
+                + "\"subscriptions\":{\"href\":\"http://localhost/api/subscriptions{?page,size}\","
                 + "\"templated\":true}}}", result.getResponse().getContentAsString());
         assertEquals("application/hal+json", result.getResponse().getContentType());
     }

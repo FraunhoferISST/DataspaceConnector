@@ -1,6 +1,5 @@
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.resources.RelationControllers;
 import io.dataspaceconnector.controller.resources.ResourceControllers;
 import io.dataspaceconnector.model.Subscription;
 import org.junit.jupiter.api.Test;
@@ -19,8 +18,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {SubscriptionViewAssembler.class, ViewAssemblerHelper.class})
 public class SubscriptionViewAssemblerTest {
@@ -71,32 +69,26 @@ public class SubscriptionViewAssemblerTest {
         assertThrows(IllegalArgumentException.class, () -> viewAssembler.toModel(null));
     }
 
-//    @Test
-//    public void toModel_validInput_returnSubscriberView() {
-//        /* ARRANGE */
-//        final var subscriber = getSubscriber();
-//
-//        /* ACT */
-//        final var result = viewAssembler.toModel(subscriber);
-//
-//        /* ASSERT */
-//        assertNotNull(result);
-//        assertEquals(subscriber.getUrl(), result.getUrl());
-//        assertEquals(subscriber.getCreationDate(), result.getCreationDate());
-//        assertEquals(subscriber.getModificationDate(), result.getModificationDate());
-//        assertEquals(subscriber.getAdditional(), result.getAdditional());
-//
-//        final var selfLink = result.getLink("self");
-//        assertTrue(selfLink.isPresent());
-//        assertNotNull(selfLink.get());
-//        assertEquals(getSubscriberLink(subscriber.getId()), selfLink.get().getHref());
-//
-//        final var requestedResourcesLink = result.getLink("requests");
-//        assertTrue(requestedResourcesLink.isPresent());
-//        assertNotNull(requestedResourcesLink.get());
-//        assertEquals(getSubscriberRequestedResourcesLink(subscriber.getId()),
-//                requestedResourcesLink.get().getHref());
-//    }
+    @Test
+    public void toModel_validInput_returnSubscriberView() {
+        /* ARRANGE */
+        final var subscriber = getSubscriber();
+
+        /* ACT */
+        final var result = viewAssembler.toModel(subscriber);
+
+        /* ASSERT */
+        assertNotNull(result);
+        assertEquals(subscriber.getUrl(), result.getUrl());
+        assertEquals(subscriber.getCreationDate(), result.getCreationDate());
+        assertEquals(subscriber.getModificationDate(), result.getModificationDate());
+        assertEquals(subscriber.getAdditional(), result.getAdditional());
+
+        final var selfLink = result.getLink("self");
+        assertTrue(selfLink.isPresent());
+        assertNotNull(selfLink.get());
+        assertEquals(getSubscriberLink(subscriber.getId()), selfLink.get().getHref());
+    }
 
     /**************************************************************************
      * Utilities.
@@ -124,11 +116,6 @@ public class SubscriptionViewAssemblerTest {
         final var path = ResourceControllers.SubscriptionController.class
                 .getAnnotation(RequestMapping.class).value()[0];
         return baseUrl + path + "/" + subscriberId;
-    }
-
-    private String getSubscriberRequestedResourcesLink(final UUID subscriberId) {
-        return linkTo(methodOn(RelationControllers.SubscriptionsToRequestedResources.class)
-                .getResource(subscriberId, null, null)).toString();
     }
 
 }

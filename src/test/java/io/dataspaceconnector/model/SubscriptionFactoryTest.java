@@ -1,17 +1,16 @@
 package io.dataspaceconnector.model;
 
-import java.net.URI;
-
 import io.dataspaceconnector.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SubscriptionFactoryTest {
 
@@ -45,7 +44,6 @@ public class SubscriptionFactoryTest {
         assertEquals(desc.getUrl(), result.getUrl());
         assertNull(result.getCreationDate());
         assertNull(result.getModificationDate());
-        assertTrue(result.getResources().isEmpty());
     }
 
     @Test
