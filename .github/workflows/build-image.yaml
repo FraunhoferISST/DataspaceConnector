@@ -169,6 +169,7 @@ jobs:
       -
        name: Push branch image
        run: |
+         docker tag $IMAGE:$BRANCH $IMAGE:$BRANCH-debug
          docker push $IMAGE:$BRANCH-debug
        if: startsWith(github.ref, 'refs/heads')
        env:
