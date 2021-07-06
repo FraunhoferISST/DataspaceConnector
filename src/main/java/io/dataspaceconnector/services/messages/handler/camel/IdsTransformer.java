@@ -231,7 +231,7 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
      *
      * @param msg the incoming message.
      * @return a RouteMsg object with the initial header and the new container object as payload.
-     * @throws Exception
+     * @throws Exception if one of the rules is null.
      */
     @Override
     protected RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer> processInternal(
