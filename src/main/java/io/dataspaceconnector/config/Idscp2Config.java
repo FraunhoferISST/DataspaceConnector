@@ -28,19 +28,37 @@ import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Contains configuration required for using IDSCP for communication.
+ */
 @Configuration
 public class Idscp2Config {
 
+    /**
+     * Processor required for determining the type of an IDS message in a Camel route.
+     *
+     * @return the processor.
+     */
     @Bean("TypeExtractionProcessor")
     public IdsMessageTypeExtractionProcessor idsMessageTypeExtractionProcessor() {
         return new IdsMessageTypeExtractionProcessor();
     }
 
+    /**
+     * Processor that creates a ContractRequestMessage in a Camel route.
+     *
+     * @return the processor.
+     */
     @Bean("ContractRequestCreationProcessor")
     public ContractRequestCreationProcessor contractRequestCreationProcessor() {
         return new ContractRequestCreationProcessor();
     }
 
+    /**
+     * Creates the SSL context used for IDSCP communication.
+     *
+     * @return the SSL context parameters.
+     */
     @Bean
     public SSLContextParameters serverSslContext() {
         var ctx = new SSLContextParameters();
@@ -65,6 +83,9 @@ public class Idscp2Config {
         return ctx;
     }
 
+    /**
+     * Initializes the configuration for IDSCP.
+     */
     @PostConstruct
     public void initConfig() {
         Utils.INSTANCE.setMaintainerUrlProducer(() -> URI.create("https://connector.com"));

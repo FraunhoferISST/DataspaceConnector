@@ -32,7 +32,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @SupportedMessageType(ResourceUpdateMessageImpl.class)
-public class ResourceUpdateMessageHandler extends AbstractMessageHandler<ResourceUpdateMessageImpl> {
+public class ResourceUpdateMessageHandler
+        extends AbstractMessageHandler<ResourceUpdateMessageImpl> {
 
     /**
      * Constructs an ResourceUpdateMessageHandler with the required super class parameters.

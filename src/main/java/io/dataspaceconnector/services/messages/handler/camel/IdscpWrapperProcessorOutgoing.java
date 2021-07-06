@@ -22,6 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
 
+/**
+ * Processor that parses the DTO produced by the message handlers' Camel routes to an IDSCP message.
+ */
 @Component("idscpWrapperProcessorOutgoing")
 @Log4j2
 public class IdscpWrapperProcessorOutgoing implements Processor {

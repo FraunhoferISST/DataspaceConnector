@@ -34,6 +34,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 
+/**
+ * Superclass for all message handlers, that contains the logic for processing an incoming request
+ * in a designated Camel route.
+ *
+ * @param <T> type of message that can be processed by this handler.
+ */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractMessageHandler<T extends Message> implements MessageHandler<T> {
 
@@ -53,8 +59,8 @@ public abstract class AbstractMessageHandler<T extends Message> implements Messa
     private final @NonNull ConnectorService connectorService;
 
     /**
-     * This message implements the logic that is needed to handle the message. As it returns the
-     * input as string the messagePayload-InputStream is converted to a String.
+     * This message implements the logic that is needed to handle the message. It creates an
+     * {@link org.apache.camel.Exchange} and triggers the route specified by the implementing class.
      *
      * @param message The request message.
      * @param payload The message payload.

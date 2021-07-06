@@ -31,7 +31,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @SupportedMessageType(DescriptionRequestMessageImpl.class)
-public class DescriptionRequestHandler extends AbstractMessageHandler<DescriptionRequestMessageImpl> {
+public class DescriptionRequestHandler
+        extends AbstractMessageHandler<DescriptionRequestMessageImpl> {
 
     /**
      * Constructs an DescriptionRequestHandler with the required super class parameters.
