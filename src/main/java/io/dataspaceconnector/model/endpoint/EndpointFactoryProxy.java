@@ -46,7 +46,9 @@ public class EndpointFactoryProxy extends EndpointFactory<Endpoint, EndpointDesc
         if (AppEndpoint.class.equals(desc.getClass())) {
             return apps.updateInternal((AppEndpoint) endpoint, (AppEndpointDesc) desc);
         } else if (ConnectorEndpoint.class.equals(desc.getClass())) {
-            return connector.updateInternal((ConnectorEndpoint) endpoint, (ConnectorEndpointDesc) desc);
+            return connector.updateInternal(
+                    (ConnectorEndpoint) endpoint,
+                    (ConnectorEndpointDesc) desc);
         }
 
         return generic.updateInternal((GenericEndpoint) endpoint, (GenericEndpointDesc) desc);
