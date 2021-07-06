@@ -51,6 +51,10 @@ public class GlobalMessageService {
      *
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public boolean sendConnectorUpdateMessage(final URI recipient)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException,
@@ -65,6 +69,10 @@ public class GlobalMessageService {
      *
      * @param recipient The recipient.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public boolean sendConnectorUnavailableMessage(final URI recipient)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException,
@@ -80,6 +88,10 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public boolean sendResourceUpdateMessage(final URI recipient, final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException,
@@ -96,6 +108,10 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param resource  The ids resource that should be updated.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public boolean sendResourceUnavailableMessage(final URI recipient, final Resource resource)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException,
@@ -112,6 +128,10 @@ public class GlobalMessageService {
      * @param recipient The recipient.
      * @param query     The query statement.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public Optional<String> sendQueryMessage(final URI recipient, final String query)
             throws MultipartParseException, ClaimsException, DapsTokenManagerException,
@@ -134,6 +154,10 @@ public class GlobalMessageService {
      * @param limit     The limit value.
      * @param offset    The offset value.
      * @return True if the message was successfully processed by the recipient, false if not.
+     * @throws MultipartParseException If response could not be parsed to header and payload.
+     * @throws ClaimsException Exception that gets thrown, if errors occur while validating a DAT token.
+     * @throws DapsTokenManagerException  DAPS Token can not be acquired.
+     * @throws IOException Any other problems in establishing a connection to the target.
      */
     public Optional<String> sendFullTextSearchQueryMessage(final URI recipient, final String term,
                                                            final int limit, final int offset)
