@@ -161,13 +161,8 @@ public final class BootstrapUtils {
 
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
-            final var containedFiles = base.listFiles();
-            if (containedFiles == null) {
-                return files;
-            }
-
             // If the base file is a directory, iterate all child files.
-            for (final var child : containedFiles) {
+            for (final var child : getContainedFiles(base)) {
                 if (child.isDirectory()) {
                     files.addAll(findFilesByExtension(child.getPath(), filename, extension));
                 } else {
@@ -184,6 +179,11 @@ public final class BootstrapUtils {
         }
 
         return files;
+    }
+
+    private static File[] getContainedFiles(final File file) {
+        final var out = file.listFiles();
+        return out == null ? new File[] {} : out;
     }
 
     /**
