@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.datasource;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.Description;
 import lombok.Data;
@@ -28,11 +26,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DataSourceDesc extends Description {
-
-    /**
-     * The relative path of the data source.
-     */
-    private URI location;
 
     /**
      * The authentication for the data source.

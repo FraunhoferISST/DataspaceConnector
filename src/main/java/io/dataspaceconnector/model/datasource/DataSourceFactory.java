@@ -17,10 +17,8 @@ package io.dataspaceconnector.model.datasource;
 
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.AbstractFactory;
-import io.dataspaceconnector.utils.MetadataUtils;
 import org.springframework.stereotype.Component;
 
-import java.net.URI;
 import java.util.Objects;
 
 /**
@@ -28,11 +26,6 @@ import java.util.Objects;
  */
 @Component
 public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDesc> {
-
-    /**
-     * The default string.
-     */
-    private static final URI DEFAULT_NAME = URI.create("");
 
     /**
      * The default data source type.
@@ -55,9 +48,6 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
      */
     @Override
     protected boolean updateInternal(final DataSource dataSource, final DataSourceDesc desc) {
-        final var hasUpdatedLocation = updateLocation(
-                dataSource,
-                desc.getLocation());
         final var hasUpdatedAuthentication = updateAuthentication(
                 dataSource,
                 desc.getAuthentication());
@@ -65,20 +55,7 @@ public class DataSourceFactory extends AbstractFactory<DataSource, DataSourceDes
                 dataSource,
                 desc.getType());
 
-        return hasUpdatedLocation || hasUpdatedAuthentication || hasUpdatedDataSourceType;
-    }
-
-    /**
-     * @param dataSource The data source entity.
-     * @param location   The relative path of the data source.
-     * @return True, if data source type is updated.
-     */
-    private boolean updateLocation(final DataSource dataSource, final URI location) {
-        final var newLocation =
-                MetadataUtils.updateUri(dataSource.getLocation(), location, DEFAULT_NAME);
-        newLocation.ifPresent(dataSource::setLocation);
-
-        return newLocation.isPresent();
+        return hasUpdatedAuthentication || hasUpdatedDataSourceType;
     }
 
     /**

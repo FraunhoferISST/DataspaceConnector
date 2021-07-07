@@ -22,7 +22,6 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 
@@ -45,7 +44,7 @@ public class GenericEndpoint extends Endpoint {
     /**
      * Data source to which the generic endpoint belongs.
      */
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne
     private DataSource dataSource;
 
     /**
