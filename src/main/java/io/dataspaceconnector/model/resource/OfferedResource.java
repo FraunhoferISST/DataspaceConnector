@@ -15,11 +15,13 @@
  */
 package io.dataspaceconnector.model.resource;
 
+import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -47,6 +49,12 @@ public final class OfferedResource extends Resource {
     private List<Catalog> catalogs;
 
     /**
+     * The list of brokers where the resource is registered.
+     */
+    @OneToMany
+    private List<Broker> brokers;
+
+    /**
      * Default constructor.
      */
     protected OfferedResource() {
@@ -67,5 +75,21 @@ public final class OfferedResource extends Resource {
     @Override
     public List<Catalog> getCatalogs() {
         return catalogs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBrokers(final List<Broker> brokerList) {
+        this.brokers = brokerList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Broker> getBrokers() {
+        return brokers;
     }
 }
