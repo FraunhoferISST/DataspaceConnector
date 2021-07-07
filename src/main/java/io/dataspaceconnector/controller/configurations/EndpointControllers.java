@@ -15,26 +15,27 @@
  */
 package io.dataspaceconnector.controller.configurations;
 
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.UUID;
+
 import io.dataspaceconnector.controller.base.CRUDController;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
-import io.dataspaceconnector.model.endpoint.AppEndpoint;
-import io.dataspaceconnector.model.endpoint.ConnectorEndpoint;
 import io.dataspaceconnector.model.endpoint.Endpoint;
 import io.dataspaceconnector.model.endpoint.EndpointDesc;
-import io.dataspaceconnector.model.endpoint.GenericEndpoint;
 import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.utils.Utils;
-import io.dataspaceconnector.view.AppEndpointViewAssembler;
-import io.dataspaceconnector.view.ConnectorEndpointViewAssembler;
-import io.dataspaceconnector.view.GenericEndpointViewAssembler;
+import io.dataspaceconnector.view.EndpointViewAssemblerProxy;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.RepresentationModel;
@@ -48,10 +49,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.UUID;
-
 /**
  * Controller for management of different endpoints.
  */
@@ -64,6 +61,8 @@ public final class EndpointControllers {
     @RequestMapping("/api/endpoints")
     @RequiredArgsConstructor
     @Tag(name = "Endpoints", description = "Endpoints for CRUD operations on endpoints")
+    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.NONE)
     public static final class GenericEndpointController
             implements CRUDController<Endpoint, EndpointDesc, Object> {
 
@@ -80,64 +79,20 @@ public final class EndpointControllers {
         private final EndpointServiceProxy service;
 
         /**
-         * Assembler for generic endpoints.
-         */
-        @Autowired
-        private final GenericEndpointViewAssembler genericAssembler;
-
-        /**
-         * Assembler for app endpoints.
-         */
-        @Autowired
-        private final AppEndpointViewAssembler appAssembler;
-
-        /**
-         * Assembler for connector endpoints.
-         */
-        @Autowired
-        private final ConnectorEndpointViewAssembler connectorAssembler;
-
-        /**
          * Assembler for pagination.
          */
         @Autowired
         private final PagedResourcesAssembler<Endpoint> pagedAssembler;
 
-        /**
-         * @param endpoint The endpoint.
-         * @param <K> The type of the endpoint.
-         * @return representation model
-         */
-        private <K> RepresentationModel<?> toView(final K endpoint) {
-            if (AppEndpoint.class.equals(endpoint.getClass())) {
-                return appAssembler.toModel((AppEndpoint) endpoint);
-            }
-
-            if (ConnectorEndpoint.class.equals(endpoint.getClass())) {
-                return connectorAssembler.toModel((ConnectorEndpoint) endpoint);
-            }
-
-            return genericAssembler.toModel((GenericEndpoint) endpoint);
-        }
-
-        /**
-         * @param pageable Holds the page request.
-         * @return page model
-         */
-        private PagedModel<?> toView(final Pageable pageable) {
-            final var objs = service.getAll(pageable);
-            if (objs.hasContent()) {
-                    return pagedAssembler.toModel(objs);
-            }
-            return PagedModel.empty();
-        }
+        @Autowired
+        private final EndpointViewAssemblerProxy assemblerProxy;
 
         /**
          * @param obj The endpoint object.
          * @return response entity
          */
         private ResponseEntity<Object> respondCreated(final Endpoint obj) {
-            final RepresentationModel<?> entity = toView(obj);
+            final RepresentationModel<?> entity = assemblerProxy.toModel(obj);
             final var headers = new HttpHeaders();
             headers.setLocation(entity.getRequiredLink("self").toUri());
 
@@ -152,12 +107,20 @@ public final class EndpointControllers {
         @Override
         public PagedModel<Object> getAll(final Integer page, final Integer size) {
             final var pageable = Utils.toPageRequest(page, size);
-            return (PagedModel<Object>) toView(pageable);
+            final var entities = service.getAll(pageable);
+            PagedModel<RepresentationModel<?>> model;
+            if (entities.hasContent()) {
+                model = pagedAssembler.toModel(entities, assemblerProxy);
+            } else {
+                model = (PagedModel<RepresentationModel<?>>) pagedAssembler.toEmptyModel(entities, Endpoint.class);
+            }
+
+            return (PagedModel<Object>) (PagedModel<?>) model;
         }
 
         @Override
         public Object get(final UUID resourceId) {
-            return toView(service.get(resourceId));
+            return assemblerProxy.toModel(service.get(resourceId));
         }
 
         @Override
