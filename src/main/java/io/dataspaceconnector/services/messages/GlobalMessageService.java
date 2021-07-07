@@ -227,7 +227,7 @@ public class GlobalMessageService {
     private boolean validateResponse(final MessageAndPayload response, final String logMsg) {
         if (response != null) {
             if (log.isInfoEnabled()) {
-                log.info(logMsg);
+                log.info("{}", logMsg);
             }
             return true;
         }
