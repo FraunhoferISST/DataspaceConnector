@@ -28,12 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 /**
  * Offers utility functions for bootstrapping data.
  */
@@ -163,8 +161,13 @@ public final class BootstrapUtils {
 
         final var files = new ArrayList<File>();
         if (base.isDirectory()) {
+            final var containedFiles = base.listFiles();
+            if (containedFiles == null) {
+                return files;
+            }
+
             // If the base file is a directory, iterate all child files.
-            for (final var child : Objects.requireNonNull(base.listFiles())) {
+            for (final var child : containedFiles) {
                 if (child.isDirectory()) {
                     files.addAll(findFilesByExtension(child.getPath(), filename, extension));
                 } else {
