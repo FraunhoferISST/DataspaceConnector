@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.List;
 
 import io.dataspaceconnector.model.NamedEntity;
+import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.representation.Representation;
@@ -118,6 +119,7 @@ public class Resource extends NamedEntity {
 
     /**
      * Set the catalogs used by this resource.
+     *
      * @param catalogList The catalog list.
      */
     public void setCatalogs(final List<Catalog> catalogList) {
@@ -129,6 +131,7 @@ public class Resource extends NamedEntity {
 
     /**
      * Get the list of catalogs used by this resource.
+     *
      * @return The list of catalogs used by this resource.
      */
     public List<Catalog> getCatalogs() {
@@ -136,6 +139,26 @@ public class Resource extends NamedEntity {
             NOTE: Offered and Requested Resource override this function
             so that exception should never be returned. Throw exception
             here so that a missing override crashes really load.
+         */
+        throw new NotImplemented();
+    }
+
+    /**
+     * @param brokers The broker list.
+     */
+    public void setBrokers(final List<Broker> brokers) {
+        /*
+            NOTE: Offered Resource override this function.
+         */
+        throw new NotImplemented();
+    }
+
+    /**
+     * @return The list of brokers used by this resource.
+     */
+    public List<Broker> getBrokers() {
+        /*
+            NOTE: Offered Resource override this function
          */
         throw new NotImplemented();
     }

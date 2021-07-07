@@ -24,7 +24,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -35,11 +34,6 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ContractTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
 
     /**
      * Contract parameters.

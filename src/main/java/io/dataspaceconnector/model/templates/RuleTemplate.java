@@ -15,10 +15,7 @@
  */
 package io.dataspaceconnector.model.templates;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.rule.ContractRuleDesc;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -30,13 +27,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @NoArgsConstructor
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class RuleTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
 
     /**
      * Rule parameters.

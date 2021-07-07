@@ -26,6 +26,7 @@ import io.dataspaceconnector.controller.resources.swagger.tags.ResourceNames;
 import io.dataspaceconnector.controller.resources.swagger.responses.ResponseCodes;
 import io.dataspaceconnector.model.agreement.Agreement;
 import io.dataspaceconnector.model.artifact.Artifact;
+import io.dataspaceconnector.model.broker.Broker;
 import io.dataspaceconnector.model.catalog.Catalog;
 import io.dataspaceconnector.model.contract.Contract;
 import io.dataspaceconnector.model.rule.ContractRule;
@@ -38,6 +39,7 @@ import io.dataspaceconnector.services.resources.AbstractResourceRepresentationLi
 import io.dataspaceconnector.services.resources.RelationServices;
 import io.dataspaceconnector.view.AgreementView;
 import io.dataspaceconnector.view.ArtifactView;
+import io.dataspaceconnector.view.BrokerView;
 import io.dataspaceconnector.view.CatalogView;
 import io.dataspaceconnector.view.ContractRuleView;
 import io.dataspaceconnector.view.ContractView;
@@ -112,6 +114,16 @@ public final class RelationControllers {
     @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
     public static class OfferedResourcesToCatalogs extends BaseResourceChildController<
             RelationServices.OfferedResourceCatalogLinker, Catalog, CatalogView> {
+    }
+
+    /**
+     * Offers the endpoints for managing the relations between offered resources and brokers.
+     */
+    @RestController
+    @RequestMapping("/api/offers/{id}/brokers")
+    @Tag(name = ResourceNames.OFFERS, description = ResourceDescriptions.OFFERS)
+    public static class OfferedResourcesToBrokers extends BaseResourceChildController<
+            RelationServices.OfferedResourceBrokerLinker, Broker, BrokerView> {
     }
 
     /**

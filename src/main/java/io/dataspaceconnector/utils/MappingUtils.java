@@ -231,7 +231,7 @@ public final class MappingUtils {
         final var desc = new OfferedResourceDesc();
         fillResourceDesc(desc, resource);
 
-        return new ResourceTemplate<>(null, desc, null, null);
+        return new ResourceTemplate<>(desc);
     }
 
     /**
@@ -248,7 +248,7 @@ public final class MappingUtils {
         desc.setRemoteId(resource.getId());
         fillResourceDesc(desc, resource);
 
-        return new ResourceTemplate<>(null, desc, null, null);
+        return new ResourceTemplate<>(desc);
     }
 
     /**
@@ -314,7 +314,7 @@ public final class MappingUtils {
             desc.setMediaType(mediaType.getFilenameExtension());
         }
 
-        return new RepresentationTemplate(null, desc, null);
+        return new RepresentationTemplate(desc);
     }
 
     /**
@@ -415,7 +415,7 @@ public final class MappingUtils {
             }
         }
 
-        return new ContractTemplate(null, desc, null);
+        return new ContractTemplate(desc);
     }
 
     /**

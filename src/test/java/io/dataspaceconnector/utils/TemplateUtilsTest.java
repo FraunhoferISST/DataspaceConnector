@@ -120,7 +120,6 @@ class TemplateUtilsTest {
         /* ASSERT */
         assertEquals(1, result.size());
         final var template = result.get(0);
-        assertNull(template.getOldRemoteId());
         final var desc = template.getDesc();
         assertEquals(requestedArtifact, desc.getRemoteId());
         assertEquals(remoteUrl, desc.getRemoteAddress());
