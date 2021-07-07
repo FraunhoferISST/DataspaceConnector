@@ -18,6 +18,7 @@ All notable changes to this project will be documented in this file.
   message.
 - Change naming of the resource's license attribute from `licence` to `license`.
 - Increase postgres version to 42.2.23.
+- Increase jackson version to 2.12.4.
 
 ## [5.2.1] - 2021-07-02
 
