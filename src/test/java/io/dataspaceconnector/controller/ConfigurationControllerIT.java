@@ -22,7 +22,7 @@ import de.fraunhofer.iais.eis.LogLevel;
 import de.fraunhofer.ids.messaging.core.config.ConfigContainer;
 import de.fraunhofer.ids.messaging.core.config.ConfigUpdateException;
 import io.dataspaceconnector.config.ConnectorConfiguration;
-import io.dataspaceconnector.services.ids.DeserializationService;
+import io.dataspaceconnector.service.ids.DeserializationService;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

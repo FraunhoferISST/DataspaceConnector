@@ -1,6 +1,8 @@
 package io.dataspaceconnector.view;
 
-import io.dataspaceconnector.controller.resources.ResourceControllers;
+import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.controller.resource.view.SubscriptionViewAssembler;
+import io.dataspaceconnector.controller.resource.view.ViewAssemblerHelper;
 import io.dataspaceconnector.model.Subscription;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

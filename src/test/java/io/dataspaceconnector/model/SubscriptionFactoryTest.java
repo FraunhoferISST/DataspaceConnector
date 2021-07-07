@@ -1,6 +1,6 @@
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.exceptions.InvalidEntityException;
+import io.dataspaceconnector.exception.InvalidEntityException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;

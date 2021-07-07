@@ -24,9 +24,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = {"io.dataspaceconnector.repositories"})
+@EnableJpaRepositories(basePackages = {"io.dataspaceconnector.repository"})
 @EntityScan("io.dataspaceconnector.model")
-@ComponentScan(basePackages = {"io.dataspaceconnector.repositories",
+@ComponentScan(basePackages = {"io.dataspaceconnector.repository",
         "io.dataspaceconnector.model"},
         excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE)})

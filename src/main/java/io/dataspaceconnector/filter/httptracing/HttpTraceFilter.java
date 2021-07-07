@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import io.dataspaceconnector.filter.httptracing.internal.RequestWrapper;
-import io.dataspaceconnector.utils.UUIDUtils;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.annotation.Order;
