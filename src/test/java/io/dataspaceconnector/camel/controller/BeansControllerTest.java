@@ -17,9 +17,7 @@ package io.dataspaceconnector.camel.controller;
 
 import java.nio.charset.StandardCharsets;
 
-import io.dataspaceconnector.camel.controller.BeansController;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +45,6 @@ public class BeansControllerTest {
     private BeanDefinitionRegistry beanDefinitionRegistry;
 
     @Autowired
-    @InjectMocks
     private BeansController beansController;
 
     @Test
