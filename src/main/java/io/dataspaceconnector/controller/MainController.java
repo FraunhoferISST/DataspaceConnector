@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.controller;
 
-import io.dataspaceconnector.controller.resources.ResourceControllers;
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.controller.resource.ResourceControllers;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

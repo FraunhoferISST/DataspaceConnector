@@ -37,7 +37,7 @@ policy classes. The Dataspace Connector currently implements eight of these.
 
 Examples for each of them can be found by using the endpoint `POST /api/examples/policy`.
 The usage policy is added to the metadata of a resource. The classes at
-`io.dataspaceconnector.services.usagecontrol` read, classify, verify, and enforce the policies at
+`io.dataspaceconnector.service.usagecontrol` read, classify, verify, and enforce the policies at
 runtime.
 
 | No. | Title                                          | Support | Implementation |

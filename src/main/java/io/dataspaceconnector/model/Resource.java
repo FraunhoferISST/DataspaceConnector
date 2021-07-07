@@ -15,8 +15,8 @@
  */
 package io.dataspaceconnector.model;
 
-import io.dataspaceconnector.exceptions.ResourceException;
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.exception.ResourceException;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

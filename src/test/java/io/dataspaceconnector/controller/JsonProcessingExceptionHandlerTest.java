@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.dataspaceconnector.controller.exceptionhandler.JsonProcessingExceptionHandler;
 import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;

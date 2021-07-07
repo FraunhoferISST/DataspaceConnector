@@ -3,13 +3,13 @@
 
         <!-- Infomodel version specified in message header is not supported by connector -->
         <onException>
-            <exception>io.dataspaceconnector.exceptions.VersionNotSupportedException</exception>
+            <exception>io.dataspaceconnector.exception.VersionNotSupportedException</exception>
             <to uri="direct:handleVersionNotSupportedException"/>
         </onException>
 
         <!-- Message header is empty -->
         <onException>
-            <exception>io.dataspaceconnector.exceptions.MessageEmptyException</exception>
+            <exception>io.dataspaceconnector.exception.MessageEmptyException</exception>
             <to uri="direct:handleMessageEmptyException"/>
         </onException>
 
