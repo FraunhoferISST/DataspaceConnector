@@ -22,7 +22,7 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 
-import io.dataspaceconnector.model.utils.UriConverter;
+import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

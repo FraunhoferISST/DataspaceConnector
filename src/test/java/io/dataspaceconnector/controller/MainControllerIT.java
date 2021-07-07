@@ -20,7 +20,7 @@ import de.fraunhofer.iais.eis.BaseConnectorBuilder;
 import de.fraunhofer.iais.eis.ConnectorEndpointBuilder;
 import de.fraunhofer.iais.eis.SecurityProfile;
 import de.fraunhofer.iais.eis.ids.jsonld.Serializer;
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

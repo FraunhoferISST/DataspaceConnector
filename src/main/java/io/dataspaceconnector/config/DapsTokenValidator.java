@@ -15,7 +15,7 @@
  */
 package io.dataspaceconnector.config;
 
-import io.dataspaceconnector.services.ids.ConnectorService;
+import io.dataspaceconnector.service.ids.ConnectorService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;

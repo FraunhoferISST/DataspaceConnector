@@ -1,0 +1,42 @@
+<routes xmlns="http://camel.apache.org/schema/spring">
+    <route id="artifactRequestHandler">
+
+        <!-- the requested artifact is missing from the message header -->
+        <onException>
+            <exception>io.dataspaceconnector.camel.exception.NoRequestedArtifactException</exception>
+            <to uri="direct:handleNoRequestedArtifactException"/>
+        </onException>
+
+        <!-- The query input from the consumer for fetching the data is invalid -->
+        <onException>
+            <exception>io.dataspaceconnector.exception.InvalidInputException</exception>
+            <to uri="direct:handleInvalidInputException"/>
+        </onException>
+
+        <!-- the response could not be built -->
+        <onException>
+            <exception>io.dataspaceconnector.exception.MessageBuilderException</exception>
+            <exception>java.io.IOException</exception>
+            <exception>de.fraunhofer.iais.eis.util.ConstraintViolationException</exception>
+            <to uri="direct:handleResponseMessageBuilderException"/>
+        </onException>
+
+        <!-- failed to retrieve the artifact's data -->
+        <onException>
+            <exception>java.lang.Exception</exception>
+            <to uri="direct:handleDataRetrievalError"/>
+        </onException>
+
+        <from uri="direct:artifactRequestHandler"/>
+        <to uri="direct:ids-validation"/>
+        <process ref="RequestedArtifactValidator"/>
+        <choice>
+            <when>
+                <simple>${bean:connectorConfiguration.isPolicyNegotiation} == true</simple>
+                <to uri="direct:policyCheck"/>
+            </when>
+        </choice>
+        <process ref="DataRequestProcessor"/>
+
+    </route>
+</routes>
