@@ -27,6 +27,7 @@ import io.dataspaceconnector.services.configuration.GenericEndpointService;
 import io.dataspaceconnector.services.resources.EndpointServiceProxy;
 import io.dataspaceconnector.utils.Utils;
 import io.dataspaceconnector.view.EndpointViewAssemblerProxy;
+import io.dataspaceconnector.view.EndpointViewProxy;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -112,7 +113,7 @@ public final class EndpointControllers {
             if (entities.hasContent()) {
                 model = pagedAssembler.toModel(entities, assemblerProxy);
             } else {
-                model = (PagedModel<RepresentationModel<?>>) pagedAssembler.toEmptyModel(entities, Endpoint.class);
+                model = (PagedModel<RepresentationModel<?>>) pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
             }
 
             return (PagedModel<Object>) (PagedModel<?>) model;
