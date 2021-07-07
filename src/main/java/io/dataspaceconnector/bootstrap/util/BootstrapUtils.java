@@ -156,7 +156,7 @@ public final class BootstrapUtils {
                                                   final String extension)
             throws FileNotFoundException {
         // Validate input.
-        final var base = new File(path);
+        final var base = new File(FilenameUtils.getName(path));
         if (!base.exists()) {
             throw new FileNotFoundException("File '" + path + "' does not exist.");
         }
