@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.model.templates;
 
-import java.net.URI;
-
 import io.dataspaceconnector.model.artifact.ArtifactDesc;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,11 +31,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 public class ArtifactTemplate {
-
-    /**
-     * Old remote id.
-     */
-    private URI oldRemoteId;
 
     /**
      * Artifact parameters.

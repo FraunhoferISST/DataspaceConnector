@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.services.messages;
 
+import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.QueryLanguage;
 import de.fraunhofer.iais.eis.QueryScope;
 import de.fraunhofer.iais.eis.QueryTarget;
@@ -224,10 +225,11 @@ public class GlobalMessageService {
      * @param logMsg   The log message.
      * @return true if the recipient successfully processed the message, false otherwise.
      */
-    private boolean validateResponse(final MessageAndPayload response, final String logMsg) {
+    private boolean validateResponse(final MessageAndPayload<? extends Message, ?> response,
+                                     final String logMsg) {
         if (response != null) {
             if (log.isInfoEnabled()) {
-                log.info(logMsg);
+                log.info("{}", logMsg);
             }
             return true;
         }

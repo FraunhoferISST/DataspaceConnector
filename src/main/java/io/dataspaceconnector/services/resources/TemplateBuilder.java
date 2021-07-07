@@ -354,30 +354,14 @@ class TemplateBuilderRequestedResource
             final ResourceTemplate<RequestedResourceDesc> template) {
         final var resourceService = getResourceService();
 
-        RequestedResource resource;
         if (resourceService instanceof RemoteResolver) {
             final var resourceId = ((RemoteResolver) resourceService)
-                    .identifyByRemoteId(template.getOldRemoteId());
+                    .identifyByRemoteId(template.getDesc().getRemoteId());
             if (resourceId.isPresent()) {
-                if (template.getOldRemoteId().equals(template.getDesc().getRemoteId())) {
-                    resource = resourceService.update(resourceId.get(), template.getDesc());
-                } else {
-                    final var doesExist = ((RemoteResolver) resourceService)
-                            .identifyByRemoteId(template.getDesc().getRemoteId()).isPresent();
-                    if (doesExist) {
-                        throw new IllegalStateException();
-                    } else {
-                        resource = resourceService.update(resourceId.get(), template.getDesc());
-                    }
-                }
-
-            } else {
-                resource = resourceService.create(template.getDesc());
+                return resourceService.update(resourceId.get(), template.getDesc());
             }
-        } else {
-            resource = resourceService.create(template.getDesc());
         }
 
-        return resource;
+        return resourceService.create(template.getDesc());
     }
 }
