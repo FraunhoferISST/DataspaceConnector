@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
   message.
 - Change naming of the resource's license attribute from `licence` to `license`.
 - Refactor message handlers using Camel routes.
+- Increase postgres version to 42.2.23.
 
 ## [5.2.1] - 2021-07-02
 
