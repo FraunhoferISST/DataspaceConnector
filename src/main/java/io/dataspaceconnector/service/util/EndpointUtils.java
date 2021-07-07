@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.util;
+package io.dataspaceconnector.service.util;
 
 import io.dataspaceconnector.exception.UnreachableLineException;
 import io.dataspaceconnector.model.EndpointId;
+import io.dataspaceconnector.util.UUIDUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -61,7 +62,7 @@ public final class EndpointUtils {
      * @return Base path as string.
      */
     public static String getCurrentBasePathString() {
-        final var currentPath = EndpointUtils.getCurrentBasePath();
+        final var currentPath = getCurrentBasePath();
         return currentPath.toString().substring(0,
                 currentPath.toString().indexOf(currentPath.getPath()));
     }
@@ -106,7 +107,7 @@ public final class EndpointUtils {
      */
     public static UUID getUUIDFromPath(final URI url) {
         try {
-            final var endpoint = EndpointUtils.getEndpointIdFromPath(url);
+            final var endpoint = getEndpointIdFromPath(url);
             return endpoint.getResourceId();
         } catch (IllegalArgumentException e) {
             if (log.isDebugEnabled()) {

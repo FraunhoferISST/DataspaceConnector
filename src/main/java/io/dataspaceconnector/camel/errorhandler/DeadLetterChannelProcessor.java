@@ -53,7 +53,7 @@ public class DeadLetterChannelProcessor implements Processor {
                 LocalDateTime.now().toString());
 
         if (log.isWarnEnabled()) {
-            log.warn("Caught an exception during route execution: {}", routeError);
+            log.warn("Caught an exception during route execution. [error=({})]", routeError);
         }
 
         exchange.getIn().setBody(objectMapper.writeValueAsString(routeError));

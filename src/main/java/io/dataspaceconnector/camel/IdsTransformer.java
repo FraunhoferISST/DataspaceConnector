@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.camel;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
@@ -27,13 +23,13 @@ import de.fraunhofer.iais.eis.Message;
 import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
-import io.dataspaceconnector.camel.exception.DeserializationException;
-import io.dataspaceconnector.camel.exception.MissingPayloadException;
-import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.camel.dto.Request;
 import io.dataspaceconnector.camel.dto.RouteMsg;
 import io.dataspaceconnector.camel.dto.payload.ContractRuleListContainer;
 import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
+import io.dataspaceconnector.camel.exception.DeserializationException;
+import io.dataspaceconnector.camel.exception.MissingPayloadException;
+import io.dataspaceconnector.service.ids.DeserializationService;
 import io.dataspaceconnector.util.ContractUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import lombok.NonNull;
@@ -41,6 +37,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 /**
  * Superclass for Camel processors that transform an incoming message's payload, e.g. by
@@ -237,8 +237,7 @@ class ContractTargetRuleMapTransformer extends IdsTransformer<
     protected RouteMsg<ContractRequestMessageImpl, ContractTargetRuleMapContainer> processInternal(
             final RouteMsg<ContractRequestMessageImpl, ContractRuleListContainer> msg)
             throws Exception {
-        final var targetRuleMap = ContractUtils
-                .getTargetRuleMap(msg.getBody().getRules());
+        final var targetRuleMap = ContractUtils.getTargetRuleMap(msg.getBody().getRules());
         final var container = new ContractTargetRuleMapContainer(msg.getBody().getContractRequest(),
                 targetRuleMap);
         return new Request<>(msg.getHeader(), container);

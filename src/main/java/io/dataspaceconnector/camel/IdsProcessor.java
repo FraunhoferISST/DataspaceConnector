@@ -15,9 +15,6 @@
  */
 package io.dataspaceconnector.camel;
 
-import java.util.ArrayList;
-import javax.persistence.PersistenceException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractAgreement;
@@ -30,10 +27,14 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.util.ConstraintViolationException;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import io.dataspaceconnector.camel.dto.Request;
+import io.dataspaceconnector.camel.dto.Response;
+import io.dataspaceconnector.camel.dto.RouteMsg;
+import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.camel.exception.AgreementPersistenceException;
+import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.exception.ContractException;
 import io.dataspaceconnector.exception.InvalidInputException;
-import io.dataspaceconnector.camel.exception.UnconfirmedAgreementException;
 import io.dataspaceconnector.model.QueryInput;
 import io.dataspaceconnector.model.message.ArtifactResponseMessageDesc;
 import io.dataspaceconnector.model.message.ContractAgreementMessageDesc;
@@ -45,10 +46,6 @@ import io.dataspaceconnector.service.EntityResolver;
 import io.dataspaceconnector.service.EntityUpdateService;
 import io.dataspaceconnector.service.ids.ConnectorService;
 import io.dataspaceconnector.service.ids.DeserializationService;
-import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.dto.Response;
-import io.dataspaceconnector.camel.dto.RouteMsg;
-import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.type.ArtifactResponseService;
 import io.dataspaceconnector.service.message.type.ContractAgreementService;
 import io.dataspaceconnector.service.message.type.ContractRejectionService;
@@ -64,6 +61,9 @@ import org.apache.camel.Processor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
+
+import javax.persistence.PersistenceException;
+import java.util.ArrayList;
 
 /**
  * Superclass for Camel processors that execute the final logic to generate a response to an
@@ -120,7 +120,7 @@ class ResourceDescriptionProcessor extends IdsProcessor<
      *
      * @param msg the incoming message.
      * @return a Response object with a DescriptionResponseMessage as header and the resource
-     *         description as payload.
+     * description as payload.
      * @throws Exception if the resource cannot be found or an error occurs building the response.
      */
     @Override
@@ -167,7 +167,7 @@ class SelfDescriptionProcessor extends IdsProcessor<
      *
      * @param msg the incoming message.
      * @return a Response object with a DescriptionResponseMessage as header and the
-     *         self-description as payload.
+     * self-description as payload.
      * @throws Exception if an error occurs building the response.
      */
     @Override
@@ -360,7 +360,7 @@ class AcceptContractProcessor extends
      *
      * @param msg the incoming message.
      * @return a Response object with a ContractAgreementMessage as header and the agreement as
-     *         payload.
+     * payload.
      * @throws Exception if the agreement cannot be stores or the response cannot be built.
      */
     @Override

@@ -22,7 +22,7 @@ import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Contract;
 import io.dataspaceconnector.model.ContractRule;
-import io.dataspaceconnector.util.EndpointUtils;
+import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;

@@ -39,7 +39,7 @@ import io.dataspaceconnector.service.resource.ArtifactService;
 import io.dataspaceconnector.service.resource.RelationServices;
 import io.dataspaceconnector.service.resource.TemplateBuilder;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
-import io.dataspaceconnector.util.EndpointUtils;
+import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.IdsUtils;
 import io.dataspaceconnector.util.MessageUtils;
 import io.dataspaceconnector.util.TemplateUtils;

@@ -15,10 +15,6 @@
  */
 package io.dataspaceconnector.camel;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-
 import de.fraunhofer.iais.eis.ArtifactRequestMessageImpl;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.ContractRequestMessageImpl;
@@ -27,6 +23,10 @@ import de.fraunhofer.iais.eis.Resource;
 import de.fraunhofer.iais.eis.ResourceUpdateMessageImpl;
 import de.fraunhofer.iais.eis.Rule;
 import de.fraunhofer.ids.messaging.handler.message.MessagePayload;
+import io.dataspaceconnector.camel.dto.Request;
+import io.dataspaceconnector.camel.dto.RouteMsg;
+import io.dataspaceconnector.camel.dto.payload.ContractRuleListContainer;
+import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.camel.exception.ContractListEmptyException;
 import io.dataspaceconnector.camel.exception.ContractRejectedException;
 import io.dataspaceconnector.camel.exception.InvalidAffectedResourceException;
@@ -37,10 +37,6 @@ import io.dataspaceconnector.camel.exception.NoAffectedResourceException;
 import io.dataspaceconnector.camel.exception.NoRequestedArtifactException;
 import io.dataspaceconnector.camel.exception.NoTransferContractException;
 import io.dataspaceconnector.exception.PolicyRestrictionException;
-import io.dataspaceconnector.camel.dto.Request;
-import io.dataspaceconnector.camel.dto.RouteMsg;
-import io.dataspaceconnector.camel.dto.payload.ContractRuleListContainer;
-import io.dataspaceconnector.camel.dto.payload.ContractTargetRuleMapContainer;
 import io.dataspaceconnector.service.message.type.DescriptionResponseService;
 import io.dataspaceconnector.service.resource.EntityDependencyResolver;
 import io.dataspaceconnector.service.usagecontrol.ContractManager;
@@ -56,6 +52,10 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.springframework.stereotype.Component;
+
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Superclass for Camel processors that validate either header or payload of an incoming message.
@@ -129,10 +129,9 @@ class AffectedResourceValidator extends IdsValidator<
      * @throws Exception if the ID is null or empty.
      */
     @Override
-    protected void processInternal(
-            final RouteMsg<ResourceUpdateMessageImpl, MessagePayload> message) throws Exception {
-        final var affected = MessageUtils
-                .extractAffectedResource(message.getHeader());
+    protected void processInternal(final RouteMsg<ResourceUpdateMessageImpl,
+            MessagePayload> message) throws Exception {
+        final var affected = MessageUtils.extractAffectedResource(message.getHeader());
 
         if (affected == null || affected.toString().isEmpty()) {
             throw new NoAffectedResourceException("Affected resource is null or empty.");
@@ -338,9 +337,9 @@ class RuleValidator extends
      * target artifact and if there is, compares the rules from the request to the ones from the
      * contract offer.
      *
-     * @param target URI of the target artifact.
-     * @param request the contract request.
-     * @param issuer the issuer connector of the request.
+     * @param target        URI of the target artifact.
+     * @param request       the contract request.
+     * @param issuer        the issuer connector of the request.
      * @param targetRuleMap the list of rules from the contract request.
      * @return true, if there is a valid offer; false otherwise.
      * @throws ContractListEmptyException if there are no contract offers for the artifact.

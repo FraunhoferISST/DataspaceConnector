@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
  * Implementation of the {@link RouteMsg} interface for responses. Should contain a subclass of
  * either {@link de.fraunhofer.iais.eis.ResponseMessage} or
  * {@link de.fraunhofer.iais.eis.NotificationMessage} as header.
- *
  */
 @Data
 @RequiredArgsConstructor

@@ -50,7 +50,7 @@ import io.dataspaceconnector.service.resource.RepresentationService;
 import io.dataspaceconnector.service.resource.ResourceService;
 import io.dataspaceconnector.service.resource.RuleService;
 import io.dataspaceconnector.service.usagecontrol.AllowAccessVerifier;
-import io.dataspaceconnector.util.EndpointUtils;
+import io.dataspaceconnector.service.util.EndpointUtils;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.Utils;
 import lombok.NonNull;
