@@ -16,19 +16,14 @@
 package io.dataspaceconnector.model.datasource;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import java.net.URI;
 
 import io.dataspaceconnector.model.auth.Authentication;
 import io.dataspaceconnector.model.base.Entity;
-import io.dataspaceconnector.model.base.RemoteService;
-import io.dataspaceconnector.model.utils.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -36,8 +31,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LENGTH;
 
 /**
  * Entity which holds information about the data sources.
@@ -51,19 +44,12 @@ import static io.dataspaceconnector.model.config.DatabaseConstants.URI_COLUMN_LE
 @Where(clause = "deleted = false")
 @Table(name = "datasource")
 @RequiredArgsConstructor
-public class DataSource extends Entity implements RemoteService {
+public class DataSource extends Entity {
 
     /**
      * Serial version uid.
      **/
     private static final long serialVersionUID = 1L;
-
-    /**
-     * The relative path of the data source.
-     */
-    @Convert(converter = UriConverter.class)
-    @Column(length = URI_COLUMN_LENGTH)
-    private URI location;
 
     /**
      * The authentication for the data source.

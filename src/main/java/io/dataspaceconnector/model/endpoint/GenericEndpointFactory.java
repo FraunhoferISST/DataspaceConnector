@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.model.endpoint;
 
+import io.dataspaceconnector.model.datasource.DataSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,5 +31,25 @@ public class GenericEndpointFactory extends EndpointFactory<GenericEndpoint, Gen
     @Override
     protected GenericEndpoint initializeEntity(final GenericEndpointDesc desc) {
         return new GenericEndpoint();
+    }
+
+    /**
+     * @param genericEndpoint The generic endpoint.
+     * @param dataSource      The data source which is added to the endpoint.
+     * @return generic endpoint
+     */
+    public GenericEndpoint setDataSourceToGenericEndpoint(final GenericEndpoint genericEndpoint,
+                                                          final DataSource dataSource) {
+        genericEndpoint.setDataSource(dataSource);
+        return genericEndpoint;
+    }
+
+    /**
+     * @param genericEndpoint The generic endpoint.
+     * @return generic endpoint
+     */
+    public GenericEndpoint removeDataSource(final GenericEndpoint genericEndpoint) {
+        genericEndpoint.setDataSource(null);
+        return genericEndpoint;
     }
 }

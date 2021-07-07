@@ -15,7 +15,6 @@
  */
 package io.dataspaceconnector.view;
 
-import java.net.URI;
 import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -47,11 +46,6 @@ public class DataSourceView extends RepresentationModel<DataSourceView> {
      */
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ViewConstants.DATE_TIME_FORMAT)
     private ZonedDateTime modificationDate;
-
-    /**
-     * The relative path of the data source.
-     */
-    private URI location;
 
     /**
      * The type of the data source.
