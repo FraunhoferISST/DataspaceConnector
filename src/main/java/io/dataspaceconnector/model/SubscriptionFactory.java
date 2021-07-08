@@ -19,6 +19,7 @@ import io.dataspaceconnector.exception.InvalidEntityException;
 import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MetadataUtils;
 import io.dataspaceconnector.util.Utils;
+import io.dataspaceconnector.util.ValidationUtils;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -82,7 +83,7 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
      * @return true, if the URL was updated; false otherwise.
      */
     private boolean updateUrl(final Subscription subscription, final URI url) {
-        if (url == null) {
+        if (url == null || ValidationUtils.isInvalidUri(String.valueOf(url))) {
             throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
         }
 
@@ -100,7 +101,7 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
      * @return true, if the URL was updated; false otherwise.
      */
     private boolean updateTarget(final Subscription subscription, final URI target) {
-        if (target == null) {
+        if (target == null || ValidationUtils.isInvalidUri(String.valueOf(target))) {
             throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
         }
 
@@ -118,7 +119,7 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
      * @return true, if the URL was updated; false otherwise.
      */
     private boolean updateSubscriber(final Subscription subscription, final URI subscriber) {
-        if (subscriber == null) {
+        if (subscriber == null || ValidationUtils.isInvalidUri(String.valueOf(subscriber))) {
             throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
         }
 
