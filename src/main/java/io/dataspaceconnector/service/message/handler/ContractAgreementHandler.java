@@ -18,7 +18,6 @@ package io.dataspaceconnector.service.message.handler;
 import de.fraunhofer.iais.eis.ContractAgreementMessageImpl;
 import de.fraunhofer.ids.messaging.handler.message.SupportedMessageType;
 import io.dataspaceconnector.service.ids.ConnectorService;
-import lombok.NonNull;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.stereotype.Component;
@@ -40,9 +39,9 @@ public class ContractAgreementHandler extends AbstractMessageHandler<ContractAgr
      * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
-    public ContractAgreementHandler(final @NonNull ProducerTemplate template,
-                                  final @NonNull CamelContext context,
-                                  final @NonNull ConnectorService connectorService) {
+    public ContractAgreementHandler(final ProducerTemplate template,
+                                    final CamelContext context,
+                                    final ConnectorService connectorService) {
         super(template, context, connectorService);
     }
 
