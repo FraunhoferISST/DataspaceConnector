@@ -33,8 +33,7 @@ public final class ValidationUtils {
     /**
      * The pattern for a date format.
      */
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    private static final String PATTERN = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
     /**
      * Utility class does not have to be instantiated.
@@ -129,7 +128,7 @@ public final class ValidationUtils {
      */
     public static boolean isInvalidDate(final String string) {
         try {
-            SIMPLE_DATE_FORMAT.parse(string);
+            new SimpleDateFormat(PATTERN).parse(string);
             return false;
         } catch (ParseException e) {
             return true;

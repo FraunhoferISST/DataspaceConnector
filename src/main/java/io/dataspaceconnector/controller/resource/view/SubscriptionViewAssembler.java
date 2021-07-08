@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Assembles the REST resource for a requested resource.
+ * Assembles the REST resource for a subscription.
  */
 @Component
 @NoArgsConstructor
