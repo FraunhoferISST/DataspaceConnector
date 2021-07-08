@@ -15,14 +15,18 @@
  */
 package io.dataspaceconnector.controller.resource;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.List;
-import java.util.UUID;
-
 import io.dataspaceconnector.controller.resource.exception.MethodNotAllowed;
 import io.dataspaceconnector.controller.resource.tag.ResourceDescriptions;
 import io.dataspaceconnector.controller.resource.tag.ResourceNames;
+import io.dataspaceconnector.controller.resource.view.AgreementView;
+import io.dataspaceconnector.controller.resource.view.ArtifactView;
+import io.dataspaceconnector.controller.resource.view.CatalogView;
+import io.dataspaceconnector.controller.resource.view.ContractRuleView;
+import io.dataspaceconnector.controller.resource.view.ContractView;
+import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
+import io.dataspaceconnector.controller.resource.view.RepresentationView;
+import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
+import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.dataspaceconnector.model.Agreement;
 import io.dataspaceconnector.model.Artifact;
 import io.dataspaceconnector.model.Catalog;
@@ -36,15 +40,6 @@ import io.dataspaceconnector.service.resource.AbstractCatalogResourceLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceContractLinker;
 import io.dataspaceconnector.service.resource.AbstractResourceRepresentationLinker;
 import io.dataspaceconnector.service.resource.RelationServices;
-import io.dataspaceconnector.controller.resource.view.AgreementView;
-import io.dataspaceconnector.controller.resource.view.ArtifactView;
-import io.dataspaceconnector.controller.resource.view.CatalogView;
-import io.dataspaceconnector.controller.resource.view.ContractRuleView;
-import io.dataspaceconnector.controller.resource.view.ContractView;
-import io.dataspaceconnector.controller.resource.view.OfferedResourceView;
-import io.dataspaceconnector.controller.resource.view.RepresentationView;
-import io.dataspaceconnector.controller.resource.view.RequestedResourceView;
-import io.dataspaceconnector.controller.resource.view.SubscriptionView;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -55,6 +50,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This class contains all implementations of the {@link BaseResourceChildController}.
@@ -305,7 +305,32 @@ public final class RelationControllers {
     public static class RequestedResourcesToSubscriptions
             extends BaseResourceChildController<RelationServices.RequestedResourceSubscriptionLinker,
             Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
 
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
     }
 
     /**
@@ -317,6 +342,31 @@ public final class RelationControllers {
     public static class OfferedResourcesToSubscriptions
             extends BaseResourceChildController<RelationServices.OfferedResourceSubscriptionLinker,
             Subscription, SubscriptionView> {
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "405", description = "Not allowed")})
+        public final PagedModel<SubscriptionView> addResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
 
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> replaceResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
+
+        @Override
+        @Hidden
+        @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "No content")})
+        public final HttpEntity<Void> removeResources(
+                @Valid @PathVariable(name = "id") final UUID ownerId,
+                @Valid @RequestBody final List<URI> resources) {
+            throw new MethodNotAllowed();
+        }
     }
 }
