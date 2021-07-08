@@ -50,24 +50,24 @@ spec:
             httpGet:
               path: /
               port: http
-              scheme: HTTPS
+              scheme: HTTP
             initialDelaySeconds: 15
             failureThreshold: 1
-            periodSeconds: 10
+            periodSeconds: 3
           readinessProbe:
             httpGet:
               path: /
               port: http
-              scheme: HTTPS
+              scheme: HTTP
             initialDelaySeconds: 10
-            periodSeconds: 5
+            periodSeconds: 3
           startupProbe:
             httpGet:
               path: /
               port: http
-              scheme: HTTPS
+              scheme: HTTP
             failureThreshold: 30
-            periodSeconds: 10
+            periodSeconds: 3
           volumeMounts:
             - name: certs
               mountPath: /var/run/certs/
