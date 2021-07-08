@@ -37,7 +37,7 @@ jobs:
          IMAGE: ${{ steps.get_repo.outputs.IMAGE }}
 
   e2e:
-    depends-on: build-test-image
+    needs: build-test-image
     timeout-minutes: 30
     runs-on: ubuntu-latest
 
@@ -50,9 +50,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-       - name: Build image
-         run: |
-           docker build . -t ghcr.io/international-data-spaces-association/dataspace-connector:test
       - name: Setup environment
         run: |
           curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE=777 sh -
