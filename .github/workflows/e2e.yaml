@@ -3,10 +3,6 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
-  OWNER: ${{ secrets.REPO_USER }}
-
 jobs:
   build-test-image:
     timeout-minutes: 15
@@ -18,7 +14,7 @@ jobs:
       -
         name: Build registry path
         id: get_repo
-        run: echo ::set-output name=IMAGE::"$REGISTRY/$OWNER/dataspace-connector"
+        run: echo ::set-output name=IMAGE::"ghcr.io/international-data-spaces-association/dataspace-connector"
       -
        name: Login to registry
        uses: docker/login-action@v1
