@@ -16,6 +16,7 @@
 package io.dataspaceconnector.controller.resource.broker;
 
 import java.net.URI;
+import java.util.Calendar;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ class BrokerControllerIT {
     void create_validInput_returnNew() throws Exception {
         mockMvc.perform(post("/api/brokers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{}"))
+                        .content("{\"location\":\"http://example.org/" + Calendar.getInstance().getTimeInMillis() + "\"}"))
                .andExpect(status().isCreated());
     }
 
@@ -53,7 +54,7 @@ class BrokerControllerIT {
         for(int i = 0; i < 5; i++) {
             mockMvc.perform(post("/api/brokers")
                                     .contentType(MediaType.APPLICATION_JSON)
-                                    .content("{}"))
+                                    .content("{\"location\":\"http://example.org/" + Calendar.getInstance().getTimeInMillis() + "\"}"))
                    .andExpect(status().isCreated());
         }
 
@@ -66,7 +67,7 @@ class BrokerControllerIT {
         final var newObject =
         mockMvc.perform(post("/api/brokers")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{}"))
+                                .content("{\"location\":\"http://example.org/" + Calendar.getInstance().getTimeInMillis() + "\"}"))
                .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
@@ -80,7 +81,7 @@ class BrokerControllerIT {
         final var newObject =
                 mockMvc.perform(post("/api/brokers")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}"))
+                                        .content("{\"location\":\"http://example.org/" + Calendar.getInstance().getTimeInMillis() + "\"}"))
                        .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
@@ -97,7 +98,7 @@ class BrokerControllerIT {
         final var newObject =
                 mockMvc.perform(post("/api/brokers")
                                         .contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}"))
+                                        .content("{\"location\":\"http://example.org/" + Calendar.getInstance().getTimeInMillis() + "\"}"))
                        .andExpect(status().isCreated()).andReturn();
 
         final var newObj = newObject.getResponse().getHeader("Location");
