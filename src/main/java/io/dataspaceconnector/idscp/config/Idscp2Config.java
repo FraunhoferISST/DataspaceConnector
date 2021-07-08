@@ -1,11 +1,20 @@
 package io.dataspaceconnector.idscp.config;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import javax.annotation.PostConstruct;
 
 import de.fhg.aisec.ids.camel.idscp2.Utils;
-import de.fhg.aisec.ids.camel.idscp2.processors.ContractRequestCreationProcessor;
 import de.fhg.aisec.ids.camel.idscp2.processors.IdsMessageTypeExtractionProcessor;
+import de.fraunhofer.iais.eis.Action;
+import de.fraunhofer.iais.eis.ContractRequestBuilder;
+import de.fraunhofer.iais.eis.ContractRequestMessageBuilder;
+import de.fraunhofer.iais.eis.DynamicAttributeTokenBuilder;
+import de.fraunhofer.iais.eis.PermissionBuilder;
+import de.fraunhofer.iais.eis.TokenFormat;
+import de.fraunhofer.iais.eis.util.Util;
+import de.fraunhofer.ids.messaging.util.IdsMessageUtils;
+import org.apache.camel.Processor;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -35,8 +44,31 @@ public class Idscp2Config {
      * @return the processor.
      */
     @Bean("ContractRequestCreationProcessor")
-    public ContractRequestCreationProcessor contractRequestCreationProcessor() {
-        return new ContractRequestCreationProcessor();
+    public Processor contractRequestCreationProcessor() {
+        return exchange -> {
+            final var in = exchange.getIn();
+
+            final var message = new ContractRequestMessageBuilder()
+                    ._issued_(IdsMessageUtils.getGregorianNow())
+                    ._modelVersion_("4.1.0")
+                    ._issuerConnector_(URI.create("https://some-connector.com"))
+                    ._senderAgent_(URI.create("https://some-connector.com"))
+                    ._securityToken_(new DynamicAttributeTokenBuilder()
+                            ._tokenFormat_(TokenFormat.JWT)
+                            ._tokenValue_("DAT")
+                            .build())
+                    ._recipientConnector_(Util.asList(URI.create("https://some-connector.com")))
+                    .build();
+            in.setHeader("idscp2-header", message);
+
+            final var contractRequest = new ContractRequestBuilder(URI.create("https://some-contract-request.com"))
+                    ._permission_(Util.asList(new PermissionBuilder()
+                            ._action_(Util.asList(Action.USE))
+                            ._target_(URI.create("https://some-artifact.com"))
+                            .build()))
+                    .build();
+            in.setBody(contractRequest.toRdf().getBytes(StandardCharsets.UTF_8));
+        };
     }
 
     /**
@@ -47,7 +79,7 @@ public class Idscp2Config {
     @Bean
     public SSLContextParameters serverSslContext() {
         var ctx = new SSLContextParameters();
-        ctx.setCertAlias("1");
+        ctx.setCertAlias("1.0.1");
 
         final var keyStoreParameters = new KeyStoreParameters();
         keyStoreParameters.setResource("./src/main/resources/conf/cert.p12");
