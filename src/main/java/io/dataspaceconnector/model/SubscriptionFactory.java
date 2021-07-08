@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 /**
- * Creates and updates a subscriber.
+ * Creates and updates a subscription.
  */
 @Component
 public class SubscriptionFactory implements AbstractFactory<Subscription, SubscriptionDesc> {
@@ -33,18 +33,19 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
      * Creates a new subscription.
      *
      * @param desc The description of the new subscription.
-     * @return the new subscription.
+     * @return The new subscription.
      * @throws IllegalArgumentException if desc is null.
-     * @throws InvalidEntityException if no valid entity can be created from the description.
+     * @throws InvalidEntityException   if no valid entity can be created from the description.
      */
     @Override
     public Subscription create(final SubscriptionDesc desc) {
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
         final var subscription = new Subscription();
-        subscription.setSubscriber(desc.getSubscriber());
         subscription.setUrl(desc.getUrl());
         subscription.setTarget(desc.getTarget());
+        subscription.setPushData(desc.isPushData());
+        subscription.setSubscriber(desc.getSubscriber());
 
         update(subscription, desc);
 
@@ -54,24 +55,30 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
     /**
      * Updates a subscription.
      *
-     * @param subscription the subscription to be updated.
-     * @param desc The new subscription description.
+     * @param subscription The subscription to be updated.
+     * @param desc         The new subscription description.
      * @return true, if the subscription has been modified; false otherwise.
      * @throws IllegalArgumentException if any of the parameters is null.
-     * @throws InvalidEntityException if no valid entity can be created from the description.
+     * @throws InvalidEntityException   if no valid entity can be created from the description.
      */
     @Override
     public boolean update(final Subscription subscription, final SubscriptionDesc desc) {
         Utils.requireNonNull(subscription, ErrorMessages.ENTITY_NULL);
         Utils.requireNonNull(desc, ErrorMessages.DESC_NULL);
 
-        return updateUrl(subscription, desc.getUrl());
+        final var hasUpdatedUrl = this.updateUrl(subscription, desc.getUrl());
+        final var hasUpdatedTarget = this.updateTarget(subscription, desc.getTarget());
+        final var hasUpdatedPushData = this.updatePushData(subscription, desc.isPushData());
+        final var hasUpdatedSubscriber = this.updateSubscriber(subscription, desc.getSubscriber());
+
+        return hasUpdatedUrl || hasUpdatedTarget || hasUpdatedPushData || hasUpdatedSubscriber;
     }
 
     /**
-     * Updates the URL for a subscriber.
-     * @param subscription the subscriber.
-     * @param url the new URL.
+     * Updates the URL of a subscription.
+     *
+     * @param subscription The subscription.
+     * @param url          The new URL.
      * @return true, if the URL was updated; false otherwise.
      */
     private boolean updateUrl(final Subscription subscription, final URI url) {
@@ -83,6 +90,58 @@ public class SubscriptionFactory implements AbstractFactory<Subscription, Subscr
         newUri.ifPresent(subscription::setUrl);
 
         return newUri.isPresent();
+    }
+
+    /**
+     * Updates the target of a subscription.
+     *
+     * @param subscription The subscription.
+     * @param target       The new target.
+     * @return true, if the URL was updated; false otherwise.
+     */
+    private boolean updateTarget(final Subscription subscription, final URI target) {
+        if (target == null) {
+            throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
+        }
+
+        final var newTarget = MetadataUtils.updateUri(subscription.getTarget(), target, null);
+        newTarget.ifPresent(subscription::setTarget);
+
+        return newTarget.isPresent();
+    }
+
+    /**
+     * Updates the subscriber of a subscription.
+     *
+     * @param subscription The subscription.
+     * @param subscriber   The new subscriber.
+     * @return true, if the URL was updated; false otherwise.
+     */
+    private boolean updateSubscriber(final Subscription subscription, final URI subscriber) {
+        if (subscriber == null) {
+            throw new InvalidEntityException(ErrorMessages.INVALID_ENTITY_INPUT.toString());
+        }
+
+        final var newSubscriber =
+                MetadataUtils.updateUri(subscription.getSubscriber(), subscriber, null);
+        newSubscriber.ifPresent(subscription::setSubscriber);
+
+        return newSubscriber.isPresent();
+    }
+
+    /**
+     * Updates the push value of a subscription.
+     *
+     * @param subscription The subscription.
+     * @param push         The new push value.
+     * @return true, if the URL was updated; false otherwise.
+     */
+    private boolean updatePushData(final Subscription subscription, final boolean push) {
+        final var newPushValue =
+                MetadataUtils.updateBoolean(subscription.isPushData(), push, false);
+        newPushValue.ifPresent(subscription::setPushData);
+
+        return newPushValue.isPresent();
     }
 
 }

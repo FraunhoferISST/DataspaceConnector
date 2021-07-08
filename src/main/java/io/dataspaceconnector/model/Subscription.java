@@ -61,9 +61,8 @@ public class Subscription extends AbstractEntity {
     private URI subscriber;
 
     /**
-     * Indicates whether the connector is the subscriber or publisher.
+     * Indicates whether the subscriber wants the data to be pushed.
      */
-
-    private boolean download;
+    private boolean pushData;
 
 }

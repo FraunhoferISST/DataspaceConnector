@@ -38,7 +38,7 @@ public class InvalidEntityExceptionHandler {
     /**
      * Handle {@link InvalidEntityException}.
      *
-     * @param exception the exception thrown.
+     * @param exception The thrown exception.
      * @return Response entity with code 400.
      */
     @ExceptionHandler(InvalidEntityException.class)

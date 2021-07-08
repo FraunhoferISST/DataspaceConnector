@@ -30,14 +30,8 @@ public class SubscriptionDesc extends AbstractDescription<Subscription> {
 
     /**
      * The id of the resource or artifact that the subscriber subscribed to.
-     * Note: Only used for request body.
      */
     private URI target;
-
-    /**
-     * The status of the subscription.
-     */
-    private boolean enabled;
 
     /**
      * The URL to use when notifying the subscriber about updates to a resource.
@@ -48,6 +42,11 @@ public class SubscriptionDesc extends AbstractDescription<Subscription> {
      * A connector or backend system identifier.
      */
     private URI subscriber;
+
+    /**
+     * Indicates whether the subscriber wants the data to be pushed.
+     */
+    private boolean pushData;
 
     /**
      * Indicates whether the connector is the subscriber or publisher.
