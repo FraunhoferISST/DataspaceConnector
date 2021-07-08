@@ -19,7 +19,6 @@ import de.fraunhofer.iais.eis.ContractAgreement;
 import io.dataspaceconnector.service.usagecontrol.PolicyExecutionService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
  * Handles agreement events by sending the agreement to the clearing house.
  */
 @Component
-@Log4j2
 @RequiredArgsConstructor
 public class AgreementEventHandler {
 
