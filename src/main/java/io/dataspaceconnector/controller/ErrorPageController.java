@@ -15,6 +15,7 @@
  */
 package io.dataspaceconnector.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,7 @@ public class ErrorPageController implements ErrorController {
      * @param request The http request.
      * @return A custom message and the status code as response object.
      */
+    @Hidden
     @RequestMapping("/error")
     public ResponseEntity<Object> handleError(final HttpServletRequest request) {
         final var status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
