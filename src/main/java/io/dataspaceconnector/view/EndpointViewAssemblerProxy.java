@@ -9,6 +9,9 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+/**
+ * Assembler for the Endpoint-View-Proxy.
+ */
 @Component
 public class EndpointViewAssemblerProxy
         implements RepresentationModelAssembler<Endpoint, RepresentationModel<?>> {
@@ -31,6 +34,11 @@ public class EndpointViewAssemblerProxy
     @Autowired
     private ConnectorEndpointViewAssembler connectorAssembler;
 
+    /**
+     * Converts an endpoint object into an app-/connector- or generic-endpoint.
+     * @param endpoint
+     * @return
+     */
     @Override
     public RepresentationModel<?> toModel(final Endpoint endpoint) {
         if (AppEndpoint.class.equals(endpoint.getClass())) {

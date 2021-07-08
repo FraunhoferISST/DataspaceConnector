@@ -33,6 +33,12 @@ public abstract class AbstractFactory<T extends Entity, D extends Description> {
 
     protected abstract T initializeEntity(D desc);
 
+    /**
+     * Updates the internal entity representation with a given new description.
+     * @param entity The entity to update.
+     * @param desc The new description.
+     * @return If updating the entity was successful.
+     */
     protected boolean updateInternal(final T entity, final D desc) {
         return false;
     }

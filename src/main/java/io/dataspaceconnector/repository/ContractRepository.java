@@ -19,13 +19,12 @@ import java.util.List;
 import java.util.UUID;
 
 import io.dataspaceconnector.model.contract.Contract;
-import io.dataspaceconnector.model.catalog.Catalog;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
  * The repository containing all objects of type {@link
- * Catalog}.
+ * io.dataspaceconnector.model.catalog.Catalog}.
  */
 @Repository
 public interface ContractRepository extends BaseEntityRepository<Contract> {

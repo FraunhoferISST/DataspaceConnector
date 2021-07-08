@@ -17,12 +17,8 @@ package io.dataspaceconnector.model.rule;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
 import io.dataspaceconnector.model.AbstractNamedFactory;
 import org.springframework.stereotype.Component;
 

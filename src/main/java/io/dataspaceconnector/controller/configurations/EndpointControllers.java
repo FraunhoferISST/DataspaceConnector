@@ -85,6 +85,9 @@ public final class EndpointControllers {
         @Autowired
         private final PagedResourcesAssembler<Endpoint> pagedAssembler;
 
+        /**
+         * Assembler for the EndpointView.
+         */
         @Autowired
         private final EndpointViewAssemblerProxy assemblerProxy;
 
@@ -113,7 +116,8 @@ public final class EndpointControllers {
             if (entities.hasContent()) {
                 model = pagedAssembler.toModel(entities, assemblerProxy);
             } else {
-                model = (PagedModel<RepresentationModel<?>>) pagedAssembler.toEmptyModel(entities, EndpointViewProxy.class);
+                model = (PagedModel<RepresentationModel<?>>) pagedAssembler
+                        .toEmptyModel(entities, EndpointViewProxy.class);
             }
 
             return (PagedModel<Object>) (PagedModel<?>) model;

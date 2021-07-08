@@ -19,6 +19,10 @@ package io.dataspaceconnector.controller.resource.swagger.response;
  * This class holds information about response codes.
  */
 public class ResponseCodes {
+    protected ResponseCodes() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Response code is OK.
      */

@@ -15,20 +15,14 @@
  */
 package io.dataspaceconnector.model.artifact;
 
-import io.dataspaceconnector.util.ErrorMessages;
 import io.dataspaceconnector.util.MetadataUtils;
-import io.dataspaceconnector.util.Utils;
 import org.springframework.stereotype.Component;
 import io.dataspaceconnector.model.AbstractNamedFactory;
-import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.zip.CRC32C;
 
 /**

@@ -16,7 +16,6 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.broker.Broker;
-import io.dataspaceconnector.repository.BaseEntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -13,18 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.dataspaceconnector.view.util;
-
 /**
- * This class holds constants for the view.
+ * Classes for resource controller tags.
  */
-public class ViewConstants {
-    protected ViewConstants() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Constant for the date time.
-     */
-    public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-}
+package io.dataspaceconnector.controller.resource.tag;

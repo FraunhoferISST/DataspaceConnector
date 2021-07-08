@@ -16,7 +16,6 @@
 package io.dataspaceconnector.repository;
 
 import io.dataspaceconnector.model.appstore.AppStore;
-import io.dataspaceconnector.repository.BaseEntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**

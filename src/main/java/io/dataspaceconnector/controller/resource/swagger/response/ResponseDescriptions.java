@@ -19,6 +19,10 @@ package io.dataspaceconnector.controller.resource.swagger.response;
  * This class holds descriptions for the responses.
  */
 public class ResponseDescriptions {
+    protected ResponseDescriptions() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Description is Ok.
      */
