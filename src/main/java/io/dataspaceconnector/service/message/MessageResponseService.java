@@ -15,8 +15,6 @@
  */
 package io.dataspaceconnector.service.message;
 
-import java.net.URI;
-
 import de.fraunhofer.iais.eis.ContractAgreement;
 import de.fraunhofer.iais.eis.ContractRequest;
 import de.fraunhofer.iais.eis.RejectionReason;
@@ -37,8 +35,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
+
 /**
  * This class handles message responses.
+ * NOTE: Used in the camel routes. Do not delete "unused" methods!
  */
 @Log4j2
 @Component

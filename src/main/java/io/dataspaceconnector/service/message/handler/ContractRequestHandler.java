@@ -36,8 +36,8 @@ public class ContractRequestHandler extends AbstractMessageHandler<ContractReque
     /**
      * Constructs an ContractRequestHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public ContractRequestHandler(final @NonNull ProducerTemplate template,

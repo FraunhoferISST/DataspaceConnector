@@ -36,13 +36,13 @@ public class NotificationMessageHandler extends AbstractMessageHandler<Notificat
     /**
      * Constructs an NotificationMessageHandler with the required super class parameters.
      *
-     * @param template Template for triggering Camel routes.
-     * @param context The CamelContext required for constructing the {@link ProducerTemplate}.
+     * @param template         Template for triggering Camel routes.
+     * @param context          Camel Context required for constructing the {@link ProducerTemplate}.
      * @param connectorService Service for the current connector configuration.
      */
     public NotificationMessageHandler(final @NonNull ProducerTemplate template,
-                                  final @NonNull CamelContext context,
-                                  final @NonNull ConnectorService connectorService) {
+                                      final @NonNull CamelContext context,
+                                      final @NonNull ConnectorService connectorService) {
         super(template, context, connectorService);
     }
 
