@@ -43,7 +43,6 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
             {{- include "dataspace-connector.env-variables" . | nindent 12 }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 8080
@@ -69,6 +68,14 @@ spec:
               scheme: HTTPS
             failureThreshold: 30
             periodSeconds: 10
+          volumeMounts:
+            - name: certs
+              mountPath: /var/run/certs/
+              readOnly: true
+            - name: config
+              mountPath: /etc/dataspace-connector/
+              readOnly: true
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -83,3 +90,10 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: certs
+          secret:
+            secretName: {{ include "dataspace-connector.fullname" . }}-certs
+        - name: config
+          secret:
+            secretName: {{ include "dataspace-connector.fullname" . }}-config

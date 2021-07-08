@@ -1,23 +1,27 @@
-#
-# Copyright 2020 Fraunhofer Institute for Software and Systems Engineering
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+#!/usr/bin/env python3
 
 import requests
 import pprint
 import json
-import tqdm
+import sys
+
+provider = "http://localhost:8080"
+consumer = "http://localhost:8081"
+
+provider_alias = "http://provider-dataspace-connector"
+consumer_alias = "http://consumer-dataspace-connector"
+
+def main(argv):
+    if(len(argv) == 2):
+        provider_alias = argv[0]
+        consumer_alias = argv[1]
+        print("Setting provider alias as:", provider_alias)
+        print("Setting consumer alias as:", consumer_alias)
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
+
+print("Starting script")
 
 # Suppress ssl verification warning
 requests.packages.urllib3.disable_warnings()
@@ -27,32 +31,32 @@ s.auth = ('admin', 'password')
 s.verify = False
 
 def create_catalog():
-    response = s.post("https://localhost:8080/api/catalogs", json={})
+    response = s.post(provider + "/api/catalogs", json={})
     return response.headers['Location']
 
 
 def create_offered_resource():
-    response = s.post("https://localhost:8080/api/offers", json={})
+    response = s.post(provider + "/api/offers", json={})
     return response.headers['Location']
 
 
 def create_representation():
-    response = s.post("https://localhost:8080/api/representations", json={})
+    response = s.post(provider + "/api/representations", json={})
     return response.headers['Location']
 
 
 def create_artifact():
-    response = s.post("https://localhost:8080/api/artifacts", json={"value": "SOME LONG VALUE"})
+    response = s.post(provider + "/api/artifacts", json={"value": "SOME LONG VALUE"})
     return response.headers['Location']
 
 
 def create_contract():
-    response = s.post("https://localhost:8080/api/contracts", json={'start': '2021-04-06T13:33:44.995+02:00', 'end':'2021-12-06T13:33:44.995+02:00'})
+    response = s.post(provider + "/api/contracts", json={'start': '2021-04-06T13:33:44.995+02:00', 'end':'2021-12-06T13:33:44.995+02:00'})
     return response.headers['Location']
 
 
 def create_rule_allow_access():
-    response = s.post("https://localhost:8080/api/rules", json={'value': """{
+    response = s.post(provider + "/api/rules", json={'value': """{
         "@context" : {
             "ids" : "https://w3id.org/idsa/core/",
             "idsc" : "https://w3id.org/idsa/code/"
@@ -105,19 +109,24 @@ def add_rule_to_contract(contract, rule):
 
 
 # IDS
+
+consumer_session = requests.Session()
+consumer_session.auth = ('admin', 'password')
+consumer_session.verify = False
+
 def descriptionRequest(recipient, elementId):
-    url = "https://localhost:8080/api/ids/description"
+    url = provider + "/api/ids/description"
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
     if elementId is not None:
         params['elementId'] = elementId
 
-    return s.post(url, params=params)
+    return consumer_session.post(url, params=params)
 
 
 def contractRequest(recipient, resourceId, artifactId, download, contract):
-    url = "https://localhost:8080/api/ids/contract"
+    url = consumer + "/api/ids/contract"
     params = {}
     if recipient is not None:
         params['recipient'] = recipient
@@ -128,7 +137,7 @@ def contractRequest(recipient, resourceId, artifactId, download, contract):
     if download is not None:
         params['download'] = download
 
-    return s.post(url, params=params, json=[contract])
+    return consumer_session.post(url, params=params, json=[contract])
 
 # Create resources
 catalog = create_catalog()
@@ -145,12 +154,21 @@ add_artifact_to_representation(representation, artifact)
 add_contract_to_resource(offers, contract)
 add_rule_to_contract(contract, use_rule)
 
+# Replace localhost references
+print(provider)
+print(provider_alias)
+offers = offers.replace(provider, provider_alias)
+artifact = artifact.replace(provider, provider_alias)
+
+print(offers)
+
 # Call description
-response = descriptionRequest("https://localhost:8080/api/ids/data", offers)
+response = descriptionRequest(provider_alias + "/api/ids/data", offers)
 offer = json.loads(response.text)
+pprint.pprint(offer)
 
 # Negotiate contract
 obj = offer['ids:contractOffer'][0]['ids:permission'][0]
 obj['ids:target'] = artifact
-response = contractRequest("https://localhost:8080/api/ids/data", offers, artifact, False, obj)
+response = contractRequest(provider_alias + "/api/ids/data", offers, artifact, False, obj)
 pprint.pprint(str(response.content))

@@ -30,4 +30,4 @@ jobs:
           kubectl cluster-info
       - name: Setup provider
         run: |
-          helm install provider charts/dataspace-connector
+          ./scripts/ci/e2e/setup-provider-consumer.sh
