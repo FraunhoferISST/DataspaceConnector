@@ -53,24 +53,19 @@ public class SubscriptionView extends RepresentationModel<SubscriptionView> {
     private URI target;
 
     /**
-     * The status of the subscription.
-     */
-    private boolean enabled;
-
-    /**
      * The URL to use when notifying the subscriber about updates to a resource.
      */
     private URI url;
 
     /**
-     * Indicates whether the connector is the subscriber or publisher.
-     */
-    private boolean active;
-
-    /**
      * A connector or backend system identifier.
      */
     private URI subscriber;
+
+    /**
+     * Indicates whether the subscriber wants the data to be pushed.
+     */
+    private boolean pushData;
 
     /**
      * Additional properties.
