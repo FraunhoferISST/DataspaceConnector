@@ -161,7 +161,7 @@ class CatalogControllerTest_getAll {
         titleField.setAccessible(true);
         titleField.set(catalog, title);
 
-        final var idField = catalog.getClass().getSuperclass().getDeclaredField("id");
+        final var idField = catalog.getClass().getSuperclass().getSuperclass().getDeclaredField("id");
         idField.setAccessible(true);
         idField.set(catalog, UUID.randomUUID());
 
