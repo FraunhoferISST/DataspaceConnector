@@ -3,6 +3,10 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+  OWNER: ${{ secrets.REPO_USER }}
+
 jobs:
   build-test-image:
     timeout-minutes: 15
