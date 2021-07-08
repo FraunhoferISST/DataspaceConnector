@@ -29,11 +29,11 @@
 package io.configmanager.extensions.gui.api.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import de.fraunhofer.iais.eis.ConnectorDeployMode;
 import de.fraunhofer.iais.eis.ConnectorStatus;
 import de.fraunhofer.iais.eis.Language;
 import io.configmanager.util.enums.BrokerRegistrationStatus;
 import io.configmanager.util.enums.RouteDeployMethod;
+import io.dataspaceconnector.model.configuration.DeployMode;
 import io.dataspaceconnector.model.configuration.LogLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -139,13 +139,18 @@ public class GuiUtilService {
         JSONArray sortedJsonArray;
 
         final var jsonArray = new JSONArray();
-        final var connectorDeployModes = ConnectorDeployMode.values();
+        final var connectorDeployModes = DeployMode.values();
 
         for (final var connectorDeployMode : connectorDeployModes) {
-            var jsonObject = new JSONObject();
-            jsonObject.put("originalName", connectorDeployMode.name());
-            jsonObject.put("displayName", connectorDeployMode.getLabel().get(0).getValue());
-            jsonArray.add(jsonObject);
+            try {
+                var jsonObject = new JSONObject();
+                jsonObject.put("originalName", connectorDeployMode.name());
+                jsonObject.put("displayName", DeployMode.class.getField(connectorDeployMode.name())
+                        .getAnnotation(JsonProperty.class).value());
+                jsonArray.add(jsonObject);
+            } catch (NoSuchFieldException e) {
+                log.debug("Missing JsonProperty found for connectorDeployMode!");
+            }
         }
 
         sortedJsonArray = sortJsonArray(jsonArray);
