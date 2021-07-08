@@ -3,8 +3,8 @@ package io.configmanager.extensions.routes.petrinet.builder;
 import de.fraunhofer.iais.eis.Rule;
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.Formula;
 import io.configmanager.extensions.routes.petrinet.evaluation.formula.transition.TransitionFormula;
-import io.dataspaceconnector.services.usagecontrol.PolicyPattern;
-import io.dataspaceconnector.utils.RuleUtils;
+import io.dataspaceconnector.service.usagecontrol.PolicyPattern;
+import io.dataspaceconnector.util.RuleUtils;
 
 import java.net.URI;
 

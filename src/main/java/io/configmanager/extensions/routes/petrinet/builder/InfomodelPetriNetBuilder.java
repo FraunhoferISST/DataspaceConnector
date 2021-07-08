@@ -34,8 +34,8 @@ import io.configmanager.extensions.routes.petrinet.model.PlaceImpl;
 import io.configmanager.extensions.routes.petrinet.model.Transition;
 import io.configmanager.extensions.routes.petrinet.model.TransitionImpl;
 import io.configmanager.extensions.routes.petrinet.simulator.PetriNetSimulator;
-import io.dataspaceconnector.utils.ContractUtils;
-import io.dataspaceconnector.utils.RuleUtils;
+import io.dataspaceconnector.util.ContractUtils;
+import io.dataspaceconnector.util.RuleUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 

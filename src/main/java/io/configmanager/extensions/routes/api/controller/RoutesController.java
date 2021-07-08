@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * the app routes in the configuration manager.
  */
 @Slf4j
-@RestController
+@RestController("configManagerRoutesController")
 @NoArgsConstructor
 @RequestMapping("/api/configmanager")
 @Tag(name = "ConfigManager: Routes")
