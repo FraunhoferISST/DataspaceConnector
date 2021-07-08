@@ -27,7 +27,6 @@ import io.dataspaceconnector.model.util.UriConverter;
 import io.dataspaceconnector.model.artifact.Artifact;
 import io.dataspaceconnector.model.base.Entity;
 import io.dataspaceconnector.model.base.RemoteObject;
-import io.dataspaceconnector.model.util.UriConverter;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
